@@ -3665,8 +3665,8 @@ body.is-resizing-sidebar {
 .board-sheets, .board-toolbar-actions { display: flex; align-items: center; gap: 6px; }
 .board-sheets > button { min-width: 34px; height: 34px; border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--foreground); background: var(--surface); font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
 .board-sheets > button.is-active { color: var(--primary-foreground); border-color: var(--primary); background: var(--primary); }
-.board-canvas-wrap { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: var(--surface); }
-.board-canvas { display: block; width: 100%; height: 100%; min-height: 340px; touch-action: none; background-image: radial-gradient(var(--border-strong) 1px, transparent 1px); background-size: 20px 20px; }
+.board-canvas-wrap { position: relative; min-width: 0; min-height: 0; overflow: hidden auto; overscroll-behavior: contain; scrollbar-width: thin; background: var(--surface); }
+.board-canvas { display: block; width: 100%; height: auto; touch-action: none; background-image: radial-gradient(var(--border-strong) 1px, transparent 1px); background-size: 20px 20px; }
 .board-canvas--erase { cursor: default; }
 .board-canvas--text, .board-canvas--math { cursor: text; }
 .board-canvas--pen, .board-canvas--marker, .board-canvas--line, .board-canvas--arrow, .board-canvas--rect, .board-canvas--ellipse { cursor: crosshair; }
@@ -3722,7 +3722,6 @@ body > .ML__keyboard,
   .live-lesson-dialog { width: 100vw; height: 100dvh; max-height: none; border-radius: 0; }
   .live-tabs { margin-inline: -4px; }
   .board-toolbar .button span { display: none; }
-  .board-canvas { min-height: 280px; }
   .enrollment-request-box article { align-items: flex-start; flex-direction: column; }
 }
 
@@ -6437,7 +6436,6 @@ a.workspace-card:hover {
 .live-room-panel-tabs .icon-button { margin-left: auto; color: #8b98a5; }
 .live-room-panel-body { min-height: 0; overflow: auto; }
 .live-room-panel-body > .board-panel { height: 100%; border: 0; border-radius: 0; }
-.live-room.is-board-full .live-room-panel-body > .board-panel .board-canvas { min-height: 0; }
 .live-room.is-board-full .live-room-panel { border-left: 0; }
 
 .live-participants { padding: 12px; display: grid; gap: 8px; align-content: start; }

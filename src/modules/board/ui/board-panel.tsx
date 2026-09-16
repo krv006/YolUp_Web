@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { Atom, Calculator, Check, Eye, FilePlus2, Pencil, UserCheck, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -6,7 +6,7 @@ import { useCourseStudents } from "@/modules/course";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import type { FormulaSolutionDto, Point, StrokeShapeDto } from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
-import { nextTextPoint } from "../lib/board-flow";
+import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
 import { buildStroke } from "../lib/board.geometry";
 import {
   useAddSheet,
@@ -62,10 +62,19 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
   const active = state?.sheets.find((item) => item.index === sheet) ?? state?.sheets[0];
   const canDraw = Boolean(state?.canDraw);
 
+  const boardHeight = state?.height ?? 900;
+  const canvasHeight = useMemo(() => {
+    const bottom = (active?.strokes ?? []).reduce((max, stroke) => {
+      const span = strokeSpan(stroke);
+      return span ? Math.max(max, span.bottom) : max;
+    }, 0);
+    return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN));
+  }, [active?.strokes, boardHeight]);
+
   function flowPointFor(lines: number): Point {
     return nextTextPoint(active?.strokes ?? [], {
       boardWidth: state?.width ?? 1200,
-      boardHeight: state?.height ?? 800,
+      boardHeight: canvasHeight,
       size: BOARD_TEXT_SIZE,
       lines,
     });
@@ -251,7 +260,9 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
         <svg
           ref={svgRef}
           className={`board-canvas board-canvas--${tool}`}
-          viewBox={`0 0 ${state.width} ${state.height}`}
+          viewBox={`0 0 ${state.width} ${canvasHeight}`}
+          preserveAspectRatio="xMidYMin meet"
+          style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
@@ -425,7 +436,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
         canDraw={canDraw}
         color={color}
         boardWidth={state.width}
-        boardHeight={state.height}
+        boardHeight={canvasHeight}
         strokes={active?.strokes ?? []}
       />
     </div>
