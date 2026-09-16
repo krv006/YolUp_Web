@@ -3,8 +3,7 @@
     "profile": { "label": "Данные профиля", "description": "Просмотр личных данных" },
     "logins": { "label": "История входов", "description": "Журнал по устройствам и IP" },
     "notifications": { "label": "Уведомления", "description": "Сообщения и напоминания" },
-    "settings": { "label": "Настройки", "description": "Параметры платформы" },
-    "ratings": { "label": "Мои оценки", "description": "Отзывы, оставленные учениками" }
+    "settings": { "label": "Настройки", "description": "Параметры платформы" }
   },
   "roleFallback": "Учитель",
   "workspaceFallback": "Рабочее пространство учителя",

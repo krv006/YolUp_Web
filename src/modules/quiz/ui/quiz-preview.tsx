@@ -9,11 +9,10 @@ export interface QuizPreviewQuestion {
 
 export interface QuizPreviewProps {
   title: string;
-  description: string;
   questions: readonly QuizPreviewQuestion[];
 }
 
-export function QuizPreview({ title, description, questions }: QuizPreviewProps) {
+export function QuizPreview({ title, questions }: QuizPreviewProps) {
   const { t } = useTranslation("quiz");
 
   return (
@@ -21,7 +20,6 @@ export function QuizPreview({ title, description, questions }: QuizPreviewProps)
       <div className="quiz-preview-head">
         <span>{t("preview.eyebrow")}</span>
         <strong>{title || t("preview.untitled")}</strong>
-        {description ? <p>{description}</p> : null}
       </div>
 
       <div className="quiz-preview-sheet">

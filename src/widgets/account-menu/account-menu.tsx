@@ -15,7 +15,6 @@ import {
   Settings,
   ShieldAlert,
   ShieldCheck,
-  Star,
   Trash2,
   UserRound,
   X,
@@ -25,7 +24,6 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import {
   LoginHistoryDialog,
-  TeacherRatingsDialog,
   resolveHomeRoute,
   useAuth,
   useDeleteCertificate,
@@ -51,9 +49,9 @@ const ROLE_I18N_KEY: Partial<Record<Role, string>> = {
 
 const SELF_SERVICE_ROLES: Role[] = [ROLES.TEACHER, ROLES.PARENT, ROLES.STUDENT];
 
-type MenuItemId = "profile" | "ratings" | "logins" | "notifications" | "settings";
+type MenuItemId = "profile" | "logins" | "notifications" | "settings";
 
-function useMenuItems(isTeacher: boolean): Array<{
+function useMenuItems(): Array<{
   id: MenuItemId;
   label: string;
   description: string;
@@ -62,9 +60,6 @@ function useMenuItems(isTeacher: boolean): Array<{
   const { t } = useTranslation("account");
   return [
     { id: "profile", label: t("menu.profile.label"), description: t("menu.profile.description"), icon: UserRound },
-    ...(isTeacher
-      ? [{ id: "ratings" as const, label: t("menu.ratings.label"), description: t("menu.ratings.description"), icon: Star }]
-      : []),
     { id: "logins", label: t("menu.logins.label"), description: t("menu.logins.description"), icon: History },
     { id: "notifications", label: t("menu.notifications.label"), description: t("menu.notifications.description"), icon: Bell },
     { id: "settings", label: t("menu.settings.label"), description: t("menu.settings.description"), icon: Settings },
@@ -92,7 +87,7 @@ export function AccountMenu({
   const resolvedRoleLabel = roleLabel ?? t("roleFallback");
   const resolvedWorkspaceLabel = workspaceLabel ?? t("workspaceFallback");
   const { user, logout } = useAuth();
-  const menuItems = useMenuItems(user?.role === ROLES.TEACHER);
+  const menuItems = useMenuItems();
   const navigate = useNavigate();
   const switchAccount = useSwitchAccountMutation();
   const switchRole = useSwitchRoleMutation();
@@ -104,7 +99,6 @@ export function AccountMenu({
   const certificateRef = useRef<HTMLInputElement>(null);
   const [editing, setEditing] = useState(false);
   const [loginsOpen, setLoginsOpen] = useState(false);
-  const [ratingsOpen, setRatingsOpen] = useState(false);
   const [inboxOpen, setInboxOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [draft, setDraft] = useState<ProfileFormValues>({
@@ -207,11 +201,6 @@ export function AccountMenu({
     if (id === "profile") {
       closeDrawer();
       onProfileOpenChange(true);
-      return;
-    }
-    if (id === "ratings") {
-      closeDrawer();
-      setRatingsOpen(true);
       return;
     }
     if (id === "logins") {
@@ -656,7 +645,6 @@ export function AccountMenu({
       </Dialog>
 
       <LoginHistoryDialog open={loginsOpen} onOpenChange={setLoginsOpen} />
-      <TeacherRatingsDialog open={ratingsOpen} onOpenChange={setRatingsOpen} />
       <NotificationInboxDialog open={inboxOpen} onOpenChange={setInboxOpen} />
     </>
   );

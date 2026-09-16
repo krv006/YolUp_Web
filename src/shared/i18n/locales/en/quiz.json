@@ -57,8 +57,6 @@
     "copyDone": "Copied {{count}} questions from \"{{title}}\" — edit them and save as a new quiz",
     "copyConfirm": "Your current questions will be replaced with the ones from \"{{title}}\". Continue?",
     "copyFailed": "Could not load the quiz",
-    "descriptionLabel": "Description — optional",
-    "descriptionPlaceholder": "A short note about the quiz",
     "dueLabel": "Due date · optional",
     "opensLabel": "Opens at · optional",
     "lessonLabel": "For which lesson",

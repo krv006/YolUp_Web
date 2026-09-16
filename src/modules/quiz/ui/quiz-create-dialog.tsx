@@ -69,7 +69,6 @@ export function AddQuizDialog({
   const [selectedCourseId, setSelectedCourseId] = useState("");
   const courseId = selectedCourseId || courses[0]?.id || "";
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
   const [dueAt, setDueAt] = useState("");
   const [opensAt, setOpensAt] = useState("");
   const [questions, setQuestions] = useState<QuizQuestionDraft[]>([]);
@@ -114,7 +113,6 @@ export function AddQuizDialog({
     setCopyingId(quiz.id);
     try {
       const detail = await loadQuizDetail(quiz.id);
-      setDescription(detail.description);
       setQuestions(
         detail.questions.map((question) => {
           const options = question.options.map((option) => ({ key: newKey(), text: option.text }));
@@ -148,7 +146,6 @@ export function AddQuizDialog({
     setStep("details");
     setSelectedCourseId("");
     setTitle("");
-    setDescription("");
     setDueAt("");
     setOpensAt("");
     setQuestions([]);
@@ -221,7 +218,7 @@ export function AddQuizDialog({
       courseId,
       lessonId: null,
       title: title.trim(),
-      description: description.trim(),
+      description: "",
       dueAt: dueAt || null,
       opensAt: opensAt || null,
       questions: questions.map((question) => ({
@@ -337,7 +334,7 @@ export function AddQuizDialog({
           </button>
           </form>
 
-          <QuizPreview title={title} description={description} questions={questions} />
+          <QuizPreview title={title} questions={questions} />
         </div>
       </div>
     );
@@ -424,16 +421,6 @@ export function AddQuizDialog({
               </small>
             ) : null}
           </div>
-          <label>
-            <span>{t("createDialog.descriptionLabel")}</span>
-            <textarea
-              value={description}
-              onChange={(event) => setDescription(event.target.value)}
-              placeholder={t("createDialog.descriptionPlaceholder")}
-              rows={2}
-            />
-          </label>
-
           {showSchedule ? (
             <div className="form-grid-two">
               <DatePicker

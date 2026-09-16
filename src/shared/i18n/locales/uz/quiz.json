@@ -57,8 +57,6 @@
     "copyDone": "\"{{title}}\" testidan {{count}} ta savol nusxalandi — tahrirlab yangi test sifatida saqlaysiz",
     "copyConfirm": "Yozilgan savollar \"{{title}}\" testidagi savollar bilan almashtiriladi. Davom etasizmi?",
     "copyFailed": "Testni yuklab bo'lmadi",
-    "descriptionLabel": "Tavsif — ixtiyoriy",
-    "descriptionPlaceholder": "Test haqida qisqacha izoh",
     "dueLabel": "Topshirish muddati · ixtiyoriy",
     "opensLabel": "Ochilish vaqti · ixtiyoriy",
     "lessonLabel": "Qaysi dars uchun",
