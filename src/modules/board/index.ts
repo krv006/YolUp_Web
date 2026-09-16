@@ -36,5 +36,6 @@ export type { BoardTool } from "./ui/board-toolbar";
 export { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "./constants/board.constants";
 export { MathMarkup } from "./ui/math-markup";
 export { PeriodicTableDialog } from "./ui/periodic-table-dialog";
+export { FLOW_MARGIN, nextFlowPoint, nextTextPoint, strokeSpan } from "./lib/board-flow";
 export { arrowHeadPoints, boxFromDrag, buildStroke, strokeKindOf } from "./lib/board.geometry";
 export type { DrawKind } from "./lib/board.geometry";

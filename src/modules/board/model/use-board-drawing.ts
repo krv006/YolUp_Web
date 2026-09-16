@@ -36,11 +36,17 @@ export function useBoardDrawing({
   const [draft, setDraft] = useState<BoardDraft | null>(null);
 
   function toBoardPoint(event: PointerEvent<SVGSVGElement>): Point {
-    const rect = svgRef.current!.getBoundingClientRect();
-    return [
-      Math.round(((event.clientX - rect.left) * width) / rect.width),
-      Math.round(((event.clientY - rect.top) * height) / rect.height),
-    ];
+    const svg = svgRef.current!;
+    const matrix = svg.getScreenCTM();
+    if (!matrix) {
+      const rect = svg.getBoundingClientRect();
+      return [
+        Math.round(((event.clientX - rect.left) * width) / rect.width),
+        Math.round(((event.clientY - rect.top) * height) / rect.height),
+      ];
+    }
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+    return [Math.round(point.x), Math.round(point.y)];
   }
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>) {

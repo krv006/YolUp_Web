@@ -77,7 +77,7 @@ export function nextFlowPoint(strokes: StrokeDto[], init: FlowInit): Point {
     const span = strokeSpan(stroke);
     return span ? Math.max(max, span.bottom) : max;
   }, top);
-  return [FLOW_MARGIN, Math.min(lowest + FLOW_GAP, Math.max(top, boardHeight - blockHeight))];
+  return [FLOW_MARGIN, lowest + FLOW_GAP];
 }
 
 export function nextTextPoint(
