@@ -3,8 +3,7 @@
     "profile": { "label": "Profil ma'lumotlari", "description": "Shaxsiy ma'lumotlarni ko'rish" },
     "logins": { "label": "Kirishlar tarixi", "description": "Qurilma va IP bo'yicha jurnal" },
     "notifications": { "label": "Bildirishnomalar", "description": "Xabarlar va eslatmalar" },
-    "settings": { "label": "Sozlamalar", "description": "Platforma parametrlari" },
-    "ratings": { "label": "Baholarim", "description": "O'quvchilar qoldirgan izohlar" }
+    "settings": { "label": "Sozlamalar", "description": "Platforma parametrlari" }
   },
   "roleFallback": "O'qituvchi",
   "workspaceFallback": "Teacher workspace",

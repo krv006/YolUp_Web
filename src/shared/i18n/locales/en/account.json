@@ -3,8 +3,7 @@
     "profile": { "label": "Profile info", "description": "View your personal information" },
     "logins": { "label": "Login history", "description": "Log by device and IP" },
     "notifications": { "label": "Notifications", "description": "Messages and reminders" },
-    "settings": { "label": "Settings", "description": "Platform settings" },
-    "ratings": { "label": "My ratings", "description": "Feedback left by students" }
+    "settings": { "label": "Settings", "description": "Platform settings" }
   },
   "roleFallback": "Teacher",
   "workspaceFallback": "Teacher workspace",
