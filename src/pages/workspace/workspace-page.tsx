@@ -11,12 +11,13 @@ interface WorkspaceCard {
   icon: LucideIcon;
   to?: string;
   studentOnly?: boolean;
+  hiddenForStudent?: boolean;
 }
 
 const CARDS: WorkspaceCard[] = [
   { id: "quizzes", icon: FileQuestion, to: "../quizzes" },
   { id: "analytics", icon: BarChart3, to: "../analytics" },
-  { id: "ai", icon: Sparkles, to: "../ai" },
+  { id: "ai", icon: Sparkles, to: "../ai", hiddenForStudent: true },
   { id: "mock", icon: ClipboardCheck, to: "../mock-tests", studentOnly: true },
 ];
 
@@ -24,7 +25,9 @@ export function WorkspacePage() {
   const { t } = useTranslation("workspace");
   const { user } = useAuth();
   const isStudent = user?.role === ROLES.STUDENT;
-  const cards = CARDS.filter((card) => !card.studentOnly || isStudent);
+  const cards = CARDS.filter(
+    (card) => (!card.studentOnly || isStudent) && !(card.hiddenForStudent && isStudent)
+  );
 
   return (
     <div className="portal-page">
