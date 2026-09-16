@@ -6356,7 +6356,7 @@ a.workspace-card:hover {
 }
 .live-room-topbar .icon-button { color: #cfd8e0; }
 
-.live-room-body { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; }
+.live-room-body { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); min-height: 0; }
 .live-room.has-panel .live-room-body { grid-template-columns: minmax(0, 1fr) minmax(320px, 34%); }
 .live-room-stage { min-width: 0; min-height: 0; padding: 12px; overflow: hidden; }
 
@@ -6407,6 +6407,7 @@ a.workspace-card:hover {
 
 .live-room-panel {
   min-width: 0;
+  min-height: 0;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   border-left: 1px solid #1e2731;
