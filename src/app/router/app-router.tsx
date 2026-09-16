@@ -183,7 +183,6 @@ export function AppRouter() {
                   >
                     <Route index element={<ChatsPage />} />
                     <Route path="schedule" element={<SchedulePage />} />
-                    <Route path="ai" element={<AiPage />} />
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="mock-tests" element={<MockTestPage />} />
