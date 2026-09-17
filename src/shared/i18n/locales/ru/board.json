@@ -40,7 +40,13 @@
     "placeholder": "Введите текст…",
     "textAria": "Написать текст на доске",
     "cancelAria": "Отмена",
-    "addAria": "Добавить на доску"
+    "addAria": "Добавить на доску",
+    "bold": "Жирный",
+    "italic": "Курсив",
+    "underline": "Подчёркнутый",
+    "bulletList": "Маркированный список",
+    "numberedList": "Нумерованный список",
+    "formatAria": "Форматирование текста"
   },
   "eraseDialog": {
     "title": "Удалить элемент",
@@ -86,5 +92,23 @@
     "placeBohr": "Нарисовать модель Бора",
     "electronLabel": "e",
     "electronSuffix": "e"
+  },
+  "palette": {
+    "aria": "Конструктор формул",
+    "groups": {
+      "fraction": "Дробь",
+      "script": "Индекс",
+      "radical": "Радикал",
+      "integral": "Интеграл",
+      "largeOperator": "Крупный оператор",
+      "bracket": "Скобка",
+      "function": "Функция",
+      "accent": "Диакритика",
+      "limit": "Предел и лог",
+      "operator": "Оператор",
+      "matrix": "Матрица",
+      "symbol": "Символы",
+      "chemistry": "Химия"
+    }
   }
 }

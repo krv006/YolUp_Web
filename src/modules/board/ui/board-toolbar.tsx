@@ -31,16 +31,14 @@ const TOOLS: ToolDefinition[] = [
   { id: "rect", labelKey: "tools.rect", icon: Square },
   { id: "ellipse", labelKey: "tools.ellipse", icon: Circle },
   { id: "text", labelKey: "tools.text", icon: Type },
+  { id: "math", labelKey: "tools.math", icon: Sigma },
 ];
-
-const MATH_TOOL: ToolDefinition = { id: "math", labelKey: "tools.math", icon: Sigma };
 
 export interface BoardToolbarProps {
   tool: BoardTool;
   color: string;
   width: number;
   canDraw: boolean;
-  mathEnabled: boolean;
   onToolChange: (tool: BoardTool) => void;
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
@@ -51,18 +49,16 @@ export function BoardToolbar({
   color,
   width,
   canDraw,
-  mathEnabled,
   onToolChange,
   onColorChange,
   onWidthChange,
 }: BoardToolbarProps) {
   const { t } = useTranslation("board");
-  const tools = mathEnabled ? [...TOOLS, MATH_TOOL] : TOOLS;
 
   return (
     <div className="board-tools" role="toolbar" aria-label={t("tools.toolbarAria")}>
       <div className="board-tool-group">
-        {tools.map(({ id, labelKey, icon: Icon }) => {
+        {TOOLS.map(({ id, labelKey, icon: Icon }) => {
           const label = t(labelKey);
           return (
             <button

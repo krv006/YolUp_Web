@@ -40,7 +40,13 @@
     "placeholder": "Matn yozing…",
     "textAria": "Doskaga matn yozish",
     "cancelAria": "Bekor qilish",
-    "addAria": "Doskaga qo'shish"
+    "addAria": "Doskaga qo'shish",
+    "bold": "Qalin",
+    "italic": "Kursiv",
+    "underline": "Tagiga chizish",
+    "bulletList": "Belgili ro'yxat",
+    "numberedList": "Raqamli ro'yxat",
+    "formatAria": "Matnni formatlash"
   },
   "eraseDialog": {
     "title": "Elementni o'chirish",
@@ -86,5 +92,23 @@
     "placeBohr": "Bor modelini chizish",
     "electronLabel": "e",
     "electronSuffix": "e"
+  },
+  "palette": {
+    "aria": "Formula konstruktori",
+    "groups": {
+      "fraction": "Drob",
+      "script": "Indeks",
+      "radical": "Radikal",
+      "integral": "Integral",
+      "largeOperator": "Katta operator",
+      "bracket": "Qavs",
+      "function": "Funksiya",
+      "accent": "Diakritik",
+      "limit": "Limit va log",
+      "operator": "Operator",
+      "matrix": "Matritsa",
+      "symbol": "Belgilar",
+      "chemistry": "Kimyo"
+    }
   }
 }
