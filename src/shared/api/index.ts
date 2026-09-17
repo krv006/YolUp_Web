@@ -19,6 +19,8 @@ export {
   refreshTokenManager,
   RefreshTokenManager,
   SESSION_EXPIRED_EVENT,
+  SESSION_CHANGED_EVENT,
+  announceSessionChange,
 } from "./refresh-token-manager";
 export type { RefreshHandler } from "./refresh-token-manager";
 export type { QueryParams, QueryValue, RequestOptions } from "./request-interceptor";

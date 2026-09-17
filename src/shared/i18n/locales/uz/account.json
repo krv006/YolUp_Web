@@ -66,7 +66,8 @@
     "openRoles": "BOSHQA ROLGA O'TISH",
     "openHint": "Ro'yxatdan o'tishsiz avtomatik ochiladi",
     "switchHint": "Akkauntga bosilsa, parolsiz darhol o'sha akkauntga o'tasiz.",
-    "switched": "{{name}} sifatida kirdingiz"
+    "switched": "{{name}} sifatida kirdingiz",
+    "failed": "Hisobni almashtirib bo'lmadi"
   },
   "toast": {
     "copied": "{{label}} nusxalandi",

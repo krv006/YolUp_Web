@@ -19,7 +19,7 @@ export function ProtectedRoute() {
     );
   }
   return user ? (
-    <Outlet />
+    <Outlet key={user.id} />
   ) : (
     <Navigate
       to={ROUTES.auth.login}

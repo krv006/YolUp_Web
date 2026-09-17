@@ -1,5 +1,12 @@
 import { create } from "zustand";
-import { AppError, SESSION_EXPIRED_EVENT, tokenStorage } from "@/shared/api";
+import {
+  AppError,
+  SESSION_EXPIRED_EVENT,
+  announceSessionChange,
+  tokenStorage,
+  type TokenPair,
+} from "@/shared/api";
+import { STORAGE_KEYS } from "@/shared/constants";
 import { SUPPORTED_LANGUAGES, useLanguageStore, type AppLanguage } from "@/shared/model";
 import type { AuthStatus, AuthUser, LoginCredentials } from "@/shared/types";
 import { authApi } from "../api/auth.api";
@@ -11,6 +18,7 @@ import {
   mapUserDto,
 } from "../lib/auth.mappers";
 import { configureAuthRefresh } from "../lib/auth-session";
+import { resolveHomeRoute } from "../lib/resolve-home-route";
 
 let suppressLanguagePush = false;
 
@@ -39,6 +47,7 @@ interface AuthState {
   register: (dto: RegisterRequestDto) => Promise<AuthUser>;
   switchAccount: (userId: string) => Promise<AuthUser>;
   switchRole: (role: string) => Promise<AuthUser>;
+  adoptSession: (response: unknown) => AuthUser;
   logout: () => Promise<void>;
   setUser: (user: AuthUser) => void;
   retry: () => Promise<void>;
@@ -53,6 +62,20 @@ function toAppError(error: unknown): AppError {
 }
 
 let pendingBootstrap: Promise<void> | null = null;
+let sessionSeq = 0;
+
+function beginSession(tokens: TokenPair, persistent: boolean): number {
+  sessionSeq += 1;
+  announceSessionChange();
+  tokenStorage.setTokens(tokens, { persistent });
+  return sessionSeq;
+}
+
+function endSession(): void {
+  sessionSeq += 1;
+  tokenStorage.clearTokens();
+  announceSessionChange();
+}
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
@@ -91,13 +114,14 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   async login(credentials) {
     try {
       const tokens = mapTokenPairDto(await authApi.login(mapLoginRequest(credentials)));
-      tokenStorage.setTokens(tokens, { persistent: credentials.remember !== false });
+      const seq = beginSession(tokens, credentials.remember !== false);
       const user = mapUserDto(await authApi.getCurrentUser());
+      if (seq !== sessionSeq) return user;
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
       syncLanguageFromServer(user.preferredLanguage);
       return user;
     } catch (error) {
-      tokenStorage.clearTokens();
+      endSession();
       set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
       throw error;
     }
@@ -106,31 +130,31 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   async register(dto) {
     try {
       const tokens = mapTokenPairDto(await authApi.register(dto));
-      tokenStorage.setTokens(tokens, { persistent: true });
+      const seq = beginSession(tokens, true);
       const user = mapUserDto(await authApi.getCurrentUser());
+      if (seq !== sessionSeq) return user;
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
       syncLanguageFromServer(user.preferredLanguage);
       return user;
     } catch (error) {
-      tokenStorage.clearTokens();
+      endSession();
       set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
       throw error;
     }
   },
 
   async switchAccount(userId) {
-    const persistent = tokenStorage.isPersistent();
-    const { tokens, user } = mapSwitchAccountResponse(await authApi.switchAccount(userId));
-    tokenStorage.setTokens(tokens, { persistent });
-    set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
-    syncLanguageFromServer(user.preferredLanguage);
-    return user;
+    return get().adoptSession(await authApi.switchAccount(userId));
   },
 
   async switchRole(role) {
+    return get().adoptSession(await authApi.switchRole(role));
+  },
+
+  adoptSession(response) {
     const persistent = tokenStorage.isPersistent();
-    const { tokens, user } = mapSwitchAccountResponse(await authApi.switchRole(role));
-    tokenStorage.setTokens(tokens, { persistent });
+    const { tokens, user } = mapSwitchAccountResponse(response);
+    beginSession(tokens, persistent);
     set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
     syncLanguageFromServer(user.preferredLanguage);
     return user;
@@ -143,7 +167,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     } catch (error) {
       void error;
     } finally {
-      tokenStorage.clearTokens();
+      endSession();
       set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
     }
   },
@@ -166,15 +190,47 @@ useLanguageStore.subscribe((state, prevState) => {
   });
 });
 
-if (typeof window !== "undefined") {
-  window.addEventListener(SESSION_EXPIRED_EVENT, () => {
-    useAuthStore.setState({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
-  });
+function dropSession(): void {
+  sessionSeq += 1;
+  announceSessionChange();
+  useAuthStore.setState({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
+}
 
+async function syncSessionFromOtherTab(): Promise<void> {
+  const current = useAuthStore.getState().user;
+  if (!tokenStorage.hasSession()) {
+    if (current) dropSession();
+    return;
+  }
+  if (!current) {
+    await useAuthStore.getState().bootstrap();
+    return;
+  }
+  const seq = sessionSeq;
+  try {
+    const next = mapUserDto(await authApi.getCurrentUser());
+    if (seq !== sessionSeq || next.id === useAuthStore.getState().user?.id) return;
+    sessionSeq += 1;
+    announceSessionChange();
+    window.location.replace(resolveHomeRoute(next));
+  } catch (error) {
+    void error;
+  }
+}
+
+const TOKEN_KEYS: ReadonlySet<string> = new Set([STORAGE_KEYS.ACCESS_TOKEN, STORAGE_KEYS.REFRESH_TOKEN]);
+const CROSS_TAB_DEBOUNCE_MS = 250;
+
+if (typeof window !== "undefined") {
+  window.addEventListener(SESSION_EXPIRED_EVENT, dropSession);
+
+  let crossTabTimer: ReturnType<typeof setTimeout> | undefined;
   window.addEventListener("storage", (event) => {
-    if (!event.key?.startsWith("fokus_")) return;
-    if (!tokenStorage.hasSession() && useAuthStore.getState().user) {
-      useAuthStore.setState({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
-    }
+    if (event.key !== null && !TOKEN_KEYS.has(event.key)) return;
+    if (crossTabTimer) clearTimeout(crossTabTimer);
+    crossTabTimer = setTimeout(() => {
+      crossTabTimer = undefined;
+      void syncSessionFromOtherTab();
+    }, CROSS_TAB_DEBOUNCE_MS);
   });
 }
