@@ -40,7 +40,13 @@
     "placeholder": "Type text…",
     "textAria": "Write text on the board",
     "cancelAria": "Cancel",
-    "addAria": "Add to board"
+    "addAria": "Add to board",
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "bulletList": "Bulleted list",
+    "numberedList": "Numbered list",
+    "formatAria": "Text formatting"
   },
   "eraseDialog": {
     "title": "Delete element",
@@ -86,5 +92,23 @@
     "placeBohr": "Draw the Bohr model",
     "electronLabel": "e",
     "electronSuffix": "e"
+  },
+  "palette": {
+    "aria": "Equation builder",
+    "groups": {
+      "fraction": "Fraction",
+      "script": "Script",
+      "radical": "Radical",
+      "integral": "Integral",
+      "largeOperator": "Large operator",
+      "bracket": "Bracket",
+      "function": "Function",
+      "accent": "Accent",
+      "limit": "Limit & log",
+      "operator": "Operator",
+      "matrix": "Matrix",
+      "symbol": "Symbols",
+      "chemistry": "Chemistry"
+    }
   }
 }

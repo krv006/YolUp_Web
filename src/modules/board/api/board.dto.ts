@@ -38,12 +38,27 @@ export interface EllipseStrokeDto extends StrokeBase {
   h: number;
 }
 
+export interface TextRunDto {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+}
+
+export type TextListKind = "bullet" | "number";
+
+export interface TextLineDto {
+  runs: TextRunDto[];
+  list?: TextListKind;
+}
+
 export interface TextStrokeDto extends StrokeBase {
   type: "text";
   text: string;
   x: number;
   y: number;
   size?: number;
+  lines?: TextLineDto[];
 }
 
 export interface MathStrokeDto extends StrokeBase {

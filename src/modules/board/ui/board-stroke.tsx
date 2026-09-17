@@ -1,5 +1,6 @@
 import type { StrokeDto } from "../api/board.dto";
 import { arrowHeadPoints, polylinePoints, textLines } from "../lib/board.geometry";
+import { listMarkers } from "../lib/rich-text";
 import { MathMarkup } from "./math-markup";
 
 export interface BoardStrokeProps {
@@ -16,7 +17,35 @@ export function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
   };
 
   switch (stroke.type) {
-    case "text":
+    case "text": {
+      const size = stroke.size ?? 22;
+      const lineHeight = size * 1.35;
+      if (stroke.lines?.length) {
+        const markers = listMarkers(stroke.lines);
+        return (
+          <text {...shared} x={stroke.x} y={stroke.y} fontSize={size} fill={color} fontWeight={600}>
+            {stroke.lines.map((line, index) => (
+              <tspan key={index} x={stroke.x} dy={index === 0 ? 0 : lineHeight}>
+                {markers[index] ? <tspan fontWeight={700}>{markers[index]}</tspan> : null}
+                {line.runs.length ? (
+                  line.runs.map((run, runIndex) => (
+                    <tspan
+                      key={runIndex}
+                      fontWeight={run.bold ? 800 : 600}
+                      fontStyle={run.italic ? "italic" : undefined}
+                      textDecoration={run.underline ? "underline" : undefined}
+                    >
+                      {run.text}
+                    </tspan>
+                  ))
+                ) : (
+                  <tspan>{"\u00a0"}</tspan>
+                )}
+              </tspan>
+            ))}
+          </text>
+        );
+      }
       return (
         <text
           {...shared}
@@ -33,6 +62,7 @@ export function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
           ))}
         </text>
       );
+    }
 
     case "math":
       return (

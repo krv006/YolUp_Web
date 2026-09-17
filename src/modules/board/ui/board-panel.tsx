@@ -1,13 +1,14 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { Atom, Calculator, Check, Eye, FilePlus2, Pencil, UserCheck, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import type { FormulaSolutionDto, Point, StrokeShapeDto } from "../api/board.dto";
+import type { FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
 import { buildStroke } from "../lib/board.geometry";
+import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
 import {
   useAddSheet,
   useAddStroke,
@@ -20,8 +21,10 @@ import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
 import { BoardStroke } from "./board-stroke";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
-import { MathFieldInput } from "./math-field-input";
+import { FormulaPalette } from "./formula-palette";
+import { MathFieldInput, type MathFieldInputHandle } from "./math-field-input";
 import { PeriodicTableDialog } from "./periodic-table-dialog";
+import { RichTextInput } from "./rich-text-input";
 
 export interface BoardPanelProps {
   lessonId: string;
@@ -52,6 +55,8 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
 
   const [placement, setPlacement] = useState<{ tool: "text" | "math"; point: Point } | null>(null);
   const [draftText, setDraftText] = useState("");
+  const [draftLines, setDraftLines] = useState<TextLineDto[]>([]);
+  const mathFieldRef = useRef<MathFieldInputHandle>(null);
 
   const [formulaOpen, setFormulaOpen] = useState(false);
   const [periodicOpen, setPeriodicOpen] = useState(false);
@@ -95,26 +100,44 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
     onPlacePoint: () => {
       if (tool !== "text" && tool !== "math") return;
       setDraftText("");
+      setDraftLines([]);
       setPlacement({ tool, point: flowPointFor(1) });
     },
   });
 
-  function placeBlock(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!placement || !draftText.trim()) return;
-    const [x, y] = flowPointFor(draftText.split("\n").length);
-    const stroke: StrokeShapeDto =
-      placement.tool === "math"
-        ? { type: "math", latex: draftText.trim(), x, y, size: BOARD_TEXT_SIZE, color }
-        : { type: "text", text: draftText, x, y, size: BOARD_TEXT_SIZE, color };
+  const draftPlainText = placement?.tool === "text" ? linesToPlainText(draftLines) : draftText;
+  const canPlaceBlock = Boolean(draftPlainText.trim()) && !addStroke.isPending;
+
+  function closePlacement() {
+    setPlacement(null);
+    setDraftText("");
+    setDraftLines([]);
+  }
+
+  function placeBlock(event?: FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    if (!placement || !canPlaceBlock) return;
+    let stroke: StrokeShapeDto;
+    if (placement.tool === "math") {
+      const [x, y] = flowPointFor(1);
+      stroke = { type: "math", latex: draftText.trim(), x, y, size: BOARD_TEXT_SIZE, color };
+    } else {
+      const [x, y] = flowPointFor(Math.max(1, draftLines.length));
+      stroke = {
+        type: "text",
+        text: draftPlainText,
+        x,
+        y,
+        size: BOARD_TEXT_SIZE,
+        color,
+        ...(hasRichFormatting(draftLines) ? { lines: draftLines } : {}),
+      };
+    }
 
     addStroke.mutate(
       { sheet, stroke },
       {
-        onSuccess: () => {
-          setPlacement(null);
-          setDraftText("");
-        },
+        onSuccess: closePlacement,
         onError: (error) => toast.error(error.message),
       }
     );
@@ -250,7 +273,6 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
         color={color}
         width={strokeWidth}
         canDraw={canDraw}
-        mathEnabled={state.mathEnabled}
         onToolChange={setTool}
         onColorChange={setColor}
         onWidthChange={setStrokeWidth}
@@ -287,37 +309,33 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
 
         {placement ? (
           <form
-            className={`board-inline-editor ${placement.point[0] > state.width * 0.72 ? "is-right" : ""}`}
+            ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
+            className={`board-inline-editor is-wide is-${placement.tool}`}
             style={{
+              top: 0,
               left: `${(placement.point[0] / state.width) * 100}%`,
-              top: `${(placement.point[1] / state.height) * 100}%`,
+              marginTop: `${(placement.point[1] / state.width) * 100}%`,
             }}
             onPointerDown={(event) => event.stopPropagation()}
             onSubmit={placeBlock}
           >
             <span>{placement.tool === "math" ? t("inline.formula") : t("inline.text")}</span>
             {placement.tool === "math" ? (
-              <MathFieldInput value={draftText} onChange={setDraftText} />
+              <>
+                <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
+                <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
+              </>
             ) : (
-              <input
-                autoFocus
-                value={draftText}
-                placeholder={t("inline.placeholder")}
-                aria-label={t("inline.textAria")}
-                onChange={(event) => setDraftText(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") setPlacement(null);
-                }}
-              />
+              <RichTextInput onChange={setDraftLines} onSubmit={() => placeBlock()} onCancel={closePlacement} />
             )}
             <div className="board-inline-actions">
-              <button type="button" onClick={() => setPlacement(null)} aria-label={t("inline.cancelAria")}>
+              <button type="button" onClick={closePlacement} aria-label={t("inline.cancelAria")}>
                 <X size={15} />
               </button>
               <button
                 type="submit"
                 className="is-primary"
-                disabled={!draftText.trim() || addStroke.isPending}
+                disabled={!canPlaceBlock}
                 aria-label={t("inline.addAria")}
               >
                 <Check size={15} />
