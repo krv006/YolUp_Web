@@ -13,6 +13,7 @@ export function configureAuthRefresh(): void {
     }
     const persistent = tokenStorage.isPersistent();
     const tokenPair = mapTokenPairDto(await authApi.refresh({ refresh }));
+    if (tokenStorage.getRefreshToken() !== refresh) return;
     tokenStorage.setTokens(tokenPair, { persistent });
   });
   configured = true;

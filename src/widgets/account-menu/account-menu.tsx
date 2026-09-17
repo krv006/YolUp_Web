@@ -38,7 +38,7 @@ import { NotificationInboxDialog } from "@/modules/notification";
 import { NotificationSettings } from "./notification-settings";
 import { ROLES, type Role } from "@/shared/constants";
 import { useLanguageStore } from "@/shared/model";
-import type { LinkedAccount } from "@/shared/types";
+import type { AuthUser, LinkedAccount } from "@/shared/types";
 import { Avatar, Button, Dialog, DialogContent, LanguageToggle, ThemeToggle } from "@/shared/ui/legacy";
 
 const ROLE_I18N_KEY: Partial<Record<Role, string>> = {
@@ -122,28 +122,25 @@ export function AccountMenu({
       : [];
   const hasRoleSwitcher = linkedAccounts.length > 0 || missingRoles.length > 0;
 
+  async function finishSwitch(request: Promise<AuthUser>) {
+    try {
+      const nextUser = await request;
+      setRoleFlyoutOpen(false);
+      navigate(resolveHomeRoute(nextUser), { replace: true });
+      toast.success(t("roleSwitcher.switched", { name: nextUser.name }));
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("roleSwitcher.failed"));
+    }
+  }
+
   function switchToAccount(account: LinkedAccount) {
-    if (switchAccount.isPending) return;
-    switchAccount.mutate(account.id, {
-      onSuccess: (nextUser) => {
-        setRoleFlyoutOpen(false);
-        toast.success(t("roleSwitcher.switched", { name: nextUser.name }));
-        navigate(resolveHomeRoute(nextUser), { replace: true });
-      },
-      onError: (error: Error) => toast.error(error.message),
-    });
+    if (switchAccount.isPending || switchRole.isPending) return;
+    void finishSwitch(switchAccount.mutateAsync(account.id));
   }
 
   function switchToRole(role: Role) {
-    if (switchRole.isPending) return;
-    switchRole.mutate(role.toLowerCase(), {
-      onSuccess: (nextUser) => {
-        setRoleFlyoutOpen(false);
-        toast.success(t("roleSwitcher.switched", { name: nextUser.name }));
-        navigate(resolveHomeRoute(nextUser), { replace: true });
-      },
-      onError: (error: Error) => toast.error(error.message),
-    });
+    if (switchAccount.isPending || switchRole.isPending) return;
+    void finishSwitch(switchRole.mutateAsync(role.toLowerCase()));
   }
 
   function cancelFlyoutClose() {
