@@ -408,13 +408,16 @@ function AssignmentsPanel({
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
   );
-  const quizTitleOptions = useMemo(
-    () =>
-      courseQuizList
-        .filter((quiz) => quiz.title)
-        .map((quiz) => ({ id: quiz.id, title: quiz.title })),
-    [courseQuizList]
-  );
+  const allQuizzes = useQuizzes(null, quizDialog);
+  const courseSubject = course.data?.subject ?? "";
+  const quizTitleOptions = useMemo(() => {
+    const subjectBank = (allQuizzes.data ?? []).filter(
+      (quiz) => !quiz.courseId && Boolean(courseSubject) && quiz.subject === courseSubject
+    );
+    return [...courseQuizList, ...subjectBank]
+      .filter((quiz) => quiz.title)
+      .map((quiz) => ({ id: quiz.id, title: quiz.title }));
+  }, [allQuizzes.data, courseQuizList, courseSubject]);
 
   return (
     <div className="group-panel">

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toIntlLocale } from "@/shared/i18n";
-import { useCourses } from "@/modules/course";
+import { useCourses, useSubjects } from "@/modules/course";
 import {
   AddQuizDialog,
   QuizAttemptsDialog,
@@ -27,6 +27,7 @@ function useQuizHighlight(quizId: string | null, ready: boolean) {
 export function TeacherQuizzesPage() {
   const { t, i18n } = useTranslation("quiz");
   const courses = useCourses();
+  const subjects = useSubjects();
   const quizzes = useQuizzes(null);
   const create = useCreateQuiz();
   const remove = useDeleteQuiz();
@@ -41,10 +42,8 @@ export function TeacherQuizzesPage() {
     () => new Map((courses.data ?? []).map((course) => [course.id, course.title])),
     [courses.data]
   );
-  const courseOptions = useMemo(
-    () => (courses.data ?? []).map((course) => ({ id: course.id, title: course.title })),
-    [courses.data]
-  );
+  const subjectOptions = subjects.data ?? [];
+  const canCreate = subjectOptions.length > 0;
 
   if (quizzes.isLoading) return <LoadingFallback label={t("teacherPage.loading")} />;
   if (quizzes.isError)
@@ -68,7 +67,7 @@ export function TeacherQuizzesPage() {
           <h1>{t("teacherPage.title")}</h1>
           <p>{t("teacherPage.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialog(true)} disabled={!courseOptions.length}>
+        <Button onClick={() => setDialog(true)} disabled={!canCreate}>
           <Plus size={17} /> {t("teacherPage.createButton")}
         </Button>
       </div>
@@ -90,7 +89,7 @@ export function TeacherQuizzesPage() {
                 <strong>{item.title}</strong>
                 <p>{item.description}</p>
                 <small>
-                  {courseTitleById.get(item.courseId) ?? t("teacherPage.courseFallback")} ·{" "}
+                  {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
                   {item.dueAt
                     ? t("teacherPage.dueLabel", {
                         date: new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
@@ -119,18 +118,17 @@ export function TeacherQuizzesPage() {
         <div className="premium-empty">
           <FileQuestion size={30} />
           <h3>{t("teacherPage.emptyTitle")}</h3>
-          {courseOptions.length ? (
+          {canCreate ? (
             <Button onClick={() => setDialog(true)}>{t("teacherPage.emptyCreateFirst")}</Button>
-          ) : (
-            <p className="portal-muted">{t("teacherPage.needCourseFirst")}</p>
-          )}
+          ) : null}
         </div>
       )}
 
       <AddQuizDialog
         open={dialog}
         onOpenChange={setDialog}
-        courses={courseOptions}
+        courses={[]}
+        subjects={subjectOptions}
         onCreate={(form) => {
           create.mutateAsync(form).then(() => setDialog(false));
         }}

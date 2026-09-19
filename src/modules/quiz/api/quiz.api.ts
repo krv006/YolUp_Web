@@ -1,6 +1,7 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
 import type { QuizFormValues } from "@/shared/types";
 import { quizEndpoints } from "./quiz.endpoints";
+import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import type {
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
@@ -51,7 +52,7 @@ export const quizApi = {
   },
   async submitAttempt(
     quizId: string,
-    answers: Array<{ questionId: string; selectedOptionId: string | null }>
+    answers: QuizAttemptAnswerInput[]
   ) {
     return mapQuizAttemptResultDto(
       await apiClient.post<QuizAttemptResultDto>(
