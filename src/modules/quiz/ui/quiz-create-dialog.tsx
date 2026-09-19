@@ -1,53 +1,30 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, ChevronDown, Plus, Trash2, X } from "lucide-react";
+import { BookOpen, ChevronDown, Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import type { QuizFormValues } from "@/shared/types";
 import { useQuizDetailLoader } from "../model/quiz.queries";
+import {
+  createDraft,
+  draftToFormValues,
+  hasDraftContent,
+  questionToDraft,
+  validateDraft,
+  type QuestionDraft,
+} from "../lib/question-draft";
+import { QuestionEditor } from "./question-editor";
 import { QuizPreview } from "./quiz-preview";
-
-interface QuizOptionDraft {
-  key: string;
-  text: string;
-}
-
-interface QuizQuestionDraft {
-  key: string;
-  text: string;
-  points: string;
-  options: QuizOptionDraft[];
-  correctKey: string | null;
-}
 
 export interface AddQuizDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreate: (values: QuizFormValues) => void;
   courses: Array<{ id: string; title: string }>;
+  subjects?: ReadonlyArray<{ value: string; label: string }>;
   showSchedule?: boolean;
   existingQuizzes?: ReadonlyArray<{ id: string; title: string }>;
-}
-
-const DEFAULT_OPTION_COUNT = 4;
-
-function optionLetter(index: number): string {
-  return String.fromCharCode(65 + index);
-}
-
-function emptyOption(key: string): QuizOptionDraft {
-  return { key, text: "" };
-}
-
-function emptyQuestion(key: string, optionKeys: string[]): QuizQuestionDraft {
-  return {
-    key,
-    text: "",
-    points: "1",
-    options: optionKeys.map(emptyOption),
-    correctKey: null,
-  };
 }
 
 export function AddQuizDialog({
@@ -55,6 +32,7 @@ export function AddQuizDialog({
   onOpenChange,
   onCreate,
   courses,
+  subjects,
   showSchedule = false,
   existingQuizzes = [],
 }: AddQuizDialogProps) {
@@ -67,11 +45,13 @@ export function AddQuizDialog({
 
   const [step, setStep] = useState<"details" | "questions">("details");
   const [selectedCourseId, setSelectedCourseId] = useState("");
-  const courseId = selectedCourseId || courses[0]?.id || "";
+  const subjectMode = Boolean(subjects);
+  const courseId = subjectMode ? "" : selectedCourseId || courses[0]?.id || "";
+  const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
   const [dueAt, setDueAt] = useState("");
   const [opensAt, setOpensAt] = useState("");
-  const [questions, setQuestions] = useState<QuizQuestionDraft[]>([]);
+  const [questions, setQuestions] = useState<QuestionDraft[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [copyingId, setCopyingId] = useState<string | null>(null);
@@ -98,34 +78,16 @@ export function AddQuizDialog({
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, [suggestOpen]);
 
-  function hasDraftContent() {
-    return questions.some(
-      (question) => question.text.trim() || question.options.some((option) => option.text.trim())
-    );
-  }
-
   async function copyFromQuiz(quiz: { id: string; title: string }) {
     setSuggestOpen(false);
     setTitle(quiz.title);
-    if (hasDraftContent() && !window.confirm(t("createDialog.copyConfirm", { title: quiz.title }))) {
+    if (questions.some(hasDraftContent) && !window.confirm(t("createDialog.copyConfirm", { title: quiz.title }))) {
       return;
     }
     setCopyingId(quiz.id);
     try {
       const detail = await loadQuizDetail(quiz.id);
-      setQuestions(
-        detail.questions.map((question) => {
-          const options = question.options.map((option) => ({ key: newKey(), text: option.text }));
-          const correctIndex = question.options.findIndex((option) => option.isCorrect);
-          return {
-            key: newKey(),
-            text: question.text,
-            points: String(question.points),
-            options,
-            correctKey: correctIndex >= 0 ? options[correctIndex].key : null,
-          };
-        })
-      );
+      setQuestions(detail.questions.map((question) => questionToDraft(question, newKey)));
       setCopiedFrom(quiz.title);
       setError(null);
     } catch (loadError) {
@@ -135,16 +97,14 @@ export function AddQuizDialog({
     }
   }
 
-  function newQuestion() {
-    return emptyQuestion(
-      newKey(),
-      Array.from({ length: DEFAULT_OPTION_COUNT }, () => newKey())
-    );
+  function newQuestion(type: QuestionDraft["type"] = "single") {
+    return createDraft(type, newKey);
   }
 
   function reset() {
     setStep("details");
     setSelectedCourseId("");
+    setSubject("");
     setTitle("");
     setDueAt("");
     setOpensAt("");
@@ -154,9 +114,15 @@ export function AddQuizDialog({
     setError(null);
   }
 
+  function targetError(): string | null {
+    if (subjectMode) return subject ? null : t("createDialog.validation.chooseSubject");
+    return courseId ? null : t("createDialog.validation.chooseCourse");
+  }
+
   function goToQuestions() {
-    if (!courseId || !title.trim()) {
-      setError(!courseId ? t("createDialog.validation.chooseCourse") : t("createDialog.validation.enterTitle"));
+    const missingTarget = targetError();
+    if (missingTarget || !title.trim()) {
+      setError(missingTarget ?? t("createDialog.validation.enterTitle"));
       return;
     }
     setError(null);
@@ -165,44 +131,36 @@ export function AddQuizDialog({
   }
 
   function addQuestion() {
-    setQuestions((current) => [...current, newQuestion()]);
+    setQuestions((current) => [...current, newQuestion(current[current.length - 1]?.type)]);
   }
 
   function removeQuestion(questionKey: string) {
     setQuestions((current) => current.filter((question) => question.key !== questionKey));
   }
 
-  function updateQuestion(questionKey: string, patch: Partial<QuizQuestionDraft>) {
+  function updateQuestion(questionKey: string, update: (draft: QuestionDraft) => QuestionDraft) {
     setQuestions((current) =>
-      current.map((question) => (question.key === questionKey ? { ...question, ...patch } : question))
-    );
-  }
-
-  function updateOptionText(questionKey: string, optionKey: string, text: string) {
-    setQuestions((current) =>
-      current.map((question) =>
-        question.key === questionKey
-          ? {
-              ...question,
-              options: question.options.map((option) =>
-                option.key === optionKey ? { ...option, text } : option
-              ),
-            }
-          : question
-      )
+      current.map((question) => (question.key === questionKey ? update(question) : question))
     );
   }
 
   function validate(): string | null {
-    if (!courseId) return t("createDialog.validation.chooseCourse");
+    const missingTarget = targetError();
+    if (missingTarget) return missingTarget;
     if (!title.trim()) return t("createDialog.validation.enterTitle");
     if (!questions.length) return t("createDialog.validation.addQuestion");
-    for (const question of questions) {
-      if (!question.text.trim()) return t("createDialog.validation.questionTextRequired");
-      if (question.options.length < 2) return t("createDialog.validation.minTwoOptions");
-      if (question.options.some((option) => !option.text.trim()))
-        return t("createDialog.validation.allOptionsRequired");
-      if (!question.correctKey) return t("createDialog.validation.markCorrect");
+    for (const [index, question] of questions.entries()) {
+      const draftError = validateDraft(question);
+      if (draftError) {
+        return t("createDialog.validation.questionPrefix", {
+          number: index + 1,
+          message: t(`createDialog.validation.${draftError}`, {
+            syntax: `{{${t("editor.blankWord")}}}`,
+            interpolation: { escapeValue: false },
+          }),
+          interpolation: { escapeValue: false },
+        });
+      }
     }
     return null;
   }
@@ -216,19 +174,13 @@ export function AddQuizDialog({
     }
     onCreate({
       courseId,
+      subject: subjectMode ? subject : undefined,
       lessonId: null,
       title: title.trim(),
       description: "",
       dueAt: dueAt || null,
       opensAt: opensAt || null,
-      questions: questions.map((question) => ({
-        text: question.text.trim(),
-        points: Number(question.points) || 1,
-        options: question.options.map((option) => ({
-          text: option.text.trim(),
-          isCorrect: option.key === question.correctKey,
-        })),
-      })),
+      questions: questions.map(draftToFormValues),
     });
     reset();
     onOpenChange(false);
@@ -270,64 +222,15 @@ export function AddQuizDialog({
         <div className="quiz-page-split">
           <form id="quiz-questions-form" className="quiz-page-body" onSubmit={submit}>
           {questions.map((question, index) => (
-            <div key={question.key} className="quiz-page-question">
-              <div className="quiz-page-question-head">
-                <span className="quiz-page-question-number">{index + 1}.</span>
-                <input
-                  className="quiz-page-question-text"
-                  value={question.text}
-                  onChange={(event) => updateQuestion(question.key, { text: event.target.value })}
-                  placeholder={t("createDialog.questionTextPlaceholder")}
-                />
-                {questions.length > 1 ? (
-                  <button
-                    type="button"
-                    className="quiz-page-question-remove"
-                    aria-label={t("createDialog.removeQuestionAria", { number: index + 1 })}
-                    onClick={() => removeQuestion(question.key)}
-                  >
-                    <Trash2 size={15} />
-                  </button>
-                ) : null}
-              </div>
-              <div className="quiz-page-options">
-                {question.options.map((option, optionIndex) => (
-                  <div key={option.key} className="quiz-page-option">
-                    <span className="quiz-page-option-letter">{optionLetter(optionIndex)})</span>
-                    <input
-                      value={option.text}
-                      onChange={(event) => updateOptionText(question.key, option.key, event.target.value)}
-                      placeholder={t("createDialog.optionPlaceholderLettered", {
-                        letter: optionLetter(optionIndex),
-                      })}
-                    />
-                  </div>
-                ))}
-              </div>
-              <div
-                className="quiz-page-answer-row"
-                role="radiogroup"
-                aria-label={t("createDialog.correctAnswerGroupAria", { number: index + 1 })}
-              >
-                <span className="quiz-page-answer-label">{t("createDialog.correctAnswerLabel")}</span>
-                {question.options.map((option, optionIndex) => {
-                  const active = question.correctKey === option.key;
-                  return (
-                    <button
-                      key={option.key}
-                      type="button"
-                      role="radio"
-                      aria-checked={active}
-                      aria-label={t("createDialog.markCorrectAria")}
-                      className={`quiz-page-answer-letter ${active ? "is-correct" : ""}`}
-                      onClick={() => updateQuestion(question.key, { correctKey: option.key })}
-                    >
-                      {optionLetter(optionIndex)}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            <QuestionEditor
+              key={question.key}
+              draft={question}
+              index={index}
+              canRemove={questions.length > 1}
+              newKey={newKey}
+              onChange={(update) => updateQuestion(question.key, update)}
+              onRemove={() => removeQuestion(question.key)}
+            />
           ))}
           <button type="button" className="quiz-page-add-question" onClick={addQuestion}>
             <Plus size={16} /> {t("createDialog.addQuestion")}
@@ -352,7 +255,18 @@ export function AddQuizDialog({
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {courses.length > 1 ? (
+          {subjects ? (
+            <SelectPicker
+              label={t("createDialog.subjectLabel")}
+              icon={BookOpen}
+              value={subject}
+              onChange={(value) => {
+                setSubject(value);
+                setError(null);
+              }}
+              options={subjects.map((item) => ({ value: item.value, label: item.label }))}
+            />
+          ) : courses.length > 1 ? (
             <SelectPicker
               label={t("createDialog.courseLabel")}
               icon={BookOpen}

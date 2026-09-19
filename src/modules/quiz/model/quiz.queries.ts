@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
 import type { QuizFormValues } from "@/shared/types";
+import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import { quizApi } from "../api/quiz.api";
 
 export const quizKeys = Object.freeze({
@@ -91,7 +92,7 @@ export function useSubmitQuizAttempt() {
       answers,
     }: {
       quizId: string;
-      answers: Array<{ questionId: string; selectedOptionId: string | null }>;
+      answers: QuizAttemptAnswerInput[];
     }) => quizApi.submitAttempt(quizId, answers),
     onSuccess: (result) => {
       client.invalidateQueries({ queryKey: quizKeys.attempts(result.quizId) });

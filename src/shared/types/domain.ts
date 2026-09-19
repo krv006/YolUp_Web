@@ -269,23 +269,65 @@ export interface HomeworkReportSummary {
   averageScore: number | null;
 }
 
+export type QuizQuestionType =
+  | "single"
+  | "multiple"
+  | "true_false"
+  | "numeric"
+  | "text"
+  | "matching"
+  | "ordering"
+  | "fill_blank";
+
 export interface QuizOption {
   id: string;
   text: string;
   isCorrect?: boolean;
 }
 
+export interface QuizChoiceItem {
+  id: string;
+  text: string;
+}
+
+export interface QuizAnswerKey {
+  correctBool?: boolean;
+  acceptedAnswers?: string[];
+  tolerance?: number;
+  caseSensitive?: boolean;
+  pairs?: Array<{ left: string; right: string }>;
+  items?: string[];
+  blanks?: Array<{ answers: string[] }>;
+}
+
 export interface QuizQuestion {
   id: string;
+  type: QuizQuestionType;
   text: string;
   points: number;
   order: number;
   options: QuizOption[];
+  matchLeft: QuizChoiceItem[];
+  matchRight: QuizChoiceItem[];
+  blankCount: number;
+  answerKey?: QuizAnswerKey;
 }
+
+export type QuizAnswerValue =
+  | { type: "single"; optionId: string | null }
+  | { type: "multiple"; optionIds: string[] }
+  | { type: "true_false"; value: boolean | null }
+  | { type: "numeric"; value: string }
+  | { type: "text"; value: string }
+  | { type: "matching"; pairs: Record<string, string> }
+  | { type: "ordering"; order: string[] }
+  | { type: "fill_blank"; values: string[] };
 
 export interface QuizSummary {
   id: string;
   courseId: string;
+  subject: string;
+  subjectLabel: string;
   lessonId: string | null;
   title: string;
   description: string;
@@ -302,10 +344,15 @@ export interface QuizDetail extends QuizSummary {
 export interface QuizAttemptAnswer {
   questionId: string;
   questionText: string;
+  questionType: QuizQuestionType;
   selectedOptionId: string | null;
   selectedOptionText: string | null;
   isCorrect: boolean;
   correctOption: { id: string; text: string } | null;
+  points: number | null;
+  earnedPoints: number | null;
+  givenDisplay: string | null;
+  correctDisplay: string | null;
 }
 
 export interface QuizAttemptSummary {
@@ -323,13 +370,22 @@ export interface QuizAttemptResult extends QuizAttemptSummary {
 }
 
 export interface QuizQuestionFormValues {
+  type: QuizQuestionType;
   text: string;
   points: number;
   options: Array<{ text: string; isCorrect: boolean }>;
+  correctBool?: boolean;
+  acceptedAnswers?: string[];
+  tolerance?: number;
+  caseSensitive?: boolean;
+  pairs?: Array<{ left: string; right: string }>;
+  items?: string[];
+  blanks?: Array<{ answers: string[] }>;
 }
 
 export interface QuizFormValues {
   courseId: string;
+  subject?: string;
   lessonId?: string | null;
   title: string;
   description?: string;

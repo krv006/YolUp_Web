@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { CheckCircle2, Clock3, XCircle } from "lucide-react";
+import { CheckCircle2, CircleDot, Clock3, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { QuizAttemptResult, QuizDetail } from "@/shared/types";
+import type { QuizAnswerValue, QuizAttemptAnswer, QuizAttemptResult, QuizDetail } from "@/shared/types";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { blankTextForDisplay, emptyAnswer } from "../lib/answer-value";
 import { useQuiz, useSubmitQuizAttempt } from "../model/quiz.queries";
+import { MathText } from "./math-text";
+import { QuestionAnswerInput, QuestionPrompt } from "./question-answer-input";
 
 export interface QuizAttemptDialogProps {
   quizId: string | null;
@@ -15,7 +18,7 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
   const { t } = useTranslation("quiz");
   const quiz = useQuiz(open ? quizId : null);
   const submit = useSubmitQuizAttempt();
-  const [answers, setAnswers] = useState<Record<string, string | null>>({});
+  const [answers, setAnswers] = useState<Record<string, QuizAnswerValue>>({});
   const [result, setResult] = useState<QuizAttemptResult | null>(null);
 
   function handleOpenChange(next: boolean) {
@@ -29,7 +32,7 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
   function submitAttempt(quizData: QuizDetail) {
     const payload = quizData.questions.map((question) => ({
       questionId: question.id,
-      selectedOptionId: answers[question.id] ?? null,
+      answer: answers[question.id] ?? emptyAnswer(question),
     }));
     submit.mutate(
       { quizId: quizData.id, answers: payload },
@@ -67,31 +70,13 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
                     <span>{t("attemptDialog.questionNumber", { number: index + 1 })}</span>
                     <b>{t("attemptDialog.pointsSuffix", { count: question.points })}</b>
                   </div>
-                  <p>{question.text}</p>
-                  <div
-                    className="quiz-option-list"
-                    role="radiogroup"
-                    aria-label={t("attemptDialog.answersAria", { number: index + 1 })}
-                  >
-                    {question.options.map((option) => {
-                      const active = answers[question.id] === option.id;
-                      return (
-                        <button
-                          key={option.id}
-                          type="button"
-                          role="radio"
-                          aria-checked={active}
-                          className={`quiz-attempt-option ${active ? "is-active" : ""}`}
-                          onClick={() =>
-                            setAnswers((current) => ({ ...current, [question.id]: option.id }))
-                          }
-                        >
-                          <span className={`quiz-option-radio ${active ? "is-active" : ""}`} aria-hidden="true" />
-                          {option.text}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <QuestionPrompt question={question} />
+                  <QuestionAnswerInput
+                    question={question}
+                    number={index + 1}
+                    value={answers[question.id]}
+                    onChange={(value) => setAnswers((current) => ({ ...current, [question.id]: value }))}
+                  />
                 </div>
               ))}
               <div className="dialog-actions">
@@ -131,27 +116,7 @@ function QuizResultView({
       </div>
       <div className="quiz-attempt-question-list">
         {result.answers.map((answer, index) => (
-          <div
-            key={answer.questionId}
-            className={`quiz-result-row ${answer.isCorrect ? "is-correct" : "is-wrong"}`}
-          >
-            <div className="quiz-result-row-head">
-              {answer.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-              <p>
-                {index + 1}. {answer.questionText}
-              </p>
-            </div>
-            <small>
-              {t("attemptDialog.yourAnswer", {
-                answer: answer.selectedOptionText ?? t("attemptDialog.notAnswered"),
-              })}
-            </small>
-            {!answer.isCorrect && answer.correctOption ? (
-              <small className="quiz-result-correct">
-                {t("attemptDialog.correctAnswer", { answer: answer.correctOption.text })}
-              </small>
-            ) : null}
-          </div>
+          <QuizResultRow key={answer.questionId} answer={answer} number={index + 1} />
         ))}
       </div>
       <div className="dialog-actions">
@@ -160,6 +125,40 @@ function QuizResultView({
         </Button>
         <Button onClick={onClose}>{t("attemptDialog.close")}</Button>
       </div>
+    </div>
+  );
+}
+
+function QuizResultRow({ answer, number }: { answer: QuizAttemptAnswer; number: number }) {
+  const { t } = useTranslation("quiz");
+  const earned = answer.earnedPoints ?? (answer.isCorrect ? answer.points : 0);
+  const partial = !answer.isCorrect && earned !== null && earned > 0;
+  const given = answer.givenDisplay ?? answer.selectedOptionText;
+  const correct = answer.correctDisplay ?? answer.correctOption?.text ?? null;
+  const tone = answer.isCorrect ? "is-correct" : partial ? "is-partial" : "is-wrong";
+
+  return (
+    <div className={`quiz-result-row ${tone}`}>
+      <div className="quiz-result-row-head">
+        {answer.isCorrect ? <CheckCircle2 size={16} /> : partial ? <CircleDot size={16} /> : <XCircle size={16} />}
+        <p>
+          {number}. <MathText text={blankTextForDisplay(answer.questionText)} />
+        </p>
+        {answer.points !== null ? (
+          <b className="quiz-result-points">
+            {t("attemptDialog.earnedPoints", { earned: earned ?? 0, total: answer.points })}
+          </b>
+        ) : null}
+      </div>
+      <small>
+        {t("attemptDialog.yourAnswerLabel")}{" "}
+        {given ? <MathText text={given} size={14} /> : t("attemptDialog.notAnswered")}
+      </small>
+      {!answer.isCorrect && correct ? (
+        <small className="quiz-result-correct">
+          {t("attemptDialog.correctAnswerLabel")} <MathText text={correct} size={14} />
+        </small>
+      ) : null}
     </div>
   );
 }
