@@ -30,7 +30,6 @@ function sectionFromPath(pathname: string): ConversationSection {
     pathname.endsWith("/mock-tests")
   )
     return "workspace";
-  if (pathname.endsWith("/report")) return "report";
   return "chat";
 }
 

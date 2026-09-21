@@ -7,7 +7,7 @@ import {
   useStartMockTest,
   type MockAttempt,
 } from "@/modules/mock-test";
-import { Button, LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { Button, LoadingFallback, RouteState, PageBackLink } from "@/shared/ui/legacy";
 
 export function MockTestPage() {
   const { t } = useTranslation("mocktest");
@@ -42,6 +42,7 @@ export function MockTestPage() {
     <div className="portal-page">
       <div className="portal-page-heading">
         <div>
+          <PageBackLink />
           <span className="portal-eyebrow">{t("list.eyebrow")}</span>
           <h1>{t("list.title")}</h1>
           <p>{t("list.subtitle")}</p>
