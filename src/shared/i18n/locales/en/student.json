@@ -15,16 +15,12 @@
     "upcomingDeadlines": "Upcoming deadlines",
     "all": "All"
   },
-  "report": {
-    "loading": "Loading rating",
-    "eyebrow": "RATING",
-    "loadError": "Couldn't load the rating",
-    "retry": "Retry",
-    "title": "My results",
-    "subtitle": "Assignments and grades per subject."
-  },
   "groupWorkspace": {
-    "tabs": { "chat": "Chat", "lessons": "Lessons", "assignments": "Assignments" },
+    "tabs": {
+      "chat": "Chat",
+      "lessons": "Lessons",
+      "assignments": "Assignments"
+    },
     "sendFailed": "Couldn't send the message",
     "replyFallback": "Reply",
     "lessons": {

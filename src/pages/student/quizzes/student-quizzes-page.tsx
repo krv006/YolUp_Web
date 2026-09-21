@@ -6,7 +6,7 @@ import { toIntlLocale } from "@/shared/i18n";
 import { useCourses } from "@/modules/course";
 import { QuizAttemptDialog, QuizAttemptsDialog, useQuizzes } from "@/modules/quiz";
 import type { QuizSummary } from "@/shared/types";
-import { Button, LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { Button, LoadingFallback, RouteState, PageBackLink } from "@/shared/ui/legacy";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -50,6 +50,7 @@ export function StudentQuizzesPage() {
     <div className="portal-page">
       <div className="portal-page-heading">
         <div>
+          <PageBackLink />
           <span className="portal-eyebrow">{t("studentPage.allCourses")}</span>
           <h1>{t("studentPage.title")}</h1>
           <p>{t("studentPage.subtitle")}</p>
