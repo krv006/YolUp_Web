@@ -15,16 +15,12 @@
     "upcomingDeadlines": "Yaqin muddatlar",
     "all": "Barchasi"
   },
-  "report": {
-    "loading": "Reyting yuklanmoqda",
-    "eyebrow": "REYTING",
-    "loadError": "Reytingni yuklab bo'lmadi",
-    "retry": "Qayta urinish",
-    "title": "Mening natijalarim",
-    "subtitle": "Har bir fan bo'yicha vazifalar va baholaringiz."
-  },
   "groupWorkspace": {
-    "tabs": { "chat": "Chat", "lessons": "Darslar", "assignments": "Vazifalar" },
+    "tabs": {
+      "chat": "Chat",
+      "lessons": "Darslar",
+      "assignments": "Vazifalar"
+    },
     "sendFailed": "Xabar yuborilmadi",
     "replyFallback": "Javob",
     "lessons": {

@@ -1,11 +1,11 @@
-import { CalendarDays, LayoutGrid, Menu, MessagesSquare, Trophy } from "lucide-react";
+import { CalendarDays, LayoutGrid, Menu, MessagesSquare } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useResolvedPath } from "react-router-dom";
 import logoUrl from "@/shared/assets/y-logo.svg";
 import type { ConversationRole } from "@/shared/types";
 import { useConversations } from "../model/use-conversations";
 
-export type ConversationSection = "chat" | "schedule" | "workspace" | "report";
+export type ConversationSection = "chat" | "schedule" | "workspace";
 
 type SectionItem = {
   id: ConversationSection;
@@ -19,8 +19,6 @@ const SECTIONS: SectionItem[] = [
   { id: "workspace", icon: LayoutGrid, path: "/workspace" },
 ];
 
-const STUDENT_ONLY_SECTIONS: SectionItem[] = [{ id: "report", icon: Trophy, path: "/report" }];
-
 export interface ConversationRailProps {
   role: ConversationRole;
   section: ConversationSection;
@@ -33,7 +31,6 @@ export function ConversationRail({ role, section, onOpenMenu }: ConversationRail
   const { data = [] } = useConversations(role);
   const basePath = role === "teacher" ? "/teacher/chats" : "/student/chats";
   const chatsPath = useResolvedPath(basePath).pathname;
-  const sections = role === "student" ? [...SECTIONS, ...STUDENT_ONLY_SECTIONS] : SECTIONS;
 
   const unreadChats = data.filter((conversation) => conversation.unreadCount > 0).length;
 
@@ -51,7 +48,7 @@ export function ConversationRail({ role, section, onOpenMenu }: ConversationRail
         <Menu size={24} />
       </button>
 
-      {sections.map((item) => {
+      {SECTIONS.map((item) => {
         const Icon = item.icon;
         const active = section === item.id;
         return (

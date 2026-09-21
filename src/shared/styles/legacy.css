@@ -4000,6 +4000,8 @@ body > .ML__keyboard,
 .portal-list article > div { min-width: 0; flex: 1; display: grid; gap: 3px; }
 .portal-list strong { font-size: var(--fs-sm); }
 .portal-list small, .portal-list time { color: var(--muted-foreground); font-size: var(--fs-2xs); }
+.portal-back-link { width: fit-content; margin-bottom: 10px; min-height: 30px; padding: 0 10px 0 6px; border: 1px solid var(--border); border-radius: var(--r-full); display: flex; align-items: center; gap: 5px; color: var(--muted-foreground); background: transparent; font-size: var(--fs-sm); font-weight: 700; text-decoration: none; transition: color .15s ease, background .15s ease, border-color .15s ease; }
+.portal-back-link:hover { color: var(--primary-text); border-color: var(--primary); background: var(--primary-tint); }
 .portal-page-heading { margin-bottom: 22px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
 .portal-page-heading h1 { margin: 6px 0; font-size: var(--fs-6xl); letter-spacing: -.035em; }
 .portal-page-heading p { margin: 0; color: var(--muted-foreground); font-size: var(--fs-md); }

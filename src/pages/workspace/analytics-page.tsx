@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useMyAnalytics } from "@/modules/analytics";
 import { formatDateTime } from "@/shared/lib";
 import type { StudentAnalytics, TeacherAnalytics } from "@/shared/types";
-import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { LoadingFallback, RouteState, PageBackLink } from "@/shared/ui/legacy";
 
 function percent(value: number | null): string {
   return value === null ? "—" : `${value.toFixed(1)}%`;
@@ -136,6 +136,7 @@ export function AnalyticsPage() {
     <div className="portal-page">
       <div className="portal-page-heading">
         <div>
+          <PageBackLink />
           <span className="portal-eyebrow">{t("analytics.eyebrow")}</span>
           <h1>{t("analytics.title")}</h1>
           <p>{t("analytics.subtitle")}</p>

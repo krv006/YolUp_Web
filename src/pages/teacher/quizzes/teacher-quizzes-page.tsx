@@ -13,7 +13,7 @@ import {
   useQuizzes,
 } from "@/modules/quiz";
 import type { QuizSummary } from "@/shared/types";
-import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { Button, Dialog, DialogContent, LoadingFallback, PageBackLink, RouteState } from "@/shared/ui/legacy";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -63,6 +63,7 @@ export function TeacherQuizzesPage() {
     <div className="portal-page">
       <div className="portal-page-heading">
         <div>
+          <PageBackLink />
           <span className="portal-eyebrow">{t("teacherPage.allCourses")}</span>
           <h1>{t("teacherPage.title")}</h1>
           <p>{t("teacherPage.subtitle")}</p>

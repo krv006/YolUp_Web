@@ -7,6 +7,8 @@ export { Dialog, DialogContent, DialogTrigger } from "./dialog";
 export type { DialogContentProps } from "./dialog";
 export { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "./dropdown";
 export { LoadingFallback } from "./loading-fallback";
+export { PageBackLink } from "./page-back-link";
+export type { PageBackLinkProps } from "./page-back-link";
 export { RouteState } from "./route-state";
 export type { RouteStateProps } from "./route-state";
 export { ThemeToggle, ThemeToggleButton } from "./theme-toggle";

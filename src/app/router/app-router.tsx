@@ -68,7 +68,6 @@ const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) =>
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
 const SchedulePage = lazy(() => import("@/pages/schedule/schedule-page").then((module) => ({ default: module.SchedulePage })));
 const AiPage = lazy(() => import("@/pages/ai/ai-page").then((module) => ({ default: module.AiPage })));
-const StudentReportPage = lazy(() => import("@/pages/student/report/student-report-page").then((module) => ({ default: module.StudentReportPage })));
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
 const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.WorkspacePage })));
 const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
@@ -171,7 +170,7 @@ export function AppRouter() {
                   />
                   <Route
                     path={ROUTES.student.grades}
-                    element={<Navigate to={`${ROUTES.student.chats}/report`} replace />}
+                    element={<Navigate to={ROUTES.student.chats} replace />}
                   />
                   <Route
                     path={ROUTES.student.schedule}
@@ -187,7 +186,6 @@ export function AppRouter() {
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="mock-tests" element={<MockTestPage />} />
                     <Route path="quizzes" element={<StudentQuizzesPage />} />
-                    <Route path="report" element={<StudentReportPage />} />
                     <Route
                       path=":conversationId"
                       element={<StudentConversationPage />}
