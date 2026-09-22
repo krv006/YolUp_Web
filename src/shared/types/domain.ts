@@ -279,6 +279,41 @@ export type QuizQuestionType =
   | "ordering"
   | "fill_blank";
 
+export type VoiceAccessMode = "open" | "invite_only";
+export type VoiceRoomStatus = "scheduled" | "live" | "ended";
+export type VoiceJoinRequestStatus = "pending" | "approved" | "denied";
+
+export interface VoiceRoom {
+  id: string;
+  courseId: string;
+  createdById: string;
+  createdByName: string;
+  title: string;
+  accessMode: VoiceAccessMode;
+  status: VoiceRoomStatus;
+  scheduledAt: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  participantCount: number;
+  createdAt: string;
+}
+
+export interface VoiceJoinRequest {
+  id: string;
+  roomId: string;
+  userId: string;
+  userName: string;
+  status: VoiceJoinRequestStatus;
+  createdAt: string;
+}
+
+export interface VoiceToken {
+  token: string;
+  serverUrl: string;
+  roomName: string;
+  isModerator: boolean;
+}
+
 export interface QuizOption {
   id: string;
   text: string;
@@ -330,6 +365,7 @@ export interface QuizSummary {
   subjectLabel: string;
   lessonId: string | null;
   title: string;
+  topic: string;
   description: string;
   dueAt: string | null;
   opensAt: string | null;
@@ -386,6 +422,7 @@ export interface QuizQuestionFormValues {
 export interface QuizFormValues {
   courseId: string;
   subject?: string;
+  topic: string;
   lessonId?: string | null;
   title: string;
   description?: string;

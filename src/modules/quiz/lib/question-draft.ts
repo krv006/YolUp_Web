@@ -273,6 +273,18 @@ export function draftToFormValues(draft: QuestionDraft): QuizQuestionFormValues 
   }
 }
 
+export function formValuesToDraft(values: QuizQuestionFormValues, newKey: KeyFactory): QuestionDraft {
+  const draft = createDraft(values.type, newKey);
+  const options = values.options.map((option) => ({ key: newKey(), text: option.text }));
+  return {
+    ...draft,
+    text: values.text,
+    points: String(values.points || DEFAULT_POINTS),
+    options: options.length ? options : draft.options,
+    correctKeys: values.options.flatMap((option, index) => (option.isCorrect ? [options[index].key] : [])),
+  };
+}
+
 export function questionToDraft(question: QuizQuestion, newKey: KeyFactory): QuestionDraft {
   const draft = createDraft(question.type, newKey);
   const key = question.answerKey ?? {};

@@ -1,0 +1,48 @@
+{
+  "toast": {
+    "created": "Ovozli xona ochildi",
+    "closed": "Xona yopildi",
+    "requestSent": "So'rov yuborildi — tasdiqlashini kuting"
+  },
+  "access": {
+    "open": "Ochiq — guruh a'zolari kira oladi",
+    "inviteOnly": "Taklif asosida"
+  },
+  "bar": {
+    "emptyTitle": "Ovozli suhbat",
+    "emptyHint": "Guruh a'zolari bilan mikrofon orqali gaplashing.",
+    "create": "Xona ochish",
+    "join": "Qo'shilish",
+    "requestJoin": "Kirish so'rovi",
+    "live": "Hozir jonli",
+    "scheduledAt": "Boshlanishi: {{time}}",
+    "participants": "{{count}} ishtirokchi"
+  },
+  "createDialog": {
+    "title": "Ovozli xona",
+    "description": "Faqat mikrofon — kamera va ekran ulashish yo'q.",
+    "nameLabel": "Xona nomi",
+    "namePlaceholder": "Masalan: Kechqurungi muhokama",
+    "accessLabel": "Kirish",
+    "openHint": "Guruhning istalgan a'zosi to'g'ridan-to'g'ri kira oladi.",
+    "inviteHint": "O'quvchilar so'rov yuboradi, siz tasdiqlaysiz.",
+    "scheduledLabel": "Boshlanish vaqti · ixtiyoriy",
+    "titleRequired": "Xona nomini kiriting",
+    "pastTime": "Boshlanish vaqti o'tmishda bo'lmasligi kerak",
+    "cancel": "Bekor qilish",
+    "submit": "Ochish"
+  },
+  "room": {
+    "defaultTitle": "Ovozli suhbat",
+    "description": "Faqat mikrofon. Chiqsangiz, xona ro'yxatdan yo'qolmaydi.",
+    "participants": "{{count}} ishtirokchi",
+    "micLabel": "Mikrofon",
+    "leave": "Chiqish",
+    "closeRoom": "Xonani yopish",
+    "requestsTitle": "Kirish so'rovlari ({{count}})",
+    "approve": "Tasdiqlash",
+    "deny": "Rad etish",
+    "connectFailed": "Ovozli xonaga ulanib bo'lmadi",
+    "connecting": "Ulanmoqda…"
+  }
+}

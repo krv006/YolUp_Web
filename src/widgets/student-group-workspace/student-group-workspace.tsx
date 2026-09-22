@@ -16,6 +16,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { ChatHeader } from "@/modules/conversation";
+import { VoiceRoomBar } from "@/modules/voice";
 import { useCourse } from "@/modules/course";
 import { MessageComposer, MessageList } from "@/modules/message";
 import {
@@ -34,7 +35,7 @@ import {
   useLessons,
   useLessonView,
 } from "@/modules/lesson";
-import { QuizAttemptDialog, QuizAttemptsDialog, useQuizzes } from "@/modules/quiz";
+import { QuizAttemptDialog, QuizAttemptsDialog, useQuizzes, quizDisplayTitle } from "@/modules/quiz";
 import type {
   Assignment,
   ChatMessage,
@@ -125,6 +126,7 @@ export function StudentGroupWorkspace({
     <section className="chat-page group-workspace student-group-workspace">
       <ChatHeader conversation={hydrated} backTo="/student/chats" />
       <LiveLessonBar courseId={courseId} />
+      <VoiceRoomBar courseId={courseId} />
       <nav className="group-tabs">
         {TABS.map((tab) => {
           const Icon = tab.icon;
@@ -371,7 +373,7 @@ function StudentAssignments({
               <FileQuestion size={20} />
             </span>
             <div>
-              <strong>{quiz.title}</strong>
+              <strong>{quizDisplayTitle(quiz)}</strong>
               <p>
                 {t("groupWorkspace.assignments.quizBadge")} ·{" "}
                 {quiz.dueAt

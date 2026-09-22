@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileQuestion, History, Plus, Trash2 } from "lucide-react";
+import { FileQuestion, History, ListFilter, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,9 +11,11 @@ import {
   useCreateQuiz,
   useDeleteQuiz,
   useQuizzes,
+  quizDisplayTitle,
 } from "@/modules/quiz";
 import type { QuizSummary } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, PageBackLink, RouteState } from "@/shared/ui/legacy";
+import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -32,6 +34,7 @@ export function TeacherQuizzesPage() {
   const create = useCreateQuiz();
   const remove = useDeleteQuiz();
   const [dialog, setDialog] = useState(false);
+  const [subjectFilter, setSubjectFilter] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const [params] = useSearchParams();
@@ -57,7 +60,14 @@ export function TeacherQuizzesPage() {
       />
     );
 
-  const list = quizzes.data ?? [];
+  const all = quizzes.data ?? [];
+  const list = subjectFilter ? all.filter((item) => item.subject === subjectFilter) : all;
+  const filterOptions = [
+    { value: "", label: t("teacherPage.allSubjects") },
+    ...subjectOptions
+      .filter((item) => all.some((quiz) => quiz.subject === item.value))
+      .map((item) => ({ value: item.value, label: item.label })),
+  ];
 
   return (
     <div className="portal-page">
@@ -68,9 +78,24 @@ export function TeacherQuizzesPage() {
           <h1>{t("teacherPage.title")}</h1>
           <p>{t("teacherPage.subtitle")}</p>
         </div>
-        <Button onClick={() => setDialog(true)} disabled={!canCreate}>
-          <Plus size={17} /> {t("teacherPage.createButton")}
-        </Button>
+        <div className="heading-actions quiz-heading-actions">
+          {filterOptions.length > 1 ? (
+            <div className="quiz-subject-filter">
+              <SelectPicker
+                label={t("teacherPage.subjectFilterLabel")}
+                hideLabel
+                searchable
+                icon={ListFilter}
+                value={subjectFilter}
+                onChange={setSubjectFilter}
+                options={filterOptions}
+              />
+            </div>
+          ) : null}
+          <Button onClick={() => setDialog(true)} disabled={!canCreate}>
+            <Plus size={17} /> {t("teacherPage.createButton")}
+          </Button>
+        </div>
       </div>
 
       {list.length ? (
@@ -87,7 +112,7 @@ export function TeacherQuizzesPage() {
                 <FileQuestion size={20} />
               </span>
               <div>
-                <strong>{item.title}</strong>
+                <strong>{quizDisplayTitle(item)}</strong>
                 <p>{item.description}</p>
                 <small>
                   {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
@@ -118,8 +143,12 @@ export function TeacherQuizzesPage() {
       ) : (
         <div className="premium-empty">
           <FileQuestion size={30} />
-          <h3>{t("teacherPage.emptyTitle")}</h3>
-          {canCreate ? (
+          <h3>{subjectFilter ? t("teacherPage.emptyForSubject") : t("teacherPage.emptyTitle")}</h3>
+          {subjectFilter ? (
+            <Button variant="secondary" onClick={() => setSubjectFilter("")}>
+              {t("teacherPage.clearFilter")}
+            </Button>
+          ) : canCreate ? (
             <Button onClick={() => setDialog(true)}>{t("teacherPage.emptyCreateFirst")}</Button>
           ) : null}
         </div>

@@ -16,6 +16,7 @@ export {
   mapQuizAttemptSummaryDto,
   mapQuizDto,
   mapQuizImportPreviewDto,
+  quizDisplayTitle,
   mapQuizOptionDto,
   mapQuizQuestionDto,
   mapQuizRequest,

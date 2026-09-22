@@ -38,8 +38,9 @@ import {
   useLessonView,
   useUpdateLesson,
 } from "@/modules/lesson";
-import { AddQuizDialog, QuizAttemptsDialog, useCreateQuiz, useQuizzes } from "@/modules/quiz";
+import { AddQuizDialog, QuizAttemptsDialog, useCreateQuiz, useQuizzes, quizDisplayTitle } from "@/modules/quiz";
 import { ChatHeader } from "@/modules/conversation";
+import { VoiceRoomBar } from "@/modules/voice";
 import { MessageComposer, MessageList } from "@/modules/message";
 import type {
   Assignment,
@@ -131,6 +132,7 @@ export function GroupWorkspace({
     <section className="chat-page group-workspace">
       <ChatHeader conversation={hydrated} />
       <LiveLessonBar courseId={courseId} />
+      <VoiceRoomBar courseId={courseId} />
       <nav className="group-tabs">
         {TABS.map((tab) => {
           const Icon = tab.icon;
@@ -236,7 +238,7 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
     () =>
       (courseQuizzes.data ?? [])
         .filter((quiz) => !quiz.lessonId || quiz.lessonId === editing?.id)
-        .map((quiz) => ({ id: quiz.id, title: quiz.title })),
+        .map((quiz) => ({ id: quiz.id, title: quizDisplayTitle(quiz) })),
     [courseQuizzes.data, editing]
   );
 
@@ -415,8 +417,8 @@ function AssignmentsPanel({
       (quiz) => !quiz.courseId && Boolean(courseSubject) && quiz.subject === courseSubject
     );
     return [...courseQuizList, ...subjectBank]
-      .filter((quiz) => quiz.title)
-      .map((quiz) => ({ id: quiz.id, title: quiz.title }));
+      .map((quiz) => ({ id: quiz.id, title: quizDisplayTitle(quiz) }))
+      .filter((quiz) => quiz.title);
   }, [allQuizzes.data, courseQuizList, courseSubject]);
 
   return (
@@ -451,7 +453,7 @@ function AssignmentsPanel({
                 <FileQuestion size={20} />
               </span>
               <div>
-                <strong>{quiz.title}</strong>
+                <strong>{quizDisplayTitle(quiz)}</strong>
                 <p>{quiz.description}</p>
                 <small>
                   {quiz.dueAt

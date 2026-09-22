@@ -25,7 +25,11 @@
     "deleteDialogDescription": "«{{title}}» и связанные с ним попытки будут удалены.",
     "cancel": "Отмена",
     "delete": "Удалить",
-    "attemptsOfTitle": "«{{title}}» — попытки"
+    "attemptsOfTitle": "«{{title}}» — попытки",
+    "subjectFilterLabel": "По предмету",
+    "allSubjects": "Все предметы",
+    "emptyForSubject": "По этому предмету тестов нет",
+    "clearFilter": "Сбросить фильтр"
   },
   "studentPage": {
     "loading": "Загрузка тестов",
@@ -48,7 +52,7 @@
     "title": "Новый тест",
     "description": "8 типов вопросов — проверка автоматическая и мгновенная.",
     "courseLabel": "Для какого курса",
-    "titleLabel": "Название теста",
+    "titleLabel": "Название теста · необязательно",
     "titlePlaceholder": "Например: Тест по 1 главе",
     "existingTitlesLabel": "Тесты в базе",
     "existingTitlesAria": "Открыть список существующих тестов",
@@ -105,9 +109,12 @@
       "allItemsRequired": "заполните все элементы",
       "blankRequired": "в тексте нужен хотя бы один пропуск {{syntax}}",
       "blankAnswerRequired": "впишите ответ в каждый пропуск",
-      "chooseSubject": "Выберите предмет"
+      "chooseSubject": "Выберите предмет",
+      "enterTopic": "Введите тему"
     },
-    "subjectLabel": "Для какого предмета"
+    "subjectLabel": "Для какого предмета",
+    "topicLabel": "Тема",
+    "topicPlaceholder": "Например: Квадратные уравнения"
   },
   "preview": {
     "regionAria": "Как это увидит ученик",

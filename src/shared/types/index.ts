@@ -74,6 +74,12 @@ export type {
   TeacherVideoStats,
   TopCourseStat,
   TopTeacherStat,
+  VoiceAccessMode,
+  VoiceJoinRequest,
+  VoiceJoinRequestStatus,
+  VoiceRoom,
+  VoiceRoomStatus,
+  VoiceToken,
 } from "./domain";
 export type { MessageCapabilities } from "./chat";
 export type { PaginatedDto, UserDto } from "./dto";
