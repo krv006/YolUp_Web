@@ -259,6 +259,7 @@ export function AddQuizDialog({
             <SelectPicker
               label={t("createDialog.subjectLabel")}
               icon={BookOpen}
+              searchable
               value={subject}
               onChange={(value) => {
                 setSubject(value);

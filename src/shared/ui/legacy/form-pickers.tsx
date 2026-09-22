@@ -24,6 +24,7 @@ import {
   ChevronUp,
   Hourglass,
   Clock3,
+  Search,
 } from "lucide-react";
 
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
@@ -287,11 +288,13 @@ export interface SelectPickerProps {
   options: Array<SelectOption | string>;
   icon?: IconComponent;
   hideLabel?: boolean;
+  searchable?: boolean;
 }
 
-export function SelectPicker({ label, value, onChange, options, icon, hideLabel }: SelectPickerProps) {
+export function SelectPicker({ label, value, onChange, options, icon, hideLabel, searchable }: SelectPickerProps) {
   const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const anchorRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
   const normalizedOptions = useMemo<SelectOption[]>(
@@ -299,22 +302,55 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel 
     [options]
   );
   const selected = normalizedOptions.find((option) => option.value === value);
+  const search = query.trim().toLowerCase();
+  const visibleOptions = search
+    ? normalizedOptions.filter((option) => option.label.toLowerCase().includes(search))
+    : normalizedOptions;
+
+  function close() {
+    setOpen(false);
+    setQuery("");
+  }
+
+  function pick(optionValue: string) {
+    onChange(optionValue);
+    close();
+    requestAnimationFrame(() => anchorRef.current?.focus());
+  }
 
   return (
     <FieldShell label={label} icon={icon} labelId={labelId} hideLabel={hideLabel}>
       <PickerTrigger
         anchorRef={anchorRef}
         open={open}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => (open ? close() : setOpen(true))}
         icon={icon ?? ChevronDown}
         value={selected?.label ?? ""}
         placeholder={t("formPickers.selectPlaceholder")}
         labelledBy={labelId}
       />
-      <FloatingPicker open={open} onClose={() => setOpen(false)} anchorRef={anchorRef} labelledBy={labelId} className="select-picker-popover">
+      <FloatingPicker open={open} onClose={close} anchorRef={anchorRef} labelledBy={labelId} className="select-picker-popover">
         <div className="picker-mini-heading"><span>{t("formPickers.selectHeading")}</span><strong>{label}</strong></div>
+        {searchable ? (
+          <div className="select-picker-search">
+            <Search size={15} />
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("formPickers.searchPlaceholder")}
+              aria-label={t("formPickers.searchPlaceholder")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && visibleOptions.length) {
+                  event.preventDefault();
+                  pick(visibleOptions[0].value);
+                }
+              }}
+            />
+          </div>
+        ) : null}
         <div className="select-picker-options" role="listbox" aria-labelledby={labelId}>
-          {normalizedOptions.map((option) => {
+          {visibleOptions.map((option) => {
             const active = option.value === value;
             return (
               <motion.button
@@ -323,11 +359,7 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel 
                 role="option"
                 aria-selected={active}
                 className={active ? "is-selected" : ""}
-                onClick={() => {
-                  onChange(option.value);
-                  setOpen(false);
-                  requestAnimationFrame(() => anchorRef.current?.focus());
-                }}
+                onClick={() => pick(option.value)}
                 whileTap={{ scale: 0.98 }}
               >
                 <span>{option.label}</span>
@@ -339,6 +371,9 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel 
               </motion.button>
             );
           })}
+          {searchable && !visibleOptions.length ? (
+            <p className="select-picker-empty">{t("formPickers.searchEmpty")}</p>
+          ) : null}
         </div>
       </FloatingPicker>
     </FieldShell>

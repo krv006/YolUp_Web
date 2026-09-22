@@ -110,6 +110,7 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
               <SelectPicker
                 label={t("newDialog.subjectLabel")}
                 icon={GraduationCap}
+                searchable
                 value={group.subject}
                 onChange={(value) => update("subject", value)}
                 options={(subjects.data ?? []).map((item) => ({ value: item.value, label: item.label }))}

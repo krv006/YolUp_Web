@@ -41,8 +41,29 @@
     "secondUnit": "s"
   },
   "formPickers": {
-    "months": ["Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun", "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"],
-    "weekdays": ["Du", "Se", "Cho", "Pa", "Ju", "Sha", "Ya"],
+    "months": [
+      "Yanvar",
+      "Fevral",
+      "Mart",
+      "Aprel",
+      "May",
+      "Iyun",
+      "Iyul",
+      "Avgust",
+      "Sentabr",
+      "Oktabr",
+      "Noyabr",
+      "Dekabr"
+    ],
+    "weekdays": [
+      "Du",
+      "Se",
+      "Cho",
+      "Pa",
+      "Ju",
+      "Sha",
+      "Ya"
+    ],
     "selectPlaceholder": "Tanlang",
     "selectHeading": "Tanlov",
     "chooseDate": "Sanani tanlang",
@@ -64,6 +85,8 @@
     "clear": "Tozalash",
     "today": "Bugun",
     "done": "Tayyor",
-    "schedule": "Jadval"
+    "schedule": "Jadval",
+    "searchPlaceholder": "Qidirish",
+    "searchEmpty": "Hech narsa topilmadi"
   }
 }

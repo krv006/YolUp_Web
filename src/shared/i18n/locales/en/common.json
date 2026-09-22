@@ -41,8 +41,29 @@
     "secondUnit": "s"
   },
   "formPickers": {
-    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    "weekdays": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "weekdays": [
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr",
+      "Sa",
+      "Su"
+    ],
     "selectPlaceholder": "Select",
     "selectHeading": "Choose",
     "chooseDate": "Choose a date",
@@ -64,6 +85,8 @@
     "clear": "Clear",
     "today": "Today",
     "done": "Done",
-    "schedule": "Schedule"
+    "schedule": "Schedule",
+    "searchPlaceholder": "Search",
+    "searchEmpty": "Nothing found"
   }
 }
