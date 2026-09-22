@@ -1,0 +1,48 @@
+{
+  "toast": {
+    "created": "Voice room opened",
+    "closed": "Room closed",
+    "requestSent": "Request sent — wait for approval"
+  },
+  "access": {
+    "open": "Open — group members can join",
+    "inviteOnly": "Invite only"
+  },
+  "bar": {
+    "emptyTitle": "Voice chat",
+    "emptyHint": "Talk to the group over microphone.",
+    "create": "Open room",
+    "join": "Join",
+    "requestJoin": "Ask to join",
+    "live": "Live now",
+    "scheduledAt": "Starts: {{time}}",
+    "participants": "{{count}} participants"
+  },
+  "createDialog": {
+    "title": "Voice room",
+    "description": "Microphone only — no camera or screen sharing.",
+    "nameLabel": "Room name",
+    "namePlaceholder": "e.g. Evening discussion",
+    "accessLabel": "Access",
+    "openHint": "Any group member joins directly.",
+    "inviteHint": "Students ask to join and you approve.",
+    "scheduledLabel": "Start time · optional",
+    "titleRequired": "Enter a room name",
+    "pastTime": "The start time cannot be in the past",
+    "cancel": "Cancel",
+    "submit": "Open"
+  },
+  "room": {
+    "defaultTitle": "Voice chat",
+    "description": "Microphone only. Leaving does not close the room.",
+    "participants": "{{count}} participants",
+    "micLabel": "Microphone",
+    "leave": "Leave",
+    "closeRoom": "Close room",
+    "requestsTitle": "Join requests ({{count}})",
+    "approve": "Approve",
+    "deny": "Deny",
+    "connectFailed": "Could not connect to the voice room",
+    "connecting": "Connecting…"
+  }
+}

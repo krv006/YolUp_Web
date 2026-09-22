@@ -25,7 +25,11 @@
     "deleteDialogDescription": "\"{{title}}\" va unga bog'liq urinishlar o'chadi.",
     "cancel": "Bekor",
     "delete": "O'chirish",
-    "attemptsOfTitle": "\"{{title}}\" — urinishlar"
+    "attemptsOfTitle": "\"{{title}}\" — urinishlar",
+    "subjectFilterLabel": "Fan bo'yicha",
+    "allSubjects": "Barcha fanlar",
+    "emptyForSubject": "Bu fanda test yo'q",
+    "clearFilter": "Filtrni tozalash"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -48,7 +52,7 @@
     "title": "Yangi test",
     "description": "8 xil savol turi — baholash avtomatik va darhol.",
     "courseLabel": "Qaysi kurs uchun",
-    "titleLabel": "Test nomi",
+    "titleLabel": "Test nomi · ixtiyoriy",
     "titlePlaceholder": "Masalan: 1-bob testi",
     "existingTitlesLabel": "Bazadagi testlar",
     "existingTitlesAria": "Mavjud testlar ro'yxatini ochish",
@@ -105,9 +109,12 @@
       "allItemsRequired": "barcha elementlar to'ldirilishi kerak",
       "blankRequired": "matnda kamida bitta {{syntax}} bo'sh joy bo'lishi kerak",
       "blankAnswerRequired": "har bir bo'sh joy ichiga javob yozing",
-      "chooseSubject": "Fanni tanlang"
+      "chooseSubject": "Fanni tanlang",
+      "enterTopic": "Mavzuni kiriting"
     },
-    "subjectLabel": "Qaysi fan uchun"
+    "subjectLabel": "Qaysi fan uchun",
+    "topicLabel": "Mavzu",
+    "topicPlaceholder": "Masalan: Kvadrat tenglamalar"
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",

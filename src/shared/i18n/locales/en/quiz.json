@@ -25,7 +25,11 @@
     "deleteDialogDescription": "\"{{title}}\" and its attempts will be deleted.",
     "cancel": "Cancel",
     "delete": "Delete",
-    "attemptsOfTitle": "\"{{title}}\" — attempts"
+    "attemptsOfTitle": "\"{{title}}\" — attempts",
+    "subjectFilterLabel": "By subject",
+    "allSubjects": "All subjects",
+    "emptyForSubject": "No tests for this subject",
+    "clearFilter": "Clear filter"
   },
   "studentPage": {
     "loading": "Loading quizzes",
@@ -48,7 +52,7 @@
     "title": "New quiz",
     "description": "8 question types — graded automatically and instantly.",
     "courseLabel": "For which course",
-    "titleLabel": "Quiz title",
+    "titleLabel": "Test name · optional",
     "titlePlaceholder": "E.g.: Chapter 1 quiz",
     "existingTitlesLabel": "Existing quizzes",
     "existingTitlesAria": "Open the list of existing quizzes",
@@ -105,9 +109,12 @@
       "allItemsRequired": "fill in every item",
       "blankRequired": "the text needs at least one {{syntax}} blank",
       "blankAnswerRequired": "write an answer inside every blank",
-      "chooseSubject": "Choose a subject"
+      "chooseSubject": "Choose a subject",
+      "enterTopic": "Enter a topic"
     },
-    "subjectLabel": "Which subject"
+    "subjectLabel": "Which subject",
+    "topicLabel": "Topic",
+    "topicPlaceholder": "e.g. Quadratic equations"
   },
   "preview": {
     "regionAria": "How the student will see it",

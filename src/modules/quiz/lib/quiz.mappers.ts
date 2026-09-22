@@ -78,6 +78,7 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     subjectLabel: dto.subject_label || dto.subject || "",
     lessonId: dto.lesson == null ? null : String(dto.lesson),
     title: dto.title,
+    topic: dto.topic || "",
     description: dto.description || "",
     dueAt: dto.due_at,
     opensAt: dto.opens_at,
@@ -136,6 +137,7 @@ export function mapQuizRequest(form: QuizFormValues): Record<string, unknown> {
     ...(form.subject ? { subject: form.subject } : {}),
     lesson: form.lessonId || null,
     title: form.title,
+    topic: form.topic,
     description: form.description || "",
     due_at: form.dueAt || null,
     opens_at: form.opensAt || null,
@@ -231,4 +233,8 @@ export function mapAttemptAnswerRequest({ questionId, answer }: QuizAttemptAnswe
 
 export function mapQuizAttemptRequest(answers: QuizAttemptAnswerInput[]): Record<string, unknown> {
   return { answers: answers.map(mapAttemptAnswerRequest) };
+}
+
+export function quizDisplayTitle(quiz: { title: string; topic: string }): string {
+  return quiz.title.trim() || quiz.topic.trim();
 }

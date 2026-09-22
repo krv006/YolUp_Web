@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, ChevronDown, Plus, X } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileUp, Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
-import type { QuizFormValues } from "@/shared/types";
-import { useQuizDetailLoader } from "../model/quiz.queries";
+import type { QuizFormValues, QuizImportWarning } from "@/shared/types";
+import { useDownloadQuizTemplate, useImportQuizDocx, useQuizDetailLoader } from "../model/quiz.queries";
 import {
   createDraft,
   draftToFormValues,
+  formValuesToDraft,
   hasDraftContent,
   questionToDraft,
   validateDraft,
@@ -16,6 +17,8 @@ import {
 } from "../lib/question-draft";
 import { QuestionEditor } from "./question-editor";
 import { QuizPreview } from "./quiz-preview";
+
+const TEMPLATE_QUESTION_COUNT = 10;
 
 export interface AddQuizDialogProps {
   open: boolean;
@@ -49,6 +52,7 @@ export function AddQuizDialog({
   const courseId = subjectMode ? "" : selectedCourseId || courses[0]?.id || "";
   const [subject, setSubject] = useState("");
   const [title, setTitle] = useState("");
+  const [topic, setTopic] = useState("");
   const [dueAt, setDueAt] = useState("");
   const [opensAt, setOpensAt] = useState("");
   const [questions, setQuestions] = useState<QuestionDraft[]>([]);
@@ -57,7 +61,11 @@ export function AddQuizDialog({
   const [copyingId, setCopyingId] = useState<string | null>(null);
   const [copiedFrom, setCopiedFrom] = useState<string | null>(null);
   const titleComboRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importWarnings, setImportWarnings] = useState<QuizImportWarning[]>([]);
   const loadQuizDetail = useQuizDetailLoader();
+  const importFile = useImportQuizDocx();
+  const downloadTemplate = useDownloadQuizTemplate();
 
   const suggestions = useMemo(() => {
     const query = title.trim().toLowerCase();
@@ -97,6 +105,27 @@ export function AddQuizDialog({
     }
   }
 
+  function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    const missingTarget = targetError();
+    if (missingTarget) {
+      setError(missingTarget);
+      return;
+    }
+    importFile.mutate(file, {
+      onSuccess: (preview) => {
+        setTitle(title.trim() || preview.title.trim());
+        setCopiedFrom(null);
+        setQuestions(preview.questions.map((question) => formValuesToDraft(question, newKey)));
+        setImportWarnings(preview.warnings);
+        setError(null);
+        setStep("questions");
+      },
+    });
+  }
+
   function newQuestion(type: QuestionDraft["type"] = "single") {
     return createDraft(type, newKey);
   }
@@ -106,23 +135,26 @@ export function AddQuizDialog({
     setSelectedCourseId("");
     setSubject("");
     setTitle("");
+    setTopic("");
     setDueAt("");
     setOpensAt("");
     setQuestions([]);
+    setImportWarnings([]);
     setCopiedFrom(null);
     setCopyingId(null);
     setError(null);
   }
 
   function targetError(): string | null {
-    if (subjectMode) return subject ? null : t("createDialog.validation.chooseSubject");
-    return courseId ? null : t("createDialog.validation.chooseCourse");
+    if (subjectMode && !subject) return t("createDialog.validation.chooseSubject");
+    if (!subjectMode && !courseId) return t("createDialog.validation.chooseCourse");
+    return topic.trim() ? null : t("createDialog.validation.enterTopic");
   }
 
   function goToQuestions() {
     const missingTarget = targetError();
-    if (missingTarget || !title.trim()) {
-      setError(missingTarget ?? t("createDialog.validation.enterTitle"));
+    if (missingTarget) {
+      setError(missingTarget);
       return;
     }
     setError(null);
@@ -147,7 +179,6 @@ export function AddQuizDialog({
   function validate(): string | null {
     const missingTarget = targetError();
     if (missingTarget) return missingTarget;
-    if (!title.trim()) return t("createDialog.validation.enterTitle");
     if (!questions.length) return t("createDialog.validation.addQuestion");
     for (const [index, question] of questions.entries()) {
       const draftError = validateDraft(question);
@@ -177,6 +208,7 @@ export function AddQuizDialog({
       subject: subjectMode ? subject : undefined,
       lessonId: null,
       title: title.trim(),
+      topic: topic.trim(),
       description: "",
       dueAt: dueAt || null,
       opensAt: opensAt || null,
@@ -193,7 +225,7 @@ export function AddQuizDialog({
       <div className="quiz-page">
         <div className="quiz-page-header">
           <div>
-            <span className="quiz-page-eyebrow">{title || t("createDialog.title")}</span>
+            <span className="quiz-page-eyebrow">{title.trim() || topic.trim() || t("createDialog.title")}</span>
             <h2>{t("createDialog.questionsPageTitle")}</h2>
           </div>
           <div className="quiz-page-header-actions">
@@ -218,6 +250,21 @@ export function AddQuizDialog({
         </div>
 
         {error ? <div className="form-alert quiz-page-alert">{error}</div> : null}
+
+        {importWarnings.length ? (
+          <div className="form-alert form-alert--warning quiz-page-alert">
+            {importWarnings.map((warning) => (
+              <p key={warning.questionNumber}>
+                {t(
+                  warning.reason === "answer_not_detected"
+                    ? "createDialog.importWarningAnswerNotDetected"
+                    : "createDialog.importWarningNotEnoughOptions",
+                  { number: warning.questionNumber }
+                )}
+              </p>
+            ))}
+          </div>
+        ) : null}
 
         <div className="quiz-page-split">
           <form id="quiz-questions-form" className="quiz-page-body" onSubmit={submit}>
@@ -276,6 +323,17 @@ export function AddQuizDialog({
               options={courses.map((course) => ({ value: course.id, label: course.title }))}
             />
           ) : null}
+          <label className="quiz-topic-field">
+            {t("createDialog.topicLabel")}
+            <input
+              value={topic}
+              onChange={(event) => {
+                setTopic(event.target.value);
+                setError(null);
+              }}
+              placeholder={t("createDialog.topicPlaceholder")}
+            />
+          </label>
           <div className="quiz-title-field">
             <span className="quiz-title-field-label">{t("createDialog.titleLabel")}</span>
             <div className="quiz-title-combo" ref={titleComboRef}>
@@ -354,6 +412,46 @@ export function AddQuizDialog({
               />
             </div>
           ) : null}
+
+          <div className="quiz-import-row">
+            <span className="quiz-template-gen-or">{t("createDialog.importOr")}</span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".docx,.xlsx"
+              hidden
+              onChange={handleImportFile}
+            />
+            <button
+              type="button"
+              className="quiz-generate-button quiz-generate-button--ghost"
+              disabled={importFile.isPending}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <FileUp size={14} />{" "}
+              {importFile.isPending ? t("createDialog.importButtonLoading") : t("createDialog.importButton")}
+            </button>
+          </div>
+
+          <div className="quiz-template-download">
+            <span className="quiz-template-download-label">{t("createDialog.downloadTemplateLabel")}</span>
+            <button
+              type="button"
+              className="quiz-generate-button quiz-generate-button--ghost"
+              disabled={downloadTemplate.isPending}
+              onClick={() => downloadTemplate.mutate({ type: "docx", count: TEMPLATE_QUESTION_COUNT })}
+            >
+              <Download size={14} /> {t("createDialog.downloadTemplateWord")}
+            </button>
+            <button
+              type="button"
+              className="quiz-generate-button quiz-generate-button--ghost"
+              disabled={downloadTemplate.isPending}
+              onClick={() => downloadTemplate.mutate({ type: "xlsx", count: TEMPLATE_QUESTION_COUNT })}
+            >
+              <Download size={14} /> {t("createDialog.downloadTemplateExcel")}
+            </button>
+          </div>
 
           {error ? <div className="form-alert">{error}</div> : null}
 

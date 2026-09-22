@@ -46,6 +46,7 @@ export interface QuizSummaryDto {
   subject_label?: string | null;
   lesson: string | number | null;
   title: string;
+  topic?: string | null;
   description?: string;
   due_at: string | null;
   opens_at: string | null;

@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileQuestion, History } from "lucide-react";
+import { FileQuestion, History, ListFilter } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { toIntlLocale } from "@/shared/i18n";
-import { useCourses } from "@/modules/course";
-import { QuizAttemptDialog, QuizAttemptsDialog, useQuizzes } from "@/modules/quiz";
+import { useCourses, useSubjects } from "@/modules/course";
+import { QuizAttemptDialog, QuizAttemptsDialog, quizDisplayTitle, useQuizzes } from "@/modules/quiz";
 import type { QuizSummary } from "@/shared/types";
 import { Button, LoadingFallback, RouteState, PageBackLink } from "@/shared/ui/legacy";
+import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -21,6 +22,8 @@ export function StudentQuizzesPage() {
   const { t, i18n } = useTranslation("quiz");
   const courses = useCourses();
   const quizzes = useQuizzes(null);
+  const subjects = useSubjects();
+  const [subjectFilter, setSubjectFilter] = useState("");
   const [attemptOf, setAttemptOf] = useState<QuizSummary | null>(null);
   const [historyOf, setHistoryOf] = useState<QuizSummary | null>(null);
   const [params] = useSearchParams();
@@ -44,7 +47,14 @@ export function StudentQuizzesPage() {
       />
     );
 
-  const list = quizzes.data ?? [];
+  const all = quizzes.data ?? [];
+  const list = subjectFilter ? all.filter((item) => item.subject === subjectFilter) : all;
+  const filterOptions = [
+    { value: "", label: t("teacherPage.allSubjects") },
+    ...(subjects.data ?? [])
+      .filter((item) => all.some((quiz) => quiz.subject === item.value))
+      .map((item) => ({ value: item.value, label: item.label })),
+  ];
 
   return (
     <div className="portal-page">
@@ -55,6 +65,19 @@ export function StudentQuizzesPage() {
           <h1>{t("studentPage.title")}</h1>
           <p>{t("studentPage.subtitle")}</p>
         </div>
+        {filterOptions.length > 1 ? (
+          <div className="quiz-subject-filter">
+            <SelectPicker
+              label={t("teacherPage.subjectFilterLabel")}
+              hideLabel
+              searchable
+              icon={ListFilter}
+              value={subjectFilter}
+              onChange={setSubjectFilter}
+              options={filterOptions}
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="student-workspace-list">
@@ -68,7 +91,7 @@ export function StudentQuizzesPage() {
               <FileQuestion size={20} />
             </span>
             <div>
-              <strong>{item.title}</strong>
+              <strong>{quizDisplayTitle(item)}</strong>
               <p>
                 {courseTitleById.get(item.courseId) ?? t("studentPage.courseFallback")} ·{" "}
                 {item.dueAt
