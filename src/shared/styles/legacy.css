@@ -5195,6 +5195,37 @@ a.workspace-card:hover {
   overflow: hidden;
 }
 .select-picker-popover .picker-mini-heading { flex: 0 0 auto; }
+.select-picker-search {
+  flex: 0 0 auto;
+  margin-bottom: 6px;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-foreground);
+  background: var(--surface-tint);
+}
+.select-picker-search:focus-within { border-color: var(--primary); }
+.select-picker-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  outline: 0;
+}
+.select-picker-empty {
+  margin: 8px 0;
+  color: var(--muted-foreground);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
 .select-picker-options {
   flex: 1 1 auto;
   display: grid;
