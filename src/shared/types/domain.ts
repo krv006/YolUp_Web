@@ -419,6 +419,15 @@ export interface QuizQuestionFormValues {
   blanks?: Array<{ answers: string[] }>;
 }
 
+export interface QuizEditValues {
+  topic?: string;
+  title?: string;
+  description?: string;
+  dueAt?: string | null;
+  opensAt?: string | null;
+  questions?: QuizQuestionFormValues[];
+}
+
 export interface QuizFormValues {
   courseId: string;
   subject?: string;

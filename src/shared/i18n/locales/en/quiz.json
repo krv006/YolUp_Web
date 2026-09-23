@@ -2,7 +2,8 @@
   "toast": {
     "created": "Quiz created",
     "deleted": "Quiz deleted",
-    "importSuccess": "Found {{count}} question(s) — review them"
+    "importSuccess": "Found {{count}} question(s) — review them",
+    "updated": "Test updated"
   },
   "teacherPage": {
     "loading": "Loading quizzes",
@@ -82,8 +83,6 @@
     "downloadTemplateExcel": "Excel",
     "templateFileName": "quiz_template.{{ext}}",
     "optionPlaceholderLettered": "Option {{letter}} text",
-    "importWarningAnswerNotDetected": "Question {{number}}: correct answer not detected — mark it manually",
-    "importWarningNotEnoughOptions": "Question {{number}}: not enough options — please check",
     "cancel": "Cancel",
     "create": "Create quiz",
     "validation": {
@@ -114,7 +113,18 @@
     },
     "subjectLabel": "Which subject",
     "topicLabel": "Topic",
-    "topicPlaceholder": "e.g. Quadratic equations"
+    "topicPlaceholder": "e.g. Quadratic equations",
+    "googleImportButton": "From a Google link",
+    "googleImportSubmit": "Import",
+    "googleLinkPlaceholder": "Paste a https://docs.google.com/… link",
+    "googleLinkInvalid": "Enter a Google Docs or Google Forms link",
+    "googleShareHint": "The document or form must be shared as “Anyone with the link can view”.",
+    "importWarningAllAnswersMissing": "Google Forms does not share the correct answers — mark them yourself on every question.",
+    "importWarning": {
+      "answerNotDetected": "Question {{number}}: the correct answer was not detected — mark it manually",
+      "notEnoughOptions": "Question {{number}}: not enough options — check it",
+      "unsupportedType": "Question {{number}} was not imported: only single and multiple choice questions are supported"
+    }
   },
   "preview": {
     "regionAria": "How the student will see it",
@@ -201,5 +211,16 @@
     "matchPlaceholder": "Choose…",
     "blankAria": "Blank {{number}}",
     "fillBlankHint": "Fill in the blanks"
+  },
+  "editDialog": {
+    "title": "Edit test",
+    "description": "You can change the topic, name and questions.",
+    "questionsPageTitle": "Edit the questions",
+    "continueButton": "Go to questions",
+    "save": "Save",
+    "lockedNotice": "This test already has attempts — the questions cannot be changed. Only the topic, name and due date are saved.",
+    "editAria": "Edit test",
+    "loading": "Loading the test…",
+    "lockedPageTitle": "Questions — cannot be changed"
   }
 }

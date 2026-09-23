@@ -38,7 +38,16 @@ import {
   useLessonView,
   useUpdateLesson,
 } from "@/modules/lesson";
-import { AddQuizDialog, QuizAttemptsDialog, useCreateQuiz, useQuizzes, quizDisplayTitle } from "@/modules/quiz";
+import {
+  AddQuizDialog,
+  QuizAttemptsDialog,
+  quizDisplayTitle,
+  useCreateQuiz,
+  useQuiz,
+  useQuizAttempts,
+  useQuizzes,
+  useUpdateQuiz,
+} from "@/modules/quiz";
 import { ChatHeader } from "@/modules/conversation";
 import { VoiceRoomBar } from "@/modules/voice";
 import { MessageComposer, MessageList } from "@/modules/message";
@@ -401,6 +410,11 @@ function AssignmentsPanel({
   const remove = useDeleteAssignment();
   const [quizDialog, setQuizDialog] = useState(false);
   const createQuiz = useCreateQuiz();
+  const updateQuiz = useUpdateQuiz();
+  const [editQuizTarget, setEditQuizTarget] = useState<QuizSummary | null>(null);
+  const editQuizDetail = useQuiz(editQuizTarget?.id ?? null);
+  const editQuizAttempts = useQuizAttempts(editQuizTarget?.id ?? null, Boolean(editQuizTarget));
+  const { t: quizT } = useTranslation("quiz");
   const course = useCourse(courseId);
 
   const lessons = useLessons({ course: courseId, page_size: 100 }, dialog);
@@ -466,6 +480,14 @@ function AssignmentsPanel({
               <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(quiz)}>
                 <CheckCircle2 size={15} /> {t("assignments.results")}
               </Button>
+              <button
+                className="icon-button"
+                aria-label={quizT("editDialog.editAria")}
+                title={quizT("editDialog.editAria")}
+                onClick={() => setEditQuizTarget(quiz)}
+              >
+                <Pencil size={16} />
+              </button>
             </motion.article>
           ))}
         </div>
@@ -544,6 +566,25 @@ function AssignmentsPanel({
         }}
         title={attemptsOf?.title}
       />
+
+      {editQuizTarget && editQuizDetail.data && !editQuizAttempts.isLoading ? (
+        <AddQuizDialog
+          key={editQuizTarget.id}
+          open
+          onOpenChange={(next) => {
+            if (!next) setEditQuizTarget(null);
+          }}
+          courses={[]}
+          editQuiz={editQuizDetail.data}
+          questionsLocked={(editQuizAttempts.data ?? []).length > 0}
+          saving={updateQuiz.isPending}
+          showSchedule
+          onCreate={() => undefined}
+          onUpdate={(values) =>
+            updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => setEditQuizTarget(null))
+          }
+        />
+      ) : null}
 
       {quizDialog && courseId ? (
         <AddQuizDialog

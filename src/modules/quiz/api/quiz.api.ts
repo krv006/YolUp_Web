@@ -1,5 +1,5 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
-import type { QuizFormValues } from "@/shared/types";
+import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import { quizEndpoints } from "./quiz.endpoints";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import type {
@@ -14,6 +14,7 @@ import {
   mapQuizAttemptResultDto,
   mapQuizAttemptSummaryDto,
   mapQuizDto,
+  mapQuizEditRequest,
   mapQuizImportPreviewDto,
   mapQuizRequest,
   mapQuizSummaryDto,
@@ -33,12 +34,21 @@ export const quizApi = {
   async create(form: QuizFormValues) {
     return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.list, mapQuizRequest(form)));
   },
+  async update(id: string, values: QuizEditValues) {
+    return mapQuizDto(
+      await apiClient.patch<QuizDto>(quizEndpoints.detail(id), mapQuizEditRequest(values))
+    );
+  },
   async importDocx(file: File) {
     const body = new FormData();
     body.set("file", file);
     return mapQuizImportPreviewDto(
       await apiClient.post<QuizImportPreviewDto>(quizEndpoints.import, body)
     );
+  },
+  async importGoogleLink(source: "google_doc" | "google_form", url: string) {
+    const endpoint = source === "google_doc" ? quizEndpoints.importGoogleDoc : quizEndpoints.importGoogleForm;
+    return mapQuizImportPreviewDto(await apiClient.post<QuizImportPreviewDto>(endpoint, { url }));
   },
   async downloadTemplate(type: "docx" | "xlsx", count: number) {
     return apiClient.get<Blob>(quizEndpoints.template, {

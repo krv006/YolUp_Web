@@ -66,6 +66,7 @@ export interface QuizImportOptionDto {
 
 export interface QuizImportQuestionDto {
   text: string;
+  type?: QuizQuestionTypeDto;
   order: number;
   options: QuizImportOptionDto[];
 }
@@ -74,6 +75,8 @@ export interface QuizImportWarningDto {
   question_number: number;
   reason: string;
 }
+
+export type QuizImportSource = "docx" | "google_doc" | "google_form";
 
 export interface QuizImportPreviewDto {
   title: string;

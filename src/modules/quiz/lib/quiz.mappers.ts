@@ -5,6 +5,7 @@ import type {
   QuizAttemptResult,
   QuizAttemptSummary,
   QuizDetail,
+  QuizEditValues,
   QuizFormValues,
   QuizImportPreview,
   QuizOption,
@@ -145,6 +146,17 @@ export function mapQuizRequest(form: QuizFormValues): Record<string, unknown> {
   };
 }
 
+export function mapQuizEditRequest(values: QuizEditValues): Record<string, unknown> {
+  const body: Record<string, unknown> = {};
+  if (values.topic !== undefined) body.topic = values.topic;
+  if (values.title !== undefined) body.title = values.title;
+  if (values.description !== undefined) body.description = values.description;
+  if (values.dueAt !== undefined) body.due_at = values.dueAt;
+  if (values.opensAt !== undefined) body.opens_at = values.opensAt;
+  if (values.questions !== undefined) body.questions = values.questions.map(mapQuestionRequest);
+  return body;
+}
+
 export function mapQuestionRequest(question: QuizQuestionFormValues): Record<string, unknown> {
   const base = { type: question.type, text: question.text, points: question.points };
   switch (question.type) {
@@ -180,7 +192,7 @@ export function mapQuizImportPreviewDto(dto: QuizImportPreviewDto): QuizImportPr
     title: dto.title || "",
     description: dto.description || "",
     questions: (dto.questions ?? []).map((question) => ({
-      type: "single" as const,
+      type: toQuestionType(question.type),
       text: question.text,
       points: 2,
       options: (question.options ?? []).map((option) => ({

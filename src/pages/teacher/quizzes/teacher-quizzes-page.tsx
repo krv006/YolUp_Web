@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileQuestion, History, ListFilter, Plus, Trash2 } from "lucide-react";
+import { FileQuestion, History, ListFilter, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -8,6 +8,9 @@ import { useCourses, useSubjects } from "@/modules/course";
 import {
   AddQuizDialog,
   QuizAttemptsDialog,
+  useQuiz,
+  useQuizAttempts,
+  useUpdateQuiz,
   useCreateQuiz,
   useDeleteQuiz,
   useQuizzes,
@@ -36,6 +39,10 @@ export function TeacherQuizzesPage() {
   const [dialog, setDialog] = useState(false);
   const [subjectFilter, setSubjectFilter] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
+  const [editTarget, setEditTarget] = useState<QuizSummary | null>(null);
+  const editDetail = useQuiz(editTarget?.id ?? null);
+  const editAttempts = useQuizAttempts(editTarget?.id ?? null, Boolean(editTarget));
+  const update = useUpdateQuiz();
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const [params] = useSearchParams();
   const highlightId = params.get("quiz");
@@ -131,6 +138,14 @@ export function TeacherQuizzesPage() {
                 <History size={15} /> {t("teacherPage.attemptsButton")}
               </Button>
               <button
+                className="icon-button"
+                aria-label={t("editDialog.editAria")}
+                title={t("editDialog.editAria")}
+                onClick={() => setEditTarget(item)}
+              >
+                <Pencil size={16} />
+              </button>
+              <button
                 className="icon-button destructive-icon"
                 onClick={() => setDeleteTarget(item)}
                 aria-label={t("teacherPage.deleteAria")}
@@ -153,6 +168,25 @@ export function TeacherQuizzesPage() {
           ) : null}
         </div>
       )}
+
+      {editTarget && editDetail.data && !editAttempts.isLoading ? (
+        <AddQuizDialog
+          key={editTarget.id}
+          open
+          onOpenChange={(next) => {
+            if (!next) setEditTarget(null);
+          }}
+          courses={[]}
+          editQuiz={editDetail.data}
+          questionsLocked={(editAttempts.data ?? []).length > 0}
+          saving={update.isPending}
+          showSchedule
+          onCreate={() => undefined}
+          onUpdate={(values) =>
+            update.mutateAsync({ id: editTarget.id, values }).then(() => setEditTarget(null))
+          }
+        />
+      ) : null}
 
       <AddQuizDialog
         open={dialog}
