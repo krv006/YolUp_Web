@@ -2,7 +2,8 @@
   "toast": {
     "created": "Тест создан",
     "deleted": "Тест удалён",
-    "importSuccess": "Найдено {{count}} вопрос(ов) — проверьте"
+    "importSuccess": "Найдено {{count}} вопрос(ов) — проверьте",
+    "updated": "Тест обновлён"
   },
   "teacherPage": {
     "loading": "Загрузка тестов",
@@ -82,8 +83,6 @@
     "downloadTemplateExcel": "Excel",
     "templateFileName": "шаблон_теста.{{ext}}",
     "optionPlaceholderLettered": "Текст варианта {{letter}}",
-    "importWarningAnswerNotDetected": "Вопрос {{number}}: правильный ответ не определён — отметьте вручную",
-    "importWarningNotEnoughOptions": "Вопрос {{number}}: недостаточно вариантов — проверьте",
     "cancel": "Отмена",
     "create": "Создать тест",
     "validation": {
@@ -114,7 +113,18 @@
     },
     "subjectLabel": "Для какого предмета",
     "topicLabel": "Тема",
-    "topicPlaceholder": "Например: Квадратные уравнения"
+    "topicPlaceholder": "Например: Квадратные уравнения",
+    "googleImportButton": "По ссылке Google",
+    "googleImportSubmit": "Импортировать",
+    "googleLinkPlaceholder": "Вставьте ссылку https://docs.google.com/…",
+    "googleLinkInvalid": "Введите ссылку на Google Docs или Google Forms",
+    "googleShareHint": "Документ или форма должны быть открыты «Всем, у кого есть ссылка».",
+    "importWarningAllAnswersMissing": "Google Forms не передаёт правильные ответы — отметьте их вручную в каждом вопросе.",
+    "importWarning": {
+      "answerNotDetected": "Вопрос {{number}}: правильный ответ не определён — отметьте вручную",
+      "notEnoughOptions": "Вопрос {{number}}: недостаточно вариантов — проверьте",
+      "unsupportedType": "Вопрос {{number}} не импортирован: берутся только вопросы с одним и несколькими вариантами"
+    }
   },
   "preview": {
     "regionAria": "Как это увидит ученик",
@@ -201,5 +211,16 @@
     "matchPlaceholder": "Выберите…",
     "blankAria": "Пропуск {{number}}",
     "fillBlankHint": "Заполните пропуски"
+  },
+  "editDialog": {
+    "title": "Редактировать тест",
+    "description": "Можно изменить тему, название и вопросы.",
+    "questionsPageTitle": "Редактирование вопросов",
+    "continueButton": "К вопросам",
+    "save": "Сохранить",
+    "lockedNotice": "В этом тесте уже есть попытки — вопросы изменить нельзя. Сохранятся только тема, название и срок.",
+    "editAria": "Редактировать тест",
+    "loading": "Тест загружается…",
+    "lockedPageTitle": "Вопросы — изменить нельзя"
   }
 }

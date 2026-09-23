@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
-import type { QuizFormValues } from "@/shared/types";
+import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import { quizApi } from "../api/quiz.api";
 
@@ -51,10 +51,34 @@ export function useCreateQuiz() {
   });
 }
 
+export function useUpdateQuiz() {
+  const { t } = useTranslation("quiz");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, values }: { id: string; values: QuizEditValues }) => quizApi.update(id, values),
+    onSuccess: (quiz) => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      client.setQueryData(quizKeys.detail(quiz.id), quiz);
+      toast.success(t("toast.updated"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useImportQuizDocx() {
   const { t } = useTranslation("quiz");
   return useMutation({
     mutationFn: (file: File) => quizApi.importDocx(file),
+    onSuccess: (preview) => toast.success(t("toast.importSuccess", { count: preview.questions.length })),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useImportGoogleLink() {
+  const { t } = useTranslation("quiz");
+  return useMutation({
+    mutationFn: ({ source, url }: { source: "google_doc" | "google_form"; url: string }) =>
+      quizApi.importGoogleLink(source, url),
     onSuccess: (preview) => toast.success(t("toast.importSuccess", { count: preview.questions.length })),
     onError: (error: Error) => toast.error(error.message),
   });

@@ -1,11 +1,22 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, ChevronDown, Download, FileUp, Plus, X } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileUp, Link2, Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
-import type { QuizFormValues, QuizImportWarning } from "@/shared/types";
-import { useDownloadQuizTemplate, useImportQuizDocx, useQuizDetailLoader } from "../model/quiz.queries";
+import type {
+  QuizDetail,
+  QuizEditValues,
+  QuizFormValues,
+  QuizImportPreview,
+  QuizImportWarning,
+} from "@/shared/types";
+import {
+  useDownloadQuizTemplate,
+  useImportGoogleLink,
+  useImportQuizDocx,
+  useQuizDetailLoader,
+} from "../model/quiz.queries";
 import {
   createDraft,
   draftToFormValues,
@@ -15,10 +26,17 @@ import {
   validateDraft,
   type QuestionDraft,
 } from "../lib/question-draft";
+import { detectGoogleSource } from "../lib/google-import";
 import { QuestionEditor } from "./question-editor";
 import { QuizPreview } from "./quiz-preview";
 
 const TEMPLATE_QUESTION_COUNT = 10;
+
+function warningKey(reason: string): "answerNotDetected" | "notEnoughOptions" | "unsupportedType" {
+  if (reason === "answer_not_detected") return "answerNotDetected";
+  if (reason === "unsupported_type") return "unsupportedType";
+  return "notEnoughOptions";
+}
 
 export interface AddQuizDialogProps {
   open: boolean;
@@ -28,6 +46,10 @@ export interface AddQuizDialogProps {
   subjects?: ReadonlyArray<{ value: string; label: string }>;
   showSchedule?: boolean;
   existingQuizzes?: ReadonlyArray<{ id: string; title: string }>;
+  editQuiz?: QuizDetail | null;
+  questionsLocked?: boolean;
+  saving?: boolean;
+  onUpdate?: (values: QuizEditValues) => void;
 }
 
 export function AddQuizDialog({
@@ -38,6 +60,10 @@ export function AddQuizDialog({
   subjects,
   showSchedule = false,
   existingQuizzes = [],
+  editQuiz = null,
+  questionsLocked = false,
+  saving = false,
+  onUpdate,
 }: AddQuizDialogProps) {
   const { t } = useTranslation("quiz");
   const nextKey = useRef(0);
@@ -51,11 +77,13 @@ export function AddQuizDialog({
   const subjectMode = Boolean(subjects);
   const courseId = subjectMode ? "" : selectedCourseId || courses[0]?.id || "";
   const [subject, setSubject] = useState("");
-  const [title, setTitle] = useState("");
-  const [topic, setTopic] = useState("");
-  const [dueAt, setDueAt] = useState("");
-  const [opensAt, setOpensAt] = useState("");
-  const [questions, setQuestions] = useState<QuestionDraft[]>([]);
+  const [title, setTitle] = useState(editQuiz?.title ?? "");
+  const [topic, setTopic] = useState(editQuiz?.topic ?? "");
+  const [dueAt, setDueAt] = useState(editQuiz?.dueAt ?? "");
+  const [opensAt, setOpensAt] = useState(editQuiz?.opensAt ?? "");
+  const [questions, setQuestions] = useState<QuestionDraft[]>(() =>
+    editQuiz ? editQuiz.questions.map((question) => questionToDraft(question, newKey)) : []
+  );
   const [error, setError] = useState<string | null>(null);
   const [suggestOpen, setSuggestOpen] = useState(false);
   const [copyingId, setCopyingId] = useState<string | null>(null);
@@ -65,7 +93,18 @@ export function AddQuizDialog({
   const [importWarnings, setImportWarnings] = useState<QuizImportWarning[]>([]);
   const loadQuizDetail = useQuizDetailLoader();
   const importFile = useImportQuizDocx();
+  const importGoogle = useImportGoogleLink();
+  const [googleOpen, setGoogleOpen] = useState(false);
+  const [googleUrl, setGoogleUrl] = useState("");
   const downloadTemplate = useDownloadQuizTemplate();
+
+  const missingAnswerWarnings = importWarnings.filter(
+    (warning) => warning.reason === "answer_not_detected"
+  );
+  const allAnswersMissing = questions.length > 0 && missingAnswerWarnings.length >= questions.length;
+  const listedWarnings = allAnswersMissing
+    ? importWarnings.filter((warning) => warning.reason !== "answer_not_detected")
+    : importWarnings;
 
   const suggestions = useMemo(() => {
     const query = title.trim().toLowerCase();
@@ -75,6 +114,8 @@ export function AddQuizDialog({
       (quiz) => quiz.title.toLowerCase().includes(query) && quiz.title.toLowerCase() !== query
     );
   }, [existingQuizzes, title]);
+
+  const editing = Boolean(editQuiz);
 
   useEffect(() => {
     if (!suggestOpen) return undefined;
@@ -105,6 +146,17 @@ export function AddQuizDialog({
     }
   }
 
+  function applyPreview(preview: QuizImportPreview) {
+    setTitle(title.trim() || preview.title.trim());
+    setCopiedFrom(null);
+    setQuestions(preview.questions.map((question) => formValuesToDraft(question, newKey)));
+    setImportWarnings(preview.warnings);
+    setGoogleOpen(false);
+    setGoogleUrl("");
+    setError(null);
+    setStep("questions");
+  }
+
   function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -114,16 +166,21 @@ export function AddQuizDialog({
       setError(missingTarget);
       return;
     }
-    importFile.mutate(file, {
-      onSuccess: (preview) => {
-        setTitle(title.trim() || preview.title.trim());
-        setCopiedFrom(null);
-        setQuestions(preview.questions.map((question) => formValuesToDraft(question, newKey)));
-        setImportWarnings(preview.warnings);
-        setError(null);
-        setStep("questions");
-      },
-    });
+    importFile.mutate(file, { onSuccess: applyPreview });
+  }
+
+  function handleImportGoogle() {
+    const missingTarget = targetError();
+    if (missingTarget) {
+      setError(missingTarget);
+      return;
+    }
+    const source = detectGoogleSource(googleUrl);
+    if (!source) {
+      setError(t("createDialog.googleLinkInvalid"));
+      return;
+    }
+    importGoogle.mutate({ source, url: googleUrl.trim() }, { onSuccess: applyPreview });
   }
 
   function newQuestion(type: QuestionDraft["type"] = "single") {
@@ -140,14 +197,16 @@ export function AddQuizDialog({
     setOpensAt("");
     setQuestions([]);
     setImportWarnings([]);
+    setGoogleOpen(false);
+    setGoogleUrl("");
     setCopiedFrom(null);
     setCopyingId(null);
     setError(null);
   }
 
   function targetError(): string | null {
-    if (subjectMode && !subject) return t("createDialog.validation.chooseSubject");
-    if (!subjectMode && !courseId) return t("createDialog.validation.chooseCourse");
+    if (!editing && subjectMode && !subject) return t("createDialog.validation.chooseSubject");
+    if (!editing && !subjectMode && !courseId) return t("createDialog.validation.chooseCourse");
     return topic.trim() ? null : t("createDialog.validation.enterTopic");
   }
 
@@ -179,6 +238,7 @@ export function AddQuizDialog({
   function validate(): string | null {
     const missingTarget = targetError();
     if (missingTarget) return missingTarget;
+    if (questionsLocked) return null;
     if (!questions.length) return t("createDialog.validation.addQuestion");
     for (const [index, question] of questions.entries()) {
       const draftError = validateDraft(question);
@@ -201,6 +261,16 @@ export function AddQuizDialog({
     const validationError = validate();
     if (validationError) {
       setError(validationError);
+      return;
+    }
+    if (editing) {
+      onUpdate?.({
+        topic: topic.trim(),
+        title: title.trim(),
+        dueAt: dueAt || null,
+        opensAt: opensAt || null,
+        ...(questionsLocked ? {} : { questions: questions.map(draftToFormValues) }),
+      });
       return;
     }
     onCreate({
@@ -226,14 +296,20 @@ export function AddQuizDialog({
         <div className="quiz-page-header">
           <div>
             <span className="quiz-page-eyebrow">{title.trim() || topic.trim() || t("createDialog.title")}</span>
-            <h2>{t("createDialog.questionsPageTitle")}</h2>
+            <h2>
+              {questionsLocked
+                ? t("editDialog.lockedPageTitle")
+                : editing
+                  ? t("editDialog.questionsPageTitle")
+                  : t("createDialog.questionsPageTitle")}
+            </h2>
           </div>
           <div className="quiz-page-header-actions">
             <Button type="button" variant="ghost" onClick={() => setStep("details")}>
               {t("createDialog.backButton")}
             </Button>
-            <Button type="submit" form="quiz-questions-form">
-              {t("createDialog.create")}
+            <Button type="submit" form="quiz-questions-form" loading={saving}>
+              {editing ? t("editDialog.save") : t("createDialog.create")}
             </Button>
             <button
               type="button"
@@ -253,35 +329,41 @@ export function AddQuizDialog({
 
         {importWarnings.length ? (
           <div className="form-alert form-alert--warning quiz-page-alert">
-            {importWarnings.map((warning) => (
-              <p key={warning.questionNumber}>
-                {t(
-                  warning.reason === "answer_not_detected"
-                    ? "createDialog.importWarningAnswerNotDetected"
-                    : "createDialog.importWarningNotEnoughOptions",
-                  { number: warning.questionNumber }
-                )}
+            {allAnswersMissing ? <p>{t("createDialog.importWarningAllAnswersMissing")}</p> : null}
+            {listedWarnings.map((warning) => (
+              <p key={`${warning.questionNumber}-${warning.reason}`}>
+                {t(`createDialog.importWarning.${warningKey(warning.reason)}`, {
+                  number: warning.questionNumber,
+                })}
               </p>
             ))}
           </div>
         ) : null}
 
-        <div className="quiz-page-split">
+        {questionsLocked ? (
+          <div className="form-alert form-alert--warning quiz-page-alert">{t("editDialog.lockedNotice")}</div>
+        ) : null}
+
+        <div className={`quiz-page-split ${questionsLocked ? "is-locked" : ""}`}>
           <form id="quiz-questions-form" className="quiz-page-body" onSubmit={submit}>
-          {questions.map((question, index) => (
-            <QuestionEditor
-              key={question.key}
-              draft={question}
-              index={index}
-              canRemove={questions.length > 1}
-              newKey={newKey}
-              onChange={(update) => updateQuestion(question.key, update)}
-              onRemove={() => removeQuestion(question.key)}
-            />
-          ))}
-          <button type="button" className="quiz-page-add-question" onClick={addQuestion}>
-            <Plus size={16} /> {t("createDialog.addQuestion")}
-          </button>
+          {questionsLocked
+            ? null
+            : questions.map((question, index) => (
+                <QuestionEditor
+                  key={question.key}
+                  draft={question}
+                  index={index}
+                  canRemove={questions.length > 1}
+                  newKey={newKey}
+                  onChange={(update) => updateQuestion(question.key, update)}
+                  onRemove={() => removeQuestion(question.key)}
+                />
+              ))}
+          {questionsLocked ? null : (
+            <button type="button" className="quiz-page-add-question" onClick={addQuestion}>
+              <Plus size={16} /> {t("createDialog.addQuestion")}
+            </button>
+          )}
           </form>
 
           <QuizPreview title={title} questions={questions} />
@@ -294,15 +376,15 @@ export function AddQuizDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         className="group-action-dialog"
-        title={t("createDialog.title")}
-        description={t("createDialog.description")}
+        title={editing ? t("editDialog.title") : t("createDialog.title")}
+        description={editing ? t("editDialog.description") : t("createDialog.description")}
       >
         <motion.div
           className="group-action-form"
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          {subjects ? (
+          {editing ? null : subjects ? (
             <SelectPicker
               label={t("createDialog.subjectLabel")}
               icon={BookOpen}
@@ -413,6 +495,8 @@ export function AddQuizDialog({
             </div>
           ) : null}
 
+          {editing ? null : (
+            <>
           <div className="quiz-import-row">
             <span className="quiz-template-gen-or">{t("createDialog.importOr")}</span>
             <input
@@ -431,7 +515,47 @@ export function AddQuizDialog({
               <FileUp size={14} />{" "}
               {importFile.isPending ? t("createDialog.importButtonLoading") : t("createDialog.importButton")}
             </button>
+            <button
+              type="button"
+              className={`quiz-generate-button quiz-generate-button--ghost ${googleOpen ? "is-active" : ""}`}
+              aria-expanded={googleOpen}
+              onClick={() => {
+                setGoogleOpen((current) => !current);
+                setError(null);
+              }}
+            >
+              <Link2 size={14} /> {t("createDialog.googleImportButton")}
+            </button>
           </div>
+
+          {googleOpen ? (
+            <div className="quiz-google-import">
+              <input
+                autoFocus
+                value={googleUrl}
+                onChange={(event) => {
+                  setGoogleUrl(event.target.value);
+                  setError(null);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    handleImportGoogle();
+                  }
+                }}
+                placeholder={t("createDialog.googleLinkPlaceholder")}
+              />
+              <button
+                type="button"
+                className="quiz-generate-button"
+                disabled={importGoogle.isPending || !googleUrl.trim()}
+                onClick={handleImportGoogle}
+              >
+                {importGoogle.isPending ? t("createDialog.importButtonLoading") : t("createDialog.googleImportSubmit")}
+              </button>
+              <small>{t("createDialog.googleShareHint")}</small>
+            </div>
+          ) : null}
 
           <div className="quiz-template-download">
             <span className="quiz-template-download-label">{t("createDialog.downloadTemplateLabel")}</span>
@@ -453,6 +577,9 @@ export function AddQuizDialog({
             </button>
           </div>
 
+            </>
+          )}
+
           {error ? <div className="form-alert">{error}</div> : null}
 
           <div className="dialog-actions">
@@ -460,7 +587,7 @@ export function AddQuizDialog({
               {t("createDialog.cancel")}
             </Button>
             <Button type="button" onClick={goToQuestions}>
-              {t("createDialog.continueButton")}
+              {editing ? t("editDialog.continueButton") : t("createDialog.continueButton")}
             </Button>
           </div>
         </motion.div>

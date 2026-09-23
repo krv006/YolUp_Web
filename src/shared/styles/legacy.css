@@ -6005,6 +6005,11 @@ a.workspace-card:hover {
 .quiz-subject-filter { width: min(260px, 52vw); }
 .quiz-topic-field { display: grid; gap: 6px; font-size: var(--fs-sm); font-weight: 700; color: var(--foreground); }
 .quiz-import-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.quiz-google-import { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; border: 1px solid var(--border-accent); border-radius: var(--r-md); background: var(--primary-tint); }
+.quiz-google-import input { flex: 1; min-width: 200px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: 0; }
+.quiz-google-import input:focus { border-color: var(--primary); }
+.quiz-google-import small { flex: 1 0 100%; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.quiz-generate-button--ghost.is-active { border-color: var(--primary); background: var(--primary-tint); }
 .quiz-template-download { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .quiz-template-download-label { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 700; }
 
@@ -6041,6 +6046,9 @@ a.workspace-card:hover {
   gap: clamp(20px, 3vw, 44px);
   align-items: start;
 }
+.quiz-page-split.is-locked { grid-template-columns: minmax(0, 1fr); }
+.quiz-page-split.is-locked .quiz-page-body { display: none; }
+.quiz-page-split.is-locked .quiz-preview { position: static; max-height: none; margin-top: 28px; }
 .quiz-page-body { min-width: 0; padding: 28px 0 100px; display: grid; gap: 32px; }
 .quiz-preview {
   position: sticky;

@@ -26,9 +26,11 @@ export {
   quizKeys,
   useCreateQuiz,
   useDeleteQuiz,
+  useImportGoogleLink,
   useImportQuizDocx,
   useQuiz,
   useQuizAttempts,
+  useUpdateQuiz,
   useQuizzes,
   useSubmitQuizAttempt,
 } from "./model/quiz.queries";

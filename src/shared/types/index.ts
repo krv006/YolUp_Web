@@ -80,6 +80,7 @@ export type {
   VoiceRoom,
   VoiceRoomStatus,
   VoiceToken,
+  QuizEditValues,
 } from "./domain";
 export type { MessageCapabilities } from "./chat";
 export type { PaginatedDto, UserDto } from "./dto";

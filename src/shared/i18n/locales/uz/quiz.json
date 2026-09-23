@@ -2,7 +2,8 @@
   "toast": {
     "created": "Test yaratildi",
     "deleted": "Test o'chirildi",
-    "importSuccess": "{{count}} ta savol topildi — tekshirib chiqing"
+    "importSuccess": "{{count}} ta savol topildi — tekshirib chiqing",
+    "updated": "Test yangilandi"
   },
   "teacherPage": {
     "loading": "Testlar yuklanmoqda",
@@ -82,8 +83,6 @@
     "downloadTemplateExcel": "Excel",
     "templateFileName": "test_shabloni.{{ext}}",
     "optionPlaceholderLettered": "{{letter}}-variant matni",
-    "importWarningAnswerNotDetected": "{{number}}-savol: to'g'ri javob aniqlanmadi — qo'lda belgilang",
-    "importWarningNotEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
     "cancel": "Bekor qilish",
     "create": "Test yaratish",
     "validation": {
@@ -114,7 +113,18 @@
     },
     "subjectLabel": "Qaysi fan uchun",
     "topicLabel": "Mavzu",
-    "topicPlaceholder": "Masalan: Kvadrat tenglamalar"
+    "topicPlaceholder": "Masalan: Kvadrat tenglamalar",
+    "googleImportButton": "Google havolasidan",
+    "googleImportSubmit": "Import qilish",
+    "googleLinkPlaceholder": "https://docs.google.com/… havolasini qo'ying",
+    "googleLinkInvalid": "Google Docs yoki Google Forms havolasini kiriting",
+    "googleShareHint": "Hujjat yoki forma “Havolaga ega har kim ko‘ra oladi” qilib ulashilgan bo‘lishi kerak.",
+    "importWarningAllAnswersMissing": "Google Forms to'g'ri javoblarni bermaydi — har bir savolda to'g'ri javobni o'zingiz belgilang.",
+    "importWarning": {
+      "answerNotDetected": "{{number}}-savol: to'g'ri javob aniqlanmadi — qo'lda belgilang",
+      "notEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
+      "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
+    }
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",
@@ -201,5 +211,16 @@
     "matchPlaceholder": "Tanlang…",
     "blankAria": "{{number}}-bo'sh joy",
     "fillBlankHint": "Bo'sh joylarni to'ldiring"
+  },
+  "editDialog": {
+    "title": "Testni tahrirlash",
+    "description": "Mavzu, nom va savollarni o'zgartirishingiz mumkin.",
+    "questionsPageTitle": "Savollarni tahrirlang",
+    "continueButton": "Savollarga o'tish",
+    "save": "Saqlash",
+    "lockedNotice": "Bu testda urinishlar bor — savollar o'zgartirilmaydi. Faqat mavzu, nom va muddat saqlanadi.",
+    "editAria": "Testni tahrirlash",
+    "loading": "Test yuklanmoqda…",
+    "lockedPageTitle": "Savollar — o'zgartirib bo'lmaydi"
   }
 }
