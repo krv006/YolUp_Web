@@ -10,13 +10,15 @@ import {
   QuizAttemptsDialog,
   useQuiz,
   useQuizAttempts,
+  quizErrorMessage,
+  usePublishQuiz,
   useUpdateQuiz,
   useCreateQuiz,
   useDeleteQuiz,
   useQuizzes,
   quizDisplayTitle,
 } from "@/modules/quiz";
-import type { QuizSummary } from "@/shared/types";
+import type { QuizImportWarning, QuizSummary } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, PageBackLink, RouteState } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 
@@ -43,6 +45,9 @@ export function TeacherQuizzesPage() {
   const editDetail = useQuiz(editTarget?.id ?? null);
   const editAttempts = useQuizAttempts(editTarget?.id ?? null, Boolean(editTarget));
   const update = useUpdateQuiz();
+  const publish = usePublishQuiz();
+  const [importedWarnings, setImportedWarnings] = useState<QuizImportWarning[]>([]);
+  const [publishError, setPublishError] = useState<string | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const [params] = useSearchParams();
   const highlightId = params.get("quiz");
@@ -54,6 +59,12 @@ export function TeacherQuizzesPage() {
   );
   const subjectOptions = subjects.data ?? [];
   const canCreate = subjectOptions.length > 0;
+
+  function closeEditor() {
+    setEditTarget(null);
+    setImportedWarnings([]);
+    setPublishError(null);
+  }
 
   if (quizzes.isLoading) return <LoadingFallback label={t("teacherPage.loading")} />;
   if (quizzes.isError)
@@ -119,7 +130,12 @@ export function TeacherQuizzesPage() {
                 <FileQuestion size={20} />
               </span>
               <div>
-                <strong>{quizDisplayTitle(item)}</strong>
+                <strong>
+                  {quizDisplayTitle(item)}
+                  {item.status === "draft" ? (
+                    <span className="quiz-draft-badge">{t("teacherPage.draftBadge")}</span>
+                  ) : null}
+                </strong>
                 <p>{item.description}</p>
                 <small>
                   {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
@@ -174,22 +190,38 @@ export function TeacherQuizzesPage() {
           key={editTarget.id}
           open
           onOpenChange={(next) => {
-            if (!next) setEditTarget(null);
+            if (!next) closeEditor();
           }}
           courses={[]}
           editQuiz={editDetail.data}
+          initialWarnings={importedWarnings}
+          startOnQuestions={importedWarnings.length > 0}
           questionsLocked={(editAttempts.data ?? []).length > 0}
           saving={update.isPending}
+          publishing={publish.isPending}
+          publishError={publishError}
           showSchedule
           onCreate={() => undefined}
           onUpdate={(values) =>
-            update.mutateAsync({ id: editTarget.id, values }).then(() => setEditTarget(null))
+            update.mutateAsync({ id: editTarget.id, values }).then(() => closeEditor())
           }
+          onPublish={() => {
+            setPublishError(null);
+            publish
+              .mutateAsync(editTarget.id)
+              .then(() => closeEditor())
+              .catch((error: unknown) => setPublishError(quizErrorMessage(error)));
+          }}
         />
       ) : null}
 
       <AddQuizDialog
         open={dialog}
+        onImported={(result) => {
+          setImportedWarnings(result.warnings);
+          setPublishError(null);
+          setEditTarget({ ...result.quiz });
+        }}
         onOpenChange={setDialog}
         courses={[]}
         subjects={subjectOptions}

@@ -3,7 +3,8 @@
     "created": "Test yaratildi",
     "deleted": "Test o'chirildi",
     "importSuccess": "{{count}} ta savol topildi — tekshirib chiqing",
-    "updated": "Test yangilandi"
+    "updated": "Test yangilandi",
+    "published": "Test e'lon qilindi"
   },
   "teacherPage": {
     "loading": "Testlar yuklanmoqda",
@@ -30,7 +31,8 @@
     "subjectFilterLabel": "Fan bo'yicha",
     "allSubjects": "Barcha fanlar",
     "emptyForSubject": "Bu fanda test yo'q",
-    "clearFilter": "Filtrni tozalash"
+    "clearFilter": "Filtrni tozalash",
+    "draftBadge": "Qoralama"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -124,7 +126,8 @@
       "answerNotDetected": "{{number}}-savol: to'g'ri javob aniqlanmadi — qo'lda belgilang",
       "notEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
       "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
-    }
+    },
+    "saveDraft": "Qoralama saqlash"
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",
@@ -221,6 +224,9 @@
     "lockedNotice": "Bu testda urinishlar bor — savollar o'zgartirilmaydi. Faqat mavzu, nom va muddat saqlanadi.",
     "editAria": "Testni tahrirlash",
     "loading": "Test yuklanmoqda…",
-    "lockedPageTitle": "Savollar — o'zgartirib bo'lmaydi"
+    "lockedPageTitle": "Savollar — o'zgartirib bo'lmaydi",
+    "publish": "E'lon qilish",
+    "draftBadge": "Qoralama",
+    "draftNotice": "Bu test qoralama — o'quvchilarga ko'rinmaydi. To'g'ri javoblarni to'ldirib, “E'lon qilish”ni bosing."
   }
 }

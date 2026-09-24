@@ -8,6 +8,7 @@ import type {
   QuizEditValues,
   QuizFormValues,
   QuizImportPreview,
+  QuizImportWarning,
   QuizOption,
   QuizQuestion,
   QuizQuestionFormValues,
@@ -20,6 +21,8 @@ import type {
   QuizAttemptSummaryDto,
   QuizDto,
   QuizImportPreviewDto,
+  QuizImportRequest,
+  QuizImportWarningDto,
   QuizOptionDto,
   QuizQuestionDto,
   QuizSummaryDto,
@@ -80,6 +83,7 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     lessonId: dto.lesson == null ? null : String(dto.lesson),
     title: dto.title,
     topic: dto.topic || "",
+    status: dto.status === "draft" ? "draft" : "published",
     description: dto.description || "",
     dueAt: dto.due_at,
     opensAt: dto.opens_at,
@@ -139,6 +143,7 @@ export function mapQuizRequest(form: QuizFormValues): Record<string, unknown> {
     lesson: form.lessonId || null,
     title: form.title,
     topic: form.topic,
+    ...(form.status ? { status: form.status } : {}),
     description: form.description || "",
     due_at: form.dueAt || null,
     opens_at: form.opensAt || null,
@@ -187,6 +192,23 @@ export function mapQuestionRequest(question: QuizQuestionFormValues): Record<str
   }
 }
 
+export function mapImportWarningDtos(
+  dtos: QuizImportWarningDto[] | undefined
+): QuizImportWarning[] {
+  return (dtos ?? []).map((warning) => ({
+    questionNumber: warning.question_number,
+    reason: warning.reason,
+  }));
+}
+
+export function mapQuizImportRequest(request: QuizImportRequest): Record<string, string> {
+  const body: Record<string, string> = { topic: request.topic };
+  if (request.courseId) body.course = request.courseId;
+  if (request.subject) body.subject = request.subject;
+  if (request.title) body.title = request.title;
+  return body;
+}
+
 export function mapQuizImportPreviewDto(dto: QuizImportPreviewDto): QuizImportPreview {
   return {
     title: dto.title || "",
@@ -200,10 +222,7 @@ export function mapQuizImportPreviewDto(dto: QuizImportPreviewDto): QuizImportPr
         isCorrect: option.is_correct,
       })),
     })),
-    warnings: (dto.warnings ?? []).map((warning) => ({
-      questionNumber: warning.question_number,
-      reason: warning.reason,
-    })),
+    warnings: mapImportWarningDtos(dto.warnings),
   };
 }
 

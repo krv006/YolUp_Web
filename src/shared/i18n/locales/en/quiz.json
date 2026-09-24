@@ -3,7 +3,8 @@
     "created": "Quiz created",
     "deleted": "Quiz deleted",
     "importSuccess": "Found {{count}} question(s) — review them",
-    "updated": "Test updated"
+    "updated": "Test updated",
+    "published": "Test published"
   },
   "teacherPage": {
     "loading": "Loading quizzes",
@@ -30,7 +31,8 @@
     "subjectFilterLabel": "By subject",
     "allSubjects": "All subjects",
     "emptyForSubject": "No tests for this subject",
-    "clearFilter": "Clear filter"
+    "clearFilter": "Clear filter",
+    "draftBadge": "Draft"
   },
   "studentPage": {
     "loading": "Loading quizzes",
@@ -124,7 +126,8 @@
       "answerNotDetected": "Question {{number}}: the correct answer was not detected — mark it manually",
       "notEnoughOptions": "Question {{number}}: not enough options — check it",
       "unsupportedType": "Question {{number}} was not imported: only single and multiple choice questions are supported"
-    }
+    },
+    "saveDraft": "Save as draft"
   },
   "preview": {
     "regionAria": "How the student will see it",
@@ -221,6 +224,9 @@
     "lockedNotice": "This test already has attempts — the questions cannot be changed. Only the topic, name and due date are saved.",
     "editAria": "Edit test",
     "loading": "Loading the test…",
-    "lockedPageTitle": "Questions — cannot be changed"
+    "lockedPageTitle": "Questions — cannot be changed",
+    "publish": "Publish",
+    "draftBadge": "Draft",
+    "draftNotice": "This test is a draft — students cannot see it. Fill in the correct answers and press “Publish”."
   }
 }

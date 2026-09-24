@@ -43,6 +43,8 @@ import {
   QuizAttemptsDialog,
   quizDisplayTitle,
   useCreateQuiz,
+  quizErrorMessage,
+  usePublishQuiz,
   useQuiz,
   useQuizAttempts,
   useQuizzes,
@@ -57,6 +59,7 @@ import type {
   ChatMessage,
   Conversation,
   Lesson,
+  QuizImportWarning,
   QuizSummary,
   SendMessagePayload,
 } from "@/shared/types";
@@ -411,6 +414,9 @@ function AssignmentsPanel({
   const [quizDialog, setQuizDialog] = useState(false);
   const createQuiz = useCreateQuiz();
   const updateQuiz = useUpdateQuiz();
+  const publishQuiz = usePublishQuiz();
+  const [importedWarnings, setImportedWarnings] = useState<QuizImportWarning[]>([]);
+  const [publishError, setPublishError] = useState<string | null>(null);
   const [editQuizTarget, setEditQuizTarget] = useState<QuizSummary | null>(null);
   const editQuizDetail = useQuiz(editQuizTarget?.id ?? null);
   const editQuizAttempts = useQuizAttempts(editQuizTarget?.id ?? null, Boolean(editQuizTarget));
@@ -426,6 +432,12 @@ function AssignmentsPanel({
   );
   const allQuizzes = useQuizzes(null, quizDialog);
   const courseSubject = course.data?.subject ?? "";
+  function closeQuizEditor() {
+    setEditQuizTarget(null);
+    setImportedWarnings([]);
+    setPublishError(null);
+  }
+
   const quizTitleOptions = useMemo(() => {
     const subjectBank = (allQuizzes.data ?? []).filter(
       (quiz) => !quiz.courseId && Boolean(courseSubject) && quiz.subject === courseSubject
@@ -467,7 +479,12 @@ function AssignmentsPanel({
                 <FileQuestion size={20} />
               </span>
               <div>
-                <strong>{quizDisplayTitle(quiz)}</strong>
+                <strong>
+                  {quizDisplayTitle(quiz)}
+                  {quiz.status === "draft" ? (
+                    <span className="quiz-draft-badge">{quizT("teacherPage.draftBadge")}</span>
+                  ) : null}
+                </strong>
                 <p>{quiz.description}</p>
                 <small>
                   {quiz.dueAt
@@ -572,17 +589,28 @@ function AssignmentsPanel({
           key={editQuizTarget.id}
           open
           onOpenChange={(next) => {
-            if (!next) setEditQuizTarget(null);
+            if (!next) closeQuizEditor();
           }}
           courses={[]}
           editQuiz={editQuizDetail.data}
+          initialWarnings={importedWarnings}
+          startOnQuestions={importedWarnings.length > 0}
           questionsLocked={(editQuizAttempts.data ?? []).length > 0}
           saving={updateQuiz.isPending}
+          publishing={publishQuiz.isPending}
+          publishError={publishError}
           showSchedule
           onCreate={() => undefined}
           onUpdate={(values) =>
-            updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => setEditQuizTarget(null))
+            updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => closeQuizEditor())
           }
+          onPublish={() => {
+            setPublishError(null);
+            publishQuiz
+              .mutateAsync(editQuizTarget.id)
+              .then(() => closeQuizEditor())
+              .catch((error: unknown) => setPublishError(quizErrorMessage(error)));
+          }}
         />
       ) : null}
 
@@ -595,6 +623,12 @@ function AssignmentsPanel({
           courses={[{ id: courseId, title: course.data?.title ?? "" }]}
           showSchedule
           existingQuizzes={quizTitleOptions}
+          onImported={(result) => {
+            setImportedWarnings(result.warnings);
+            setPublishError(null);
+            setQuizDialog(false);
+            setEditQuizTarget({ ...result.quiz });
+          }}
           onCreate={(values) =>
             createQuiz.mutate(values, { onSuccess: () => setQuizDialog(false) })
           }
