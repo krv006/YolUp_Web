@@ -358,6 +358,8 @@ export type QuizAnswerValue =
   | { type: "ordering"; order: string[] }
   | { type: "fill_blank"; values: string[] };
 
+export type QuizStatus = "draft" | "published";
+
 export interface QuizSummary {
   id: string;
   courseId: string;
@@ -366,6 +368,7 @@ export interface QuizSummary {
   lessonId: string | null;
   title: string;
   topic: string;
+  status: QuizStatus;
   description: string;
   dueAt: string | null;
   opensAt: string | null;
@@ -432,6 +435,7 @@ export interface QuizFormValues {
   courseId: string;
   subject?: string;
   topic: string;
+  status?: QuizStatus;
   lessonId?: string | null;
   title: string;
   description?: string;

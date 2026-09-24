@@ -47,6 +47,7 @@ export interface QuizSummaryDto {
   lesson: string | number | null;
   title: string;
   topic?: string | null;
+  status?: "draft" | "published";
   description?: string;
   due_at: string | null;
   opens_at: string | null;
@@ -56,6 +57,7 @@ export interface QuizSummaryDto {
 
 export interface QuizDto extends QuizSummaryDto {
   questions: QuizQuestionDto[];
+  warnings?: QuizImportWarningDto[];
 }
 
 export interface QuizImportOptionDto {
@@ -77,6 +79,13 @@ export interface QuizImportWarningDto {
 }
 
 export type QuizImportSource = "docx" | "google_doc" | "google_form";
+
+export interface QuizImportRequest {
+  topic: string;
+  courseId?: string | null;
+  subject?: string;
+  title?: string;
+}
 
 export interface QuizImportPreviewDto {
   title: string;

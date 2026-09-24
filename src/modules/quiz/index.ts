@@ -1,4 +1,6 @@
 export { quizApi } from "./api/quiz.api";
+export { quizErrorMessage } from "./lib/quiz-errors";
+export type { ImportedQuiz } from "./api/quiz.api";
 export { quizEndpoints } from "./api/quiz.endpoints";
 export type {
   QuizAttemptAnswerDto,
@@ -31,6 +33,7 @@ export {
   useQuiz,
   useQuizAttempts,
   useUpdateQuiz,
+  usePublishQuiz,
   useQuizzes,
   useSubmitQuizAttempt,
 } from "./model/quiz.queries";

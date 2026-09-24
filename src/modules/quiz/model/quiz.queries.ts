@@ -5,6 +5,7 @@ import { downloadBlob } from "@/shared/lib";
 import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import { quizApi } from "../api/quiz.api";
+import type { QuizImportRequest } from "../api/quiz.dto";
 
 export const quizKeys = Object.freeze({
   all: ["quizzes"] as const,
@@ -43,8 +44,8 @@ export function useCreateQuiz() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (form: QuizFormValues) => quizApi.create(form),
-    onSuccess: (quiz) => {
-      client.invalidateQueries({ queryKey: quizKeys.list(quiz.courseId) });
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
       toast.success(t("toast.created"));
     },
     onError: (error: Error) => toast.error(error.message),
@@ -67,20 +68,49 @@ export function useUpdateQuiz() {
 
 export function useImportQuizDocx() {
   const { t } = useTranslation("quiz");
+  const client = useQueryClient();
   return useMutation({
-    mutationFn: (file: File) => quizApi.importDocx(file),
-    onSuccess: (preview) => toast.success(t("toast.importSuccess", { count: preview.questions.length })),
+    mutationFn: ({ file, request }: { file: File; request: QuizImportRequest }) =>
+      quizApi.importDocx(file, request),
+    onSuccess: (result) => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      toast.success(t("toast.importSuccess", { count: result.quiz.questions.length }));
+    },
     onError: (error: Error) => toast.error(error.message),
   });
 }
 
 export function useImportGoogleLink() {
   const { t } = useTranslation("quiz");
+  const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ source, url }: { source: "google_doc" | "google_form"; url: string }) =>
-      quizApi.importGoogleLink(source, url),
-    onSuccess: (preview) => toast.success(t("toast.importSuccess", { count: preview.questions.length })),
+    mutationFn: ({
+      source,
+      url,
+      request,
+    }: {
+      source: "google_doc" | "google_form";
+      url: string;
+      request: QuizImportRequest;
+    }) => quizApi.importGoogleLink(source, url, request),
+    onSuccess: (result) => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      toast.success(t("toast.importSuccess", { count: result.quiz.questions.length }));
+    },
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function usePublishQuiz() {
+  const { t } = useTranslation("quiz");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => quizApi.publish(id),
+    onSuccess: (quiz) => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      client.setQueryData(quizKeys.detail(quiz.id), quiz);
+      toast.success(t("toast.published"));
+    },
   });
 }
 

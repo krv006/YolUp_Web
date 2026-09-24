@@ -6003,6 +6003,7 @@ a.workspace-card:hover {
 .quiz-generate-button--ghost:hover { background: var(--secondary); }
 .quiz-heading-actions { align-items: center; gap: 10px; }
 .quiz-subject-filter { width: min(260px, 52vw); }
+.quiz-draft-badge { margin-left: 8px; padding: 2px 8px; border-radius: var(--r-full); color: var(--warning-strong); background: var(--warning-soft); font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
 .quiz-topic-field { display: grid; gap: 6px; font-size: var(--fs-sm); font-weight: 700; color: var(--foreground); }
 .quiz-import-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .quiz-google-import { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; border: 1px solid var(--border-accent); border-radius: var(--r-md); background: var(--primary-tint); }

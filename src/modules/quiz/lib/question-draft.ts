@@ -177,7 +177,25 @@ export function draftPoints(draft: QuestionDraft): number | null {
   return value;
 }
 
-export function validateDraft(draft: QuestionDraft): DraftError | null {
+const ANSWER_ERRORS: ReadonlySet<DraftError> = new Set<DraftError>([
+  "markCorrect",
+  "markAtLeastOneCorrect",
+  "chooseTrueFalse",
+  "numericAnswerRequired",
+  "textAnswerRequired",
+  "blankAnswerRequired",
+]);
+
+export function validateDraft(
+  draft: QuestionDraft,
+  { allowMissingAnswer = false }: { allowMissingAnswer?: boolean } = {}
+): DraftError | null {
+  const error = checkDraft(draft);
+  if (error && allowMissingAnswer && ANSWER_ERRORS.has(error)) return null;
+  return error;
+}
+
+function checkDraft(draft: QuestionDraft): DraftError | null {
   if (!draft.text.trim()) return "questionTextRequired";
   if (draftPoints(draft) === null) return "pointsInvalid";
   switch (draft.type) {
