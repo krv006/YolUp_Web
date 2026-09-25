@@ -32,7 +32,10 @@
     "allSubjects": "Все предметы",
     "emptyForSubject": "По этому предмету тестов нет",
     "clearFilter": "Сбросить фильтр",
-    "draftBadge": "Черновик"
+    "draftBadge": "Черновик",
+    "sectionCount": "{{count}} тестов",
+    "sectionDrafts": "{{count}} черновиков",
+    "sectionToggleAria": "Развернуть или свернуть: {{subject}}"
   },
   "studentPage": {
     "loading": "Загрузка тестов",

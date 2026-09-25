@@ -32,7 +32,10 @@
     "allSubjects": "Barcha fanlar",
     "emptyForSubject": "Bu fanda test yo'q",
     "clearFilter": "Filtrni tozalash",
-    "draftBadge": "Qoralama"
+    "draftBadge": "Qoralama",
+    "sectionCount": "{{count}} ta test",
+    "sectionDrafts": "{{count}} qoralama",
+    "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",

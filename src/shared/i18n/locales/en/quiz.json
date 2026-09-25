@@ -32,7 +32,10 @@
     "allSubjects": "All subjects",
     "emptyForSubject": "No tests for this subject",
     "clearFilter": "Clear filter",
-    "draftBadge": "Draft"
+    "draftBadge": "Draft",
+    "sectionCount": "{{count}} tests",
+    "sectionDrafts": "{{count}} drafts",
+    "sectionToggleAria": "Expand or collapse {{subject}}"
   },
   "studentPage": {
     "loading": "Loading quizzes",

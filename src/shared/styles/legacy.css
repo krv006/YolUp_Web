@@ -6004,6 +6004,19 @@ a.workspace-card:hover {
 .quiz-heading-actions { align-items: center; gap: 10px; }
 .quiz-subject-filter { width: min(260px, 52vw); }
 .quiz-draft-badge { margin-left: 8px; padding: 2px 8px; border-radius: var(--r-full); color: var(--warning-strong); background: var(--warning-soft); font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
+.quiz-subject-groups { display: grid; gap: 12px; }
+.quiz-subject-group { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.quiz-subject-group.is-open { border-color: var(--border-accent); }
+.quiz-subject-head { display: flex; align-items: center; gap: 14px; width: 100%; padding: 16px 18px; border: 0; background: transparent; color: var(--foreground); font: inherit; text-align: left; cursor: pointer; }
+.quiz-subject-head:hover { background: var(--primary-tint); }
+.quiz-subject-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--r-md); color: var(--primary); background: var(--primary-tint); flex: none; }
+.quiz-subject-title { display: grid; gap: 2px; flex: 1; min-width: 0; }
+.quiz-subject-title strong { font-size: var(--fs-lg); font-weight: 800; }
+.quiz-subject-title small { color: var(--muted-foreground); font-size: var(--fs-sm); }
+.quiz-subject-drafts { color: var(--warning-strong); font-weight: 700; }
+.quiz-subject-chevron { flex: none; color: var(--muted-foreground); transition: transform .2s ease; }
+.quiz-subject-group.is-open .quiz-subject-chevron { transform: rotate(180deg); }
+.quiz-subject-body { padding: 0 14px 14px; }
 .quiz-topic-field { display: grid; gap: 6px; font-size: var(--fs-sm); font-weight: 700; color: var(--foreground); }
 .quiz-import-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .quiz-google-import { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; border: 1px solid var(--border-accent); border-radius: var(--r-md); background: var(--primary-tint); }

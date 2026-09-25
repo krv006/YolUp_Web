@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FileQuestion, History, ListFilter, Pencil, Plus, Trash2 } from "lucide-react";
+import { BookOpen, ChevronDown, FileQuestion, History, ListFilter, Pencil, Plus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -40,6 +40,7 @@ export function TeacherQuizzesPage() {
   const remove = useDeleteQuiz();
   const [dialog, setDialog] = useState(false);
   const [subjectFilter, setSubjectFilter] = useState("");
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
   const [editTarget, setEditTarget] = useState<QuizSummary | null>(null);
   const editDetail = useQuiz(editTarget?.id ?? null);
@@ -87,6 +88,16 @@ export function TeacherQuizzesPage() {
       .map((item) => ({ value: item.value, label: item.label })),
   ];
 
+  const groupMap = new Map<string, { key: string; label: string; items: QuizSummary[] }>();
+  for (const item of list) {
+    const key = item.subject || "other";
+    const label = item.subjectLabel || item.subject || t("teacherPage.courseFallback");
+    const group = groupMap.get(key) ?? { key, label, items: [] };
+    group.items.push(item);
+    groupMap.set(key, group);
+  }
+  const groups = [...groupMap.values()].sort((a, b) => a.label.localeCompare(b.label, i18n.language));
+
   return (
     <div className="portal-page">
       <div className="portal-page-heading">
@@ -116,60 +127,97 @@ export function TeacherQuizzesPage() {
         </div>
       </div>
 
-      {list.length ? (
-        <div className="assignment-list">
-          {list.map((item) => (
-            <motion.article
-              key={item.id}
-              data-quiz-id={item.id}
-              className={`assignment-card ${item.id === highlightId ? "is-highlighted" : ""}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <span className="assignment-card-icon">
-                <FileQuestion size={20} />
-              </span>
-              <div>
-                <strong>
-                  {quizDisplayTitle(item)}
-                  {item.status === "draft" ? (
-                    <span className="quiz-draft-badge">{t("teacherPage.draftBadge")}</span>
-                  ) : null}
-                </strong>
-                <p>{item.description}</p>
-                <small>
-                  {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
-                  {item.dueAt
-                    ? t("teacherPage.dueLabel", {
-                        date: new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        }).format(new Date(item.dueAt)),
-                      })
-                    : t("teacherPage.noDue")}{" "}
-                  · {t("teacherPage.questionCount", { count: item.questionCount })}
-                </small>
-              </div>
-              <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(item)}>
-                <History size={15} /> {t("teacherPage.attemptsButton")}
-              </Button>
-              <button
-                className="icon-button"
-                aria-label={t("editDialog.editAria")}
-                title={t("editDialog.editAria")}
-                onClick={() => setEditTarget(item)}
-              >
-                <Pencil size={16} />
-              </button>
-              <button
-                className="icon-button destructive-icon"
-                onClick={() => setDeleteTarget(item)}
-                aria-label={t("teacherPage.deleteAria")}
-              >
-                <Trash2 size={16} />
-              </button>
-            </motion.article>
-          ))}
+      {groups.length ? (
+        <div className="quiz-subject-groups">
+          {groups.map((group, index) => {
+            const isOpen =
+              expanded[group.key] ?? (index === 0 || group.items.some((item) => item.id === highlightId));
+            const drafts = group.items.filter((item) => item.status === "draft").length;
+            return (
+              <section key={group.key} className={`quiz-subject-group ${isOpen ? "is-open" : ""}`}>
+                <button
+                  type="button"
+                  className="quiz-subject-head"
+                  aria-expanded={isOpen}
+                  aria-label={t("teacherPage.sectionToggleAria", { subject: group.label })}
+                  onClick={() => setExpanded((prev) => ({ ...prev, [group.key]: !isOpen }))}
+                >
+                  <span className="quiz-subject-icon">
+                    <BookOpen size={22} />
+                  </span>
+                  <span className="quiz-subject-title">
+                    <strong>{group.label}</strong>
+                    <small>
+                      {t("teacherPage.sectionCount", { count: group.items.length })}
+                      {drafts ? (
+                        <span className="quiz-subject-drafts">
+                          {" "}
+                          · {t("teacherPage.sectionDrafts", { count: drafts })}
+                        </span>
+                      ) : null}
+                    </small>
+                  </span>
+                  <ChevronDown size={22} className="quiz-subject-chevron" />
+                </button>
+                {isOpen ? (
+                  <div className="assignment-list quiz-subject-body">
+                    {group.items.map((item) => (
+                      <motion.article
+                        key={item.id}
+                        data-quiz-id={item.id}
+                        className={`assignment-card ${item.id === highlightId ? "is-highlighted" : ""}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                      >
+                        <span className="assignment-card-icon">
+                          <FileQuestion size={20} />
+                        </span>
+                        <div>
+                          <strong>
+                            {quizDisplayTitle(item)}
+                            {item.status === "draft" ? (
+                              <span className="quiz-draft-badge">{t("teacherPage.draftBadge")}</span>
+                            ) : null}
+                          </strong>
+                          <p>{item.description}</p>
+                          <small>
+                            {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
+                            {item.dueAt
+                              ? t("teacherPage.dueLabel", {
+                                  date: new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
+                                    dateStyle: "medium",
+                                    timeStyle: "short",
+                                  }).format(new Date(item.dueAt)),
+                                })
+                              : t("teacherPage.noDue")}{" "}
+                            · {t("teacherPage.questionCount", { count: item.questionCount })}
+                          </small>
+                        </div>
+                        <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(item)}>
+                          <History size={15} /> {t("teacherPage.attemptsButton")}
+                        </Button>
+                        <button
+                          className="icon-button"
+                          aria-label={t("editDialog.editAria")}
+                          title={t("editDialog.editAria")}
+                          onClick={() => setEditTarget(item)}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          className="icon-button destructive-icon"
+                          onClick={() => setDeleteTarget(item)}
+                          aria-label={t("teacherPage.deleteAria")}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </motion.article>
+                    ))}
+                  </div>
+                ) : null}
+              </section>
+            );
+          })}
         </div>
       ) : (
         <div className="premium-empty">
