@@ -73,7 +73,7 @@ export const homeworkApi = {
   async getReport(studentId?: string | null, options: RequestOptions = {}) {
     const dto = await apiClient.get<HomeworkReportDto>(homeworkEndpoints.report, {
       ...options,
-      query: studentId ? { student: studentId } : undefined,
+      query: studentId ? { student_id: studentId } : undefined,
     });
     return mapHomeworkReportDto(dto);
   },
