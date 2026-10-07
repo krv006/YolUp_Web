@@ -1,6 +1,8 @@
 export { quizApi } from "./api/quiz.api";
 export { quizErrorMessage } from "./lib/quiz-errors";
 export { emptyAnswer } from "./lib/answer-value";
+export { groupQuestions } from "./lib/group-questions";
+export { QuizGroupPanel } from "./ui/quiz-group-panel";
 export { QuestionAnswerInput, QuestionPrompt } from "./ui/question-answer-input";
 export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
 export type { ImportedQuiz } from "./api/quiz.api";
@@ -24,6 +26,7 @@ export {
   quizDisplayTitle,
   mapQuizOptionDto,
   mapAttemptAnswerRequest,
+  mapQuizGroupDto,
   mapQuizQuestionDto,
   mapQuizRequest,
   mapQuizSummaryDto,
@@ -36,6 +39,8 @@ export {
   useImportQuizDocx,
   useQuiz,
   useQuizAttempts,
+  useRemoveGroupAudio,
+  useUploadGroupAudio,
   useUpdateQuiz,
   usePublishQuiz,
   useQuizzes,

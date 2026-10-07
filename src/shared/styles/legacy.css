@@ -6065,6 +6065,34 @@ a.workspace-card:hover {
 .exam-result-row-total strong small { font-size: var(--fs-sm); color: var(--muted-foreground); }
 .exam-result-row-total small { color: var(--muted-foreground); font-size: var(--fs-2xs); }
 .exam-result-row-manual { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; flex: 1 0 100%; }
+.exam-result-row-review { flex: 1 0 100%; margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--border); }
+.exam-writing-review { display: grid; gap: 12px; }
+.exam-writing-head { color: var(--muted-foreground); font-size: var(--fs-2xs); font-weight: 900; letter-spacing: .1em; }
+.exam-writing-answers { display: grid; gap: 8px; }
+.exam-writing-answers article { padding: 10px; border: 1px solid var(--border); border-radius: var(--r-md); display: grid; gap: 4px; background: var(--surface-tint); }
+.exam-writing-answers small { color: var(--muted-foreground); font-size: var(--fs-xs); }
+.exam-writing-answers p { margin: 0; white-space: pre-wrap; font-size: var(--fs-sm); line-height: 1.6; }
+.exam-writing-empty, .exam-writing-failed { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted-foreground); font-size: var(--fs-sm); }
+.exam-writing-failed p { margin: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--destructive); }
+.exam-writing-status { margin: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--muted-foreground); font-size: var(--fs-sm); }
+.exam-spin { animation: spin 1s linear infinite; }
+.exam-writing-result { display: grid; gap: 12px; padding: 12px; border: 1px solid var(--border-accent); border-radius: var(--r-md); background: var(--primary-tint); }
+.exam-writing-band { display: flex; align-items: baseline; gap: 8px; }
+.exam-writing-band strong { font-size: var(--fs-4xl); color: var(--primary-text); }
+.exam-writing-band span { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 800; text-transform: uppercase; }
+.exam-writing-task { display: grid; gap: 6px; padding: 10px; border-radius: var(--r-md); background: var(--surface); }
+.exam-writing-task-head { display: flex; align-items: baseline; gap: 8px; }
+.exam-writing-task-head span { font-size: var(--fs-xl); font-weight: 800; color: var(--primary-text); }
+.exam-writing-task-head small { color: var(--muted-foreground); font-size: var(--fs-xs); }
+.exam-writing-criteria { display: flex; gap: 12px; flex-wrap: wrap; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.exam-writing-strengths { margin: 0; color: var(--success-strong); font-size: var(--fs-sm); }
+.exam-writing-weaknesses { margin: 0; color: var(--warning-strong); font-size: var(--fs-sm); }
+.exam-writing-corrections { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: var(--fs-sm); }
+.exam-writing-corrections small { display: block; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.exam-writing-feedback { margin: 0; font-size: var(--fs-sm); line-height: 1.6; }
+.exam-writing-recommendations { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: var(--fs-sm); }
+.exam-writing-actions { display: flex; align-items: center; gap: 8px; }
+.exam-writing-actions input { width: 90px; min-height: 36px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; text-align: center; outline: 0; }
 .exam-result-card { width: min(520px, 100%); padding: 18px; border: 1px solid var(--border); border-radius: var(--r-lg); display: grid; gap: 14px; background: var(--surface); text-align: left; }
 .exam-result-total { display: grid; justify-items: center; gap: 2px; padding: 14px; border-radius: var(--r-lg); background: var(--primary-tint); }
 .exam-result-total strong { color: var(--primary-text); font-size: var(--fs-6xl); line-height: 1; }
@@ -6085,6 +6113,24 @@ a.workspace-card:hover {
 .exam-state-badge.is-running { color: var(--success-strong); background: var(--success-soft); }
 .exam-state-badge.is-finished { color: var(--muted-foreground); background: var(--muted); }
 .exam-countdown { flex: none; color: var(--primary-text); font-size: var(--fs-xs); font-weight: 800; }
+.quiz-groups { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface-tint); }
+.quiz-groups-head { display: grid; gap: 2px; }
+.quiz-groups-head span { font-size: var(--fs-sm); font-weight: 800; }
+.quiz-groups-head small { color: var(--muted-foreground); font-size: var(--fs-xs); }
+.quiz-group-card { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
+.quiz-group-card-head { display: flex; align-items: center; gap: 8px; }
+.quiz-group-index { width: 24px; height: 24px; flex: none; border-radius: var(--r-full); display: grid; place-items: center; color: var(--primary-text); background: var(--primary-tint); font-size: var(--fs-xs); font-weight: 800; }
+.quiz-group-card-head input { flex: 1; min-width: 0; min-height: 34px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); font-weight: 700; outline: 0; }
+.quiz-group-card textarea { width: 100%; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); line-height: 1.5; resize: vertical; outline: 0; }
+.quiz-group-card-head input:focus, .quiz-group-card textarea:focus { border-color: var(--primary); }
+.quiz-group-card .quiz-group-audio { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.quiz-group-card .quiz-group-audio audio { height: 36px; max-width: 320px; }
+.quiz-group-card .quiz-group-audio small { flex: 1 0 100%; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.quiz-group-panel { padding: 14px; border: 1px solid var(--border); border-radius: var(--r-lg); display: grid; gap: 10px; background: var(--surface-tint); }
+.quiz-group-panel h3 { margin: 0; font-size: var(--fs-lg); }
+.quiz-group-panel audio { width: 100%; max-width: 420px; height: 36px; }
+.quiz-group-passage { max-height: 320px; overflow-y: auto; white-space: pre-wrap; font-size: var(--fs-md); line-height: 1.6; }
+.quiz-attempt-block { display: grid; gap: 12px; }
 .quiz-draft-badge { margin-left: 8px; padding: 2px 8px; border-radius: var(--r-full); color: var(--warning-strong); background: var(--warning-soft); font-size: var(--fs-2xs); font-weight: 800; letter-spacing: .04em; text-transform: uppercase; vertical-align: middle; }
 .quiz-subject-groups { display: grid; gap: 12px; }
 .quiz-subject-group { border: 1px solid var(--border); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }

@@ -1,9 +1,16 @@
 import { useState } from "react";
 import { CheckCircle2, CircleDot, Clock3, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import type { QuizAnswerValue, QuizAttemptAnswer, QuizAttemptResult, QuizDetail } from "@/shared/types";
+import type {
+  QuizAnswerValue,
+  QuizAttemptAnswer,
+  QuizAttemptResult,
+  QuizDetail,
+} from "@/shared/types";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { blankTextForDisplay, emptyAnswer } from "../lib/answer-value";
+import { groupQuestions } from "../lib/group-questions";
+import { QuizGroupPanel } from "./quiz-group-panel";
 import { useQuiz, useSubmitQuizAttempt } from "../model/quiz.queries";
 import { MathText } from "./math-text";
 import { QuestionAnswerInput, QuestionPrompt } from "./question-answer-input";
@@ -14,7 +21,11 @@ export interface QuizAttemptDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDialogProps) {
+export function QuizAttemptDialog({
+  quizId,
+  open,
+  onOpenChange,
+}: QuizAttemptDialogProps) {
   const { t } = useTranslation("quiz");
   const quiz = useQuiz(open ? quizId : null);
   const submit = useSubmitQuizAttempt();
@@ -36,7 +47,7 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
     }));
     submit.mutate(
       { quizId: quizData.id, answers: payload },
-      { onSuccess: setResult }
+      { onSuccess: setResult },
     );
   }
 
@@ -46,7 +57,9 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
         <DialogContent
           className="quiz-attempt-dialog"
           title={quiz.data?.title ?? t("attemptDialog.defaultTitle")}
-          description={quiz.data?.description || t("attemptDialog.defaultDescription")}
+          description={
+            quiz.data?.description || t("attemptDialog.defaultDescription")
+          }
         >
           {!quiz.data ? (
             <div className="hw-result-state">
@@ -64,26 +77,57 @@ export function QuizAttemptDialog({ quizId, open, onOpenChange }: QuizAttemptDia
             />
           ) : (
             <div className="quiz-attempt-form">
-              {quiz.data.questions.map((question, index) => (
-                <div key={question.id} className="quiz-attempt-question">
-                  <div className="quiz-attempt-question-head">
-                    <span>{t("attemptDialog.questionNumber", { number: index + 1 })}</span>
-                    <b>{t("attemptDialog.pointsSuffix", { count: question.points })}</b>
-                  </div>
-                  <QuestionPrompt question={question} />
-                  <QuestionAnswerInput
-                    question={question}
-                    number={index + 1}
-                    value={answers[question.id]}
-                    onChange={(value) => setAnswers((current) => ({ ...current, [question.id]: value }))}
-                  />
-                </div>
-              ))}
+              {groupQuestions(quiz.data.questions, quiz.data.groups).map(
+                (block) => (
+                  <section
+                    key={block.group?.id ?? "plain"}
+                    className="quiz-attempt-block"
+                  >
+                    {block.group ? (
+                      <QuizGroupPanel group={block.group} />
+                    ) : null}
+                    {block.questions.map((question) => (
+                      <div key={question.id} className="quiz-attempt-question">
+                        <div className="quiz-attempt-question-head">
+                          <span>
+                            {t("attemptDialog.questionNumber", {
+                              number: question.order + 1,
+                            })}
+                          </span>
+                          <b>
+                            {t("attemptDialog.pointsSuffix", {
+                              count: question.points,
+                            })}
+                          </b>
+                        </div>
+                        <QuestionPrompt question={question} />
+                        <QuestionAnswerInput
+                          question={question}
+                          number={question.order + 1}
+                          value={answers[question.id]}
+                          onChange={(value) =>
+                            setAnswers((current) => ({
+                              ...current,
+                              [question.id]: value,
+                            }))
+                          }
+                        />
+                      </div>
+                    ))}
+                  </section>
+                ),
+              )}
               <div className="dialog-actions">
-                <Button variant="secondary" onClick={() => handleOpenChange(false)}>
+                <Button
+                  variant="secondary"
+                  onClick={() => handleOpenChange(false)}
+                >
                   {t("attemptDialog.close")}
                 </Button>
-                <Button loading={submit.isPending} onClick={() => submitAttempt(quiz.data)}>
+                <Button
+                  loading={submit.isPending}
+                  onClick={() => submitAttempt(quiz.data)}
+                >
                   {t("attemptDialog.submit")}
                 </Button>
               </div>
@@ -116,7 +160,11 @@ function QuizResultView({
       </div>
       <div className="quiz-attempt-question-list">
         {result.answers.map((answer, index) => (
-          <QuizResultRow key={answer.questionId} answer={answer} number={index + 1} />
+          <QuizResultRow
+            key={answer.questionId}
+            answer={answer}
+            number={index + 1}
+          />
         ))}
       </div>
       <div className="dialog-actions">
@@ -129,34 +177,58 @@ function QuizResultView({
   );
 }
 
-function QuizResultRow({ answer, number }: { answer: QuizAttemptAnswer; number: number }) {
+function QuizResultRow({
+  answer,
+  number,
+}: {
+  answer: QuizAttemptAnswer;
+  number: number;
+}) {
   const { t } = useTranslation("quiz");
   const earned = answer.earnedPoints ?? (answer.isCorrect ? answer.points : 0);
   const partial = !answer.isCorrect && earned !== null && earned > 0;
   const given = answer.givenDisplay ?? answer.selectedOptionText;
   const correct = answer.correctDisplay ?? answer.correctOption?.text ?? null;
-  const tone = answer.isCorrect ? "is-correct" : partial ? "is-partial" : "is-wrong";
+  const tone = answer.isCorrect
+    ? "is-correct"
+    : partial
+      ? "is-partial"
+      : "is-wrong";
 
   return (
     <div className={`quiz-result-row ${tone}`}>
       <div className="quiz-result-row-head">
-        {answer.isCorrect ? <CheckCircle2 size={16} /> : partial ? <CircleDot size={16} /> : <XCircle size={16} />}
+        {answer.isCorrect ? (
+          <CheckCircle2 size={16} />
+        ) : partial ? (
+          <CircleDot size={16} />
+        ) : (
+          <XCircle size={16} />
+        )}
         <p>
           {number}. <MathText text={blankTextForDisplay(answer.questionText)} />
         </p>
         {answer.points !== null ? (
           <b className="quiz-result-points">
-            {t("attemptDialog.earnedPoints", { earned: earned ?? 0, total: answer.points })}
+            {t("attemptDialog.earnedPoints", {
+              earned: earned ?? 0,
+              total: answer.points,
+            })}
           </b>
         ) : null}
       </div>
       <small>
         {t("attemptDialog.yourAnswerLabel")}{" "}
-        {given ? <MathText text={given} size={14} /> : t("attemptDialog.notAnswered")}
+        {given ? (
+          <MathText text={given} size={14} />
+        ) : (
+          t("attemptDialog.notAnswered")
+        )}
       </small>
       {!answer.isCorrect && correct ? (
         <small className="quiz-result-correct">
-          {t("attemptDialog.correctAnswerLabel")} <MathText text={correct} size={14} />
+          {t("attemptDialog.correctAnswerLabel")}{" "}
+          <MathText text={correct} size={14} />
         </small>
       ) : null}
     </div>

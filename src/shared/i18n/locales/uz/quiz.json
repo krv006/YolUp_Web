@@ -4,7 +4,8 @@
     "deleted": "Test o'chirildi",
     "importSuccess": "{{count}} ta savol topildi — tekshirib chiqing",
     "updated": "Test yangilandi",
-    "published": "Test e'lon qilindi"
+    "published": "Test e'lon qilindi",
+    "audioUploaded": "Audio yuklandi"
   },
   "teacherPage": {
     "loading": "Testlar yuklanmoqda",
@@ -231,5 +232,21 @@
     "publish": "E'lon qilish",
     "draftBadge": "Qoralama",
     "draftNotice": "Bu test qoralama — o'quvchilarga ko'rinmaydi. To'g'ri javoblarni to'ldirib, “E'lon qilish”ni bosing."
+  },
+  "groups": {
+    "title": "Savollar guruhi",
+    "hint": "Bir matn yoki audio ostida bir nechta savol bo'lsa, guruh qo'shing.",
+    "add": "Guruh qo'shish",
+    "titlePlaceholder": "{{number}}-matn sarlavhasi",
+    "passagePlaceholder": "Matn parchasi (Reading) — savollar shu matnga tegishli bo'ladi",
+    "removeAria": "Guruhni o'chirish",
+    "uploadAudio": "Audio yuklash",
+    "removeAudio": "Audioni o'chirish",
+    "audioHint": "mp3, m4a, aac, ogg, wav · {{size}} MB gacha",
+    "audioAfterSave": "Audio yuklash uchun avval testni saqlang.",
+    "audioFormat": "Faqat shu formatlar: {{list}}",
+    "audioTooBig": "Fayl {{size}} MB dan katta bo'lmasligi kerak",
+    "questionGroupLabel": "Guruh",
+    "noGroup": "Guruhsiz"
   }
 }

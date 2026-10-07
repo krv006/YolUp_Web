@@ -22,11 +22,13 @@ import {
   hasDraftContent,
   questionToDraft,
   validateDraft,
+  type GroupDraft,
   type QuestionDraft,
 } from "../lib/question-draft";
 import type { ImportedQuiz } from "../api/quiz.api";
 import { detectGoogleSource } from "../lib/google-import";
 import { QuestionEditor } from "./question-editor";
+import { QuestionGroupEditor } from "./question-group-editor";
 import { QuizPreview } from "./quiz-preview";
 
 const TEMPLATE_QUESTION_COUNT = 10;
@@ -52,6 +54,9 @@ export interface AddQuizDialogProps {
   saving?: boolean;
   publishing?: boolean;
   publishError?: string | null;
+  uploadingAudio?: boolean;
+  onUploadAudio?: (groupId: string, file: File) => void;
+  onRemoveAudio?: (groupId: string) => void;
   onUpdate?: (values: QuizEditValues) => void;
   onPublish?: () => void;
   onImported?: (result: ImportedQuiz) => void;
@@ -72,6 +77,9 @@ export function AddQuizDialog({
   saving = false,
   publishing = false,
   publishError = null,
+  uploadingAudio = false,
+  onUploadAudio,
+  onRemoveAudio,
   onUpdate,
   onPublish,
   onImported,
@@ -94,6 +102,14 @@ export function AddQuizDialog({
   const [opensAt, setOpensAt] = useState(editQuiz?.opensAt ?? "");
   const [questions, setQuestions] = useState<QuestionDraft[]>(() =>
     editQuiz ? editQuiz.questions.map((question) => questionToDraft(question, newKey)) : []
+  );
+  const [groups, setGroups] = useState<GroupDraft[]>(() =>
+    (editQuiz?.groups ?? []).map((group) => ({
+      key: group.id,
+      id: group.id,
+      title: group.title,
+      passage: group.passage,
+    }))
   );
   const [error, setError] = useState<string | null>(null);
   const [suggestOpen, setSuggestOpen] = useState(false);
@@ -279,6 +295,21 @@ export function AddQuizDialog({
     return null;
   }
 
+  function groupsPayload() {
+    return groups.map((group) => ({
+      ...(group.id ? { id: group.id } : {}),
+      title: group.title.trim(),
+      passage: group.passage.trim(),
+    }));
+  }
+
+  function questionsPayload() {
+    return questions.map((question) => {
+      const index = groups.findIndex((group) => group.key === question.groupKey);
+      return draftToFormValues(question, index >= 0 ? index : null);
+    });
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const asDraft = saveAsDraftRef.current;
@@ -294,7 +325,8 @@ export function AddQuizDialog({
         title: title.trim(),
         dueAt: dueAt || null,
         opensAt: opensAt || null,
-        ...(questionsLocked ? {} : { questions: questions.map(draftToFormValues) }),
+        groups: groupsPayload(),
+        ...(questionsLocked ? {} : { questions: questionsPayload() }),
       });
       return;
     }
@@ -308,7 +340,8 @@ export function AddQuizDialog({
       description: "",
       dueAt: dueAt || null,
       opensAt: opensAt || null,
-      questions: questions.map(draftToFormValues),
+      groups: groupsPayload(),
+      questions: questionsPayload(),
     });
     reset();
     onOpenChange(false);
@@ -401,12 +434,22 @@ export function AddQuizDialog({
 
         <div className={`quiz-page-split ${questionsLocked ? "is-locked" : ""}`}>
           <form id="quiz-questions-form" className="quiz-page-body" onSubmit={submit}>
+          <QuestionGroupEditor
+            groups={groups}
+            savedGroups={editQuiz?.groups ?? []}
+            uploading={Boolean(uploadingAudio)}
+            onChange={setGroups}
+            onUploadAudio={onUploadAudio}
+            onRemoveAudio={onRemoveAudio}
+          />
+
           {questionsLocked
             ? null
             : questions.map((question, index) => (
                 <QuestionEditor
                   key={question.key}
                   draft={question}
+                  groups={groups}
                   index={index}
                   canRemove={questions.length > 1}
                   newKey={newKey}

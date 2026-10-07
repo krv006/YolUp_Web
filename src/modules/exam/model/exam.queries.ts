@@ -11,6 +11,9 @@ export const examKeys = Object.freeze({
   list: (courseId: string | null) => ["exams", "list", courseId ?? "all"] as const,
   detail: (id: string) => ["exams", "detail", id] as const,
   current: (id: string) => ["exams", "current", id] as const,
+  results: (id: string) => ["exams", "detail", id, "results"] as const,
+  studentResult: (id: string, studentId: string) =>
+    ["exams", "detail", id, "result", studentId] as const,
 });
 
 export function useExamTemplates(enabled = true) {
@@ -51,9 +54,44 @@ export function useExamCurrent(id: string | null, refetchInterval: number | fals
 
 export function useExamResults(examId: string | null, enabled = true) {
   return useQuery({
-    queryKey: [...examKeys.detail(examId ?? ""), "results"],
+    queryKey: examKeys.results(examId ?? ""),
     queryFn: ({ signal }) => examApi.getResults(examId as string, { signal }),
     enabled: Boolean(examId) && enabled,
+  });
+}
+
+export function useExamStudentResult(examId: string | null, studentId: string | null) {
+  return useQuery({
+    queryKey: examKeys.studentResult(examId ?? "", studentId ?? ""),
+    queryFn: ({ signal }) => examApi.getStudentResult(examId as string, studentId as string, { signal }),
+    enabled: Boolean(examId && studentId),
+    refetchInterval: (query) =>
+      query.state.data?.ai?.status === "running" ? 10_000 : false,
+  });
+}
+
+export function useStartAiReview(examId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (studentId: string) => examApi.startAiReview(examId, studentId),
+    onSuccess: (_result, studentId) =>
+      client.invalidateQueries({ queryKey: examKeys.studentResult(examId, studentId) }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useApproveAiBand(examId: string) {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ studentId, band }: { studentId: string; band?: number }) =>
+      examApi.approveAiBand(examId, studentId, band),
+    onSuccess: (result) => {
+      client.setQueryData(examKeys.studentResult(examId, result.studentId), result);
+      client.invalidateQueries({ queryKey: examKeys.results(examId) });
+      toast.success(t("toast.aiApproved"));
+    },
+    onError: (error: Error) => toast.error(error.message),
   });
 }
 
@@ -129,7 +167,7 @@ export function useSaveManualScores(examId: string) {
     mutationFn: ({ studentId, scores }: { studentId: string; scores: Record<string, number> }) =>
       examApi.saveManualScores(examId, studentId, scores),
     onSuccess: () => {
-      client.invalidateQueries({ queryKey: examKeys.detail(examId) });
+      client.invalidateQueries({ queryKey: examKeys.results(examId) });
       toast.success(t("toast.scoresSaved"));
     },
     onError: (error: Error) => toast.error(error.message),

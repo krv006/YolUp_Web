@@ -96,6 +96,13 @@ export type {
   ExamSectionResult,
   ExamStudentResult,
   ExamTotalResult,
+  QuizGroup,
+  QuizGroupFormValues,
+  ExamAiStatus,
+  ExamAiTask,
+  ExamAiWriting,
+  ExamManualAnswer,
+  ExamStudentResultDetail,
 } from "./domain";
 export type { MessageCapabilities } from "./chat";
 export type { PaginatedDto, UserDto } from "./dto";

@@ -6,6 +6,7 @@ import type {
   ExamDetailDto,
   ExamFormValues,
   ExamResultsDto,
+  ExamStudentResultDetailDto,
   ExamStudentResultDto,
   ExamTemplateFormValues,
   ExamSummaryDto,
@@ -16,6 +17,7 @@ import {
   mapExamDetailDto,
   mapExamRequest,
   mapExamResultsDto,
+  mapExamStudentResultDetailDto,
   mapExamStudentResultDto,
   mapExamTemplateRequest,
   mapExamSummaryDto,
@@ -87,6 +89,22 @@ export const examApi = {
   },
   async getResults(id: string, options?: RequestOptions) {
     return mapExamResultsDto(await apiClient.get<ExamResultsDto>(examEndpoints.results(id), options));
+  },
+  async getStudentResult(id: string, studentId: string, options?: RequestOptions) {
+    return mapExamStudentResultDetailDto(
+      await apiClient.get<ExamStudentResultDetailDto>(examEndpoints.studentResult(id, studentId), options)
+    );
+  },
+  async startAiReview(id: string, studentId: string) {
+    return apiClient.post<{ status?: string }>(examEndpoints.aiReview(id, studentId), {});
+  },
+  async approveAiBand(id: string, studentId: string, band?: number) {
+    return mapExamStudentResultDetailDto(
+      await apiClient.post<ExamStudentResultDetailDto>(
+        examEndpoints.aiApprove(id, studentId),
+        band === undefined ? {} : { band }
+      )
+    );
   },
   async finish(id: string) {
     await apiClient.post(examEndpoints.finish(id), {});

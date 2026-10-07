@@ -45,6 +45,8 @@ import {
   useCreateQuiz,
   quizErrorMessage,
   usePublishQuiz,
+  useRemoveGroupAudio,
+  useUploadGroupAudio,
   useQuiz,
   useQuizAttempts,
   useQuizzes,
@@ -420,6 +422,8 @@ function AssignmentsPanel({
   const [editQuizTarget, setEditQuizTarget] = useState<QuizSummary | null>(null);
   const editQuizDetail = useQuiz(editQuizTarget?.id ?? null);
   const editQuizAttempts = useQuizAttempts(editQuizTarget?.id ?? null, Boolean(editQuizTarget));
+  const uploadAudio = useUploadGroupAudio(editQuizTarget?.id ?? "");
+  const removeAudio = useRemoveGroupAudio(editQuizTarget?.id ?? "");
   const { t: quizT } = useTranslation("quiz");
   const course = useCourse(courseId);
 
@@ -594,6 +598,9 @@ function AssignmentsPanel({
           courses={[]}
           editQuiz={editQuizDetail.data}
           initialWarnings={importedWarnings}
+          uploadingAudio={uploadAudio.isPending}
+          onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
+          onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
           startOnQuestions={importedWarnings.length > 0}
           questionsLocked={(editQuizAttempts.data ?? []).length > 0}
           saving={updateQuiz.isPending}
@@ -603,6 +610,7 @@ function AssignmentsPanel({
           onCreate={() => undefined}
           onUpdate={(values) =>
             updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => closeQuizEditor())
+              .catch((error: unknown) => setPublishError(quizErrorMessage(error)))
           }
           onPublish={() => {
             setPublishError(null);
