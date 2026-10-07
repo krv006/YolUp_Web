@@ -407,8 +407,10 @@ function AssignmentsPanel({
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Assignment | null>(null);
   const [detailId, setDetailId] = useState<string | null>(null);
-  const [assignmentParams] = useSearchParams();
+  const [assignmentParams, setAssignmentParams] = useSearchParams();
   const highlightId = assignmentParams.get("assignment");
+  const linkedSubmissionId = assignmentParams.get("submission");
+  const linkedAssignmentId = linkedSubmissionId ? highlightId : null;
   useAssignmentHighlight(highlightId, (assignments?.length ?? 0) > 0);
   const create = useCreateAssignment();
   const update = useUpdateAssignment();
@@ -690,10 +692,18 @@ function AssignmentsPanel({
         )}
       </Dialog>
       <AssignmentDetailDialog
-        assignmentId={detailId}
-        open={Boolean(detailId)}
+        key={linkedAssignmentId ?? detailId ?? "none"}
+        assignmentId={detailId ?? linkedAssignmentId}
+        openSubmissionId={linkedSubmissionId}
+        open={Boolean(detailId || linkedSubmissionId)}
         onOpenChange={(open: boolean) => {
-          if (!open) setDetailId(null);
+          if (open) return;
+          setDetailId(null);
+          if (linkedSubmissionId) {
+            const next = new URLSearchParams(assignmentParams);
+            next.delete("submission");
+            setAssignmentParams(next, { replace: true });
+          }
         }}
       />
     </div>

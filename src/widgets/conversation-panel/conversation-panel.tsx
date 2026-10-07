@@ -107,6 +107,33 @@ export function ConversationPanel({ role = "teacher", onOpenMenu }: Conversation
       }
       return;
     }
+    if (link.type === "submission") {
+      try {
+        const submission = await queryClient.fetchQuery({
+          queryKey: homeworkKeys.submission(link.id),
+          queryFn: ({ signal }) => homeworkApi.getSubmission(link.id, { signal }),
+        });
+        if (!submission) {
+          toast.error(t("panel.assignmentOpenFailed"));
+          return;
+        }
+        const assignment = await queryClient.fetchQuery({
+          queryKey: homeworkKeys.assignment(submission.assignmentId),
+          queryFn: ({ signal }) => homeworkApi.getAssignment(submission.assignmentId, { signal }),
+        });
+        const room = data.find((item) => item.courseId === assignment.courseId);
+        if (!room) {
+          toast.error(t("panel.assignmentGroupNotFound"));
+          return;
+        }
+        navigate(
+          `${basePath}/${room.id}?tab=assignments&assignment=${submission.assignmentId}&submission=${link.id}`
+        );
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : t("panel.assignmentOpenFailed"));
+      }
+      return;
+    }
     if (link.type === "quiz") {
       navigate(`${basePath}/quizzes?quiz=${link.id}`);
       return;

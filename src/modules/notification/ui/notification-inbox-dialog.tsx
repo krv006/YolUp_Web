@@ -15,6 +15,7 @@ const LINK_LABELS: Record<string, string> = {
   quiz: "Testga o‘tish",
   teacher: "Ko‘rib chiqish",
   exam: "Imtihonga o‘tish",
+  submission: "Topshiriqni ochish",
 };
 
 export interface NotificationInboxDialogProps {

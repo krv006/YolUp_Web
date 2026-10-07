@@ -21,6 +21,7 @@ import { useCourse } from "@/modules/course";
 import { MessageComposer, MessageList } from "@/modules/message";
 import {
   HomeworkResultDialog,
+  homeworkFieldError,
   useAssignments,
   useDownloadAssignmentFile,
   useSubmission,
@@ -343,13 +344,15 @@ function StudentAssignments({
   const [selected, setSelected] = useState<Assignment | null>(null);
   const [attemptOf, setAttemptOf] = useState<QuizSummary | null>(null);
   const [historyOf, setHistoryOf] = useState<QuizSummary | null>(null);
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const highlightId = params.get("assignment");
+  const linkedSubmissionId = params.get("submission");
   useAssignmentHighlight(highlightId, assignments.length > 0);
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [resultOf, setResultOf] = useState<Submission | null>(null);
   const submit = useSubmitHomework();
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   if (loading)
     return (
@@ -459,6 +462,7 @@ function StudentAssignments({
           if (!open) {
             setSelected(null);
             setFile(null);
+            setSubmitError(null);
           }
         }}
       >
@@ -484,6 +488,7 @@ function StudentAssignments({
                   </span>
                 ) : null}
               </div>
+              {submitError ? <div className="form-alert">{submitError}</div> : null}
               <Button
                 loading={submit.isPending}
                 disabled={!file || isAssignmentOverdue(selected)}
@@ -493,10 +498,11 @@ function StudentAssignments({
                     setSelected(null);
                     return;
                   }
+                  setSubmitError(null);
                   void submit
                     .mutateAsync({ assignmentId: selected.id, file, skillKey: selected.skillKey })
                     .then(() => setSelected(null))
-                    .catch(() => undefined);
+                    .catch((error: unknown) => setSubmitError(homeworkFieldError(error, "file")));
                 }}
               >
                 {t("groupWorkspace.assignments.send")}
@@ -507,11 +513,17 @@ function StudentAssignments({
       </Dialog>
 
       <HomeworkResultDialog
-        submissionId={resultOf?.id}
+        submissionId={resultOf?.id ?? linkedSubmissionId ?? undefined}
         initial={resultOf}
-        open={Boolean(resultOf)}
+        open={Boolean(resultOf || linkedSubmissionId)}
         onOpenChange={(open: boolean) => {
-          if (!open) setResultOf(null);
+          if (open) return;
+          setResultOf(null);
+          if (linkedSubmissionId) {
+            const next = new URLSearchParams(params);
+            next.delete("submission");
+            setParams(next, { replace: true });
+          }
         }}
         canDownloadFile
         title={t("groupWorkspace.assignments.resultDialogTitle")}

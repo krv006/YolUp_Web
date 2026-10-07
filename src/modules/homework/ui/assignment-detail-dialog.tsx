@@ -22,6 +22,8 @@ import { HomeworkResultDialog } from "./homework-result-dialog";
 import type { Submission } from "@/shared/types";
 
 export interface AssignmentDetailDialogProps {
+  /** Bildirishnomadan kelganda shu topshiriq darhol ochiladi. */
+  openSubmissionId?: string | null;
   assignmentId?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -92,11 +94,17 @@ function SubmissionRow({ submission, onOpenResult }: { submission: Submission; o
   );
 }
 
-export function AssignmentDetailDialog({ assignmentId, open, onOpenChange }: AssignmentDetailDialogProps) {
+export function AssignmentDetailDialog({
+  assignmentId,
+  openSubmissionId = null,
+  open,
+  onOpenChange,
+}: AssignmentDetailDialogProps) {
   const { t, i18n } = useTranslation("homework");
   const assignment = useAssignment(open ? assignmentId : null);
   const downloadAttachment = useDownloadAssignmentFile();
   const [resultOf, setResultOf] = useState<Submission | null>(null);
+  const [linkedSubmissionId, setLinkedSubmissionId] = useState<string | null>(openSubmissionId);
   const data = assignment.data;
   const submissions = data?.submissions ?? [];
 
@@ -201,11 +209,14 @@ export function AssignmentDetailDialog({ assignmentId, open, onOpenChange }: Ass
       </Dialog>
 
       <HomeworkResultDialog
-        submissionId={resultOf?.id}
+        submissionId={resultOf?.id ?? linkedSubmissionId ?? undefined}
         initial={resultOf}
-        open={Boolean(resultOf)}
+        open={Boolean(resultOf || linkedSubmissionId)}
         onOpenChange={(value) => {
-          if (!value) setResultOf(null);
+          if (!value) {
+            setResultOf(null);
+            setLinkedSubmissionId(null);
+          }
         }}
         canRecheck
         canDownloadFile
