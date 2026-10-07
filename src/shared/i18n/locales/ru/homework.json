@@ -70,7 +70,8 @@
     "analysis": "Разбор",
     "mistakes": "Ошибки",
     "suggestions": "Рекомендации",
-    "defaultFileName": "Работа"
+    "defaultFileName": "Работа",
+    "scoreRange": "Общий балл должен быть от 0 до 100"
   },
   "report": {
     "noGrade": "Без оценки",

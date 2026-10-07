@@ -70,7 +70,8 @@
     "analysis": "Tahlil",
     "mistakes": "Xatolar",
     "suggestions": "Tavsiyalar",
-    "defaultFileName": "Topshiriq"
+    "defaultFileName": "Topshiriq",
+    "scoreRange": "Umumiy ball 0 dan 100 gacha bo'lishi kerak"
   },
   "report": {
     "noGrade": "Baho yo'q",

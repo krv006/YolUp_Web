@@ -177,6 +177,7 @@ export function HomeworkResultDialog({
   const review = useReviewSubmission();
   const submission = query.data ?? initial;
 
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [draft, setDraft] = useState<{
     score: string;
     grade: string;
@@ -223,12 +224,23 @@ export function HomeworkResultDialog({
   function saveReview() {
     if (!submission || !draft) return;
     const score = draft.score.trim() === "" ? null : Number(draft.score);
+    if (score !== null && (!Number.isFinite(score) || score < 0 || score > 100)) {
+      setReviewError(t("resultDialog.scoreRange"));
+      return;
+    }
+    setReviewError(null);
     review.mutate(
       {
         id: submission.id,
         input: { overallScore: score, grade: draft.grade, result: buildResult(draft, score) },
       },
-      { onSuccess: () => setDraft(null) }
+      {
+        onSuccess: () => {
+          setDraft(null);
+          setReviewError(null);
+        },
+        onError: (error: Error) => setReviewError(error.message),
+      }
     );
   }
 
@@ -332,6 +344,8 @@ export function HomeworkResultDialog({
                   ) : null}
                 </div>
               </header>
+
+              {reviewError ? <div className="form-alert">{reviewError}</div> : null}
 
               {submission.status === "checking" ? (
                 <div className="hw-result-state">
