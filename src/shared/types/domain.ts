@@ -338,6 +338,7 @@ export interface QuizAnswerKey {
 export interface QuizQuestion {
   id: string;
   type: QuizQuestionType;
+  groupId: string | null;
   text: string;
   points: number;
   order: number;
@@ -357,6 +358,129 @@ export type QuizAnswerValue =
   | { type: "matching"; pairs: Record<string, string> }
   | { type: "ordering"; order: string[] }
   | { type: "fill_blank"; values: string[] };
+
+export type ExamItemKind = "section" | "break" | "offline";
+export type ExamState = "upcoming" | "running" | "finished" | "submitted";
+
+export interface ExamTemplateItem {
+  kind: ExamItemKind;
+  key: string;
+  title: string;
+  minutes: number | null;
+  questions: number | null;
+  manual: boolean;
+  weight: number;
+}
+
+export interface ExamTemplate {
+  id: string;
+  kind: "system" | "custom";
+  name: string;
+  description: string;
+  scoringType: string;
+  scale: number | null;
+  passPercent: number | null;
+  items: ExamTemplateItem[];
+}
+
+export interface ExamSection {
+  order: number;
+  kind: ExamItemKind;
+  key: string;
+  group: string;
+  title: string;
+  minutes: number | null;
+  manual: boolean;
+  startsAt: string | null;
+  endsAt: string | null;
+  quizId: string | null;
+}
+
+export interface ExamSummary {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  title: string;
+  templateKey: string;
+  engine: string;
+  startsAt: string;
+  endsAt: string;
+  totalMinutes: number;
+  state: Exclude<ExamState, "submitted">;
+  serverNow: string;
+}
+
+export interface ExamDetail extends ExamSummary {
+  sections: ExamSection[];
+}
+
+export interface ExamQuestionGroup {
+  id: string;
+  order: number;
+  title: string;
+  passage: string;
+  audioUrl: string | null;
+}
+
+export interface ExamCurrentItem {
+  kind: ExamItemKind;
+  key: string;
+  title: string;
+  minutes: number | null;
+  startsAt: string | null;
+  endsAt: string | null;
+  groups: ExamQuestionGroup[];
+  questions: QuizQuestion[];
+  savedAnswers: Record<string, QuizAnswerValue>;
+}
+
+export interface ExamCurrent {
+  serverNow: string;
+  state: ExamState;
+  startsAt: string;
+  endsAt: string;
+  item: ExamCurrentItem | null;
+  next: { kind: ExamItemKind; title: string; startsAt: string | null; endsAt: string | null } | null;
+}
+
+export interface ExamSectionResult {
+  key: string;
+  title: string;
+  earned: number | null;
+  max: number | null;
+  percent: number | null;
+  score: number | null;
+  scaleMax: number | null;
+  manual: boolean;
+}
+
+export interface ExamTotalResult {
+  score: number | null;
+  max: number | null;
+  label: string;
+  range: [number, number] | null;
+  level: string | null;
+  passed: boolean | null;
+}
+
+export interface ExamStudentResult {
+  studentId: string;
+  studentName: string;
+  username: string;
+  participated: boolean;
+  finishedAt: string | null;
+  approximate: boolean;
+  sections: ExamSectionResult[];
+  total: ExamTotalResult | null;
+  pending: string[];
+}
+
+export interface ExamResults {
+  hidden: boolean;
+  engine: string;
+  state: string;
+  results: ExamStudentResult[];
+}
 
 export type QuizStatus = "draft" | "published";
 

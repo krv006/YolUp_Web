@@ -16,9 +16,9 @@
       "title": "AI",
       "description": "Sun'iy intellekt yordamchisi bilan ishlash."
     },
-    "mock": {
-      "title": "Mock Test",
-      "description": "Imtihon sharoitida sinov testini yechish."
+    "exams": {
+      "title": "Imtihon",
+      "description": "IELTS, SAT, Milliy sertifikat va o'z imtihoningiz."
     }
   },
   "analytics": {

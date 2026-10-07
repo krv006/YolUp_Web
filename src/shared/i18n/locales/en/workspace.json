@@ -16,9 +16,9 @@
       "title": "AI",
       "description": "Work with the AI assistant."
     },
-    "mock": {
-      "title": "Mock Test",
-      "description": "Take a practice test under exam conditions."
+    "exams": {
+      "title": "Exam",
+      "description": "IELTS, SAT, National certificate and your own exam."
     }
   },
   "analytics": {

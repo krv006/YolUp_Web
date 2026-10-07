@@ -1,0 +1,60 @@
+{
+  "toast": {
+    "created": "Imtihon yaratildi",
+    "finished": "Imtihon yakunlandi"
+  },
+  "state": {
+    "upcoming": "Boshlanmagan",
+    "running": "Davom etmoqda",
+    "finished": "Tugagan",
+    "submitted": "Topshirilgan"
+  },
+  "list": {
+    "eyebrow": "IMTIHONLAR",
+    "title": "Imtihonlar",
+    "subtitle": "Belgilangan vaqtda boshlanadi va hamma uchun bir vaqtda tugaydi.",
+    "loading": "Imtihonlar yuklanmoqda",
+    "loadError": "Imtihonlarni yuklab bo'lmadi",
+    "retry": "Qayta urinish",
+    "empty": "Hali imtihon yo'q.",
+    "minutes": "{{count}} daqiqa",
+    "startsIn": "Boshlanishiga {{time}}",
+    "enter": "Kirish",
+    "openResult": "Natija"
+  },
+  "runner": {
+    "loading": "Imtihon yuklanmoqda",
+    "loadError": "Imtihonni yuklab bo'lmadi",
+    "notStarted": "Imtihon hali boshlanmagan.",
+    "finished": "Imtihon tugagan.",
+    "exit": "Ro'yxatga qaytish",
+    "timeLeft": "Qolgan vaqt",
+    "questionNumber": "{{number}}-savol",
+    "points": "{{count}} ball",
+    "answered": "{{answered}} / {{total}} savolga javob berildi",
+    "finish": "Yakunlash",
+    "finishTitle": "Imtihonni yakunlaysizmi?",
+    "finishDescription": "Yakunlagandan keyin qaytib kira olmaysiz va javoblar o'zgarmaydi.",
+    "finishConfirm": "Ha, yakunlash",
+    "cancel": "Bekor qilish",
+    "breakTitle": "Tanaffus",
+    "breakHint": "Dam oling — keyingi bo'lim avtomatik boshlanadi.",
+    "nextItem": "Keyingisi: {{title}}",
+    "audioStart": "Audioni eshitish",
+    "audioPlaying": "Audio ijro etilmoqda",
+    "audioPlayed": "Audio eshitildi",
+    "audioOnce": "Audio bir marta eshittiriladi, to'xtatib yoki qaytarib bo'lmaydi."
+  },
+  "result": {
+    "total": "Natija",
+    "range": "{{from}}–{{to}} oralig'ida",
+    "approximate": "taxminiy",
+    "level": "Daraja",
+    "waitingTeacher": "O'qituvchi bahosi kutilmoqda",
+    "pendingShort": "kutilmoqda",
+    "pendingList": "Qo'lda baholanadi: {{list}}",
+    "earned": "{{earned}} / {{max}}",
+    "loading": "Natija yuklanmoqda…",
+    "hidden": "Natija imtihon tugagach ko'rinadi."
+  }
+}

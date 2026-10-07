@@ -1,0 +1,90 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
+import type { QuizAttemptAnswerInput } from "@/modules/quiz";
+import { examApi } from "../api/exam.api";
+import type { ExamFormValues } from "../api/exam.dto";
+
+export const examKeys = Object.freeze({
+  all: ["exams"] as const,
+  templates: ["exams", "templates"] as const,
+  list: (courseId: string | null) => ["exams", "list", courseId ?? "all"] as const,
+  detail: (id: string) => ["exams", "detail", id] as const,
+  current: (id: string) => ["exams", "current", id] as const,
+});
+
+export function useExamTemplates(enabled = true) {
+  return useQuery({
+    queryKey: examKeys.templates,
+    queryFn: ({ signal }) => examApi.getTemplates({ signal }),
+    enabled,
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useExams(courseId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: examKeys.list(courseId),
+    queryFn: ({ signal }) => examApi.getAll(courseId, { signal }),
+    enabled,
+    refetchInterval: 60_000,
+  });
+}
+
+export function useExam(id: string | null) {
+  return useQuery({
+    queryKey: examKeys.detail(id ?? ""),
+    queryFn: ({ signal }) => examApi.getOne(id as string, { signal }),
+    enabled: Boolean(id),
+  });
+}
+
+export function useExamCurrent(id: string | null, refetchInterval: number | false = 15_000) {
+  return useQuery({
+    queryKey: examKeys.current(id ?? ""),
+    queryFn: ({ signal }) => examApi.getCurrent(id as string, { signal }),
+    enabled: Boolean(id),
+    refetchInterval,
+    retry: false,
+  });
+}
+
+export function useExamResults(examId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: [...examKeys.detail(examId ?? ""), "results"],
+    queryFn: ({ signal }) => examApi.getResults(examId as string, { signal }),
+    enabled: Boolean(examId) && enabled,
+  });
+}
+
+export function useCreateExam() {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (form: ExamFormValues) => examApi.create(form),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.all });
+      toast.success(t("toast.created"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useSaveExamAnswers(examId: string) {
+  return useMutation({
+    mutationFn: (answers: QuizAttemptAnswerInput[]) => examApi.saveAnswers(examId, answers),
+  });
+}
+
+export function useFinishExam(examId: string) {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => examApi.finish(examId),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.all });
+      toast.success(t("toast.finished"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}

@@ -1,5 +1,8 @@
 export { quizApi } from "./api/quiz.api";
 export { quizErrorMessage } from "./lib/quiz-errors";
+export { emptyAnswer } from "./lib/answer-value";
+export { QuestionAnswerInput, QuestionPrompt } from "./ui/question-answer-input";
+export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
 export type { ImportedQuiz } from "./api/quiz.api";
 export { quizEndpoints } from "./api/quiz.endpoints";
 export type {
@@ -20,6 +23,7 @@ export {
   mapQuizImportPreviewDto,
   quizDisplayTitle,
   mapQuizOptionDto,
+  mapAttemptAnswerRequest,
   mapQuizQuestionDto,
   mapQuizRequest,
   mapQuizSummaryDto,

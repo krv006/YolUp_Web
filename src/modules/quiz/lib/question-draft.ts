@@ -358,6 +358,7 @@ export function draftToStudentQuestion(draft: QuestionDraft, index: number): Qui
   const common = {
     id: draft.key,
     type: draft.type,
+    groupId: null,
     text: draft.text,
     points: draftPoints(draft) ?? DEFAULT_POINTS,
     order: index,
