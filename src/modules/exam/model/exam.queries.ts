@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import type { QuizAttemptAnswerInput } from "@/modules/quiz";
 import { examApi } from "../api/exam.api";
-import type { ExamFormValues } from "../api/exam.dto";
+import type { ExamFormValues, ExamTemplateFormValues } from "../api/exam.dto";
 
 export const examKeys = Object.freeze({
   all: ["exams"] as const,
@@ -65,6 +65,72 @@ export function useCreateExam() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: examKeys.all });
       toast.success(t("toast.created"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useUpdateExam() {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, values }: { id: string; values: { title?: string; startsAt?: string } }) =>
+      examApi.update(id, values),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.all });
+      toast.success(t("toast.updated"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useDeleteExam() {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => examApi.remove(id),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.all });
+      toast.success(t("toast.deleted"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useCreateExamTemplate() {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (form: ExamTemplateFormValues) => examApi.createTemplate(form),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.templates });
+      toast.success(t("toast.templateCreated"));
+    },
+  });
+}
+
+export function useDeleteExamTemplate() {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => examApi.removeTemplate(id),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.templates });
+      toast.success(t("toast.templateDeleted"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useSaveManualScores(examId: string) {
+  const { t } = useTranslation("exam");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ studentId, scores }: { studentId: string; scores: Record<string, number> }) =>
+      examApi.saveManualScores(examId, studentId, scores),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: examKeys.detail(examId) });
+      toast.success(t("toast.scoresSaved"));
     },
     onError: (error: Error) => toast.error(error.message),
   });

@@ -25,6 +25,7 @@ import type {
   ExamSectionDto,
   ExamSummaryDto,
   ExamTemplateDto,
+  ExamTemplateFormValues,
   ExamTemplateItemDto,
   ExamResultsDto,
   ExamSectionResultDto,
@@ -197,12 +198,35 @@ export function mapExamCurrentDto(dto: ExamCurrentDto): ExamCurrent {
   };
 }
 
+export function mapExamTemplateRequest(form: ExamTemplateFormValues): Record<string, unknown> {
+  return {
+    name: form.name,
+    description: form.description,
+    items: form.items.map((item) => ({
+      type: item.kind,
+      key: item.key,
+      title: item.title,
+      minutes: item.minutes,
+      ...(item.kind === "section" && item.weight ? { weight: item.weight } : {}),
+    })),
+    scoring: {
+      scale: form.scale,
+      ...(form.passPercent === null ? {} : { pass_percent: form.passPercent }),
+    },
+  };
+}
+
+export function toIsoDateTime(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? value : date.toISOString();
+}
+
 export function mapExamRequest(form: ExamFormValues): Record<string, unknown> {
   return {
     course: form.courseId,
     template: form.templateId,
     title: form.title,
-    starts_at: form.startsAt,
+    starts_at: toIsoDateTime(form.startsAt),
     sections: form.sections.map((section) => ({
       key: section.key,
       quiz: section.quizId,

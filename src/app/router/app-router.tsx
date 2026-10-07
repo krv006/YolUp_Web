@@ -71,6 +71,7 @@ const AiPage = lazy(() => import("@/pages/ai/ai-page").then((module) => ({ defau
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
 const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.WorkspacePage })));
 const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
+const TeacherExamsPage = lazy(() => import("@/pages/teacher/exams/teacher-exams-page").then((module) => ({ default: module.TeacherExamsPage })));
 const StudentExamsPage = lazy(() => import("@/pages/student/exams/student-exams-page").then((module) => ({ default: module.StudentExamsPage })));
 const StudentExamPage = lazy(() => import("@/pages/student/exams/student-exam-page").then((module) => ({ default: module.StudentExamPage })));
 const TeacherQuizzesPage = lazy(() => import("@/pages/teacher/quizzes/teacher-quizzes-page").then((module) => ({ default: module.TeacherQuizzesPage })));
@@ -145,6 +146,7 @@ export function AppRouter() {
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="quizzes" element={<TeacherQuizzesPage />} />
+                    <Route path="exams" element={<TeacherExamsPage />} />
                     <Route
                       path=":conversationId"
                       element={<ConversationPage />}

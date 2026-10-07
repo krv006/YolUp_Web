@@ -93,6 +93,20 @@ export interface ExamCurrentDto {
   } | null;
 }
 
+export interface ExamTemplateFormValues {
+  name: string;
+  description: string;
+  items: Array<{
+    kind: "section" | "break";
+    key: string;
+    title: string;
+    minutes: number;
+    weight?: number;
+  }>;
+  scale: number;
+  passPercent: number | null;
+}
+
 export interface ExamFormValues {
   courseId: string;
   templateId: string;

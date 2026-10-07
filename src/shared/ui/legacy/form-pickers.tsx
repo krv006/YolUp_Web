@@ -143,15 +143,16 @@ function FloatingPicker({ open, onClose, anchorRef, children, labelledBy, classN
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.stopPropagation();
+        event.stopImmediatePropagation();
         onClose();
         anchorRef.current?.focus();
       }
     }
     document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown, true);
     return () => {
       document.removeEventListener("pointerdown", handlePointerDown);
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown, true);
     };
   }, [anchorRef, onClose, open]);
 
