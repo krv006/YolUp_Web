@@ -109,6 +109,10 @@ export function ConversationPanel({ role = "teacher", onOpenMenu }: Conversation
     }
     if (link.type === "quiz") {
       navigate(`${basePath}/quizzes?quiz=${link.id}`);
+      return;
+    }
+    if (link.type === "exam") {
+      navigate(`${basePath}/exams/${link.id}`);
     }
   }
 

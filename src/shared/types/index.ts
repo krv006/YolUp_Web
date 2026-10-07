@@ -82,6 +82,20 @@ export type {
   VoiceToken,
   QuizEditValues,
   QuizStatus,
+  ExamCurrent,
+  ExamCurrentItem,
+  ExamDetail,
+  ExamItemKind,
+  ExamQuestionGroup,
+  ExamSection,
+  ExamState,
+  ExamSummary,
+  ExamTemplate,
+  ExamTemplateItem,
+  ExamResults,
+  ExamSectionResult,
+  ExamStudentResult,
+  ExamTotalResult,
 } from "./domain";
 export type { MessageCapabilities } from "./chat";
 export type { PaginatedDto, UserDto } from "./dto";

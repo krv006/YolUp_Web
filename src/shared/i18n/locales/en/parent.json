@@ -42,15 +42,24 @@
     "consentOff": "Off",
     "consentLoadError": "Couldn't load permissions.",
     "consentKinds": {
-      "recording": { "label": "Lesson recording", "description": "Permission to record the lesson" },
-      "camera": { "label": "Camera", "description": "Use the camera during a live lesson" },
-      "analytics": { "label": "Activity analytics", "description": "Attendance, attention, and focus analytics" }
+      "recording": {
+        "label": "Lesson recording",
+        "description": "Permission to record the lesson"
+      },
+      "camera": {
+        "label": "Camera",
+        "description": "Use the camera during a live lesson"
+      },
+      "analytics": {
+        "label": "Activity analytics",
+        "description": "Attendance, attention, and focus analytics"
+      }
     },
     "linkDialog": {
       "title": "Link a student",
-      "description": "Enter the FK-... invite code from the student's profile.",
-      "codeLabel": "Invite code",
-      "codePlaceholder": "FK-XXXX",
+      "description": "Enter the student's username or an FK-… invite code.",
+      "codeLabel": "Username or invite code",
+      "codePlaceholder": "e.g. ali_valiyev",
       "cancel": "Cancel",
       "submit": "Send request"
     },

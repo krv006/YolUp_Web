@@ -16,9 +16,9 @@
       "title": "AI",
       "description": "Работа с ИИ-помощником."
     },
-    "mock": {
-      "title": "Mock Test",
-      "description": "Пробный тест в условиях экзамена."
+    "exams": {
+      "title": "Экзамен",
+      "description": "IELTS, SAT, Национальный сертификат и свой экзамен."
     }
   },
   "analytics": {

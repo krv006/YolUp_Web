@@ -71,7 +71,8 @@ const AiPage = lazy(() => import("@/pages/ai/ai-page").then((module) => ({ defau
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
 const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.WorkspacePage })));
 const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
-const MockTestPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.MockTestPage })));
+const StudentExamsPage = lazy(() => import("@/pages/student/exams/student-exams-page").then((module) => ({ default: module.StudentExamsPage })));
+const StudentExamPage = lazy(() => import("@/pages/student/exams/student-exam-page").then((module) => ({ default: module.StudentExamPage })));
 const TeacherQuizzesPage = lazy(() => import("@/pages/teacher/quizzes/teacher-quizzes-page").then((module) => ({ default: module.TeacherQuizzesPage })));
 const StudentQuizzesPage = lazy(() => import("@/pages/student/quizzes/student-quizzes-page").then((module) => ({ default: module.StudentQuizzesPage })));
 
@@ -184,7 +185,8 @@ export function AppRouter() {
                     <Route path="schedule" element={<SchedulePage />} />
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
-                    <Route path="mock-tests" element={<MockTestPage />} />
+                    <Route path="exams" element={<StudentExamsPage />} />
+                    <Route path="exams/:examId" element={<StudentExamPage />} />
                     <Route path="quizzes" element={<StudentQuizzesPage />} />
                     <Route
                       path=":conversationId"

@@ -42,15 +42,24 @@
     "consentOff": "O'chiq",
     "consentLoadError": "Ruxsatlarni yuklab bo'lmadi.",
     "consentKinds": {
-      "recording": { "label": "Dars yozuvi", "description": "Darsni yozib olishga ruxsat" },
-      "camera": { "label": "Kamera", "description": "Jonli darsda kameradan foydalanish" },
-      "analytics": { "label": "Faollik tahlili", "description": "Davomat, diqqat va fokus tahlili" }
+      "recording": {
+        "label": "Dars yozuvi",
+        "description": "Darsni yozib olishga ruxsat"
+      },
+      "camera": {
+        "label": "Kamera",
+        "description": "Jonli darsda kameradan foydalanish"
+      },
+      "analytics": {
+        "label": "Faollik tahlili",
+        "description": "Davomat, diqqat va fokus tahlili"
+      }
     },
     "linkDialog": {
       "title": "O'quvchini ulash",
-      "description": "O'quvchi profilidagi FK-... taklif kodini kiriting.",
-      "codeLabel": "Taklif kodi",
-      "codePlaceholder": "FK-XXXX",
+      "description": "O'quvchining login (username) yoki FK-... taklif kodini kiriting.",
+      "codeLabel": "Login yoki taklif kodi",
+      "codePlaceholder": "masalan: ali_valiyev",
       "cancel": "Bekor",
       "submit": "So'rov yuborish"
     },

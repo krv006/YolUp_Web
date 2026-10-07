@@ -1,0 +1,60 @@
+{
+  "toast": {
+    "created": "Exam created",
+    "finished": "Exam finished"
+  },
+  "state": {
+    "upcoming": "Not started",
+    "running": "In progress",
+    "finished": "Finished",
+    "submitted": "Submitted"
+  },
+  "list": {
+    "eyebrow": "EXAMS",
+    "title": "Exams",
+    "subtitle": "They start at the set time and end for everyone at once.",
+    "loading": "Loading exams",
+    "loadError": "Could not load the exams",
+    "retry": "Try again",
+    "empty": "No exams yet.",
+    "minutes": "{{count}} min",
+    "startsIn": "Starts in {{time}}",
+    "enter": "Enter",
+    "openResult": "Result"
+  },
+  "runner": {
+    "loading": "Loading the exam",
+    "loadError": "Could not load the exam",
+    "notStarted": "The exam has not started yet.",
+    "finished": "The exam is over.",
+    "exit": "Back to the list",
+    "timeLeft": "Time left",
+    "questionNumber": "Question {{number}}",
+    "points": "{{count}} pts",
+    "answered": "{{answered}} of {{total}} answered",
+    "finish": "Finish",
+    "finishTitle": "Finish the exam?",
+    "finishDescription": "After finishing you cannot come back and the answers stay as they are.",
+    "finishConfirm": "Yes, finish",
+    "cancel": "Cancel",
+    "breakTitle": "Break",
+    "breakHint": "Take a rest — the next section starts automatically.",
+    "nextItem": "Next: {{title}}",
+    "audioStart": "Play the audio",
+    "audioPlaying": "Audio is playing",
+    "audioPlayed": "Audio played",
+    "audioOnce": "The audio plays once and cannot be paused or replayed."
+  },
+  "result": {
+    "total": "Result",
+    "range": "range {{from}}–{{to}}",
+    "approximate": "approximate",
+    "level": "Level",
+    "waitingTeacher": "Waiting for the teacher's score",
+    "pendingShort": "pending",
+    "pendingList": "Graded by hand: {{list}}",
+    "earned": "{{earned}} / {{max}}",
+    "loading": "Loading the result…",
+    "hidden": "The result appears once the exam is over."
+  }
+}

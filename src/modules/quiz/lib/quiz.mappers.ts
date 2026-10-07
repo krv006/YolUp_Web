@@ -63,6 +63,7 @@ export function mapQuizQuestionDto(dto: QuizQuestionDto): QuizQuestion {
   return {
     id: String(dto.id),
     type: toQuestionType(dto.type),
+    groupId: dto.group == null ? null : String(dto.group),
     text: dto.text,
     points: Number(dto.points) || 0,
     order: dto.order,

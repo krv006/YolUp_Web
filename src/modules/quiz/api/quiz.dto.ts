@@ -24,6 +24,7 @@ export interface QuizQuestionDto {
   id: string | number;
   type?: QuizQuestionTypeDto;
   text: string;
+  group?: string | number | null;
   points: number;
   order: number;
   options: QuizOptionDto[];

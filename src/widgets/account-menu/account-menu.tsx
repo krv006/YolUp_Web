@@ -13,7 +13,6 @@ import {
   Phone,
   Plus,
   Settings,
-  ShieldAlert,
   ShieldCheck,
   Trash2,
   UserRound,
@@ -541,11 +540,6 @@ export function AccountMenu({
 
                 {user?.role === ROLES.TEACHER ? (
                   <div className="teacher-profile-certificates">
-                    {user.isApproved === false ? (
-                      <div className="form-alert">
-                        <ShieldAlert size={15} /> {t("profileDialog.notApproved")}
-                      </div>
-                    ) : null}
                     <div className="teacher-profile-certificates-head">
                       <span>{t("profileDialog.certificates")}</span>
                       <button

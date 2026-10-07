@@ -42,15 +42,24 @@
     "consentOff": "Выключено",
     "consentLoadError": "Не удалось загрузить разрешения.",
     "consentKinds": {
-      "recording": { "label": "Запись урока", "description": "Разрешение на запись урока" },
-      "camera": { "label": "Камера", "description": "Использование камеры на живом уроке" },
-      "analytics": { "label": "Анализ активности", "description": "Анализ посещаемости, внимания и фокуса" }
+      "recording": {
+        "label": "Запись урока",
+        "description": "Разрешение на запись урока"
+      },
+      "camera": {
+        "label": "Камера",
+        "description": "Использование камеры на живом уроке"
+      },
+      "analytics": {
+        "label": "Анализ активности",
+        "description": "Анализ посещаемости, внимания и фокуса"
+      }
     },
     "linkDialog": {
       "title": "Привязать ученика",
-      "description": "Введите код приглашения FK-... из профиля ученика.",
-      "codeLabel": "Код приглашения",
-      "codePlaceholder": "FK-XXXX",
+      "description": "Введите логин (username) ученика или код приглашения FK-...",
+      "codeLabel": "Логин или код приглашения",
+      "codePlaceholder": "например: ali_valiyev",
       "cancel": "Отмена",
       "submit": "Отправить запрос"
     },

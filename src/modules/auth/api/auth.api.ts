@@ -81,8 +81,12 @@ export const authApi = {
   getLinks(options?: RequestOptions) {
     return apiClient.get(authEndpoints.links, options);
   },
-  requestLink(inviteCode: string) {
-    return apiClient.post(authEndpoints.requestLink, { invite_code: inviteCode });
+  requestLink(value: string) {
+    const trimmed = value.trim();
+    const body = /^fk-/i.test(trimmed)
+      ? { invite_code: trimmed.toUpperCase() }
+      : { username: trimmed };
+    return apiClient.post(authEndpoints.requestLink, body);
   },
   respondLink(id: string, action: LinkAction) {
     return apiClient.post(authEndpoints.respondLink(id), { action });
