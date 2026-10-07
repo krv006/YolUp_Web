@@ -12,6 +12,8 @@ import {
   useQuizAttempts,
   quizErrorMessage,
   usePublishQuiz,
+  useRemoveGroupAudio,
+  useUploadGroupAudio,
   useUpdateQuiz,
   useCreateQuiz,
   useDeleteQuiz,
@@ -47,6 +49,8 @@ export function TeacherQuizzesPage() {
   const editAttempts = useQuizAttempts(editTarget?.id ?? null, Boolean(editTarget));
   const update = useUpdateQuiz();
   const publish = usePublishQuiz();
+  const uploadAudio = useUploadGroupAudio(editTarget?.id ?? "");
+  const removeAudio = useRemoveGroupAudio(editTarget?.id ?? "");
   const [importedWarnings, setImportedWarnings] = useState<QuizImportWarning[]>([]);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
@@ -243,6 +247,9 @@ export function TeacherQuizzesPage() {
           courses={[]}
           editQuiz={editDetail.data}
           initialWarnings={importedWarnings}
+          uploadingAudio={uploadAudio.isPending}
+          onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
+          onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
           startOnQuestions={importedWarnings.length > 0}
           questionsLocked={(editAttempts.data ?? []).length > 0}
           saving={update.isPending}
@@ -252,6 +259,7 @@ export function TeacherQuizzesPage() {
           onCreate={() => undefined}
           onUpdate={(values) =>
             update.mutateAsync({ id: editTarget.id, values }).then(() => closeEditor())
+              .catch((error: unknown) => setPublishError(quizErrorMessage(error)))
           }
           onPublish={() => {
             setPublishError(null);

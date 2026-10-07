@@ -335,6 +335,14 @@ export interface QuizAnswerKey {
   blanks?: Array<{ answers: string[] }>;
 }
 
+export interface QuizGroup {
+  id: string;
+  order: number;
+  title: string;
+  passage: string;
+  audioUrl: string | null;
+}
+
 export interface QuizQuestion {
   id: string;
   type: QuizQuestionType;
@@ -475,6 +483,43 @@ export interface ExamStudentResult {
   pending: string[];
 }
 
+export type ExamAiStatus = "idle" | "running" | "proposed" | "approved" | "failed";
+
+export interface ExamAiTask {
+  taskNumber: number;
+  words: number | null;
+  minWords: number | null;
+  band: number | null;
+  criteria: Array<{ key: string; score: number | null }>;
+  strengths: string[];
+  weaknesses: string[];
+  corrections: Array<{ original: string; corrected: string; explanation: string }>;
+  feedback: string;
+}
+
+export interface ExamAiWriting {
+  status: ExamAiStatus;
+  proposedBand: number | null;
+  approvedBand: number | null;
+  error: string;
+  generatedAt: string | null;
+  writingBand: number | null;
+  tasks: ExamAiTask[];
+  overallComment: string;
+  recommendations: string[];
+}
+
+export interface ExamManualAnswer {
+  section: string;
+  question: string;
+  answer: string;
+}
+
+export interface ExamStudentResultDetail extends ExamStudentResult {
+  manualAnswers: ExamManualAnswer[];
+  ai: ExamAiWriting | null;
+}
+
 export interface ExamResults {
   hidden: boolean;
   engine: string;
@@ -501,6 +546,7 @@ export interface QuizSummary {
 }
 
 export interface QuizDetail extends QuizSummary {
+  groups: QuizGroup[];
   questions: QuizQuestion[];
 }
 
@@ -532,8 +578,15 @@ export interface QuizAttemptResult extends QuizAttemptSummary {
   answers: QuizAttemptAnswer[];
 }
 
+export interface QuizGroupFormValues {
+  id?: string;
+  title: string;
+  passage: string;
+}
+
 export interface QuizQuestionFormValues {
   type: QuizQuestionType;
+  groupIndex?: number | null;
   text: string;
   points: number;
   options: Array<{ text: string; isCorrect: boolean }>;
@@ -548,6 +601,7 @@ export interface QuizQuestionFormValues {
 
 export interface QuizEditValues {
   topic?: string;
+  groups?: QuizGroupFormValues[];
   title?: string;
   description?: string;
   dueAt?: string | null;
@@ -557,6 +611,7 @@ export interface QuizEditValues {
 
 export interface QuizFormValues {
   courseId: string;
+  groups?: QuizGroupFormValues[];
   subject?: string;
   topic: string;
   status?: QuizStatus;

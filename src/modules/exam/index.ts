@@ -11,7 +11,10 @@ export {
   useUpdateExam,
   useExam,
   useExamCurrent,
+  useApproveAiBand,
   useExamResults,
+  useExamStudentResult,
+  useStartAiReview,
   useExamTemplates,
   useExams,
   useFinishExam,
@@ -22,6 +25,7 @@ export { ExamCountdown } from "./ui/exam-countdown";
 export { ExamCreateDialog } from "./ui/exam-create-dialog";
 export { ExamResultsView } from "./ui/exam-results-view";
 export { ExamTemplateDialog } from "./ui/exam-template-dialog";
+export { ExamWritingReview } from "./ui/exam-writing-review";
 export { ExamResultCard } from "./ui/exam-result-card";
 export { ExamRunner } from "./ui/exam-runner";
 export { ExamTimer } from "./ui/exam-timer";

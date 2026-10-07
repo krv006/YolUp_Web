@@ -153,3 +153,46 @@ export interface ExamResultsDto {
   hidden?: boolean;
   results?: ExamStudentResultDto[];
 }
+
+export interface ExamAiCriteriaDto {
+  task_response?: number | null;
+  coherence_cohesion?: number | null;
+  lexical_resource?: number | null;
+  grammatical_range_accuracy?: number | null;
+}
+
+export interface ExamAiTaskDto {
+  task_number: number;
+  words?: number | null;
+  min_words?: number | null;
+  band?: number | null;
+  criteria?: ExamAiCriteriaDto;
+  strengths?: string[];
+  weaknesses?: string[];
+  corrections?: Array<{ original: string; corrected: string; explanation?: string | null }>;
+  feedback?: string | null;
+}
+
+export interface ExamAiWritingDto {
+  status?: "running" | "proposed" | "approved" | "failed";
+  proposed_band?: number | null;
+  approved_band?: number | null;
+  error?: string | null;
+  generated_at?: string | null;
+  result?: {
+    writing_band?: number | null;
+    tasks?: ExamAiTaskDto[];
+    summary?: { overall_comment?: string | null; recommendations?: string[] } | null;
+  } | null;
+}
+
+export interface ExamManualAnswerDto {
+  section: string;
+  question: string;
+  answer: string;
+}
+
+export interface ExamStudentResultDetailDto extends ExamStudentResultDto {
+  manual_answers?: ExamManualAnswerDto[];
+  ai?: { writing?: ExamAiWritingDto } | null;
+}

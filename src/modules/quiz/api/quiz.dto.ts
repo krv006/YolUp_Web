@@ -56,7 +56,16 @@ export interface QuizSummaryDto {
   created_at: string;
 }
 
+export interface QuizGroupDto {
+  id: string | number;
+  order: number;
+  title?: string | null;
+  passage?: string | null;
+  audio_url?: string | null;
+}
+
 export interface QuizDto extends QuizSummaryDto {
+  groups?: QuizGroupDto[];
   questions: QuizQuestionDto[];
   warnings?: QuizImportWarningDto[];
 }

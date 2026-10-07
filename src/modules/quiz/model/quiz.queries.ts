@@ -125,6 +125,29 @@ export function useDownloadQuizTemplate() {
   });
 }
 
+export function useUploadGroupAudio(quizId: string) {
+  const { t } = useTranslation("quiz");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ groupId, file }: { groupId: string; file: File }) =>
+      quizApi.uploadGroupAudio(quizId, groupId, file),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: quizKeys.detail(quizId) });
+      toast.success(t("toast.audioUploaded"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useRemoveGroupAudio(quizId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (groupId: string) => quizApi.removeGroupAudio(quizId, groupId),
+    onSuccess: () => client.invalidateQueries({ queryKey: quizKeys.detail(quizId) }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useDeleteQuiz() {
   const { t } = useTranslation("quiz");
   const client = useQueryClient();

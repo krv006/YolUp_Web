@@ -6,7 +6,8 @@
     "deleted": "Imtihon o'chirildi",
     "templateCreated": "Shablon yaratildi",
     "templateDeleted": "Shablon o'chirildi",
-    "scoresSaved": "Ballar saqlandi"
+    "scoresSaved": "Ballar saqlandi",
+    "aiApproved": "Band tasdiqlandi"
   },
   "state": {
     "upcoming": "Boshlanmagan",
@@ -154,5 +155,28 @@
       "passPercentInvalid": "O'tish foizi 0 dan 100 gacha bo'lishi kerak"
     },
     "breakDefaultTitle": "Tanaffus"
+  },
+  "ai": {
+    "essays": "O'QUVCHI INSHOSI",
+    "notStarted": "AI baholash hali boshlanmagan.",
+    "start": "AI bilan baholash",
+    "running": "AI baholamoqda…",
+    "failed": "AI baholay olmadi",
+    "retry": "Qayta urinish",
+    "proposedBand": "AI taklifi",
+    "approvedBand": "Tasdiqlangan band",
+    "task": "{{number}}-task",
+    "words": "{{words}} so'z (kamida {{min}})",
+    "approve": "Tasdiqlash",
+    "approveWithBand": "Shu band bilan tasdiqlash",
+    "bandLabel": "Band",
+    "show": "AI baholash",
+    "hide": "AI baholashni yopish",
+    "criteria": {
+      "task_response": "Topshiriqqa javob",
+      "coherence_cohesion": "Mantiq va bog'lanish",
+      "lexical_resource": "Lug'at boyligi",
+      "grammatical_range_accuracy": "Grammatika"
+    }
   }
 }

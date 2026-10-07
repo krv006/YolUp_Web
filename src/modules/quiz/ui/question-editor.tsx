@@ -11,12 +11,14 @@ import {
   QUESTION_TYPE_ORDER,
   changeDraftType,
   optionLetter,
+  type GroupDraft,
   type KeyFactory,
   type QuestionDraft,
 } from "../lib/question-draft";
 
 export interface QuestionEditorProps {
   draft: QuestionDraft;
+  groups?: GroupDraft[];
   index: number;
   canRemove: boolean;
   newKey: KeyFactory;
@@ -43,7 +45,15 @@ function move<T>(items: T[], from: number, to: number): T[] {
   return next;
 }
 
-export function QuestionEditor({ draft, index, canRemove, newKey, onChange, onRemove }: QuestionEditorProps) {
+export function QuestionEditor({
+  draft,
+  groups = [],
+  index,
+  canRemove,
+  newKey,
+  onChange,
+  onRemove,
+}: QuestionEditorProps) {
   const { t } = useTranslation("quiz");
   const number = index + 1;
   const textRef = useRef<HTMLTextAreaElement>(null);
@@ -207,6 +217,23 @@ export function QuestionEditor({ draft, index, canRemove, newKey, onChange, onRe
             options={typeOptions}
           />
         </div>
+        {groups.length ? (
+          <div className="quiz-page-type-select">
+            <SelectPicker
+              label={t("groups.questionGroupLabel")}
+              hideLabel
+              value={draft.groupKey ?? ""}
+              onChange={(value) => patch({ groupKey: value || null })}
+              options={[
+                { value: "", label: t("groups.noGroup") },
+                ...groups.map((group, groupIndex) => ({
+                  value: group.key,
+                  label: group.title.trim() || t("groups.titlePlaceholder", { number: groupIndex + 1 }),
+                })),
+              ]}
+            />
+          </div>
+        ) : null}
         <label className="quiz-page-points">
           <span>{t("editor.pointsLabel")}</span>
           <input

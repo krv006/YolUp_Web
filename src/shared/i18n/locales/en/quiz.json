@@ -4,7 +4,8 @@
     "deleted": "Quiz deleted",
     "importSuccess": "Found {{count}} question(s) — review them",
     "updated": "Test updated",
-    "published": "Test published"
+    "published": "Test published",
+    "audioUploaded": "Audio uploaded"
   },
   "teacherPage": {
     "loading": "Loading quizzes",
@@ -231,5 +232,21 @@
     "publish": "Publish",
     "draftBadge": "Draft",
     "draftNotice": "This test is a draft — students cannot see it. Fill in the correct answers and press “Publish”."
+  },
+  "groups": {
+    "title": "Question group",
+    "hint": "Add a group when several questions share one passage or audio.",
+    "add": "Add a group",
+    "titlePlaceholder": "Passage {{number}} title",
+    "passagePlaceholder": "Passage text (Reading) — the questions belong to it",
+    "removeAria": "Remove the group",
+    "uploadAudio": "Upload audio",
+    "removeAudio": "Remove the audio",
+    "audioHint": "mp3, m4a, aac, ogg, wav · up to {{size}} MB",
+    "audioAfterSave": "Save the test first to upload audio.",
+    "audioFormat": "Only these formats: {{list}}",
+    "audioTooBig": "The file must not exceed {{size}} MB",
+    "questionGroupLabel": "Group",
+    "noGroup": "No group"
   }
 }

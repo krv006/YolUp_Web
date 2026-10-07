@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { ExamDetail, ExamStudentResult } from "@/shared/types";
 import { Avatar, Button } from "@/shared/ui/legacy";
 import { useExamResults, useSaveManualScores } from "../model/exam.queries";
+import { ExamWritingReview } from "./exam-writing-review";
 
 export interface ExamResultsViewProps {
   exam: ExamDetail;
@@ -41,6 +42,7 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
   );
 
   const manualSections = result.sections.filter((section) => section.manual);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const total = result.total;
 
   function submitScores() {
@@ -124,10 +126,22 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
               </Button>
             </>
           ) : (
-            <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
-              {t("result.manualScores")}
-            </Button>
+            <>
+              <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
+                {t("result.manualScores")}
+              </Button>
+              {exam.engine === "ielts" ? (
+                <Button size="sm" variant="ghost" onClick={() => setReviewOpen((current) => !current)}>
+                  {reviewOpen ? t("ai.hide") : t("ai.show")}
+                </Button>
+              ) : null}
+            </>
           )}
+        </div>
+      ) : null}
+      {reviewOpen ? (
+        <div className="exam-result-row-review">
+          <ExamWritingReview examId={exam.id} studentId={result.studentId} />
         </div>
       ) : null}
     </article>

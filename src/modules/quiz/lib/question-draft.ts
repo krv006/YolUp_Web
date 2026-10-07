@@ -35,9 +35,17 @@ export interface DraftPair {
   right: string;
 }
 
+export interface GroupDraft {
+  key: string;
+  id: string | null;
+  title: string;
+  passage: string;
+}
+
 export interface QuestionDraft {
   key: string;
   type: QuizQuestionType;
+  groupKey: string | null;
   text: string;
   points: string;
   options: DraftOption[];
@@ -89,6 +97,7 @@ export function createDraft(type: QuizQuestionType, newKey: KeyFactory): Questio
   return {
     key: newKey(),
     type,
+    groupKey: null,
     text: "",
     points: String(DEFAULT_POINTS),
     options: type === "ordering" ? emptyOptions(newKey, 3) : emptyOptions(newKey),
@@ -113,6 +122,7 @@ export function changeDraftType(
   return {
     ...fresh,
     key: draft.key,
+    groupKey: draft.groupKey,
     text: type === "fill_blank" || draft.type === "fill_blank" ? draft.text.replace(BLANK_PATTERN, "$1") : draft.text,
     points: draft.points,
     options: keepOptions ? draft.options : fresh.options,
@@ -241,9 +251,13 @@ function checkDraft(draft: QuestionDraft): DraftError | null {
   }
 }
 
-export function draftToFormValues(draft: QuestionDraft): QuizQuestionFormValues {
+export function draftToFormValues(
+  draft: QuestionDraft,
+  groupIndex: number | null = null
+): QuizQuestionFormValues {
   const base = {
     type: draft.type,
+    groupIndex,
     text: draft.text.trim(),
     points: draftPoints(draft) ?? DEFAULT_POINTS,
     options: [] as QuizQuestionFormValues["options"],
@@ -307,7 +321,12 @@ export function questionToDraft(question: QuizQuestion, newKey: KeyFactory): Que
   const draft = createDraft(question.type, newKey);
   const key = question.answerKey ?? {};
   const options = question.options.map((option) => ({ key: newKey(), text: option.text }));
-  const base: QuestionDraft = { ...draft, text: question.text, points: String(question.points || DEFAULT_POINTS) };
+  const base: QuestionDraft = {
+    ...draft,
+    groupKey: question.groupId,
+    text: question.text,
+    points: String(question.points || DEFAULT_POINTS),
+  };
   switch (question.type) {
     case "single":
     case "multiple":

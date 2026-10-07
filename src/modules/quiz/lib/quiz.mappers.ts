@@ -7,6 +7,8 @@ import type {
   QuizDetail,
   QuizEditValues,
   QuizFormValues,
+  QuizGroup,
+  QuizGroupFormValues,
   QuizImportPreview,
   QuizImportWarning,
   QuizOption,
@@ -20,6 +22,7 @@ import type {
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
   QuizDto,
+  QuizGroupDto,
   QuizImportPreviewDto,
   QuizImportRequest,
   QuizImportWarningDto,
@@ -93,9 +96,20 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
   };
 }
 
+export function mapQuizGroupDto(dto: QuizGroupDto): QuizGroup {
+  return {
+    id: String(dto.id),
+    order: dto.order,
+    title: dto.title || "",
+    passage: dto.passage || "",
+    audioUrl: dto.audio_url || null,
+  };
+}
+
 export function mapQuizDto(dto: QuizDto): QuizDetail {
   return {
     ...mapQuizSummaryDto(dto),
+    groups: (dto.groups ?? []).map(mapQuizGroupDto),
     questions: (dto.questions ?? []).map(mapQuizQuestionDto),
   };
 }
@@ -148,6 +162,7 @@ export function mapQuizRequest(form: QuizFormValues): Record<string, unknown> {
     description: form.description || "",
     due_at: form.dueAt || null,
     opens_at: form.opensAt || null,
+    ...(form.groups?.length ? { groups: mapGroupsRequest(form.groups) } : {}),
     questions: form.questions.map(mapQuestionRequest),
   };
 }
@@ -159,12 +174,26 @@ export function mapQuizEditRequest(values: QuizEditValues): Record<string, unkno
   if (values.description !== undefined) body.description = values.description;
   if (values.dueAt !== undefined) body.due_at = values.dueAt;
   if (values.opensAt !== undefined) body.opens_at = values.opensAt;
+  if (values.groups !== undefined) body.groups = mapGroupsRequest(values.groups);
   if (values.questions !== undefined) body.questions = values.questions.map(mapQuestionRequest);
   return body;
 }
 
+function mapGroupsRequest(groups: QuizGroupFormValues[]): Array<Record<string, unknown>> {
+  return groups.map((group) => ({
+    ...(group.id ? { id: group.id } : {}),
+    title: group.title,
+    passage: group.passage,
+  }));
+}
+
 export function mapQuestionRequest(question: QuizQuestionFormValues): Record<string, unknown> {
-  const base = { type: question.type, text: question.text, points: question.points };
+  const base: Record<string, unknown> = {
+    type: question.type,
+    text: question.text,
+    points: question.points,
+    ...(question.groupIndex == null ? {} : { group: question.groupIndex }),
+  };
   switch (question.type) {
     case "single":
     case "multiple":

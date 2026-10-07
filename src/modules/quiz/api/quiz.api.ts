@@ -6,6 +6,7 @@ import type {
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
   QuizDto,
+  QuizGroupDto,
   QuizImportPreviewDto,
   QuizImportRequest,
   QuizSummaryDto,
@@ -17,6 +18,7 @@ import {
   mapQuizDto,
   mapImportWarningDtos,
   mapQuizEditRequest,
+  mapQuizGroupDto,
   mapQuizImportPreviewDto,
   mapQuizImportRequest,
   mapQuizRequest,
@@ -78,6 +80,17 @@ export const quizApi = {
       responseType: "blob",
       query: { type, count },
     });
+  },
+  async uploadGroupAudio(quizId: string, groupId: string, file: File) {
+    const body = new FormData();
+    body.set("file", file);
+    return mapQuizGroupDto(
+      await apiClient.post<QuizGroupDto>(quizEndpoints.groupAudio(quizId, groupId), body)
+    );
+  },
+  async removeGroupAudio(quizId: string, groupId: string) {
+    await apiClient.delete(quizEndpoints.groupAudio(quizId, groupId));
+    return groupId;
   },
   async remove(id: string) {
     await apiClient.delete(quizEndpoints.detail(id));
