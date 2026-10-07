@@ -6,6 +6,8 @@ import type {
   ExamDetailDto,
   ExamFormValues,
   ExamResultsDto,
+  ExamStudentResultDto,
+  ExamTemplateFormValues,
   ExamSummaryDto,
   ExamTemplateDto,
 } from "./exam.dto";
@@ -14,8 +16,11 @@ import {
   mapExamDetailDto,
   mapExamRequest,
   mapExamResultsDto,
+  mapExamStudentResultDto,
+  mapExamTemplateRequest,
   mapExamSummaryDto,
   mapExamTemplateDto,
+  toIsoDateTime,
 } from "../lib/exam.mappers";
 import { syncServerTime } from "../lib/server-time";
 
@@ -40,6 +45,30 @@ export const examApi = {
   },
   async create(form: ExamFormValues) {
     return mapExamDetailDto(await apiClient.post<ExamDetailDto>(examEndpoints.list, mapExamRequest(form)));
+  },
+  async update(id: string, values: { title?: string; startsAt?: string }) {
+    const body: Record<string, unknown> = {};
+    if (values.title !== undefined) body.title = values.title;
+    if (values.startsAt !== undefined) body.starts_at = toIsoDateTime(values.startsAt);
+    return mapExamDetailDto(await apiClient.patch<ExamDetailDto>(examEndpoints.detail(id), body));
+  },
+  async remove(id: string) {
+    await apiClient.delete(examEndpoints.detail(id));
+    return id;
+  },
+  async createTemplate(form: ExamTemplateFormValues) {
+    return mapExamTemplateDto(
+      await apiClient.post<ExamTemplateDto>(examEndpoints.templates, mapExamTemplateRequest(form))
+    );
+  },
+  async removeTemplate(id: string) {
+    await apiClient.delete(examEndpoints.template(id));
+    return id;
+  },
+  async saveManualScores(id: string, studentId: string, scores: Record<string, number>) {
+    return mapExamStudentResultDto(
+      await apiClient.put<ExamStudentResultDto>(examEndpoints.manualScores(id, studentId), { scores })
+    );
   },
   async getCurrent(id: string, options?: RequestOptions) {
     const current = mapExamCurrentDto(
