@@ -6141,6 +6141,13 @@ a.workspace-card:hover {
 .ai-quiz-field { display: grid; gap: 6px; min-width: 150px; color: var(--foreground); font-size: var(--fs-xs); font-weight: 800; }
 .ai-quiz-field > small { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 500; }
 .ai-quiz-field input[type="number"] { width: 110px; }
+.ai-quiz-details > summary { cursor: pointer; color: var(--primary-text); font-size: var(--fs-xs); font-weight: 800; padding: 4px 0; }
+.ai-quiz-details[open] > summary { margin-bottom: 8px; }
+.ai-quiz-files { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ai-quiz-files li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid var(--border-accent); border-radius: var(--r-sm); background: var(--primary-tint); color: var(--foreground); font-size: var(--fs-xs); font-weight: 600; }
+.ai-quiz-files li span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ai-quiz-files li button { border: 0; background: transparent; color: var(--muted-foreground); cursor: pointer; display: inline-flex; padding: 2px; border-radius: var(--r-sm); }
+.ai-quiz-files li button:hover { color: var(--destructive); }
 .ai-quiz-rules { display: grid; gap: 10px; padding-top: 4px; }
 .ai-quiz-rules textarea { resize: vertical; }
 .ai-quiz-rules .quiz-generate-button { justify-self: start; }

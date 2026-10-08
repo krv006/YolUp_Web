@@ -260,7 +260,7 @@
     "titlePlaceholder": "Masalan: 1-bob testi",
     "materialLabel": "Material",
     "chooseFile": "Material tanlash",
-    "fileHint": "Har biri 20 MB gacha, 5 tagacha fayl",
+    "fileHint": "Fayllarni birma-bir qo'shishingiz mumkin: har biri 20 MB gacha, 5 tagacha",
     "standardLabel": "Standart",
     "countLabel": "Savollar soni",
     "submit": "Yaratish",
@@ -310,6 +310,9 @@
     "materialOptionalHint": "Material ixtiyoriy: topolmasangiz bo'sh qoldiring, AI mavzu va qoidalar bo'yicha matnni o'zi yozadi.",
     "examLabel": "Qaysi imtihon · ixtiyoriy",
     "examPlaceholder": "Masalan: IELTS Academic Reading, SAT Math, TOEFL...",
-    "examHint": "Imtihon nomini yozsangiz, qoidalarni yuklash shart emas: AI uning rasmiy tuzilmasini (bo'limlar, savol turlari, soni, tartibi) o'zi biladi. Qoidalar yuklasangiz, ular ustun bo'ladi."
+    "examHint": "Imtihon nomini yozsangiz, qoidalarni yuklash shart emas: AI uning rasmiy tuzilmasini (bo'limlar, savol turlari, soni, tartibi) o'zi biladi. Qoidalar yuklasangiz, ular ustun bo'ladi.",
+    "addMoreFiles": "Yana fayl qo'shish",
+    "removeFile": "{{name}} faylini olib tashlash",
+    "rulesToggle": "Imtihon qoidalarini o'zim kiritaman (ixtiyoriy)"
   }
 }

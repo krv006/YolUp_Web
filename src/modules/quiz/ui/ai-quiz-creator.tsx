@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { BookOpen, CircleAlert, FileText, FileUp, Loader2, Sparkles } from "lucide-react";
+import { BookOpen, CircleAlert, FileText, FileUp, Loader2, Sparkles, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -53,16 +53,24 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
     const picked = Array.from(event.target.files ?? []);
     event.target.value = "";
     if (!picked.length) return;
-    if (picked.length > MAX_FILES) return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
     const big = picked.find((item) => item.size > MAX_FILE_MB * 1024 * 1024);
     if (big) {
       return setError(t("aiPage.fileTooLarge", { size: (big.size / 1024 / 1024).toFixed(1), max: MAX_FILE_MB }));
     }
-    if (picked.reduce((sum, item) => sum + item.size, 0) > MAX_TOTAL_MB * 1024 * 1024) {
+    // Yangi tanlov oldingilariga QO'SHILADI (bir xil fayl ikki marta qo'shilmaydi)
+    const known = new Set(files.map((item) => `${item.name}:${item.size}`));
+    const merged = [...files, ...picked.filter((item) => !known.has(`${item.name}:${item.size}`))];
+    if (merged.length > MAX_FILES) return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
+    if (merged.reduce((sum, item) => sum + item.size, 0) > MAX_TOTAL_MB * 1024 * 1024) {
       return setError(t("aiPage.totalTooLarge", { max: MAX_TOTAL_MB }));
     }
     setError(null);
-    setFiles(picked);
+    setFiles(merged);
+  }
+
+  function removeFile(index: number) {
+    setFiles((current) => current.filter((_, position) => position !== index));
+    setError(null);
   }
 
   function pick(event: ChangeEvent<HTMLInputElement>, maxMb: number, key: "fileTooLarge" | "rulesTooLarge") {
@@ -191,13 +199,25 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
               className={`quiz-generate-button quiz-generate-button--ghost ${files.length ? "is-active" : ""}`}
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileUp size={14} />{" "}
-              {files.length === 0
-                ? t("aiPage.chooseFiles")
-                : files.length === 1
-                  ? files[0].name
-                  : t("aiPage.filesChosen", { count: files.length })}
+              <FileUp size={14} /> {files.length === 0 ? t("aiPage.chooseFiles") : t("aiPage.addMoreFiles")}
             </button>
+            {files.length ? (
+              <ul className="ai-quiz-files">
+                {files.map((item, index) => (
+                  <li key={`${item.name}-${item.size}`}>
+                    <FileText size={13} />
+                    <span>{item.name}</span>
+                    <button
+                      type="button"
+                      aria-label={t("aiPage.removeFile", { name: item.name })}
+                      onClick={() => removeFile(index)}
+                    >
+                      <X size={13} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <small>{t("aiPage.fileHint")}</small>
           </div>
           <label className="ai-quiz-field">
@@ -225,6 +245,8 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           <small>{t("aiPage.materialOptionalHint")}</small>
         </label>
 
+        <details className="ai-quiz-details" open={Boolean(rulesFile || rulesText.trim())}>
+          <summary>{t("aiPage.rulesToggle")}</summary>
         <div className="ai-quiz-rules">
           <div className="ai-quiz-field">
             <span>{t("aiPage.rulesLabel")}</span>
@@ -258,6 +280,7 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           </label>
           <small className="ai-quiz-hint">{t("aiPage.rulesHint")}</small>
         </div>
+        </details>
 
         <small className="ai-quiz-hint">{t("aiPage.hint")}</small>
         {error ? <div className="form-alert">{error}</div> : null}

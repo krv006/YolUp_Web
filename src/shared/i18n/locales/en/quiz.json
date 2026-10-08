@@ -260,7 +260,7 @@
     "titlePlaceholder": "E.g. Chapter 1 test",
     "materialLabel": "Material",
     "chooseFile": "Choose material",
-    "fileHint": "Up to 20 MB each, up to 5 files",
+    "fileHint": "You can add files one by one: up to 20 MB each, up to 5 files",
     "standardLabel": "Standard",
     "countLabel": "Number of questions",
     "submit": "Create",
@@ -310,6 +310,9 @@
     "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules.",
     "examLabel": "Which exam · optional",
     "examPlaceholder": "E.g. IELTS Academic Reading, SAT Math, TOEFL...",
-    "examHint": "If you give the exam name you don't need to upload rules: AI knows its official structure (sections, question types, counts, order). Uploaded rules take priority."
+    "examHint": "If you give the exam name you don't need to upload rules: AI knows its official structure (sections, question types, counts, order). Uploaded rules take priority.",
+    "addMoreFiles": "Add another file",
+    "removeFile": "Remove {{name}}",
+    "rulesToggle": "I'll enter the exam rules myself (optional)"
   }
 }
