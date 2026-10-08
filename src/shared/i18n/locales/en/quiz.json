@@ -131,33 +131,7 @@
       "notEnoughOptions": "Question {{number}}: not enough options — check it",
       "unsupportedType": "Question {{number}} was not imported: only single and multiple choice questions are supported"
     },
-    "saveDraft": "Save as draft",
-    "ai": {
-      "button": "Create with AI",
-      "chooseFile": "Choose material",
-      "standardLabel": "Standard",
-      "countLabel": "Number of questions",
-      "submit": "Create",
-      "hint": "PDF, Word, PowerPoint, Excel or text file (up to 20 MB). Questions are based on the material, {{min}}–{{max}}. The result is a draft — review it before publishing.",
-      "fileRequired": "Choose a material file",
-      "countRange": "Number of questions must be {{min}} to {{max}}",
-      "standards": {
-        "uzbmb": "National certificate",
-        "ielts": "IELTS Academic",
-        "sat": "Digital SAT"
-      },
-      "status": {
-        "queued": "Queued…",
-        "processing": "Analysing the material…",
-        "generating": "Generating questions…",
-        "done": "Ready, opening…",
-        "failed": "Error"
-      },
-      "waitHint": "This can take 1–5 minutes. You can close this window — the job keeps running and you'll get a notification.",
-      "failedTitle": "Could not create the test",
-      "failedFallback": "Unknown error. Please try again.",
-      "retry": "Try again"
-    }
+    "saveDraft": "Save as draft"
   },
   "preview": {
     "regionAria": "How the student will see it",
@@ -274,5 +248,46 @@
     "audioTooBig": "The file must not exceed {{size}} MB",
     "questionGroupLabel": "Group",
     "noGroup": "No group"
+  },
+  "aiPage": {
+    "title": "Create a test with AI",
+    "description": "Upload your study material (PDF, Word, PowerPoint, Excel or text) and pick a standard: AI writes the questions. The result is a draft, so review it before publishing.",
+    "subjectLabel": "Subject",
+    "topicLabel": "Topic",
+    "topicPlaceholder": "E.g. Quadratic equations",
+    "titleLabel": "Test title · optional",
+    "titlePlaceholder": "E.g. Chapter 1 test",
+    "materialLabel": "Material",
+    "chooseFile": "Choose material",
+    "fileHint": "up to 20 MB",
+    "standardLabel": "Standard",
+    "countLabel": "Number of questions",
+    "submit": "Create",
+    "hint": "Questions are based on the uploaded material ({{min}}–{{max}}). Scanned (image) PDFs can't be read.",
+    "chooseSubject": "Choose a subject",
+    "enterTopic": "Enter a topic",
+    "fileRequired": "Choose a material file",
+    "countRange": "Number of questions must be {{min}} to {{max}}",
+    "started": "Started. You'll get a notification when it's ready.",
+    "standards": {
+      "uzbmb": "National certificate",
+      "ielts": "IELTS Academic",
+      "sat": "Digital SAT"
+    },
+    "jobsTitle": "My AI tests",
+    "jobsEmpty": "No AI-generated tests yet.",
+    "jobsLoading": "Loading…",
+    "jobsError": "Could not load the list",
+    "status": {
+      "queued": "Queued…",
+      "processing": "Analysing the material…",
+      "generating": "Generating questions…",
+      "done": "Ready",
+      "failed": "Error"
+    },
+    "questions": "{{count}} questions",
+    "openQuiz": "Open test",
+    "failedFallback": "Unknown error. Please try again.",
+    "waitHint": "This can take 1–5 minutes. It keeps running if you close the page."
   }
 }

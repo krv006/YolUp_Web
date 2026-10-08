@@ -1,10 +1,15 @@
-import { Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useSubjects } from "@/modules/course";
+import { AiQuizCreator } from "@/modules/quiz";
 import { PageBackLink } from "@/shared/ui/legacy";
 
 export function AiPage() {
+  const navigate = useNavigate();
+  const subjects = useSubjects();
+
   return (
-    <div className="schedule-page">
-      <div className="schedule-page-head">
+    <div className="portal-page">
+      <div className="portal-page-heading">
         <div>
           <PageBackLink />
           <span className="portal-eyebrow">AI</span>
@@ -13,10 +18,10 @@ export function AiPage() {
         </div>
       </div>
 
-      <div className="lesson-empty">
-        <Sparkles size={26} />
-        <p>Bu bo‘lim hozircha tayyorlanmoqda.</p>
-      </div>
+      <AiQuizCreator
+        subjects={subjects.data ?? []}
+        onOpenQuiz={(quizId) => navigate(`../quizzes?quiz=${quizId}`)}
+      />
     </div>
   );
 }

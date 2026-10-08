@@ -3,6 +3,7 @@ import type { QuizDetail, QuizEditValues, QuizFormValues, QuizImportWarning } fr
 import { quizEndpoints } from "./quiz.endpoints";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import type {
+  AiQuizJob,
   AiQuizJobDto,
   AiQuizRequest,
   QuizAttemptResultDto,
@@ -85,8 +86,19 @@ export const quizApi = {
     if (request.title) body.set("title", request.title);
     return apiClient.post<AiQuizJobDto>(quizEndpoints.aiGenerate, body);
   },
-  async getAiJob(id: string, options?: RequestOptions) {
-    return apiClient.get<AiQuizJobDto>(quizEndpoints.aiJob(id), options);
+  async getAiJobs(options?: RequestOptions): Promise<AiQuizJob[]> {
+    const dto = await apiClient.get<unknown>(quizEndpoints.aiGenerate, options);
+    return normalizePagination<AiQuizJobDto>(dto).items.map((item) => ({
+      id: String(item.id),
+      status: item.status,
+      topic: item.topic ?? "",
+      title: item.title ?? "",
+      standard: item.standard ?? null,
+      questionCount: item.question_count ?? 0,
+      quizId: item.quiz === null || item.quiz === undefined ? null : String(item.quiz),
+      error: item.error ?? "",
+      createdAt: item.created_at ?? "",
+    }));
   },
   async publish(id: string) {
     return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.publish(id), {}));

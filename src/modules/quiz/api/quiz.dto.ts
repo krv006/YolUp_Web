@@ -112,9 +112,26 @@ export interface AiQuizRequest {
 export interface AiQuizJobDto {
   id: string;
   status: AiQuizJobStatus;
+  topic?: string;
+  title?: string;
+  standard?: AiQuizStandard;
+  question_count?: number;
   quiz: string | number | null;
   error: string;
   warnings: QuizImportWarningDto[];
+  created_at?: string;
+}
+
+export interface AiQuizJob {
+  id: string;
+  status: AiQuizJobStatus;
+  topic: string;
+  title: string;
+  standard: AiQuizStandard | null;
+  questionCount: number;
+  quizId: string | null;
+  error: string;
+  createdAt: string;
 }
 
 export interface QuizImportPreviewDto {
