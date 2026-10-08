@@ -28,6 +28,8 @@ import {
   mapQuizSummaryDto,
 } from "../lib/quiz.mappers";
 
+const AI_UPLOAD_TIMEOUT_MS = 300_000;
+
 export interface ImportedQuiz {
   quiz: QuizDetail;
   warnings: QuizImportWarning[];
@@ -88,7 +90,8 @@ export const quizApi = {
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);
     if (request.title) body.set("title", request.title);
-    return apiClient.post<AiQuizJobDto>(quizEndpoints.aiGenerate, body);
+    // Katta fayllarni yuklash standart 15 soniyadan uzoq davom etadi
+    return apiClient.post<AiQuizJobDto>(quizEndpoints.aiGenerate, body, { timeoutMs: AI_UPLOAD_TIMEOUT_MS });
   },
   async getAiJobs(options?: RequestOptions): Promise<AiQuizJob[]> {
     const dto = await apiClient.get<unknown>(quizEndpoints.aiGenerate, options);
