@@ -17,8 +17,8 @@
       "description": "Work with the AI assistant."
     },
     "exams": {
-      "title": "Exam",
-      "description": "IELTS, SAT, National certificate and your own exam."
+      "title": "Mock test",
+      "description": "IELTS, SAT, National certificate and your own mock test."
     }
   },
   "analytics": {

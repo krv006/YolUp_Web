@@ -13,8 +13,8 @@ export function AiPage() {
         <div>
           <PageBackLink />
           <span className="portal-eyebrow">AI</span>
-          <h1>AI yordamchi</h1>
-          <p>Sun’iy intellekt imkoniyatlari shu bo‘limda jamlanadi.</p>
+          <h1>AI bilan test yaratish</h1>
+          <p>Material va imtihon turini bering. AI qoralama test tuzib beradi.</p>
         </div>
       </div>
 

@@ -15,8 +15,8 @@
     "submitted": "Topshirilgan"
   },
   "list": {
-    "eyebrow": "IMTIHONLAR",
-    "title": "Imtihonlar",
+    "eyebrow": "MOCK TEST",
+    "title": "Mock testlar",
     "subtitle": "Belgilangan vaqtda boshlanadi va hamma uchun bir vaqtda tugaydi.",
     "loading": "Imtihonlar yuklanmoqda",
     "loadError": "Imtihonlarni yuklab bo'lmadi",

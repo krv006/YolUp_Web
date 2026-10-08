@@ -17,8 +17,8 @@
       "description": "Работа с ИИ-помощником."
     },
     "exams": {
-      "title": "Экзамен",
-      "description": "IELTS, SAT, Национальный сертификат и свой экзамен."
+      "title": "Мок-тест",
+      "description": "IELTS, SAT, Национальный сертификат и свой мок-тест."
     }
   },
   "analytics": {

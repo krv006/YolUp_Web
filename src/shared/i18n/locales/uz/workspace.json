@@ -14,11 +14,11 @@
     },
     "ai": {
       "title": "AI",
-      "description": "Sun'iy intellekt yordamchisi bilan ishlash."
+      "description": "AI yordamida test tuzish."
     },
     "exams": {
-      "title": "Imtihon",
-      "description": "IELTS, SAT, Milliy sertifikat va o'z imtihoningiz."
+      "title": "Mock test",
+      "description": "IELTS, SAT, Milliy sertifikat va o'z mock testingiz."
     }
   },
   "analytics": {

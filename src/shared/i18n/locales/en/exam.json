@@ -15,8 +15,8 @@
     "submitted": "Submitted"
   },
   "list": {
-    "eyebrow": "EXAMS",
-    "title": "Exams",
+    "eyebrow": "MOCK TESTS",
+    "title": "Mock tests",
     "subtitle": "They start at the set time and end for everyone at once.",
     "loading": "Loading exams",
     "loadError": "Could not load the exams",
