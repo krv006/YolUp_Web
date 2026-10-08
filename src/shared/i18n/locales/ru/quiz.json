@@ -36,7 +36,8 @@
     "draftBadge": "Черновик",
     "sectionCount": "{{count}} тестов",
     "sectionDrafts": "{{count}} черновиков",
-    "sectionToggleAria": "Развернуть или свернуть: {{subject}}"
+    "sectionToggleAria": "Развернуть или свернуть: {{subject}}",
+    "openQuestionsAria": "Открыть вопросы: {{title}}"
   },
   "studentPage": {
     "loading": "Загрузка тестов",
