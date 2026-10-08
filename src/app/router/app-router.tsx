@@ -68,6 +68,7 @@ const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) =>
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
 const SchedulePage = lazy(() => import("@/pages/schedule/schedule-page").then((module) => ({ default: module.SchedulePage })));
 const AiPage = lazy(() => import("@/pages/ai/ai-page").then((module) => ({ default: module.AiPage })));
+const ParentExamsPage = lazy(() => import("@/pages/parent/exams/parent-exams-page").then((module) => ({ default: module.ParentExamsPage })));
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
 const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.WorkspacePage })));
 const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
@@ -212,6 +213,7 @@ export function AppRouter() {
                       element={<ParentAttendancePage />}
                     />
                     <Route path="homework" element={<ParentHomeworkPage />} />
+                    <Route path="exams" element={<ParentExamsPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
                   </Route>
                 </Route>

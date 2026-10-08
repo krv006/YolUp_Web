@@ -6072,27 +6072,6 @@ a.workspace-card:hover {
 .exam-writing-answers article { padding: 10px; border: 1px solid var(--border); border-radius: var(--r-md); display: grid; gap: 4px; background: var(--surface-tint); }
 .exam-writing-answers small { color: var(--muted-foreground); font-size: var(--fs-xs); }
 .exam-writing-answers p { margin: 0; white-space: pre-wrap; font-size: var(--fs-sm); line-height: 1.6; }
-.exam-writing-empty, .exam-writing-failed { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--muted-foreground); font-size: var(--fs-sm); }
-.exam-writing-failed p { margin: 0; display: inline-flex; align-items: center; gap: 6px; color: var(--destructive); }
-.exam-writing-status { margin: 0; display: inline-flex; align-items: center; gap: 7px; color: var(--muted-foreground); font-size: var(--fs-sm); }
-.exam-spin { animation: spin 1s linear infinite; }
-.exam-writing-result { display: grid; gap: 12px; padding: 12px; border: 1px solid var(--border-accent); border-radius: var(--r-md); background: var(--primary-tint); }
-.exam-writing-band { display: flex; align-items: baseline; gap: 8px; }
-.exam-writing-band strong { font-size: var(--fs-4xl); color: var(--primary-text); }
-.exam-writing-band span { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 800; text-transform: uppercase; }
-.exam-writing-task { display: grid; gap: 6px; padding: 10px; border-radius: var(--r-md); background: var(--surface); }
-.exam-writing-task-head { display: flex; align-items: baseline; gap: 8px; }
-.exam-writing-task-head span { font-size: var(--fs-xl); font-weight: 800; color: var(--primary-text); }
-.exam-writing-task-head small { color: var(--muted-foreground); font-size: var(--fs-xs); }
-.exam-writing-criteria { display: flex; gap: 12px; flex-wrap: wrap; color: var(--muted-foreground); font-size: var(--fs-xs); }
-.exam-writing-strengths { margin: 0; color: var(--success-strong); font-size: var(--fs-sm); }
-.exam-writing-weaknesses { margin: 0; color: var(--warning-strong); font-size: var(--fs-sm); }
-.exam-writing-corrections { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: var(--fs-sm); }
-.exam-writing-corrections small { display: block; color: var(--muted-foreground); font-size: var(--fs-xs); }
-.exam-writing-feedback { margin: 0; font-size: var(--fs-sm); line-height: 1.6; }
-.exam-writing-recommendations { margin: 0; padding-left: 18px; display: grid; gap: 3px; font-size: var(--fs-sm); }
-.exam-writing-actions { display: flex; align-items: center; gap: 8px; }
-.exam-writing-actions input { width: 90px; min-height: 36px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; text-align: center; outline: 0; }
 .exam-result-card { width: min(520px, 100%); padding: 18px; border: 1px solid var(--border); border-radius: var(--r-lg); display: grid; gap: 14px; background: var(--surface); text-align: left; }
 .exam-result-total { display: grid; justify-items: center; gap: 2px; padding: 14px; border-radius: var(--r-lg); background: var(--primary-tint); }
 .exam-result-total strong { color: var(--primary-text); font-size: var(--fs-6xl); line-height: 1; }
@@ -6151,6 +6130,9 @@ a.workspace-card:hover {
 .quiz-google-import input { flex: 1; min-width: 200px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: 0; }
 .quiz-google-import input:focus { border-color: var(--primary); }
 .quiz-google-import small { flex: 1 0 100%; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.quiz-ai-panel select { flex: 1; min-width: 160px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: none; }
+.quiz-ai-panel select:focus { border-color: var(--primary); }
+.quiz-ai-panel input[type="number"] { flex: 0 0 96px; min-width: 96px; }
 .quiz-generate-button--ghost.is-active { border-color: var(--primary); background: var(--primary-tint); }
 .quiz-template-download { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .quiz-template-download-label { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 700; }

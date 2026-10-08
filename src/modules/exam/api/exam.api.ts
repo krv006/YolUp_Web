@@ -95,17 +95,6 @@ export const examApi = {
       await apiClient.get<ExamStudentResultDetailDto>(examEndpoints.studentResult(id, studentId), options)
     );
   },
-  async startAiReview(id: string, studentId: string) {
-    return apiClient.post<{ status?: string }>(examEndpoints.aiReview(id, studentId), {});
-  },
-  async approveAiBand(id: string, studentId: string, band?: number) {
-    return mapExamStudentResultDetailDto(
-      await apiClient.post<ExamStudentResultDetailDto>(
-        examEndpoints.aiApprove(id, studentId),
-        band === undefined ? {} : { band }
-      )
-    );
-  },
   async finish(id: string) {
     await apiClient.post(examEndpoints.finish(id), {});
     return id;

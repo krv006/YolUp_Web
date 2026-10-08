@@ -130,11 +130,9 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
               <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
                 {t("result.manualScores")}
               </Button>
-              {exam.engine === "ielts" ? (
-                <Button size="sm" variant="ghost" onClick={() => setReviewOpen((current) => !current)}>
-                  {reviewOpen ? t("ai.hide") : t("ai.show")}
-                </Button>
-              ) : null}
+              <Button size="sm" variant="ghost" onClick={() => setReviewOpen((current) => !current)}>
+                {reviewOpen ? t("writing.hide") : t("writing.show")}
+              </Button>
             </>
           )}
         </div>

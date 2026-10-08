@@ -6,8 +6,7 @@
     "deleted": "Imtihon o'chirildi",
     "templateCreated": "Shablon yaratildi",
     "templateDeleted": "Shablon o'chirildi",
-    "scoresSaved": "Ballar saqlandi",
-    "aiApproved": "Band tasdiqlandi"
+    "scoresSaved": "Ballar saqlandi"
   },
   "state": {
     "upcoming": "Boshlanmagan",
@@ -27,6 +26,14 @@
     "startsIn": "Boshlanishiga {{time}}",
     "enter": "Kirish",
     "openResult": "Natija"
+  },
+  "parentList": {
+    "subtitle": "Farzandingiz guruhlaridagi imtihonlar. Natija imtihon tugagach ochiladi.",
+    "resultTitle": "{{name}} — natija",
+    "hidden": "Natija imtihon tugagach ochiladi.",
+    "notInExam": "Bu imtihon farzandingizning guruhiga tegishli emas.",
+    "noChildTitle": "Farzand tanlanmagan",
+    "noChildDescription": "Imtihonlarni ko'rish uchun avval farzand qo'shing."
   },
   "runner": {
     "loading": "Imtihon yuklanmoqda",
@@ -156,27 +163,10 @@
     },
     "breakDefaultTitle": "Tanaffus"
   },
-  "ai": {
+  "writing": {
     "essays": "O'QUVCHI INSHOSI",
-    "notStarted": "AI baholash hali boshlanmagan.",
-    "start": "AI bilan baholash",
-    "running": "AI baholamoqda…",
-    "failed": "AI baholay olmadi",
-    "retry": "Qayta urinish",
-    "proposedBand": "AI taklifi",
-    "approvedBand": "Tasdiqlangan band",
-    "task": "{{number}}-task",
-    "words": "{{words}} so'z (kamida {{min}})",
-    "approve": "Tasdiqlash",
-    "approveWithBand": "Shu band bilan tasdiqlash",
-    "bandLabel": "Band",
-    "show": "AI baholash",
-    "hide": "AI baholashni yopish",
-    "criteria": {
-      "task_response": "Topshiriqqa javob",
-      "coherence_cohesion": "Mantiq va bog'lanish",
-      "lexical_resource": "Lug'at boyligi",
-      "grammatical_range_accuracy": "Grammatika"
-    }
+    "empty": "Yozma javob topshirilmagan.",
+    "show": "Insholarni ko'rish",
+    "hide": "Insholarni yopish"
   }
 }
