@@ -85,7 +85,6 @@ export function ParentExamsPage() {
       >
         {resultOf ? (
           <DialogContent
-            className="exam-results-dialog"
             title={t("parentList.resultTitle", { name: selectedChild.name })}
             description={resultOf.title}
           >
