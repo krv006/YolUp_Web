@@ -252,7 +252,7 @@
   },
   "aiPage": {
     "title": "Create a test with AI",
-    "description": "Upload your study material. If you also upload the exam rules (for example the IELTS format), AI builds the test to that structure: sections, passages and questions of different types. Without rules you get a plain multiple-choice test. The result is a draft, so review it before publishing.",
+    "description": "Upload your study material (or leave it empty). Name the exam (for example IELTS) or upload its rules: AI builds the test to that structure: sections, passages and questions of different types. With neither you get a plain multiple-choice test. The result is a draft, so review it before publishing.",
     "subjectLabel": "Subject",
     "topicLabel": "Topic",
     "topicPlaceholder": "E.g. Quadratic equations",
@@ -292,7 +292,7 @@
     "failedFallback": "Unknown error. Please try again.",
     "waitHint": "This can take a few minutes. It keeps running if you close the page.",
     "countHint": "If the rules fix the number of questions, they take priority.",
-    "rulesLabel": "Exam rules · optional",
+    "rulesLabel": "Or exam rules · optional",
     "rulesChoose": "Choose rules file",
     "rulesTextLabel": "Or write the rules",
     "rulesPlaceholder": "E.g. IELTS Reading: 3 passages (700-900 words), 40 questions in total. Passage 1: 6 True/False/Not Given, then 7 gap-fills (no more than 2 words)...",
@@ -307,6 +307,9 @@
     "totalTooLarge": "The files together must not exceed {{max}} MB.",
     "materialTextLabel": "Or paste the material here",
     "materialTextPlaceholder": "You can copy text from the web and paste it here...",
-    "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules."
+    "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules.",
+    "examLabel": "Which exam · optional",
+    "examPlaceholder": "E.g. IELTS Academic Reading, SAT Math, TOEFL...",
+    "examHint": "If you give the exam name you don't need to upload rules: AI knows its official structure (sections, question types, counts, order). Uploaded rules take priority."
   }
 }

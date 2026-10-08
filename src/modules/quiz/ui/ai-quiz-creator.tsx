@@ -16,6 +16,12 @@ const MAX_MATERIAL_TEXT = 120000;
 const MAX_RULES_MB = 5;
 const MAX_RULES_TEXT = 30000;
 const ACTIVE = ["queued", "processing", "generating"];
+/** Faqat tavsiyalar (datalist): har qanday imtihon nomini yozish mumkin — AI uni o'zi biladi. */
+const EXAM_SUGGESTIONS = [
+  "IELTS Academic Reading", "IELTS General Training Reading", "IELTS Listening", "IELTS Writing",
+  "SAT Reading and Writing", "SAT Math", "TOEFL iBT Reading", "Cambridge B2 First (FCE) Reading",
+  "CEFR B1", "Milliy sertifikat (matematika)", "DTM test",
+];
 
 export interface AiQuizCreatorProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
@@ -35,6 +41,7 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [materialText, setMaterialText] = useState("");
+  const [examName, setExamName] = useState("");
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const [rulesText, setRulesText] = useState("");
   const [count, setCount] = useState(20);
@@ -87,6 +94,7 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           rulesFile,
           rulesText: rulesText.trim(),
           materialText: materialText.trim(),
+          examName: examName.trim(),
         },
       },
       {
@@ -95,6 +103,7 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           setTitle("");
           setFiles([]);
           setMaterialText("");
+          setExamName("");
           setRulesFile(null);
           setRulesText("");
         },
@@ -148,6 +157,23 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
             />
           </label>
         </div>
+
+        <label className="quiz-topic-field">
+          {t("aiPage.examLabel")}
+          <input
+            list="ai-exam-suggestions"
+            value={examName}
+            maxLength={120}
+            onChange={(event) => setExamName(event.target.value)}
+            placeholder={t("aiPage.examPlaceholder")}
+          />
+          <datalist id="ai-exam-suggestions">
+            {EXAM_SUGGESTIONS.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
+          <small className="ai-quiz-hint">{t("aiPage.examHint")}</small>
+        </label>
 
         <div className="ai-quiz-row">
           <div className="ai-quiz-field">

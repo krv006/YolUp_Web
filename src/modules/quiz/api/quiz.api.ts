@@ -83,6 +83,7 @@ export const quizApi = {
     if (request.rulesFile) body.set("rules_file", request.rulesFile);
     if (request.rulesText) body.set("rules_text", request.rulesText);
     if (request.materialText) body.set("material_text", request.materialText);
+    if (request.examName) body.set("exam_name", request.examName);
     body.set("question_count", String(request.questionCount));
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);
