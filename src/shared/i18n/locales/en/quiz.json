@@ -260,7 +260,7 @@
     "titlePlaceholder": "E.g. Chapter 1 test",
     "materialLabel": "Material",
     "chooseFile": "Choose material",
-    "fileHint": "up to 20 MB",
+    "fileHint": "Up to 20 MB each, up to 5 files",
     "standardLabel": "Standard",
     "countLabel": "Number of questions",
     "submit": "Create",
@@ -300,6 +300,13 @@
     "rulesTooLarge": "The rules file is too large: {{size}} MB (limit {{max}} MB).",
     "modeRules": "By exam rules",
     "modeSimple": "Plain multiple choice",
-    "modeBank": "Test bank"
+    "modeBank": "Test bank",
+    "chooseFiles": "Choose material (several files allowed)",
+    "filesChosen": "{{count}} files selected",
+    "tooManyFiles": "You can pick at most {{max}} files at once.",
+    "totalTooLarge": "The files together must not exceed {{max}} MB.",
+    "materialTextLabel": "Or paste the material here",
+    "materialTextPlaceholder": "You can copy text from the web and paste it here...",
+    "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules."
   }
 }

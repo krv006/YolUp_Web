@@ -75,13 +75,14 @@ export const quizApi = {
       await apiClient.post<QuizDto>(endpoint, { url, ...mapQuizImportRequest(request) })
     );
   },
-  async startAiGenerate(file: File, request: AiQuizRequest) {
+  async startAiGenerate(files: File[], request: AiQuizRequest) {
     const body = new FormData();
-    body.set("file", file);
+    for (const file of files) body.append("file", file);
     body.set("topic", request.topic);
     if (request.standard) body.set("standard", request.standard);
     if (request.rulesFile) body.set("rules_file", request.rulesFile);
     if (request.rulesText) body.set("rules_text", request.rulesText);
+    if (request.materialText) body.set("material_text", request.materialText);
     body.set("question_count", String(request.questionCount));
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);

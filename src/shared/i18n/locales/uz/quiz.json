@@ -260,7 +260,7 @@
     "titlePlaceholder": "Masalan: 1-bob testi",
     "materialLabel": "Material",
     "chooseFile": "Material tanlash",
-    "fileHint": "20 MB gacha",
+    "fileHint": "Har biri 20 MB gacha, 5 tagacha fayl",
     "standardLabel": "Standart",
     "countLabel": "Savollar soni",
     "submit": "Yaratish",
@@ -300,6 +300,13 @@
     "rulesTooLarge": "Qoidalar fayli juda katta: {{size}} MB (chegara {{max}} MB).",
     "modeRules": "Imtihon qoidalari bo'yicha",
     "modeSimple": "Oddiy variantli",
-    "modeBank": "Test banki"
+    "modeBank": "Test banki",
+    "chooseFiles": "Material tanlash (bir nechta fayl)",
+    "filesChosen": "{{count}} ta fayl tanlandi",
+    "tooManyFiles": "Bir vaqtda ko'pi bilan {{max}} ta fayl tanlash mumkin.",
+    "totalTooLarge": "Fayllar umumiy hajmi {{max}} MB dan oshmasligi kerak.",
+    "materialTextLabel": "Yoki materialni shu yerga qo'ying",
+    "materialTextPlaceholder": "Matnni internetdan nusxalab shu yerga yopishtirishingiz mumkin...",
+    "materialOptionalHint": "Material ixtiyoriy: topolmasangiz bo'sh qoldiring, AI mavzu va qoidalar bo'yicha matnni o'zi yozadi."
   }
 }

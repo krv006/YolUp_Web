@@ -106,8 +106,8 @@ export function useImportGoogleLink() {
 export function useStartAiQuiz() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ file, request }: { file: File; request: AiQuizRequest }) =>
-      quizApi.startAiGenerate(file, request),
+    mutationFn: ({ files, request }: { files: File[]; request: AiQuizRequest }) =>
+      quizApi.startAiGenerate(files, request),
     onSuccess: () => client.invalidateQueries({ queryKey: quizKeys.aiJobs }),
     onError: (error: Error) => toast.error(error.message),
   });

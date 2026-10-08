@@ -112,6 +112,8 @@ export interface AiQuizRequest {
   questionCount: number;
   rulesFile?: File | null;
   rulesText?: string;
+  /** Material matni (fayl o'rniga yoki fayllarga qo'shimcha). */
+  materialText?: string;
 }
 
 export interface AiQuizJobDto {
