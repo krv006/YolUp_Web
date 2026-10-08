@@ -483,32 +483,6 @@ export interface ExamStudentResult {
   pending: string[];
 }
 
-export type ExamAiStatus = "idle" | "running" | "proposed" | "approved" | "failed";
-
-export interface ExamAiTask {
-  taskNumber: number;
-  words: number | null;
-  minWords: number | null;
-  band: number | null;
-  criteria: Array<{ key: string; score: number | null }>;
-  strengths: string[];
-  weaknesses: string[];
-  corrections: Array<{ original: string; corrected: string; explanation: string }>;
-  feedback: string;
-}
-
-export interface ExamAiWriting {
-  status: ExamAiStatus;
-  proposedBand: number | null;
-  approvedBand: number | null;
-  error: string;
-  generatedAt: string | null;
-  writingBand: number | null;
-  tasks: ExamAiTask[];
-  overallComment: string;
-  recommendations: string[];
-}
-
 export interface ExamManualAnswer {
   section: string;
   question: string;
@@ -517,7 +491,6 @@ export interface ExamManualAnswer {
 
 export interface ExamStudentResultDetail extends ExamStudentResult {
   manualAnswers: ExamManualAnswer[];
-  ai: ExamAiWriting | null;
 }
 
 export interface ExamResults {

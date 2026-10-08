@@ -6,8 +6,7 @@
     "deleted": "Exam deleted",
     "templateCreated": "Template created",
     "templateDeleted": "Template deleted",
-    "scoresSaved": "Scores saved",
-    "aiApproved": "Band approved"
+    "scoresSaved": "Scores saved"
   },
   "state": {
     "upcoming": "Not started",
@@ -156,27 +155,10 @@
     },
     "breakDefaultTitle": "Break"
   },
-  "ai": {
-    "essays": "STUDENT'S ESSAY",
-    "notStarted": "The AI review has not started yet.",
-    "start": "Review with AI",
-    "running": "The AI is reviewing…",
-    "failed": "The AI could not review it",
-    "retry": "Try again",
-    "proposedBand": "AI suggestion",
-    "approvedBand": "Approved band",
-    "task": "Task {{number}}",
-    "words": "{{words}} words (at least {{min}})",
-    "approve": "Approve",
-    "approveWithBand": "Approve with this band",
-    "bandLabel": "Band",
-    "show": "AI review",
-    "hide": "Hide the AI review",
-    "criteria": {
-      "task_response": "Task response",
-      "coherence_cohesion": "Coherence and cohesion",
-      "lexical_resource": "Lexical resource",
-      "grammatical_range_accuracy": "Grammar"
-    }
+  "writing": {
+    "essays": "STUDENT ESSAYS",
+    "empty": "No written answers submitted.",
+    "show": "View essays",
+    "hide": "Hide essays"
   }
 }

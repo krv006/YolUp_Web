@@ -98,9 +98,6 @@ export type {
   ExamTotalResult,
   QuizGroup,
   QuizGroupFormValues,
-  ExamAiStatus,
-  ExamAiTask,
-  ExamAiWriting,
   ExamManualAnswer,
   ExamStudentResultDetail,
 } from "./domain";

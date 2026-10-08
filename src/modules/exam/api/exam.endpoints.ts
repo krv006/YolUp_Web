@@ -9,6 +9,4 @@ export const examEndpoints = Object.freeze({
   results: (id: string) => `/api/v1/exams/${id}/results/`,
   studentResult: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/`,
   manualScores: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/manual/`,
-  aiReview: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/ai/`,
-  aiApprove: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/ai/approve/`,
 });

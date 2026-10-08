@@ -6,8 +6,7 @@
     "deleted": "Экзамен удалён",
     "templateCreated": "Шаблон создан",
     "templateDeleted": "Шаблон удалён",
-    "scoresSaved": "Баллы сохранены",
-    "aiApproved": "Балл подтверждён"
+    "scoresSaved": "Баллы сохранены"
   },
   "state": {
     "upcoming": "Не начался",
@@ -156,27 +155,10 @@
     },
     "breakDefaultTitle": "Перерыв"
   },
-  "ai": {
-    "essays": "РАБОТА УЧЕНИКА",
-    "notStarted": "Оценка ИИ ещё не запускалась.",
-    "start": "Оценить с ИИ",
-    "running": "ИИ оценивает…",
-    "failed": "ИИ не смог оценить",
-    "retry": "Повторить",
-    "proposedBand": "Предложение ИИ",
-    "approvedBand": "Подтверждённый балл",
-    "task": "Task {{number}}",
-    "words": "{{words}} слов (минимум {{min}})",
-    "approve": "Подтвердить",
-    "approveWithBand": "Подтвердить с этим баллом",
-    "bandLabel": "Балл",
-    "show": "Оценка ИИ",
-    "hide": "Скрыть оценку ИИ",
-    "criteria": {
-      "task_response": "Ответ на задание",
-      "coherence_cohesion": "Связность",
-      "lexical_resource": "Лексика",
-      "grammatical_range_accuracy": "Грамматика"
-    }
+  "writing": {
+    "essays": "ЭССЕ УЧЕНИКА",
+    "empty": "Письменных ответов нет.",
+    "show": "Показать эссе",
+    "hide": "Скрыть эссе"
   }
 }

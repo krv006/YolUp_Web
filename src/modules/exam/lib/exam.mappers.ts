@@ -11,7 +11,6 @@ import type {
   ExamTemplate,
   ExamResults,
   ExamSectionResult,
-  ExamAiWriting,
   ExamStudentResult,
   ExamStudentResultDetail,
   ExamTemplateItem,
@@ -283,44 +282,6 @@ export function mapExamResultsDto(dto: ExamResultsDto): ExamResults {
   };
 }
 
-const AI_CRITERIA = [
-  "task_response",
-  "coherence_cohesion",
-  "lexical_resource",
-  "grammatical_range_accuracy",
-] as const;
-
-function mapAiWriting(dto: ExamStudentResultDetailDto["ai"]): ExamAiWriting | null {
-  const writing = dto?.writing;
-  if (!writing || !writing.status) return null;
-  const result = writing.result ?? null;
-  return {
-    status: writing.status,
-    proposedBand: writing.proposed_band ?? null,
-    approvedBand: writing.approved_band ?? null,
-    error: writing.error || "",
-    generatedAt: writing.generated_at ?? null,
-    writingBand: result?.writing_band ?? null,
-    tasks: (result?.tasks ?? []).map((task) => ({
-      taskNumber: task.task_number,
-      words: task.words ?? null,
-      minWords: task.min_words ?? null,
-      band: task.band ?? null,
-      criteria: AI_CRITERIA.map((key) => ({ key, score: task.criteria?.[key] ?? null })),
-      strengths: task.strengths ?? [],
-      weaknesses: task.weaknesses ?? [],
-      corrections: (task.corrections ?? []).map((item) => ({
-        original: item.original,
-        corrected: item.corrected,
-        explanation: item.explanation || "",
-      })),
-      feedback: task.feedback || "",
-    })),
-    overallComment: result?.summary?.overall_comment || "",
-    recommendations: result?.summary?.recommendations ?? [],
-  };
-}
-
 export function mapExamStudentResultDetailDto(
   dto: ExamStudentResultDetailDto
 ): ExamStudentResultDetail {
@@ -331,6 +292,5 @@ export function mapExamStudentResultDetailDto(
       question: item.question,
       answer: item.answer,
     })),
-    ai: mapAiWriting(dto.ai),
   };
 }
