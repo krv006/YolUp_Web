@@ -8,4 +8,6 @@ export const quizEndpoints = Object.freeze({
   importGoogleDoc: "/api/v1/quizzes/import-google-doc/",
   importGoogleForm: "/api/v1/quizzes/import-google-form/",
   template: "/api/v1/quizzes/template/",
+  aiGenerate: "/api/v1/quizzes/ai-generate/",
+  aiJob: (id: string) => `/api/v1/quizzes/ai-generate/${id}/`,
 });

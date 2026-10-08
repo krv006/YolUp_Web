@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { BookOpen, ChevronDown, Download, FileUp, Link2, Plus, X } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileUp, Link2, Plus, Sparkles, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -27,6 +27,7 @@ import {
 } from "../lib/question-draft";
 import type { ImportedQuiz } from "../api/quiz.api";
 import { detectGoogleSource } from "../lib/google-import";
+import { AiGeneratePanel } from "./ai-generate-panel";
 import { QuestionEditor } from "./question-editor";
 import { QuestionGroupEditor } from "./question-group-editor";
 import { QuizPreview } from "./quiz-preview";
@@ -124,6 +125,7 @@ export function AddQuizDialog({
   const importGoogle = useImportGoogleLink();
   const [googleOpen, setGoogleOpen] = useState(false);
   const [googleUrl, setGoogleUrl] = useState("");
+  const [aiOpen, setAiOpen] = useState(false);
   const downloadTemplate = useDownloadQuizTemplate();
 
   const missingAnswerWarnings = importWarnings.filter(
@@ -187,6 +189,7 @@ export function AddQuizDialog({
   function applyImported(result: ImportedQuiz) {
     setGoogleOpen(false);
     setGoogleUrl("");
+    setAiOpen(false);
     setError(null);
     onImported?.(result);
     reset();
@@ -238,6 +241,7 @@ export function AddQuizDialog({
     setImportWarnings([]);
     setGoogleOpen(false);
     setGoogleUrl("");
+    setAiOpen(false);
     setCopiedFrom(null);
     setCopyingId(null);
     setError(null);
@@ -600,7 +604,7 @@ export function AddQuizDialog({
             <input
               ref={fileInputRef}
               type="file"
-              accept=".docx,.xlsx"
+              accept=".docx,.xlsx,.json"
               hidden
               onChange={handleImportFile}
             />
@@ -619,12 +623,34 @@ export function AddQuizDialog({
               aria-expanded={googleOpen}
               onClick={() => {
                 setGoogleOpen((current) => !current);
+                setAiOpen(false);
                 setError(null);
               }}
             >
               <Link2 size={14} /> {t("createDialog.googleImportButton")}
             </button>
+            <button
+              type="button"
+              className={`quiz-generate-button quiz-generate-button--ghost ${aiOpen ? "is-active" : ""}`}
+              aria-expanded={aiOpen}
+              onClick={() => {
+                setAiOpen((current) => !current);
+                setGoogleOpen(false);
+                setError(null);
+              }}
+            >
+              <Sparkles size={14} /> {t("createDialog.ai.button")}
+            </button>
           </div>
+
+          {aiOpen ? (
+            <AiGeneratePanel
+              validateTarget={targetError}
+              getRequest={importRequest}
+              onCreated={applyImported}
+              onError={setError}
+            />
+          ) : null}
 
           {googleOpen ? (
             <div className="quiz-google-import">
