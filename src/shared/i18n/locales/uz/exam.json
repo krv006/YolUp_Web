@@ -27,6 +27,14 @@
     "enter": "Kirish",
     "openResult": "Natija"
   },
+  "parentList": {
+    "subtitle": "Farzandingiz guruhlaridagi imtihonlar. Natija imtihon tugagach ochiladi.",
+    "resultTitle": "{{name}} — natija",
+    "hidden": "Natija imtihon tugagach ochiladi.",
+    "notInExam": "Bu imtihon farzandingizning guruhiga tegishli emas.",
+    "noChildTitle": "Farzand tanlanmagan",
+    "noChildDescription": "Imtihonlarni ko'rish uchun avval farzand qo'shing."
+  },
   "runner": {
     "loading": "Imtihon yuklanmoqda",
     "loadError": "Imtihonni yuklab bo'lmadi",

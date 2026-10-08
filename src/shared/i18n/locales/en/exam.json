@@ -27,6 +27,14 @@
     "enter": "Enter",
     "openResult": "Result"
   },
+  "parentList": {
+    "subtitle": "Exams in your child's groups. Results open once the exam is over.",
+    "resultTitle": "{{name}} — result",
+    "hidden": "The result opens once the exam is over.",
+    "notInExam": "This exam doesn't belong to your child's group.",
+    "noChildTitle": "No child selected",
+    "noChildDescription": "Add a child first to see their exams."
+  },
   "runner": {
     "loading": "Loading the exam",
     "loadError": "Could not load the exam",

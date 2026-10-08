@@ -94,7 +94,7 @@ export function AiGeneratePanel({ validateTarget, getRequest, onCreated, onError
   }
 
   return (
-    <div className="quiz-google-import">
+    <div className="quiz-google-import quiz-ai-panel">
       <input ref={fileInputRef} type="file" accept={MATERIAL_ACCEPT} hidden onChange={handleFile} />
       <button
         type="button"
