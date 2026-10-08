@@ -252,7 +252,7 @@
   },
   "aiPage": {
     "title": "AI bilan test yaratish",
-    "description": "O'quv materialingizni (PDF, Word, PowerPoint, Excel yoki matn) yuklang, standartni tanlang: AI savollarni yozadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
+    "description": "O'quv materialingizni yuklang. Imtihon qoidalarini ham yuklasangiz (masalan, IELTS formati), AI testni shu tuzilma bo'yicha to'liq tuzadi: bo'limlar, matn parchalari va turli turdagi savollar. Qoidalarsiz oddiy variantli test chiqadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
     "subjectLabel": "Qaysi fan uchun",
     "topicLabel": "Mavzu",
     "topicPlaceholder": "Masalan: Kvadrat tenglamalar",
@@ -264,7 +264,7 @@
     "standardLabel": "Standart",
     "countLabel": "Savollar soni",
     "submit": "Yaratish",
-    "hint": "Savollar yuklangan materialga asoslanadi ({{min}}–{{max}} ta). Skanerlangan (rasm) PDF o'qilmaydi.",
+    "hint": "Savollar yuklangan materialga asoslanadi. Skanerlangan (rasm) PDF o'qilmaydi.",
     "chooseSubject": "Fanni tanlang",
     "enterTopic": "Mavzuni kiriting",
     "fileRequired": "Material faylini tanlang",
@@ -290,6 +290,16 @@
     "questions": "{{count}} ta savol",
     "openQuiz": "Testni ochish",
     "failedFallback": "Noma'lum xato. Qayta urinib ko'ring.",
-    "waitHint": "Bu 1–5 daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi."
+    "waitHint": "Bu bir necha daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi.",
+    "countHint": "Qoidalarda soni belgilangan bo'lsa, ular ustun.",
+    "rulesLabel": "Imtihon qoidalari · ixtiyoriy",
+    "rulesChoose": "Qoidalar faylini tanlash",
+    "rulesTextLabel": "Yoki qoidalarni yozing",
+    "rulesPlaceholder": "Masalan: IELTS Reading: 3 ta matn (700-900 so'z), jami 40 savol. 1-matn: 6 ta True/False/Not Given, so'ng 7 ta bo'sh joyni to'ldirish (ko'pi bilan 2 so'z)...",
+    "rulesHint": "Qoidalar faylini (PDF, Word...) ham, matnni ham berish mumkin. Bo'sh qoldirsangiz, oddiy A-B-C-D test tuziladi.",
+    "rulesTooLarge": "Qoidalar fayli juda katta: {{size}} MB (chegara {{max}} MB).",
+    "modeRules": "Imtihon qoidalari bo'yicha",
+    "modeSimple": "Oddiy variantli",
+    "modeBank": "Test banki"
   }
 }

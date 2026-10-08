@@ -252,7 +252,7 @@
   },
   "aiPage": {
     "title": "Create a test with AI",
-    "description": "Upload your study material (PDF, Word, PowerPoint, Excel or text) and pick a standard: AI writes the questions. The result is a draft, so review it before publishing.",
+    "description": "Upload your study material. If you also upload the exam rules (for example the IELTS format), AI builds the test to that structure: sections, passages and questions of different types. Without rules you get a plain multiple-choice test. The result is a draft, so review it before publishing.",
     "subjectLabel": "Subject",
     "topicLabel": "Topic",
     "topicPlaceholder": "E.g. Quadratic equations",
@@ -264,7 +264,7 @@
     "standardLabel": "Standard",
     "countLabel": "Number of questions",
     "submit": "Create",
-    "hint": "Questions are based on the uploaded material ({{min}}–{{max}}). Scanned (image) PDFs can't be read.",
+    "hint": "Questions are based on the uploaded material. Scanned (image) PDFs can't be read.",
     "chooseSubject": "Choose a subject",
     "enterTopic": "Enter a topic",
     "fileRequired": "Choose a material file",
@@ -290,6 +290,16 @@
     "questions": "{{count}} questions",
     "openQuiz": "Open test",
     "failedFallback": "Unknown error. Please try again.",
-    "waitHint": "This can take 1–5 minutes. It keeps running if you close the page."
+    "waitHint": "This can take a few minutes. It keeps running if you close the page.",
+    "countHint": "If the rules fix the number of questions, they take priority.",
+    "rulesLabel": "Exam rules · optional",
+    "rulesChoose": "Choose rules file",
+    "rulesTextLabel": "Or write the rules",
+    "rulesPlaceholder": "E.g. IELTS Reading: 3 passages (700-900 words), 40 questions in total. Passage 1: 6 True/False/Not Given, then 7 gap-fills (no more than 2 words)...",
+    "rulesHint": "You can provide a rules file (PDF, Word...) and/or text. Leave empty for a plain A-B-C-D test.",
+    "rulesTooLarge": "The rules file is too large: {{size}} MB (limit {{max}} MB).",
+    "modeRules": "By exam rules",
+    "modeSimple": "Plain multiple choice",
+    "modeBank": "Test bank"
   }
 }
