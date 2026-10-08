@@ -1,4 +1,11 @@
-import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
+import {
+  API_ERROR_CODES,
+  apiClient,
+  AppError,
+  directApiUrl,
+  normalizePagination,
+  type RequestOptions,
+} from "@/shared/api";
 import type { QuizDetail, QuizEditValues, QuizFormValues, QuizImportWarning } from "@/shared/types";
 import { quizEndpoints } from "./quiz.endpoints";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
@@ -90,8 +97,18 @@ export const quizApi = {
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);
     if (request.title) body.set("title", request.title);
-    // Katta fayllarni yuklash standart 15 soniyadan uzoq davom etadi
-    return apiClient.post<AiQuizJobDto>(quizEndpoints.aiGenerate, body, { timeoutMs: AI_UPLOAD_TIMEOUT_MS });
+    // Katta fayllar: (1) standart 15 soniyadan uzoq davom etadi; (2) Vercel proxy'si ularni uzib qo'yishi mumkin —
+    // shuning uchun avval to'g'ridan-to'g'ri API domeniga yuboramiz, tarmoq darajasida muvaffaqiyatsiz bo'lsa
+    // (CORS/ulanish) odatiy yo'l bilan qayta urinamiz.
+    const options = { timeoutMs: AI_UPLOAD_TIMEOUT_MS };
+    try {
+      return await apiClient.post<AiQuizJobDto>(directApiUrl(quizEndpoints.aiGenerate), body, options);
+    } catch (error) {
+      if (error instanceof AppError && error.code === API_ERROR_CODES.NETWORK_ERROR) {
+        return apiClient.post<AiQuizJobDto>(quizEndpoints.aiGenerate, body, options);
+      }
+      throw error;
+    }
   },
   async getAiJobs(options?: RequestOptions): Promise<AiQuizJob[]> {
     const dto = await apiClient.get<unknown>(quizEndpoints.aiGenerate, options);

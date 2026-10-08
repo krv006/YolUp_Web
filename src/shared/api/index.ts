@@ -1,6 +1,6 @@
 export { apiClient, ApiClient } from "./api-client";
 export type { ApiClientInit } from "./api-client";
-export { apiConfig } from "./api-config";
+export { apiConfig, directApiUrl } from "./api-config";
 export {
   AppError,
   ApiError,
