@@ -81,7 +81,7 @@
     "addQuestion": "Savol qo'shish",
     "removeQuestionAria": "{{number}}-savolni o'chirish",
     "importOr": "yoki",
-    "importButton": ".docx/.xlsx fayldan import",
+    "importButton": ".docx/.xlsx/.json fayldan import",
     "importButtonLoading": "Yuklanmoqda…",
     "downloadTemplateLabel": "Shablonni yuklab olish:",
     "downloadTemplateWord": "Word",
@@ -130,7 +130,33 @@
       "notEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
       "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
     },
-    "saveDraft": "Qoralama saqlash"
+    "saveDraft": "Qoralama saqlash",
+    "ai": {
+      "button": "AI bilan yaratish",
+      "chooseFile": "Material tanlash",
+      "standardLabel": "Standart",
+      "countLabel": "Savollar soni",
+      "submit": "Yaratish",
+      "hint": "PDF, Word, PowerPoint, Excel yoki matn fayl (20 MB gacha). Savollar materialga asoslanadi, {{min}}–{{max}} ta. Natija qoralama bo‘ladi — e’lon qilishdan oldin tekshiring.",
+      "fileRequired": "Material faylini tanlang",
+      "countRange": "Savollar soni {{min}} dan {{max}} gacha bo‘lishi kerak",
+      "standards": {
+        "uzbmb": "Milliy sertifikat",
+        "ielts": "IELTS Academic",
+        "sat": "Digital SAT"
+      },
+      "status": {
+        "queued": "Navbatda…",
+        "processing": "Material tahlil qilinmoqda…",
+        "generating": "Savollar yaratilmoqda…",
+        "done": "Tayyor, ochilmoqda…",
+        "failed": "Xato"
+      },
+      "waitHint": "Bu 1–5 daqiqa olishi mumkin. Oynani yopsangiz ham ish davom etadi — tayyor bo‘lganda bildirishnoma keladi.",
+      "failedTitle": "Test yaratilmadi",
+      "failedFallback": "Noma’lum xato. Qayta urinib ko‘ring.",
+      "retry": "Qayta urinish"
+    }
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",

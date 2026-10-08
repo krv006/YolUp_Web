@@ -87,6 +87,26 @@ export interface QuizImportRequest {
   title?: string;
 }
 
+export type AiQuizStandard = "uzbmb" | "ielts" | "sat";
+export type AiQuizJobStatus = "queued" | "processing" | "generating" | "done" | "failed";
+
+export interface AiQuizRequest {
+  topic: string;
+  courseId?: string | null;
+  subject?: string;
+  title?: string;
+  standard: AiQuizStandard;
+  questionCount: number;
+}
+
+export interface AiQuizJobDto {
+  id: string;
+  status: AiQuizJobStatus;
+  quiz: string | number | null;
+  error: string;
+  warnings: QuizImportWarningDto[];
+}
+
 export interface QuizImportPreviewDto {
   title: string;
   description: string;

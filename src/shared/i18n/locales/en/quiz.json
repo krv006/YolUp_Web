@@ -81,7 +81,7 @@
     "addQuestion": "Add question",
     "removeQuestionAria": "Remove question {{number}}",
     "importOr": "or",
-    "importButton": "Import from .docx/.xlsx",
+    "importButton": "Import from .docx/.xlsx/.json",
     "importButtonLoading": "Uploading…",
     "downloadTemplateLabel": "Download template:",
     "downloadTemplateWord": "Word",
@@ -130,7 +130,33 @@
       "notEnoughOptions": "Question {{number}}: not enough options — check it",
       "unsupportedType": "Question {{number}} was not imported: only single and multiple choice questions are supported"
     },
-    "saveDraft": "Save as draft"
+    "saveDraft": "Save as draft",
+    "ai": {
+      "button": "Create with AI",
+      "chooseFile": "Choose material",
+      "standardLabel": "Standard",
+      "countLabel": "Number of questions",
+      "submit": "Create",
+      "hint": "PDF, Word, PowerPoint, Excel or text file (up to 20 MB). Questions are based on the material, {{min}}–{{max}}. The result is a draft — review it before publishing.",
+      "fileRequired": "Choose a material file",
+      "countRange": "Number of questions must be {{min}} to {{max}}",
+      "standards": {
+        "uzbmb": "National certificate",
+        "ielts": "IELTS Academic",
+        "sat": "Digital SAT"
+      },
+      "status": {
+        "queued": "Queued…",
+        "processing": "Analysing the material…",
+        "generating": "Generating questions…",
+        "done": "Ready, opening…",
+        "failed": "Error"
+      },
+      "waitHint": "This can take 1–5 minutes. You can close this window — the job keeps running and you'll get a notification.",
+      "failedTitle": "Could not create the test",
+      "failedFallback": "Unknown error. Please try again.",
+      "retry": "Try again"
+    }
   },
   "preview": {
     "regionAria": "How the student will see it",

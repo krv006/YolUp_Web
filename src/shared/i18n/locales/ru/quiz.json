@@ -81,7 +81,7 @@
     "addQuestion": "Добавить вопрос",
     "removeQuestionAria": "Удалить вопрос {{number}}",
     "importOr": "или",
-    "importButton": "Импорт из .docx/.xlsx",
+    "importButton": "Импорт из .docx/.xlsx/.json",
     "importButtonLoading": "Загрузка…",
     "downloadTemplateLabel": "Скачать шаблон:",
     "downloadTemplateWord": "Word",
@@ -130,7 +130,33 @@
       "notEnoughOptions": "Вопрос {{number}}: недостаточно вариантов — проверьте",
       "unsupportedType": "Вопрос {{number}} не импортирован: берутся только вопросы с одним и несколькими вариантами"
     },
-    "saveDraft": "Сохранить черновик"
+    "saveDraft": "Сохранить черновик",
+    "ai": {
+      "button": "Создать с ИИ",
+      "chooseFile": "Выбрать материал",
+      "standardLabel": "Стандарт",
+      "countLabel": "Количество вопросов",
+      "submit": "Создать",
+      "hint": "PDF, Word, PowerPoint, Excel или текстовый файл (до 20 МБ). Вопросы строятся по материалу, {{min}}–{{max}} шт. Результат — черновик: проверьте перед публикацией.",
+      "fileRequired": "Выберите файл с материалом",
+      "countRange": "Количество вопросов — от {{min}} до {{max}}",
+      "standards": {
+        "uzbmb": "Национальный сертификат",
+        "ielts": "IELTS Academic",
+        "sat": "Digital SAT"
+      },
+      "status": {
+        "queued": "В очереди…",
+        "processing": "Анализ материала…",
+        "generating": "Создание вопросов…",
+        "done": "Готово, открываем…",
+        "failed": "Ошибка"
+      },
+      "waitHint": "Это может занять 1–5 минут. Если закрыть окно, задача продолжится — придёт уведомление.",
+      "failedTitle": "Не удалось создать тест",
+      "failedFallback": "Неизвестная ошибка. Попробуйте ещё раз.",
+      "retry": "Повторить"
+    }
   },
   "preview": {
     "regionAria": "Как это увидит ученик",

@@ -5,13 +5,14 @@ import { downloadBlob } from "@/shared/lib";
 import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import { quizApi } from "../api/quiz.api";
-import type { QuizImportRequest } from "../api/quiz.dto";
+import type { AiQuizRequest, QuizImportRequest } from "../api/quiz.dto";
 
 export const quizKeys = Object.freeze({
   all: ["quizzes"] as const,
   list: (courseId: string | null) => ["quizzes", "list", courseId] as const,
   detail: (id: string) => ["quizzes", "detail", id] as const,
   attempts: (id: string) => ["quizzes", "attempts", id] as const,
+  aiJob: (id: string) => ["quizzes", "ai-job", id] as const,
 });
 
 export function useQuizzes(courseId: string | null, enabled = true) {
@@ -98,6 +99,27 @@ export function useImportGoogleLink() {
       toast.success(t("toast.importSuccess", { count: result.quiz.questions.length }));
     },
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useStartAiQuiz() {
+  return useMutation({
+    mutationFn: ({ file, request }: { file: File; request: AiQuizRequest }) =>
+      quizApi.startAiGenerate(file, request),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+/** Ish tugaguncha (done/failed) har 5 soniyada holatni so'raydi. */
+export function useAiQuizJob(id: string | null) {
+  return useQuery({
+    queryKey: quizKeys.aiJob(id ?? ""),
+    queryFn: ({ signal }) => quizApi.getAiJob(id as string, { signal }),
+    enabled: Boolean(id),
+    refetchInterval: (query) => {
+      const status = query.state.data?.status;
+      return status === "done" || status === "failed" ? false : 5000;
+    },
   });
 }
 
