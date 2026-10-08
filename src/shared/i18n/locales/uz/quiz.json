@@ -252,7 +252,7 @@
   },
   "aiPage": {
     "title": "AI bilan test yaratish",
-    "description": "O'quv materialingizni yuklang. Imtihon qoidalarini ham yuklasangiz (masalan, IELTS formati), AI testni shu tuzilma bo'yicha to'liq tuzadi: bo'limlar, matn parchalari va turli turdagi savollar. Qoidalarsiz oddiy variantli test chiqadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
+    "description": "O'quv materialingizni yuklang (yoki bo'sh qoldiring). Imtihon nomini (masalan, IELTS) yozing yoki qoidalarini yuklang: AI testni shu tuzilma bo'yicha to'liq tuzadi: bo'limlar, matn parchalari va turli turdagi savollar. Ikkalasi ham bo'lmasa, oddiy variantli test chiqadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
     "subjectLabel": "Qaysi fan uchun",
     "topicLabel": "Mavzu",
     "topicPlaceholder": "Masalan: Kvadrat tenglamalar",
@@ -260,7 +260,7 @@
     "titlePlaceholder": "Masalan: 1-bob testi",
     "materialLabel": "Material",
     "chooseFile": "Material tanlash",
-    "fileHint": "20 MB gacha",
+    "fileHint": "Har biri 20 MB gacha, 5 tagacha fayl",
     "standardLabel": "Standart",
     "countLabel": "Savollar soni",
     "submit": "Yaratish",
@@ -292,7 +292,7 @@
     "failedFallback": "Noma'lum xato. Qayta urinib ko'ring.",
     "waitHint": "Bu bir necha daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi.",
     "countHint": "Qoidalarda soni belgilangan bo'lsa, ular ustun.",
-    "rulesLabel": "Imtihon qoidalari · ixtiyoriy",
+    "rulesLabel": "Yoki imtihon qoidalari · ixtiyoriy",
     "rulesChoose": "Qoidalar faylini tanlash",
     "rulesTextLabel": "Yoki qoidalarni yozing",
     "rulesPlaceholder": "Masalan: IELTS Reading: 3 ta matn (700-900 so'z), jami 40 savol. 1-matn: 6 ta True/False/Not Given, so'ng 7 ta bo'sh joyni to'ldirish (ko'pi bilan 2 so'z)...",
@@ -300,6 +300,16 @@
     "rulesTooLarge": "Qoidalar fayli juda katta: {{size}} MB (chegara {{max}} MB).",
     "modeRules": "Imtihon qoidalari bo'yicha",
     "modeSimple": "Oddiy variantli",
-    "modeBank": "Test banki"
+    "modeBank": "Test banki",
+    "chooseFiles": "Material tanlash (bir nechta fayl)",
+    "filesChosen": "{{count}} ta fayl tanlandi",
+    "tooManyFiles": "Bir vaqtda ko'pi bilan {{max}} ta fayl tanlash mumkin.",
+    "totalTooLarge": "Fayllar umumiy hajmi {{max}} MB dan oshmasligi kerak.",
+    "materialTextLabel": "Yoki materialni shu yerga qo'ying",
+    "materialTextPlaceholder": "Matnni internetdan nusxalab shu yerga yopishtirishingiz mumkin...",
+    "materialOptionalHint": "Material ixtiyoriy: topolmasangiz bo'sh qoldiring, AI mavzu va qoidalar bo'yicha matnni o'zi yozadi.",
+    "examLabel": "Qaysi imtihon · ixtiyoriy",
+    "examPlaceholder": "Masalan: IELTS Academic Reading, SAT Math, TOEFL...",
+    "examHint": "Imtihon nomini yozsangiz, qoidalarni yuklash shart emas: AI uning rasmiy tuzilmasini (bo'limlar, savol turlari, soni, tartibi) o'zi biladi. Qoidalar yuklasangiz, ular ustun bo'ladi."
   }
 }

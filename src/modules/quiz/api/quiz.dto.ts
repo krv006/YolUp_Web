@@ -112,6 +112,10 @@ export interface AiQuizRequest {
   questionCount: number;
   rulesFile?: File | null;
   rulesText?: string;
+  /** Material matni (fayl o'rniga yoki fayllarga qo'shimcha). */
+  materialText?: string;
+  /** Imtihon nomi: AI uning rasmiy tuzilmasini o'zi eslaydi (qoidalar berilmasa). */
+  examName?: string;
 }
 
 export interface AiQuizJobDto {

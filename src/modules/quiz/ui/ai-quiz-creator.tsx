@@ -10,9 +10,18 @@ const MATERIAL_ACCEPT = ".pdf,.docx,.pptx,.xlsx,.xlsm,.csv,.txt,.md";
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 60;
 const MAX_FILE_MB = 20;
+const MAX_FILES = 5;
+const MAX_TOTAL_MB = 40;
+const MAX_MATERIAL_TEXT = 120000;
 const MAX_RULES_MB = 5;
 const MAX_RULES_TEXT = 30000;
 const ACTIVE = ["queued", "processing", "generating"];
+/** Faqat tavsiyalar (datalist): har qanday imtihon nomini yozish mumkin — AI uni o'zi biladi. */
+const EXAM_SUGGESTIONS = [
+  "IELTS Academic Reading", "IELTS General Training Reading", "IELTS Listening", "IELTS Writing",
+  "SAT Reading and Writing", "SAT Math", "TOEFL iBT Reading", "Cambridge B2 First (FCE) Reading",
+  "CEFR B1", "Milliy sertifikat (matematika)", "DTM test",
+];
 
 export interface AiQuizCreatorProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
@@ -30,13 +39,31 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   const [subject, setSubject] = useState("");
   const [topic, setTopic] = useState("");
   const [title, setTitle] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [materialText, setMaterialText] = useState("");
+  const [examName, setExamName] = useState("");
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const [rulesText, setRulesText] = useState("");
   const [count, setCount] = useState(20);
   const [error, setError] = useState<string | null>(null);
   const start = useStartAiQuiz();
   const jobs = useAiQuizJobs();
+
+  function pickMaterial(event: ChangeEvent<HTMLInputElement>) {
+    const picked = Array.from(event.target.files ?? []);
+    event.target.value = "";
+    if (!picked.length) return;
+    if (picked.length > MAX_FILES) return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
+    const big = picked.find((item) => item.size > MAX_FILE_MB * 1024 * 1024);
+    if (big) {
+      return setError(t("aiPage.fileTooLarge", { size: (big.size / 1024 / 1024).toFixed(1), max: MAX_FILE_MB }));
+    }
+    if (picked.reduce((sum, item) => sum + item.size, 0) > MAX_TOTAL_MB * 1024 * 1024) {
+      return setError(t("aiPage.totalTooLarge", { max: MAX_TOTAL_MB }));
+    }
+    setError(null);
+    setFiles(picked);
+  }
 
   function pick(event: ChangeEvent<HTMLInputElement>, maxMb: number, key: "fileTooLarge" | "rulesTooLarge") {
     const picked = event.target.files?.[0] ?? null;
@@ -52,14 +79,13 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   function submit() {
     if (!subject) return setError(t("aiPage.chooseSubject"));
     if (!topic.trim()) return setError(t("aiPage.enterTopic"));
-    if (!file) return setError(t("aiPage.fileRequired"));
     if (!(count >= MIN_QUESTIONS && count <= MAX_QUESTIONS)) {
       return setError(t("aiPage.countRange", { min: MIN_QUESTIONS, max: MAX_QUESTIONS }));
     }
     setError(null);
     start.mutate(
       {
-        file,
+        files,
         request: {
           topic: topic.trim(),
           subject,
@@ -67,13 +93,17 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           questionCount: count,
           rulesFile,
           rulesText: rulesText.trim(),
+          materialText: materialText.trim(),
+          examName: examName.trim(),
         },
       },
       {
         onSuccess: () => {
           setTopic("");
           setTitle("");
-          setFile(null);
+          setFiles([]);
+          setMaterialText("");
+          setExamName("");
           setRulesFile(null);
           setRulesText("");
         },
@@ -128,6 +158,23 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           </label>
         </div>
 
+        <label className="quiz-topic-field">
+          {t("aiPage.examLabel")}
+          <input
+            list="ai-exam-suggestions"
+            value={examName}
+            maxLength={120}
+            onChange={(event) => setExamName(event.target.value)}
+            placeholder={t("aiPage.examPlaceholder")}
+          />
+          <datalist id="ai-exam-suggestions">
+            {EXAM_SUGGESTIONS.map((name) => (
+              <option key={name} value={name} />
+            ))}
+          </datalist>
+          <small className="ai-quiz-hint">{t("aiPage.examHint")}</small>
+        </label>
+
         <div className="ai-quiz-row">
           <div className="ai-quiz-field">
             <span>{t("aiPage.materialLabel")}</span>
@@ -135,18 +182,21 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
               ref={fileInputRef}
               type="file"
               accept={MATERIAL_ACCEPT}
+              multiple
               hidden
-              onChange={(event) => {
-                const picked = pick(event, MAX_FILE_MB, "fileTooLarge");
-                if (picked) setFile(picked);
-              }}
+              onChange={pickMaterial}
             />
             <button
               type="button"
-              className={`quiz-generate-button quiz-generate-button--ghost ${file ? "is-active" : ""}`}
+              className={`quiz-generate-button quiz-generate-button--ghost ${files.length ? "is-active" : ""}`}
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileUp size={14} /> {file ? file.name : t("aiPage.chooseFile")}
+              <FileUp size={14} />{" "}
+              {files.length === 0
+                ? t("aiPage.chooseFiles")
+                : files.length === 1
+                  ? files[0].name
+                  : t("aiPage.filesChosen", { count: files.length })}
             </button>
             <small>{t("aiPage.fileHint")}</small>
           </div>
@@ -162,6 +212,18 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
             <small>{t("aiPage.countHint")}</small>
           </label>
         </div>
+
+        <label className="ai-quiz-field">
+          <span>{t("aiPage.materialTextLabel")}</span>
+          <textarea
+            rows={4}
+            maxLength={MAX_MATERIAL_TEXT}
+            value={materialText}
+            onChange={(event) => setMaterialText(event.target.value)}
+            placeholder={t("aiPage.materialTextPlaceholder")}
+          />
+          <small>{t("aiPage.materialOptionalHint")}</small>
+        </label>
 
         <div className="ai-quiz-rules">
           <div className="ai-quiz-field">
