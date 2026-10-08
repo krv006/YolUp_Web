@@ -6130,9 +6130,20 @@ a.workspace-card:hover {
 .quiz-google-import input { flex: 1; min-width: 200px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: 0; }
 .quiz-google-import input:focus { border-color: var(--primary); }
 .quiz-google-import small { flex: 1 0 100%; color: var(--muted-foreground); font-size: var(--fs-xs); }
-.quiz-ai-panel select { flex: 1; min-width: 160px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: none; }
-.quiz-ai-panel select:focus { border-color: var(--primary); }
-.quiz-ai-panel input[type="number"] { flex: 0 0 96px; min-width: 96px; }
+.ai-quiz { display: grid; gap: 16px; max-width: 860px; }
+.ai-quiz-form, .ai-quiz-jobs { display: grid; gap: 14px; margin-top: 0; padding: 20px; }
+.ai-quiz-head { display: flex; align-items: flex-start; gap: 12px; }
+.ai-quiz-head h2, .ai-quiz-jobs h2 { margin: 0; font-size: var(--fs-lg); }
+.ai-quiz-head p { margin: 4px 0 0; color: var(--muted-foreground); font-size: var(--fs-sm); line-height: 1.5; }
+.ai-quiz-row { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.ai-quiz-field { display: grid; gap: 6px; min-width: 150px; color: var(--foreground); font-size: var(--fs-xs); font-weight: 800; }
+.ai-quiz-field > small { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 500; }
+.ai-quiz-field input[type="number"] { width: 110px; }
+.ai-quiz-hint { color: var(--muted-foreground); font-size: var(--fs-xs); }
+.ai-quiz-job { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
+.ai-quiz-job > div { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.ai-quiz-job small { color: var(--muted-foreground); font-size: var(--fs-xs); }
+.ai-quiz-job .ai-quiz-error { color: var(--destructive); }
 .quiz-generate-button--ghost.is-active { border-color: var(--primary); background: var(--primary-tint); }
 .quiz-template-download { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
 .quiz-template-download-label { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 700; }

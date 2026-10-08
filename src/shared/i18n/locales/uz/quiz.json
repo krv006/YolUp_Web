@@ -131,33 +131,7 @@
       "notEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
       "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
     },
-    "saveDraft": "Qoralama saqlash",
-    "ai": {
-      "button": "AI bilan yaratish",
-      "chooseFile": "Material tanlash",
-      "standardLabel": "Standart",
-      "countLabel": "Savollar soni",
-      "submit": "Yaratish",
-      "hint": "PDF, Word, PowerPoint, Excel yoki matn fayl (20 MB gacha). Savollar materialga asoslanadi, {{min}}–{{max}} ta. Natija qoralama bo‘ladi — e’lon qilishdan oldin tekshiring.",
-      "fileRequired": "Material faylini tanlang",
-      "countRange": "Savollar soni {{min}} dan {{max}} gacha bo‘lishi kerak",
-      "standards": {
-        "uzbmb": "Milliy sertifikat",
-        "ielts": "IELTS Academic",
-        "sat": "Digital SAT"
-      },
-      "status": {
-        "queued": "Navbatda…",
-        "processing": "Material tahlil qilinmoqda…",
-        "generating": "Savollar yaratilmoqda…",
-        "done": "Tayyor, ochilmoqda…",
-        "failed": "Xato"
-      },
-      "waitHint": "Bu 1–5 daqiqa olishi mumkin. Oynani yopsangiz ham ish davom etadi — tayyor bo‘lganda bildirishnoma keladi.",
-      "failedTitle": "Test yaratilmadi",
-      "failedFallback": "Noma’lum xato. Qayta urinib ko‘ring.",
-      "retry": "Qayta urinish"
-    }
+    "saveDraft": "Qoralama saqlash"
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",
@@ -274,5 +248,46 @@
     "audioTooBig": "Fayl {{size}} MB dan katta bo'lmasligi kerak",
     "questionGroupLabel": "Guruh",
     "noGroup": "Guruhsiz"
+  },
+  "aiPage": {
+    "title": "AI bilan test yaratish",
+    "description": "O'quv materialingizni (PDF, Word, PowerPoint, Excel yoki matn) yuklang, standartni tanlang: AI savollarni yozadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
+    "subjectLabel": "Qaysi fan uchun",
+    "topicLabel": "Mavzu",
+    "topicPlaceholder": "Masalan: Kvadrat tenglamalar",
+    "titleLabel": "Test nomi · ixtiyoriy",
+    "titlePlaceholder": "Masalan: 1-bob testi",
+    "materialLabel": "Material",
+    "chooseFile": "Material tanlash",
+    "fileHint": "20 MB gacha",
+    "standardLabel": "Standart",
+    "countLabel": "Savollar soni",
+    "submit": "Yaratish",
+    "hint": "Savollar yuklangan materialga asoslanadi ({{min}}–{{max}} ta). Skanerlangan (rasm) PDF o'qilmaydi.",
+    "chooseSubject": "Fanni tanlang",
+    "enterTopic": "Mavzuni kiriting",
+    "fileRequired": "Material faylini tanlang",
+    "countRange": "Savollar soni {{min}} dan {{max}} gacha bo'lishi kerak",
+    "started": "Boshlandi. Tayyor bo'lganda bildirishnoma keladi.",
+    "standards": {
+      "uzbmb": "Milliy sertifikat",
+      "ielts": "IELTS Academic",
+      "sat": "Digital SAT"
+    },
+    "jobsTitle": "Mening AI testlarim",
+    "jobsEmpty": "Hali AI bilan yaratilgan test yo'q.",
+    "jobsLoading": "Yuklanmoqda…",
+    "jobsError": "Ro'yxatni yuklab bo'lmadi",
+    "status": {
+      "queued": "Navbatda…",
+      "processing": "Material tahlil qilinmoqda…",
+      "generating": "Savollar yaratilmoqda…",
+      "done": "Tayyor",
+      "failed": "Xato"
+    },
+    "questions": "{{count}} ta savol",
+    "openQuiz": "Testni ochish",
+    "failedFallback": "Noma'lum xato. Qayta urinib ko'ring.",
+    "waitHint": "Bu 1–5 daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi."
   }
 }

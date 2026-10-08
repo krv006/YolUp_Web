@@ -12,7 +12,7 @@ export const quizKeys = Object.freeze({
   list: (courseId: string | null) => ["quizzes", "list", courseId] as const,
   detail: (id: string) => ["quizzes", "detail", id] as const,
   attempts: (id: string) => ["quizzes", "attempts", id] as const,
-  aiJob: (id: string) => ["quizzes", "ai-job", id] as const,
+  aiJobs: ["quizzes", "ai-jobs"] as const,
 });
 
 export function useQuizzes(courseId: string | null, enabled = true) {
@@ -103,23 +103,29 @@ export function useImportGoogleLink() {
 }
 
 export function useStartAiQuiz() {
+  const client = useQueryClient();
   return useMutation({
     mutationFn: ({ file, request }: { file: File; request: AiQuizRequest }) =>
       quizApi.startAiGenerate(file, request),
+    onSuccess: () => client.invalidateQueries({ queryKey: quizKeys.aiJobs }),
     onError: (error: Error) => toast.error(error.message),
   });
 }
 
-/** Ish tugaguncha (done/failed) har 5 soniyada holatni so'raydi. */
-export function useAiQuizJob(id: string | null) {
+/** O'qituvchining AI testlari; faol ish bo'lsa har 5 soniyada yangilanadi. Tayyor bo'lganda test ro'yxati ham yangilanadi. */
+export function useAiQuizJobs() {
+  const client = useQueryClient();
   return useQuery({
-    queryKey: quizKeys.aiJob(id ?? ""),
-    queryFn: ({ signal }) => quizApi.getAiJob(id as string, { signal }),
-    enabled: Boolean(id),
-    refetchInterval: (query) => {
-      const status = query.state.data?.status;
-      return status === "done" || status === "failed" ? false : 5000;
+    queryKey: quizKeys.aiJobs,
+    queryFn: async ({ signal }) => {
+      const jobs = await quizApi.getAiJobs({ signal });
+      if (jobs.some((job) => job.status === "done")) client.invalidateQueries({ queryKey: quizKeys.all });
+      return jobs;
     },
+    refetchInterval: (query) =>
+      (query.state.data ?? []).some((job) => ["queued", "processing", "generating"].includes(job.status))
+        ? 5000
+        : false,
   });
 }
 

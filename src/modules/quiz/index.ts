@@ -49,4 +49,5 @@ export {
 export { QuizAttemptDialog } from "./ui/quiz-attempt-dialog";
 export { QuizAttemptsDialog } from "./ui/quiz-attempts-dialog";
 export { AddQuizDialog } from "./ui/quiz-create-dialog";
+export { AiQuizCreator } from "./ui/ai-quiz-creator";
 export { QuizPreview } from "./ui/quiz-preview";
