@@ -10,6 +10,7 @@ const STANDARDS: AiQuizStandard[] = ["uzbmb", "ielts", "sat"];
 const MATERIAL_ACCEPT = ".pdf,.docx,.pptx,.xlsx,.xlsm,.csv,.txt,.md";
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 60;
+const MAX_FILE_MB = 20;
 const ACTIVE = ["queued", "processing", "generating"];
 
 export interface AiQuizCreatorProps {
@@ -32,8 +33,14 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   const jobs = useAiQuizJobs();
 
   function handleFile(event: ChangeEvent<HTMLInputElement>) {
-    setFile(event.target.files?.[0] ?? null);
+    const picked = event.target.files?.[0] ?? null;
     event.target.value = "";
+    if (picked && picked.size > MAX_FILE_MB * 1024 * 1024) {
+      setFile(null);
+      setError(t("aiPage.fileTooLarge", { size: (picked.size / 1024 / 1024).toFixed(1), max: MAX_FILE_MB }));
+      return;
+    }
+    setFile(picked);
     setError(null);
   }
 
