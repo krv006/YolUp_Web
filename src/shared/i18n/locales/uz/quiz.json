@@ -267,6 +267,7 @@
     "chooseSubject": "Fanni tanlang",
     "enterTopic": "Mavzuni kiriting",
     "fileRequired": "Material faylini tanlang",
+    "fileTooLarge": "Fayl juda katta: {{size}} MB (chegara {{max}} MB). Kichikroq fayl tanlang yoki kerakli qismini ajratib oling.",
     "countRange": "Savollar soni {{min}} dan {{max}} gacha bo'lishi kerak",
     "started": "Boshlandi. Tayyor bo'lganda bildirishnoma keladi.",
     "standards": {

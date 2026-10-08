@@ -267,6 +267,7 @@
     "chooseSubject": "Choose a subject",
     "enterTopic": "Enter a topic",
     "fileRequired": "Choose a material file",
+    "fileTooLarge": "The file is too large: {{size}} MB (limit {{max}} MB). Choose a smaller file or split out the part you need.",
     "countRange": "Number of questions must be {{min}} to {{max}}",
     "started": "Started. You'll get a notification when it's ready.",
     "standards": {
