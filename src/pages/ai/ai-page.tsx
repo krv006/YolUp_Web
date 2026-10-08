@@ -8,8 +8,8 @@ export function AiPage() {
   const subjects = useSubjects();
 
   return (
-    <div className="portal-page">
-      <div className="portal-page-heading">
+    <div className="schedule-page">
+      <div className="schedule-page-head">
         <div>
           <PageBackLink />
           <span className="portal-eyebrow">AI</span>
