@@ -79,7 +79,9 @@ export const quizApi = {
     const body = new FormData();
     body.set("file", file);
     body.set("topic", request.topic);
-    body.set("standard", request.standard);
+    if (request.standard) body.set("standard", request.standard);
+    if (request.rulesFile) body.set("rules_file", request.rulesFile);
+    if (request.rulesText) body.set("rules_text", request.rulesText);
     body.set("question_count", String(request.questionCount));
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);
@@ -93,7 +95,9 @@ export const quizApi = {
       status: item.status,
       topic: item.topic ?? "",
       title: item.title ?? "",
-      standard: item.standard ?? null,
+      standard: item.standard ? item.standard : null,
+      mode: item.mode ?? (item.standard ? "test_creator" : "simple"),
+      summary: item.summary ?? "",
       questionCount: item.question_count ?? 0,
       quizId: item.quiz === null || item.quiz === undefined ? null : String(item.quiz),
       error: item.error ?? "",

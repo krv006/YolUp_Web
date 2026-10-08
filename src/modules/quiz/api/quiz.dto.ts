@@ -98,6 +98,8 @@ export interface QuizImportRequest {
 }
 
 export type AiQuizStandard = "uzbmb" | "ielts" | "sat";
+/** rules — imtihon qoidalari bo'yicha, simple — oddiy variantli, test_creator — eski yo'l */
+export type AiQuizMode = "rules" | "simple" | "test_creator";
 export type AiQuizJobStatus = "queued" | "processing" | "generating" | "done" | "failed";
 
 export interface AiQuizRequest {
@@ -105,8 +107,11 @@ export interface AiQuizRequest {
   courseId?: string | null;
   subject?: string;
   title?: string;
-  standard: AiQuizStandard;
+  /** Faqat eski Test-creator yo'li uchun; bo'sh = imtihon qoidalari bo'yicha AI generator. */
+  standard?: AiQuizStandard;
   questionCount: number;
+  rulesFile?: File | null;
+  rulesText?: string;
 }
 
 export interface AiQuizJobDto {
@@ -114,7 +119,9 @@ export interface AiQuizJobDto {
   status: AiQuizJobStatus;
   topic?: string;
   title?: string;
-  standard?: AiQuizStandard;
+  standard?: AiQuizStandard | "";
+  mode?: AiQuizMode;
+  summary?: string;
   question_count?: number;
   quiz: string | number | null;
   error: string;
@@ -128,6 +135,8 @@ export interface AiQuizJob {
   topic: string;
   title: string;
   standard: AiQuizStandard | null;
+  mode: AiQuizMode;
+  summary: string;
   questionCount: number;
   quizId: string | null;
   error: string;

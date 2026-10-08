@@ -6141,6 +6141,9 @@ a.workspace-card:hover {
 .ai-quiz-field { display: grid; gap: 6px; min-width: 150px; color: var(--foreground); font-size: var(--fs-xs); font-weight: 800; }
 .ai-quiz-field > small { color: var(--muted-foreground); font-size: var(--fs-xs); font-weight: 500; }
 .ai-quiz-field input[type="number"] { width: 110px; }
+.ai-quiz-rules { display: grid; gap: 10px; padding-top: 4px; }
+.ai-quiz-rules textarea { resize: vertical; }
+.ai-quiz-rules .quiz-generate-button { justify-self: start; }
 .ai-quiz-hint { color: var(--muted-foreground); font-size: var(--fs-xs); }
 .ai-quiz-job { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface); }
 .ai-quiz-job > div { flex: 1; min-width: 0; display: grid; gap: 2px; }
