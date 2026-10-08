@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -112,21 +113,30 @@ export function useStartAiQuiz() {
   });
 }
 
-/** O'qituvchining AI testlari; faol ish bo'lsa har 5 soniyada yangilanadi. Tayyor bo'lganda test ro'yxati ham yangilanadi. */
+/** O'qituvchining AI testlari; faol ish bo'lsa har 5 soniyada yangilanadi. Biror ish tayyor bo'lganda test ro'yxati ham yangilanadi. */
 export function useAiQuizJobs() {
   const client = useQueryClient();
-  return useQuery({
+  const query = useQuery({
     queryKey: quizKeys.aiJobs,
-    queryFn: async ({ signal }) => {
-      const jobs = await quizApi.getAiJobs({ signal });
-      if (jobs.some((job) => job.status === "done")) client.invalidateQueries({ queryKey: quizKeys.all });
-      return jobs;
-    },
-    refetchInterval: (query) =>
-      (query.state.data ?? []).some((job) => ["queued", "processing", "generating"].includes(job.status))
+    queryFn: ({ signal }) => quizApi.getAiJobs({ signal }),
+    refetchInterval: (current) =>
+      (current.state.data ?? []).some((job) => ["queued", "processing", "generating"].includes(job.status))
         ? 5000
         : false,
   });
+
+  // Tayyor ishlar soni o'zgargandagina test ro'yxatini yangilaymiz. DIQQAT: bu yerda `quizKeys.all`
+  // ni yangilab bo'lmaydi: u `aiJobs` kalitini ham o'z ichiga oladi va cheksiz so'rovlar tsikli bo'lib qoladi.
+  const doneCount = (query.data ?? []).filter((job) => job.status === "done").length;
+  const seenDone = useRef<number | null>(null);
+  useEffect(() => {
+    if (seenDone.current !== null && doneCount > seenDone.current) {
+      client.invalidateQueries({ queryKey: ["quizzes", "list"] });
+    }
+    seenDone.current = doneCount;
+  }, [doneCount, client]);
+
+  return query;
 }
 
 export function usePublishQuiz() {
