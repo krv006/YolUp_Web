@@ -1,5 +1,14 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { BookOpen, CircleAlert, FileText, FileUp, Loader2, Sparkles, X } from "lucide-react";
+import {
+  BookOpen,
+  CircleAlert,
+  FileText,
+  FileUp,
+  GraduationCap,
+  Loader2,
+  Sparkles,
+  X,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -16,12 +25,21 @@ const MAX_MATERIAL_TEXT = 120000;
 const MAX_RULES_MB = 5;
 const MAX_RULES_TEXT = 30000;
 const ACTIVE = ["queued", "processing", "generating"];
-/** Faqat tavsiyalar (datalist): har qanday imtihon nomini yozish mumkin — AI uni o'zi biladi. */
-const EXAM_SUGGESTIONS = [
-  "IELTS Academic Reading", "IELTS General Training Reading", "IELTS Listening", "IELTS Writing",
-  "SAT Reading and Writing", "SAT Math", "TOEFL iBT Reading", "Cambridge B2 First (FCE) Reading",
-  "CEFR B1", "Milliy sertifikat (matematika)", "DTM test",
+/** Tez tanlash uchun tavsiyalar; "Boshqa" orqali har qanday imtihon nomini yozish mumkin — AI uni o'zi biladi. */
+const EXAM_OPTIONS = [
+  "IELTS Academic Reading",
+  "IELTS General Training Reading",
+  "IELTS Writing",
+  "SAT Reading and Writing",
+  "SAT Math",
+  "TOEFL iBT Reading",
+  "Cambridge B2 First (FCE) Reading",
+  "CEFR B1",
+  "Milliy sertifikat (matematika)",
+  "DTM test",
 ];
+const EXAM_SIMPLE = "simple";
+const EXAM_OTHER = "other";
 
 export interface AiQuizCreatorProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
@@ -41,12 +59,19 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [materialText, setMaterialText] = useState("");
-  const [examName, setExamName] = useState("");
+  const [examChoice, setExamChoice] = useState(EXAM_SIMPLE);
+  const [customExam, setCustomExam] = useState("");
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const [rulesText, setRulesText] = useState("");
   const [count, setCount] = useState(20);
   const [error, setError] = useState<string | null>(null);
   const start = useStartAiQuiz();
+  const isSimple = examChoice === EXAM_SIMPLE;
+  const examName = isSimple
+    ? ""
+    : examChoice === EXAM_OTHER
+      ? customExam.trim()
+      : examChoice;
   const jobs = useAiQuizJobs();
 
   function pickMaterial(event: ChangeEvent<HTMLInputElement>) {
@@ -55,13 +80,25 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
     if (!picked.length) return;
     const big = picked.find((item) => item.size > MAX_FILE_MB * 1024 * 1024);
     if (big) {
-      return setError(t("aiPage.fileTooLarge", { size: (big.size / 1024 / 1024).toFixed(1), max: MAX_FILE_MB }));
+      return setError(
+        t("aiPage.fileTooLarge", {
+          size: (big.size / 1024 / 1024).toFixed(1),
+          max: MAX_FILE_MB,
+        }),
+      );
     }
     // Yangi tanlov oldingilariga QO'SHILADI (bir xil fayl ikki marta qo'shilmaydi)
     const known = new Set(files.map((item) => `${item.name}:${item.size}`));
-    const merged = [...files, ...picked.filter((item) => !known.has(`${item.name}:${item.size}`))];
-    if (merged.length > MAX_FILES) return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
-    if (merged.reduce((sum, item) => sum + item.size, 0) > MAX_TOTAL_MB * 1024 * 1024) {
+    const merged = [
+      ...files,
+      ...picked.filter((item) => !known.has(`${item.name}:${item.size}`)),
+    ];
+    if (merged.length > MAX_FILES)
+      return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
+    if (
+      merged.reduce((sum, item) => sum + item.size, 0) >
+      MAX_TOTAL_MB * 1024 * 1024
+    ) {
       return setError(t("aiPage.totalTooLarge", { max: MAX_TOTAL_MB }));
     }
     setError(null);
@@ -73,11 +110,20 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
     setError(null);
   }
 
-  function pick(event: ChangeEvent<HTMLInputElement>, maxMb: number, key: "fileTooLarge" | "rulesTooLarge") {
+  function pick(
+    event: ChangeEvent<HTMLInputElement>,
+    maxMb: number,
+    key: "fileTooLarge" | "rulesTooLarge",
+  ) {
     const picked = event.target.files?.[0] ?? null;
     event.target.value = "";
     if (picked && picked.size > maxMb * 1024 * 1024) {
-      setError(t(`aiPage.${key}`, { size: (picked.size / 1024 / 1024).toFixed(1), max: maxMb }));
+      setError(
+        t(`aiPage.${key}`, {
+          size: (picked.size / 1024 / 1024).toFixed(1),
+          max: maxMb,
+        }),
+      );
       return null;
     }
     setError(null);
@@ -87,8 +133,12 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   function submit() {
     if (!subject) return setError(t("aiPage.chooseSubject"));
     if (!topic.trim()) return setError(t("aiPage.enterTopic"));
-    if (!(count >= MIN_QUESTIONS && count <= MAX_QUESTIONS)) {
-      return setError(t("aiPage.countRange", { min: MIN_QUESTIONS, max: MAX_QUESTIONS }));
+    if (examChoice === EXAM_OTHER && !examName)
+      return setError(t("aiPage.enterExam"));
+    if (isSimple && !(count >= MIN_QUESTIONS && count <= MAX_QUESTIONS)) {
+      return setError(
+        t("aiPage.countRange", { min: MIN_QUESTIONS, max: MAX_QUESTIONS }),
+      );
     }
     setError(null);
     start.mutate(
@@ -98,11 +148,11 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           topic: topic.trim(),
           subject,
           title: title.trim(),
-          questionCount: count,
+          questionCount: isSimple ? count : 0, // 0 = avto: imtihonning o'z soni va ballari
           rulesFile,
           rulesText: rulesText.trim(),
           materialText: materialText.trim(),
-          examName: examName.trim(),
+          examName,
         },
       },
       {
@@ -111,11 +161,11 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           setTitle("");
           setFiles([]);
           setMaterialText("");
-          setExamName("");
+          setCustomExam("");
           setRulesFile(null);
           setRulesText("");
         },
-      }
+      },
     );
   }
 
@@ -141,47 +191,52 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
             setSubject(value);
             setError(null);
           }}
-          options={subjects.map((item) => ({ value: item.value, label: item.label }))}
+          options={subjects.map((item) => ({
+            value: item.value,
+            label: item.label,
+          }))}
         />
 
-        <div className="form-grid-two">
-          <label className="quiz-topic-field">
-            {t("aiPage.topicLabel")}
-            <input
-              value={topic}
-              onChange={(event) => {
-                setTopic(event.target.value);
-                setError(null);
-              }}
-              placeholder={t("aiPage.topicPlaceholder")}
-            />
-          </label>
-          <label className="quiz-topic-field">
-            {t("aiPage.titleLabel")}
-            <input
-              value={title}
-              onChange={(event) => setTitle(event.target.value)}
-              placeholder={t("aiPage.titlePlaceholder")}
-            />
-          </label>
-        </div>
-
         <label className="quiz-topic-field">
-          {t("aiPage.examLabel")}
+          {t("aiPage.topicLabel")}
           <input
-            list="ai-exam-suggestions"
-            value={examName}
-            maxLength={120}
-            onChange={(event) => setExamName(event.target.value)}
-            placeholder={t("aiPage.examPlaceholder")}
+            value={topic}
+            onChange={(event) => {
+              setTopic(event.target.value);
+              setError(null);
+            }}
+            placeholder={t("aiPage.topicPlaceholder")}
           />
-          <datalist id="ai-exam-suggestions">
-            {EXAM_SUGGESTIONS.map((name) => (
-              <option key={name} value={name} />
-            ))}
-          </datalist>
-          <small className="ai-quiz-hint">{t("aiPage.examHint")}</small>
         </label>
+
+        <SelectPicker
+          label={t("aiPage.examLabel")}
+          icon={GraduationCap}
+          searchable
+          value={examChoice}
+          onChange={(value) => {
+            setExamChoice(value);
+            setError(null);
+          }}
+          options={[
+            { value: EXAM_SIMPLE, label: t("aiPage.examSimple") },
+            ...EXAM_OPTIONS.map((name) => ({ value: name, label: name })),
+            { value: EXAM_OTHER, label: t("aiPage.examOther") },
+          ]}
+        />
+        {examChoice === EXAM_OTHER ? (
+          <label className="quiz-topic-field">
+            <input
+              value={customExam}
+              maxLength={120}
+              onChange={(event) => setCustomExam(event.target.value)}
+              placeholder={t("aiPage.examPlaceholder")}
+            />
+          </label>
+        ) : null}
+        <small className="ai-quiz-hint">
+          {isSimple ? t("aiPage.examSimpleHint") : t("aiPage.examHint")}
+        </small>
 
         <div className="ai-quiz-row">
           <div className="ai-quiz-field">
@@ -199,7 +254,10 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
               className={`quiz-generate-button quiz-generate-button--ghost ${files.length ? "is-active" : ""}`}
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileUp size={14} /> {files.length === 0 ? t("aiPage.chooseFiles") : t("aiPage.addMoreFiles")}
+              <FileUp size={14} />{" "}
+              {files.length === 0
+                ? t("aiPage.chooseFiles")
+                : t("aiPage.addMoreFiles")}
             </button>
             {files.length ? (
               <ul className="ai-quiz-files">
@@ -220,66 +278,86 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
             ) : null}
             <small>{t("aiPage.fileHint")}</small>
           </div>
-          <label className="ai-quiz-field">
-            <span>{t("aiPage.countLabel")}</span>
-            <input
-              type="number"
-              min={MIN_QUESTIONS}
-              max={MAX_QUESTIONS}
-              value={count}
-              onChange={(event) => setCount(Number(event.target.value))}
-            />
-            <small>{t("aiPage.countHint")}</small>
-          </label>
+          {isSimple ? (
+            <label className="ai-quiz-field">
+              <span>{t("aiPage.countLabel")}</span>
+              <input
+                type="number"
+                min={MIN_QUESTIONS}
+                max={MAX_QUESTIONS}
+                value={count}
+                onChange={(event) => setCount(Number(event.target.value))}
+              />
+              <small>{t("aiPage.countHint")}</small>
+            </label>
+          ) : null}
         </div>
 
-        <label className="ai-quiz-field">
-          <span>{t("aiPage.materialTextLabel")}</span>
-          <textarea
-            rows={4}
-            maxLength={MAX_MATERIAL_TEXT}
-            value={materialText}
-            onChange={(event) => setMaterialText(event.target.value)}
-            placeholder={t("aiPage.materialTextPlaceholder")}
-          />
-          <small>{t("aiPage.materialOptionalHint")}</small>
-        </label>
-
-        <details className="ai-quiz-details" open={Boolean(rulesFile || rulesText.trim())}>
-          <summary>{t("aiPage.rulesToggle")}</summary>
-        <div className="ai-quiz-rules">
-          <div className="ai-quiz-field">
-            <span>{t("aiPage.rulesLabel")}</span>
-            <input
-              ref={rulesInputRef}
-              type="file"
-              accept={MATERIAL_ACCEPT}
-              hidden
-              onChange={(event) => {
-                const picked = pick(event, MAX_RULES_MB, "rulesTooLarge");
-                if (picked) setRulesFile(picked);
-              }}
-            />
-            <button
-              type="button"
-              className={`quiz-generate-button quiz-generate-button--ghost ${rulesFile ? "is-active" : ""}`}
-              onClick={() => rulesInputRef.current?.click()}
-            >
-              <FileText size={14} /> {rulesFile ? rulesFile.name : t("aiPage.rulesChoose")}
-            </button>
-          </div>
+        <details
+          className="ai-quiz-details"
+          open={Boolean(materialText.trim())}
+        >
+          <summary>{t("aiPage.materialTextToggle")}</summary>
           <label className="ai-quiz-field">
-            <span>{t("aiPage.rulesTextLabel")}</span>
+            <span>{t("aiPage.materialTextLabel")}</span>
             <textarea
               rows={4}
-              maxLength={MAX_RULES_TEXT}
-              value={rulesText}
-              onChange={(event) => setRulesText(event.target.value)}
-              placeholder={t("aiPage.rulesPlaceholder")}
+              maxLength={MAX_MATERIAL_TEXT}
+              value={materialText}
+              onChange={(event) => setMaterialText(event.target.value)}
+              placeholder={t("aiPage.materialTextPlaceholder")}
+            />
+            <small>{t("aiPage.materialOptionalHint")}</small>
+          </label>
+        </details>
+
+        <details
+          className="ai-quiz-details"
+          open={Boolean(title.trim() || rulesFile || rulesText.trim())}
+        >
+          <summary>{t("aiPage.extraToggle")}</summary>
+          <label className="quiz-topic-field">
+            {t("aiPage.titleLabel")}
+            <input
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              placeholder={t("aiPage.titlePlaceholder")}
             />
           </label>
-          <small className="ai-quiz-hint">{t("aiPage.rulesHint")}</small>
-        </div>
+          <div className="ai-quiz-rules">
+            <div className="ai-quiz-field">
+              <span>{t("aiPage.rulesLabel")}</span>
+              <input
+                ref={rulesInputRef}
+                type="file"
+                accept={MATERIAL_ACCEPT}
+                hidden
+                onChange={(event) => {
+                  const picked = pick(event, MAX_RULES_MB, "rulesTooLarge");
+                  if (picked) setRulesFile(picked);
+                }}
+              />
+              <button
+                type="button"
+                className={`quiz-generate-button quiz-generate-button--ghost ${rulesFile ? "is-active" : ""}`}
+                onClick={() => rulesInputRef.current?.click()}
+              >
+                <FileText size={14} />{" "}
+                {rulesFile ? rulesFile.name : t("aiPage.rulesChoose")}
+              </button>
+            </div>
+            <label className="ai-quiz-field">
+              <span>{t("aiPage.rulesTextLabel")}</span>
+              <textarea
+                rows={4}
+                maxLength={MAX_RULES_TEXT}
+                value={rulesText}
+                onChange={(event) => setRulesText(event.target.value)}
+                placeholder={t("aiPage.rulesPlaceholder")}
+              />
+            </label>
+            <small className="ai-quiz-hint">{t("aiPage.rulesHint")}</small>
+          </div>
         </details>
 
         <small className="ai-quiz-hint">{t("aiPage.hint")}</small>
@@ -293,9 +371,15 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
 
       <section className="portal-card ai-quiz-jobs">
         <h2>{t("aiPage.jobsTitle")}</h2>
-        {jobs.isLoading ? <LoadingFallback label={t("aiPage.jobsLoading")} /> : null}
-        {jobs.isError && !jobs.data ? <p className="ai-quiz-hint">{t("aiPage.jobsError")}</p> : null}
-        {jobs.data && !jobs.data.length ? <p className="ai-quiz-hint">{t("aiPage.jobsEmpty")}</p> : null}
+        {jobs.isLoading ? (
+          <LoadingFallback label={t("aiPage.jobsLoading")} />
+        ) : null}
+        {jobs.isError && !jobs.data ? (
+          <p className="ai-quiz-hint">{t("aiPage.jobsError")}</p>
+        ) : null}
+        {jobs.data && !jobs.data.length ? (
+          <p className="ai-quiz-hint">{t("aiPage.jobsEmpty")}</p>
+        ) : null}
         {(jobs.data ?? []).map((job) => (
           <JobRow key={job.id} job={job} onOpenQuiz={onOpenQuiz} />
         ))}
@@ -304,26 +388,59 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   );
 }
 
-function JobRow({ job, onOpenQuiz }: { job: AiQuizJob; onOpenQuiz: (quizId: string) => void }) {
+function JobRow({
+  job,
+  onOpenQuiz,
+}: {
+  job: AiQuizJob;
+  onOpenQuiz: (quizId: string) => void;
+}) {
   const { t } = useTranslation("quiz");
   const active = ACTIVE.includes(job.status);
   const kind =
-    job.mode === "rules" ? t("aiPage.modeRules") : job.mode === "simple" ? t("aiPage.modeSimple") : t("aiPage.modeBank");
+    job.mode === "rules"
+      ? t("aiPage.modeRules")
+      : job.mode === "simple"
+        ? t("aiPage.modeSimple")
+        : t("aiPage.modeBank");
   return (
     <article className={`ai-quiz-job is-${job.status}`}>
       <span className="workspace-list-icon">
-        {active ? <Loader2 size={18} className="spin" /> : job.status === "failed" ? <CircleAlert size={18} /> : <Sparkles size={18} />}
+        {active ? (
+          <Loader2 size={18} className="spin" />
+        ) : job.status === "failed" ? (
+          <CircleAlert size={18} />
+        ) : (
+          <Sparkles size={18} />
+        )}
       </span>
       <div>
         <strong>{job.title || job.topic}</strong>
         <small>
-          {kind} · {job.summary || t("aiPage.questions", { count: job.questionCount })} · {t(`aiPage.status.${job.status}`)}
+          {[
+            kind,
+            job.summary ||
+              (job.questionCount
+                ? t("aiPage.questions", { count: job.questionCount })
+                : ""),
+            t(`aiPage.status.${job.status}`),
+          ]
+            .filter(Boolean)
+            .join(" · ")}
         </small>
-        {job.status === "failed" ? <small className="ai-quiz-error">{job.error || t("aiPage.failedFallback")}</small> : null}
+        {job.status === "failed" ? (
+          <small className="ai-quiz-error">
+            {job.error || t("aiPage.failedFallback")}
+          </small>
+        ) : null}
         {active ? <small>{t("aiPage.waitHint")}</small> : null}
       </div>
       {job.status === "done" && job.quizId ? (
-        <Button size="sm" variant="secondary" onClick={() => onOpenQuiz(job.quizId as string)}>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => onOpenQuiz(job.quizId as string)}
+        >
           {t("aiPage.openQuiz")}
         </Button>
       ) : null}

@@ -251,8 +251,8 @@
     "noGroup": "Guruhsiz"
   },
   "aiPage": {
-    "title": "AI bilan test yaratish",
-    "description": "O'quv materialingizni yuklang (yoki bo'sh qoldiring). Imtihon nomini (masalan, IELTS) yozing yoki qoidalarini yuklang: AI testni shu tuzilma bo'yicha to'liq tuzadi: bo'limlar, matn parchalari va turli turdagi savollar. Ikkalasi ham bo'lmasa, oddiy variantli test chiqadi. Natija qoralama bo'ladi, e'lon qilishdan oldin tekshiring.",
+    "title": "Yangi test",
+    "description": "Mavzu va imtihon turini tanlang, kerak bo'lsa material yuklang. AI qoralama test tuzib beradi, e'lon qilishdan oldin uni tekshiring.",
     "subjectLabel": "Qaysi fan uchun",
     "topicLabel": "Mavzu",
     "topicPlaceholder": "Masalan: Kvadrat tenglamalar",
@@ -308,11 +308,17 @@
     "materialTextLabel": "Yoki materialni shu yerga qo'ying",
     "materialTextPlaceholder": "Matnni internetdan nusxalab shu yerga yopishtirishingiz mumkin...",
     "materialOptionalHint": "Material ixtiyoriy: topolmasangiz bo'sh qoldiring, AI mavzu va qoidalar bo'yicha matnni o'zi yozadi.",
-    "examLabel": "Qaysi imtihon · ixtiyoriy",
-    "examPlaceholder": "Masalan: IELTS Academic Reading, SAT Math, TOEFL...",
-    "examHint": "Imtihon nomini yozsangiz, qoidalarni yuklash shart emas: AI uning rasmiy tuzilmasini (bo'limlar, savol turlari, soni, tartibi) o'zi biladi. Qoidalar yuklasangiz, ular ustun bo'ladi.",
+    "examLabel": "Qaysi imtihon",
+    "examPlaceholder": "Imtihon nomini yozing, masalan: TOEFL iBT Listening",
+    "examHint": "AI imtihonning rasmiy tuzilmasini biladi: bo'limlar, savol turlari, soni va ballari o'zi belgilanadi. Material berilsa, uni bo'limlarga mos taqsimlaydi.",
     "addMoreFiles": "Yana fayl qo'shish",
     "removeFile": "{{name}} faylini olib tashlash",
-    "rulesToggle": "Imtihon qoidalarini o'zim kiritaman (ixtiyoriy)"
+    "rulesToggle": "Imtihon qoidalarini o'zim kiritaman (ixtiyoriy)",
+    "examSimple": "Oddiy test (A-B-C-D)",
+    "examOther": "Boshqa imtihon...",
+    "enterExam": "Imtihon nomini yozing.",
+    "examSimpleHint": "Variantli oddiy test. Savollar sonini o'zingiz belgilaysiz.",
+    "materialTextToggle": "Materialni matn sifatida qo'yaman",
+    "extraToggle": "Qo'shimcha: test nomi va o'z qoidalarim (ixtiyoriy)"
   }
 }

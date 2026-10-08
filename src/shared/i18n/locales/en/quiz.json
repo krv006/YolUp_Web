@@ -251,8 +251,8 @@
     "noGroup": "No group"
   },
   "aiPage": {
-    "title": "Create a test with AI",
-    "description": "Upload your study material (or leave it empty). Name the exam (for example IELTS) or upload its rules: AI builds the test to that structure: sections, passages and questions of different types. With neither you get a plain multiple-choice test. The result is a draft, so review it before publishing.",
+    "title": "New test",
+    "description": "Pick the topic and exam type, upload material if you have it. AI builds a draft test; review it before publishing.",
     "subjectLabel": "Subject",
     "topicLabel": "Topic",
     "topicPlaceholder": "E.g. Quadratic equations",
@@ -308,11 +308,17 @@
     "materialTextLabel": "Or paste the material here",
     "materialTextPlaceholder": "You can copy text from the web and paste it here...",
     "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules.",
-    "examLabel": "Which exam · optional",
-    "examPlaceholder": "E.g. IELTS Academic Reading, SAT Math, TOEFL...",
-    "examHint": "If you give the exam name you don't need to upload rules: AI knows its official structure (sections, question types, counts, order). Uploaded rules take priority.",
+    "examLabel": "Which exam",
+    "examPlaceholder": "Type the exam name, e.g. TOEFL iBT Listening",
+    "examHint": "AI knows the official structure of the exam: sections, question types, counts and points are set automatically. If you upload material, it is spread across the sections.",
     "addMoreFiles": "Add another file",
     "removeFile": "Remove {{name}}",
-    "rulesToggle": "I'll enter the exam rules myself (optional)"
+    "rulesToggle": "I'll enter the exam rules myself (optional)",
+    "examSimple": "Plain test (A-B-C-D)",
+    "examOther": "Other exam...",
+    "enterExam": "Type the exam name.",
+    "examSimpleHint": "A plain multiple-choice test. You set the number of questions.",
+    "materialTextToggle": "I'll paste the material as text",
+    "extraToggle": "Extra: test name and my own rules (optional)"
   }
 }
