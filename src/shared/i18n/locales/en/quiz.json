@@ -36,7 +36,8 @@
     "draftBadge": "Draft",
     "sectionCount": "{{count}} tests",
     "sectionDrafts": "{{count}} drafts",
-    "sectionToggleAria": "Expand or collapse {{subject}}"
+    "sectionToggleAria": "Expand or collapse {{subject}}",
+    "openQuestionsAria": "View questions: {{title}}"
   },
   "studentPage": {
     "loading": "Loading quizzes",

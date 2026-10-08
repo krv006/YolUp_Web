@@ -36,7 +36,8 @@
     "draftBadge": "Qoralama",
     "sectionCount": "{{count}} ta test",
     "sectionDrafts": "{{count}} qoralama",
-    "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish"
+    "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish",
+    "openQuestionsAria": "Savollarni ko'rish: {{title}}"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",

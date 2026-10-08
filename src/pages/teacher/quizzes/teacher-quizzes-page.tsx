@@ -45,6 +45,7 @@ export function TeacherQuizzesPage() {
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
   const [editTarget, setEditTarget] = useState<QuizSummary | null>(null);
+  const [openOnQuestions, setOpenOnQuestions] = useState(false);
   const editDetail = useQuiz(editTarget?.id ?? null);
   const editAttempts = useQuizAttempts(editTarget?.id ?? null, Boolean(editTarget));
   const update = useUpdateQuiz();
@@ -65,8 +66,15 @@ export function TeacherQuizzesPage() {
   const subjectOptions = subjects.data ?? [];
   const canCreate = subjectOptions.length > 0;
 
+  /** Kartochka bosilganda savollar to'g'ridan-to'g'ri ochiladi (qalamcha esa avval mavzu/nom oynasini ochadi). */
+  function openQuestions(item: QuizSummary) {
+    setOpenOnQuestions(true);
+    setEditTarget(item);
+  }
+
   function closeEditor() {
     setEditTarget(null);
+    setOpenOnQuestions(false);
     setImportedWarnings([]);
     setPublishError(null);
   }
@@ -169,7 +177,21 @@ export function TeacherQuizzesPage() {
                       <motion.article
                         key={item.id}
                         data-quiz-id={item.id}
-                        className={`assignment-card ${item.id === highlightId ? "is-highlighted" : ""}`}
+                        className={`assignment-card is-clickable ${item.id === highlightId ? "is-highlighted" : ""}`}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={t("teacherPage.openQuestionsAria", { title: quizDisplayTitle(item) })}
+                        onClick={(event) => {
+                          if ((event.target as HTMLElement).closest("button")) return;
+                          openQuestions(item);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.target !== event.currentTarget) return;
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            openQuestions(item);
+                          }
+                        }}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                       >
@@ -204,7 +226,10 @@ export function TeacherQuizzesPage() {
                           className="icon-button"
                           aria-label={t("editDialog.editAria")}
                           title={t("editDialog.editAria")}
-                          onClick={() => setEditTarget(item)}
+                          onClick={() => {
+                            setOpenOnQuestions(false);
+                            setEditTarget(item);
+                          }}
                         >
                           <Pencil size={16} />
                         </button>
@@ -250,7 +275,7 @@ export function TeacherQuizzesPage() {
           uploadingAudio={uploadAudio.isPending}
           onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
           onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
-          startOnQuestions={importedWarnings.length > 0}
+          startOnQuestions={importedWarnings.length > 0 || openOnQuestions}
           questionsLocked={(editAttempts.data ?? []).length > 0}
           saving={update.isPending}
           publishing={publish.isPending}

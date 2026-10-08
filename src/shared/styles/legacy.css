@@ -6130,6 +6130,8 @@ a.workspace-card:hover {
 .quiz-google-import input { flex: 1; min-width: 200px; min-height: 40px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--foreground); font: inherit; font-size: var(--fs-sm); outline: 0; }
 .quiz-google-import input:focus { border-color: var(--primary); }
 .quiz-google-import small { flex: 1 0 100%; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.assignment-card.is-clickable { cursor: pointer; }
+.assignment-card.is-clickable:hover { border-color: var(--primary); }
 .ai-quiz { display: grid; gap: 16px; max-width: 860px; }
 .ai-quiz-form, .ai-quiz-jobs { display: grid; gap: 14px; margin-top: 0; padding: 20px; }
 .ai-quiz-head { display: flex; align-items: flex-start; gap: 12px; }
