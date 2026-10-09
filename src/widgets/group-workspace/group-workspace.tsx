@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   ClipboardList,
   FileQuestion,
+  Library,
   Pencil,
   Plus,
   Trash2,
@@ -40,8 +41,10 @@ import {
 } from "@/modules/lesson";
 import {
   AddQuizDialog,
+  AssignQuizDialog,
   QuizAttemptsDialog,
   quizDisplayTitle,
+  useAssignQuizToCourse,
   useCreateQuiz,
   quizErrorMessage,
   usePublishQuiz,
@@ -416,6 +419,8 @@ function AssignmentsPanel({
   const update = useUpdateAssignment();
   const remove = useDeleteAssignment();
   const [quizDialog, setQuizDialog] = useState(false);
+  const [bankDialog, setBankDialog] = useState(false);
+  const assignQuiz = useAssignQuizToCourse();
   const createQuiz = useCreateQuiz();
   const updateQuiz = useUpdateQuiz();
   const publishQuiz = usePublishQuiz();
@@ -436,13 +441,28 @@ function AssignmentsPanel({
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
   );
-  const allQuizzes = useQuizzes(null, quizDialog);
+  const allQuizzes = useQuizzes(null, quizDialog || bankDialog);
   const courseSubject = course.data?.subject ?? "";
   function closeQuizEditor() {
     setEditQuizTarget(null);
     setImportedWarnings([]);
     setPublishError(null);
   }
+
+  // Tayyor (guruhsiz) testlar: avval shu guruh fanidagilar — AI yaratgan testlar ham shu yerda
+  const bankOptions = useMemo(
+    () =>
+      (allQuizzes.data ?? [])
+        .filter((quiz) => !quiz.courseId)
+        .sort((a, b) => Number(b.subject === courseSubject) - Number(a.subject === courseSubject))
+        .map((quiz) => ({
+          id: quiz.id,
+          label: `${quizDisplayTitle(quiz)} · ${t("assignments.quizQuestions", { count: quiz.questionCount })}${
+            quiz.status === "draft" ? ` · ${quizT("teacherPage.draftBadge")}` : ""
+          }`,
+        })),
+    [allQuizzes.data, courseSubject, quizT, t]
+  );
 
   const quizTitleOptions = useMemo(() => {
     const subjectBank = (allQuizzes.data ?? []).filter(
@@ -462,6 +482,9 @@ function AssignmentsPanel({
           <p>{t("assignments.subtitle")}</p>
         </div>
         <div className="group-panel-tools">
+          <Button variant="secondary" onClick={() => setBankDialog(true)}>
+            <Library size={17} /> {t("assignments.fromBank")}
+          </Button>
           <Button variant="secondary" onClick={() => setQuizDialog(true)}>
             <FileQuestion size={17} /> {t("assignments.addQuiz")}
           </Button>
@@ -623,6 +646,15 @@ function AssignmentsPanel({
           }}
         />
       ) : null}
+
+      <AssignQuizDialog
+        open={bankDialog && Boolean(courseId)}
+        onOpenChange={setBankDialog}
+        quizzes={bankOptions}
+        courseId={courseId}
+        pending={assignQuiz.isPending}
+        onSubmit={(value) => assignQuiz.mutateAsync(value).then(() => setBankDialog(false))}
+      />
 
       {quizDialog && courseId ? (
         <AddQuizDialog

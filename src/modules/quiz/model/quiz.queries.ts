@@ -68,6 +68,20 @@ export function useUpdateQuiz() {
   });
 }
 
+export function useAssignQuizToCourse() {
+  const { t } = useTranslation("quiz");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ quizId, courseId }: { quizId: string; courseId: string }) =>
+      quizApi.assignToCourse(quizId, courseId),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      toast.success(t("toast.assigned"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useImportQuizDocx() {
   const { t } = useTranslation("quiz");
   const client = useQueryClient();

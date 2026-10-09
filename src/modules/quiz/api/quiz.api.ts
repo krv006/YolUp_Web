@@ -65,6 +65,10 @@ export const quizApi = {
       await apiClient.patch<QuizDto>(quizEndpoints.detail(id), mapQuizEditRequest(values))
     );
   },
+  /** Guruhsiz testni (masalan, AI yaratgan) o'qituvchining guruhiga biriktiradi. */
+  async assignToCourse(id: string, courseId: string) {
+    return mapQuizDto(await apiClient.patch<QuizDto>(quizEndpoints.detail(id), { course: courseId }));
+  },
   async importDocx(file: File, request: QuizImportRequest) {
     const body = new FormData();
     body.set("file", file);

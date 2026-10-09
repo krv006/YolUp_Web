@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, ChevronDown, FileQuestion, History, ListFilter, Pencil, Plus, Trash2 } from "lucide-react";
+import { BookOpen, ChevronDown, FileQuestion, History, ListFilter, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -7,7 +7,9 @@ import { toIntlLocale } from "@/shared/i18n";
 import { useCourses, useSubjects } from "@/modules/course";
 import {
   AddQuizDialog,
+  AssignQuizDialog,
   QuizAttemptsDialog,
+  useAssignQuizToCourse,
   useQuiz,
   useQuizAttempts,
   quizErrorMessage,
@@ -55,6 +57,8 @@ export function TeacherQuizzesPage() {
   const [importedWarnings, setImportedWarnings] = useState<QuizImportWarning[]>([]);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
+  const [giveTarget, setGiveTarget] = useState<QuizSummary | null>(null);
+  const assign = useAssignQuizToCourse();
   const [params] = useSearchParams();
   const highlightId = params.get("quiz");
   useQuizHighlight(highlightId, (quizzes.data?.length ?? 0) > 0);
@@ -219,6 +223,11 @@ export function TeacherQuizzesPage() {
                             · {t("teacherPage.questionCount", { count: item.questionCount })}
                           </small>
                         </div>
+                        {item.courseId ? null : (
+                          <Button size="sm" variant="secondary" onClick={() => setGiveTarget(item)}>
+                            <Send size={15} /> {t("teacherPage.giveToGroup")}
+                          </Button>
+                        )}
                         <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(item)}>
                           <History size={15} /> {t("teacherPage.attemptsButton")}
                         </Button>
@@ -335,6 +344,19 @@ export function TeacherQuizzesPage() {
           </DialogContent>
         )}
       </Dialog>
+      <AssignQuizDialog
+        open={Boolean(giveTarget)}
+        onOpenChange={(open) => {
+          if (!open) setGiveTarget(null);
+        }}
+        quizId={giveTarget?.id ?? null}
+        courses={(courses.data ?? [])
+          .slice()
+          .sort((a, b) => Number(b.subject === giveTarget?.subject) - Number(a.subject === giveTarget?.subject))
+          .map((course) => ({ id: course.id, label: course.title }))}
+        pending={assign.isPending}
+        onSubmit={(value) => assign.mutateAsync(value).then(() => setGiveTarget(null))}
+      />
       <QuizAttemptsDialog
         quizId={attemptsOf?.id ?? null}
         open={Boolean(attemptsOf)}

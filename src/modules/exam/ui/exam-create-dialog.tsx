@@ -45,6 +45,11 @@ export function ExamCreateDialog({
     () => quizzes.filter((quiz) => quiz.status === "published" && quiz.questionCount > 0),
     [quizzes]
   );
+  // AI yaratgan testlar qoralama bo'ladi va e'lon qilinmaguncha shu ro'yxatda chiqmaydi — buni ayttirib qo'yamiz
+  const draftCount = useMemo(
+    () => quizzes.filter((quiz) => quiz.status === "draft" && quiz.questionCount > 0).length,
+    [quizzes]
+  );
 
   function close() {
     setTemplateId("");
@@ -174,6 +179,9 @@ export function ExamCreateDialog({
             {template ? (
               <div className="exam-section-list">
                 <span className="exam-section-list-head">{t("createDialog.sectionsHead")}</span>
+                {draftCount ? (
+                  <small className="ai-quiz-hint">{t("createDialog.draftsHint", { count: draftCount })}</small>
+                ) : null}
                 {template.items.map((item) =>
                   item.kind === "section" ? (
                     <div key={item.key} className="exam-section-row">

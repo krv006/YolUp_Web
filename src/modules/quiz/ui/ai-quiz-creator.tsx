@@ -7,6 +7,7 @@ import {
   GraduationCap,
   Loader2,
   Sparkles,
+  Users,
   X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -41,8 +42,12 @@ const EXAM_OPTIONS = [
 const EXAM_SIMPLE = "simple";
 const EXAM_OTHER = "other";
 
+const NO_GROUP = "none";
+
 export interface AiQuizCreatorProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
+  /** O'qituvchining guruhlari: tanlansa test shu guruhga yaratiladi (qoralama sifatida). */
+  courses?: ReadonlyArray<{ id: string; title: string }>;
   onOpenQuiz: (quizId: string) => void;
 }
 
@@ -50,11 +55,12 @@ export interface AiQuizCreatorProps {
  * Material va (ixtiyoriy) imtihon qoidalarini yuklab AI bilan test yaratish. Qoidalar berilsa AI testni
  * shu tuzilmaga qarab (bo'limlar, matn parchalari, turli savollar) tuzadi, aks holda oddiy variantli test.
  */
-export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
+export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCreatorProps) {
   const { t } = useTranslation("quiz");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const rulesInputRef = useRef<HTMLInputElement>(null);
   const [subject, setSubject] = useState("");
+  const [courseId, setCourseId] = useState(NO_GROUP);
   const [topic, setTopic] = useState("");
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState<File[]>([]);
@@ -131,7 +137,7 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
   }
 
   function submit() {
-    if (!subject) return setError(t("aiPage.chooseSubject"));
+    if (courseId === NO_GROUP && !subject) return setError(t("aiPage.chooseSubject"));
     if (!topic.trim()) return setError(t("aiPage.enterTopic"));
     if (examChoice === EXAM_OTHER && !examName)
       return setError(t("aiPage.enterExam"));
@@ -146,7 +152,8 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
         files,
         request: {
           topic: topic.trim(),
-          subject,
+          courseId: courseId === NO_GROUP ? null : courseId, // guruh tanlansa fan guruhdan olinadi
+          subject: courseId === NO_GROUP ? subject : undefined,
           title: title.trim(),
           questionCount: isSimple ? count : 0, // 0 = avto: imtihonning o'z soni va ballari
           rulesFile,
@@ -182,20 +189,41 @@ export function AiQuizCreator({ subjects, onOpenQuiz }: AiQuizCreatorProps) {
           </div>
         </div>
 
-        <SelectPicker
-          label={t("aiPage.subjectLabel")}
-          icon={BookOpen}
-          searchable
-          value={subject}
-          onChange={(value) => {
-            setSubject(value);
-            setError(null);
-          }}
-          options={subjects.map((item) => ({
-            value: item.value,
-            label: item.label,
-          }))}
-        />
+        {courses.length ? (
+          <SelectPicker
+            label={t("aiPage.groupLabel")}
+            icon={Users}
+            searchable
+            value={courseId}
+            onChange={(value) => {
+              setCourseId(value);
+              setError(null);
+            }}
+            options={[
+              { value: NO_GROUP, label: t("aiPage.noGroup") },
+              ...courses.map((item) => ({ value: item.id, label: item.title })),
+            ]}
+          />
+        ) : null}
+
+        {courseId === NO_GROUP ? (
+          <SelectPicker
+            label={t("aiPage.subjectLabel")}
+            icon={BookOpen}
+            searchable
+            value={subject}
+            onChange={(value) => {
+              setSubject(value);
+              setError(null);
+            }}
+            options={subjects.map((item) => ({
+              value: item.value,
+              label: item.label,
+            }))}
+          />
+        ) : (
+          <small className="ai-quiz-hint">{t("aiPage.groupHint")}</small>
+        )}
 
         <label className="quiz-topic-field">
           {t("aiPage.topicLabel")}

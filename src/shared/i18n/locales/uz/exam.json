@@ -123,7 +123,8 @@
       "startInFuture": "Boshlanish vaqti kelajakda bo'lishi kerak",
       "chooseQuiz": "“{{title}}” bo'limi uchun test tanlang",
       "quizTwice": "Bitta test faqat bitta bo'limga biriktiriladi"
-    }
+    },
+    "draftsHint": "{{count}} ta test hali qoralama (AI yaratgan testlar ham). Ularni tekshirib e'lon qiling — shunda shu ro'yxatda chiqadi."
   },
   "templateDialog": {
     "title": "O'z shabloningiz",

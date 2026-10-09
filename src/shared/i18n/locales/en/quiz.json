@@ -5,7 +5,8 @@
     "importSuccess": "Found {{count}} question(s) — review them",
     "updated": "Test updated",
     "published": "Test published",
-    "audioUploaded": "Audio uploaded"
+    "audioUploaded": "Audio uploaded",
+    "assigned": "Test given to the group"
   },
   "teacherPage": {
     "loading": "Loading quizzes",
@@ -37,7 +38,8 @@
     "sectionCount": "{{count}} tests",
     "sectionDrafts": "{{count}} drafts",
     "sectionToggleAria": "Expand or collapse {{subject}}",
-    "openQuestionsAria": "View questions: {{title}}"
+    "openQuestionsAria": "View questions: {{title}}",
+    "giveToGroup": "Give to a group"
   },
   "studentPage": {
     "loading": "Loading quizzes",
@@ -319,6 +321,19 @@
     "enterExam": "Type the exam name.",
     "examSimpleHint": "A plain multiple-choice test. You set the number of questions.",
     "materialTextToggle": "I'll paste the material as text",
-    "extraToggle": "Extra: test name and my own rules (optional)"
+    "extraToggle": "Extra: test name and my own rules (optional)",
+    "groupLabel": "Which group",
+    "noGroup": "No group (subject only)",
+    "groupHint": "The test will be created for this group as a draft. Students see it once you review and publish it."
+  },
+  "assignDialog": {
+    "title": "Give a test to a group",
+    "description": "Give a ready test (for example one made by AI) to a group: students take it in the assignments section.",
+    "quizLabel": "Which test",
+    "courseLabel": "Which group",
+    "submit": "Give to group",
+    "cancel": "Cancel",
+    "noQuizzes": "There are no ready group-less tests. Create a new one on the AI page.",
+    "draftHint": "A draft stays hidden from students even after you give it to a group: review and publish it first."
   }
 }

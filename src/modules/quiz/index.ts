@@ -3,6 +3,7 @@ export { quizErrorMessage } from "./lib/quiz-errors";
 export { emptyAnswer } from "./lib/answer-value";
 export { groupQuestions } from "./lib/group-questions";
 export { QuizGroupPanel } from "./ui/quiz-group-panel";
+export { AssignQuizDialog } from "./ui/assign-quiz-dialog";
 export { QuestionAnswerInput, QuestionPrompt } from "./ui/question-answer-input";
 export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
 export type { ImportedQuiz } from "./api/quiz.api";
@@ -42,6 +43,7 @@ export {
   useRemoveGroupAudio,
   useUploadGroupAudio,
   useUpdateQuiz,
+  useAssignQuizToCourse,
   usePublishQuiz,
   useQuizzes,
   useSubmitQuizAttempt,

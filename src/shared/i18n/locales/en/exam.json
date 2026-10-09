@@ -123,7 +123,8 @@
       "startInFuture": "The start time must be in the future",
       "chooseQuiz": "Choose a test for the “{{title}}” section",
       "quizTwice": "One test can be attached to only one section"
-    }
+    },
+    "draftsHint": "{{count}} test(s) are still drafts (including AI-made ones). Review and publish them and they will appear in this list."
   },
   "templateDialog": {
     "title": "Your own template",

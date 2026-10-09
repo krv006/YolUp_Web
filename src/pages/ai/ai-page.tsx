@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { useSubjects } from "@/modules/course";
+import { useCourses, useSubjects } from "@/modules/course";
 import { AiQuizCreator } from "@/modules/quiz";
 import { PageBackLink } from "@/shared/ui/legacy";
 
 export function AiPage() {
   const navigate = useNavigate();
   const subjects = useSubjects();
+  const courses = useCourses();
 
   return (
     <div className="schedule-page">
@@ -20,6 +21,7 @@ export function AiPage() {
 
       <AiQuizCreator
         subjects={subjects.data ?? []}
+        courses={(courses.data ?? []).map((course) => ({ id: course.id, title: course.title }))}
         onOpenQuiz={(quizId) => navigate(`../quizzes?quiz=${quizId}`)}
       />
     </div>

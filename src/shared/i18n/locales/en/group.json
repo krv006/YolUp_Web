@@ -37,7 +37,8 @@
     "deleteDialogTitle": "Delete assignment",
     "deleteDialogDescription": "\"{{title}}\" and its related data will be deleted.",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "fromBank": "From ready tests"
   },
   "students": {
     "eyebrow": "PARTICIPANTS",
@@ -72,8 +73,24 @@
       "weekdaysLabel": "Weekdays",
       "oddDays": "Odd days",
       "evenDays": "Even days",
-      "weekdayLabels": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-      "weekdayShort": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+      "weekdayLabels": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "weekdayShort": [
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa",
+        "Su"
+      ],
       "startDate": "Start date",
       "endDate": "End date",
       "dateOptional": "Date · optional",

@@ -5,7 +5,8 @@
     "importSuccess": "{{count}} ta savol topildi — tekshirib chiqing",
     "updated": "Test yangilandi",
     "published": "Test e'lon qilindi",
-    "audioUploaded": "Audio yuklandi"
+    "audioUploaded": "Audio yuklandi",
+    "assigned": "Test guruhga berildi"
   },
   "teacherPage": {
     "loading": "Testlar yuklanmoqda",
@@ -37,7 +38,8 @@
     "sectionCount": "{{count}} ta test",
     "sectionDrafts": "{{count}} qoralama",
     "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish",
-    "openQuestionsAria": "Savollarni ko'rish: {{title}}"
+    "openQuestionsAria": "Savollarni ko'rish: {{title}}",
+    "giveToGroup": "Guruhga berish"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -319,6 +321,19 @@
     "enterExam": "Imtihon nomini yozing.",
     "examSimpleHint": "Variantli oddiy test. Savollar sonini o'zingiz belgilaysiz.",
     "materialTextToggle": "Materialni matn sifatida qo'yaman",
-    "extraToggle": "Qo'shimcha: test nomi va o'z qoidalarim (ixtiyoriy)"
+    "extraToggle": "Qo'shimcha: test nomi va o'z qoidalarim (ixtiyoriy)",
+    "groupLabel": "Qaysi guruh uchun",
+    "noGroup": "Guruhsiz (faqat fan bo'yicha)",
+    "groupHint": "Test shu guruh uchun qoralama bo'lib yaratiladi. Tekshirib e'lon qilgach o'quvchilar ko'radi."
+  },
+  "assignDialog": {
+    "title": "Testni guruhga berish",
+    "description": "Tayyor (masalan, AI yaratgan) testni guruhga bering — o'quvchilar uni vazifalar bo'limida yechadi.",
+    "quizLabel": "Qaysi test",
+    "courseLabel": "Qaysi guruh",
+    "submit": "Guruhga berish",
+    "cancel": "Bekor qilish",
+    "noQuizzes": "Guruhsiz tayyor testlar yo'q. AI sahifasida yangi test yarating.",
+    "draftHint": "Qoralama test guruhga berilgach ham o'quvchilarga ko'rinmaydi: avval tekshirib e'lon qiling."
   }
 }

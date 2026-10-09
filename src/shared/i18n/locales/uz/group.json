@@ -37,7 +37,8 @@
     "deleteDialogTitle": "Vazifani o'chirish",
     "deleteDialogDescription": "\"{{title}}\" va unga bog'liq ma'lumotlar o'chadi.",
     "cancel": "Bekor",
-    "delete": "O'chirish"
+    "delete": "O'chirish",
+    "fromBank": "Tayyor testdan"
   },
   "students": {
     "eyebrow": "ISHTIROKCHILAR",
@@ -72,8 +73,24 @@
       "weekdaysLabel": "Hafta kunlari",
       "oddDays": "Toq kunlar",
       "evenDays": "Juft kunlar",
-      "weekdayLabels": ["Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma", "Shanba", "Yakshanba"],
-      "weekdayShort": ["Du", "Se", "Ch", "Pa", "Ju", "Sh", "Ya"],
+      "weekdayLabels": [
+        "Dushanba",
+        "Seshanba",
+        "Chorshanba",
+        "Payshanba",
+        "Juma",
+        "Shanba",
+        "Yakshanba"
+      ],
+      "weekdayShort": [
+        "Du",
+        "Se",
+        "Ch",
+        "Pa",
+        "Ju",
+        "Sh",
+        "Ya"
+      ],
       "startDate": "Boshlanish sanasi",
       "endDate": "Tugash sanasi",
       "dateOptional": "Sana · ixtiyoriy",
