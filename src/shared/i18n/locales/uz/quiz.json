@@ -324,7 +324,11 @@
     "extraToggle": "Qo'shimcha: test nomi va o'z qoidalarim (ixtiyoriy)",
     "groupLabel": "Qaysi guruh uchun",
     "noGroup": "Guruhsiz (faqat fan bo'yicha)",
-    "groupHint": "Test shu guruh uchun qoralama bo'lib yaratiladi. Tekshirib e'lon qilgach o'quvchilar ko'radi."
+    "groupHint": "Test shu guruh uchun qoralama bo'lib yaratiladi. Tekshirib e'lon qilgach o'quvchilar ko'radi.",
+    "bankLabel": "Test banki (tajribaviy)",
+    "bankNone": "Ishlatilmasin",
+    "bankHint": "Standart bo'yicha reja va savollar banki: faqat variantli (A-B-C-D) savollar, bitta material fayli kerak. Imtihon tanlovi va qoidalar bu rejimda ishlatilmaydi.",
+    "bankNeedsOneFile": "Test banki uchun aynan bitta material fayli yuklang."
   },
   "assignDialog": {
     "title": "Testni guruhga berish",

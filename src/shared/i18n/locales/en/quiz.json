@@ -324,7 +324,11 @@
     "extraToggle": "Extra: test name and my own rules (optional)",
     "groupLabel": "Which group",
     "noGroup": "No group (subject only)",
-    "groupHint": "The test will be created for this group as a draft. Students see it once you review and publish it."
+    "groupHint": "The test will be created for this group as a draft. Students see it once you review and publish it.",
+    "bankLabel": "Question bank (experimental)",
+    "bankNone": "Don't use",
+    "bankHint": "Standard-based plan and question bank: multiple-choice (A-B-C-D) questions only, one material file required. Exam choice and rules are not used in this mode.",
+    "bankNeedsOneFile": "Upload exactly one material file for the question bank."
   },
   "assignDialog": {
     "title": "Give a test to a group",

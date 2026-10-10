@@ -5,6 +5,7 @@ import {
   FileText,
   FileUp,
   GraduationCap,
+  Library,
   Loader2,
   Sparkles,
   Users,
@@ -13,7 +14,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
-import type { AiQuizJob } from "../api/quiz.dto";
+import type { AiQuizJob, AiQuizStandard } from "../api/quiz.dto";
 import { useAiQuizJobs, useStartAiQuiz } from "../model/quiz.queries";
 
 const MATERIAL_ACCEPT = ".pdf,.docx,.pptx,.xlsx,.xlsm,.csv,.txt,.md";
@@ -43,6 +44,7 @@ const EXAM_SIMPLE = "simple";
 const EXAM_OTHER = "other";
 
 const NO_GROUP = "none";
+const NO_BANK = "none";
 
 export interface AiQuizCreatorProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
@@ -70,8 +72,10 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const [rulesText, setRulesText] = useState("");
   const [count, setCount] = useState(20);
+  const [bank, setBank] = useState(NO_BANK);
   const [error, setError] = useState<string | null>(null);
   const start = useStartAiQuiz();
+  const useBank = bank !== NO_BANK;
   const isSimple = examChoice === EXAM_SIMPLE;
   const examName = isSimple
     ? ""
@@ -139,9 +143,10 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
   function submit() {
     if (courseId === NO_GROUP && !subject) return setError(t("aiPage.chooseSubject"));
     if (!topic.trim()) return setError(t("aiPage.enterTopic"));
-    if (examChoice === EXAM_OTHER && !examName)
+    if (useBank && files.length !== 1) return setError(t("aiPage.bankNeedsOneFile"));
+    if (!useBank && examChoice === EXAM_OTHER && !examName)
       return setError(t("aiPage.enterExam"));
-    if (isSimple && !(count >= MIN_QUESTIONS && count <= MAX_QUESTIONS)) {
+    if ((isSimple || useBank) && !(count >= MIN_QUESTIONS && count <= MAX_QUESTIONS)) {
       return setError(
         t("aiPage.countRange", { min: MIN_QUESTIONS, max: MAX_QUESTIONS }),
       );
@@ -155,11 +160,13 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
           courseId: courseId === NO_GROUP ? null : courseId, // guruh tanlansa fan guruhdan olinadi
           subject: courseId === NO_GROUP ? subject : undefined,
           title: title.trim(),
-          questionCount: isSimple ? count : 0, // 0 = avto: imtihonning o'z soni va ballari
-          rulesFile,
-          rulesText: rulesText.trim(),
-          materialText: materialText.trim(),
-          examName,
+          // Test banki (Test-creator) — standart bo'yicha, faqat variantli savollar; qolgan sozlamalar ishlatilmaydi
+          standard: useBank ? (bank as AiQuizStandard) : undefined,
+          questionCount: isSimple || useBank ? count : 0, // 0 = avto: imtihonning o'z soni va ballari
+          rulesFile: useBank ? null : rulesFile,
+          rulesText: useBank ? "" : rulesText.trim(),
+          materialText: useBank ? "" : materialText.trim(),
+          examName: useBank ? "" : examName,
         },
       },
       {
@@ -306,7 +313,7 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
             ) : null}
             <small>{t("aiPage.fileHint")}</small>
           </div>
-          {isSimple ? (
+          {isSimple || useBank ? (
             <label className="ai-quiz-field">
               <span>{t("aiPage.countLabel")}</span>
               <input
@@ -341,9 +348,25 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
 
         <details
           className="ai-quiz-details"
-          open={Boolean(title.trim() || rulesFile || rulesText.trim())}
+          open={Boolean(title.trim() || rulesFile || rulesText.trim() || useBank)}
         >
           <summary>{t("aiPage.extraToggle")}</summary>
+          <SelectPicker
+            label={t("aiPage.bankLabel")}
+            icon={Library}
+            value={bank}
+            onChange={(value) => {
+              setBank(value);
+              setError(null);
+            }}
+            options={[
+              { value: NO_BANK, label: t("aiPage.bankNone") },
+              { value: "uzbmb", label: "UZBMB" },
+              { value: "ielts", label: "IELTS Academic" },
+              { value: "sat", label: "Digital SAT" },
+            ]}
+          />
+          {useBank ? <small className="ai-quiz-hint">{t("aiPage.bankHint")}</small> : null}
           <label className="quiz-topic-field">
             {t("aiPage.titleLabel")}
             <input
