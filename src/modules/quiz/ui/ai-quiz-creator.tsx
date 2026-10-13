@@ -31,6 +31,7 @@ const ACTIVE = ["queued", "processing", "generating"];
 const EXAM_OPTIONS = [
   "IELTS Academic Reading",
   "IELTS General Training Reading",
+  "IELTS Listening",
   "IELTS Writing",
   "SAT Reading and Writing",
   "SAT Math",
