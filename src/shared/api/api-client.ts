@@ -2,7 +2,7 @@ import { apiConfig } from "./api-config";
 import { AppError, createTransportError } from "./api-error";
 import { buildRequestUrl, createRequestInit, type RequestOptions } from "./request-interceptor";
 import { handleApiResponse } from "./response-interceptor";
-import { refreshTokenManager } from "./refresh-token-manager";
+import { expireSession, refreshTokenManager } from "./refresh-token-manager";
 
 function createRequestId(): string {
   return (
@@ -76,6 +76,10 @@ export class ApiClient {
       ) {
         return this.request<T>(path, options, true);
       }
+
+      // Token yangilangan bo'lsa ham server 401 qaytardi: sessiya yaroqsiz (masalan, hisob o'chirilgan yoki kalit
+      // almashgan). Buzilgan sahifada qolib ketmaslik uchun login sahifasiga qaytaramiz.
+      if (response.status === 401 && isRetry && !options.skipAuth) expireSession();
 
       return (await handleApiResponse(response, {
         responseType: options.responseType,

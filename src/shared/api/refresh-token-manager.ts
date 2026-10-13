@@ -10,6 +10,14 @@ export function announceSessionChange(): void {
   globalThis.dispatchEvent?.(new CustomEvent(SESSION_CHANGED_EVENT));
 }
 
+/** Sessiya yaroqsiz: tokenlarni tozalaydi va ilovaga xabar beradi (u login sahifasiga qaytaradi). */
+export function expireSession(): void {
+  tokenStorage.clearTokens();
+  if (typeof CustomEvent !== "undefined") {
+    globalThis.dispatchEvent?.(new CustomEvent(SESSION_EXPIRED_EVENT));
+  }
+}
+
 export class RefreshTokenManager {
   private refreshHandler: RefreshHandler | null = null;
   private refreshPromise: Promise<boolean> | null = null;
@@ -28,10 +36,7 @@ export class RefreshTokenManager {
           if (tokenStorage.getRefreshToken() !== startedWith && tokenStorage.hasSession()) {
             return true;
           }
-          tokenStorage.clearTokens();
-          if (typeof CustomEvent !== "undefined") {
-            globalThis.dispatchEvent?.(new CustomEvent(SESSION_EXPIRED_EVENT));
-          }
+          expireSession();
           return false;
         })
         .finally(() => {
