@@ -250,7 +250,8 @@
     "audioFormat": "Faqat shu formatlar: {{list}}",
     "audioTooBig": "Fayl {{size}} MB dan katta bo'lmasligi kerak",
     "questionGroupLabel": "Guruh",
-    "noGroup": "Guruhsiz"
+    "noGroup": "Guruhsiz",
+    "transcriptToggle": "Audio skripti (o'quvchiga ko'rinmaydi)"
   },
   "aiPage": {
     "title": "Yangi test",

@@ -250,7 +250,8 @@
     "audioFormat": "Только эти форматы: {{list}}",
     "audioTooBig": "Файл не должен превышать {{size}} МБ",
     "questionGroupLabel": "Группа",
-    "noGroup": "Без группы"
+    "noGroup": "Без группы",
+    "transcriptToggle": "Текст аудио (ученик не видит)"
   },
   "aiPage": {
     "title": "Новый тест",

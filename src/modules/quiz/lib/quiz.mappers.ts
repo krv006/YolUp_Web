@@ -103,6 +103,7 @@ export function mapQuizGroupDto(dto: QuizGroupDto): QuizGroup {
     title: dto.title || "",
     passage: dto.passage || "",
     audioUrl: dto.audio_url || null,
+    transcript: dto.transcript || "",
   };
 }
 

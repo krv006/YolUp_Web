@@ -250,7 +250,8 @@
     "audioFormat": "Only these formats: {{list}}",
     "audioTooBig": "The file must not exceed {{size}} MB",
     "questionGroupLabel": "Group",
-    "noGroup": "No group"
+    "noGroup": "No group",
+    "transcriptToggle": "Audio script (hidden from students)"
   },
   "aiPage": {
     "title": "New test",

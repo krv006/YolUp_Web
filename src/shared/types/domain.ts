@@ -341,6 +341,8 @@ export interface QuizGroup {
   title: string;
   passage: string;
   audioUrl: string | null;
+  /** Audio skripti — faqat o'qituvchiga ko'rinadi (o'quvchi javobida yo'q). */
+  transcript?: string;
 }
 
 export interface QuizQuestion {

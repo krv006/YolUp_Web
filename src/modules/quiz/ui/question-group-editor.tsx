@@ -120,6 +120,12 @@ export function QuestionGroupEditor({
                   </Button>
                 )}
                 <small>{t("groups.audioHint", { size: MAX_AUDIO_MB })}</small>
+                {saved?.transcript ? (
+                  <details className="ai-quiz-details">
+                    <summary>{t("groups.transcriptToggle")}</summary>
+                    <pre className="ai-quiz-hint" style={{ whiteSpace: "pre-wrap" }}>{saved.transcript}</pre>
+                  </details>
+                ) : null}
               </div>
             ) : (
               <small className="quiz-page-hint">{t("groups.audioAfterSave")}</small>

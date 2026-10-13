@@ -62,6 +62,8 @@ export interface QuizGroupDto {
   title?: string | null;
   passage?: string | null;
   audio_url?: string | null;
+  /** Audio skripti (AI yaratgan Listening): faqat o'qituvchi javobida bo'ladi. */
+  transcript?: string | null;
 }
 
 export interface QuizDto extends QuizSummaryDto {
