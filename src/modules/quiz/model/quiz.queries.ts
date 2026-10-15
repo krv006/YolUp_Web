@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
 import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
-import { quizApi } from "../api/quiz.api";
+import { quizApi, type QuizExportMode, type QuizExportType } from "../api/quiz.api";
 import type { AiQuizRequest, QuizImportRequest } from "../api/quiz.dto";
 
 export const quizKeys = Object.freeze({
@@ -173,6 +173,17 @@ export function useDownloadQuizTemplate() {
       quizApi.downloadTemplate(type, count).then((blob) =>
         downloadBlob(blob, t("createDialog.templateFileName", { ext: type }))
       ),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useExportQuiz() {
+  return useMutation({
+    mutationFn: ({ id, type, mode, name }: { id: string; type: QuizExportType; mode: QuizExportMode; name: string }) =>
+      quizApi.exportQuiz(id, type, mode).then((blob) => {
+        const safe = name.replace(/[\\/:*?"<>|]+/g, " ").trim().slice(0, 80) || "test";
+        return downloadBlob(blob, `${safe} (${mode}).${type}`);
+      }),
     onError: (error: Error) => toast.error(error.message),
   });
 }

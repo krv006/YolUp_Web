@@ -37,6 +37,9 @@ import {
 
 const AI_UPLOAD_TIMEOUT_MS = 300_000;
 
+export type QuizExportType = "pdf" | "docx" | "xlsx";
+export type QuizExportMode = "student" | "teacher";
+
 export interface ImportedQuiz {
   quiz: QuizDetail;
   warnings: QuizImportWarning[];
@@ -132,6 +135,10 @@ export const quizApi = {
   },
   async publish(id: string) {
     return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.publish(id), {}));
+  },
+  /** Testni fayl qilib yuklab olish: `student` — javobsiz, `teacher` — javob kaliti va Listening skripti bilan. */
+  async exportQuiz(id: string, type: QuizExportType, mode: QuizExportMode) {
+    return apiClient.get<Blob>(quizEndpoints.export(id), { responseType: "blob", query: { type, mode } });
   },
   async downloadTemplate(type: "docx" | "xlsx", count: number) {
     return apiClient.get<Blob>(quizEndpoints.template, {

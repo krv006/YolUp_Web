@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, ChevronDown, FileQuestion, History, ListFilter, Pencil, Plus, Send, Trash2 } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileQuestion, History, ListFilter, Pencil, Plus, Send, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -9,7 +9,9 @@ import {
   AddQuizDialog,
   AssignQuizDialog,
   QuizAttemptsDialog,
+  QuizExportDialog,
   useAssignQuizToCourse,
+  useExportQuiz,
   useQuiz,
   useQuizAttempts,
   quizErrorMessage,
@@ -59,6 +61,8 @@ export function TeacherQuizzesPage() {
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const [giveTarget, setGiveTarget] = useState<QuizSummary | null>(null);
   const assign = useAssignQuizToCourse();
+  const [exportTarget, setExportTarget] = useState<QuizSummary | null>(null);
+  const exporter = useExportQuiz();
   const [params] = useSearchParams();
   const highlightId = params.get("quiz");
   useQuizHighlight(highlightId, (quizzes.data?.length ?? 0) > 0);
@@ -233,6 +237,14 @@ export function TeacherQuizzesPage() {
                         </Button>
                         <button
                           className="icon-button"
+                          aria-label={t("teacherPage.exportAria")}
+                          title={t("teacherPage.exportAria")}
+                          onClick={() => setExportTarget(item)}
+                        >
+                          <Download size={16} />
+                        </button>
+                        <button
+                          className="icon-button"
                           aria-label={t("editDialog.editAria")}
                           title={t("editDialog.editAria")}
                           onClick={() => {
@@ -356,6 +368,18 @@ export function TeacherQuizzesPage() {
           .map((course) => ({ id: course.id, label: course.title }))}
         pending={assign.isPending}
         onSubmit={(value) => assign.mutateAsync(value).then(() => setGiveTarget(null))}
+      />
+      <QuizExportDialog
+        open={Boolean(exportTarget)}
+        onOpenChange={(open) => {
+          if (!open) setExportTarget(null);
+        }}
+        title={exportTarget ? quizDisplayTitle(exportTarget) : ""}
+        pending={exporter.isPending ? `${exporter.variables?.mode}:${exporter.variables?.type}` : null}
+        onExport={(type, mode) =>
+          exportTarget &&
+          exporter.mutate({ id: exportTarget.id, type, mode, name: quizDisplayTitle(exportTarget) })
+        }
       />
       <QuizAttemptsDialog
         quizId={attemptsOf?.id ?? null}

@@ -39,7 +39,8 @@
     "sectionDrafts": "{{count}} qoralama",
     "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish",
     "openQuestionsAria": "Savollarni ko'rish: {{title}}",
-    "giveToGroup": "Guruhga berish"
+    "giveToGroup": "Guruhga berish",
+    "exportAria": "Yuklab olish (PDF / Word / Excel)"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -340,5 +341,18 @@
     "cancel": "Bekor qilish",
     "noQuizzes": "Guruhsiz tayyor testlar yo'q. AI sahifasida yangi test yarating.",
     "draftHint": "Test guruhga berilishi bilan e'lon qilinadi va o'quvchilarga ko'rinadi (savollarda to'g'ri javob belgilangan bo'lsa)."
+  },
+  "exportDialog": {
+    "title": "Testni yuklab olish",
+    "student": "O'quvchi nusxasi",
+    "studentHint": "Javoblarsiz — chop etib tarqatish uchun.",
+    "teacher": "O'qituvchi nusxasi",
+    "teacherHint": "To'g'ri javoblar (va Listening skripti) bilan.",
+    "type": {
+      "pdf": "PDF",
+      "docx": "Word",
+      "xlsx": "Excel"
+    },
+    "close": "Yopish"
   }
 }

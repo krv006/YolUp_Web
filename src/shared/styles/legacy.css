@@ -6991,3 +6991,7 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
   .periodic-grid { grid-template-columns: repeat(18, 34px); }
   .bohr-model { height: 210px; }
 }
+
+.quiz-export-block { display: grid; gap: 6px; }
+.quiz-export-block + .quiz-export-block { margin-top: 6px; padding-top: 12px; border-top: 1px solid var(--border, rgba(127, 127, 127, 0.25)); }
+.quiz-export-buttons { display: flex; flex-wrap: wrap; gap: 8px; }

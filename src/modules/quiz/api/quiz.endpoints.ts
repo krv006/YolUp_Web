@@ -1,6 +1,7 @@
 export const quizEndpoints = Object.freeze({
   list: "/api/v1/quizzes/",
   detail: (id: string) => `/api/v1/quizzes/${id}/`,
+  export: (id: string) => `/api/v1/quizzes/${id}/export/`,
   publish: (id: string) => `/api/v1/quizzes/${id}/publish/`,
   groupAudio: (quizId: string, groupId: string) => `/api/v1/quizzes/${quizId}/groups/${groupId}/audio/`,
   attempts: (id: string) => `/api/v1/quizzes/${id}/attempts/`,

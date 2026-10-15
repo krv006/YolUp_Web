@@ -39,7 +39,8 @@
     "sectionDrafts": "{{count}} черновиков",
     "sectionToggleAria": "Развернуть или свернуть: {{subject}}",
     "openQuestionsAria": "Открыть вопросы: {{title}}",
-    "giveToGroup": "Дать группе"
+    "giveToGroup": "Дать группе",
+    "exportAria": "Скачать (PDF / Word / Excel)"
   },
   "studentPage": {
     "loading": "Загрузка тестов",
@@ -340,5 +341,18 @@
     "cancel": "Отмена",
     "noQuizzes": "Готовых тестов без группы нет. Создайте новый на странице ИИ.",
     "draftHint": "Тест публикуется сразу после передачи группе и виден ученикам (если во всех вопросах отмечен правильный ответ)."
+  },
+  "exportDialog": {
+    "title": "Скачать тест",
+    "student": "Копия для ученика",
+    "studentHint": "Без ответов — для печати и раздачи.",
+    "teacher": "Копия для учителя",
+    "teacherHint": "С правильными ответами (и скриптом Listening).",
+    "type": {
+      "pdf": "PDF",
+      "docx": "Word",
+      "xlsx": "Excel"
+    },
+    "close": "Закрыть"
   }
 }
