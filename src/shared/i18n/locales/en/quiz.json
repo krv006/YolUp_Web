@@ -325,7 +325,7 @@
     "extraToggle": "Extra: test name and my own rules (optional)",
     "groupLabel": "Which group",
     "noGroup": "No group (subject only)",
-    "groupHint": "The test will be created for this group as a draft. Students see it once you review and publish it.",
+    "groupHint": "If a group is selected, the finished test is published to the group automatically.",
     "bankLabel": "Question bank (experimental)",
     "bankNone": "Don't use",
     "bankHint": "Standard-based plan and question bank: multiple-choice (A-B-C-D) questions only, one material file required. Exam choice and rules are not used in this mode.",
@@ -339,6 +339,6 @@
     "submit": "Give to group",
     "cancel": "Cancel",
     "noQuizzes": "There are no ready group-less tests. Create a new one on the AI page.",
-    "draftHint": "A draft stays hidden from students even after you give it to a group: review and publish it first."
+    "draftHint": "The test is published as soon as it is given to the group and students can see it (if every question has a correct answer marked)."
   }
 }

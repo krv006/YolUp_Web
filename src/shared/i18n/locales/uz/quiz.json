@@ -325,7 +325,7 @@
     "extraToggle": "Qo'shimcha: test nomi va o'z qoidalarim (ixtiyoriy)",
     "groupLabel": "Qaysi guruh uchun",
     "noGroup": "Guruhsiz (faqat fan bo'yicha)",
-    "groupHint": "Test shu guruh uchun qoralama bo'lib yaratiladi. Tekshirib e'lon qilgach o'quvchilar ko'radi.",
+    "groupHint": "Guruh tanlansa, test tayyor bo'lgach guruhga avtomatik e'lon qilinadi.",
     "bankLabel": "Test banki (tajribaviy)",
     "bankNone": "Ishlatilmasin",
     "bankHint": "Standart bo'yicha reja va savollar banki: faqat variantli (A-B-C-D) savollar, bitta material fayli kerak. Imtihon tanlovi va qoidalar bu rejimda ishlatilmaydi.",
@@ -339,6 +339,6 @@
     "submit": "Guruhga berish",
     "cancel": "Bekor qilish",
     "noQuizzes": "Guruhsiz tayyor testlar yo'q. AI sahifasida yangi test yarating.",
-    "draftHint": "Qoralama test guruhga berilgach ham o'quvchilarga ko'rinmaydi: avval tekshirib e'lon qiling."
+    "draftHint": "Test guruhga berilishi bilan e'lon qilinadi va o'quvchilarga ko'rinadi (savollarda to'g'ri javob belgilangan bo'lsa)."
   }
 }
