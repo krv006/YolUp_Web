@@ -36,23 +36,26 @@ export interface ExamListeningPlayerProps {
  */
 export function ExamListeningPlayer({ examId, groups }: ExamListeningPlayerProps) {
   const queue = useMemo(() => groups.filter((group) => group.audioUrl), [groups]);
-  const [finished, setFinished] = useState(0); // shu seansda tugagan qismlar soni (keyingisini tanlash uchun)
-  const index = useMemo(
-    () => queue.findIndex((group) => !wasPlayed(examId, group.id)),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [queue, examId, finished]
-  );
+  // Joriy qism FAQAT bir marta (mount paytida) hisoblanadi va keyin faqat qism tugaganda oldinga siljiydi.
+  // Muhim: "eshitilgan" belgisi audio boshlanishi bilan qo'yiladi, shuning uchun uni har renderda qayta o'qisak,
+  // ma'lumot yangilanganda (har 15 soniyada) pleer "hammasi tugadi" deb audioni o'rtasida uzib qo'yardi.
+  const [index, setIndex] = useState(() => queue.findIndex((group) => !wasPlayed(examId, group.id)));
+  const done = index < 0 || index >= queue.length;
+  const group = done ? null : queue[index];
 
   if (!queue.length) return null;
   return (
     <ExamAudioPart
-      key={index < 0 ? "done" : queue[index].id}
+      key={group?.id ?? "done"}
       examId={examId}
-      group={index < 0 ? null : queue[index]}
-      number={index < 0 ? queue.length : index + 1}
+      group={group}
+      number={done ? queue.length : index + 1}
       total={queue.length}
       first={index === 0}
-      onEnded={() => setFinished((value) => value + 1)}
+      onEnded={() => setIndex((current) => {
+        const next = queue.findIndex((item, position) => position > current && !wasPlayed(examId, item.id));
+        return next < 0 ? queue.length : next;
+      })}
     />
   );
 }
@@ -80,13 +83,14 @@ function ExamAudioPart({
   const [progress, setProgress] = useState(0);
   const label = group?.title || t("runner.audioPart", { number });
 
+  const groupId = group?.id;
   useEffect(() => {
-    if (!group) return undefined;
+    if (!groupId) return undefined;
     const timer = globalThis.setTimeout(() => {
       audioRef.current?.play().catch(() => setState("tap"));
     }, first ? FIRST_DELAY_MS : GAP_MS);
     return () => globalThis.clearTimeout(timer);
-  }, [group, first]);
+  }, [groupId, first]);
 
   if (!group) {
     return (
