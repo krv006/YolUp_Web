@@ -29,7 +29,7 @@ export function QuestionPrompt({ question }: { question: QuizQuestion }) {
   if (question.type === "fill_blank") return <small className="quiz-answer-hint">{t("answer.fillBlankHint")}</small>;
   if (!question.text.trim()) return <p className="quiz-preview-placeholder">{t("preview.questionPlaceholder")}</p>;
   return (
-    <p>
+    <p className={question.type === "essay" ? "quiz-essay-prompt" : undefined}>
       <MathText text={question.text} />
     </p>
   );

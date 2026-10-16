@@ -42,11 +42,11 @@ export function ExamResultCard({ result }: ExamResultCardProps) {
             <strong>
               {section.score !== null
                 ? `${section.score}${section.scaleMax ? `/${section.scaleMax}` : ""}`
-                : section.percent !== null
+                : section.percent !== null && !section.manual // qo'lda baholanadigan bo'lim: ball qo'yilguncha "kutilmoqda"
                   ? `${Math.round(section.percent)}%`
                   : t("result.pendingShort")}
             </strong>
-            {section.earned !== null && section.max !== null ? (
+            {section.earned !== null && section.max !== null && !section.manual ? (
               <small>{t("result.earned", { earned: section.earned, max: section.max })}</small>
             ) : null}
           </div>

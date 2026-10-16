@@ -7040,3 +7040,5 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .exam-writing-ai-cols ul { margin: 4px 0 0; padding-left: 18px; font-size: var(--fs-sm); }
 .exam-writing-ai-upgrade { padding: 10px 12px; border-radius: var(--r-lg); background: var(--surface-tint); }
 .exam-writing-ai-upgrade p { margin: 4px 0 0; white-space: pre-wrap; }
+
+.quiz-essay-prompt { white-space: pre-wrap; line-height: 1.6; font-weight: 600; }

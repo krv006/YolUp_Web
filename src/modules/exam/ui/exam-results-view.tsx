@@ -67,7 +67,7 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
                 .map((section) =>
                   section.score !== null
                     ? `${section.title}: ${section.score}`
-                    : section.percent !== null
+                    : section.percent !== null && !section.manual
                       ? `${section.title}: ${Math.round(section.percent)}%`
                       : `${section.title}: ${t("result.pendingShort")}`
                 )
