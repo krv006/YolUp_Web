@@ -160,6 +160,20 @@ export interface ExamManualAnswerDto {
   answer: string;
 }
 
+export interface ExamReviewRowDto {
+  section: string;
+  section_title: string;
+  number: number;
+  question: string;
+  type: string;
+  given: string | null;
+  correct_answer: string | null;
+  earned: number;
+  points: number;
+  is_correct: boolean;
+}
+
 export interface ExamStudentResultDetailDto extends ExamStudentResultDto {
   manual_answers?: ExamManualAnswerDto[];
+  review?: ExamReviewRowDto[];
 }

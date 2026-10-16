@@ -189,7 +189,8 @@ function QuizResultRow({
   const partial = !answer.isCorrect && earned !== null && earned > 0;
   const given = answer.givenDisplay ?? answer.selectedOptionText;
   const correct = answer.correctDisplay ?? answer.correctOption?.text ?? null;
-  const tone = answer.isCorrect
+  const review = answer.questionType === "essay"; // insho: avtomatik baholanmaydi, o'qituvchi ko'radi
+  const tone = review ? "is-partial" : answer.isCorrect
     ? "is-correct"
     : partial
       ? "is-partial"
@@ -200,7 +201,7 @@ function QuizResultRow({
       <div className="quiz-result-row-head">
         {answer.isCorrect ? (
           <CheckCircle2 size={16} />
-        ) : partial ? (
+        ) : review || partial ? (
           <CircleDot size={16} />
         ) : (
           <XCircle size={16} />
@@ -208,7 +209,9 @@ function QuizResultRow({
         <p>
           {number}. <MathText text={blankTextForDisplay(answer.questionText)} />
         </p>
-        {answer.points !== null ? (
+        {review ? (
+          <b className="quiz-result-points">{t("attemptDialog.essayReview")}</b>
+        ) : answer.points !== null ? (
           <b className="quiz-result-points">
             {t("attemptDialog.earnedPoints", {
               earned: earned ?? 0,
@@ -225,7 +228,7 @@ function QuizResultRow({
           t("attemptDialog.notAnswered")
         )}
       </small>
-      {!answer.isCorrect && correct ? (
+      {!answer.isCorrect && !review && correct ? (
         <small className="quiz-result-correct">
           {t("attemptDialog.correctAnswerLabel")}{" "}
           <MathText text={correct} size={14} />

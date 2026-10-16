@@ -1,4 +1,4 @@
-import { mapQuizQuestionDto } from "@/modules/quiz";
+import { mapQuizQuestionDto, toQuestionType } from "@/modules/quiz";
 import type {
   ExamCurrent,
   ExamCurrentItem,
@@ -134,6 +134,8 @@ export function mapSavedAnswer(
       return { type: "numeric", value: String(answer.value_text ?? "") };
     case "text":
       return { type: "text", value: String(answer.value_text ?? "") };
+    case "essay":
+      return { type: "essay", value: String(answer.value_text ?? "") };
     case "matching": {
       const pairs: Record<string, string> = {};
       for (const pair of Array.isArray(answer.pairs) ? answer.pairs : []) {
@@ -291,6 +293,18 @@ export function mapExamStudentResultDetailDto(
       section: item.section,
       question: item.question,
       answer: item.answer,
+    })),
+    review: (dto.review ?? []).map((row) => ({
+      section: row.section,
+      sectionTitle: row.section_title,
+      number: row.number,
+      question: row.question,
+      type: toQuestionType(row.type),
+      given: row.given,
+      correctAnswer: row.correct_answer,
+      earned: row.earned,
+      points: row.points,
+      isCorrect: row.is_correct,
     })),
   };
 }

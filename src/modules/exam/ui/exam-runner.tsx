@@ -8,6 +8,7 @@ import { useFinishExam, useSaveExamAnswers } from "../model/exam.queries";
 import { useExamResults } from "../model/exam.queries";
 import { ExamGroupPanel, type ExamAudioState } from "./exam-question-group";
 import { ExamResultCard } from "./exam-result-card";
+import { ExamReview } from "./exam-review";
 import { ExamTimer } from "./exam-timer";
 
 const AUTOSAVE_MS = 10_000;
@@ -127,6 +128,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
           <section key={block.group?.id ?? "plain"} className="exam-runner-block">
             {block.group ? (
               <ExamGroupPanel
+                examId={examId}
                 group={block.group}
                 audioState={audioStates[block.group.id] ?? "idle"}
                 onAudioState={(state) =>
@@ -250,5 +252,15 @@ function ExamOwnResult({ examId }: { examId: string }) {
 
   const own = results.data?.results?.[0];
   if (!own) return null;
-  return <ExamResultCard result={own} />;
+  return (
+    <>
+      <ExamResultCard result={own} />
+      {own.participated && results.data?.state === "finished" ? (
+        <details className="exam-review-toggle">
+          <summary>{t("review.show")}</summary>
+          <ExamReview examId={examId} studentId={own.studentId} />
+        </details>
+      ) : null}
+    </>
+  );
 }

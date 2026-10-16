@@ -22,6 +22,7 @@ export const QUESTION_TYPE_ORDER: QuizQuestionType[] = [
   "matching",
   "ordering",
   "fill_blank",
+  "essay",
 ];
 
 export interface DraftOption {
@@ -55,6 +56,7 @@ export interface QuestionDraft {
   tolerance: string;
   caseSensitive: boolean;
   pairs: DraftPair[];
+  minWords: string;
 }
 
 export type KeyFactory = () => string;
@@ -107,6 +109,7 @@ export function createDraft(type: QuizQuestionType, newKey: KeyFactory): Questio
     tolerance: "",
     caseSensitive: false,
     pairs: emptyPairs(newKey),
+    minWords: type === "essay" ? "250" : "",
   };
 }
 
@@ -300,6 +303,8 @@ export function draftToFormValues(
       const { text, blanks } = blankTemplateToNumbered(draft.text.trim());
       return { ...base, text, blanks };
     }
+    case "essay":
+      return { ...base, minWords: Math.max(0, Math.round(Number(draft.minWords) || 0)) };
     default:
       return base;
   }
@@ -363,6 +368,8 @@ export function questionToDraft(question: QuizQuestion, newKey: KeyFactory): Que
       };
     case "fill_blank":
       return { ...base, text: numberedToBlankTemplate(question.text, key.blanks ?? []) };
+    case "essay":
+      return { ...base, minWords: String(question.minWords ?? 0) };
     default:
       return base;
   }
@@ -385,6 +392,7 @@ export function draftToStudentQuestion(draft: QuestionDraft, index: number): Qui
     matchLeft: [] as QuizChoiceItem[],
     matchRight: [] as QuizChoiceItem[],
     blankCount: 0,
+    minWords: draft.type === "essay" ? Math.max(0, Math.round(Number(draft.minWords) || 0)) : 0,
   };
   switch (draft.type) {
     case "single":

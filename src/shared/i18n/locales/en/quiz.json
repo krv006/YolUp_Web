@@ -158,7 +158,8 @@
     "retry": "Retry",
     "earnedPoints": "{{earned}}/{{total}} pts",
     "yourAnswerLabel": "Your answer:",
-    "correctAnswerLabel": "Correct answer:"
+    "correctAnswerLabel": "Correct answer:",
+    "essayReview": "Teacher will review"
   },
   "attemptsDialog": {
     "defaultTitle": "Attempt history",
@@ -174,7 +175,8 @@
     "text": "Short text",
     "matching": "Matching",
     "ordering": "Ordering",
-    "fill_blank": "Fill in the blank"
+    "fill_blank": "Fill in the blank",
+    "essay": "Essay (Writing)"
   },
   "editor": {
     "typeLabel": "Question type",
@@ -211,7 +213,9 @@
     "fillBlankHint": "Write each blank's answer as {{syntax}}. Separate alternatives with |: {{example}}",
     "addBlank": "Add blank",
     "blankWord": "answer",
-    "blankExample": "Tashkent|Toshkent"
+    "blankExample": "Tashkent|Toshkent",
+    "minWordsLabel": "Minimum words",
+    "essayHint": "Essays are not graded automatically: the teacher (or AI-assisted review) marks them. The student sees a word counter."
   },
   "answer": {
     "true": "True",
@@ -221,7 +225,10 @@
     "textPlaceholder": "Type your answer",
     "matchPlaceholder": "Choose…",
     "blankAria": "Blank {{number}}",
-    "fillBlankHint": "Fill in the blanks"
+    "fillBlankHint": "Fill in the blanks",
+    "essayPlaceholder": "Write your essay here…",
+    "words": "{{count}} words",
+    "wordsOfMin": "{{count}} / {{min}} words"
   },
   "editDialog": {
     "title": "Edit test",

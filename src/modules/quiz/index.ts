@@ -4,6 +4,7 @@ export { emptyAnswer } from "./lib/answer-value";
 export { groupQuestions } from "./lib/group-questions";
 export { QuizGroupPanel } from "./ui/quiz-group-panel";
 export { AssignQuizDialog } from "./ui/assign-quiz-dialog";
+export { MathText } from "./ui/math-text";
 export { QuizExportDialog } from "./ui/quiz-export-dialog";
 export { QuestionAnswerInput, QuestionPrompt } from "./ui/question-answer-input";
 export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
@@ -30,6 +31,7 @@ export {
   mapAttemptAnswerRequest,
   mapQuizGroupDto,
   mapQuizQuestionDto,
+  toQuestionType,
   mapQuizRequest,
   mapQuizSummaryDto,
 } from "./lib/quiz.mappers";

@@ -329,6 +329,22 @@ export function QuestionEditor({
         </div>
       ) : null}
 
+      {draft.type === "essay" ? (
+        <div className="quiz-page-options">
+          <label className="quiz-page-answer-label">
+            {t("editor.minWordsLabel")}
+            <input
+              type="number"
+              min={0}
+              max={2000}
+              value={draft.minWords}
+              onChange={(event) => patch({ minWords: event.target.value })}
+            />
+          </label>
+          <small className="quiz-page-hint">{t("editor.essayHint")}</small>
+        </div>
+      ) : null}
+
       {draft.type === "numeric" || draft.type === "text" ? (
         <div className="quiz-page-options">
           <span className="quiz-page-answer-label">{t("editor.acceptedAnswersLabel")}</span>

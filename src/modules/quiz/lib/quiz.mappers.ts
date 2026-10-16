@@ -44,6 +44,7 @@ const QUESTION_TYPES: ReadonlySet<QuizQuestionType> = new Set<QuizQuestionType>(
   "matching",
   "ordering",
   "fill_blank",
+  "essay",
 ]);
 
 export function toQuestionType(value: unknown): QuizQuestionType {
@@ -74,6 +75,7 @@ export function mapQuizQuestionDto(dto: QuizQuestionDto): QuizQuestion {
     matchLeft: (dto.pairs_left ?? []).map((item) => ({ id: String(item.id), text: item.text })),
     matchRight: (dto.pairs_right ?? []).map((item) => ({ id: String(item.id), text: item.text })),
     blankCount: Number(dto.blank_count ?? 0),
+    minWords: Number(dto.min_words ?? 0),
     answerKey: mapAnswerKey(dto),
   };
 }
@@ -218,6 +220,8 @@ export function mapQuestionRequest(question: QuizQuestionFormValues): Record<str
       return { ...base, items: question.items ?? [] };
     case "fill_blank":
       return { ...base, blanks: question.blanks ?? [] };
+    case "essay":
+      return { ...base, min_words: question.minWords ?? 0 };
     default:
       return base;
   }
@@ -288,6 +292,8 @@ export function mapAttemptAnswerRequest({ questionId, answer }: QuizAttemptAnswe
       return { question, order: answer.order };
     case "fill_blank":
       return { question, blanks: answer.values.map((value: string) => value.trim()) };
+    case "essay":
+      return { question, value_text: answer.value };
     default:
       return { question };
   }

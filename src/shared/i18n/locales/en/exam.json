@@ -169,5 +169,13 @@
     "empty": "No written answers submitted.",
     "show": "View essays",
     "hide": "Hide essays"
+  },
+  "review": {
+    "show": "Review your answers (what was wrong)",
+    "empty": "No review available yet.",
+    "correctCount": "{{right}} / {{total}} correct",
+    "yourAnswer": "Your answer",
+    "noAnswer": "no answer",
+    "correctAnswer": "Correct answer"
   }
 }

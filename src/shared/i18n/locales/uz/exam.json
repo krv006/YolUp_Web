@@ -169,5 +169,13 @@
     "empty": "Yozma javob topshirilmagan.",
     "show": "Insholarni ko'rish",
     "hide": "Insholarni yopish"
+  },
+  "review": {
+    "show": "Javoblarni ko'rish (qaysi biri xato)",
+    "empty": "Tahlil hali mavjud emas.",
+    "correctCount": "{{right}} / {{total}} to'g'ri",
+    "yourAnswer": "Sizning javobingiz",
+    "noAnswer": "javob berilmagan",
+    "correctAnswer": "To'g'ri javob"
   }
 }

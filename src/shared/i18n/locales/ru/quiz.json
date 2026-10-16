@@ -158,7 +158,8 @@
     "retry": "Повторить",
     "earnedPoints": "{{earned}}/{{total}} б.",
     "yourAnswerLabel": "Ваш ответ:",
-    "correctAnswerLabel": "Правильный ответ:"
+    "correctAnswerLabel": "Правильный ответ:",
+    "essayReview": "Проверит учитель"
   },
   "attemptsDialog": {
     "defaultTitle": "История попыток",
@@ -174,7 +175,8 @@
     "text": "Короткий текст",
     "matching": "Сопоставление",
     "ordering": "Упорядочивание",
-    "fill_blank": "Заполнить пропуск"
+    "fill_blank": "Заполнить пропуск",
+    "essay": "Эссе (Writing)"
   },
   "editor": {
     "typeLabel": "Тип вопроса",
@@ -211,7 +213,9 @@
     "fillBlankHint": "Ответ для пропуска пишите как {{syntax}}. Несколько правильных вариантов разделяйте |: {{example}}",
     "addBlank": "Добавить пропуск",
     "blankWord": "ответ",
-    "blankExample": "Ташкент|Tashkent"
+    "blankExample": "Ташкент|Tashkent",
+    "minWordsLabel": "Минимум слов",
+    "essayHint": "Эссе не проверяется автоматически: его проверяет учитель (или с помощью ИИ). Ученик видит счётчик слов."
   },
   "answer": {
     "true": "Верно",
@@ -221,7 +225,10 @@
     "textPlaceholder": "Напишите ответ",
     "matchPlaceholder": "Выберите…",
     "blankAria": "Пропуск {{number}}",
-    "fillBlankHint": "Заполните пропуски"
+    "fillBlankHint": "Заполните пропуски",
+    "essayPlaceholder": "Напишите эссе здесь…",
+    "words": "Слов: {{count}}",
+    "wordsOfMin": "Слов: {{count}} / {{min}}"
   },
   "editDialog": {
     "title": "Редактировать тест",

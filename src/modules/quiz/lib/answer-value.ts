@@ -10,6 +10,8 @@ export function emptyAnswer(question: QuizQuestion): QuizAnswerValue {
       return { type: "numeric", value: "" };
     case "text":
       return { type: "text", value: "" };
+    case "essay":
+      return { type: "essay", value: "" };
     case "matching":
       return { type: "matching", pairs: {} };
     case "ordering":

@@ -7,13 +7,27 @@ export type ExamAudioState = "idle" | "playing" | "done";
 
 export interface ExamGroupPanelProps {
   group: ExamQuestionGroup;
+  /** Audio shu brauzerda allaqachon boshlangan bo'lsa (sahifa yangilangandan keyin ham) qayta eshittirilmaydi. */
+  examId: string;
   audioState: ExamAudioState;
   onAudioState: (state: ExamAudioState) => void;
 }
 
-export function ExamGroupPanel({ group, audioState, onAudioState }: ExamGroupPanelProps) {
+const playedKey = (examId: string, groupId: string) => `exam-audio-played:${examId}:${groupId}`;
+
+function wasPlayed(key: string): boolean {
+  try {
+    return globalThis.localStorage.getItem(key) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function ExamGroupPanel({ group, examId, audioState: liveState, onAudioState }: ExamGroupPanelProps) {
   const { t } = useTranslation("exam");
   const audioRef = useRef<HTMLAudioElement>(null);
+  const key = playedKey(examId, group.id);
+  const audioState: ExamAudioState = liveState === "idle" && wasPlayed(key) ? "done" : liveState;
 
   return (
     <div className="exam-group">
@@ -25,7 +39,14 @@ export function ExamGroupPanel({ group, audioState, onAudioState }: ExamGroupPan
             ref={audioRef}
             src={group.audioUrl}
             onEnded={() => onAudioState("done")}
-            onPlay={() => onAudioState("playing")}
+            onPlay={() => {
+              try {
+                globalThis.localStorage.setItem(key, "1");
+              } catch {
+                /* xotira o'chirilgan bo'lsa ham audio ishlayveradi */
+              }
+              onAudioState("playing");
+            }}
           />
           {audioState === "idle" ? (
             <button type="button" onClick={() => void audioRef.current?.play()}>

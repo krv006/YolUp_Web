@@ -12,6 +12,11 @@ export interface QuestionAnswerInputProps {
   onChange: (value: QuizAnswerValue) => void;
 }
 
+function countWords(value: string): number {
+  const trimmed = value.trim();
+  return trimmed ? trimmed.split(/\s+/).length : 0;
+}
+
 function asType<T extends QuizAnswerValue["type"]>(
   value: QuizAnswerValue,
   type: T
@@ -126,6 +131,27 @@ export function QuestionAnswerInput({ question, number, value, onChange }: Quest
         placeholder={t("answer.numericPlaceholder")}
         onChange={(event) => onChange({ type: "numeric", value: event.target.value })}
       />
+    );
+  }
+
+  const essay = asType(current, "essay");
+  if (essay) {
+    const words = countWords(essay.value);
+    const minimum = question.minWords ?? 0;
+    return (
+      <div className="quiz-answer-essay">
+        <textarea
+          className="quiz-answer-input quiz-answer-essay-input"
+          rows={14}
+          value={essay.value}
+          aria-label={groupLabel}
+          placeholder={t("answer.essayPlaceholder")}
+          onChange={(event) => onChange({ type: "essay", value: event.target.value })}
+        />
+        <small className={`quiz-answer-words ${minimum && words < minimum ? "is-short" : "is-enough"}`}>
+          {minimum ? t("answer.wordsOfMin", { count: words, min: minimum }) : t("answer.words", { count: words })}
+        </small>
+      </div>
     );
   }
 

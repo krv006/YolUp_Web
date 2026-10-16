@@ -13,7 +13,8 @@ export type QuizQuestionTypeDto =
   | "text"
   | "matching"
   | "ordering"
-  | "fill_blank";
+  | "fill_blank"
+  | "essay";
 
 export interface QuizChoiceItemDto {
   id: string | number;
@@ -38,6 +39,7 @@ export interface QuizQuestionDto {
   pairs?: Array<{ left: string; right: string }> | null;
   items?: string[] | null;
   blanks?: Array<{ answers: string[] }> | null;
+  min_words?: number | null;
 }
 
 export interface QuizSummaryDto {

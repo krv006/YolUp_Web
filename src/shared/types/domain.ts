@@ -277,7 +277,8 @@ export type QuizQuestionType =
   | "text"
   | "matching"
   | "ordering"
-  | "fill_blank";
+  | "fill_blank"
+  | "essay";
 
 export type VoiceAccessMode = "open" | "invite_only";
 export type VoiceRoomStatus = "scheduled" | "live" | "ended";
@@ -356,6 +357,8 @@ export interface QuizQuestion {
   matchLeft: QuizChoiceItem[];
   matchRight: QuizChoiceItem[];
   blankCount: number;
+  /** Insho (Writing): kamida nechta so'z (0 — cheklov yo'q). */
+  minWords?: number;
   answerKey?: QuizAnswerKey;
 }
 
@@ -367,7 +370,8 @@ export type QuizAnswerValue =
   | { type: "text"; value: string }
   | { type: "matching"; pairs: Record<string, string> }
   | { type: "ordering"; order: string[] }
-  | { type: "fill_blank"; values: string[] };
+  | { type: "fill_blank"; values: string[] }
+  | { type: "essay"; value: string };
 
 export type ExamItemKind = "section" | "break" | "offline";
 export type ExamState = "upcoming" | "running" | "finished" | "submitted";
@@ -491,8 +495,23 @@ export interface ExamManualAnswer {
   answer: string;
 }
 
+export interface ExamReviewRow {
+  section: string;
+  sectionTitle: string;
+  number: number;
+  question: string;
+  type: QuizQuestionType;
+  given: string | null;
+  correctAnswer: string | null;
+  earned: number;
+  points: number;
+  isCorrect: boolean;
+}
+
 export interface ExamStudentResultDetail extends ExamStudentResult {
   manualAnswers: ExamManualAnswer[];
+  /** Savol-savol tahlil (o'quvchiga imtihon tugagach, o'qituvchiga doim). */
+  review: ExamReviewRow[];
 }
 
 export interface ExamResults {
@@ -572,6 +591,7 @@ export interface QuizQuestionFormValues {
   pairs?: Array<{ left: string; right: string }>;
   items?: string[];
   blanks?: Array<{ answers: string[] }>;
+  minWords?: number;
 }
 
 export interface QuizEditValues {
