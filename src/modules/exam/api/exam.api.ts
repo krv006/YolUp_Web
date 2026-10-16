@@ -67,6 +67,11 @@ export const examApi = {
     await apiClient.delete(examEndpoints.template(id));
     return id;
   },
+  async requestWritingAi(id: string, studentId: string) {
+    return mapExamStudentResultDetailDto(
+      await apiClient.post<ExamStudentResultDetailDto>(examEndpoints.writingAi(id, studentId), {})
+    );
+  },
   async saveManualScores(id: string, studentId: string, scores: Record<string, number>) {
     return mapExamStudentResultDto(
       await apiClient.put<ExamStudentResultDto>(examEndpoints.manualScores(id, studentId), { scores })

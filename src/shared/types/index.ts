@@ -100,6 +100,11 @@ export type {
   QuizGroupFormValues,
   ExamManualAnswer,
   ExamStudentResultDetail,
+  ExamReviewRow,
+  ExamWritingAi,
+  ExamWritingAiItem,
+  ExamWritingCriterion,
+  ExamWritingError,
 } from "./domain";
 export type { MessageCapabilities } from "./chat";
 export type { PaginatedDto, UserDto } from "./dto";

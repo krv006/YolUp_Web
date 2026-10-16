@@ -306,5 +306,25 @@ export function mapExamStudentResultDetailDto(
       points: row.points,
       isCorrect: row.is_correct,
     })),
+    writingAi: dto.writing_ai
+      ? {
+          status: dto.writing_ai.status,
+          suggestedBand: dto.writing_ai.suggested_band ?? null,
+          error: dto.writing_ai.error ?? "",
+          items: (dto.writing_ai.items ?? []).map((item) => ({
+            question: item.question ?? "",
+            task: item.task,
+            wordCount: item.word_count,
+            minWords: item.min_words,
+            tooShort: item.too_short,
+            overallBand: item.overall_band,
+            criteria: item.criteria,
+            errors: item.errors ?? [],
+            strengths: item.strengths ?? [],
+            improvements: item.improvements ?? [],
+            upgradedParagraph: item.upgraded_paragraph ?? "",
+          })),
+        }
+      : null,
   };
 }

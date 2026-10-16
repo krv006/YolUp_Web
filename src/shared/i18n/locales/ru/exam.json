@@ -183,5 +183,24 @@
     "yourAnswer": "Ваш ответ",
     "noAnswer": "нет ответа",
     "correctAnswer": "Правильный ответ"
+  },
+  "writingAi": {
+    "ask": "Разобрать с помощью ИИ (критерии IELTS)",
+    "again": "Запросить разбор ИИ снова",
+    "queued": "ИИ анализирует… (1–2 минуты)",
+    "failed": "ИИ не смог проанализировать: {{error}}",
+    "suggested": "Предложенный балл Writing: {{band}}",
+    "apply": "Подставить в поле балла",
+    "teacherConfirms": "Итоговый балл подтверждает учитель.",
+    "taskTitle": "Task {{task}}",
+    "band": "Band {{band}}",
+    "words": "Слов: {{count}} (минимум {{min}})",
+    "tooShort": "слов недостаточно",
+    "capped": "ограничено из-за малого объёма",
+    "errors": "Основные ошибки",
+    "strengths": "Сильные стороны",
+    "improvements": "Что улучшить",
+    "upgraded": "Улучшенный вариант (примерно +1 band)",
+    "sectionTitle": "Разбор Writing"
   }
 }

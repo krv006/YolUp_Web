@@ -70,6 +70,7 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
   const [materialText, setMaterialText] = useState("");
   const [examChoice, setExamChoice] = useState(EXAM_SIMPLE);
   const [customExam, setCustomExam] = useState("");
+  const [level, setLevel] = useState("");
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const [rulesText, setRulesText] = useState("");
   const [count, setCount] = useState(20);
@@ -83,6 +84,7 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
     : examChoice === EXAM_OTHER
       ? customExam.trim()
       : examChoice;
+  const isIelts = /ielts/i.test(examName);
   const jobs = useAiQuizJobs();
 
   function pickMaterial(event: ChangeEvent<HTMLInputElement>) {
@@ -157,7 +159,8 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
       {
         files,
         request: {
-          topic: topic.trim(),
+          // Daraja mavzuga qo'shiladi (qoidalar matniga emas: u imtihonning rasmiy tuzilmasini almashtirib yuborardi)
+          topic: isIelts && level ? `${topic.trim()} · ${t("aiPage.levelTopic", { band: level })}` : topic.trim(),
           courseId: courseId === NO_GROUP ? null : courseId, // guruh tanlansa fan guruhdan olinadi
           subject: courseId === NO_GROUP ? subject : undefined,
           title: title.trim(),
@@ -177,6 +180,7 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
           setFiles([]);
           setMaterialText("");
           setCustomExam("");
+          setLevel("");
           setRulesFile(null);
           setRulesText("");
         },
@@ -273,6 +277,21 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
         <small className="ai-quiz-hint">
           {isSimple ? t("aiPage.examSimpleHint") : t("aiPage.examHint")}
         </small>
+        {isIelts ? (
+          <SelectPicker
+            label={t("aiPage.levelLabel")}
+            icon={GraduationCap}
+            value={level}
+            onChange={setLevel}
+            options={[
+              { value: "", label: t("aiPage.levelAny") },
+              { value: "5.5", label: "Band 5.0 – 5.5" },
+              { value: "6.5", label: "Band 6.0 – 6.5" },
+              { value: "7.5", label: "Band 7.0 – 7.5" },
+              { value: "8.5", label: "Band 8.0+" },
+            ]}
+          />
+        ) : null}
 
         <div className="ai-quiz-row">
           <div className="ai-quiz-field">

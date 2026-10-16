@@ -139,7 +139,14 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
       ) : null}
       {reviewOpen ? (
         <div className="exam-result-row-review">
-          <ExamWritingReview examId={exam.id} studentId={result.studentId} />
+          <ExamWritingReview
+            examId={exam.id}
+            studentId={result.studentId}
+            onApplyBand={(band) => {
+              setScores((current) => ({ ...current, writing: String(band) }));
+              setOpen(true);
+            }}
+          />
         </div>
       ) : null}
     </article>

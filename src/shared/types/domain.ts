@@ -495,6 +495,43 @@ export interface ExamManualAnswer {
   answer: string;
 }
 
+export interface ExamWritingCriterion {
+  key: string;
+  title: string;
+  band: number;
+  capped: boolean;
+  comment: string;
+  evidence: string;
+}
+
+export interface ExamWritingError {
+  quote: string;
+  issue: string;
+  correction: string;
+}
+
+export interface ExamWritingAiItem {
+  question: string;
+  task: number;
+  wordCount: number;
+  minWords: number;
+  tooShort: boolean;
+  overallBand: number;
+  criteria: ExamWritingCriterion[];
+  errors: ExamWritingError[];
+  strengths: string[];
+  improvements: string[];
+  upgradedParagraph: string;
+}
+
+export interface ExamWritingAi {
+  status: "queued" | "done" | "failed";
+  items: ExamWritingAiItem[];
+  /** O'qituvchiga: Writing bo'limi uchun taklif etilgan band (o'quvchiga ko'rsatilmaydi). */
+  suggestedBand: number | null;
+  error: string;
+}
+
 export interface ExamReviewRow {
   section: string;
   sectionTitle: string;
@@ -512,6 +549,7 @@ export interface ExamStudentResultDetail extends ExamStudentResult {
   manualAnswers: ExamManualAnswer[];
   /** Savol-savol tahlil (o'quvchiga imtihon tugagach, o'qituvchiga doim). */
   review: ExamReviewRow[];
+  writingAi: ExamWritingAi | null;
 }
 
 export interface ExamResults {

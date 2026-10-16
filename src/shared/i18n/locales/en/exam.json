@@ -183,5 +183,24 @@
     "yourAnswer": "Your answer",
     "noAnswer": "no answer",
     "correctAnswer": "Correct answer"
+  },
+  "writingAi": {
+    "ask": "Analyse with AI (IELTS criteria)",
+    "again": "Ask for the AI analysis again",
+    "queued": "AI is analysing… (1–2 minutes)",
+    "failed": "AI could not analyse it: {{error}}",
+    "suggested": "Suggested Writing band: {{band}}",
+    "apply": "Use as the score",
+    "teacherConfirms": "The teacher confirms the final band.",
+    "taskTitle": "Task {{task}}",
+    "band": "Band {{band}}",
+    "words": "{{count}} words (minimum {{min}})",
+    "tooShort": "too short",
+    "capped": "capped: too short",
+    "errors": "Main mistakes",
+    "strengths": "Strengths",
+    "improvements": "How to improve",
+    "upgraded": "Upgraded version (about +1 band)",
+    "sectionTitle": "Writing analysis"
   }
 }

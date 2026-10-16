@@ -65,6 +65,17 @@ export function useExamStudentResult(examId: string | null, studentId: string | 
     queryKey: examKeys.studentResult(examId ?? "", studentId ?? ""),
     queryFn: ({ signal }) => examApi.getStudentResult(examId as string, studentId as string, { signal }),
     enabled: Boolean(examId && studentId),
+    // AI tahlil navbatda turganda natija chiqquncha har 4 soniyada so'raymiz
+    refetchInterval: (query) => (query.state.data?.writingAi?.status === "queued" ? 4000 : false),
+  });
+}
+
+export function useRequestWritingAi(examId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (studentId: string) => examApi.requestWritingAi(examId, studentId),
+    onSuccess: (detail) => client.setQueryData(examKeys.studentResult(examId, detail.studentId), detail),
+    onError: (error: Error) => toast.error(error.message),
   });
 }
 

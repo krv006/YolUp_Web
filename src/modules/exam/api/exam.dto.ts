@@ -173,7 +173,27 @@ export interface ExamReviewRowDto {
   is_correct: boolean;
 }
 
+export interface ExamWritingAiDto {
+  status: "queued" | "done" | "failed";
+  items?: Array<{
+    question?: string;
+    task: number;
+    word_count: number;
+    min_words: number;
+    too_short: boolean;
+    overall_band: number;
+    criteria: Array<{ key: string; title: string; band: number; capped: boolean; comment: string; evidence: string }>;
+    errors: Array<{ quote: string; issue: string; correction: string }>;
+    strengths: string[];
+    improvements: string[];
+    upgraded_paragraph: string;
+  }>;
+  suggested_band?: number | null;
+  error?: string;
+}
+
 export interface ExamStudentResultDetailDto extends ExamStudentResultDto {
   manual_answers?: ExamManualAnswerDto[];
   review?: ExamReviewRowDto[];
+  writing_ai?: ExamWritingAiDto | null;
 }

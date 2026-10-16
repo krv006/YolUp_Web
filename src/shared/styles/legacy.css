@@ -7023,3 +7023,20 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .exam-listening-bar { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
 .exam-listening-bar span { display: block; height: 100%; background: var(--primary); transition: width 0.4s linear; }
 .exam-listening small { color: var(--muted-foreground); font-size: var(--fs-xs); }
+
+.exam-writing-ai { display: grid; gap: 14px; margin-top: 10px; }
+.exam-writing-ai-suggest { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--r-lg); background: var(--surface-tint); border: 1px solid var(--primary); }
+.exam-writing-ai-suggest button { min-height: 34px; padding: 0 12px; border: 0; border-radius: var(--r-full); color: var(--primary-foreground); background: var(--primary); font: inherit; font-weight: 800; cursor: pointer; }
+.exam-writing-ai-item { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: var(--r-lg); }
+.exam-writing-ai-item header { display: flex; justify-content: space-between; align-items: baseline; }
+.exam-writing-ai-item h4, .exam-writing-ai-item h5 { margin: 0; }
+.exam-writing-ai-item h5 { display: flex; align-items: center; gap: 6px; font-size: var(--fs-sm); }
+.exam-writing-ai-item small.is-warn { color: #b45309; }
+.exam-writing-ai-criteria { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.exam-writing-ai-criteria li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; }
+.exam-writing-ai-criteria li p { grid-column: 1 / -1; margin: 0; color: var(--muted-foreground); font-size: var(--fs-sm); }
+.exam-writing-ai-errors p { margin: 4px 0; font-size: var(--fs-sm); }
+.exam-writing-ai-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.exam-writing-ai-cols ul { margin: 4px 0 0; padding-left: 18px; font-size: var(--fs-sm); }
+.exam-writing-ai-upgrade { padding: 10px 12px; border-radius: var(--r-lg); background: var(--surface-tint); }
+.exam-writing-ai-upgrade p { margin: 4px 0 0; white-space: pre-wrap; }

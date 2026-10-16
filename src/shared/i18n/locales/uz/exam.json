@@ -183,5 +183,24 @@
     "yourAnswer": "Sizning javobingiz",
     "noAnswer": "javob berilmagan",
     "correctAnswer": "To'g'ri javob"
+  },
+  "writingAi": {
+    "ask": "AI bilan tahlil qilish (IELTS mezonlari)",
+    "again": "AI tahlilni qayta so'rash",
+    "queued": "AI tahlil qilmoqda… (1–2 daqiqa)",
+    "failed": "AI tahlil qila olmadi: {{error}}",
+    "suggested": "Taklif etilgan Writing bandi: {{band}}",
+    "apply": "Ball maydoniga qo'yish",
+    "teacherConfirms": "Yakuniy bandni o'qituvchi tasdiqlaydi.",
+    "taskTitle": "Task {{task}}",
+    "band": "Band {{band}}",
+    "words": "{{count}} ta so'z (kamida {{min}})",
+    "tooShort": "so'z soni yetarli emas",
+    "capped": "so'z kamligi uchun cheklandi",
+    "errors": "Asosiy xatolar",
+    "strengths": "Kuchli tomonlar",
+    "improvements": "Yaxshilash uchun",
+    "upgraded": "Yaxshilangan variant (taxminan +1 band)",
+    "sectionTitle": "Writing tahlili"
   }
 }

@@ -2,6 +2,7 @@ import { CheckCircle2, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { MathText } from "@/modules/quiz";
 import { useExamStudentResult } from "../model/exam.queries";
+import { ExamWritingAiPanel } from "./exam-writing-ai";
 
 export interface ExamReviewProps {
   examId: string;
@@ -15,7 +16,8 @@ export function ExamReview({ examId, studentId }: ExamReviewProps) {
 
   if (detail.isLoading) return <p className="exam-result-loading">{t("result.loading")}</p>;
   const rows = detail.data?.review ?? [];
-  if (!rows.length) return <p className="exam-result-loading">{t("review.empty")}</p>;
+  const writing = detail.data?.writingAi;
+  if (!rows.length && !writing) return <p className="exam-result-loading">{t("review.empty")}</p>;
 
   const sections: Array<{ key: string; title: string; rows: typeof rows }> = [];
   for (const row of rows) {
@@ -55,6 +57,12 @@ export function ExamReview({ examId, studentId }: ExamReviewProps) {
           </section>
         );
       })}
+      {writing ? (
+        <section className="exam-review-section">
+          <h4>{t("writingAi.sectionTitle")}</h4>
+          <ExamWritingAiPanel ai={writing} />
+        </section>
+      ) : null}
     </div>
   );
 }

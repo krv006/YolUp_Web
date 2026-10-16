@@ -337,7 +337,10 @@
     "bankLabel": "Test banki (tajribaviy)",
     "bankNone": "Ishlatilmasin",
     "bankHint": "Standart bo'yicha reja va savollar banki: faqat variantli (A-B-C-D) savollar, bitta material fayli kerak. Imtihon tanlovi va qoidalar bu rejimda ishlatilmaydi.",
-    "bankNeedsOneFile": "Test banki uchun aynan bitta material fayli yuklang."
+    "bankNeedsOneFile": "Test banki uchun aynan bitta material fayli yuklang.",
+    "levelLabel": "Qiyinlik (maqsadli band)",
+    "levelAny": "Standart (o'rtacha)",
+    "levelTopic": "band {{band}} darajasi"
   },
   "assignDialog": {
     "title": "Testni guruhga berish",
