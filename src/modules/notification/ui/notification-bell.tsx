@@ -6,10 +6,15 @@ import { NotificationInboxDialog } from "./notification-inbox-dialog";
 
 export interface NotificationBellProps {
   enabled?: boolean;
+  className?: string;
   onOpenLink?: (link: NotificationLink) => void;
 }
 
-export function NotificationBell({ enabled = true, onOpenLink }: NotificationBellProps) {
+export function NotificationBell({
+  enabled = true,
+  className = "notification-bell",
+  onOpenLink,
+}: NotificationBellProps) {
   const [open, setOpen] = useState(false);
   const { available, unreadCount } = useNotificationFeed(enabled, onOpenLink);
 
@@ -19,7 +24,7 @@ export function NotificationBell({ enabled = true, onOpenLink }: NotificationBel
     <>
       <button
         type="button"
-        className="notification-bell"
+        className={className}
         aria-label={unreadCount ? `Bildirishnomalar (${unreadCount} yangi)` : "Bildirishnomalar"}
         onClick={() => setOpen(true)}
       >

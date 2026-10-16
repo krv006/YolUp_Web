@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { UsersRound, Video } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -20,19 +19,16 @@ export function ConversationItem({
   live = false,
 }: ConversationItemProps) {
   const { t } = useTranslation("chat");
+  const unread = conversation.unreadCount > 0;
+
   return (
     <Link
-      className={`conversation-item ${active ? "is-active" : ""}`}
+      className={`flex h-[82px] shrink-0 items-center gap-3.5 rounded-xl border p-4 transition-colors ${
+        active ? "border-transparent bg-action-subtle" : "border-line bg-surface hover:bg-subtle"
+      }`}
       to={`${basePath}/${conversation.id}`}
     >
-      {active && (
-        <motion.span
-          className="conversation-active"
-          layoutId="conversation-active"
-          transition={{ type: "spring", stiffness: 350, damping: 30 }}
-        />
-      )}
-      <span className="conversation-avatar">
+      <span className="relative shrink-0">
         <Avatar
           name={conversation.title}
           tone={conversation.avatarTone}
@@ -40,27 +36,52 @@ export function ConversationItem({
           size="lg"
           status={conversation.type === "direct" ? conversation.status : undefined}
         />
-        {live && <span className="conversation-live-ring" aria-hidden="true" />}
+        {live && (
+          <span
+            className="absolute -inset-0.5 rounded-[16px] ring-2 ring-error"
+            aria-hidden="true"
+          />
+        )}
       </span>
-      <span className="conversation-copy">
-        <span className="conversation-row">
-          <strong>{conversation.title}</strong>
-          <time>{formatConversationTime(conversation.updatedAt)}</time>
+
+      <span className="flex min-w-0 flex-1 flex-col gap-1">
+        <span className="flex items-center gap-2">
+          <strong className="min-w-0 flex-1 truncate text-title text-ink">
+            {conversation.title}
+          </strong>
+          <time
+            className={`shrink-0 font-numeric text-caption ${
+              unread ? "text-action" : "text-ink-tertiary"
+            }`}
+          >
+            {formatConversationTime(conversation.updatedAt)}
+          </time>
         </span>
-        <span className="conversation-row conversation-row--preview">
+
+        <span className="flex items-center gap-2">
           {live ? (
-            <span className="conversation-live-copy">
+            <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate text-body-sm text-error">
               <Video size={13} aria-hidden="true" />
               {t("item.liveNow")}
             </span>
           ) : (
-            <span className={conversation.typing ? "typing-copy" : ""}>
-              {conversation.type === "group" && <UsersRound size={13} aria-hidden="true" />}
-              {conversation.typing ? t("item.typing") : conversation.lastMessage}
+            <span
+              className={`flex min-w-0 flex-1 items-center gap-1.5 truncate text-body-sm ${
+                conversation.typing ? "text-action" : "text-ink-secondary"
+              }`}
+            >
+              {conversation.type === "group" && (
+                <UsersRound size={13} className="shrink-0" aria-hidden="true" />
+              )}
+              <span className="truncate">
+                {conversation.typing ? t("item.typing") : conversation.lastMessage}
+              </span>
             </span>
           )}
-          {conversation.unreadCount > 0 && (
-            <span className="unread-badge">{conversation.unreadCount}</span>
+          {unread && (
+            <span className="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-action px-1.5 font-numeric text-[11px] leading-none font-semibold text-ink-inverse">
+              {conversation.unreadCount}
+            </span>
           )}
         </span>
       </span>

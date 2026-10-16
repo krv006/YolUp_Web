@@ -22,5 +22,11 @@
     "teacherWorkspace": "Teacher workspace",
     "studentWorkspace": "Student workspace",
     "parentWorkspace": "Parent workspace"
+  },
+  "titles": {
+    "chat": "Chats",
+    "schedule": "Schedule",
+    "workspace": "Workspace",
+    "profile": "Profile"
   }
 }

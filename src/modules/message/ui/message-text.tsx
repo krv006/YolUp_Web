@@ -15,13 +15,13 @@ export function MessageText({ text }: MessageTextProps) {
   const tokens = useMemo(() => tokenizeMessageText(text), [text]);
 
   return (
-    <p>
+    <p className="text-body break-words whitespace-pre-wrap">
       {tokens.map((token, index) => {
         if (token.kind === "internal" && RECORDING_PATH.test(token.href)) {
           return (
             <Link
               key={index}
-              className="message-recording-chip"
+              className="mx-0.5 inline-flex items-center gap-1 rounded-full bg-action-subtle px-2 py-0.5 text-caption-strong text-action"
               to={token.href}
               onClick={(event) => event.stopPropagation()}
             >
@@ -33,7 +33,7 @@ export function MessageText({ text }: MessageTextProps) {
           return (
             <Link
               key={index}
-              className="message-link"
+              className="underline underline-offset-2"
               to={token.href}
               onClick={(event) => event.stopPropagation()}
             >
@@ -45,7 +45,7 @@ export function MessageText({ text }: MessageTextProps) {
           return (
             <a
               key={index}
-              className="message-link"
+              className="underline underline-offset-2"
               href={token.href}
               target="_blank"
               rel="noopener noreferrer"

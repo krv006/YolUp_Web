@@ -2,7 +2,12 @@
   "emptyState": {
     "title": "Choose a conversation",
     "description": "Pick a conversation on the left to view and continue messaging.",
-    "openConversations": "Open conversations"
+    "openConversations": "Open conversations",
+    "noChatsTitle": "No chats yet",
+    "noChatsTeacher": "Create a group and invite your students. Chats will appear here.",
+    "noChatsStudent": "Join a course or find a teacher. Chats will appear here.",
+    "createGroup": "Create a group",
+    "findTeacher": "Join a course"
   },
   "header": {
     "backAria": "Back to conversations",
@@ -156,6 +161,12 @@
     "assignmentGroupNotFound": "Assignment group not found",
     "assignmentOpenFailed": "Couldn't open the assignment",
     "directOpened": "Conversation opened",
-    "directRequestSent": "Request sent — waiting for the teacher's approval"
+    "directRequestSent": "Request sent — waiting for the teacher's approval",
+    "groups": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "earlier": "Earlier"
+    },
+    "loading": "Loading"
   }
 }

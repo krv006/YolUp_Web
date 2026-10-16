@@ -10,6 +10,7 @@ export {
   useConversationFilterStore,
 } from "./model/conversation-filter.store";
 export type { ConversationFilter } from "./model/conversation-filter.store";
+export { useNewConversationStore } from "./model/new-conversation.store";
 export {
   readCachedConversation,
   useConversations,

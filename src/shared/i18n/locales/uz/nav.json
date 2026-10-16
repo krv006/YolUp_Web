@@ -22,5 +22,11 @@
     "teacherWorkspace": "O'qituvchi ish maydoni",
     "studentWorkspace": "O'quvchi ish maydoni",
     "parentWorkspace": "Ota-ona kabineti"
+  },
+  "titles": {
+    "chat": "Suhbatlar",
+    "schedule": "Jadval",
+    "workspace": "Workspace",
+    "profile": "Profil"
   }
 }
