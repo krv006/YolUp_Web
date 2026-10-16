@@ -64,6 +64,19 @@ export function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
       );
     }
 
+    case "image":
+      return (
+        <image
+          {...shared}
+          href={stroke.src}
+          x={stroke.x}
+          y={stroke.y}
+          width={stroke.w}
+          height={stroke.h}
+          preserveAspectRatio="none"
+        />
+      );
+
     case "math":
       return (
         <foreignObject

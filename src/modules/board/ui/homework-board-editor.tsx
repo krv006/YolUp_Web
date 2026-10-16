@@ -1,11 +1,20 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { Atom, Calculator, Check, FilePlus2, Undo2, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { Atom, Calculator, Check, FilePlus2, ImagePlus, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import type { FormulaSolutionDto, Point, StrokeDto, StrokeInput, StrokeShapeDto, TextLineDto } from "../api/board.dto";
+import type {
+  BoardPaper,
+  FormulaSolutionDto,
+  Point,
+  StrokeDto,
+  StrokeInput,
+  StrokeShapeDto,
+  TextLineDto,
+} from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
-import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
+import { FLOW_MARGIN, nextFlowPoint, nextTextPoint, strokeSpan } from "../lib/board-flow";
+import { compressImage } from "../lib/compress-image";
 import { buildStroke } from "../lib/board.geometry";
 import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
 import { useBoardDrawing } from "../model/use-board-drawing";
@@ -17,20 +26,58 @@ import { PeriodicTableDialog } from "./periodic-table-dialog";
 import { RichTextInput } from "./rich-text-input";
 
 const MAX_UNDO = 60;
+const MAX_IMAGES = 6;
+const PAPER_STEP = 40;
+const RULED_STEP = 48;
+const PAPERS: BoardPaper[] = ["blank", "dots", "grid", "ruled"];
+
+export interface HomeworkBoardSheetState {
+  strokes: StrokeDto[];
+  paper: BoardPaper;
+}
 
 function newId(): string {
   return globalThis.crypto.randomUUID().replace(/-/g, "").slice(0, 12);
 }
 
+function PaperLayer({ paper, width, height }: { paper: BoardPaper; width: number; height: number }) {
+  if (paper === "blank") return null;
+  const id = `hw-paper-${paper}`;
+  return (
+    <g pointerEvents="none">
+      <defs>
+        {paper === "dots" ? (
+          <pattern id={id} width={PAPER_STEP} height={PAPER_STEP} patternUnits="userSpaceOnUse">
+            <circle cx={PAPER_STEP} cy={PAPER_STEP} r={1.6} fill="#bec3d2" />
+          </pattern>
+        ) : null}
+        {paper === "grid" ? (
+          <pattern id={id} width={PAPER_STEP} height={PAPER_STEP} patternUnits="userSpaceOnUse">
+            <path d={`M ${PAPER_STEP} 0 V ${PAPER_STEP} M 0 ${PAPER_STEP} H ${PAPER_STEP}`} fill="none" stroke="#e2e8f0" strokeWidth={1} />
+          </pattern>
+        ) : null}
+        {paper === "ruled" ? (
+          <pattern id={id} width={RULED_STEP} height={RULED_STEP} patternUnits="userSpaceOnUse">
+            <path d={`M 0 ${RULED_STEP} H ${RULED_STEP}`} fill="none" stroke="#cbd5e1" strokeWidth={1} />
+          </pattern>
+        ) : null}
+      </defs>
+      <rect x={0} y={0} width={width} height={height} fill={`url(#${id})`} />
+    </g>
+  );
+}
+
 export interface HomeworkBoardEditorProps {
-  /** Har sheet — chiziqlar ro'yxati. */
-  initialSheets: StrokeDto[][];
+  /** Har sheet — chiziqlar va daftar turi. */
+  initialSheets: HomeworkBoardSheetState[];
+  /** Fanga mos standart daftar turi (yangi sahifa shu bilan ochiladi). */
+  defaultPaper: BoardPaper;
   width: number;
   height: number;
   mathEnabled: boolean;
   chemistryEnabled: boolean;
   /** Har o'zgarishdan keyin to'liq holat (ota-komponent avtosaqlashni o'zi boshqaradi). */
-  onChange: (sheets: StrokeDto[][]) => void;
+  onChange: (sheets: HomeworkBoardSheetState[]) => void;
   onSolve: (expression: string) => Promise<FormulaSolutionDto>;
 }
 
@@ -41,6 +88,7 @@ export interface HomeworkBoardEditorProps {
  */
 export function HomeworkBoardEditor({
   initialSheets,
+  defaultPaper,
   width,
   height,
   mathEnabled,
@@ -49,8 +97,11 @@ export function HomeworkBoardEditor({
   onSolve,
 }: HomeworkBoardEditorProps) {
   const { t } = useTranslation("board");
-  const [sheets, setSheets] = useState<StrokeDto[][]>(() => (initialSheets.length ? initialSheets : [[]]));
-  const [history, setHistory] = useState<StrokeDto[][][]>([]);
+  const [sheets, setSheets] = useState<HomeworkBoardSheetState[]>(() =>
+    initialSheets.length ? initialSheets : [{ strokes: [], paper: defaultPaper }]
+  );
+  const [history, setHistory] = useState<HomeworkBoardSheetState[][]>([]);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [sheet, setSheet] = useState(0);
   const [tool, setTool] = useState<BoardTool>("pen");
   const [color, setColor] = useState<string>(BOARD_COLORS[0]);
@@ -67,7 +118,9 @@ export function HomeworkBoardEditor({
   const [solution, setSolution] = useState<FormulaSolutionDto | null>(null);
   const [solving, setSolving] = useState(false);
 
-  const active = useMemo(() => sheets[sheet] ?? [], [sheets, sheet]);
+  const active = useMemo(() => sheets[sheet]?.strokes ?? [], [sheets, sheet]);
+  const paper = sheets[sheet]?.paper ?? defaultPaper;
+  const imageCount = sheets.reduce((sum, item) => sum + item.strokes.filter((stroke) => stroke.type === "image").length, 0);
 
   const canvasHeight = useMemo(() => {
     const bottom = active.reduce((max, stroke) => {
@@ -77,7 +130,7 @@ export function HomeworkBoardEditor({
     return Math.max(height, Math.ceil(bottom + FLOW_MARGIN));
   }, [active, height]);
 
-  function apply(next: StrokeDto[][], remember = true) {
+  function apply(next: HomeworkBoardSheetState[], remember = true) {
     if (remember) setHistory((current) => [...current.slice(-(MAX_UNDO - 1)), sheets]);
     setSheets(next);
     onChange(next);
@@ -86,7 +139,28 @@ export function HomeworkBoardEditor({
   function commitMany(strokes: StrokeInput[], target = sheet) {
     if (!strokes.length) return;
     const added = strokes.map((stroke) => ({ ...stroke, id: newId() }) as StrokeDto);
-    apply(sheets.map((items, index) => (index === target ? [...items, ...added] : items)));
+    apply(sheets.map((item, index) => (index === target ? { ...item, strokes: [...item.strokes, ...added] } : item)));
+  }
+
+  function setPaper(next: BoardPaper) {
+    apply(sheets.map((item, index) => (index === sheet ? { ...item, paper: next } : item)));
+  }
+
+  async function pickImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (imageCount >= MAX_IMAGES) return toast.error(t("homeworkBoard.tooManyImages", { max: MAX_IMAGES }));
+    try {
+      const image = await compressImage(file);
+      const scale = Math.min(1, 760 / image.width, 520 / image.height);
+      const w = Math.round(image.width * scale);
+      const h = Math.round(image.height * scale);
+      const [x, y] = nextFlowPoint(active, { boardWidth: width, boardHeight: canvasHeight, blockHeight: h });
+      commitMany([{ type: "image", src: image.src, x, y, w, h }]);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("homeworkBoard.imageError"));
+    }
   }
 
   function undo() {
@@ -168,11 +242,15 @@ export function HomeworkBoardEditor({
 
   function eraseStroke(id: string) {
     if (tool !== "erase") return;
-    apply(sheets.map((items, index) => (index === sheet ? items.filter((stroke) => stroke.id !== id) : items)));
+    apply(
+      sheets.map((item, index) =>
+        index === sheet ? { ...item, strokes: item.strokes.filter((stroke) => stroke.id !== id) } : item
+      )
+    );
   }
 
   function addSheet() {
-    apply([...sheets, []]);
+    apply([...sheets, { strokes: [], paper }]);
     setSheet(sheets.length);
   }
 
@@ -219,6 +297,17 @@ export function HomeworkBoardEditor({
         </div>
 
         <div className="board-toolbar-actions">
+          <div className="homework-board-papers" role="group" aria-label={t("homeworkBoard.paper")}>
+            {PAPERS.map((item) => (
+              <button key={item} type="button" className={paper === item ? "is-active" : ""} onClick={() => setPaper(item)}>
+                {t(`homeworkBoard.papers.${item}`)}
+              </button>
+            ))}
+          </div>
+          <input ref={imageInputRef} type="file" accept="image/*" hidden onChange={pickImage} />
+          <Button size="sm" variant="secondary" onClick={() => imageInputRef.current?.click()}>
+            <ImagePlus size={15} /> {t("homeworkBoard.image")}
+          </Button>
           <Button size="sm" variant="secondary" onClick={undo} disabled={!history.length}>
             <Undo2 size={15} /> {t("homeworkBoard.undo")}
           </Button>
@@ -257,6 +346,7 @@ export function HomeworkBoardEditor({
           onPointerUp={handlePointerUp}
           onPointerCancel={handlePointerUp}
         >
+          <PaperLayer paper={paper} width={width} height={canvasHeight} />
           {active.map((stroke) => (
             <BoardStroke key={stroke.id} stroke={stroke} selected={false} onSelect={eraseStroke} />
           ))}

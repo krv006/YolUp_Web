@@ -1,4 +1,4 @@
-export type StrokeKind = "pen" | "marker" | "line" | "rect" | "ellipse" | "text" | "math";
+export type StrokeKind = "pen" | "marker" | "line" | "rect" | "ellipse" | "text" | "math" | "image";
 
 export type Point = [number, number];
 
@@ -69,13 +69,28 @@ export interface MathStrokeDto extends StrokeBase {
   size?: number;
 }
 
+/** Daftardan olingan surat, xarita, sxema — doskaga qo'yiladi (siqilgan data URL), ustidan chizish mumkin. */
+export interface ImageStrokeDto {
+  type: "image";
+  src: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  color?: undefined;
+  width?: undefined;
+}
+
+export type BoardPaper = "blank" | "dots" | "grid" | "ruled";
+
 export type StrokeShapeDto =
   | FreehandStrokeDto
   | LineStrokeDto
   | RectStrokeDto
   | EllipseStrokeDto
   | TextStrokeDto
-  | MathStrokeDto;
+  | MathStrokeDto
+  | ImageStrokeDto;
 
 export type StrokeDto = StrokeShapeDto & { id: string };
 

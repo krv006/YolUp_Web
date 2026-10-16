@@ -112,6 +112,16 @@
     }
   },
   "homeworkBoard": {
-    "undo": "Undo"
+    "undo": "Undo",
+    "paper": "Paper",
+    "papers": {
+      "blank": "Blank",
+      "dots": "Dots",
+      "grid": "Grid",
+      "ruled": "Lined"
+    },
+    "image": "Image",
+    "tooManyImages": "A board can hold at most {{max}} images.",
+    "imageError": "Could not add the image"
   }
 }

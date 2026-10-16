@@ -112,6 +112,16 @@
     }
   },
   "homeworkBoard": {
-    "undo": "Bekor qilish"
+    "undo": "Bekor qilish",
+    "paper": "Daftar turi",
+    "papers": {
+      "blank": "Oq",
+      "dots": "Nuqtali",
+      "grid": "Katakli",
+      "ruled": "Chiziqli"
+    },
+    "image": "Rasm",
+    "tooManyImages": "Doskada eng ko'pi bilan {{max}} ta rasm bo'ladi.",
+    "imageError": "Rasmni qo'shib bo'lmadi"
   }
 }

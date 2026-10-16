@@ -1,5 +1,5 @@
 import { apiClient, type RequestOptions } from "@/shared/api";
-import type { FormulaSolutionDto, StrokeDto } from "@/modules/board";
+import type { BoardPaper, FormulaSolutionDto, StrokeDto } from "@/modules/board";
 import type { Submission } from "@/shared/types";
 import { homeworkEndpoints } from "./homework.endpoints";
 import type {
@@ -18,6 +18,11 @@ import {
   mapSubmissionDto,
 } from "../lib/homework.mappers";
 import { validateHomeworkFile } from "../lib/homework-validation";
+
+export interface HomeworkBoardSheet {
+  strokes: StrokeDto[];
+  paper: BoardPaper;
+}
 
 export const homeworkApi = {
   async getAssignments(courseId: string | null, options: RequestOptions = {}) {
@@ -61,10 +66,10 @@ export const homeworkApi = {
   async getBoard(assignmentId: string, options?: RequestOptions) {
     return mapBoardDto(await apiClient.get<HomeworkBoardDto>(homeworkEndpoints.board(assignmentId), options));
   },
-  async saveBoard(assignmentId: string, sheets: StrokeDto[][]) {
+  async saveBoard(assignmentId: string, sheets: HomeworkBoardSheet[]) {
     return mapBoardDto(
       await apiClient.put<HomeworkBoardDto>(homeworkEndpoints.board(assignmentId), {
-        sheets: sheets.map((strokes) => ({ strokes })),
+        sheets: sheets.map(({ strokes, paper }) => ({ strokes, paper })),
       })
     );
   },

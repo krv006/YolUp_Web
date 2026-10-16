@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { StrokeDto } from "@/modules/board";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
 import type { Submission } from "@/shared/types";
-import { homeworkApi } from "../api/homework.api";
+import { homeworkApi, type HomeworkBoardSheet } from "../api/homework.api";
 import type { AssignmentFormInput, SubmissionReviewInput } from "../api/homework.dto";
 
 const POLL_INTERVAL_MS = 2500;
@@ -138,7 +137,7 @@ export function useHomeworkBoard(assignmentId: string | null) {
 }
 
 export function useSaveHomeworkBoard(assignmentId: string) {
-  return useMutation({ mutationFn: (sheets: StrokeDto[][]) => homeworkApi.saveBoard(assignmentId, sheets) });
+  return useMutation({ mutationFn: (sheets: HomeworkBoardSheet[]) => homeworkApi.saveBoard(assignmentId, sheets) });
 }
 
 export function useSolveHomeworkBoard(assignmentId: string) {

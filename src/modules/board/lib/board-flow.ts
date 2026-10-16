@@ -22,6 +22,7 @@ export function strokeSpan(stroke: StrokeDto): VerticalSpan | null {
       return { top: Math.min(stroke.y1, stroke.y2), bottom: Math.max(stroke.y1, stroke.y2) };
     case "rect":
     case "ellipse":
+    case "image":
       return { top: stroke.y, bottom: stroke.y + stroke.h };
     case "text":
       return textSpan(stroke.y, stroke.size ?? 22, String(stroke.text ?? "").split("\n").length);
