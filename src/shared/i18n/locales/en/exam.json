@@ -56,7 +56,13 @@
     "audioStart": "Play the audio",
     "audioPlaying": "Audio is playing",
     "audioPlayed": "Audio played",
-    "audioOnce": "The audio plays once and cannot be paused or replayed."
+    "audioOnce": "The audio plays once: it cannot be paused or replayed.",
+    "audioPart": "Part {{number}}",
+    "audioStartPart": "Start audio: {{label}}",
+    "audioPlayingPart": "{{label}} — audio is playing",
+    "audioNext": "{{label}} — audio starts shortly",
+    "audioAllDone": "All audio has been played",
+    "audioPartsCount": "Part {{current}} / {{total}}"
   },
   "result": {
     "total": "Result",

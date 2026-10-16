@@ -56,7 +56,13 @@
     "audioStart": "Включить аудио",
     "audioPlaying": "Аудио воспроизводится",
     "audioPlayed": "Аудио прослушано",
-    "audioOnce": "Аудио воспроизводится один раз, без паузы и перемотки."
+    "audioOnce": "Аудио звучит один раз: остановить или перемотать нельзя.",
+    "audioPart": "Часть {{number}}",
+    "audioStartPart": "Запустить аудио: {{label}}",
+    "audioPlayingPart": "{{label}} — идёт аудио",
+    "audioNext": "{{label}} — аудио скоро начнётся",
+    "audioAllDone": "Все аудио прослушаны",
+    "audioPartsCount": "Часть {{current}} / {{total}}"
   },
   "result": {
     "total": "Результат",

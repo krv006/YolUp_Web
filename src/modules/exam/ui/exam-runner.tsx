@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { CheckCircle2, Coffee, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { QuestionAnswerInput, QuestionPrompt, emptyAnswer, type QuizAttemptAnswerInput } from "@/modules/quiz";
@@ -6,7 +6,8 @@ import type { ExamCurrent, ExamCurrentItem, QuizAnswerValue, QuizQuestion } from
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { useFinishExam, useSaveExamAnswers } from "../model/exam.queries";
 import { useExamResults } from "../model/exam.queries";
-import { ExamGroupPanel, type ExamAudioState } from "./exam-question-group";
+import { ExamListeningPlayer } from "./exam-listening-player";
+import { ExamGroupPanel } from "./exam-question-group";
 import { ExamResultCard } from "./exam-result-card";
 import { ExamReview } from "./exam-review";
 import { ExamTimer } from "./exam-timer";
@@ -27,7 +28,6 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const save = useSaveExamAnswers(examId);
   const finish = useFinishExam(examId);
   const [answers, setAnswers] = useState<Record<string, QuizAnswerValue>>(item?.savedAnswers ?? {});
-  const [audioStates, setAudioStates] = useState<Record<string, ExamAudioState>>({});
   const [finishOpen, setFinishOpen] = useState(false);
   const dirtyRef = useRef(false);
   const answersRef = useRef(answers);
@@ -121,20 +121,14 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
         total={questions.length}
         onFinish={() => setFinishOpen(true)}
         onExpire={sectionExpired}
+        player={<ExamListeningPlayer key={item.key} examId={examId} groups={item.groups} />}
       />
 
       <div className="exam-runner-body">
         {grouped.map((block) => (
           <section key={block.group?.id ?? "plain"} className="exam-runner-block">
             {block.group ? (
-              <ExamGroupPanel
-                examId={examId}
-                group={block.group}
-                audioState={audioStates[block.group.id] ?? "idle"}
-                onAudioState={(state) =>
-                  setAudioStates((current) => ({ ...current, [block.group?.id ?? ""]: state }))
-                }
-              />
+              <ExamGroupPanel group={block.group} />
             ) : null}
             <div className="exam-runner-questions">
               {block.questions.map((question) => (
@@ -191,6 +185,7 @@ function ExamRunnerHeader({
   total,
   onFinish,
   onExpire,
+  player = null,
 }: {
   title: string;
   item: ExamCurrentItem;
@@ -198,6 +193,7 @@ function ExamRunnerHeader({
   total: number | null;
   onFinish: () => void;
   onExpire: () => void;
+  player?: ReactNode;
 }) {
   const { t } = useTranslation("exam");
   return (
@@ -215,6 +211,7 @@ function ExamRunnerHeader({
           <LogOut size={16} /> {t("runner.finish")}
         </Button>
       </div>
+      {player}
     </header>
   );
 }

@@ -56,7 +56,13 @@
     "audioStart": "Audioni eshitish",
     "audioPlaying": "Audio ijro etilmoqda",
     "audioPlayed": "Audio eshitildi",
-    "audioOnce": "Audio bir marta eshittiriladi, to'xtatib yoki qaytarib bo'lmaydi."
+    "audioOnce": "Audio bir marta eshittiriladi, to'xtatib yoki qaytarib bo'lmaydi.",
+    "audioPart": "{{number}}-qism",
+    "audioStartPart": "{{label}} audiosini boshlash",
+    "audioPlayingPart": "{{label}} — audio ijro etilmoqda",
+    "audioNext": "{{label}} — audio birozdan keyin boshlanadi",
+    "audioAllDone": "Barcha audiolar eshittirildi",
+    "audioPartsCount": "{{current}} / {{total}}-qism"
   },
   "result": {
     "total": "Natija",
