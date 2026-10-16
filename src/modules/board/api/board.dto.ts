@@ -161,7 +161,8 @@ export interface BoardSource {
   addStrokes: (sheet: number, strokes: StrokeInput[]) => void;
   addSheet: () => void;
   eraseStroke: (sheet: number, strokeId: string) => void;
-  solve: (expression: string) => Promise<FormulaSolutionDto>;
+  /** Yechuvchi faqat dars doskasida (matematika); uy vazifasida yo'q. */
+  solve?: (expression: string) => Promise<FormulaSolutionDto>;
 }
 
 export interface BoardState {

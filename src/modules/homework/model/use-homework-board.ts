@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { BoardSource, BoardState, StrokeDto, StrokeInput } from "@/modules/board";
-import { useSaveHomeworkBoard, useSolveHomeworkBoard } from "./homework.queries";
+import { useSaveHomeworkBoard } from "./homework.queries";
 
 const AUTOSAVE_MS = 1500;
 
@@ -10,8 +10,6 @@ export interface HomeworkBoardInit {
   sheets: StrokeDto[][];
   width: number;
   height: number;
-  mathEnabled: boolean;
-  chemistryEnabled: boolean;
 }
 
 function newId(): string {
@@ -27,7 +25,6 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
   const sheetsRef = useRef(sheets);
   const [saveState, setSaveState] = useState<HomeworkBoardSaveState>("saved");
   const save = useSaveHomeworkBoard(assignmentId);
-  const solve = useSolveHomeworkBoard(assignmentId);
   const dirty = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saving = useRef(false);
@@ -91,13 +88,14 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
       width: init.width,
       height: init.height,
       subject: "",
-      mathEnabled: init.mathEnabled,
-      chemistryEnabled: init.chemistryEnabled,
+      // Doska fanga bog'lanmagan: hamma fanda bir xil umumiy asboblar (yechuvchi/davriy jadval yo'q)
+      mathEnabled: false,
+      chemistryEnabled: false,
       awayStudents: [],
       pendingMicRequests: [],
       pendingCameraRequests: [],
     }),
-    [sheets, init.width, init.height, init.mathEnabled, init.chemistryEnabled]
+    [sheets, init.width, init.height]
   );
 
   const source: BoardSource = {
@@ -107,7 +105,6 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
     addSheet: () => change([...sheetsRef.current, []]),
     eraseStroke: (sheet, strokeId) =>
       change(sheetsRef.current.map((items, index) => (index === sheet ? items.filter((item) => item.id !== strokeId) : items))),
-    solve: (expression) => solve.mutateAsync(expression),
   };
 
   function addStrokes(sheet: number, strokes: StrokeInput[]) {

@@ -6,8 +6,6 @@ import type { StrokeDto } from "@/modules/board";
 export interface HomeworkBoardDto {
   sheets: Array<{ index: number; strokes: StrokeDto[] }>;
   size: [number, number];
-  math_enabled: boolean;
-  chemistry_enabled: boolean;
   updated_at: string | null;
 }
 

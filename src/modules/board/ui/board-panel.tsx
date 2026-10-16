@@ -181,7 +181,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardP
   async function solveFormula(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      setSolution(await (source ? source.solve(formula) : solve.mutateAsync(formula)));
+      setSolution(await (source ? source.solve!(formula) : solve.mutateAsync(formula)));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("formulaDialog.solveError"));
     }

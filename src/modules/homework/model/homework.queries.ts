@@ -141,10 +141,6 @@ export function useSaveHomeworkBoard(assignmentId: string) {
   return useMutation({ mutationFn: (sheets: StrokeDto[][]) => homeworkApi.saveBoard(assignmentId, sheets) });
 }
 
-export function useSolveHomeworkBoard(assignmentId: string) {
-  return useMutation({ mutationFn: (expr: string) => homeworkApi.solveBoardFormula(assignmentId, expr) });
-}
-
 export function useSubmitHomeworkBoard() {
   const { t } = useTranslation("homework");
   const client = useQueryClient();

@@ -1,5 +1,5 @@
 import { apiClient, type RequestOptions } from "@/shared/api";
-import type { FormulaSolutionDto, StrokeDto } from "@/modules/board";
+import type { StrokeDto } from "@/modules/board";
 import type { Submission } from "@/shared/types";
 import { homeworkEndpoints } from "./homework.endpoints";
 import type {
@@ -70,9 +70,6 @@ export const homeworkApi = {
   },
   async submitBoard(assignmentId: string): Promise<Submission | null> {
     return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.boardSubmit(assignmentId), {}));
-  },
-  async solveBoardFormula(assignmentId: string, expr: string) {
-    return apiClient.post<FormulaSolutionDto>(homeworkEndpoints.boardSolve(assignmentId), { expr });
   },
   async getSubmission(id: string, options?: RequestOptions) {
     return mapSubmissionDto(await apiClient.get<SubmissionDto>(homeworkEndpoints.submission(id), options));

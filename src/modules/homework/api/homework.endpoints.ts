@@ -6,6 +6,5 @@ export const homeworkEndpoints = Object.freeze({
   review: (id: string) => `/api/v1/homework/submissions/${id}/review/`,
   board: (id: string) => `/api/v1/homework/assignments/${id}/board/`,
   boardSubmit: (id: string) => `/api/v1/homework/assignments/${id}/board/submit/`,
-  boardSolve: (id: string) => `/api/v1/homework/assignments/${id}/board/solve/`,
   report: "/api/v1/homework/report/",
 });

@@ -63,8 +63,6 @@ export function mapBoardDto(dto: HomeworkBoardDto) {
     sheets: (dto.sheets ?? []).map((sheet) => sheet.strokes ?? []),
     width: Number(dto.size?.[0] ?? 1600),
     height: Number(dto.size?.[1] ?? 900),
-    mathEnabled: Boolean(dto.math_enabled),
-    chemistryEnabled: Boolean(dto.chemistry_enabled),
   };
 }
 

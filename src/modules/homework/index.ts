@@ -13,7 +13,7 @@ export { mapAiResultDto, mapAssignmentDto, mapAssignmentRequest, mapHomeworkRepo
 export { validateHomeworkFile } from "./lib/homework-validation";
 export { useHomeworkBoardSource } from "./model/use-homework-board";
 export type { HomeworkBoardSaveState } from "./model/use-homework-board";
-export { getHomeworkPollingInterval, homeworkKeys, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useSaveHomeworkBoard, useSolveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment } from "./model/homework.queries";
+export { getHomeworkPollingInterval, homeworkKeys, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment } from "./model/homework.queries";
 export { AssignmentDetailDialog } from "./ui/assignment-detail-dialog";
 export { homeworkFieldError } from "./lib/homework-errors";
 export { HomeworkResultDialog } from "./ui/homework-result-dialog";
