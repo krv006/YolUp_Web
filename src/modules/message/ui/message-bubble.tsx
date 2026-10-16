@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
+import { Avatar } from "@/shared/ui/legacy";
 import type { ChatMessage } from "@/shared/types";
 import { MessageAttachment } from "./message-attachment";
 import { MessageText } from "./message-text";
@@ -17,19 +18,32 @@ export interface MessageBubbleProps {
   onRetryMessage?: (message: ChatMessage) => void;
 }
 
-export function MessageBubble({ message, currentUserId = null, onReply, onOpenActions, onReact, onRetryMessage }: MessageBubbleProps) {
+export function MessageBubble({
+  message,
+  currentUserId = null,
+  onReply,
+  onOpenActions,
+  onReact,
+  onRetryMessage,
+}: MessageBubbleProps) {
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
   const isTeacherSender = message.senderRole === ROLES.TEACHER;
   const [dragging, setDragging] = useState(false);
 
   if (message.type === "system")
-    return <div className="system-message">{message.text}</div>;
+    return (
+      <div className="flex justify-center py-1">
+        <span className="rounded-full bg-subtle px-3 py-1 text-caption text-ink-tertiary">
+          {message.text}
+        </span>
+      </div>
+    );
 
   return (
     <motion.div
-      className={`message-row ${outgoing ? "message-row--outgoing" : ""} ${
-        dragging ? "is-dragging" : ""
+      className={`group flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${
+        message.pending ? "opacity-70" : ""
       }`}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
@@ -45,10 +59,7 @@ export function MessageBubble({ message, currentUserId = null, onReply, onOpenAc
       }}
       onDoubleClick={() => onReply(message)}
       onClick={(event) => {
-        if (
-          !dragging &&
-          window.matchMedia("(max-width: 768px), (pointer: coarse)").matches
-        ) {
+        if (!dragging && window.matchMedia("(max-width: 768px), (pointer: coarse)").matches) {
           onOpenActions(message, {
             x: event.clientX || 20,
             y: event.clientY || window.innerHeight - 330,
@@ -60,63 +71,114 @@ export function MessageBubble({ message, currentUserId = null, onReply, onOpenAc
         onOpenActions(message, { x: event.clientX, y: event.clientY });
       }}
     >
-      <span className="reply-drag-hint" aria-hidden="true">
-        <Reply size={16} />
-      </span>
-      <div className="message-bubble">
+      {outgoing ? null : (
+        <span className="mb-1 shrink-0">
+          <Avatar name={message.senderName} size="sm" />
+        </span>
+      )}
+
+      <div
+        className={`flex max-w-[78%] flex-col gap-1.5 rounded-2xl px-4 py-3 lg:max-w-[560px] ${
+          outgoing
+            ? "rounded-br-md bg-action text-on-action"
+            : "rounded-bl-md border border-line bg-surface text-ink"
+        }`}
+      >
         {message.senderName && !outgoing && (
-          <span className={`message-sender-name ${isTeacherSender ? "is-teacher" : "is-student"}`}>
+          <span className="flex items-center gap-1 text-caption-strong text-action">
             {isTeacherSender && <GraduationCap size={12} />}
             {message.senderName}
           </span>
         )}
+
         {message.replyTo && (
-          <div className="reply-quote">
-            <strong>{message.replyTo.author}</strong>
-            <span>{message.replyTo.text}</span>
+          <div
+            className={`flex flex-col gap-0.5 rounded-lg border-l-2 py-1 pl-2.5 ${
+              outgoing
+                ? "border-l-white/60 bg-white/15"
+                : "border-l-action bg-action-subtle text-ink-secondary"
+            }`}
+          >
+            <strong className="text-caption-strong">{message.replyTo.author}</strong>
+            <span className="line-clamp-2 text-caption">{message.replyTo.text}</span>
           </div>
         )}
+
         {message.text && <MessageText text={message.text} />}
         {message.attachment && <MessageAttachment attachment={message.attachment} />}
-        <span className="message-meta">
-          {message.editedAt && <em>{t("bubble.edited")}</em>}
+
+        <span
+          className={`flex items-center justify-end gap-1 font-numeric text-caption ${
+            outgoing ? "text-on-action/75" : "text-ink-tertiary"
+          }`}
+        >
+          {message.editedAt && <em className="not-italic">{t("bubble.edited")}</em>}
           <time>{formatMessageTime(message.createdAt)}</time>
           {outgoing && (
             <CheckCheck
               size={15}
-              className={message.status === "read" ? "is-read" : ""}
+              className={message.status === "read" ? "opacity-100" : "opacity-60"}
               aria-label={message.status}
             />
           )}
         </span>
-        {message.failed ? <button className="message-retry" onClick={(event) => { event.stopPropagation(); onRetryMessage?.(message); }}><RefreshCw size={13} /> {t("bubble.retry")}</button> : null}
+
+        {message.failed ? (
+          <button
+            className="flex items-center gap-1 self-end text-caption-strong text-error-text"
+            onClick={(event) => {
+              event.stopPropagation();
+              onRetryMessage?.(message);
+            }}
+          >
+            <RefreshCw size={13} /> {t("bubble.retry")}
+          </button>
+        ) : null}
+
         <AnimatePresence initial={false}>
-        {message.reactions && message.reactions.length > 0 && (
-          <motion.div className="message-reactions" aria-label={t("bubble.reactionsAria")} initial={{ opacity: 0, y: -18, scale: .68 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: -8, scale: .72 }} transition={{ type: "spring", stiffness: 520, damping: 24 }}>
-            {message.reactions.map((reaction) => (
-              <motion.button
-                layout
-                key={`${reaction.emoji}-${reaction.count}-${reaction.reacted}`}
-                className={reaction.reacted ? "is-reacted" : ""}
-                initial={{ opacity: 0, y: -22, scale: .35, rotate: -18 }}
-                animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
-                exit={{ opacity: 0, y: -10, scale: .45 }}
-                transition={{ type: "spring", stiffness: 640, damping: 21 }}
-                whileTap={{ scale: .82 }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onReact(message, reaction.emoji);
-                }}
-              >
-                <motion.i className="reaction-pop-burst" initial={{ opacity: .75, scale: .2 }} animate={{ opacity: 0, scale: 2.2 }} transition={{ duration: .48, ease: "easeOut" }} />
-                <motion.span initial={{ y: -7 }} animate={{ y: 0 }} transition={{ type: "spring", stiffness: 700, damping: 18 }}>{reaction.emoji}</motion.span>
-                {reaction.count}
-              </motion.button>
-            ))}
-          </motion.div>
-        )}
+          {message.reactions && message.reactions.length > 0 && (
+            <motion.div
+              className="flex flex-wrap gap-1"
+              aria-label={t("bubble.reactionsAria")}
+              initial={{ opacity: 0, y: -18, scale: 0.68 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.72 }}
+              transition={{ type: "spring", stiffness: 520, damping: 24 }}
+            >
+              {message.reactions.map((reaction) => (
+                <motion.button
+                  layout
+                  key={`${reaction.emoji}-${reaction.count}-${reaction.reacted}`}
+                  className={`flex items-center gap-1 rounded-full border px-2 py-0.5 font-numeric text-caption ${
+                    reaction.reacted
+                      ? "border-action bg-action-subtle text-action"
+                      : "border-line bg-surface text-ink-secondary"
+                  }`}
+                  initial={{ opacity: 0, y: -22, scale: 0.35, rotate: -18 }}
+                  animate={{ opacity: 1, y: 0, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.45 }}
+                  transition={{ type: "spring", stiffness: 640, damping: 21 }}
+                  whileTap={{ scale: 0.82 }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onReact(message, reaction.emoji);
+                  }}
+                >
+                  <span>{reaction.emoji}</span>
+                  {reaction.count}
+                </motion.button>
+              ))}
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
+
+      <span
+        className="pointer-events-none mb-2 text-ink-tertiary opacity-0 transition-opacity group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        <Reply size={16} />
+      </span>
     </motion.div>
   );
 }

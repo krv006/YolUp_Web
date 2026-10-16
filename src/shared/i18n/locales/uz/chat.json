@@ -2,7 +2,12 @@
   "emptyState": {
     "title": "Suhbatni tanlang",
     "description": "Xabarlarni ko'rish va davom ettirish uchun chap tomondagi suhbatlardan birini tanlang.",
-    "openConversations": "Suhbatlarni ochish"
+    "openConversations": "Suhbatlarni ochish",
+    "noChatsTitle": "Hali suhbatlar yo‘q",
+    "noChatsTeacher": "Guruh yarating va o‘quvchilaringizni taklif qiling. Suhbatlar shu yerda paydo bo‘ladi.",
+    "noChatsStudent": "Kursga yoziling yoki o‘qituvchi toping. Suhbatlar shu yerda paydo bo‘ladi.",
+    "createGroup": "Guruh yaratish",
+    "findTeacher": "Kursga yozilish"
   },
   "header": {
     "backAria": "Suhbatlar ro'yxatiga qaytish",
@@ -156,6 +161,12 @@
     "assignmentGroupNotFound": "Vazifa guruhi topilmadi",
     "assignmentOpenFailed": "Vazifani ochib bo'lmadi",
     "directOpened": "Suhbat ochildi",
-    "directRequestSent": "So'rov yuborildi — o'qituvchi tasdiqlashi kerak"
+    "directRequestSent": "So'rov yuborildi — o'qituvchi tasdiqlashi kerak",
+    "groups": {
+      "today": "Bugun",
+      "yesterday": "Kecha",
+      "earlier": "Avvalgi"
+    },
+    "loading": "Yuklanmoqda"
   }
 }

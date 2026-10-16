@@ -1,22 +1,9 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  LoaderCircle,
-  Paperclip,
-  Pencil,
-  Reply,
-  SendHorizontal,
-  Smile,
-  X,
-} from "lucide-react";
+import { LoaderCircle, Paperclip, Pencil, Reply, SendHorizontal, Smile, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import {
-  Dropdown,
-  DropdownContent,
-  DropdownItem,
-  DropdownTrigger,
-} from "@/shared/ui/legacy";
+import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 
 export interface MessageComposerProps {
@@ -90,20 +77,20 @@ export function MessageComposer({
   const context = editingMessage || replyTo;
 
   return (
-    <div className="composer-wrap">
+    <div className="shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
       <AnimatePresence initial={false}>
         {context && (
           <motion.div
-            className="composer-context"
+            className="mb-3 flex items-center gap-3 rounded-xl border border-line bg-canvas px-3 py-2"
             initial={{ opacity: 0, y: 8, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: 5, height: 0 }}
           >
-            <span className="composer-context-icon">
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
               {editingMessage ? <Pencil size={16} /> : <Reply size={17} />}
             </span>
-            <span className="composer-context-copy">
-              <strong>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-caption-strong text-ink">
                 {editingMessage
                   ? t("composer.editingLabel")
                   : `${
@@ -113,9 +100,10 @@ export function MessageComposer({
                         : t("composer.replyFallback"))
                     }`}
               </strong>
-              <small>{context.text}</small>
+              <small className="truncate text-caption text-ink-tertiary">{context.text}</small>
             </span>
             <button
+              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:bg-subtle hover:text-ink"
               onClick={() => {
                 onCancelContext();
                 if (editingMessage) setDraft("");
@@ -132,19 +120,22 @@ export function MessageComposer({
       <AnimatePresence initial={false}>
         {selectedFile && (
           <motion.div
-            className="composer-file"
+            className="mb-3 flex items-center gap-3 rounded-xl border border-line bg-canvas px-3 py-2"
             initial={{ opacity: 0, y: 6, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: 4, height: 0 }}
           >
-            <span>
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
               <Paperclip size={16} />
             </span>
-            <div>
-              <strong>{selectedFile.name}</strong>
-              <small>{formatFileSize(selectedFile.size)}</small>
+            <div className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-caption-strong text-ink">{selectedFile.name}</strong>
+              <small className="text-caption text-ink-tertiary">
+                {formatFileSize(selectedFile.size)}
+              </small>
             </div>
             <button
+              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:bg-subtle hover:text-ink"
               onClick={() => setSelectedFile(null)}
               aria-label={t("composer.removeAttachmentAria")}
             >
@@ -153,7 +144,7 @@ export function MessageComposer({
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="composer">
+      <div className="mx-auto flex w-full max-w-[920px] items-end gap-3">
         <input
           ref={fileRef}
           type="file"
@@ -170,49 +161,55 @@ export function MessageComposer({
             event.target.value = "";
           }}
         />
-        {allowAttachments ? <button
-          className="composer-action"
-          onClick={() => fileRef.current?.click()}
-          disabled={Boolean(editingMessage)}
-          aria-label={t("composer.attachAria")}
-        >
-          <Paperclip size={20} />
-        </button> : null}
-        <textarea
-          ref={textareaRef}
-          rows={1}
-          value={draft}
-          onChange={(event) => { setDraft(event.target.value); onTyping?.(); }}
-          onKeyDown={handleKeyDown}
-          placeholder={
-            editingMessage ? t("composer.editPlaceholder") : t("composer.sendPlaceholder")
-          }
-          aria-label={t("composer.textAria")}
-        />
-        <Dropdown>
-          <DropdownTrigger asChild>
-            <button className="composer-action" aria-label={t("composer.emojiAria")}>
-              <Smile size={20} />
-            </button>
-          </DropdownTrigger>
-          <DropdownContent className="emoji-picker">
-            {emojis.map((emoji) => (
-              <DropdownItem
-                key={emoji}
-                onSelect={() => setDraft((value) => value + emoji)}
+        {allowAttachments ? (
+          <button
+            className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:opacity-50"
+            onClick={() => fileRef.current?.click()}
+            disabled={Boolean(editingMessage)}
+            aria-label={t("composer.attachAria")}
+          >
+            <Paperclip size={20} />
+          </button>
+        ) : null}
+        <div className="flex min-w-0 flex-1 items-end gap-2 rounded-3xl border border-line bg-canvas px-5 py-3">
+          <textarea
+            className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+            ref={textareaRef}
+            rows={1}
+            value={draft}
+            onChange={(event) => {
+              setDraft(event.target.value);
+              onTyping?.();
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              editingMessage ? t("composer.editPlaceholder") : t("composer.sendPlaceholder")
+            }
+            aria-label={t("composer.textAria")}
+          />
+          <Dropdown>
+            <DropdownTrigger asChild>
+              <button
+                className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+                aria-label={t("composer.emojiAria")}
               >
-                {emoji}
-              </DropdownItem>
-            ))}
-          </DropdownContent>
-        </Dropdown>
+                <Smile size={20} />
+              </button>
+            </DropdownTrigger>
+            <DropdownContent className="emoji-picker">
+              {emojis.map((emoji) => (
+                <DropdownItem key={emoji} onSelect={() => setDraft((value) => value + emoji)}>
+                  {emoji}
+                </DropdownItem>
+              ))}
+            </DropdownContent>
+          </Dropdown>
+        </div>
         <button
-          className="send-button"
+          className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40"
           onClick={submit}
           disabled={(!draft.trim() && !selectedFile) || sending}
-          aria-label={
-            editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")
-          }
+          aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
         >
           {sending ? (
             <LoaderCircle className="spin" size={19} />

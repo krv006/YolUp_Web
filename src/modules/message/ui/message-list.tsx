@@ -45,27 +45,38 @@ export function MessageList({
 
   if (loading)
     return (
-      <div className="message-loading">
+      <div className="flex flex-1 flex-col gap-3 overflow-hidden bg-canvas px-4 py-5 lg:px-6">
         {Array.from({ length: 5 }, (_, index) => (
           <div
             key={index}
-            className={`message-skeleton ${index % 2 ? "right" : ""}`}
+            className={`h-16 w-3/5 max-w-[420px] animate-pulse rounded-2xl bg-muted ${
+              index % 2 ? "self-end" : ""
+            }`}
           />
         ))}
       </div>
     );
   if (error)
     return (
-      <div className="chat-error">
-        <strong>{t("list.loadError")}</strong>
-        <p>{t("list.loadErrorHint")}</p>
-        <button onClick={onRetry}>{t("list.retry")}</button>
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-canvas px-6 text-center">
+        <strong className="font-heading text-h3 text-ink">{t("list.loadError")}</strong>
+        <p className="max-w-[320px] text-body-sm text-ink-secondary">{t("list.loadErrorHint")}</p>
+        <button
+          className="mt-3 flex h-12 items-center rounded-full bg-muted px-5 text-label-strong text-ink transition-colors hover:bg-subtle"
+          onClick={onRetry}
+        >
+          {t("list.retry")}
+        </button>
       </div>
     );
 
   return (
-    <div className="message-scroll" role="log" aria-live="polite">
-      <div className="message-list">
+    <div
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-4 py-5 lg:px-6"
+      role="log"
+      aria-live="polite"
+    >
+      <div className="mx-auto flex w-full max-w-[920px] flex-col gap-3">
         <DateSeparator>{t("list.today")}</DateSeparator>
         {(messages ?? []).map((message) => (
           <MessageBubble
@@ -87,7 +98,9 @@ export function MessageList({
             }}
           />
         ))}
-        {conversation.typing && <TypingIndicator name={conversation.title} />}
+        {conversation.typing && (
+          <TypingIndicator name={conversation.typingName || conversation.title} />
+        )}
         <div ref={bottomRef} />
       </div>
       <MessageActionsMenu

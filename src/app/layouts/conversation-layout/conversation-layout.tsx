@@ -1,24 +1,29 @@
-import { useEffect, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import {
+  useEffect,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { ConversationRail, type ConversationSection } from "@/modules/conversation";
 import { ConversationPanel } from "@/widgets/conversation-panel";
+import { ConversationTopbar } from "@/widgets/conversation-topbar";
 import { AccountMenu } from "@/widgets/account-menu";
 import { STORAGE_KEYS } from "@/shared/constants";
 import { storage } from "@/shared/lib";
 import type { ConversationRole } from "@/shared/types";
-
-
 
 const WIDTH_KEYS: Record<ConversationRole, string> = {
   teacher: STORAGE_KEYS.CONVERSATION_PANEL_WIDTH,
   student: STORAGE_KEYS.STUDENT_CONVERSATION_PANEL_WIDTH,
 };
 
-const MIN_WIDTH = 300;
+const MIN_WIDTH = 320;
 const MAX_WIDTH = 480;
-const DEFAULT_WIDTH = 368;
+const DEFAULT_WIDTH = 400;
 
 function sectionFromPath(pathname: string): ConversationSection {
   if (pathname.endsWith("/schedule")) return "schedule";
@@ -44,14 +49,16 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
   const storageKey = WIDTH_KEYS[role] ?? WIDTH_KEYS.teacher;
   const [panelWidth, setPanelWidth] = useState(() => {
     const saved = Number(storage.get(storageKey));
-    return Number.isFinite(saved) && saved >= MIN_WIDTH && saved <= MAX_WIDTH ? saved : DEFAULT_WIDTH;
+    return Number.isFinite(saved) && saved >= MIN_WIDTH && saved <= MAX_WIDTH
+      ? saved
+      : DEFAULT_WIDTH;
   });
   const [resizing, setResizing] = useState(false);
 
   useEffect(() => {
     if (!resizing) return undefined;
     function handleMove(event: globalThis.PointerEvent) {
-      setPanelWidth(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, event.clientX)));
+      setPanelWidth(Math.min(MAX_WIDTH, Math.max(MIN_WIDTH, event.clientX - 248)));
     }
     function handleUp() {
       setResizing(false);
@@ -71,7 +78,7 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
   }, [panelWidth, storageKey]);
 
   function startResize(event: PointerEvent<HTMLDivElement>) {
-    if (window.innerWidth <= 768) return;
+    if (window.innerWidth < 1024) return;
     event.preventDefault();
     setResizing(true);
     document.body.classList.add("is-resizing-sidebar");
@@ -82,40 +89,56 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
     if (event.key === "ArrowRight") setPanelWidth((width) => Math.min(MAX_WIDTH, width + 16));
   }
 
+  const mainVisible = Boolean(conversationId) || wideSection;
+
   return (
     <div
-      className={`teacher-shell conversation-shell conversation-shell--${role} ${resizing ? "is-resizing" : ""} ${wideSection ? "is-wide-section" : ""} ${conversationId ? "has-conversation" : ""}`}
+      className="flex h-dvh w-full bg-canvas font-body text-ink"
       style={{ "--conversation-width": `${panelWidth}px` } as CSSProperties}
     >
       <ConversationRail role={role} section={section} onOpenMenu={() => setMenuOpen(true)} />
-      <ConversationPanel role={role} onOpenMenu={() => setMenuOpen(true)} />
-      <div
-        className="conversation-resize-handle"
-        role="separator"
-        aria-label={t("rail.resizeHandle")}
-        aria-orientation="vertical"
-        tabIndex={0}
-        onPointerDown={startResize}
-        onDoubleClick={() => setPanelWidth(DEFAULT_WIDTH)}
-        onKeyDown={resizeWithKeyboard}
-      >
-        <span />
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <ConversationTopbar role={role} title={t(`titles.${section}`)} />
+
+        <div className="flex min-h-0 flex-1">
+          {wideSection ? null : <ConversationPanel role={role} hidden={Boolean(conversationId)} />}
+          {wideSection ? null : (
+            <div
+              className="group relative hidden w-1.5 shrink-0 cursor-col-resize touch-none lg:block"
+              role="separator"
+              aria-label={t("rail.resizeHandle")}
+              aria-orientation="vertical"
+              tabIndex={0}
+              onPointerDown={startResize}
+              onDoubleClick={() => setPanelWidth(DEFAULT_WIDTH)}
+              onKeyDown={resizeWithKeyboard}
+            >
+              <span
+                className={`absolute inset-y-0 left-1/2 w-px -translate-x-1/2 transition-all group-hover:w-[3px] group-hover:bg-action group-focus-visible:w-[3px] group-focus-visible:bg-action ${
+                  resizing ? "w-[3px] bg-action" : "bg-transparent"
+                }`}
+              />
+            </div>
+          )}
+
+          <main
+            className={`teacher-main relative min-w-0 flex-1 overflow-hidden bg-canvas ${
+              mainVisible ? "block" : "hidden lg:block"
+            }`}
+          >
+            <motion.div
+              key={wideSection ? section : (conversationId ?? "empty")}
+              className="route-motion"
+              initial={{ opacity: 0, x: 4 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.14, ease: "easeOut" }}
+            >
+              <Outlet />
+            </motion.div>
+          </main>
+        </div>
       </div>
-      <main
-        className={`teacher-main conversation-main ${
-          conversationId || wideSection ? "has-conversation" : ""
-        }`}
-      >
-        <motion.div
-          key={wideSection ? section : (conversationId ?? "empty")}
-          className="route-motion"
-          initial={{ opacity: 0, x: 4 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.14, ease: "easeOut" }}
-        >
-          <Outlet />
-        </motion.div>
-      </main>
 
       <AccountMenu
         open={menuOpen}
@@ -123,7 +146,9 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
         profileOpen={profileOpen}
         onProfileOpenChange={setProfileOpen}
         roleLabel={role === "teacher" ? t("roles.teacher") : t("roles.student")}
-        workspaceLabel={role === "teacher" ? t("rail.teacherWorkspace") : t("rail.studentWorkspace")}
+        workspaceLabel={
+          role === "teacher" ? t("rail.teacherWorkspace") : t("rail.studentWorkspace")
+        }
       />
     </div>
   );
