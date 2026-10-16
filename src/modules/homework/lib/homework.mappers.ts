@@ -60,11 +60,7 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
 
 export function mapBoardDto(dto: HomeworkBoardDto) {
   return {
-    sheets: (dto.sheets ?? []).map((sheet) => ({
-      strokes: sheet.strokes ?? [],
-      paper: sheet.paper ?? dto.default_paper ?? "blank",
-    })),
-    defaultPaper: dto.default_paper ?? "blank",
+    sheets: (dto.sheets ?? []).map((sheet) => sheet.strokes ?? []),
     width: Number(dto.size?.[0] ?? 1600),
     height: Number(dto.size?.[1] ?? 900),
     mathEnabled: Boolean(dto.math_enabled),

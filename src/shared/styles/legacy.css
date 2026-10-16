@@ -7054,8 +7054,3 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .homework-board-task-body img { max-width: 100%; }
 .assignment-board-row { display: grid; gap: 6px; margin-bottom: 10px; }
 .assignment-board-row small { color: var(--muted-foreground); }
-
-.homework-board .board-canvas { background: #fff; }
-.homework-board-papers { display: inline-flex; border: 1px solid var(--border); border-radius: var(--r-full); overflow: hidden; }
-.homework-board-papers button { min-height: 32px; padding: 0 12px; border: 0; background: var(--surface); color: var(--muted-foreground); font: inherit; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
-.homework-board-papers button.is-active { background: var(--primary); color: var(--primary-foreground); }

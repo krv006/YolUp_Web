@@ -1,11 +1,10 @@
 import type { SubmissionStatus } from "@/shared/types";
 
-import type { BoardPaper, StrokeDto } from "@/modules/board";
+import type { StrokeDto } from "@/modules/board";
 
 /** Uy vazifasi doskasi: server javobi. */
 export interface HomeworkBoardDto {
-  sheets: Array<{ index: number; strokes: StrokeDto[]; paper?: BoardPaper }>;
-  default_paper?: BoardPaper;
+  sheets: Array<{ index: number; strokes: StrokeDto[] }>;
   size: [number, number];
   math_enabled: boolean;
   chemistry_enabled: boolean;

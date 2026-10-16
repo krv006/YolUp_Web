@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, CheckCircle2, Cloud, CloudOff, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { HomeworkBoardEditor, type HomeworkBoardSheetState } from "@/modules/board";
+import { HomeworkBoardEditor, type StrokeDto } from "@/modules/board";
 import {
   useAssignment,
   useHomeworkBoard,
@@ -29,7 +29,7 @@ export function StudentHomeworkBoardPage() {
   const submit = useSubmitHomeworkBoard();
   const [saveState, setSaveState] = useState<SaveState>("saved");
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const pending = useRef<HomeworkBoardSheetState[] | null>(null);
+  const pending = useRef<StrokeDto[][] | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   async function flush(): Promise<boolean> {
@@ -50,7 +50,7 @@ export function StudentHomeworkBoardPage() {
     }
   }
 
-  function changed(sheets: HomeworkBoardSheetState[]) {
+  function changed(sheets: StrokeDto[][]) {
     pending.current = sheets;
     setSaveState("saving");
     if (timer.current) clearTimeout(timer.current);
@@ -128,7 +128,6 @@ export function StudentHomeworkBoardPage() {
       <section className="portal-card board-page-canvas">
         <HomeworkBoardEditor
           initialSheets={board.data.sheets}
-          defaultPaper={board.data.defaultPaper}
           width={board.data.width}
           height={board.data.height}
           mathEnabled={board.data.mathEnabled}
