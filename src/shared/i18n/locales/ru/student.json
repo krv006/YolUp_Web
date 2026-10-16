@@ -50,7 +50,9 @@
       "chooseFile": "Выбрать файл",
       "send": "Отправить",
       "deadlinePassed": "Срок сдачи истёк",
-      "resultDialogTitle": "Результат вашего задания"
+      "resultDialogTitle": "Результат вашего задания",
+      "solveOnBoard": "Решить на доске",
+      "solveOnBoardHint": "Решайте на полноценной доске (перо, формулы, фигуры) или загрузите файл ниже."
     }
   },
   "enrollmentDialog": {

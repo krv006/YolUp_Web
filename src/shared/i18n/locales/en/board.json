@@ -110,5 +110,8 @@
       "symbol": "Symbols",
       "chemistry": "Chemistry"
     }
+  },
+  "homeworkBoard": {
+    "undo": "Undo"
   }
 }

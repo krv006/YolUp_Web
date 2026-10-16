@@ -50,7 +50,9 @@
       "chooseFile": "Fayl tanlash",
       "send": "Yuborish",
       "deadlinePassed": "Topshirish muddati tugagan",
-      "resultDialogTitle": "Vazifangiz bo'yicha natija"
+      "resultDialogTitle": "Vazifangiz bo'yicha natija",
+      "solveOnBoard": "Doskada yechish",
+      "solveOnBoardHint": "Qalam, formula, shakllar bilan to'liq doskada yeching yoki quyida fayl yuklang."
     }
   },
   "enrollmentDialog": {

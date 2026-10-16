@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { StrokeDto } from "@/modules/board";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
@@ -15,6 +16,7 @@ export const homeworkKeys = Object.freeze({
   assignments: (courseId: string | null) => ["homework", "assignments", courseId] as const,
   assignment: (id: string) => ["homework", "assignment", id] as const,
   submission: (id: string) => ["homework", "submission", id] as const,
+  board: (id: string) => ["homework", "board", id] as const,
   report: (studentId?: string | null) => ["homework", "report", studentId ?? "me"] as const,
 });
 
@@ -116,6 +118,38 @@ export function useSubmitHomework() {
       file: File | null;
       skillKey?: string;
     }) => homeworkApi.submit(assignmentId, file, skillKey),
+    onSuccess: (submission) => {
+      if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
+      client.invalidateQueries({ queryKey: homeworkKeys.all });
+      toast.success(t("toast.submitted"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useHomeworkBoard(assignmentId: string | null) {
+  return useQuery({
+    queryKey: homeworkKeys.board(assignmentId ?? ""),
+    queryFn: ({ signal }) => homeworkApi.getBoard(assignmentId as string, { signal }),
+    enabled: Boolean(assignmentId),
+    staleTime: Infinity, // doska holati sahifada o'zgartiriladi — qayta yuklash chizilganni bosib ketmasin
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useSaveHomeworkBoard(assignmentId: string) {
+  return useMutation({ mutationFn: (sheets: StrokeDto[][]) => homeworkApi.saveBoard(assignmentId, sheets) });
+}
+
+export function useSolveHomeworkBoard(assignmentId: string) {
+  return useMutation({ mutationFn: (expr: string) => homeworkApi.solveBoardFormula(assignmentId, expr) });
+}
+
+export function useSubmitHomeworkBoard() {
+  const { t } = useTranslation("homework");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (assignmentId: string) => homeworkApi.submitBoard(assignmentId),
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });

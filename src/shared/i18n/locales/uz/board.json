@@ -110,5 +110,8 @@
       "symbol": "Belgilar",
       "chemistry": "Kimyo"
     }
+  },
+  "homeworkBoard": {
+    "undo": "Bekor qilish"
   }
 }

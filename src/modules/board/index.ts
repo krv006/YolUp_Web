@@ -1,5 +1,6 @@
 export { boardApi } from "./api/board.api";
 export type {
+  FormulaSolutionDto,
   AwayStudent,
   BoardSheet,
   BoardState,
@@ -30,6 +31,8 @@ export { useBoardChannel } from "./model/use-board-channel";
 export { useBoardRealtime } from "./model/use-board-realtime";
 export { AwayStudentsNotice } from "./ui/away-students-notice";
 export { BoardPanel } from "./ui/board-panel";
+export { HomeworkBoardEditor } from "./ui/homework-board-editor";
+export type { HomeworkBoardEditorProps } from "./ui/homework-board-editor";
 export { BoardStroke } from "./ui/board-stroke";
 export { BoardToolbar } from "./ui/board-toolbar";
 export type { BoardTool } from "./ui/board-toolbar";

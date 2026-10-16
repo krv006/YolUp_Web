@@ -1,7 +1,9 @@
 import { apiClient, type RequestOptions } from "@/shared/api";
+import type { FormulaSolutionDto, StrokeDto } from "@/modules/board";
 import type { Submission } from "@/shared/types";
 import { homeworkEndpoints } from "./homework.endpoints";
 import type {
+  HomeworkBoardDto,
   AssignmentDto,
   AssignmentFormInput,
   HomeworkReportDto,
@@ -9,6 +11,7 @@ import type {
   SubmissionReviewInput,
 } from "./homework.dto";
 import {
+  mapBoardDto,
   mapAssignmentDto,
   mapAssignmentRequest,
   mapHomeworkReportDto,
@@ -53,6 +56,23 @@ export const homeworkApi = {
     return mapSubmissionDto(
       await apiClient.post<SubmissionDto>(homeworkEndpoints.submit(assignmentId), body)
     );
+  },
+  /** Uy vazifasi doskasi (o'quvchining shaxsiy holati): sheetlar, o'lcham, fanga xos asboblar. */
+  async getBoard(assignmentId: string, options?: RequestOptions) {
+    return mapBoardDto(await apiClient.get<HomeworkBoardDto>(homeworkEndpoints.board(assignmentId), options));
+  },
+  async saveBoard(assignmentId: string, sheets: StrokeDto[][]) {
+    return mapBoardDto(
+      await apiClient.put<HomeworkBoardDto>(homeworkEndpoints.board(assignmentId), {
+        sheets: sheets.map((strokes) => ({ strokes })),
+      })
+    );
+  },
+  async submitBoard(assignmentId: string): Promise<Submission | null> {
+    return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.boardSubmit(assignmentId), {}));
+  },
+  async solveBoardFormula(assignmentId: string, expr: string) {
+    return apiClient.post<FormulaSolutionDto>(homeworkEndpoints.boardSolve(assignmentId), { expr });
   },
   async getSubmission(id: string, options?: RequestOptions) {
     return mapSubmissionDto(await apiClient.get<SubmissionDto>(homeworkEndpoints.submission(id), options));

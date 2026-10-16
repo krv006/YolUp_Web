@@ -86,5 +86,22 @@
     "bySubjectTitle": "Har bir kurs statistikasi",
     "emptyTitle": "Hali statistika yo'q",
     "emptyDescription": "Kursga yozilib, vazifa topshirgach shu yerda ko'rinadi."
+  },
+  "board": {
+    "eyebrow": "DOSKADA YECHISH",
+    "loading": "Doska yuklanmoqda…",
+    "loadError": "Doskani ochib bo'lmadi",
+    "back": "Orqaga",
+    "submit": "Topshirish",
+    "task": "Vazifa sharti",
+    "confirmTitle": "Doskadagi yechimni topshirasizmi?",
+    "confirmDescription": "Barcha sheetlar PDF qilib o'qituvchiga yuboriladi. Topshirgandan keyin ham doskaga qaytib, qayta topshirishingiz mumkin.",
+    "cancel": "Bekor qilish",
+    "confirm": "Ha, topshirish",
+    "save": {
+      "saved": "Saqlandi",
+      "saving": "Saqlanmoqda…",
+      "error": "Saqlanmadi — qayta uriniladi"
+    }
   }
 }

@@ -74,6 +74,7 @@ const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({
 const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
 const TeacherExamsPage = lazy(() => import("@/pages/teacher/exams/teacher-exams-page").then((module) => ({ default: module.TeacherExamsPage })));
 const StudentExamsPage = lazy(() => import("@/pages/student/exams/student-exams-page").then((module) => ({ default: module.StudentExamsPage })));
+const StudentHomeworkBoardPage = lazy(() => import("@/pages/student/homework-board/student-homework-board-page").then((module) => ({ default: module.StudentHomeworkBoardPage })));
 const StudentExamPage = lazy(() => import("@/pages/student/exams/student-exam-page").then((module) => ({ default: module.StudentExamPage })));
 const TeacherQuizzesPage = lazy(() => import("@/pages/teacher/quizzes/teacher-quizzes-page").then((module) => ({ default: module.TeacherQuizzesPage })));
 const StudentQuizzesPage = lazy(() => import("@/pages/student/quizzes/student-quizzes-page").then((module) => ({ default: module.StudentQuizzesPage })));
@@ -190,6 +191,7 @@ export function AppRouter() {
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="exams" element={<StudentExamsPage />} />
                     <Route path="exams/:examId" element={<StudentExamPage />} />
+                    <Route path="homework-board/:assignmentId" element={<StudentHomeworkBoardPage />} />
                     <Route path="quizzes" element={<StudentQuizzesPage />} />
                     <Route
                       path=":conversationId"

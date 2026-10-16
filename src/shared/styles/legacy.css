@@ -7042,3 +7042,15 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .exam-writing-ai-upgrade p { margin: 4px 0 0; white-space: pre-wrap; }
 
 .quiz-essay-prompt { white-space: pre-wrap; line-height: 1.6; font-weight: 600; }
+
+.homework-board-page .heading-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.homework-board-save { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-sm); font-weight: 700; color: var(--muted-foreground); }
+.homework-board-save.is-saved { color: #15803d; }
+.homework-board-save.is-error { color: #b91c1c; }
+.homework-board-task { display: grid; gap: 6px; }
+.homework-board-task h2 { margin: 0; font-size: var(--fs-lg); }
+.homework-board-task p { margin: 0; white-space: pre-wrap; }
+.homework-board-task-body { line-height: 1.6; }
+.homework-board-task-body img { max-width: 100%; }
+.assignment-board-row { display: grid; gap: 6px; margin-bottom: 10px; }
+.assignment-board-row small { color: var(--muted-foreground); }

@@ -3,6 +3,7 @@ import type {
   AiResultDto,
   AssignmentDto,
   AssignmentFormInput,
+  HomeworkBoardDto,
   HomeworkCourseReportDto,
   HomeworkReportDto,
   SubmissionDto,
@@ -54,6 +55,16 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     checkedAt: dto.checked_at,
     result: mapAiResultDto(dto.result),
     rawResult: (dto.result as Record<string, unknown> | null | undefined) ?? null,
+  };
+}
+
+export function mapBoardDto(dto: HomeworkBoardDto) {
+  return {
+    sheets: (dto.sheets ?? []).map((sheet) => sheet.strokes ?? []),
+    width: Number(dto.size?.[0] ?? 1600),
+    height: Number(dto.size?.[1] ?? 900),
+    mathEnabled: Boolean(dto.math_enabled),
+    chemistryEnabled: Boolean(dto.chemistry_enabled),
   };
 }
 

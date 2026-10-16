@@ -86,5 +86,22 @@
     "bySubjectTitle": "Stats for each course",
     "emptyTitle": "No stats yet",
     "emptyDescription": "This will appear once you join a course and submit homework."
+  },
+  "board": {
+    "eyebrow": "SOLVE ON THE BOARD",
+    "loading": "Loading the board…",
+    "loadError": "Could not open the board",
+    "back": "Back",
+    "submit": "Submit",
+    "task": "Assignment",
+    "confirmTitle": "Submit your board solution?",
+    "confirmDescription": "All sheets are sent to the teacher as a PDF. After submitting you can come back to the board and submit again.",
+    "cancel": "Cancel",
+    "confirm": "Yes, submit",
+    "save": {
+      "saved": "Saved",
+      "saving": "Saving…",
+      "error": "Not saved — retrying"
+    }
   }
 }

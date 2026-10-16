@@ -11,6 +11,7 @@ import {
   History,
   ListChecks,
   Paperclip,
+  PenLine,
 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -341,6 +342,7 @@ function StudentAssignments({
   quizzes?: QuizSummary[];
 }) {
   const { t } = useTranslation("student");
+  const navigate = useNavigate();
   const [selected, setSelected] = useState<Assignment | null>(null);
   const [attemptOf, setAttemptOf] = useState<QuizSummary | null>(null);
   const [historyOf, setHistoryOf] = useState<QuizSummary | null>(null);
@@ -471,6 +473,16 @@ function StudentAssignments({
             <div className="homework-submit-dialog">
               <p>{selected.description}</p>
               {selected.hasAttachment ? <AttachmentDownloadRow assignment={selected} /> : null}
+              <div className="assignment-board-row">
+                <Button
+                  variant="secondary"
+                  disabled={isAssignmentOverdue(selected)}
+                  onClick={() => navigate(`/student/chats/homework-board/${selected.id}`)}
+                >
+                  <PenLine size={16} /> {t("groupWorkspace.assignments.solveOnBoard")}
+                </Button>
+                <small>{t("groupWorkspace.assignments.solveOnBoardHint")}</small>
+              </div>
               <div className="assignment-upload-row">
                 <input
                   ref={fileRef}

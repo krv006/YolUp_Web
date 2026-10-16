@@ -50,7 +50,9 @@
       "chooseFile": "Choose file",
       "send": "Send",
       "deadlinePassed": "The submission deadline has passed",
-      "resultDialogTitle": "Your assignment result"
+      "resultDialogTitle": "Your assignment result",
+      "solveOnBoard": "Solve on the board",
+      "solveOnBoardHint": "Solve on the full whiteboard (pen, formulas, shapes) or upload a file below."
     }
   },
   "enrollmentDialog": {

@@ -1,5 +1,16 @@
 import type { SubmissionStatus } from "@/shared/types";
 
+import type { StrokeDto } from "@/modules/board";
+
+/** Uy vazifasi doskasi: server javobi. */
+export interface HomeworkBoardDto {
+  sheets: Array<{ index: number; strokes: StrokeDto[] }>;
+  size: [number, number];
+  math_enabled: boolean;
+  chemistry_enabled: boolean;
+  updated_at: string | null;
+}
+
 export interface AiQuestionDto {
   question_number?: number;
   question?: string;

@@ -16,7 +16,10 @@ import { BohrModel } from "./bohr-model";
 export interface PeriodicTableDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  lessonId: string;
+  /** Dars doskasi uchun: chiziqlar serverga shu dars orqali yoziladi. Uy vazifasi doskasida `onPlace` beriladi. */
+  lessonId?: string;
+  /** Berilsa — chiziqlar serverga yozilmaydi, shu funksiyaga uzatiladi (uy vazifasi doskasi). */
+  onPlace?: (strokes: StrokeInput[]) => void;
   sheet: number;
   canDraw: boolean;
   color: string;
@@ -47,6 +50,7 @@ export function PeriodicTableDialog({
   open,
   onOpenChange,
   lessonId,
+  onPlace,
   sheet,
   canDraw,
   color,
@@ -56,7 +60,7 @@ export function PeriodicTableDialog({
 }: PeriodicTableDialogProps) {
   const { t } = useTranslation("board");
   const table = usePeriodicTable(open);
-  const addStrokes = useAddStrokes(lessonId);
+  const addStrokes = useAddStrokes(lessonId ?? "");
   const [selectedZ, setSelectedZ] = useState<number | null>(null);
   const [query, setQuery] = useState("");
 
@@ -93,6 +97,11 @@ export function PeriodicTableDialog({
     const origin = nextFlowPoint(strokes, { boardWidth, boardHeight, blockHeight });
     const next = build(origin);
     if (!next.length) return;
+    if (onPlace) {
+      onPlace(next);
+      onOpenChange(false);
+      return;
+    }
     addStrokes.mutate({ sheet, strokes: next }, { onSuccess: () => onOpenChange(false) });
   }
 
