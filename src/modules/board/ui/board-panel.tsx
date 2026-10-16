@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import type { FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
+import type { BoardSource, FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
 import { buildStroke } from "../lib/board.geometry";
@@ -30,12 +30,14 @@ export interface BoardPanelProps {
   lessonId: string;
   courseId: string | null;
   currentUserId?: string | null;
+  /** Berilsa - doska dars o'rniga shu manbadan ishlaydi (uy vazifasi doskasi): realtime va ruxsatlarsiz. */
+  source?: BoardSource;
 }
 
-export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProps) {
+export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardPanelProps) {
   const { t } = useTranslation("board");
-  const realtime = useBoardRealtime(lessonId, true, currentUserId);
-  const board = useBoard(lessonId, { live: realtime.connected });
+  const realtime = useBoardRealtime(lessonId, !source, currentUserId);
+  const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
   const addStroke = useAddStroke(lessonId);
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
@@ -63,7 +65,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
   const [formula, setFormula] = useState("");
   const [solution, setSolution] = useState<FormulaSolutionDto | null>(null);
 
-  const state = board.data;
+  const state = source ? source.state : board.data;
   const active = state?.sheets.find((item) => item.index === sheet) ?? state?.sheets[0];
   const canDraw = Boolean(state?.canDraw);
 
@@ -86,6 +88,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
   }
 
   function commitStroke(stroke: StrokeShapeDto) {
+    if (source) return source.addStroke(sheet, stroke);
     if (!realtime.sendStroke(sheet, stroke)) addStroke.mutate({ sheet, stroke });
   }
 
@@ -106,7 +109,8 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
   });
 
   const draftPlainText = placement?.tool === "text" ? linesToPlainText(draftLines) : draftText;
-  const canPlaceBlock = Boolean(draftPlainText.trim()) && !addStroke.isPending;
+  const adding = !source && addStroke.isPending;
+  const canPlaceBlock = Boolean(draftPlainText.trim()) && !adding;
 
   function closePlacement() {
     setPlacement(null);
@@ -134,6 +138,11 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
       };
     }
 
+    if (source) {
+      source.addStroke(sheet, stroke);
+      closePlacement();
+      return;
+    }
     addStroke.mutate(
       { sheet, stroke },
       {
@@ -145,6 +154,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
 
   function handleStrokeClick(id: string) {
     if (tool !== "erase" || !canDraw) return;
+    if (source) return source.eraseStroke(sheet, id); // shaxsiy doska: o'chirishga sabab so'ralmaydi
     setSelected(id);
     setReason("");
     setReasonOpen(true);
@@ -171,7 +181,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
   async function solveFormula(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
-      setSolution(await solve.mutateAsync(formula));
+      setSolution(await (source ? source.solve(formula) : solve.mutateAsync(formula)));
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("formulaDialog.solveError"));
     }
@@ -182,23 +192,22 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
     const steps = solution.steps?.length ? `\n${solution.steps.join("\n")}` : "";
     const text = `${solution.pretty}\n${solution.result}${steps}`;
     const [x, y] = flowPointFor(text.split("\n").length);
-    addStroke.mutate(
-      {
-        sheet,
-        stroke: { type: "text", text, x, y, size: BOARD_TEXT_SIZE, color },
-      },
-      {
-        onSuccess: () => {
-          setFormulaOpen(false);
-          setFormula("");
-          setSolution(null);
-        },
-      }
-    );
+    const stroke: StrokeShapeDto = { type: "text", text, x, y, size: BOARD_TEXT_SIZE, color };
+    const done = () => {
+      setFormulaOpen(false);
+      setFormula("");
+      setSolution(null);
+    };
+    if (source) {
+      source.addStroke(sheet, stroke);
+      done();
+      return;
+    }
+    addStroke.mutate({ sheet, stroke }, { onSuccess: done });
   }
 
-  if (board.isLoading) return <div className="board-loading">{t("status.loading")}</div>;
-  if (board.isError || !state)
+  if (!source && board.isLoading) return <div className="board-loading">{t("status.loading")}</div>;
+  if ((!source && board.isError) || !state)
     return (
       <div className="board-error">
         <p>{board.error?.message}</p>
@@ -222,13 +231,15 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
             {canDraw ? <Pencil size={13} /> : <Eye size={13} />}
             {canDraw ? t("status.canDraw") : t("status.viewOnly")}
           </span>
-          <span
-            className="board-live"
-            title={realtime.connected ? t("status.liveConnectedTitle") : t("status.liveDisconnectedTitle")}
-          >
-            <i className={`board-live-dot ${realtime.connected ? "is-live" : ""}`} aria-hidden="true" />
-            {realtime.connected ? t("status.live") : t("status.slowMode")}
-          </span>
+          {source ? null : (
+            <span
+              className="board-live"
+              title={realtime.connected ? t("status.liveConnectedTitle") : t("status.liveDisconnectedTitle")}
+            >
+              <i className={`board-live-dot ${realtime.connected ? "is-live" : ""}`} aria-hidden="true" />
+              {realtime.connected ? t("status.live") : t("status.slowMode")}
+            </span>
+          )}
         </div>
 
         <div className="board-sheets">
@@ -242,8 +253,8 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
               #{item.index + 1}
             </button>
           ))}
-          {state.isTeacher ? (
-            <Button size="sm" variant="secondary" onClick={() => addSheet.mutate()}>
+          {state.isTeacher || source ? (
+            <Button size="sm" variant="secondary" onClick={() => (source ? source.addSheet() : addSheet.mutate())}>
               <FilePlus2 size={15} /> {t("sheet.addSheet")}
             </Button>
           ) : null}
@@ -436,7 +447,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
                   {t("formulaDialog.solve")}
                 </Button>
                 {solution && canDraw ? (
-                  <Button type="button" loading={addStroke.isPending} onClick={placeSolution}>
+                  <Button type="button" loading={adding} onClick={placeSolution}>
                     {t("formulaDialog.place")}
                   </Button>
                 ) : null}
@@ -449,7 +460,8 @@ export function BoardPanel({ lessonId, courseId, currentUserId }: BoardPanelProp
       <PeriodicTableDialog
         open={periodicOpen}
         onOpenChange={setPeriodicOpen}
-        lessonId={lessonId}
+        lessonId={source ? undefined : lessonId}
+        onPlace={source ? (strokes) => source.addStrokes(sheet, strokes) : undefined}
         sheet={sheet}
         canDraw={canDraw}
         color={color}

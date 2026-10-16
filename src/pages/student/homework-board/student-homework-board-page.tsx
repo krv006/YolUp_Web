@@ -1,84 +1,28 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { ArrowLeft, CheckCircle2, Cloud, CloudOff, Send } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { HomeworkBoardEditor, type StrokeDto } from "@/modules/board";
+import { BoardPanel } from "@/modules/board";
 import {
   useAssignment,
   useHomeworkBoard,
-  useSaveHomeworkBoard,
-  useSolveHomeworkBoard,
+  useHomeworkBoardSource,
   useSubmitHomeworkBoard,
+  type HomeworkBoardSaveState,
 } from "@/modules/homework";
 import { sanitizeHtml } from "@/shared/lib";
+import type { Assignment } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
-const AUTOSAVE_MS = 1500;
+type BoardData = NonNullable<ReturnType<typeof useHomeworkBoard>["data"]>;
 
-type SaveState = "saved" | "saving" | "error";
-
-/** O'quvchi vazifani fayl yuklamasdan, to'liq funksiyali doskada yechadi; "Topshirish" doskani PDF qilib yuboradi. */
+/** O'quvchi vazifani fayl yuklamasdan dars doskasining o'zida yechadi; "Topshirish" doskani PDF qilib yuboradi. */
 export function StudentHomeworkBoardPage() {
   const { t } = useTranslation("homework");
   const { assignmentId } = useParams();
   const navigate = useNavigate();
   const assignment = useAssignment(assignmentId ?? null);
   const board = useHomeworkBoard(assignmentId ?? null);
-  const save = useSaveHomeworkBoard(assignmentId ?? "");
-  const solve = useSolveHomeworkBoard(assignmentId ?? "");
-  const submit = useSubmitHomeworkBoard();
-  const [saveState, setSaveState] = useState<SaveState>("saved");
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const pending = useRef<StrokeDto[][] | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  async function flush(): Promise<boolean> {
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = null;
-    const sheets = pending.current;
-    if (!sheets) return true;
-    pending.current = null;
-    setSaveState("saving");
-    try {
-      await save.mutateAsync(sheets);
-      setSaveState(pending.current ? "saving" : "saved");
-      return true;
-    } catch {
-      pending.current = pending.current ?? sheets; // qayta uriniladi
-      setSaveState("error");
-      return false;
-    }
-  }
-
-  function changed(sheets: StrokeDto[][]) {
-    pending.current = sheets;
-    setSaveState("saving");
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => void flush(), AUTOSAVE_MS);
-  }
-
-  useEffect(() => {
-    const warn = (event: BeforeUnloadEvent) => {
-      if (pending.current) event.preventDefault();
-    };
-    window.addEventListener("beforeunload", warn);
-    return () => {
-      window.removeEventListener("beforeunload", warn);
-      void flush(); // sahifadan chiqqanda oxirgi o'zgarishlar yo'qolmasin
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function send() {
-    if (!(await flush()) || !assignmentId) return;
-    submit.mutate(assignmentId, {
-      onSuccess: () => {
-        setConfirmOpen(false);
-        navigate("/student/chats");
-      },
-      onError: () => setConfirmOpen(false),
-    });
-  }
 
   if (assignment.isLoading || board.isLoading) return <LoadingFallback label={t("board.loading")} />;
   if (assignment.isError || board.isError || !assignment.data || !board.data)
@@ -92,23 +36,48 @@ export function StudentHomeworkBoardPage() {
       />
     );
 
-  const task = assignment.data;
-  const html = task.body ? sanitizeHtml(task.body) : "";
+  return <HomeworkBoardScreen assignment={assignment.data} board={board.data} onBack={() => navigate(-1)} onSubmitted={() => navigate("/student/chats")} />;
+}
+
+function HomeworkBoardScreen({
+  assignment,
+  board,
+  onBack,
+  onSubmitted,
+}: {
+  assignment: Assignment;
+  board: BoardData;
+  onBack: () => void;
+  onSubmitted: () => void;
+}) {
+  const { t } = useTranslation("homework");
+  const { source, saveState, flush } = useHomeworkBoardSource(assignment.id, board);
+  const submit = useSubmitHomeworkBoard();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const html = assignment.body ? sanitizeHtml(assignment.body) : "";
+
+  async function send() {
+    if (!(await flush())) return;
+    submit.mutate(assignment.id, {
+      onSuccess: () => {
+        setConfirmOpen(false);
+        onSubmitted();
+      },
+      onError: () => setConfirmOpen(false),
+    });
+  }
 
   return (
     <div className="portal-page homework-board-page">
       <div className="portal-page-heading">
         <div>
           <span className="portal-eyebrow">{t("board.eyebrow")}</span>
-          <h1>{task.title}</h1>
-          <p>{task.courseTitle}</p>
+          <h1>{assignment.title}</h1>
+          <p>{assignment.courseTitle}</p>
         </div>
         <div className="heading-actions">
-          <span className={`homework-board-save is-${saveState}`}>
-            {saveState === "saved" ? <Cloud size={15} /> : saveState === "error" ? <CloudOff size={15} /> : <Cloud size={15} />}
-            {t(`board.save.${saveState}`)}
-          </span>
-          <Button variant="secondary" onClick={() => navigate(-1)}>
+          <SaveBadge state={saveState} />
+          <Button variant="secondary" onClick={onBack}>
             <ArrowLeft size={16} /> {t("board.back")}
           </Button>
           <Button onClick={() => setConfirmOpen(true)} loading={submit.isPending}>
@@ -117,24 +86,16 @@ export function StudentHomeworkBoardPage() {
         </div>
       </div>
 
-      {task.description || html ? (
+      {assignment.description || html ? (
         <section className="portal-card homework-board-task">
           <h2>{t("board.task")}</h2>
-          {task.description ? <p>{task.description}</p> : null}
+          {assignment.description ? <p>{assignment.description}</p> : null}
           {html ? <div className="homework-board-task-body" dangerouslySetInnerHTML={{ __html: html }} /> : null}
         </section>
       ) : null}
 
       <section className="portal-card board-page-canvas">
-        <HomeworkBoardEditor
-          initialSheets={board.data.sheets}
-          width={board.data.width}
-          height={board.data.height}
-          mathEnabled={board.data.mathEnabled}
-          chemistryEnabled={board.data.chemistryEnabled}
-          onChange={changed}
-          onSolve={(expression) => solve.mutateAsync(expression)}
-        />
+        <BoardPanel lessonId="" courseId={null} source={source} />
       </section>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
@@ -144,7 +105,7 @@ export function StudentHomeworkBoardPage() {
               <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
                 {t("board.cancel")}
               </Button>
-              <Button loading={submit.isPending || save.isPending} onClick={() => void send()}>
+              <Button loading={submit.isPending} onClick={() => void send()}>
                 <CheckCircle2 size={16} /> {t("board.confirm")}
               </Button>
             </div>
@@ -152,5 +113,15 @@ export function StudentHomeworkBoardPage() {
         ) : null}
       </Dialog>
     </div>
+  );
+}
+
+function SaveBadge({ state }: { state: HomeworkBoardSaveState }) {
+  const { t } = useTranslation("homework");
+  return (
+    <span className={`homework-board-save is-${state}`}>
+      {state === "error" ? <CloudOff size={15} /> : <Cloud size={15} />}
+      {t(`board.save.${state}`)}
+    </span>
   );
 }

@@ -11,6 +11,8 @@ export type {
 export { HOMEWORK_EXTENSIONS, HOMEWORK_MAX_FILE_SIZE, HOMEWORK_SKILLS } from "./constants/homework.constants";
 export { mapAiResultDto, mapAssignmentDto, mapAssignmentRequest, mapHomeworkReportDto, mapSubmissionDto } from "./lib/homework.mappers";
 export { validateHomeworkFile } from "./lib/homework-validation";
+export { useHomeworkBoardSource } from "./model/use-homework-board";
+export type { HomeworkBoardSaveState } from "./model/use-homework-board";
 export { getHomeworkPollingInterval, homeworkKeys, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useSaveHomeworkBoard, useSolveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment } from "./model/homework.queries";
 export { AssignmentDetailDialog } from "./ui/assignment-detail-dialog";
 export { homeworkFieldError } from "./lib/homework-errors";
