@@ -26,6 +26,14 @@ export function ExamWritingReview({ examId, studentId, onApplyBand }: ExamWritin
 
   return (
     <div className="exam-writing-review">
+      {/* AI tahlil va taklif etilgan band TEPADA: o'qituvchi uzun insholarni aylantirib o'tirmaydi */}
+      {canAsk ? (
+        <Button size="sm" variant="secondary" loading={ask.isPending} onClick={() => ask.mutate(studentId)}>
+          <Sparkles size={15} /> {ai?.status === "done" ? t("writingAi.again") : t("writingAi.ask")}
+        </Button>
+      ) : null}
+      {ai ? <ExamWritingAiPanel ai={ai} onApply={onApplyBand} /> : null}
+
       <div className="exam-writing-answers">
         <span className="exam-writing-head">{t("writing.essays")}</span>
         {answers.length ? (
@@ -39,13 +47,6 @@ export function ExamWritingReview({ examId, studentId, onApplyBand }: ExamWritin
           <small>{t("writing.empty")}</small>
         )}
       </div>
-
-      {canAsk ? (
-        <Button size="sm" variant="secondary" loading={ask.isPending} onClick={() => ask.mutate(studentId)}>
-          <Sparkles size={15} /> {ai?.status === "done" ? t("writingAi.again") : t("writingAi.ask")}
-        </Button>
-      ) : null}
-      {ai ? <ExamWritingAiPanel ai={ai} onApply={onApplyBand} /> : null}
     </div>
   );
 }
