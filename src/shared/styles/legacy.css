@@ -7058,3 +7058,19 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 
 .exam-ai-link { display: inline-block; margin-bottom: 4px; font-size: var(--fs-xs); font-weight: 700; color: var(--primary-text, var(--primary)); text-decoration: none; }
 .exam-ai-link:hover { text-decoration: underline; }
+
+/* Reading: matn va savollar yonma-yon (keng ekranda), matn yopishib turadi; savollar paneli va belgilash */
+.exam-qnav { flex: 1 0 100%; display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 4px; }
+.exam-qnav button { position: relative; flex: 0 0 auto; min-width: 32px; height: 32px; padding: 0 6px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); color: var(--muted-foreground); font: inherit; font-size: var(--fs-sm); font-weight: 800; cursor: pointer; }
+.exam-qnav button.is-done { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
+.exam-qnav button.is-flagged { border-color: #f59e0b; box-shadow: inset 0 -3px 0 #f59e0b; }
+.exam-qnav button svg { position: absolute; top: 2px; right: 2px; color: #f59e0b; }
+.quiz-attempt-question.is-flagged { border-color: #f59e0b; }
+.exam-q-tools { display: inline-flex; align-items: center; gap: 12px; }
+.exam-flag { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; color: var(--muted-foreground); font: inherit; font-size: var(--fs-xs); font-weight: 800; cursor: pointer; }
+.exam-flag.is-on { color: #b45309; }
+@media (min-width: 1000px) {
+  .exam-runner-block.has-passage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+  .exam-runner-block.has-passage .exam-group { position: sticky; top: calc(var(--exam-head, 140px) + 12px); }
+  .exam-runner-block.has-passage .exam-group-passage { max-height: calc(100vh - var(--exam-head, 140px) - 120px); }
+}

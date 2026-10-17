@@ -62,7 +62,10 @@
     "audioPlayingPart": "{{label}} — audio is playing",
     "audioNext": "{{label}} — audio starts shortly",
     "audioAllDone": "All audio has been played",
-    "audioPartsCount": "Part {{current}} / {{total}}"
+    "audioPartsCount": "Part {{current}} / {{total}}",
+    "navAria": "Question palette",
+    "flag": "Flag",
+    "unflag": "Unflag"
   },
   "result": {
     "total": "Result",

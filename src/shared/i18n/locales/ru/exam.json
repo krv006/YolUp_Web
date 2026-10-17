@@ -62,7 +62,10 @@
     "audioPlayingPart": "{{label}} — идёт аудио",
     "audioNext": "{{label}} — аудио скоро начнётся",
     "audioAllDone": "Все аудио прослушаны",
-    "audioPartsCount": "Часть {{current}} / {{total}}"
+    "audioPartsCount": "Часть {{current}} / {{total}}",
+    "navAria": "Панель вопросов",
+    "flag": "Отметить",
+    "unflag": "Снять отметку"
   },
   "result": {
     "total": "Результат",

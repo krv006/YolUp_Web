@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { CheckCircle2, Coffee, LogOut } from "lucide-react";
+import { CheckCircle2, Coffee, Flag, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { QuestionAnswerInput, QuestionPrompt, emptyAnswer, type QuizAttemptAnswerInput } from "@/modules/quiz";
 import type { ExamCurrent, ExamCurrentItem, QuizAnswerValue, QuizQuestion } from "@/shared/types";
@@ -7,12 +7,24 @@ import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { useFinishExam, useSaveExamAnswers } from "../model/exam.queries";
 import { useExamResults } from "../model/exam.queries";
 import { ExamListeningPlayer } from "./exam-listening-player";
+import { ExamQuestionNav } from "./exam-question-nav";
 import { ExamGroupPanel } from "./exam-question-group";
 import { ExamResultCard } from "./exam-result-card";
 import { ExamReview } from "./exam-review";
 import { ExamTimer } from "./exam-timer";
 
 const AUTOSAVE_MS = 10_000;
+
+const flagsKey = (examId: string, sectionKey: string) => `exam-flags:${examId}:${sectionKey}`;
+
+function loadFlags(examId: string, sectionKey: string): Set<string> {
+  try {
+    const raw = globalThis.localStorage.getItem(flagsKey(examId, sectionKey));
+    return new Set(raw ? (JSON.parse(raw) as string[]) : []);
+  } catch {
+    return new Set();
+  }
+}
 
 export interface ExamRunnerProps {
   examId: string;
@@ -31,6 +43,8 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const [finishOpen, setFinishOpen] = useState(false);
   const dirtyRef = useRef(false);
   const answersRef = useRef(answers);
+  const runnerRef = useRef<HTMLDivElement>(null);
+  const [flagged, setFlagged] = useState<Set<string>>(() => loadFlags(examId, item?.key ?? ""));
 
   const questions = useMemo(() => item?.questions ?? [], [item]);
   const sectionKey = item?.key ?? "";
@@ -38,6 +52,36 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
+
+  // Yopishqoq sarlavha balandligi: matn paneli shuning ostida yopishib turadi
+  useEffect(() => {
+    const root = runnerRef.current;
+    const head = root?.querySelector<HTMLElement>(".exam-runner-head");
+    if (!root || !head) return undefined;
+    const apply = () => root.style.setProperty("--exam-head", `${head.offsetHeight}px`);
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(head);
+    return () => observer.disconnect();
+  }, [sectionKey, item?.kind]);
+
+  function toggleFlag(questionId: string) {
+    setFlagged((current) => {
+      const next = new Set(current);
+      if (next.has(questionId)) next.delete(questionId);
+      else next.add(questionId);
+      try {
+        globalThis.localStorage.setItem(flagsKey(examId, sectionKey), JSON.stringify([...next]));
+      } catch {
+        /* xotira o'chirilgan bo'lsa ham belgilash sahifada ishlayveradi */
+      }
+      return next;
+    });
+  }
+
+  function jumpTo(questionId: string) {
+    document.getElementById(`exam-q-${questionId}`)?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }
 
   function payload(): QuizAttemptAnswerInput[] {
     return questions
@@ -113,7 +157,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const grouped = groupQuestions(item);
 
   return (
-    <div className="exam-runner">
+    <div className="exam-runner" ref={runnerRef}>
       <ExamRunnerHeader
         title={title}
         item={item}
@@ -122,20 +166,35 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
         onFinish={() => setFinishOpen(true)}
         onExpire={sectionExpired}
         player={<ExamListeningPlayer key={item.key} examId={examId} groups={item.groups} />}
+        nav={<ExamQuestionNav questions={questions} answers={answers} flagged={flagged} onJump={jumpTo} />}
       />
 
       <div className="exam-runner-body">
         {grouped.map((block) => (
-          <section key={block.group?.id ?? "plain"} className="exam-runner-block">
+          <section key={block.group?.id ?? "plain"} className={`exam-runner-block ${block.group?.passage ? "has-passage" : ""}`}>
             {block.group ? (
               <ExamGroupPanel group={block.group} />
             ) : null}
             <div className="exam-runner-questions">
               {block.questions.map((question) => (
-                <article key={question.id} className="quiz-attempt-question">
+                <article
+                  key={question.id}
+                  id={`exam-q-${question.id}`}
+                  className={`quiz-attempt-question ${flagged.has(question.id) ? "is-flagged" : ""}`}
+                >
                   <div className="quiz-attempt-question-head">
                     <span>{t("runner.questionNumber", { number: question.order + 1 })}</span>
-                    <b>{t("runner.points", { count: question.points })}</b>
+                    <span className="exam-q-tools">
+                      <button
+                        type="button"
+                        className={`exam-flag ${flagged.has(question.id) ? "is-on" : ""}`}
+                        aria-pressed={flagged.has(question.id)}
+                        onClick={() => toggleFlag(question.id)}
+                      >
+                        <Flag size={13} /> {flagged.has(question.id) ? t("runner.unflag") : t("runner.flag")}
+                      </button>
+                      <b>{t("runner.points", { count: question.points })}</b>
+                    </span>
                   </div>
                   <QuestionPrompt question={question} />
                   <QuestionAnswerInput
@@ -186,6 +245,7 @@ function ExamRunnerHeader({
   onFinish,
   onExpire,
   player = null,
+  nav = null,
 }: {
   title: string;
   item: ExamCurrentItem;
@@ -194,6 +254,7 @@ function ExamRunnerHeader({
   onFinish: () => void;
   onExpire: () => void;
   player?: ReactNode;
+  nav?: ReactNode;
 }) {
   const { t } = useTranslation("exam");
   return (
@@ -212,6 +273,7 @@ function ExamRunnerHeader({
         </Button>
       </div>
       {player}
+      {nav}
     </header>
   );
 }

@@ -62,7 +62,10 @@
     "audioPlayingPart": "{{label}} — audio ijro etilmoqda",
     "audioNext": "{{label}} — audio birozdan keyin boshlanadi",
     "audioAllDone": "Barcha audiolar eshittirildi",
-    "audioPartsCount": "{{current}} / {{total}}-qism"
+    "audioPartsCount": "{{current}} / {{total}}-qism",
+    "navAria": "Savollar paneli",
+    "flag": "Belgilash",
+    "unflag": "Belgini olish"
   },
   "result": {
     "total": "Natija",
