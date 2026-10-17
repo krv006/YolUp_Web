@@ -7054,3 +7054,4 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .homework-board-task-body img { max-width: 100%; }
 .assignment-board-row { display: grid; gap: 6px; margin-bottom: 10px; }
 .assignment-board-row small { color: var(--muted-foreground); }
+.exam-writing-answers small { display: block; white-space: pre-wrap; line-height: 1.5; }
