@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { formatDayTime } from "@/shared/lib";
+import { formatDayTime, sanitizeHtml } from "@/shared/lib";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpen,
@@ -472,6 +472,9 @@ function StudentAssignments({
           <DialogContent title={selected.title} description={t("groupWorkspace.assignments.submitDialogDescription")}>
             <div className="homework-submit-dialog">
               <p>{selected.description}</p>
+              {selected.body ? (
+                <div className="homework-board-task-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selected.body) }} />
+              ) : null}
               {selected.hasAttachment ? <AttachmentDownloadRow assignment={selected} /> : null}
               <div className="assignment-board-row">
                 <Button
