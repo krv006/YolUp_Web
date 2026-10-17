@@ -32,7 +32,8 @@ function sectionFromPath(pathname: string): ConversationSection {
     pathname.endsWith("/quizzes") ||
     pathname.endsWith("/ai") ||
     pathname.endsWith("/analytics") ||
-    pathname.includes("/exams")
+    pathname.includes("/exams") ||
+    pathname.includes("/homework-board")
   )
     return "workspace";
   return "chat";
