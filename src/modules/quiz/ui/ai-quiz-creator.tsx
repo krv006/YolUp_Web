@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import type { AiQuizJob, AiQuizStandard } from "../api/quiz.dto";
@@ -68,7 +69,12 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
   const [title, setTitle] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [materialText, setMaterialText] = useState("");
-  const [examChoice, setExamChoice] = useState(EXAM_SIMPLE);
+  // `?exam=IELTS Listening` kabi havoladan kelsa (mock imtihon yaratish oynasidan) imtihon oldindan tanlanadi
+  const [searchParams] = useSearchParams();
+  const [examChoice, setExamChoice] = useState(() => {
+    const wanted = searchParams.get("exam");
+    return wanted && EXAM_OPTIONS.includes(wanted) ? wanted : EXAM_SIMPLE;
+  });
   const [customExam, setCustomExam] = useState("");
   const [level, setLevel] = useState("");
   const [rulesFile, setRulesFile] = useState<File | null>(null);

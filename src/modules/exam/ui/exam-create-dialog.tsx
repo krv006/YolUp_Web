@@ -6,6 +6,13 @@ import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import type { ExamTemplate, QuizSummary } from "@/shared/types";
 import type { ExamFormValues } from "../api/exam.dto";
 
+/** IELTS shablonidagi bo'lim -> AI sahifasidagi imtihon nomi (yangi oynada oldindan tanlangan holda ochiladi). */
+const AI_EXAM_FOR_SECTION: Record<string, string> = {
+  listening: "IELTS Listening",
+  reading: "IELTS Academic Reading",
+  writing: "IELTS Writing",
+};
+
 export interface ExamCreateDialogProps {
   open: boolean;
   pending?: boolean;
@@ -193,6 +200,16 @@ export function ExamCreateDialog({
                         </small>
                       </div>
                       <div className="exam-section-row-quiz">
+                        {AI_EXAM_FOR_SECTION[item.key] && template.id === "ielts" ? (
+                          <a
+                            className="exam-ai-link"
+                            href={`/teacher/chats/ai?exam=${encodeURIComponent(AI_EXAM_FOR_SECTION[item.key])}`}
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            {t("createDialog.createWithAi")}
+                          </a>
+                        ) : null}
                         <SelectPicker
                           label={t("createDialog.quizLabel")}
                           hideLabel

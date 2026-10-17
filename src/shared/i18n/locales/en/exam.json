@@ -130,7 +130,8 @@
       "chooseQuiz": "Choose a test for the “{{title}}” section",
       "quizTwice": "One test can be attached to only one section"
     },
-    "draftsHint": "{{count}} test(s) are still drafts (including AI-made ones). Review and publish them and they will appear in this list."
+    "draftsHint": "{{count}} test(s) are still drafts (including AI-made ones). Review and publish them and they will appear in this list.",
+    "createWithAi": "No test yet? Create one with AI →"
   },
   "templateDialog": {
     "title": "Your own template",
