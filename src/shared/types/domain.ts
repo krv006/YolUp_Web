@@ -487,6 +487,8 @@ export interface ExamStudentResult {
   sections: ExamSectionResult[];
   total: ExamTotalResult | null;
   pending: string[];
+  /** Halollik jurnali (faqat o'qituvchiga): oynadan chiqish va tashqaridan nusxa qo'yish soni. */
+  integrity: { away: number; paste: number } | null;
 }
 
 export interface ExamManualAnswer {

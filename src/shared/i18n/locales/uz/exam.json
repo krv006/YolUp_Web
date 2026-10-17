@@ -65,7 +65,9 @@
     "audioPartsCount": "{{current}} / {{total}}-qism",
     "navAria": "Savollar paneli",
     "flag": "Belgilash",
-    "unflag": "Belgini olish"
+    "unflag": "Belgini olish",
+    "pasteBlocked": "Imtihonda tashqaridan nusxa qo'yish mumkin emas.",
+    "integrityNotice": "Imtihon vaqtida boshqa oynaga o'tish qayd etiladi."
   },
   "result": {
     "total": "Natija",
@@ -83,7 +85,9 @@
     "absent": "Kirmagan",
     "manualScores": "Ball qo'yish",
     "saveScores": "Saqlash",
-    "cancel": "Bekor"
+    "cancel": "Bekor",
+    "integrity": "Oynadan chiqdi: {{away}} · Nusxa qo'ymoqchi bo'ldi: {{paste}}",
+    "integrityTitle": "Imtihon davomida boshqa oynaga o'tish va nusxa qo'yishga urinishlar soni"
   },
   "teacherList": {
     "subtitle": "Guruhlaringizdagi imtihonlar — yaratish, tahrirlash va natijalar.",

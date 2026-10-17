@@ -7,6 +7,7 @@ export {
   useCreateExamTemplate,
   useDeleteExam,
   useDeleteExamTemplate,
+  useRecordExamFocus,
   useRequestWritingAi,
   useSaveManualScores,
   useUpdateExam,

@@ -144,6 +144,7 @@ export interface ExamStudentResultDto {
   sections?: ExamSectionResultDto[];
   total?: ExamTotalResultDto | null;
   pending?: string[];
+  integrity?: { away: number; paste: number };
 }
 
 export interface ExamResultsDto {

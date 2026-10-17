@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type ReactNode } from "react";
 import { CheckCircle2, Coffee, Flag, LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { QuestionAnswerInput, QuestionPrompt, emptyAnswer, type QuizAttemptAnswerInput } from "@/modules/quiz";
 import type { ExamCurrent, ExamCurrentItem, QuizAnswerValue, QuizQuestion } from "@/shared/types";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import { useFinishExam, useSaveExamAnswers } from "../model/exam.queries";
+import { useFinishExam, useRecordExamFocus, useSaveExamAnswers } from "../model/exam.queries";
+import { toast } from "sonner";
 import { useExamResults } from "../model/exam.queries";
 import { ExamListeningPlayer } from "./exam-listening-player";
 import { ExamQuestionNav } from "./exam-question-nav";
@@ -39,6 +40,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const item = current.item;
   const save = useSaveExamAnswers(examId);
   const finish = useFinishExam(examId);
+  const recordFocus = useRecordExamFocus(examId);
   const [answers, setAnswers] = useState<Record<string, QuizAnswerValue>>(item?.savedAnswers ?? {});
   const [finishOpen, setFinishOpen] = useState(false);
   const dirtyRef = useRef(false);
@@ -64,6 +66,43 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
     observer.observe(head);
     return () => observer.disconnect();
   }, [sectionKey, item?.kind]);
+
+  // Halollik: imtihon davomida boshqa oynaga o'tish qayd etiladi (o'qituvchi natijada ko'radi)
+  const awayRef = useRef(false);
+  const running = item?.kind === "section";
+  useEffect(() => {
+    if (!running) return undefined;
+    function away() {
+      if (awayRef.current) return;
+      awayRef.current = true;
+      recordFocus.mutate("blur");
+    }
+    function back() {
+      awayRef.current = false;
+    }
+    function visibility() {
+      if (document.hidden) away();
+      else back();
+    }
+    window.addEventListener("blur", away);
+    window.addEventListener("focus", back);
+    document.addEventListener("visibilitychange", visibility);
+    return () => {
+      window.removeEventListener("blur", away);
+      window.removeEventListener("focus", back);
+      document.removeEventListener("visibilitychange", visibility);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, examId]);
+
+  // Insho maydoniga tashqaridan nusxa qo'yish mumkin emas (AI yozgan matn kiritilmasligi uchun); urinish qayd etiladi
+  function guardPaste(event: ClipboardEvent<HTMLDivElement>) {
+    if ((event.target as HTMLElement).closest(".quiz-answer-essay")) {
+      event.preventDefault();
+      recordFocus.mutate("paste");
+      toast.error(t("runner.pasteBlocked"));
+    }
+  }
 
   function toggleFlag(questionId: string) {
     setFlagged((current) => {
@@ -157,7 +196,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const grouped = groupQuestions(item);
 
   return (
-    <div className="exam-runner" ref={runnerRef}>
+    <div className="exam-runner" ref={runnerRef} onPasteCapture={guardPaste}>
       <ExamRunnerHeader
         title={title}
         item={item}
@@ -265,6 +304,7 @@ function ExamRunnerHeader({
         {answered !== null && total !== null ? (
           <p>{t("runner.answered", { answered, total })}</p>
         ) : null}
+        {item.kind === "section" ? <small className="exam-runner-notice">{t("runner.integrityNotice")}</small> : null}
       </div>
       <div className="exam-runner-head-actions">
         <ExamTimer key={item.endsAt} deadline={item.endsAt} label={t("runner.timeLeft")} onExpire={onExpire} />

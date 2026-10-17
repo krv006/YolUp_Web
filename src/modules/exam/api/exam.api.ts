@@ -100,6 +100,10 @@ export const examApi = {
       await apiClient.get<ExamStudentResultDetailDto>(examEndpoints.studentResult(id, studentId), options)
     );
   },
+  /** Imtihon davomida boshqa oynaga o'tish (`blur`) yoki tashqaridan nusxa qo'yishga urinish (`paste`) qayd etiladi. */
+  async recordFocus(id: string, kind: "blur" | "paste") {
+    await apiClient.post(examEndpoints.focus(id), { kind });
+  },
   async finish(id: string) {
     await apiClient.post(examEndpoints.finish(id), {});
     return id;

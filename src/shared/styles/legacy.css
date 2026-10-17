@@ -7074,3 +7074,6 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
   .exam-runner-block.has-passage .exam-group { position: sticky; top: calc(var(--exam-head, 140px) + 12px); }
   .exam-runner-block.has-passage .exam-group-passage { max-height: calc(100vh - var(--exam-head, 140px) - 120px); }
 }
+
+.exam-runner-notice { display: block; margin-top: 2px; color: var(--muted-foreground); font-size: var(--fs-xs); }
+.exam-integrity-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: var(--r-full); background: rgba(245, 158, 11, 0.14); color: #b45309; font-size: var(--fs-xs); font-weight: 700; }

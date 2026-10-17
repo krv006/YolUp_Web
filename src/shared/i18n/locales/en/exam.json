@@ -65,7 +65,9 @@
     "audioPartsCount": "Part {{current}} / {{total}}",
     "navAria": "Question palette",
     "flag": "Flag",
-    "unflag": "Unflag"
+    "unflag": "Unflag",
+    "pasteBlocked": "Pasting from outside is not allowed during the exam.",
+    "integrityNotice": "Switching to another window during the exam is recorded."
   },
   "result": {
     "total": "Result",
@@ -83,7 +85,9 @@
     "absent": "Did not take it",
     "manualScores": "Enter scores",
     "saveScores": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "integrity": "Left the window: {{away}} · Paste attempts: {{paste}}",
+    "integrityTitle": "Times the student switched windows or tried to paste during the exam"
   },
   "teacherList": {
     "subtitle": "Exams in your groups — create, edit and see the results.",

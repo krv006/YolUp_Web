@@ -158,6 +158,10 @@ export function useSaveManualScores(examId: string) {
   });
 }
 
+export function useRecordExamFocus(examId: string) {
+  return useMutation({ mutationFn: (kind: "blur" | "paste") => examApi.recordFocus(examId, kind) });
+}
+
 export function useSaveExamAnswers(examId: string) {
   return useMutation({
     mutationFn: (answers: QuizAttemptAnswerInput[]) => examApi.saveAnswers(examId, answers),

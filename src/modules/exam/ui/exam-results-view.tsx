@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserRoundX } from "lucide-react";
+import { TriangleAlert, UserRoundX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ExamDetail, ExamStudentResult } from "@/shared/types";
 import { Avatar, Button } from "@/shared/ui/legacy";
@@ -80,6 +80,12 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
           )}
         </small>
       </div>
+
+      {result.integrity && (result.integrity.away > 0 || result.integrity.paste > 0) ? (
+        <span className="exam-integrity-badge" title={t("result.integrityTitle")}>
+          <TriangleAlert size={13} /> {t("result.integrity", { away: result.integrity.away, paste: result.integrity.paste })}
+        </span>
+      ) : null}
 
       <div className="exam-result-row-total">
         {total && total.score !== null ? (
