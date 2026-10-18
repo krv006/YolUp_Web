@@ -1,0 +1,26 @@
+{
+  "title": "Notifications",
+  "markAllRead": "Mark all read",
+  "openAria": "Notifications",
+  "unreadAria": "Notifications ({{count}} new)",
+  "groups": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "earlier": "Earlier"
+  },
+  "emptyTitle": "No notifications yet",
+  "emptyDescription": "Updates about assignments, lessons and payments will show up here.",
+  "loadError": "Could not load notifications",
+  "retry": "Try again",
+  "loading": "Loading",
+  "system": "System",
+  "markRead": "Mark as read",
+  "links": {
+    "assignment": "Open assignment",
+    "quiz": "Open quiz",
+    "teacher": "Review",
+    "exam": "Open exam",
+    "submission": "Open submission",
+    "default": "Open"
+  }
+}

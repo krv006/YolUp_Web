@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useChatUiStore } from "../model/chat-ui.store";
 import { DateSeparator } from "./date-separator";
 import { MessageBubble } from "./message-bubble";
 import { TypingIndicator } from "./typing-indicator";
@@ -37,6 +38,10 @@ export function MessageList({
 }: MessageListProps) {
   const { t } = useTranslation("chat");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const search = useChatUiStore((state) => state.search).trim().toLowerCase();
+  const visible = search
+    ? (messages ?? []).filter((message) => message.text.toLowerCase().includes(search))
+    : (messages ?? []);
   const [actionMessage, setActionMessage] = useState<ChatMessage | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 20, y: 20 });
   useEffect(() => {
@@ -76,9 +81,14 @@ export function MessageList({
       role="log"
       aria-live="polite"
     >
-      <div className="mx-auto flex w-full max-w-[920px] flex-col gap-3">
-        <DateSeparator>{t("list.today")}</DateSeparator>
-        {(messages ?? []).map((message) => (
+      <div className="mx-auto mt-auto flex w-full max-w-[920px] flex-col gap-3">
+        {search ? null : <DateSeparator>{t("list.today")}</DateSeparator>}
+        {search && !visible.length ? (
+          <p className="py-10 text-center text-body-sm text-ink-tertiary">
+            {t("list.searchEmpty")}
+          </p>
+        ) : null}
+        {visible.map((message) => (
           <MessageBubble
             key={message.id}
             message={message}
@@ -98,7 +108,7 @@ export function MessageList({
             }}
           />
         ))}
-        {conversation.typing && (
+        {!search && conversation.typing && (
           <TypingIndicator name={conversation.typingName || conversation.title} />
         )}
         <div ref={bottomRef} />

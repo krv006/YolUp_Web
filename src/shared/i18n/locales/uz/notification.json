@@ -1,0 +1,26 @@
+{
+  "title": "Bildirishnomalar",
+  "markAllRead": "Hammasini o‘qildi",
+  "openAria": "Bildirishnomalar",
+  "unreadAria": "Bildirishnomalar ({{count}} ta yangi)",
+  "groups": {
+    "today": "Bugun",
+    "yesterday": "Kecha",
+    "earlier": "Avvalgi"
+  },
+  "emptyTitle": "Hozircha bildirishnomalar yo‘q",
+  "emptyDescription": "Topshiriqlar, darslar va to‘lovlar haqidagi xabarlar shu yerda ko‘rinadi.",
+  "loadError": "Xabarlarni yuklab bo‘lmadi",
+  "retry": "Qayta urinish",
+  "loading": "Yuklanmoqda",
+  "system": "Tizim",
+  "markRead": "O‘qildi deb belgilash",
+  "links": {
+    "assignment": "Vazifaga o‘tish",
+    "quiz": "Testga o‘tish",
+    "teacher": "Ko‘rib chiqish",
+    "exam": "Imtihonga o‘tish",
+    "submission": "Topshiriqni ochish",
+    "default": "Ochish"
+  }
+}

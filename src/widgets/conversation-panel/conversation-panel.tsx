@@ -1,15 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, RotateCcw, UserRoundPlus, X } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import {
+  ConversationActionsSheet,
   ConversationItem,
   matchesConversationFilter,
   NewConversationDialog,
   useConversationFilter,
   useConversations,
+  useConversationPrefsStore,
   useNewConversationStore,
   useRequestDirect,
   useTeachersForDirect,
@@ -58,6 +59,10 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
   const dialogOpen = useNewConversationStore((state) => state.open);
   const setDialogOpen = useNewConversationStore((state) => state.setOpen);
   const { conversationId } = useParams();
+  const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
+  const [online, setOnline] = useState(() => navigator.onLine);
+  const pinnedRooms = useConversationPrefsStore((state) => state.pinned);
+  const mutedRooms = useConversationPrefsStore((state) => state.muted);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data = [], isLoading, isError, refetch } = useConversations(role);
@@ -75,6 +80,18 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
     [liveLessons],
   );
 
+  useEffect(() => {
+    function update() {
+      setOnline(navigator.onLine);
+    }
+    window.addEventListener("online", update);
+    window.addEventListener("offline", update);
+    return () => {
+      window.removeEventListener("online", update);
+      window.removeEventListener("offline", update);
+    };
+  }, []);
+
   const visible = useMemo(
     () =>
       data.filter((item) => {
@@ -86,18 +103,24 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
     [data, search, filter],
   );
 
+  const ordered = useMemo(() => {
+    const sorted = [...visible];
+    sorted.sort((a, b) => Number(pinnedRooms.includes(b.id)) - Number(pinnedRooms.includes(a.id)));
+    return sorted;
+  }, [visible, pinnedRooms]);
+
   const groups = useMemo(() => {
     const buckets: Array<{ key: GroupKey; items: Conversation[] }> = [
       { key: "today", items: [] },
       { key: "yesterday", items: [] },
       { key: "earlier", items: [] },
     ];
-    for (const item of visible) {
+    for (const item of ordered) {
       const bucket = buckets.find((entry) => entry.key === groupKeyOf(item.updatedAt));
       bucket?.items.push(item);
     }
     return buckets.filter((entry) => entry.items.length > 0);
-  }, [visible]);
+  }, [ordered]);
 
   const people = useMemo(() => {
     if (!peopleEnabled) return [];
@@ -134,6 +157,16 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
       }`}
       aria-label={t("panel.listAria")}
     >
+      {online ? null : (
+        <div className="flex shrink-0 items-center gap-2 rounded-xl bg-saffron-subtle px-4 py-3">
+          <Icon name="error" size={18} className="shrink-0 text-saffron-strong" />
+          <span className="flex-1 truncate text-body-sm text-ink">{t("panel.offlineTitle")}</span>
+          <button className="text-label-strong text-action" onClick={() => refetch()}>
+            {t("panel.offlineRetry")}
+          </button>
+        </div>
+      )}
+
       <label className="flex h-(--size-control-xl) shrink-0 items-center gap-3 rounded-2xl border border-line bg-surface px-4 text-ink focus-within:border-focus">
         <Icon name="search" size={20} className="shrink-0 text-ink-tertiary" />
         <input
@@ -150,13 +183,13 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
             onClick={() => setSearch("")}
             aria-label={t("panel.closeSearchAria")}
           >
-            <X size={15} />
+            <Icon name="add" size={16} className="rotate-45" />
           </button>
         ) : null}
       </label>
 
       <div
-        className="flex shrink-0 items-center gap-2 overflow-x-auto"
+        className="flex shrink-0 items-center gap-1.5 overflow-x-auto lg:gap-2"
         role="tablist"
         aria-label={t("panel.filtersAria")}
       >
@@ -167,7 +200,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
               key={item.id}
               role="tab"
               aria-selected={active}
-              className={`flex h-10 shrink-0 items-center rounded-full border px-4 text-label-strong transition-colors ${
+              className={`flex h-10 shrink-0 items-center rounded-full border px-3 text-caption-strong transition-colors lg:px-4 lg:text-label-strong ${
                 active
                   ? "border-action bg-action-subtle text-action"
                   : "border-line bg-surface text-ink-secondary hover:bg-subtle hover:text-ink"
@@ -179,6 +212,12 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
           );
         })}
       </div>
+
+      {query ? (
+        <span className="shrink-0 px-1 text-caption text-ink-tertiary">
+          {t("panel.resultCount", { count: visible.length })}
+        </span>
+      ) : null}
 
       <div className="-mr-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pr-2 pb-20">
         {isLoading &&
@@ -205,7 +244,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
               className="mt-3 flex h-12 items-center gap-2 rounded-full bg-muted px-5 text-label-strong text-ink transition-colors hover:bg-subtle"
               onClick={() => refetch()}
             >
-              <RotateCcw size={17} />
+              <Icon name="refresh" size={18} />
               {t("panel.retry")}
             </button>
           </div>
@@ -225,6 +264,9 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                   active={conversation.id === conversationId}
                   basePath={basePath}
                   live={Boolean(conversation.courseId && liveCourses.has(conversation.courseId))}
+                  muted={mutedRooms.includes(conversation.id)}
+                  pinned={pinnedRooms.includes(conversation.id)}
+                  onOpenActions={setActionsFor}
                 />
               ))}
             </div>
@@ -250,7 +292,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                     @{teacher.username}
                   </small>
                 </span>
-                <UserRoundPlus size={17} className="shrink-0 text-ink-tertiary" />
+                <Icon name="person" size={18} className="shrink-0 text-ink-tertiary" />
               </button>
             ))}
           </>
@@ -267,7 +309,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                 setFilter("all");
               }}
             >
-              <RotateCcw size={17} />
+              <Icon name="refresh" size={18} />
               {t("panel.clearFilters")}
             </button>
           </div>
@@ -276,15 +318,17 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
 
       {data.length > 0 ? (
         <motion.button
-          className="absolute right-5 bottom-24 grid size-14 place-items-center rounded-full bg-action text-on-action shadow-lg lg:bottom-5"
+          className="absolute right-5 bottom-5 hidden size-14 place-items-center rounded-full bg-action text-on-action shadow-lg lg:grid"
           onClick={() => setDialogOpen(true)}
           aria-label={isTeacher ? t("panel.newGroupAria") : t("panel.findTeacherAria")}
           whileHover={{ y: -3, scale: 1.03 }}
           whileTap={{ scale: 0.94 }}
         >
-          <Plus size={20} />
+          <Icon name="add" size={22} />
         </motion.button>
       ) : null}
+
+      <ConversationActionsSheet conversation={actionsFor} onClose={() => setActionsFor(null)} />
 
       {isTeacher ? (
         <NewConversationDialog open={dialogOpen} onOpenChange={setDialogOpen} />

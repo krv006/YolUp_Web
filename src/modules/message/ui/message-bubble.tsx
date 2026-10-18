@@ -1,10 +1,10 @@
-import { CheckCheck, GraduationCap, RefreshCw, Reply } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
 import { Avatar } from "@/shared/ui/legacy";
+import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage } from "@/shared/types";
 import { MessageAttachment } from "./message-attachment";
 import { MessageText } from "./message-text";
@@ -86,7 +86,7 @@ export function MessageBubble({
       >
         {message.senderName && !outgoing && (
           <span className="flex items-center gap-1 text-caption-strong text-action">
-            {isTeacherSender && <GraduationCap size={12} />}
+            {isTeacherSender && <Icon name="school" size={13} />}
             {message.senderName}
           </span>
         )}
@@ -115,10 +115,11 @@ export function MessageBubble({
           {message.editedAt && <em className="not-italic">{t("bubble.edited")}</em>}
           <time>{formatMessageTime(message.createdAt)}</time>
           {outgoing && (
-            <CheckCheck
+            <Icon
+              name="done-all"
               size={15}
               className={message.status === "read" ? "opacity-100" : "opacity-60"}
-              aria-label={message.status}
+              title={message.status}
             />
           )}
         </span>
@@ -131,7 +132,7 @@ export function MessageBubble({
               onRetryMessage?.(message);
             }}
           >
-            <RefreshCw size={13} /> {t("bubble.retry")}
+            <Icon name="refresh" size={14} /> {t("bubble.retry")}
           </button>
         ) : null}
 
@@ -177,7 +178,7 @@ export function MessageBubble({
         className="pointer-events-none mb-2 text-ink-tertiary opacity-0 transition-opacity group-hover:opacity-100"
         aria-hidden="true"
       >
-        <Reply size={16} />
+        <Icon name="arrow-back" size={16} />
       </span>
     </motion.div>
   );

@@ -11,6 +11,7 @@ export {
 } from "./model/conversation-filter.store";
 export type { ConversationFilter } from "./model/conversation-filter.store";
 export { useNewConversationStore } from "./model/new-conversation.store";
+export { useConversationPrefsStore } from "./model/conversation-prefs.store";
 export {
   readCachedConversation,
   useConversations,
@@ -22,6 +23,7 @@ export {
 export { ChatEmptyState } from "./ui/chat-empty-state";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";
+export { ConversationActionsSheet } from "./ui/conversation-actions-sheet";
 export { ConversationItem } from "./ui/conversation-item";
 export { ConversationRail } from "./ui/conversation-rail";
 export type { ConversationRailProps, ConversationSection } from "./ui/conversation-rail";

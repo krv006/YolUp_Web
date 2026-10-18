@@ -1,4 +1,3 @@
-import { Plus, UsersRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { Icon } from "@/shared/ui/icon";
@@ -28,7 +27,7 @@ export function ChatEmptyState({ onOpenConversations }: { onOpenConversations?: 
     return (
       <section className="flex h-full w-full flex-col items-center justify-center gap-4 bg-canvas px-8 text-center">
         <span className="grid size-20 place-items-center rounded-full bg-action-subtle text-action">
-          <UsersRound size={32} />
+          <Icon name="groups" size={32} />
         </span>
         <h2 className="font-heading text-h3 text-ink">{t("emptyState.noChatsTitle")}</h2>
         <p className="max-w-[380px] text-body-sm text-ink-secondary">
@@ -38,7 +37,7 @@ export function ChatEmptyState({ onOpenConversations }: { onOpenConversations?: 
           className="mt-2 flex h-(--size-control-xl) items-center gap-2 rounded-full bg-action px-7 text-label-strong text-on-action transition-colors hover:bg-action-hover"
           onClick={() => openNewConversation(true)}
         >
-          <Plus size={18} />
+          <Icon name="add" size={18} />
           {isTeacher ? t("emptyState.createGroup") : t("emptyState.findTeacher")}
         </button>
       </section>

@@ -14,7 +14,10 @@
     "openInfoAria": "Открыть информацию — {{title}}",
     "memberCount": "{{count}} учеников",
     "online": "Сейчас в сети",
-    "recentlyActive": "Недавно был(а) в сети"
+    "recentlyActive": "Недавно был(а) в сети",
+    "searchAria": "Поиск по сообщениям",
+    "searchPlaceholder": "Поиск по сообщениям",
+    "closeSearchAria": "Закрыть поиск"
   },
   "directStatus": {
     "pending": "Запрос ожидает",
@@ -81,7 +84,8 @@
     "today": "Сегодня",
     "loadError": "Не удалось загрузить сообщения",
     "loadErrorHint": "Повторите попытку через некоторое время.",
-    "retry": "Повторить"
+    "retry": "Повторить",
+    "searchEmpty": "Сообщения не найдены"
   },
   "composer": {
     "editingLabel": "Редактирование сообщения",
@@ -98,7 +102,8 @@
     "textAria": "Текст сообщения",
     "emojiAria": "Выбрать эмодзи",
     "saveEditAria": "Сохранить отредактированное сообщение",
-    "sendAria": "Отправить сообщение"
+    "sendAria": "Отправить сообщение",
+    "attachUnavailable": "Отправка файлов пока недоступна"
   },
   "actionsMenu": {
     "closeAria": "Закрыть меню сообщения",
@@ -107,7 +112,9 @@
     "reply": "Ответить",
     "edit": "Редактировать",
     "deleteForMe": "Удалить у себя",
-    "deleteForEveryone": "Удалить у всех"
+    "deleteForEveryone": "Удалить у всех",
+    "pin": "Закрепить",
+    "unpin": "Открепить"
   },
   "bubble": {
     "edited": "изменено",
@@ -115,7 +122,8 @@
     "reactionsAria": "Реакции на сообщение"
   },
   "text": {
-    "viewRecording": "Посмотреть видеозапись"
+    "viewRecording": "Посмотреть видеозапись",
+    "recordingHint": "Открыть запись урока"
   },
   "typing": {
     "suffix": "печатает"
@@ -167,6 +175,26 @@
       "yesterday": "Вчера",
       "earlier": "Ранее"
     },
-    "loading": "Загрузка"
+    "loading": "Загрузка",
+    "resultCount": "{{count}} результатов",
+    "offlineTitle": "Нет подключения к интернету",
+    "offlineRetry": "Повторить"
+  },
+  "pinned": {
+    "label": "Закреплённое сообщение",
+    "removeAria": "Открепить"
+  },
+  "actions": {
+    "pin": "Закрепить",
+    "unpin": "Открепить",
+    "mute": "Отключить звук",
+    "unmute": "Включить звук",
+    "markRead": "Отметить прочитанным",
+    "delete": "Удалить чат",
+    "deleteTitle": "Удалить чат?",
+    "deleteDescription": "Все сообщения будут удалены только на вашем устройстве. Это действие нельзя отменить.",
+    "cancel": "Отмена",
+    "confirmDelete": "Удалить",
+    "notAvailable": "Это действие пока не поддерживается бэкендом"
   }
 }

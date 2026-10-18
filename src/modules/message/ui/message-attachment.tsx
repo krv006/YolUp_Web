@@ -1,9 +1,9 @@
 import { useCallback, useState } from "react";
-import { Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { fileKindLabel, fileKindOf } from "@/shared/lib";
 import type { MessageAttachment as Attachment } from "@/shared/types";
 import { FileViewer } from "@/shared/ui/file-viewer";
+import { Icon } from "@/shared/ui/icon";
 import { messageApi } from "../api/message.api";
 
 export function MessageAttachment({ attachment }: { attachment: Attachment }) {
@@ -35,7 +35,7 @@ export function MessageAttachment({ attachment }: { attachment: Attachment }) {
           </small>
         </span>
         <span className="grid size-8 shrink-0 place-items-center rounded-full bg-subtle text-ink-secondary">
-          <Download size={15} />
+          <Icon name="download" size={16} />
         </span>
       </button>
 

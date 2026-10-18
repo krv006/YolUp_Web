@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LoaderCircle, Paperclip, Pencil, Reply, SendHorizontal, Smile, X } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
+import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 
 export interface MessageComposerProps {
@@ -87,7 +88,7 @@ export function MessageComposer({
             exit={{ opacity: 0, y: 5, height: 0 }}
           >
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
-              {editingMessage ? <Pencil size={16} /> : <Reply size={17} />}
+              {editingMessage ? <Icon name="edit" size={16} /> : <Icon name="arrow-back" size={17} />}
             </span>
             <span className="flex min-w-0 flex-1 flex-col">
               <strong className="truncate text-caption-strong text-ink">
@@ -112,7 +113,7 @@ export function MessageComposer({
                 editingMessage ? t("composer.cancelEditAria") : t("composer.cancelReplyAria")
               }
             >
-              <X size={17} />
+              <Icon name="add" size={18} className="rotate-45" />
             </button>
           </motion.div>
         )}
@@ -126,7 +127,7 @@ export function MessageComposer({
             exit={{ opacity: 0, y: 4, height: 0 }}
           >
             <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
-              <Paperclip size={16} />
+              <Icon name="assign" size={16} />
             </span>
             <div className="flex min-w-0 flex-1 flex-col">
               <strong className="truncate text-caption-strong text-ink">{selectedFile.name}</strong>
@@ -139,7 +140,7 @@ export function MessageComposer({
               onClick={() => setSelectedFile(null)}
               aria-label={t("composer.removeAttachmentAria")}
             >
-              <X size={16} />
+              <Icon name="add" size={17} className="rotate-45" />
             </button>
           </motion.div>
         )}
@@ -161,16 +162,15 @@ export function MessageComposer({
             event.target.value = "";
           }}
         />
-        {allowAttachments ? (
-          <button
-            className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:opacity-50"
-            onClick={() => fileRef.current?.click()}
-            disabled={Boolean(editingMessage)}
-            aria-label={t("composer.attachAria")}
-          >
-            <Paperclip size={20} />
-          </button>
-        ) : null}
+        <button
+          className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+          onClick={() => fileRef.current?.click()}
+          disabled={!allowAttachments || Boolean(editingMessage)}
+          title={allowAttachments ? undefined : t("composer.attachUnavailable")}
+          aria-label={t("composer.attachAria")}
+        >
+          <Icon name="add" size={22} />
+        </button>
         <div className="flex min-w-0 flex-1 items-end gap-2 rounded-3xl border border-line bg-canvas px-5 py-3">
           <textarea
             className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
@@ -193,7 +193,7 @@ export function MessageComposer({
                 className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
                 aria-label={t("composer.emojiAria")}
               >
-                <Smile size={20} />
+                <Icon name="emoji" size={20} />
               </button>
             </DropdownTrigger>
             <DropdownContent className="emoji-picker">
@@ -212,11 +212,11 @@ export function MessageComposer({
           aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
         >
           {sending ? (
-            <LoaderCircle className="spin" size={19} />
+            <LoaderCircle className="animate-spin" size={19} />
           ) : editingMessage ? (
-            <Pencil size={18} />
+            <Icon name="edit" size={18} />
           ) : (
-            <SendHorizontal size={19} />
+            <Icon name="send" size={20} />
           )}
         </button>
       </div>

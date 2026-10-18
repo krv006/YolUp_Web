@@ -14,7 +14,10 @@
     "openInfoAria": "{{title}} ma'lumotlarini ochish",
     "memberCount": "{{count}} o'quvchi",
     "online": "Hozir onlayn",
-    "recentlyActive": "Yaqinda faol edi"
+    "recentlyActive": "Yaqinda faol edi",
+    "searchAria": "Xabarlardan qidirish",
+    "searchPlaceholder": "Xabarlardan qidirish",
+    "closeSearchAria": "Qidiruvni yopish"
   },
   "directStatus": {
     "pending": "So'rov kutilmoqda",
@@ -81,7 +84,8 @@
     "today": "Bugun",
     "loadError": "Xabarlar yuklanmadi",
     "loadErrorHint": "Bir ozdan so'ng yana urinib ko'ring.",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "searchEmpty": "Xabar topilmadi"
   },
   "composer": {
     "editingLabel": "Xabarni tahrirlash",
@@ -98,7 +102,8 @@
     "textAria": "Xabar matni",
     "emojiAria": "Emoji tanlash",
     "saveEditAria": "Tahrirlangan xabarni saqlash",
-    "sendAria": "Xabarni yuborish"
+    "sendAria": "Xabarni yuborish",
+    "attachUnavailable": "Fayl yuborish hozircha mavjud emas"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -107,7 +112,9 @@
     "reply": "Javob berish",
     "edit": "Tahrirlash",
     "deleteForMe": "Men uchun o'chirish",
-    "deleteForEveryone": "Hamma uchun o'chirish"
+    "deleteForEveryone": "Hamma uchun o'chirish",
+    "pin": "Qadash",
+    "unpin": "Qadalganni olib tashlash"
   },
   "bubble": {
     "edited": "tahrirlangan",
@@ -115,7 +122,8 @@
     "reactionsAria": "Xabar reaksiyalari"
   },
   "text": {
-    "viewRecording": "Video yozuvni ko'rish"
+    "viewRecording": "Video yozuvni ko'rish",
+    "recordingHint": "Dars yozuvini ochish"
   },
   "typing": {
     "suffix": "yozmoqda"
@@ -167,6 +175,26 @@
       "yesterday": "Kecha",
       "earlier": "Avvalgi"
     },
-    "loading": "Yuklanmoqda"
+    "loading": "Yuklanmoqda",
+    "resultCount": "{{count}} ta natija",
+    "offlineTitle": "Internet aloqasi yo‘q",
+    "offlineRetry": "Qayta urinish"
+  },
+  "pinned": {
+    "label": "Qadalgan xabar",
+    "removeAria": "Qadalganni olib tashlash"
+  },
+  "actions": {
+    "pin": "Qadash",
+    "unpin": "Qadalganni olib tashlash",
+    "mute": "Ovozsiz qilish",
+    "unmute": "Ovozni yoqish",
+    "markRead": "O‘qilgan deb belgilash",
+    "delete": "Suhbatni o‘chirish",
+    "deleteTitle": "Suhbatni o‘chirasizmi?",
+    "deleteDescription": "Barcha xabarlar faqat sizning qurilmangizdan o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
+    "cancel": "Bekor qilish",
+    "confirmDelete": "O‘chirish",
+    "notAvailable": "Bu amal backendda hali mavjud emas"
   }
 }
