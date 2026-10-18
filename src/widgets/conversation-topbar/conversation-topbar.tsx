@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import logoUrl from "@/shared/assets/y-logo.svg";
 import { useAuth } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
@@ -76,8 +77,12 @@ export function ConversationTopbar({ role, title }: ConversationTopbarProps) {
   }
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-surface px-5 lg:h-(--layout-topbar) lg:gap-4 lg:px-8">
-      <h1 className="min-w-0 flex-1 truncate font-heading text-h2 text-ink">{title}</h1>
+    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-canvas px-5 lg:h-(--layout-topbar) lg:gap-4 lg:border-line lg:bg-surface lg:px-8">
+      <img className="size-8 shrink-0 lg:hidden" src={logoUrl} alt="YolUp" />
+      <h1 className="hidden min-w-0 flex-1 truncate font-heading text-h2 text-ink lg:block">
+        {title}
+      </h1>
+      <span className="flex-1 lg:hidden" />
 
       <NotificationBell
         enabled={Boolean(user)}

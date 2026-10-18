@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Pencil, Reply, Trash2, UsersRound } from "lucide-react";
+import { Icon } from "@/shared/ui/icon";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import type { ChatMessage, MessageCapabilities } from "@/shared/types";
+import { useChatUiStore } from "../model/chat-ui.store";
 
 export interface MessageActionsMenuProps {
   message: ChatMessage | null;
@@ -31,6 +32,11 @@ export function MessageActionsMenu({
 }: MessageActionsMenuProps) {
   const { t } = useTranslation("chat");
   const outgoing = message?.senderId === currentUserId;
+  const pinned = useChatUiStore((state) =>
+    message ? state.pinned[message.conversationId] : undefined
+  );
+  const pin = useChatUiStore((state) => state.pin);
+  const unpin = useChatUiStore((state) => state.unpin);
 
   useEffect(() => {
     if (!message) return undefined;
@@ -89,7 +95,7 @@ export function MessageActionsMenu({
                 onClose();
               }}
             >
-              <Reply size={17} /> {t("actionsMenu.reply")}
+              <Icon name="arrow-back" size={17} /> {t("actionsMenu.reply")}
             </button> : null}
             {capabilities.edit && outgoing && (
               <button
@@ -99,9 +105,25 @@ export function MessageActionsMenu({
                   onClose();
                 }}
               >
-                <Pencil size={16} /> {t("actionsMenu.edit")}
+                <Icon name="edit" size={16} /> {t("actionsMenu.edit")}
               </button>
             )}
+            <button
+              role="menuitem"
+              onClick={() => {
+                if (pinned?.id === message.id) unpin(message.conversationId);
+                else
+                  pin(message.conversationId, {
+                    id: message.id,
+                    author: message.senderName,
+                    text: message.text || message.attachment?.name || "",
+                  });
+                onClose();
+              }}
+            >
+              <Icon name="pin" size={16} />{" "}
+              {pinned?.id === message.id ? t("actionsMenu.unpin") : t("actionsMenu.pin")}
+            </button>
             {capabilities.delete ? <span className="message-menu-divider" /> : null}
             {capabilities.delete ? <button
               role="menuitem"
@@ -111,7 +133,7 @@ export function MessageActionsMenu({
                 onClose();
               }}
             >
-              <Trash2 size={16} /> {t("actionsMenu.deleteForMe")}
+              <Icon name="trash" size={16} /> {t("actionsMenu.deleteForMe")}
             </button> : null}
             {capabilities.delete && outgoing && (
               <button
@@ -122,7 +144,7 @@ export function MessageActionsMenu({
                   onClose();
                 }}
               >
-                <UsersRound size={16} /> {t("actionsMenu.deleteForEveryone")}
+                <Icon name="groups" size={16} /> {t("actionsMenu.deleteForEveryone")}
               </button>
             )}
           </motion.div>

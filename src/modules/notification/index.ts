@@ -26,6 +26,7 @@ export {
 export type { LiveNotification } from "./lib/notification-socket-manager";
 export {
   notificationKeys,
+  useMarkAllNotificationsRead,
   useMarkNotificationRead,
   useNotificationInbox,
   useNotificationRecipients,
@@ -41,5 +42,6 @@ export { pushApi } from "./api/push.api";
 export { NotificationBell } from "./ui/notification-bell";
 export { NotificationHtml } from "./ui/notification-html";
 export { NotificationInboxDialog } from "./ui/notification-inbox-dialog";
+export { NotificationInboxPanel } from "./ui/notification-inbox-panel";
 export { SendNotificationDialog } from "./ui/send-notification-dialog";
 export { SentNotificationsPanel } from "./ui/sent-notifications-panel";

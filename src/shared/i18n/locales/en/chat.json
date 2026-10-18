@@ -14,7 +14,10 @@
     "openInfoAria": "Open {{title}} info",
     "memberCount": "{{count}} students",
     "online": "Online now",
-    "recentlyActive": "Recently active"
+    "recentlyActive": "Recently active",
+    "searchAria": "Search messages",
+    "searchPlaceholder": "Search messages",
+    "closeSearchAria": "Close search"
   },
   "directStatus": {
     "pending": "Request pending",
@@ -81,7 +84,8 @@
     "today": "Today",
     "loadError": "Couldn't load messages",
     "loadErrorHint": "Please try again shortly.",
-    "retry": "Retry"
+    "retry": "Retry",
+    "searchEmpty": "No messages found"
   },
   "composer": {
     "editingLabel": "Editing message",
@@ -98,7 +102,8 @@
     "textAria": "Message text",
     "emojiAria": "Choose emoji",
     "saveEditAria": "Save edited message",
-    "sendAria": "Send message"
+    "sendAria": "Send message",
+    "attachUnavailable": "Sending files is not available yet"
   },
   "actionsMenu": {
     "closeAria": "Close message menu",
@@ -107,7 +112,9 @@
     "reply": "Reply",
     "edit": "Edit",
     "deleteForMe": "Delete for me",
-    "deleteForEveryone": "Delete for everyone"
+    "deleteForEveryone": "Delete for everyone",
+    "pin": "Pin",
+    "unpin": "Unpin"
   },
   "bubble": {
     "edited": "edited",
@@ -115,7 +122,8 @@
     "reactionsAria": "Message reactions"
   },
   "text": {
-    "viewRecording": "View the video recording"
+    "viewRecording": "View the video recording",
+    "recordingHint": "Open the lesson recording"
   },
   "typing": {
     "suffix": "typing"
@@ -167,6 +175,26 @@
       "yesterday": "Yesterday",
       "earlier": "Earlier"
     },
-    "loading": "Loading"
+    "loading": "Loading",
+    "resultCount": "{{count}} results",
+    "offlineTitle": "No internet connection",
+    "offlineRetry": "Try again"
+  },
+  "pinned": {
+    "label": "Pinned message",
+    "removeAria": "Unpin"
+  },
+  "actions": {
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "markRead": "Mark as read",
+    "delete": "Delete chat",
+    "deleteTitle": "Delete this chat?",
+    "deleteDescription": "All messages will be removed from this device only. This cannot be undone.",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete",
+    "notAvailable": "The backend does not support this action yet"
   }
 }

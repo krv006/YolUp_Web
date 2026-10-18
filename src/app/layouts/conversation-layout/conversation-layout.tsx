@@ -96,7 +96,12 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
       className="flex h-dvh w-full bg-canvas font-body text-ink"
       style={{ "--conversation-width": `${panelWidth}px` } as CSSProperties}
     >
-      <ConversationRail role={role} section={section} onOpenMenu={() => setMenuOpen(true)} />
+      <ConversationRail
+        role={role}
+        section={section}
+        hiddenOnMobile={Boolean(conversationId)}
+        onOpenMenu={() => setMenuOpen(true)}
+      />
 
       <div className="flex min-w-0 flex-1 flex-col">
         <ConversationTopbar role={role} title={t(`titles.${section}`)} />
@@ -123,9 +128,9 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
           )}
 
           <main
-            className={`teacher-main relative min-w-0 flex-1 overflow-hidden bg-canvas ${
+            className={`relative min-w-0 flex-1 overflow-hidden bg-canvas ${
               mainVisible ? "block" : "hidden lg:block"
-            }`}
+            } ${conversationId ? "" : "pb-[68px]"} lg:pb-0`}
           >
             <motion.div
               key={wideSection ? section : (conversationId ?? "empty")}

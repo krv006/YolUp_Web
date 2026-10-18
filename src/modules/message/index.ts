@@ -16,3 +16,6 @@ export { MessageComposer } from "./ui/message-composer";
 export { MessageList } from "./ui/message-list";
 export { MessageText } from "./ui/message-text";
 export { TypingIndicator } from "./ui/typing-indicator";
+export { PinnedMessageBar } from "./ui/pinned-message-bar";
+export { useChatUiStore, usePinnedMessage } from "./model/chat-ui.store";
+export type { PinnedMessage } from "./model/chat-ui.store";
