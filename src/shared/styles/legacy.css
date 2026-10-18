@@ -7081,5 +7081,5 @@ textarea.quiz-page-question-text { resize: none; field-sizing: content; min-heig
 .exam-page { height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 .homework-board-page { height: 100%; width: 100%; margin: 0; padding: 24px clamp(16px, 4vw, 40px) 60px; box-sizing: border-box; overflow-y: auto; overscroll-behavior: contain; }
 
-.exam-start-now { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
-.exam-start-now input { width: 16px; height: 16px; accent-color: var(--primary); }
+.group-action-form .exam-start-now { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
+.group-action-form .exam-start-now input { flex: none; width: 16px; min-height: 0; height: 16px; padding: 0; accent-color: var(--primary); }
