@@ -104,6 +104,11 @@ export const examApi = {
   async recordFocus(id: string, kind: "blur" | "paste") {
     await apiClient.post(examEndpoints.focus(id), { kind });
   },
+  /** Joriy bo'limni muddatidan oldin tugatib keyingisiga o'tish (orqaga qaytib bo'lmaydi). */
+  async nextSection(id: string) {
+    await apiClient.post(examEndpoints.nextSection(id), {});
+    return id;
+  },
   async finish(id: string) {
     await apiClient.post(examEndpoints.finish(id), {});
     return id;

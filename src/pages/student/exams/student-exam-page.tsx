@@ -25,6 +25,7 @@ export function StudentExamPage() {
   return (
     <div className="exam-page">
       <ExamRunner
+        key={current.data.item?.key ?? "none"}
         examId={examId as string}
         title={exam.data?.title ?? ""}
         current={current.data}

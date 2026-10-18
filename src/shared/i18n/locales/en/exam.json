@@ -67,7 +67,11 @@
     "flag": "Flag",
     "unflag": "Unflag",
     "pasteBlocked": "Pasting from outside is not allowed during the exam.",
-    "integrityNotice": "Switching to another window during the exam is recorded."
+    "integrityNotice": "Switching to another window during the exam is recorded.",
+    "next": "Next section",
+    "nextTitle": "Move on to the next section?",
+    "nextDescription": "This section will be closed and you cannot go back to it. Next: {{title}}. Its timer starts immediately.",
+    "nextConfirm": "Yes, continue"
   },
   "result": {
     "total": "Result",

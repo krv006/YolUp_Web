@@ -67,7 +67,11 @@
     "flag": "Belgilash",
     "unflag": "Belgini olish",
     "pasteBlocked": "Imtihonda tashqaridan nusxa qo'yish mumkin emas.",
-    "integrityNotice": "Imtihon vaqtida boshqa oynaga o'tish qayd etiladi."
+    "integrityNotice": "Imtihon vaqtida boshqa oynaga o'tish qayd etiladi.",
+    "next": "Keyingi bo'lim",
+    "nextTitle": "Keyingi bo'limga o'tasizmi?",
+    "nextDescription": "Hozirgi bo'lim yopiladi va unga qaytib bo'lmaydi. Keyingisi: {{title}}. Vaqt shu zahotiyoq boshlanadi.",
+    "nextConfirm": "Ha, o'tish"
   },
   "result": {
     "total": "Natija",

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState, type ClipboardEvent, type ReactNode } from "react";
-import { CheckCircle2, Coffee, Flag, LogOut } from "lucide-react";
+import { CheckCircle2, Coffee, Flag, LogOut, SkipForward } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { QuestionAnswerInput, QuestionPrompt, emptyAnswer, type QuizAttemptAnswerInput } from "@/modules/quiz";
 import type { ExamCurrent, ExamCurrentItem, QuizAnswerValue, QuizQuestion } from "@/shared/types";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import { useFinishExam, useRecordExamFocus, useSaveExamAnswers } from "../model/exam.queries";
+import { useFinishExam, useNextExamSection, useRecordExamFocus, useSaveExamAnswers } from "../model/exam.queries";
 import { toast } from "sonner";
 import { useExamResults } from "../model/exam.queries";
 import { ExamListeningPlayer } from "./exam-listening-player";
@@ -41,8 +41,10 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
   const save = useSaveExamAnswers(examId);
   const finish = useFinishExam(examId);
   const recordFocus = useRecordExamFocus(examId);
+  const nextSection = useNextExamSection(examId);
   const [answers, setAnswers] = useState<Record<string, QuizAnswerValue>>(item?.savedAnswers ?? {});
   const [finishOpen, setFinishOpen] = useState(false);
+  const [nextOpen, setNextOpen] = useState(false);
   const dirtyRef = useRef(false);
   const answersRef = useRef(answers);
   const runnerRef = useRef<HTMLDivElement>(null);
@@ -154,6 +156,26 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
     setAnswers((current) => ({ ...current, [question.id]: value }));
   }
 
+  async function goNext() {
+    // avval javoblar saqlanadi, keyin server bo'limni yopadi
+    if (dirtyRef.current && questions.length) {
+      dirtyRef.current = false;
+      try {
+        await save.mutateAsync(payload());
+      } catch {
+        dirtyRef.current = true;
+        return;
+      }
+    }
+    try {
+      await nextSection.mutateAsync();
+      setNextOpen(false);
+      onRefresh();
+    } catch {
+      /* xato xabari mutatsiyada ko'rsatiladi */
+    }
+  }
+
   function sectionExpired() {
     flush();
     onRefresh();
@@ -181,6 +203,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
           answered={null}
           total={null}
           onFinish={() => setFinishOpen(true)}
+          onNext={current.next ? () => setNextOpen(true) : undefined}
           onExpire={sectionExpired}
         />
         <div className="exam-runner-break">
@@ -203,6 +226,7 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
         answered={answeredCount}
         total={questions.length}
         onFinish={() => setFinishOpen(true)}
+        onNext={current.next ? () => setNextOpen(true) : undefined}
         onExpire={sectionExpired}
         player={<ExamListeningPlayer key={item.key} examId={examId} groups={item.groups} />}
         nav={<ExamQuestionNav questions={questions} answers={answers} flagged={flagged} onJump={jumpTo} />}
@@ -249,6 +273,24 @@ export function ExamRunner({ examId, title, current, onRefresh, onExit }: ExamRu
         ))}
       </div>
 
+      <Dialog open={nextOpen} onOpenChange={setNextOpen}>
+        {nextOpen && current.next ? (
+          <DialogContent
+            title={t("runner.nextTitle")}
+            description={t("runner.nextDescription", { title: current.next.title })}
+          >
+            <div className="dialog-actions">
+              <Button variant="secondary" onClick={() => setNextOpen(false)}>
+                {t("runner.cancel")}
+              </Button>
+              <Button loading={nextSection.isPending || save.isPending} onClick={() => void goNext()}>
+                {t("runner.nextConfirm")}
+              </Button>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
+
       <Dialog open={finishOpen} onOpenChange={setFinishOpen}>
         {finishOpen ? (
           <DialogContent title={t("runner.finishTitle")} description={t("runner.finishDescription")}>
@@ -282,6 +324,7 @@ function ExamRunnerHeader({
   answered,
   total,
   onFinish,
+  onNext,
   onExpire,
   player = null,
   nav = null,
@@ -291,6 +334,7 @@ function ExamRunnerHeader({
   answered: number | null;
   total: number | null;
   onFinish: () => void;
+  onNext?: () => void;
   onExpire: () => void;
   player?: ReactNode;
   nav?: ReactNode;
@@ -308,6 +352,11 @@ function ExamRunnerHeader({
       </div>
       <div className="exam-runner-head-actions">
         <ExamTimer key={item.endsAt} deadline={item.endsAt} label={t("runner.timeLeft")} onExpire={onExpire} />
+        {onNext ? (
+          <Button variant="secondary" onClick={onNext}>
+            <SkipForward size={16} /> {t("runner.next")}
+          </Button>
+        ) : null}
         <Button variant="secondary" onClick={onFinish}>
           <LogOut size={16} /> {t("runner.finish")}
         </Button>

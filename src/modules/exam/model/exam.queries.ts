@@ -168,6 +168,15 @@ export function useSaveExamAnswers(examId: string) {
   });
 }
 
+export function useNextExamSection(examId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => examApi.nextSection(examId),
+    onSuccess: () => client.invalidateQueries({ queryKey: examKeys.all }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useFinishExam(examId: string) {
   const { t } = useTranslation("exam");
   const client = useQueryClient();
