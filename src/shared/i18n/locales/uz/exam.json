@@ -142,7 +142,8 @@
       "quizTwice": "Bitta test faqat bitta bo'limga biriktiriladi"
     },
     "draftsHint": "{{count}} ta test hali qoralama (AI yaratgan testlar ham). Ularni tekshirib e'lon qiling — shunda shu ro'yxatda chiqadi.",
-    "createWithAi": "Test yo'qmi? AI bilan yarating →"
+    "createWithAi": "Test yo'qmi? AI bilan yarating →",
+    "startNow": "Hozir boshlash (vaqt kutilmaydi)"
   },
   "templateDialog": {
     "title": "O'z shabloningiz",

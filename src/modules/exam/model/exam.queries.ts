@@ -96,7 +96,7 @@ export function useUpdateExam() {
   const { t } = useTranslation("exam");
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, values }: { id: string; values: { title?: string; startsAt?: string } }) =>
+    mutationFn: ({ id, values }: { id: string; values: { title?: string; startsAt?: string; startNow?: boolean } }) =>
       examApi.update(id, values),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: examKeys.all });

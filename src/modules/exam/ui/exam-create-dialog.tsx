@@ -39,6 +39,7 @@ export function ExamCreateDialog({
   const [templateId, setTemplateId] = useState("");
   const [title, setTitle] = useState("");
   const [startsAt, setStartsAt] = useState("");
+  const [startNow, setStartNow] = useState(false);
   const [sectionQuiz, setSectionQuiz] = useState<Record<string, string>>({});
   const [sectionMinutes, setSectionMinutes] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +63,7 @@ export function ExamCreateDialog({
     setTemplateId("");
     setTitle("");
     setStartsAt("");
+    setStartNow(false);
     setSectionQuiz({});
     setSectionMinutes({});
     setError(null);
@@ -81,11 +83,11 @@ export function ExamCreateDialog({
       setError(t("createDialog.validation.enterTitle"));
       return;
     }
-    if (!startsAt) {
+    if (!startNow && !startsAt) {
       setError(t("createDialog.validation.chooseStart"));
       return;
     }
-    if (new Date(startsAt).getTime() <= Date.now()) {
+    if (!startNow && new Date(startsAt).getTime() <= Date.now()) {
       setError(t("createDialog.validation.startInFuture"));
       return;
     }
@@ -109,6 +111,7 @@ export function ExamCreateDialog({
       templateId: template.id,
       title: title.trim(),
       startsAt,
+      startNow,
       sections: sections.map((section) => ({
         key: section.key,
         quizId: sectionQuiz[section.key],
@@ -173,15 +176,28 @@ export function ExamCreateDialog({
               </div>
             </label>
 
-            <DatePicker
-              label={t("createDialog.startLabel")}
-              value={startsAt}
-              onChange={(value) => {
-                setStartsAt(value);
-                setError(null);
-              }}
-              includeTime
-            />
+            <label className="exam-start-now">
+              <input
+                type="checkbox"
+                checked={startNow}
+                onChange={(event) => {
+                  setStartNow(event.target.checked);
+                  setError(null);
+                }}
+              />
+              {t("createDialog.startNow")}
+            </label>
+            {startNow ? null : (
+              <DatePicker
+                label={t("createDialog.startLabel")}
+                value={startsAt}
+                onChange={(value) => {
+                  setStartsAt(value);
+                  setError(null);
+                }}
+                includeTime
+              />
+            )}
 
             {template ? (
               <div className="exam-section-list">

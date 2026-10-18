@@ -48,10 +48,11 @@ export const examApi = {
   async create(form: ExamFormValues) {
     return mapExamDetailDto(await apiClient.post<ExamDetailDto>(examEndpoints.list, mapExamRequest(form)));
   },
-  async update(id: string, values: { title?: string; startsAt?: string }) {
+  async update(id: string, values: { title?: string; startsAt?: string; startNow?: boolean }) {
     const body: Record<string, unknown> = {};
     if (values.title !== undefined) body.title = values.title;
-    if (values.startsAt !== undefined) body.starts_at = toIsoDateTime(values.startsAt);
+    if (values.startNow) body.start_now = true;
+    else if (values.startsAt !== undefined) body.starts_at = toIsoDateTime(values.startsAt);
     return mapExamDetailDto(await apiClient.patch<ExamDetailDto>(examEndpoints.detail(id), body));
   },
   async remove(id: string) {

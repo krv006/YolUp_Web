@@ -230,7 +230,7 @@ export function mapExamRequest(form: ExamFormValues): Record<string, unknown> {
     course: form.courseId,
     template: form.templateId,
     title: form.title,
-    starts_at: toIsoDateTime(form.startsAt),
+    ...(form.startNow ? { start_now: true } : { starts_at: toIsoDateTime(form.startsAt) }),
     sections: form.sections.map((section) => ({
       key: section.key,
       quiz: section.quizId,

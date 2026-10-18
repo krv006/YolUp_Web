@@ -211,11 +211,12 @@ function ExamEditDialog({
   exam: ExamSummary | null;
   pending: boolean;
   onClose: () => void;
-  onSave: (values: { title: string; startsAt: string }) => void;
+  onSave: (values: { title: string; startsAt: string; startNow: boolean }) => void;
 }) {
   const { t } = useTranslation("exam");
   const [title, setTitle] = useState(exam?.title ?? "");
   const [startsAt, setStartsAt] = useState(exam?.startsAt ?? "");
+  const [startNow, setStartNow] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   return (
@@ -238,7 +239,13 @@ function ExamEditDialog({
                 <input autoFocus value={title} onChange={(event) => setTitle(event.target.value)} />
               </div>
             </label>
-            <DatePicker label={t("createDialog.startLabel")} value={startsAt} onChange={setStartsAt} includeTime />
+            <label className="exam-start-now">
+              <input type="checkbox" checked={startNow} onChange={(event) => setStartNow(event.target.checked)} />
+              {t("createDialog.startNow")}
+            </label>
+            {startNow ? null : (
+              <DatePicker label={t("createDialog.startLabel")} value={startsAt} onChange={setStartsAt} includeTime />
+            )}
             {error ? <div className="form-alert">{error}</div> : null}
             <div className="dialog-actions">
               <Button variant="secondary" onClick={onClose}>
@@ -251,11 +258,11 @@ function ExamEditDialog({
                     setError(t("createDialog.validation.enterTitle"));
                     return;
                   }
-                  if (!startsAt || new Date(startsAt).getTime() <= Date.now()) {
+                  if (!startNow && (!startsAt || new Date(startsAt).getTime() <= Date.now())) {
                     setError(t("createDialog.validation.startInFuture"));
                     return;
                   }
-                  onSave({ title: title.trim(), startsAt });
+                  onSave({ title: title.trim(), startsAt, startNow });
                 }}
               >
                 {t("teacherList.save")}

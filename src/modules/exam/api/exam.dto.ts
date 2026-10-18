@@ -112,6 +112,8 @@ export interface ExamFormValues {
   templateId: string;
   title: string;
   startsAt: string;
+  /** true bo'lsa `startsAt` e'tiborga olinmaydi: imtihon hoziroq boshlanadi. */
+  startNow?: boolean;
   sections: Array<{ key: string; quizId: string; minutes?: number }>;
 }
 
