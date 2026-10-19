@@ -152,7 +152,8 @@
     "voiceUnavailable": "Ovozli xabar hozircha mavjud emas",
     "recordCancel": "Yozuvni bekor qilish",
     "recordSend": "Ovozli xabarni yuborish",
-    "micDenied": "Mikrofonga ruxsat berilmadi"
+    "micDenied": "Mikrofonga ruxsat berilmadi",
+    "recordHint": "‹ Bekor qilish uchun suring"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -299,5 +300,23 @@
     "recordingTitle": "Dars video yozuvi tayyor",
     "recordingHint": "Yozuvni faqat platformada ko‘rish mumkin",
     "recordingAction": "Ko‘rish"
+  },
+  "attach": {
+    "title": "Biriktirish",
+    "sizeHint": "Har bir fayl {{size}} MB gacha",
+    "gallery": "Galereya",
+    "camera": "Kamera",
+    "document": "Hujjat",
+    "assignment": "Vazifa"
+  },
+  "preview": {
+    "title": "{{count}} ta rasm",
+    "cancel": "Bekor qilish",
+    "captionPlaceholder": "Izoh qo‘shing...",
+    "send": "Yuborish",
+    "addMore": "Yana qo‘shish",
+    "selectAria": "{{number}}-rasm",
+    "removeAria": "{{number}}-rasmni olib tashlash",
+    "quality": "Rasmlar asl sifatda yuboriladi · {{size}}"
   }
 }

@@ -3,12 +3,15 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AtSign, LoaderCircle, Mic } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useQuery } from "@tanstack/react-query";
 import { useOnlineStatus } from "@/shared/model";
 import { messageApi } from "../api/message.api";
 import { messageKeys } from "../model/message.keys";
 import { Avatar, Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { AttachmentSheet } from "./attachment-sheet";
+import { ImagePreviewScreen } from "./image-preview-screen";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 
 export interface MessageComposerProps {
@@ -21,6 +24,8 @@ export interface MessageComposerProps {
   onTyping?: () => void;
   allowAttachments?: boolean;
   roomId?: string | null;
+  /** Mobil biriktirish panelidagi "Vazifa" tugmasi (faqat o'qituvchi guruhida). */
+  onAssignment?: () => void;
 }
 
 const emojis = ["🔥", "💎", "🚀", "👑", "⚡", "🎯"];
@@ -37,6 +42,7 @@ export function MessageComposer({
   onTyping,
   allowAttachments = true,
   roomId = null,
+  onAssignment,
 }: MessageComposerProps) {
   const { t } = useTranslation("chat");
   const [draft, setDraft] = useState(() => editingMessage?.text ?? "");
@@ -144,11 +150,15 @@ export function MessageComposer({
     setFiles([]);
   }
 
+  const isCompact = useIsCompact();
+  const [attachOpen, setAttachOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+
   function addFiles(list: FileList | null) {
     if (!list?.length) return;
     const accepted: File[] = [];
     for (const file of Array.from(list)) {
-      if (file.size > 20 * 1024 * 1024) {
+      if (file.size > MAX_FILE_MB * 1024 * 1024) {
         toast.error(t("composer.fileTooLarge"));
         continue;
       }
@@ -156,6 +166,10 @@ export function MessageComposer({
     }
     if (!accepted.length) return;
     setFiles((current) => [...current, ...accepted]);
+    if (isCompact && accepted.every((file) => file.type.startsWith("image/"))) {
+      setPreviewOpen(true);
+      return;
+    }
     toast.success(t("composer.fileAttached"));
   }
 
@@ -399,8 +413,11 @@ export function MessageComposer({
           <span className="shrink-0 font-numeric text-label-strong text-ink">
             {formatDuration(seconds)}
           </span>
+          <small className="min-w-0 flex-1 truncate text-center text-caption text-ink-tertiary lg:hidden">
+            {t("composer.recordHint")}
+          </small>
           <span
-            className="flex min-w-0 flex-1 items-center justify-between gap-[3px] overflow-hidden"
+            className="hidden min-w-0 flex-1 items-center justify-between gap-[3px] overflow-hidden lg:flex"
             aria-hidden="true"
           >
             {WAVE.map((height, index) => (
@@ -441,7 +458,7 @@ export function MessageComposer({
         />
         <button
           className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
-          onClick={() => fileRef.current?.click()}
+          onClick={() => (isCompact ? setAttachOpen(true) : fileRef.current?.click())}
           disabled={!allowAttachments || Boolean(editingMessage)}
           title={allowAttachments ? undefined : t("composer.attachUnavailable")}
           aria-label={t("composer.attachAria")}
@@ -526,9 +543,43 @@ export function MessageComposer({
         )}
       </div>
       )}
+
+      <AttachmentSheet
+        open={attachOpen}
+        onOpenChange={setAttachOpen}
+        onPick={addFiles}
+        onAssignment={onAssignment}
+        maxSizeMb={MAX_FILE_MB}
+      />
+
+      {previewOpen && files.length ? (
+        <ImagePreviewScreen
+          files={files}
+          caption={draft}
+          onCaptionChange={setDraft}
+          onRemove={(index) => {
+            setFiles((current) => {
+              const next = current.filter((_, position) => position !== index);
+              if (!next.length) setPreviewOpen(false);
+              return next;
+            });
+          }}
+          onAddMore={() => setAttachOpen(true)}
+          onCancel={() => {
+            setFiles([]);
+            setPreviewOpen(false);
+          }}
+          onSend={() => {
+            setPreviewOpen(false);
+            void submit();
+          }}
+        />
+      ) : null}
     </div>
   );
 }
+
+const MAX_FILE_MB = 20;
 
 function formatDuration(total: number): string {
   const minutes = Math.floor(total / 60);

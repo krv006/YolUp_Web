@@ -152,7 +152,8 @@
     "voiceUnavailable": "Voice messages are not available yet",
     "recordCancel": "Cancel recording",
     "recordSend": "Send voice message",
-    "micDenied": "Microphone access was denied"
+    "micDenied": "Microphone access was denied",
+    "recordHint": "‹ Swipe to cancel"
   },
   "actionsMenu": {
     "closeAria": "Close message menu",
@@ -299,5 +300,23 @@
     "recordingTitle": "The lesson recording is ready",
     "recordingHint": "The recording can only be watched on the platform",
     "recordingAction": "Watch"
+  },
+  "attach": {
+    "title": "Attach",
+    "sizeHint": "Up to {{size}} MB per file",
+    "gallery": "Gallery",
+    "camera": "Camera",
+    "document": "Document",
+    "assignment": "Assignment"
+  },
+  "preview": {
+    "title": "{{count}} photos",
+    "cancel": "Cancel",
+    "captionPlaceholder": "Add a caption...",
+    "send": "Send",
+    "addMore": "Add more",
+    "selectAria": "Photo {{number}}",
+    "removeAria": "Remove photo {{number}}",
+    "quality": "Photos are sent in original quality · {{size}}"
   }
 }

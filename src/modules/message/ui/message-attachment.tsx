@@ -31,6 +31,38 @@ export function MessageAttachment({
     [attachment.messageId]
   );
 
+  if (kind === "image" && attachment.url && !failed)
+    return (
+      <>
+        <button
+          type="button"
+          className="relative block w-full overflow-hidden rounded-xl"
+          onClick={() => setOpen(true)}
+          aria-label={t("attachment.openAria", { name: attachment.name })}
+        >
+          <img
+            className="max-h-[320px] w-full object-cover"
+            src={attachment.url}
+            alt={attachment.name}
+            draggable={false}
+          />
+          {uploading ? (
+            <span className="absolute inset-0 grid place-items-center bg-black/35 text-white">
+              <Icon name="refresh" size={26} className="animate-spin" />
+            </span>
+          ) : null}
+        </button>
+
+        <FileViewer
+          open={open}
+          onOpenChange={setOpen}
+          name={attachment.name}
+          mimeType={attachment.mimeType}
+          load={load}
+        />
+      </>
+    );
+
   return (
     <>
       <button
