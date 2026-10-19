@@ -46,8 +46,9 @@
     "course": "Kurs",
     "quizAvg": "Test o'rtachasi",
     "attendance": "Davomat",
-    "noCourses": "Kurs topilmadi.",
-    "studentCountValue": "{{count}} o‘quvchi"
+    "noCourses": "Baholar, test natijalari va davomat kiritilgach, kurslar bo‘yicha ko‘rsatkichlar shu yerda chiqadi.",
+    "studentCountValue": "{{count}} o‘quvchi",
+    "emptyTitle": "Hali ma’lumot yo‘q"
   },
   "createGroup": "Guruh yaratish",
   "statGroups": "Guruh",

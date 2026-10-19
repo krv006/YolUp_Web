@@ -46,8 +46,9 @@
     "course": "Курс",
     "quizAvg": "Среднее по тестам",
     "attendance": "Посещаемость",
-    "noCourses": "Курсы не найдены.",
-    "studentCountValue": "{{count}} учеников"
+    "noCourses": "Когда появятся оценки, результаты тестов и посещаемость, здесь будут показатели по курсам.",
+    "studentCountValue": "{{count}} учеников",
+    "emptyTitle": "Пока нет данных"
   },
   "createGroup": "Создать группу",
   "statGroups": "Группы",
