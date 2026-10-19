@@ -1,9 +1,9 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Atom, Calculator, Check, Eye, FilePlus2, Pencil, UserCheck, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
-import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import type { BoardSource, FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
@@ -21,6 +21,8 @@ import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
 import { BoardStroke } from "./board-stroke";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
+import { EraseReasonDialog } from "./erase-reason-dialog";
+import { FormulaSolverDialog } from "./formula-solver-dialog";
 import { FormulaPalette } from "./formula-palette";
 import { MathFieldInput, type MathFieldInputHandle } from "./math-field-input";
 import { PeriodicTableDialog } from "./periodic-table-dialog";
@@ -30,11 +32,22 @@ export interface BoardPanelProps {
   lessonId: string;
   courseId: string | null;
   currentUserId?: string | null;
+  /** Doska holati yonida ko'rsatiladigan qo'shimcha izoh (masalan: "Dars tugagan"). */
+  statusNote?: string;
+  /** Doska ustida, o'ng pastda ko'rinadigan amallar (arxiv sahifasi uchun). */
+  footerActions?: ReactNode;
   /** Berilsa - doska dars o'rniga shu manbadan ishlaydi (uy vazifasi doskasi): realtime va ruxsatlarsiz. */
   source?: BoardSource;
 }
 
-export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardPanelProps) {
+export function BoardPanel({
+  lessonId,
+  courseId,
+  currentUserId,
+  statusNote,
+  footerActions,
+  source,
+}: BoardPanelProps) {
   const { t } = useTranslation("board");
   const realtime = useBoardRealtime(lessonId, !source, currentUserId);
   const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
@@ -166,8 +179,7 @@ export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardP
     setReason("");
   }
 
-  async function removeSelected(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  async function removeSelected() {
     if (!selected || !reason.trim()) return;
     try {
       await erase.mutateAsync({ sheet, strokeIds: [selected], reason: reason.trim() });
@@ -206,12 +218,47 @@ export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardP
     addStroke.mutate({ sheet, stroke }, { onSuccess: done });
   }
 
-  if (!source && board.isLoading) return <div className="board-loading">{t("status.loading")}</div>;
+  function placeResultOnly() {
+    if (!solution) return;
+    const [x, y] = flowPointFor(1);
+    const stroke: StrokeShapeDto = {
+      type: "text",
+      text: solution.result,
+      x,
+      y,
+      size: BOARD_TEXT_SIZE,
+      color,
+    };
+    const done = () => {
+      setFormulaOpen(false);
+      setFormula("");
+      setSolution(null);
+    };
+    if (source) {
+      source.addStroke(sheet, stroke);
+      done();
+      return;
+    }
+    addStroke.mutate({ sheet, stroke }, { onSuccess: done });
+  }
+
+  if (!source && board.isLoading)
+    return (
+      <div className="grid min-h-[320px] flex-1 place-items-center text-body-sm text-ink-tertiary">
+        {t("status.loading")}
+      </div>
+    );
   if ((!source && board.isError) || !state)
     return (
-      <div className="board-error">
-        <p>{board.error?.message}</p>
-        <Button onClick={() => board.refetch()}>{t("status.retry")}</Button>
+      <div className="flex min-h-[320px] flex-1 flex-col items-center justify-center gap-3 text-center">
+        <p className="text-body-sm text-ink-secondary">{board.error?.message}</p>
+        <button
+          type="button"
+          className="flex h-11 items-center rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+          onClick={() => board.refetch()}
+        >
+          {t("status.retry")}
+        </button>
       </div>
     );
 
@@ -220,242 +267,258 @@ export function BoardPanel({ lessonId, courseId, currentUserId, source }: BoardP
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
 
-  return (
-    <div className="board-panel">
-      <div className="board-toolbar">
-        <div className="board-status">
-          <span
-            className={`board-permission ${canDraw ? "is-can-draw" : ""}`}
-            title={canDraw ? t("status.canDrawTitle") : t("status.viewOnlyTitle")}
-          >
-            {canDraw ? <Pencil size={13} /> : <Eye size={13} />}
-            {canDraw ? t("status.canDraw") : t("status.viewOnly")}
-          </span>
-          {source ? null : (
-            <span
-              className="board-live"
-              title={realtime.connected ? t("status.liveConnectedTitle") : t("status.liveDisconnectedTitle")}
-            >
-              <i className={`board-live-dot ${realtime.connected ? "is-live" : ""}`} aria-hidden="true" />
-              {realtime.connected ? t("status.live") : t("status.slowMode")}
-            </span>
-          )}
-        </div>
+  const chip =
+    "flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary transition-colors hover:bg-muted hover:text-ink";
 
-        <div className="board-sheets">
+  return (
+    <div className="board-panel flex min-h-0 flex-1 flex-col gap-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-caption-strong ${
+            canDraw ? "text-success-text" : "text-ink-tertiary"
+          }`}
+          title={canDraw ? t("status.canDrawTitle") : t("status.viewOnlyTitle")}
+        >
+          {canDraw ? <Pencil size={13} /> : <Eye size={13} />}
+          {canDraw ? t("status.canDraw") : t("status.viewOnly")}
+        </span>
+
+        {statusNote ? (
+          <span className="flex h-8 shrink-0 items-center gap-1.5 text-caption-strong text-ink-tertiary">
+            <i className="size-1.5 shrink-0 rounded-full bg-ink-tertiary" aria-hidden="true" />
+            {statusNote}
+          </span>
+        ) : null}
+
+        {source || statusNote ? null : (
+          <span
+            className="flex h-8 shrink-0 items-center gap-1.5 text-caption-strong text-ink-tertiary"
+            title={
+              realtime.connected
+                ? t("status.liveConnectedTitle")
+                : t("status.liveDisconnectedTitle")
+            }
+          >
+            <i
+              className={`size-1.5 shrink-0 rounded-full ${
+                realtime.connected ? "bg-success" : "bg-saffron-strong"
+              }`}
+              aria-hidden="true"
+            />
+            {realtime.connected ? t("status.live") : t("status.slowMode")}
+          </span>
+        )}
+
+        <span className="flex-1" />
+
+        <div className="flex items-center gap-1.5">
           {state.sheets.map((item) => (
             <button
               key={item.index}
               type="button"
-              className={sheet === item.index ? "is-active" : ""}
+              className={`grid h-8 min-w-8 shrink-0 place-items-center rounded-full px-2.5 text-caption-strong transition-colors ${
+                sheet === item.index
+                  ? "bg-action text-on-action"
+                  : "bg-subtle text-ink-secondary hover:bg-muted hover:text-ink"
+              }`}
               onClick={() => setSheet(item.index)}
             >
               #{item.index + 1}
             </button>
           ))}
-          {state.isTeacher || source ? (
-            <Button size="sm" variant="secondary" onClick={() => (source ? source.addSheet() : addSheet.mutate())}>
-              <FilePlus2 size={15} /> {t("sheet.addSheet")}
-            </Button>
-          ) : null}
-        </div>
 
-        <div className="board-toolbar-actions">
-          {state.isTeacher ? (
-            <Button size="sm" variant="secondary" onClick={() => setGrantOpen(true)}>
-              <UserCheck size={15} /> {t("permission.grantButton")}
-            </Button>
+          {state.isTeacher || source ? (
+            <button
+              type="button"
+              className={chip}
+              onClick={() => (source ? source.addSheet() : addSheet.mutate())}
+            >
+              <FilePlus2 size={14} /> {t("sheet.addSheet")}
+            </button>
           ) : null}
+
           {state.mathEnabled ? (
-            <Button size="sm" variant="secondary" onClick={() => setFormulaOpen(true)}>
-              <Calculator size={15} /> {t("solver.button")}
-            </Button>
+            <button type="button" className={chip} onClick={() => setFormulaOpen(true)}>
+              <Calculator size={14} /> {t("solver.button")}
+            </button>
           ) : null}
+
           {state.chemistryEnabled ? (
-            <Button size="sm" variant="secondary" onClick={() => setPeriodicOpen(true)}>
-              <Atom size={15} /> {t("periodic.button")}
-            </Button>
+            <button type="button" className={chip} onClick={() => setPeriodicOpen(true)}>
+              <Atom size={14} /> {t("periodic.button")}
+            </button>
+          ) : null}
+
+          {state.isTeacher ? (
+            <button type="button" className={chip} onClick={() => setGrantOpen(true)}>
+              <UserCheck size={14} /> {t("permission.grantButton")}
+            </button>
           ) : null}
         </div>
       </div>
 
-      <BoardToolbar
-        tool={tool}
-        color={color}
-        width={strokeWidth}
-        canDraw={canDraw}
-        onToolChange={setTool}
-        onColorChange={setColor}
-        onWidthChange={setStrokeWidth}
-      />
-
-      <div className="board-canvas-wrap">
-        <svg
-          ref={svgRef}
-          className={`board-canvas board-canvas--${tool}`}
-          viewBox={`0 0 ${state.width} ${canvasHeight}`}
-          preserveAspectRatio="xMidYMin meet"
-          style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-        >
-          {active?.strokes.map((stroke) => (
-            <BoardStroke
-              key={stroke.id}
-              stroke={stroke}
-              selected={selected === stroke.id}
-              onSelect={handleStrokeClick}
-            />
-          ))}
-          {preview ? (
-            <BoardStroke
-              stroke={{ ...preview, id: "draft" }}
-              selected={false}
-              onSelect={() => undefined}
-            />
-          ) : null}
-        </svg>
-
-        {placement ? (
-          <form
-            ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
-            className={`board-inline-editor is-wide is-${placement.tool}`}
-            style={{
-              top: 0,
-              left: `${(placement.point[0] / state.width) * 100}%`,
-              marginTop: `${(placement.point[1] / state.width) * 100}%`,
-            }}
-            onPointerDown={(event) => event.stopPropagation()}
-            onSubmit={placeBlock}
+      <div
+        data-theme="light"
+        className="relative min-h-0 flex-1 overflow-hidden rounded-2xl bg-surface"
+      >
+        <div className="board-canvas-wrap h-full">
+          <svg
+            ref={svgRef}
+            className={`board-canvas board-canvas--${tool}`}
+            viewBox={`0 0 ${state.width} ${canvasHeight}`}
+            preserveAspectRatio="xMidYMin meet"
+            style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
           >
-            <span>{placement.tool === "math" ? t("inline.formula") : t("inline.text")}</span>
-            {placement.tool === "math" ? (
-              <>
-                <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
-                <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
-              </>
-            ) : (
-              <RichTextInput onChange={setDraftLines} onSubmit={() => placeBlock()} onCancel={closePlacement} />
-            )}
-            <div className="board-inline-actions">
-              <button type="button" onClick={closePlacement} aria-label={t("inline.cancelAria")}>
-                <X size={15} />
-              </button>
-              <button
-                type="submit"
-                className="is-primary"
-                disabled={!canPlaceBlock}
-                aria-label={t("inline.addAria")}
-              >
-                <Check size={15} />
-              </button>
+            {active?.strokes.map((stroke) => (
+              <BoardStroke
+                key={stroke.id}
+                stroke={stroke}
+                selected={selected === stroke.id}
+                onSelect={handleStrokeClick}
+              />
+            ))}
+            {preview ? (
+              <BoardStroke
+                stroke={{ ...preview, id: "draft" }}
+                selected={false}
+                onSelect={() => undefined}
+              />
+            ) : null}
+          </svg>
+
+          {placement ? (
+            <form
+              ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
+              className={`board-inline-editor is-wide is-${placement.tool}`}
+              style={{
+                top: 0,
+                left: `${(placement.point[0] / state.width) * 100}%`,
+                marginTop: `${(placement.point[1] / state.width) * 100}%`,
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+              onSubmit={placeBlock}
+            >
+              <span>{placement.tool === "math" ? t("inline.formula") : t("inline.text")}</span>
+              {placement.tool === "math" ? (
+                <>
+                  <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
+                  <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
+                </>
+              ) : (
+                <RichTextInput
+                  onChange={setDraftLines}
+                  onSubmit={() => placeBlock()}
+                  onCancel={closePlacement}
+                />
+              )}
+              <div className="board-inline-actions">
+                <button type="button" onClick={closePlacement} aria-label={t("inline.cancelAria")}>
+                  <X size={15} />
+                </button>
+                <button
+                  type="submit"
+                  className="is-primary"
+                  disabled={!canPlaceBlock}
+                  aria-label={t("inline.addAria")}
+                >
+                  <Check size={15} />
+                </button>
+              </div>
+            </form>
+          ) : null}
+        </div>
+
+        {canDraw ? (
+          <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center px-4">
+            <div className="pointer-events-auto max-w-full overflow-x-auto rounded-2xl">
+              <BoardToolbar
+                tool={tool}
+                color={color}
+                width={strokeWidth}
+                canDraw={canDraw}
+                onToolChange={setTool}
+                onColorChange={setColor}
+                onWidthChange={setStrokeWidth}
+              />
             </div>
-          </form>
+          </div>
+        ) : null}
+
+        {footerActions ? (
+          <div className="absolute right-4 bottom-4 z-10 flex flex-wrap items-center justify-end gap-2">
+            {footerActions}
+          </div>
         ) : null}
       </div>
 
-      <Dialog
+      <EraseReasonDialog
         open={reasonOpen}
-        onOpenChange={(open) => (open ? setReasonOpen(true) : closeReasonDialog())}
+        pending={erase.isPending}
+        reason={reason}
+        onReasonChange={setReason}
+        onCancel={closeReasonDialog}
+        onConfirm={removeSelected}
+      />
+
+      <AppDialog
+        open={grantOpen}
+        onOpenChange={setGrantOpen}
+        title={t("grantDialog.title")}
+        description={t("grantDialog.description")}
       >
-        {reasonOpen && (
-          <DialogContent
-            title={t("eraseDialog.title")}
-            description={t("eraseDialog.description")}
-          >
-            <form className="dialog-form" onSubmit={removeSelected}>
-              <label className="field-group">
-                <span>{t("eraseDialog.reasonLabel")}</span>
-                <div className="input-shell">
-                  <input
-                    autoFocus
-                    value={reason}
-                    onChange={(event) => setReason(event.target.value)}
-                    required
-                  />
-                </div>
-              </label>
-              <div className="dialog-actions">
-                <Button type="button" variant="secondary" onClick={closeReasonDialog}>
-                  {t("eraseDialog.cancel")}
-                </Button>
-                <Button type="submit" loading={erase.isPending}>
-                  {t("eraseDialog.confirm")}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        )}
-      </Dialog>
+        <div className="flex flex-col gap-2">
+          {(members.data?.items ?? []).map(({ student }) => (
+            <button
+              key={student.id}
+              type="button"
+              className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-3 py-2.5 text-left transition-colors hover:bg-subtle disabled:opacity-50"
+              disabled={grant.isPending}
+              onClick={() =>
+                grant.mutate(student.id, {
+                  onSuccess: () => toast.success(t("grantDialog.granted", { name: student.name })),
+                })
+              }
+            >
+              <span className="flex min-w-0 flex-col">
+                <strong className="truncate text-label-strong text-ink">{student.name}</strong>
+                <small className="truncate text-caption text-ink-tertiary">
+                  @{student.username}
+                </small>
+              </span>
+              <UserCheck size={17} className="shrink-0 text-ink-tertiary" />
+            </button>
+          ))}
+          {!members.isLoading && !members.data?.items?.length ? (
+            <p className="py-3 text-center text-body-sm text-ink-tertiary">
+              {t("grantDialog.noStudents")}
+            </p>
+          ) : null}
+        </div>
+      </AppDialog>
 
-      <Dialog open={grantOpen} onOpenChange={setGrantOpen}>
-        {grantOpen && (
-          <DialogContent
-            title={t("grantDialog.title")}
-            description={t("grantDialog.description")}
-          >
-            <div className="board-student-list">
-              {(members.data?.items ?? []).map(({ student }) => (
-                <button
-                  key={student.id}
-                  disabled={grant.isPending}
-                  onClick={() =>
-                    grant.mutate(student.id, {
-                      onSuccess: () => toast.success(t("grantDialog.granted", { name: student.name })),
-                    })
-                  }
-                >
-                  <span>
-                    <strong>{student.name}</strong>
-                    <small>@{student.username}</small>
-                  </span>
-                  <UserCheck size={17} />
-                </button>
-              ))}
-              {!members.isLoading && !members.data?.items?.length ? <p>{t("grantDialog.noStudents")}</p> : null}
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
-
-      <Dialog open={formulaOpen} onOpenChange={setFormulaOpen}>
-        {formulaOpen && (
-          <DialogContent title={t("formulaDialog.title")} description={t("formulaDialog.description")}>
-            <form className="dialog-form" onSubmit={solveFormula}>
-              <label className="field-group">
-                <span>{t("formulaDialog.formulaLabel")}</span>
-                <div className="input-shell">
-                  <input
-                    autoFocus
-                    value={formula}
-                    onChange={(event) => setFormula(event.target.value)}
-                    required
-                  />
-                </div>
-              </label>
-              {solution ? (
-                <div className="formula-solution">
-                  <pre>{solution.pretty}</pre>
-                  <strong>{solution.result}</strong>
-                  {solution.steps?.map((step) => <p key={step}>{step}</p>)}
-                </div>
-              ) : null}
-              <div className="dialog-actions">
-                <Button type="submit" variant="secondary" loading={solve.isPending}>
-                  {t("formulaDialog.solve")}
-                </Button>
-                {solution && canDraw ? (
-                  <Button type="button" loading={adding} onClick={placeSolution}>
-                    {t("formulaDialog.place")}
-                  </Button>
-                ) : null}
-              </div>
-            </form>
-          </DialogContent>
-        )}
-      </Dialog>
+      <FormulaSolverDialog
+        open={formulaOpen}
+        onOpenChange={(next) => {
+          setFormulaOpen(next);
+          if (!next) {
+            setFormula("");
+            setSolution(null);
+          }
+        }}
+        formula={formula}
+        onFormulaChange={setFormula}
+        solution={solution}
+        solving={solve.isPending}
+        placing={adding}
+        canPlace={canDraw}
+        onSolve={solveFormula}
+        onPlace={placeSolution}
+        onPlaceResultOnly={placeResultOnly}
+      />
 
       <PeriodicTableDialog
         open={periodicOpen}

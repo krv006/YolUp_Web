@@ -1,20 +1,26 @@
 {
   "attentionCheck": {
-    "title": "Are you still there?",
-    "description": "Respond to the attention check in time.",
+    "title": "Are you still here?",
+    "description": "If you do not answer, in {{time}} you will be marked as “left the lesson” in attendance.",
     "secondsLeft": "seconds left",
-    "respond": "I'm here"
+    "respond": "Yes, I'm here"
   },
   "invite": {
     "title": "Invite to lesson",
-    "description": "An invite is just a nudge — students join the lesson themselves.",
-    "sendToAll": "Send to everyone",
+    "description": "{{count}} students from the group have not joined yet. The call reaches them as a notification.",
+    "sendToAll": "Call everyone",
     "searchPlaceholder": "By name or username",
-    "invite": "Invite",
+    "invite": "Call",
     "banAria": "Remove {{name}} from the lesson",
     "banTitle": "Remove from lesson",
     "empty": "No students found.",
-    "note": "Removal only applies to this lesson — the student stays in the course and can join future lessons."
+    "note": "Student online status is not available on the backend yet.",
+    "copyLink": "Copy link",
+    "called": "Called",
+    "calledJustNow": "Called · just now",
+    "sentToAll": "Invitation sent to everyone",
+    "linkCopied": "Link copied",
+    "linkCopyFailed": "Could not copy the link"
   },
   "preJoin": {
     "you": "You",
@@ -83,7 +89,11 @@
     "leave": "Leave",
     "finish": "Finish",
     "finishAria": "Finish lesson",
-    "finishTitle": "Finish the lesson for everyone — the video recording is saved afterward"
+    "finishTitle": "Finish the lesson for everyone — the video recording is saved afterward",
+    "youLabel": "You",
+    "reconnecting": "Connection lost — reconnecting ({{attempt}}/{{total}}). The lesson continues.",
+    "participantsCount": "Participants ({{count}})",
+    "moreAria": "More actions"
   },
   "mic": {
     "label": "Microphone",
@@ -131,6 +141,30 @@
     "allowShare": "Allow",
     "banAria": "Remove {{name}} from the lesson",
     "banTitle": "Remove from lesson",
-    "empty": "No one here yet."
+    "empty": "No one here yet.",
+    "teacherYou": "Teacher · You",
+    "speaking": "Speaking",
+    "raisedHand": "Raised hand",
+    "muteAll": "Mute all",
+    "invite": "Invite",
+    "muteAllUnavailable": "Muting everyone is not available on the backend yet."
+  },
+  "permissionDialog": {
+    "title": "Camera and microphone access needed",
+    "description": "Click the lock icon in the browser address bar and allow camera and microphone access. Without it you join as a listener only.",
+    "joinWithout": "Join without access",
+    "recheck": "Check again"
+  },
+  "state": {
+    "notFoundTitle": "Lesson not found",
+    "back": "Back",
+    "retry": "Try again",
+    "finishedTitle": "Lesson finished",
+    "finishedDescription": "Before you leave, rate the teacher.",
+    "exit": "Exit",
+    "joinFailedTitle": "Could not join the lesson",
+    "joinFailedFinished": "The “{{title}}” lesson ended at {{time}}. The recording goes to the group chat once it is ready.",
+    "backToChat": "Back to group chat",
+    "openRecording": "Watch the recording"
   }
 }

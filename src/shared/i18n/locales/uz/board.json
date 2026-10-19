@@ -49,12 +49,18 @@
     "formatAria": "Matnni formatlash"
   },
   "eraseDialog": {
-    "title": "Elementni o'chirish",
-    "description": "Audit uchun o'chirish sababini kiriting.",
+    "title": "Elementni o‘chirish",
+    "description": "Tanlangan elementni o‘chiryapsiz. Sababini tanlang — u o‘quvchiga ko‘rsatiladi.",
     "reasonLabel": "Sabab",
-    "cancel": "Bekor",
+    "cancel": "Bekor qilish",
     "confirm": "O'chirish",
-    "deleted": "Element o'chirildi"
+    "deleted": "Element o'chirildi",
+    "reasons": {
+      "wrongAnswer": "Noto‘g‘ri javob",
+      "offTopic": "Mavzuga aloqasiz",
+      "cleanup": "Doskani tozalash",
+      "other": "Boshqa"
+    }
   },
   "grantDialog": {
     "title": "Doskada chizish ruxsati",
@@ -63,12 +69,16 @@
     "noStudents": "O'quvchi topilmadi."
   },
   "formulaDialog": {
-    "title": "Formula yordamchisi",
-    "description": "Masalan: 2x^2 - 5x + 3 = 0",
-    "formulaLabel": "Formula",
+    "title": "Formula yechuvchi",
+    "description": "Tenglamani kiriting — yechim bosqichma-bosqich doskaga qo‘shiladi.",
+    "formulaLabel": "Tenglama",
     "solve": "Yechish",
-    "place": "Doskaga qo'yish",
-    "solveError": "Formulani yechib bo'lmadi"
+    "place": "Doskaga qo‘shish",
+    "solveError": "Formulani yechib bo'lmadi",
+    "placeholder": "x² − 5x + 6 = 0",
+    "solutionSteps": "Yechim · {{count}} qadam",
+    "answer": "Javob: {{value}}",
+    "resultOnly": "Faqat javob"
   },
   "away": {
     "title": "Darsdan chiqqan"
@@ -76,7 +86,7 @@
   "periodic": {
     "button": "Davriy jadval",
     "title": "Davriy jadval",
-    "description": "Elementni tanlang — tuzilishi va Bor modeli ko'rinadi.",
+    "description": "Elementni tanlang — belgisi va ma’lumoti doskaga qo‘yiladi.",
     "loading": "Jadval yuklanmoqda",
     "loadError": "Davriy jadvalni yuklab bo'lmadi",
     "searchPlaceholder": "Element, belgi yoki raqam",
@@ -88,10 +98,14 @@
     "group": "Guruh",
     "shells": "Elektron qatlamlari",
     "noShells": "Bu element uchun elektron qatlamlari ma'lumoti yo'q.",
-    "placeCard": "Doskaga qo'yish",
+    "placeCard": "Doskaga qo‘yish",
     "placeBohr": "Bor modelini chizish",
     "electronLabel": "e",
-    "electronSuffix": "e"
+    "electronSuffix": "e",
+    "close": "Yopish",
+    "tableNote": "1–4-davrlar ko‘rsatilgan · {{count}} ta element",
+    "periodShort": "{{value}}-davr",
+    "groupShort": "{{value}} guruh"
   },
   "palette": {
     "aria": "Formula konstruktori",
@@ -110,5 +124,18 @@
       "symbol": "Belgilar",
       "chemistry": "Kimyo"
     }
+  },
+  "page": {
+    "loading": "Doska yuklanmoqda",
+    "notFound": "Darsni topib bo‘lmadi",
+    "back": "Orqaga",
+    "lessonFinished": "Dars tugagan",
+    "sendToChat": "Chatga yuborish",
+    "downloadPdf": "PDF yuklab olish",
+    "sentToChat": "Doska guruh chatiga yuborildi",
+    "sendFailed": "Doskani chatga yuborib bo‘lmadi",
+    "pdfFailed": "PDF yuklab bo‘lmadi",
+    "roomNotFound": "Bu guruhning chati topilmadi",
+    "chatMessage": "“{{title}}” darsining doskasi"
   }
 }

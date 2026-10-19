@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { Atom, PenLine, Search } from "lucide-react";
+import { Atom, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogContent, LoadingFallback } from "@/shared/ui/legacy";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import type { PeriodicElement, StrokeDto, StrokeInput } from "../api/board.dto";
 import { nextFlowPoint } from "../lib/board-flow";
 import {
@@ -105,150 +105,160 @@ export function PeriodicTableDialog({
     addStrokes.mutate({ sheet, strokes: next }, { onSuccess: () => onOpenChange(false) });
   }
 
+  const placeCard = () =>
+    selected &&
+    place(
+      (origin) => buildElementCardStrokes(selected, placement, origin),
+      elementCardHeight(selected)
+    );
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {open ? (
-        <DialogContent
-          className="periodic-dialog"
-          title={t("periodic.title")}
-          description={t("periodic.description")}
-        >
-          {table.isLoading ? <LoadingFallback label={t("periodic.loading")} /> : null}
-          {table.isError ? <div className="form-alert">{t("periodic.loadError")}</div> : null}
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      width="lg:w-[760px]"
+      title={t("periodic.title")}
+      description={t("periodic.description")}
+      footer={
+        <>
+          <button
+            type="button"
+            className={dialogButton.secondary}
+            onClick={() => onOpenChange(false)}
+          >
+            {t("periodic.close")}
+          </button>
+          <button
+            type="button"
+            className={dialogButton.primary}
+            disabled={!selected || !canDraw || addStrokes.isPending}
+            onClick={placeCard}
+          >
+            {t("periodic.placeCard")}
+          </button>
+        </>
+      }
+    >
+      {table.isLoading ? (
+        <p className="py-6 text-center text-body-sm text-ink-tertiary">{t("periodic.loading")}</p>
+      ) : null}
+      {table.isError ? (
+        <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
+          {t("periodic.loadError")}
+        </p>
+      ) : null}
 
-          {elements.length ? (
-            <div className="periodic-body">
-              <div className="periodic-search">
-                <Search size={15} />
-                <input
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder={t("periodic.searchPlaceholder")}
-                  aria-label={t("periodic.searchPlaceholder")}
+      {elements.length ? (
+        <>
+          <label className="flex h-12 items-center gap-2.5 rounded-xl border border-line bg-surface px-3.5 focus-within:border-focus">
+            <Search size={18} className="shrink-0 text-ink-tertiary" />
+            <input
+              className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("periodic.searchPlaceholder")}
+              aria-label={t("periodic.searchPlaceholder")}
+            />
+          </label>
+
+          <div
+            className="periodic-grid overflow-x-auto"
+            role="grid"
+            aria-label={t("periodic.title")}
+          >
+            {elements.map((element) => {
+              const position = cellPosition(element);
+              if (!position) return null;
+              const dimmed = matches ? !matches.has(element.z) : false;
+              return (
+                <button
+                  key={element.z}
+                  type="button"
+                  role="gridcell"
+                  className={`periodic-cell periodic-cell--${element.category} ${
+                    element.z === selectedZ ? "is-active" : ""
+                  } ${dimmed ? "is-dimmed" : ""}`}
+                  style={{ gridColumn: position.column, gridRow: position.row }}
+                  onClick={() => setSelectedZ(element.z)}
+                  aria-pressed={element.z === selectedZ}
+                >
+                  <small>{element.z}</small>
+                  <strong>{element.symbol}</strong>
+                  <span>{element.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="text-caption text-ink-tertiary">
+            {t("periodic.tableNote", { count: elements.length })}
+          </p>
+
+          {selected ? (
+            <div className="flex flex-col gap-3 rounded-xl bg-subtle p-3.5">
+              <div className="flex items-center gap-3">
+                <span
+                  className={`periodic-detail-symbol periodic-cell--${selected.category} grid size-14 shrink-0 place-items-center rounded-xl font-heading text-h2`}
+                >
+                  {selected.symbol}
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-title text-ink">
+                    {selected.name} · {selected.z}
+                  </strong>
+                  <small className="truncate text-caption text-ink-secondary">
+                    {[
+                      selected.appearance,
+                      selected.mass ? t("periodic.mass", { value: selected.mass }) : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </small>
+                  <small className="truncate text-caption text-ink-tertiary">
+                    {[
+                      selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
+                      selected.group ? t("periodic.groupShort", { value: selected.group }) : "",
+                      selected.valence ? t("periodic.valence") + ": " + selected.valence : "",
+                      selected.shells.length ? selected.shells.join(" · ") : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </small>
+                </span>
+
+                {canDraw && selected.shells.length ? (
+                  <button
+                    type="button"
+                    className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-label-strong text-ink transition-colors hover:bg-muted disabled:opacity-50"
+                    disabled={addStrokes.isPending}
+                    onClick={() =>
+                      place(
+                        (origin) => buildBohrStrokes(selected, placement, origin),
+                        bohrDiagramSize(selected, placement)
+                      )
+                    }
+                  >
+                    <Atom size={15} /> {t("periodic.placeBohr")}
+                  </button>
+                ) : null}
+              </div>
+
+              {selected.shells.length ? (
+                <BohrModel
+                  key={selected.z}
+                  shells={selected.shells}
+                  symbol={selected.symbol}
+                  label={selected.name}
                 />
-              </div>
-
-              <div className="periodic-grid" role="grid" aria-label={t("periodic.title")}>
-                {elements.map((element) => {
-                  const position = cellPosition(element);
-                  if (!position) return null;
-                  const dimmed = matches ? !matches.has(element.z) : false;
-                  return (
-                    <button
-                      key={element.z}
-                      type="button"
-                      role="gridcell"
-                      className={`periodic-cell periodic-cell--${element.category} ${
-                        element.z === selectedZ ? "is-active" : ""
-                      } ${dimmed ? "is-dimmed" : ""}`}
-                      style={{ gridColumn: position.column, gridRow: position.row }}
-                      onClick={() => setSelectedZ(element.z)}
-                      aria-pressed={element.z === selectedZ}
-                    >
-                      <small>{element.z}</small>
-                      <strong>{element.symbol}</strong>
-                      <span>{element.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {selected ? (
-                <div className="periodic-detail">
-                  <div className="periodic-detail-head">
-                    <span className={`periodic-detail-symbol periodic-cell--${selected.category}`}>
-                      {selected.symbol}
-                    </span>
-                    <div>
-                      <strong>{selected.name}</strong>
-                      <small>
-                        {t("periodic.atomicNumber", { count: selected.z })}
-                        {selected.mass ? ` · ${t("periodic.mass", { value: selected.mass })}` : ""}
-                      </small>
-                    </div>
-                  </div>
-
-                  <dl className="periodic-facts">
-                    {selected.valence ? (
-                      <div>
-                        <dt>{t("periodic.valence")}</dt>
-                        <dd>{selected.valence}</dd>
-                      </div>
-                    ) : null}
-                    {selected.period ? (
-                      <div>
-                        <dt>{t("periodic.period")}</dt>
-                        <dd>{selected.period}</dd>
-                      </div>
-                    ) : null}
-                    {selected.group ? (
-                      <div>
-                        <dt>{t("periodic.group")}</dt>
-                        <dd>{selected.group}</dd>
-                      </div>
-                    ) : null}
-                    {selected.shells.length ? (
-                      <div>
-                        <dt>{t("periodic.shells")}</dt>
-                        <dd>{selected.shells.join(" · ")}</dd>
-                      </div>
-                    ) : null}
-                  </dl>
-
-                  {selected.appearance ? (
-                    <p className="periodic-appearance">{selected.appearance}</p>
-                  ) : null}
-
-                  {canDraw ? (
-                    <div className="periodic-place-actions">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        loading={addStrokes.isPending}
-                        onClick={() =>
-                          place(
-                            (origin) => buildElementCardStrokes(selected, placement, origin),
-                            elementCardHeight(selected)
-                          )
-                        }
-                      >
-                        <PenLine size={15} /> {t("periodic.placeCard")}
-                      </Button>
-                      {selected.shells.length ? (
-                        <Button
-                          size="sm"
-                          loading={addStrokes.isPending}
-                          onClick={() =>
-                            place(
-                              (origin) => buildBohrStrokes(selected, placement, origin),
-                              bohrDiagramSize(selected, placement)
-                            )
-                          }
-                        >
-                          <Atom size={15} /> {t("periodic.placeBohr")}
-                        </Button>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  {selected.shells.length ? (
-                    <BohrModel
-                      key={selected.z}
-                      shells={selected.shells}
-                      symbol={selected.symbol}
-                      label={selected.name}
-                    />
-                  ) : (
-                    <p className="portal-muted">{t("periodic.noShells")}</p>
-                  )}
-                </div>
               ) : (
-                <p className="portal-muted periodic-hint">{t("periodic.pickHint")}</p>
+                <p className="text-body-sm text-ink-tertiary">{t("periodic.noShells")}</p>
               )}
             </div>
-          ) : null}
-        </DialogContent>
+          ) : (
+            <p className="text-body-sm text-ink-tertiary">{t("periodic.pickHint")}</p>
+          )}
+        </>
       ) : null}
-    </Dialog>
+    </AppDialog>
   );
 }

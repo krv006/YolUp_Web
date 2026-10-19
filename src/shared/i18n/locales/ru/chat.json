@@ -287,5 +287,10 @@
     "searchPlaceholder": "Поиск чата",
     "empty": "Чат не найден",
     "done": "Сообщение переслано"
+  },
+  "system": {
+    "recordingTitle": "Видеозапись урока готова",
+    "recordingHint": "Запись доступна только на платформе",
+    "recordingAction": "Смотреть"
   }
 }

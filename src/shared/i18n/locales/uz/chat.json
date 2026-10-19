@@ -287,5 +287,10 @@
     "searchPlaceholder": "Suhbatni qidirish",
     "empty": "Suhbat topilmadi",
     "done": "Xabar uzatildi"
+  },
+  "system": {
+    "recordingTitle": "Dars video yozuvi tayyor",
+    "recordingHint": "Yozuvni faqat platformada ko‘rish mumkin",
+    "recordingAction": "Ko‘rish"
   }
 }
