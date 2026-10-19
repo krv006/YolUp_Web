@@ -150,7 +150,11 @@
     "missingAnswersDescription_one": "Question {{list}} has no correct answer marked. Until it is filled in, the test stays hidden from students.",
     "missingAnswersDescription_other": "Questions {{list}} have no correct answer marked. Until they are filled in, the test stays hidden from students.",
     "missingAnswersLater": "Later",
-    "missingAnswersGo": "Go to the question"
+    "missingAnswersGo": "Go to the question",
+    "tab": {
+      "edit": "Edit",
+      "preview": "Student view"
+    }
   },
   "preview": {
     "regionAria": "How the student will see it",

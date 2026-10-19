@@ -126,7 +126,7 @@ export function TeacherQuizzesPage() {
   const groups = [...groupMap.values()].sort((a, b) => a.label.localeCompare(b.label, i18n.language));
 
   return (
-    <div className="relative flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 pb-24 lg:p-6 lg:pb-6">
+    <div className="relative flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 lg:p-6">
       <div className="flex flex-wrap items-center gap-3">
         <p className="min-w-0 flex-1 text-body-sm text-ink-secondary">{t("teacherPage.subtitle")}</p>
         {filterOptions.length > 1 ? (
@@ -340,7 +340,7 @@ export function TeacherQuizzesPage() {
       )}
 
       {canCreate ? (
-        <div className="sticky bottom-0 -mx-4 mt-auto bg-canvas px-4 pt-3 pb-1 lg:hidden">
+        <div className="mt-2 lg:hidden">
           <button
             type="button"
             className="flex h-14 w-full items-center justify-center rounded-full bg-action text-title text-on-action transition-colors hover:bg-action-hover"

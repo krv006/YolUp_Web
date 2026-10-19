@@ -312,7 +312,7 @@ textarea.quiz-page-question-text:focus {
 }
 
 .quiz-page-option input {
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-default);
   border-radius: 12px;
   background: var(--bg-surface);
   padding: 10px 14px;
@@ -499,3 +499,20 @@ textarea.quiz-page-question-text:focus {
   color: var(--action-primary-foreground);
 }
 .picker-sheet .picker-today { display: none; }
+
+@media (max-width: 1023px) {
+  .quiz-page-question-meta { padding-left: 0; gap: 8px; flex-wrap: nowrap; }
+  .quiz-page-question-meta .quiz-page-type-select { min-width: 0; flex: 1; }
+  .quiz-page-points { flex: none; gap: 6px; }
+  .quiz-page-points > input { width: 56px; }
+  .quiz-page-question-head { align-items: flex-start; }
+}
+
+.quiz-page-option.is-correct input { border-color: var(--status-success); }
+.quiz-page-option.is-correct .quiz-page-option-letter {
+  background: var(--status-success);
+  color: #fff;
+}
+.select-picker-sheet .picker-mini-heading { display: none; }
+.select-picker-sheet .select-picker-options { max-height: 60dvh; overflow-y: auto; }
+.select-picker-sheet .select-picker-options > button { min-height: 52px; }

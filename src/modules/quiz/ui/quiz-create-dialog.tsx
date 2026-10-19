@@ -128,6 +128,7 @@ export function AddQuizDialog({
   const [dirtyCount, setDirtyCount] = useState(0);
   const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
   const [answerWarningOpen, setAnswerWarningOpen] = useState(false);
+  const [mobileTab, setMobileTab] = useState<"edit" | "preview">("edit");
   const [fieldErrors, setFieldErrors] = useState<{ target?: string; topic?: string }>({});
   const [importWarnings, setImportWarnings] = useState<QuizImportWarning[]>(initialWarnings);
   const loadQuizDetail = useQuizDetailLoader();
@@ -408,7 +409,7 @@ export function AddQuizDialog({
             <button
               type="submit"
               form="quiz-questions-form"
-              className={HEADER_SECONDARY}
+              className={`${HEADER_SECONDARY} hidden lg:flex`}
               disabled={saving}
               onClick={() => {
                 saveAsDraftRef.current = true;
@@ -421,7 +422,7 @@ export function AddQuizDialog({
           <button
             type="submit"
             form="quiz-questions-form"
-            className={isDraft ? HEADER_SECONDARY : HEADER_PRIMARY}
+            className={`${isDraft ? HEADER_SECONDARY : HEADER_PRIMARY} hidden lg:flex`}
             disabled={saving}
           >
             {editing ? t("editDialog.save") : t("createDialog.create")}
@@ -430,7 +431,7 @@ export function AddQuizDialog({
           {isDraft ? (
             <button
               type="button"
-              className={HEADER_PRIMARY}
+              className={`${HEADER_PRIMARY} hidden lg:flex`}
               disabled={publishing}
               onClick={() => {
                 if (missingAnswerNumbers.length) {
@@ -461,8 +462,27 @@ export function AddQuizDialog({
           </button>
         </header>
 
+        <div className="flex shrink-0 items-center gap-1 rounded-full bg-subtle p-1 mx-4 mt-3 lg:hidden">
+          {(["edit", "preview"] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`h-10 flex-1 rounded-full text-label-strong transition-colors ${
+                mobileTab === item ? "bg-surface text-ink shadow-xs" : "text-ink-secondary"
+              }`}
+              onClick={() => setMobileTab(item)}
+            >
+              {t(`createDialog.tab.${item}`)}
+            </button>
+          ))}
+        </div>
+
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex-row lg:gap-6 lg:p-6">
-          <div className="flex min-w-0 flex-1 flex-col gap-4">
+          <div
+            className={`min-w-0 flex-1 flex-col gap-4 lg:flex ${
+              mobileTab === "edit" ? "flex" : "hidden"
+            }`}
+          >
             {error ? (
               <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">{error}</p>
             ) : null}
@@ -535,9 +555,49 @@ export function AddQuizDialog({
             </form>
           </div>
 
-          <aside className="flex w-full shrink-0 flex-col gap-3 lg:w-[380px]">
+          <aside
+            className={`w-full shrink-0 flex-col gap-3 lg:flex lg:w-[380px] ${
+              mobileTab === "preview" ? "flex" : "hidden"
+            }`}
+          >
             <QuizPreview title={title} questions={questions} />
           </aside>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-3 border-t border-line bg-surface px-4 py-3 lg:hidden">
+          <button
+            type="submit"
+            form="quiz-questions-form"
+            className={`${HEADER_SECONDARY} h-12 flex-1 justify-center`}
+            disabled={saving}
+          >
+            {editing ? t("editDialog.save") : t("createDialog.saveDraft")}
+          </button>
+          {isDraft ? (
+            <button
+              type="button"
+              className={`${HEADER_PRIMARY} h-12 flex-1 justify-center`}
+              disabled={publishing}
+              onClick={() => {
+                if (missingAnswerNumbers.length) {
+                  setAnswerWarningOpen(true);
+                  return;
+                }
+                onPublish?.();
+              }}
+            >
+              {t("editDialog.publish")}
+            </button>
+          ) : (
+            <button
+              type="submit"
+              form="quiz-questions-form"
+              className={`${HEADER_PRIMARY} h-12 flex-1 justify-center`}
+              disabled={saving}
+            >
+              {editing ? t("editDialog.save") : t("createDialog.create")}
+            </button>
+          )}
         </div>
 
         <AppDialog

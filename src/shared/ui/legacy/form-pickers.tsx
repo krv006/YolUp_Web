@@ -300,6 +300,7 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel,
   const [query, setQuery] = useState("");
   const anchorRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
+  const isCompact = useIsCompact();
   const normalizedOptions = useMemo<SelectOption[]>(
     () => options.map((option) => (typeof option === "string" ? { value: option, label: option } : option)),
     [options]
@@ -332,6 +333,62 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel,
         placeholder={t("formPickers.selectPlaceholder")}
         labelledBy={labelId}
       />
+      {isCompact ? (
+        <Drawer open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
+          <DrawerContent className="px-4 pb-6">
+            <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
+              {label}
+            </DrawerTitle>
+            <div className="picker-sheet select-picker-sheet">
+        <div className="picker-mini-heading"><span>{t("formPickers.selectHeading")}</span><strong>{label}</strong></div>
+        {searchable ? (
+          <div className="select-picker-search">
+            <Search size={15} />
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={t("formPickers.searchPlaceholder")}
+              aria-label={t("formPickers.searchPlaceholder")}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && visibleOptions.length) {
+                  event.preventDefault();
+                  pick(visibleOptions[0].value);
+                }
+              }}
+            />
+          </div>
+        ) : null}
+        <div className="select-picker-options" role="listbox" aria-labelledby={labelId}>
+          {visibleOptions.map((option) => {
+            const active = option.value === value;
+            return (
+              <motion.button
+                key={option.value}
+                type="button"
+                role="option"
+                aria-selected={active}
+                className={active ? "is-selected" : ""}
+                onClick={() => pick(option.value)}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>{option.label}</span>
+                {active ? (
+                  <motion.span layoutId={`${labelId}-check`} className="select-picker-check">
+                    <Check size={15} />
+                  </motion.span>
+                ) : null}
+              </motion.button>
+            );
+          })}
+          {searchable && !visibleOptions.length ? (
+            <p className="select-picker-empty">{t("formPickers.searchEmpty")}</p>
+          ) : null}
+        </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
       <FloatingPicker open={open} onClose={close} anchorRef={anchorRef} labelledBy={labelId} className="select-picker-popover">
         <div className="picker-mini-heading"><span>{t("formPickers.selectHeading")}</span><strong>{label}</strong></div>
         {searchable ? (
@@ -379,6 +436,7 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel,
           ) : null}
         </div>
       </FloatingPicker>
+      )}
     </FieldShell>
   );
 }
