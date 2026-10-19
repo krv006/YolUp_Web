@@ -2,6 +2,8 @@ import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAuth, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/modules/auth";
+import { useSubjects } from "@/modules/course";
+import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import { Icon } from "@/shared/ui/icon";
 import { ProfileSubPage } from "./profile-shell";
 
@@ -10,7 +12,9 @@ export function PersonalInfoPage() {
   const { user } = useAuth();
   const update = useUpdateProfileMutation();
   const updateAvatar = useUpdateAvatarMutation();
+  const subjects = useSubjects();
   const fileRef = useRef<HTMLInputElement>(null);
+  const [today] = useState(() => new Date().toISOString().slice(0, 10));
   const [form, setForm] = useState({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
@@ -23,6 +27,11 @@ export function PersonalInfoPage() {
     bio: user?.bio ?? "",
   });
   const [emailError, setEmailError] = useState(false);
+
+  const subjectOptions = [
+    { value: "", label: t("page.subjectNone") },
+    ...(subjects.data ?? []),
+  ];
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -152,14 +161,13 @@ export function PersonalInfoPage() {
           />
         </label>
 
-        <label className="field-group">
-          <span>{t("page.birthDate")}</span>
-          <input
-            type="date"
-            value={form.birthDate}
-            onChange={(event) => setForm((c) => ({ ...c, birthDate: event.target.value }))}
-          />
-        </label>
+        <DatePicker
+          label={t("page.birthDate")}
+          value={form.birthDate}
+          onChange={(value) => setForm((c) => ({ ...c, birthDate: value }))}
+          maxDate={today}
+          optional
+        />
 
         <label className="field-group">
           <span>{t("page.phone")}</span>
@@ -184,14 +192,13 @@ export function PersonalInfoPage() {
           />
         </label>
 
-        <label className="field-group">
-          <span>{t("page.subject")}</span>
-          <input
-            value={form.subject}
-            onChange={(event) => setForm((c) => ({ ...c, subject: event.target.value }))}
-            placeholder="—"
-          />
-        </label>
+        <SelectPicker
+          label={t("page.subject")}
+          value={form.subject}
+          onChange={(value) => setForm((c) => ({ ...c, subject: value }))}
+          options={subjectOptions}
+          searchable
+        />
 
         <label className="field-group">
           <span>{t("page.city")}</span>

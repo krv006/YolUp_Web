@@ -195,6 +195,7 @@
     "switchAccountDescription": "Roles linked to one phone number. Switching does not require signing in again.",
     "accountActive": "active",
     "addAccount": "Add another account",
-    "close": "Close"
+    "close": "Close",
+    "subjectNone": "Not selected"
   }
 }
