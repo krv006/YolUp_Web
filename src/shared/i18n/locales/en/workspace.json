@@ -46,8 +46,9 @@
     "course": "Course",
     "quizAvg": "Quiz average",
     "attendance": "Attendance",
-    "noCourses": "No courses found.",
-    "studentCountValue": "{{count}} students"
+    "noCourses": "Once grades, test results and attendance come in, course metrics will show up here.",
+    "studentCountValue": "{{count}} students",
+    "emptyTitle": "No data yet"
   },
   "createGroup": "Create a group",
   "statGroups": "Groups",

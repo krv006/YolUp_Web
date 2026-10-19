@@ -20,11 +20,11 @@ function StatCard({
   label: string;
 }) {
   return (
-    <article className="flex min-w-[150px] flex-1 flex-col gap-2 rounded-2xl border border-line bg-surface p-4">
-      <span className={`grid size-9 place-items-center rounded-xl ${tone}`}>
+    <article className="flex min-w-0 flex-col gap-2 rounded-2xl border border-line bg-surface p-3 lg:min-w-[150px] lg:flex-1 lg:p-4">
+      <span className={`grid size-9 place-items-center rounded-lg ${tone}`}>
         <Icon name={icon} size={17} />
       </span>
-      <strong className="font-heading text-h2 text-ink">{value}</strong>
+      <strong className="font-heading text-h3 text-ink lg:text-h2">{value}</strong>
       <small className="text-caption text-ink-secondary">{label}</small>
     </article>
   );
@@ -58,7 +58,7 @@ function StudentView({ data }: { data: StudentAnalytics }) {
   const { t } = useTranslation("workspace");
   return (
     <>
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:flex lg:flex-wrap">
         <StatCard
           icon="assign"
           tone="bg-action text-on-action"
@@ -108,7 +108,7 @@ function TeacherView({ data }: { data: TeacherAnalytics }) {
 
   return (
     <>
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-wrap">
         <StatCard
           icon="check-circle"
           tone="bg-saffron-strong text-white"
@@ -157,7 +157,7 @@ function TeacherView({ data }: { data: TeacherAnalytics }) {
                 className="flex flex-col gap-4 rounded-2xl border border-line bg-surface p-4"
               >
                 <div className="flex items-center gap-3 border-b border-line pb-4">
-                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-action text-on-action">
                     <Icon name="groups" size={18} />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
@@ -192,7 +192,15 @@ function TeacherView({ data }: { data: TeacherAnalytics }) {
             ))}
           </div>
         ) : (
-          <p className="text-body-sm text-ink-tertiary">{t("analytics.noCourses")}</p>
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line px-6 py-10 text-center">
+            <span className="grid size-16 place-items-center rounded-2xl bg-action text-on-action">
+              <Icon name="nav-workspace" size={26} />
+            </span>
+            <strong className="font-heading text-h3 text-ink">{t("analytics.emptyTitle")}</strong>
+            <p className="max-w-[340px] text-body-sm text-ink-secondary">
+              {t("analytics.noCourses")}
+            </p>
+          </div>
         )}
       </section>
     </>
@@ -206,9 +214,12 @@ export function AnalyticsPage() {
   if (query.isLoading)
     return (
       <div className="flex h-full flex-col gap-4 bg-canvas p-4 lg:p-6">
-        <div className="flex flex-wrap gap-3">
+        <div className="grid grid-cols-3 gap-3 lg:flex lg:flex-wrap">
           {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className="h-28 min-w-[150px] flex-1 animate-pulse rounded-2xl bg-muted" />
+            <div
+              key={index}
+              className="h-28 animate-pulse rounded-2xl bg-muted lg:min-w-[150px] lg:flex-1"
+            />
           ))}
         </div>
         <div className="grid gap-3 lg:grid-cols-2">
