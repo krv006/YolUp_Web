@@ -35,8 +35,8 @@ function SystemMessage({ text }: { text: string }) {
   if (path) {
     const title = text.match(QUOTED_TITLE)?.[1] ?? "";
     return (
-      <div className="flex justify-center py-1">
-        <div className="flex w-full max-w-[460px] items-center gap-3 rounded-2xl border border-line bg-surface p-3">
+      <div className="flex justify-end py-1">
+        <div className="flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-sm">
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action-subtle text-action">
             <Play size={18} />
           </span>
