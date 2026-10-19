@@ -18,7 +18,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, DurationPicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
-import { toIntlLocale } from "@/shared/i18n";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { Icon } from "@/shared/ui/icon";
 import {
   buildScheduleDates,
   EVEN_WEEKDAYS,
@@ -47,6 +48,7 @@ export interface AddLessonDialogProps {
   existingLessons?: readonly Lesson[];
   initialValues?: Lesson | null;
   quizOptions?: ReadonlyArray<{ id: string; title: string }>;
+  onDelete?: () => void;
 }
 
 interface AssignmentDraft { title: string; description: string; dueAt: string; skillKey: string; grading: string; lessonId: string }
@@ -104,12 +106,12 @@ function monthLaterString(): string {
   return toDateValue(date);
 }
 
-function useDateLabelFormatter(): Intl.DateTimeFormat {
-  const { i18n } = useTranslation("group");
-  return useMemo(
-    () => new Intl.DateTimeFormat(toIntlLocale(i18n.language), { day: "numeric", month: "short" }),
-    [i18n.language]
-  );
+function useDateLabelFormatter(): { format: (date: Date) => string } {
+  const { t } = useTranslation("lesson");
+  const months = t("list.months", { returnObjects: true }) as string[];
+  return {
+    format: (date: Date) => `${date.getDate()}-${months[date.getMonth()] ?? ""}`,
+  };
 }
 
 export function AddLessonDialog({
@@ -120,6 +122,7 @@ export function AddLessonDialog({
   existingLessons = [],
   initialValues = null,
   quizOptions = [],
+  onDelete,
 }: AddLessonDialogProps) {
   const { t } = useTranslation("group");
   const DATE_LABEL = useDateLabelFormatter();
@@ -213,14 +216,43 @@ export function AddLessonDialog({
     a.length === b.length && a.every((day, index) => day === b[index]);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {open && (
-        <DialogContent
-          className="group-action-dialog"
-          title={initialValues ? t("dialogs.lesson.editTitle") : t("dialogs.lesson.newTitle")}
-          description={t("dialogs.lesson.description")}
-        >
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      variant="fullscreen"
+      width="lg:w-[610px]"
+      title={initialValues ? t("dialogs.lesson.editTitle") : t("dialogs.lesson.newTitle")}
+      description={
+        initialValues ? t("dialogs.lesson.editDescription") : t("dialogs.lesson.description")
+      }
+      footer={
+        <>
+          <button
+            type="button"
+            className={dialogButton.secondary}
+            onClick={() => onOpenChange(false)}
+          >
+            {t("dialogs.lesson.cancel")}
+          </button>
+          <button
+            type="submit"
+            form="lesson-form"
+            className={dialogButton.primary}
+            disabled={
+              isRepeating ? !dates.length || invalidRange : !form.topic.trim() || startsInPast
+            }
+          >
+            {initialValues
+              ? t("dialogs.lesson.saveChanges")
+              : isRepeating
+                ? t("dialogs.lesson.saveMultiple", { count: dates.length })
+                : t("dialogs.lesson.saveSingle")}
+          </button>
+        </>
+      }
+    >
           <motion.form
+            id="lesson-form"
             className="group-action-form"
             onSubmit={submit}
             initial={{ opacity: 0, y: 6 }}
@@ -398,33 +430,20 @@ export function AddLessonDialog({
 
             <ConflictNotice single={singleConflicts} schedule={scheduleConflicts} />
 
-            <div className="dialog-actions">
-              <Button
+            {initialValues && onDelete ? (
+              <button
                 type="button"
-                variant="ghost"
-                onClick={() => onOpenChange(false)}
+                className="mx-auto flex h-11 items-center gap-2 rounded-full px-4 text-label-strong text-error-text transition-colors hover:bg-error-bg"
+                onClick={() => {
+                  onOpenChange(false);
+                  onDelete();
+                }}
               >
-                {t("dialogs.lesson.cancel")}
-              </Button>
-              <Button
-                type="submit"
-                disabled={
-                  isRepeating
-                    ? !dates.length || invalidRange
-                    : !form.topic.trim() || startsInPast
-                }
-              >
-                {initialValues
-                  ? t("dialogs.lesson.saveChanges")
-                  : isRepeating
-                    ? t("dialogs.lesson.saveMultiple", { count: dates.length })
-                    : t("dialogs.lesson.saveSingle")}
-              </Button>
-            </div>
+                <Icon name="trash" size={17} /> {t("dialogs.lesson.deleteLesson")}
+              </button>
+            ) : null}
           </motion.form>
-        </DialogContent>
-      )}
-    </Dialog>
+    </AppDialog>
   );
 }
 

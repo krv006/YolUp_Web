@@ -13,9 +13,10 @@
     "subtitle": "Rejalashtirilgan jonli mashg'ulotlar.",
     "addLesson": "Dars qo'shish",
     "deleteDialogTitle": "Darsni o'chirish",
-    "deleteDialogDescription": "\"{{title}}\" qayta tiklanmaydi.",
+    "deleteDialogDescription": "Dars jadvaldan olib tashlanadi va o‘quvchilarga xabar boradi. Biriktirilgan test va davomat yozuvlari ham o‘chadi.",
     "cancel": "Bekor",
-    "delete": "O'chirish"
+    "delete": "O'chirish",
+    "deleteConfirmTitle": "“{{title}}” darsini o‘chirasizmi?"
   },
   "assignments": {
     "eyebrow": "GURUH VAZIFALARI",
@@ -49,15 +50,27 @@
     "removeAria": "{{name}}ni kursdan chiqarish",
     "empty": "O'quvchi topilmadi.",
     "removeDialogTitle": "Kursdan chiqarish",
-    "removeDialogDescription": "{{name}} kurs, chat va vazifalardan chiqariladi.",
+    "removeDialogDescription": "O‘quvchi guruh chati, darslar va vazifalarni ko‘rmay qoladi. Uning baholari va davomat tarixi saqlanadi.",
     "cancel": "Bekor",
-    "remove": "Chiqarish"
+    "remove": "Chiqarish",
+    "removeConfirmTitle": "{{name}}ni guruhdan chiqarasizmi?"
   },
   "attendance": {
     "eyebrow": "KURS HISOBOTI",
     "title": "Davomat va fokus",
     "summary": "{{lessonCount}} ta dars · {{recordCount}} ta yozuv",
-    "empty": "Davomat hali yo'q."
+    "empty": "Davomat hali yo'q.",
+    "emptyTitle": "Davomat hali yo‘q",
+    "emptyDescription": "Dars o‘tkazilgach, o‘quvchilarning qatnashuvi va fokus ko‘rsatkichi shu yerda chiqadi.",
+    "filterAll": "Barcha darslar",
+    "filterMonth": "Oxirgi 30 kun",
+    "filterCurrent": "Shu oy",
+    "statAttendance": "Davomat",
+    "statFocus": "Fokus",
+    "statLessons": "Dars",
+    "studentsTitle": "O‘quvchilar",
+    "studentsMeta": "Davomat · fokus",
+    "focusSuffix": "fokus"
   },
   "dialogs": {
     "lesson": {
@@ -106,7 +119,9 @@
       "saveMultiple": "{{count}} ta darsni saqlash",
       "saveSingle": "Darsni saqlash",
       "quizLabel": "Test biriktirish",
-      "quizNone": "Test biriktirilmagan"
+      "quizNone": "Test biriktirilmagan",
+      "editDescription": "Mavzu, vaqt va biriktirilgan testni o‘zgartiring. O‘quvchilarga bildirishnoma boradi.",
+      "deleteLesson": "Darsni o‘chirish"
     },
     "conflict": {
       "singleTitle": "Bu vaqtda darsingiz bor",
@@ -150,5 +165,39 @@
         "speaking": "Speaking"
       }
     }
+  },
+  "addStudent": {
+    "title": "O‘quvchi qo‘shish",
+    "description": "Platformadagi o‘quvchini qidiring yoki unga yangi hisob yarating.",
+    "searchPlaceholder": "Ism yoki username",
+    "searchHint": "Qidirish uchun kamida 2 ta belgi yozing.",
+    "notFound": "O‘quvchi topilmadi — yangi hisob yarating.",
+    "alreadyMember": "Allaqachon guruhda",
+    "createAccount": "Yangi o‘quvchi hisobini yaratish",
+    "shareInvite": "Taklif havolasini ulashish",
+    "cancel": "Bekor qilish",
+    "submit": "Qo‘shish ({{count}})",
+    "added": "{{count}} ta o‘quvchi qo‘shildi",
+    "createTitle": "Yangi o‘quvchi hisobi",
+    "createDescription": "O‘quvchi platformada bo‘lmasa, hisobni siz yaratasiz va guruhga avtomatik qo‘shiladi.",
+    "firstName": "Ism",
+    "lastName": "Familiya",
+    "login": "Login",
+    "regenerate": "Loginni yangilash",
+    "password": "Vaqtinchalik parol",
+    "copyPassword": "Parolni nusxalash",
+    "passwordCopied": "Parol nusxalandi",
+    "parentPhone": "Ota-ona telefoni · ixtiyoriy",
+    "createNote": "Login va parolni o‘quvchiga yuboring. Birinchi kirishda u parolini o‘zgartiradi.",
+    "createSubmit": "Hisob yaratish",
+    "inviteUnavailable": "Taklif havolasi backendda hali mavjud emas",
+    "requestsTitle": "Qo‘shilish so‘rovlari · {{count}}",
+    "requestsDescription": "Taklif havolasi orqali kelgan so‘rovlar. Qabul qilinganlar guruhga darhol qo‘shiladi.",
+    "requestsEmpty": "Yangi so‘rov yo‘q.",
+    "accept": "Qabul qilish",
+    "decline": "Rad etish",
+    "acceptAll": "Qabul qilish ({{count}})",
+    "close": "Yopish",
+    "parentFor": "Ota-ona · {{name}} uchun"
   }
 }

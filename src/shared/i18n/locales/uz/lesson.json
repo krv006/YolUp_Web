@@ -19,7 +19,47 @@
     "empty": "Hali dars rejalashtirilmagan.",
     "dayCount": "{{count}} ta",
     "durationMinutes": "{{count}} daqiqa",
-    "missingTopic": "Mavzu yozilmagan"
+    "missingTopic": "Mavzu yozilmagan",
+    "durationShort": "{{count}} daq",
+    "today": "BUGUN",
+    "yesterday": "KECHA",
+    "months": [
+      "YAN",
+      "FEV",
+      "MAR",
+      "APR",
+      "MAY",
+      "IYN",
+      "IYL",
+      "AVG",
+      "SEN",
+      "OKT",
+      "NOY",
+      "DEK"
+    ],
+    "weekdays": [
+      "YAKSHANBA",
+      "DUSHANBA",
+      "SESHANBA",
+      "CHORSHANBA",
+      "PAYSHANBA",
+      "JUMA",
+      "SHANBA"
+    ],
+    "monthsLong": [
+      "Yanvar",
+      "Fevral",
+      "Mart",
+      "Aprel",
+      "May",
+      "Iyun",
+      "Iyul",
+      "Avgust",
+      "Sentabr",
+      "Oktabr",
+      "Noyabr",
+      "Dekabr"
+    ]
   },
   "calendar": {
     "todayButton": "Bugun",
@@ -28,7 +68,15 @@
     "lessonsCount": "{{count}} ta dars",
     "dayCellAria": "{{date}} — {{count}} ta dars",
     "noLessonsThisDay": "Bu kunda dars yo'q.",
-    "weekdays": ["Du", "Se", "Chor", "Pay", "Jum", "Shan", "Yak"]
+    "weekdays": [
+      "Du",
+      "Se",
+      "Ch",
+      "Pa",
+      "Ju",
+      "Sh",
+      "Ya"
+    ]
   },
   "actions": {
     "join": "Kirish",
@@ -39,7 +87,10 @@
     "rate": "Baholash",
     "editAria": "Darsni tahrirlash",
     "deleteAria": "Darsni o'chirish",
-    "ratingsAria": "Dars baholari — {{count}} ta"
+    "ratingsAria": "Dars baholari — {{count}} ta",
+    "edit": "Tahrirlash",
+    "cancel": "Bekor qilish",
+    "joinLesson": "Darsga qo‘shilish"
   },
   "viewSwitch": {
     "list": "Ro'yxat",
@@ -75,7 +126,8 @@
     "loadError": "Baholarni yuklab bo'lmadi.",
     "retry": "Qayta urinish",
     "empty": "Bu darsni hali hech kim baholamagan.",
-    "disabled": "Baholash serverda hali yoqilmagan."
+    "disabled": "Baholash serverda hali yoqilmagan.",
+    "close": "Yopish"
   },
   "starRating": {
     "aria": "Dars bahosi",

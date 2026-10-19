@@ -161,10 +161,17 @@
     "correctAnswerLabel": "Correct answer:"
   },
   "attemptsDialog": {
-    "defaultTitle": "Attempt history",
-    "description": "Unlimited retries — each shown in its own row.",
+    "defaultTitle": "Quiz results",
+    "description": "Unlimited retries — each attempt on its own row.",
     "loading": "Loading…",
-    "empty": "No attempts yet."
+    "empty": "No attempts yet.",
+    "attemptNo": "Attempt {{count}}",
+    "notAttempted": "Not attempted yet",
+    "close": "Close",
+    "download": "Download",
+    "csvName": "Name",
+    "csvDate": "Date",
+    "csvScore": "Score"
   },
   "types": {
     "single": "Single correct answer",

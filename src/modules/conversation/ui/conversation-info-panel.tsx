@@ -1,16 +1,34 @@
 import { useRef, useState, type FormEvent } from "react";
-import { Bell, BellOff, Camera, Check, Copy, GraduationCap, Loader2, Pencil, ShieldAlert, Trash2, UserRound } from "lucide-react";
+import { GraduationCap, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { storage } from "@/shared/lib";
+import { initials, storage } from "@/shared/lib";
 import { useAuth } from "@/modules/auth";
-import { CourseMembersSection, useCourse, useDeleteCourse, useSubjects, useUpdateCourse } from "@/modules/course";
-import { DIRECT_STATUS, useDirectStatusLabel, useRespondDirect, useSetRoomImage } from "@/modules/conversation";
+import {
+  CourseMembersSection,
+  JoinRequestsDialog,
+  useCourse,
+  useCourseRequests,
+  useDeleteCourse,
+  useSubjects,
+  useUpdateCourse,
+} from "@/modules/course";
+import { useChatUiStore } from "@/modules/message";
+import {
+  DIRECT_STATUS,
+  useDirectStatusLabel,
+  useRespondDirect,
+  useSetRoomImage,
+} from "@/modules/conversation";
 import type { CourseFormInput } from "@/modules/course";
 import type { Conversation } from "@/shared/types";
-import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { Avatar } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { Icon } from "@/shared/ui/icon";
+import { Switch } from "@/shared/ui/switch";
 import type { DirectAction } from "../api/conversation.dto";
 
 export interface ConversationInfoPanelProps {
@@ -19,7 +37,16 @@ export interface ConversationInfoPanelProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export function ConversationInfoPanel({ conversation, open, onOpenChange }: ConversationInfoPanelProps) {
+const TILE =
+  "flex flex-col items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-2 py-3 text-caption-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50";
+const WIDE_ACTION =
+  "flex h-14 items-center justify-center gap-2 rounded-xl bg-subtle px-4 text-label-strong text-ink transition-colors hover:bg-muted disabled:opacity-50";
+
+export function ConversationInfoPanel({
+  conversation,
+  open,
+  onOpenChange,
+}: ConversationInfoPanelProps) {
   const { t } = useTranslation("chat");
   const directStatusLabel = useDirectStatusLabel();
   const { user } = useAuth();
@@ -31,12 +58,19 @@ export function ConversationInfoPanel({ conversation, open, onOpenChange }: Conv
   const [editOpen, setEditOpen] = useState(false);
   const subjects = useSubjects(editOpen);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [courseForm, setCourseForm] = useState<CourseFormInput>({ title: "", subject: "", description: "" });
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [requestsOpen, setRequestsOpen] = useState(false);
+  const [courseForm, setCourseForm] = useState<CourseFormInput>({
+    title: "",
+    subject: "",
+    description: "",
+  });
   const course = useCourse(open ? conversation.courseId : null);
   const respond = useRespondDirect();
   const updateCourse = useUpdateCourse();
   const deleteCourse = useDeleteCourse();
   const setRoomImage = useSetRoomImage();
+  const openChatSearch = useChatUiStore((state) => state.setSearchOpen);
   const imageRef = useRef<HTMLInputElement>(null);
 
   function toggleMute() {
@@ -47,7 +81,9 @@ export function ConversationInfoPanel({ conversation, open, onOpenChange }: Conv
   }
 
   async function copyUsername() {
-    const value = conversation.participant?.username ? `@${conversation.participant.username}` : "";
+    const value = conversation.participant?.username
+      ? `@${conversation.participant.username}`
+      : "";
     if (!value) return;
     await navigator.clipboard.writeText(value);
     setCopied(true);
@@ -60,7 +96,9 @@ export function ConversationInfoPanel({ conversation, open, onOpenChange }: Conv
       { roomId: conversation.id, action },
       {
         onSuccess: () => {
-          toast.success(action === "accept" ? t("info.conversationAccepted") : t("info.conversationBlocked"));
+          toast.success(
+            action === "accept" ? t("info.conversationAccepted") : t("info.conversationBlocked")
+          );
           onOpenChange(false);
         },
         onError: (error: Error) => toast.error(error.message),
@@ -97,24 +135,54 @@ export function ConversationInfoPanel({ conversation, open, onOpenChange }: Conv
   }
 
   const teacherGroup = isGroup && user?.role === "TEACHER";
+  const joinRequests = useCourseRequests({ page_size: 50 }, open && teacherGroup);
+  const pendingRequests = (joinRequests.data?.items ?? []).filter(
+    (item) => item.courseId === conversation.courseId
+  );
 
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        {open ? (
-          <DialogContent
-            className="info-sheet"
-            motionPreset="right-sheet"
-            title={conversation.title}
-            description={
-              isGroup
-                ? conversation.subjectLabel || conversation.subject || t("info.groupSubjectFallback")
-                : t("info.profileInfo")
-            }
-          >
-            <div className="info-profile">
-              <span className="info-avatar-slot">
-                <Avatar name={conversation.title} tone={conversation.avatarTone} size="lg" src={conversation.imageUrl} />
+        <DialogContent
+          showCloseButton={false}
+          className="top-0 right-0 left-auto flex h-dvh w-full max-w-full translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 bg-surface p-0 text-ink data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 sm:max-w-full lg:w-[520px] lg:max-w-[520px] lg:border-l lg:border-line"
+        >
+          <header className="flex h-16 shrink-0 items-center gap-3 px-4 lg:h-[72px] lg:px-6">
+            <button
+              className="grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:hidden"
+              onClick={() => onOpenChange(false)}
+              aria-label={t("info.backAria")}
+            >
+              <Icon name="arrow-back" size={22} />
+            </button>
+            <DialogTitle className="min-w-0 flex-1 truncate font-heading text-title text-ink lg:text-h3">
+              <span className="lg:hidden">{t("info.panelTitle")}</span>
+              <span className="hidden lg:inline">{conversation.title}</span>
+            </DialogTitle>
+            <button
+              className="hidden size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:grid"
+              onClick={() => onOpenChange(false)}
+              aria-label={t("info.closeAria")}
+            >
+              <Icon name="add" size={20} className="rotate-45" />
+            </button>
+          </header>
+
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 lg:px-6 lg:pb-6">
+           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-2xl border border-line p-4 lg:p-5">
+            <section className="flex flex-col items-center gap-1 px-1 pt-2">
+              <span className="relative">
+                {conversation.imageUrl ? (
+                  <img
+                    className="size-22 rounded-full object-cover"
+                    src={conversation.imageUrl}
+                    alt={conversation.title}
+                  />
+                ) : (
+                  <span className="grid size-22 place-items-center rounded-full bg-action-subtle font-heading text-h3 text-action">
+                    {initials(conversation.title)}
+                  </span>
+                )}
                 {teacherGroup ? (
                   <>
                     <input
@@ -138,150 +206,316 @@ export function ConversationInfoPanel({ conversation, open, onOpenChange }: Conv
                     />
                     <button
                       type="button"
-                      className="info-avatar-edit"
+                      className="absolute right-1/2 bottom-0 grid size-9 translate-x-1/2 translate-y-1/3 place-items-center rounded-full border border-line bg-surface text-ink shadow-sm disabled:opacity-60"
                       aria-label={t("info.changeGroupImageAria")}
                       disabled={setRoomImage.isPending}
                       onClick={() => imageRef.current?.click()}
                     >
-                      {setRoomImage.isPending ? <Loader2 size={14} className="spin" /> : <Camera size={14} />}
+                      {setRoomImage.isPending ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Icon name="camera" size={16} />
+                      )}
                     </button>
                   </>
                 ) : null}
               </span>
-              <h3>{conversation.title}</h3>
-              <p>
+
+              <h3 className="mt-3 text-center font-heading text-h3 text-ink">
+                {conversation.title}
+              </h3>
+              <p className="text-body-sm text-ink-tertiary">
                 {isGroup
                   ? t("info.memberCount", { count: conversation.memberCount ?? 0 })
                   : directStatusLabel(conversation.directStatus, t("directStatus.active"))}
               </p>
-            </div>
-            <div className="info-quick-actions">
-              <button className={muted ? "is-active" : ""} onClick={toggleMute}>
-                {muted ? <Bell size={19} /> : <BellOff size={19} />}
-                <span>{muted ? t("info.muteOn") : t("info.muteOff")}</span>
-              </button>
-              {teacherGroup ? (
-                <button onClick={beginEdit}>
-                  <Pencil size={19} />
-                  <span>{t("info.editCourse")}</span>
+
+              <div className="mt-4 grid w-full grid-cols-3 gap-2 lg:hidden">
+                <button
+                  className={TILE}
+                  onClick={() => {
+                    onOpenChange(false);
+                    openChatSearch(true);
+                  }}
+                >
+                  <Icon name="search" size={20} className="text-action" />
+                  {t("info.search")}
                 </button>
-              ) : null}
-            </div>
-            <div className="info-section">
-              <span className="info-section-title">{isGroup ? t("info.aboutGroup") : t("info.aboutDirect")}</span>
+                <button className={TILE} onClick={toggleMute}>
+                  <Icon name="volume" size={20} className="text-action" />
+                  {muted ? t("info.muteOn") : t("info.muteOff")}
+                </button>
+                {teacherGroup ? (
+                  <button className={TILE} onClick={beginEdit}>
+                    <Icon name="edit" size={20} className="text-action" />
+                    {t("info.editCourse")}
+                  </button>
+                ) : null}
+              </div>
+
+              <div className="mt-5 hidden w-full gap-3 lg:grid lg:grid-cols-2">
+                <button className={WIDE_ACTION} onClick={toggleMute}>
+                  <Icon name="volume" size={20} />
+                  {muted ? t("info.muteOn") : t("info.muteOff")}
+                </button>
+                {teacherGroup ? (
+                  <button className={WIDE_ACTION} onClick={beginEdit}>
+                    <Icon name="edit" size={20} />
+                    {t("info.editCourse")}
+                  </button>
+                ) : null}
+              </div>
+            </section>
+
+            {teacherGroup ? (
+              <section className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 lg:hidden">
+                <Icon name="bell" size={20} className="shrink-0 text-ink-secondary" />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="text-label-strong text-ink">
+                    {t("info.announcementTitle")}
+                  </strong>
+                  <small className="text-caption text-ink-tertiary">
+                    {t("info.announcementHint")}
+                  </small>
+                </span>
+                <Switch
+                  checked={false}
+                  onCheckedChange={() => toast.info(t("actions.notAvailable"))}
+                  aria-label={t("info.announcementTitle")}
+                />
+              </section>
+            ) : null}
+
+            <section className={`flex-col gap-2 ${isGroup ? "hidden lg:flex" : "flex"}`}>
+              <span className="px-1 text-label-strong text-ink">
+                {isGroup ? t("info.aboutGroupPlain") : t("info.aboutDirect")}
+              </span>
               {isGroup ? (
-                <p className="info-description">{conversation.description || t("info.groupDescriptionFallback")}</p>
+                <p className="px-1 text-caption text-ink-tertiary">
+                  {conversation.description || t("info.groupDescriptionFallback")}
+                </p>
               ) : (
-                <button className="info-row" onClick={copyUsername}>
-                  <UserRound size={18} />
-                  <span>
-                    <small>{t("info.usernameHint")}</small>
-                    <strong>@{conversation.participant?.username || "—"}</strong>
+                <button
+                  className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left transition-colors hover:bg-subtle"
+                  onClick={copyUsername}
+                >
+                  <Icon name="person" size={20} className="shrink-0 text-ink-secondary" />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <small className="text-caption text-ink-tertiary">
+                      {t("info.usernameHint")}
+                    </small>
+                    <strong className="truncate text-label-strong text-ink">
+                      @{conversation.participant?.username || "—"}
+                    </strong>
                   </span>
-                  {copied ? <Check size={17} /> : <Copy size={16} />}
+                  <Icon
+                    name={copied ? "check-circle" : "eye"}
+                    size={18}
+                    className="shrink-0 text-ink-tertiary"
+                  />
                 </button>
               )}
-            </div>
-            {teacherGroup ? (
-              <CourseMembersSection courseId={conversation.courseId} canManage />
+            </section>
+
+            {teacherGroup && pendingRequests.length ? (
+              <button
+                type="button"
+                className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-left transition-colors hover:bg-subtle"
+                onClick={() => setRequestsOpen(true)}
+              >
+                <span className="grid size-9 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
+                  <Icon name="groups" size={18} />
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-label-strong text-ink">
+                    {t("info.joinRequests", { count: pendingRequests.length })}
+                  </strong>
+                  <small className="truncate text-caption text-ink-tertiary">
+                    {t("info.joinRequestsHint")}
+                  </small>
+                </span>
+                <Icon name="chevron-right" size={18} className="shrink-0 text-ink-tertiary" />
+              </button>
             ) : null}
+
+            {teacherGroup ? <CourseMembersSection courseId={conversation.courseId} canManage /> : null}
+
             {isGroup && !teacherGroup ? (
-              <div className="info-section">
-                <span className="info-section-title">{t("info.teacherSection")}</span>
+              <section className="flex flex-col gap-2">
+                <span className="px-1 text-label-strong text-ink-tertiary">
+                  {t("info.teacherSection")}
+                </span>
                 {course.data ? (
-                  <div className="member-mini">
-                    <Avatar name={course.data.teacher} tone={course.data.teacherUser?.avatarTone} size="sm" />
-                    <span>
-                      <strong>{course.data.teacher}</strong>
-                      {course.data.teacherUser?.username ? <small>@{course.data.teacherUser.username}</small> : null}
+                  <div className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3">
+                    <Avatar
+                      name={course.data.teacher}
+                      tone={course.data.teacherUser?.avatarTone}
+                      size="sm"
+                    />
+                    <span className="flex min-w-0 flex-col">
+                      <strong className="truncate text-label-strong text-ink">
+                        {course.data.teacher}
+                      </strong>
+                      {course.data.teacherUser?.username ? (
+                        <small className="truncate text-caption text-ink-tertiary">
+                          @{course.data.teacherUser.username}
+                        </small>
+                      ) : null}
                     </span>
                   </div>
                 ) : (
-                  <p className="info-description">{course.isLoading ? t("info.loading") : t("info.noInfo")}</p>
+                  <p className="px-1 text-body-sm text-ink-secondary">
+                    {course.isLoading ? t("info.loading") : t("info.noInfo")}
+                  </p>
                 )}
-              </div>
+              </section>
             ) : null}
-            {!isGroup && user?.role === "TEACHER" && conversation.directStatus === DIRECT_STATUS.PENDING ? (
-              <Button loading={respond.isPending} onClick={() => respondDirect("accept")}>
-                <Check size={18} /> {t("info.acceptConversation")}
-              </Button>
+
+            {!isGroup &&
+            user?.role === "TEACHER" &&
+            conversation.directStatus === DIRECT_STATUS.PENDING ? (
+              <button
+                className="flex h-14 items-center justify-center gap-2 rounded-xl bg-action text-label-strong text-on-action disabled:opacity-60"
+                disabled={respond.isPending}
+                onClick={() => respondDirect("accept")}
+              >
+                <Icon name="check-circle" size={18} /> {t("info.acceptConversation")}
+              </button>
             ) : null}
-            {!isGroup && user?.role === "TEACHER" && conversation.directStatus !== DIRECT_STATUS.BLOCKED ? (
-              <Button
-                variant="ghost"
-                className="block-button"
-                loading={respond.isPending}
+
+            {!isGroup &&
+            user?.role === "TEACHER" &&
+            conversation.directStatus !== DIRECT_STATUS.BLOCKED ? (
+              <button
+                className="flex h-14 items-center justify-center gap-2 rounded-xl bg-error-bg text-label-strong text-error-text disabled:opacity-60"
+                disabled={respond.isPending}
                 onClick={() => respondDirect("block")}
               >
-                <ShieldAlert size={18} /> {t("info.blockUser")}
-              </Button>
+                <Icon name="error" size={18} /> {t("info.blockUser")}
+              </button>
             ) : null}
             {teacherGroup ? (
-              <Button variant="ghost" className="block-button" onClick={() => setDeleteOpen(true)}>
-                <Trash2 size={18} /> {t("info.deleteCourse")}
-              </Button>
+              <button
+                className="mt-auto flex h-14 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-error-bg text-label-strong text-error-text transition-opacity hover:opacity-90"
+                onClick={() => setDeleteOpen(true)}
+              >
+                <Icon name="trash" size={18} /> {t("info.deleteCourse")}
+              </button>
             ) : null}
-          </DialogContent>
-        ) : null}
+           </div>
+          </div>
+        </DialogContent>
       </Dialog>
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        {editOpen && (
-          <DialogContent title={t("info.editCourseTitle")} description={t("info.editCourseDescription")}>
-            <form className="dialog-form" onSubmit={saveCourse}>
-              <label className="field-group">
-                <span>{t("info.courseName")}</span>
-                <div className="input-shell">
-                  <input
-                    value={courseForm.title}
-                    onChange={(event) => setCourseForm((value) => ({ ...value, title: event.target.value }))}
-                    required
-                  />
-                </div>
-              </label>
-              <SelectPicker
-                label={t("info.subject")}
-                icon={GraduationCap}
-                value={courseForm.subject ?? ""}
-                onChange={(value) => setCourseForm((current) => ({ ...current, subject: value }))}
-                options={(subjects.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
-              />
-              <label className="field-group">
-                <span>{t("info.description")}</span>
-                <textarea
-                  value={courseForm.description}
-                  onChange={(event) => setCourseForm((value) => ({ ...value, description: event.target.value }))}
-                  rows={4}
-                />
-              </label>
-              <div className="dialog-actions">
-                <Button type="button" variant="secondary" onClick={() => setEditOpen(false)}>
-                  {t("info.cancel")}
-                </Button>
-                <Button type="submit" loading={updateCourse.isPending}>
-                  {t("info.save")}
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        )}
-      </Dialog>
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        {deleteOpen && (
-          <DialogContent
-            title={t("info.deleteCourseTitle")}
-            description={t("info.deleteCourseDescription", { title: conversation.title })}
-          >
-            <div className="dialog-actions">
-              <Button variant="secondary" onClick={() => setDeleteOpen(false)}>
-                {t("info.cancel")}
-              </Button>
-              <Button loading={deleteCourse.isPending} onClick={removeCourse}>
-                {t("info.deleteCourse")}
-              </Button>
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
+
+      <JoinRequestsDialog
+        courseId={conversation.courseId}
+        open={requestsOpen}
+        onOpenChange={setRequestsOpen}
+      />
+
+      <AppDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        title={t("info.editCourseTitle")}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setEditOpen(false)}
+            >
+              {t("info.cancel")}
+            </button>
+            <button
+              type="submit"
+              form="course-edit-form"
+              className={dialogButton.primary}
+              disabled={updateCourse.isPending}
+            >
+              {t("info.save")}
+            </button>
+          </>
+        }
+      >
+        <form id="course-edit-form" className="flex flex-col gap-4" onSubmit={saveCourse}>
+          <label className="field-group">
+            <span>{t("info.courseName")}</span>
+            <input
+              value={courseForm.title}
+              onChange={(event) =>
+                setCourseForm((value) => ({ ...value, title: event.target.value }))
+              }
+              required
+            />
+          </label>
+          <SelectPicker
+            label={t("info.subject")}
+            icon={GraduationCap}
+            value={courseForm.subject ?? ""}
+            onChange={(value) => setCourseForm((current) => ({ ...current, subject: value }))}
+            options={(subjects.data ?? []).map((item) => ({
+              value: item.value,
+              label: item.label,
+            }))}
+          />
+          <label className="field-group">
+            <span>{t("info.descriptionOptional")}</span>
+            <textarea
+              value={courseForm.description}
+              onChange={(event) =>
+                setCourseForm((value) => ({ ...value, description: event.target.value }))
+              }
+              rows={4}
+            />
+          </label>
+        </form>
+      </AppDialog>
+
+      <AppDialog
+        open={deleteOpen}
+        onOpenChange={(open) => {
+          setDeleteOpen(open);
+          if (!open) setDeleteConfirmation("");
+        }}
+        variant="confirm"
+        title={t("info.deleteCourseConfirmTitle", { title: conversation.title })}
+        description={t("info.deleteCourseDescription", { title: conversation.title })}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => {
+                setDeleteOpen(false);
+                setDeleteConfirmation("");
+              }}
+            >
+              {t("info.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.danger}
+              disabled={
+                deleteCourse.isPending ||
+                deleteConfirmation.trim() !== (conversation.title ?? "").trim()
+              }
+              onClick={removeCourse}
+            >
+              {t("info.deleteConfirm")}
+            </button>
+          </>
+        }
+      >
+        <label className="field-group">
+          <span>{t("info.deleteTypeName")}</span>
+          <input
+            value={deleteConfirmation}
+            onChange={(event) => setDeleteConfirmation(event.target.value)}
+            placeholder={conversation.title}
+            autoComplete="off"
+          />
+        </label>
+      </AppDialog>
     </>
   );
 }

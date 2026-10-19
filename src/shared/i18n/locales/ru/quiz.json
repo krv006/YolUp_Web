@@ -161,10 +161,17 @@
     "correctAnswerLabel": "Правильный ответ:"
   },
   "attemptsDialog": {
-    "defaultTitle": "История попыток",
-    "description": "Неограниченные попытки — каждая в отдельной строке.",
+    "defaultTitle": "Результаты теста",
+    "description": "Неограниченные попытки — каждая отдельной строкой.",
     "loading": "Загрузка…",
-    "empty": "Попыток пока нет."
+    "empty": "Попыток пока нет.",
+    "attemptNo": "Попытка {{count}}",
+    "notAttempted": "Ещё не решал",
+    "close": "Закрыть",
+    "download": "Скачать",
+    "csvName": "Имя",
+    "csvDate": "Дата",
+    "csvScore": "Балл"
   },
   "types": {
     "single": "Один правильный ответ",

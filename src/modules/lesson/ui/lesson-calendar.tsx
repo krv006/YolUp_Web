@@ -1,14 +1,10 @@
 import { useMemo, useState } from "react";
 import { addMonths, startOfMonth } from "date-fns";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { toIntlLocale } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
-import { Button } from "@/shared/ui/legacy";
+import { Icon } from "@/shared/ui/icon";
 import {
   buildMonthGrid,
-  formatDayTitle,
-  formatMonthTitle,
   resolveInitialMonth,
   toDayKey,
   type CalendarDay,
@@ -22,6 +18,13 @@ export type LessonCalendarProps = Omit<LessonActionsProps, "lesson" | "compact">
 
 const MAX_CHIPS = 3;
 
+const CHIP_TONE: Record<string, string> = {
+  live: "bg-error text-white",
+  finished: "bg-action text-on-action",
+  scheduled: "bg-saffron-strong text-white",
+  cancelled: "bg-muted text-ink-secondary",
+};
+
 function DayCell({
   day,
   selected,
@@ -31,59 +34,53 @@ function DayCell({
   selected: boolean;
   onSelect: (day: CalendarDay) => void;
 }) {
-  const { t, i18n } = useTranslation("lesson");
+  const { t } = useTranslation("lesson");
   const lessonStatusMeta = useLessonStatusMeta();
   const hidden = day.lessons.length - MAX_CHIPS;
 
   return (
     <button
       type="button"
-      className={[
-        "calendar-day",
-        day.inCurrentMonth ? "" : "is-outside",
-        day.isToday ? "is-today" : "",
-        selected ? "is-selected" : "",
-        day.lessons.length ? "has-lessons" : "",
-      ]
-        .filter(Boolean)
-        .join(" ")}
+      className={`flex min-h-[72px] flex-col items-start gap-1 rounded-lg border p-1 text-left transition-colors lg:min-h-[96px] lg:p-2 ${
+        selected ? "border-action" : "border-line"
+      } ${day.inCurrentMonth ? "bg-surface" : "bg-canvas opacity-60"}`}
       aria-pressed={selected}
       aria-label={t("calendar.dayCellAria", {
-        date: formatDayTitle(day.date, toIntlLocale(i18n.language)),
+        date: `${day.date.getDate()}-${(t("list.monthsLong", { returnObjects: true }) as string[])[day.date.getMonth()]}`,
         count: day.lessons.length,
       })}
       onClick={() => onSelect(day)}
     >
-      <span className="calendar-day-number">{day.dayOfMonth}</span>
+      <span
+        className={`grid size-6 shrink-0 place-items-center rounded-full font-numeric text-caption-strong ${
+          day.isToday ? "bg-action text-on-action" : "text-ink-secondary"
+        }`}
+      >
+        {day.dayOfMonth}
+      </span>
 
-      <span className="calendar-day-chips" aria-hidden="true">
+      <span className="flex w-full flex-col gap-1" aria-hidden="true">
         {day.lessons.slice(0, MAX_CHIPS).map((lesson) => (
           <span
             key={lesson.id}
-            className={`calendar-chip calendar-chip--${lessonStatusMeta(lesson.status).tone}`}
+            className={`w-full rounded px-0.5 py-0.5 text-center font-numeric text-[10px] leading-tight font-semibold ${
+              CHIP_TONE[lessonStatusMeta(lesson.status).tone] ?? CHIP_TONE.scheduled
+            }`}
           >
-            <b>{lesson.time}</b>
-            <i className={hasLessonTopic(lesson) ? "" : "lesson-missing-topic"}>
-              {hasLessonTopic(lesson) ? lesson.title : t("list.missingTopic")}
-            </i>
+            {lesson.time}
           </span>
         ))}
-        {hidden > 0 ? <span className="calendar-chip-more">+{hidden}</span> : null}
-      </span>
-
-      <span className="calendar-day-dots" aria-hidden="true">
-        {day.lessons.slice(0, MAX_CHIPS).map((lesson) => (
-          <i key={lesson.id} className={`dot dot--${lessonStatusMeta(lesson.status).tone}`} />
-        ))}
+        {hidden > 0 ? (
+          <span className="px-1 text-[11px] text-ink-tertiary">+{hidden}</span>
+        ) : null}
       </span>
     </button>
   );
 }
 
 export function LessonCalendar({ lessons, ...actions }: LessonCalendarProps) {
-  const { t, i18n } = useTranslation("lesson");
+  const { t } = useTranslation("lesson");
   const lessonStatusMeta = useLessonStatusMeta();
-  const locale = toIntlLocale(i18n.language);
   const weekdays = t("calendar.weekdays", { returnObjects: true }) as string[];
   const [month, setMonth] = useState(() => resolveInitialMonth(lessons));
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -104,83 +101,99 @@ export function LessonCalendar({ lessons, ...actions }: LessonCalendarProps) {
     setSelectedKey(day.key);
     if (!day.inCurrentMonth) setMonth(startOfMonth(day.date));
   }
-  const monthLessonCount = days.reduce(
-    (sum, day) => sum + (day.inCurrentMonth ? day.lessons.length : 0),
-    0
-  );
+
+  const monthNames = t("list.monthsLong", { returnObjects: true }) as string[];
 
   return (
-    <div className="lesson-calendar">
-      <div className="calendar-toolbar">
-        <div className="calendar-title">
-          <strong>{formatMonthTitle(month, locale)}</strong>
-          <small>{t("calendar.lessonsCount", { count: monthLessonCount })}</small>
-        </div>
-        <div className="calendar-nav">
-          <button
-            className="icon-button"
-            aria-label={t("calendar.prevMonth")}
-            onClick={() => setMonth((value) => addMonths(value, -1))}
-          >
-            <ChevronLeft size={17} />
-          </button>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() => {
-              const now = new Date();
-              setMonth(startOfMonth(now));
-              setSelectedKey(toDayKey(now));
-            }}
-          >
-            <CalendarDays size={15} /> {t("calendar.todayButton")}
-          </Button>
-          <button
-            className="icon-button"
-            aria-label={t("calendar.nextMonth")}
-            onClick={() => setMonth((value) => addMonths(value, 1))}
-          >
-            <ChevronRight size={17} />
-          </button>
-        </div>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <strong className="flex-1 font-heading text-h3 text-ink">
+          {monthNames[month.getMonth()]} {month.getFullYear()}
+        </strong>
+        <button
+          type="button"
+          className="grid size-10 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
+          aria-label={t("calendar.prevMonth")}
+          onClick={() => setMonth((value) => addMonths(value, -1))}
+        >
+          <Icon name="chevron-left" size={18} />
+        </button>
+        <button
+          type="button"
+          className="flex h-10 items-center rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
+          onClick={() => {
+            const now = new Date();
+            setMonth(startOfMonth(now));
+            setSelectedKey(toDayKey(now));
+          }}
+        >
+          {t("calendar.todayButton")}
+        </button>
+        <button
+          type="button"
+          className="grid size-10 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
+          aria-label={t("calendar.nextMonth")}
+          onClick={() => setMonth((value) => addMonths(value, 1))}
+        >
+          <Icon name="chevron-right" size={18} />
+        </button>
       </div>
 
-      <div className="calendar-weekdays" aria-hidden="true">
+      <div className="grid grid-cols-7 gap-1.5 text-center" aria-hidden="true">
         {weekdays.map((label, index) => (
-          <span key={index}>{label}</span>
+          <span key={index} className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
+            {label}
+          </span>
         ))}
       </div>
 
-      <div className="calendar-grid" role="grid">
+      <div className="grid grid-cols-7 gap-1.5" role="grid">
         {days.map((day) => (
           <DayCell key={day.key} day={day} selected={day.key === activeKey} onSelect={selectDay} />
         ))}
       </div>
 
       {selected ? (
-        <section className="calendar-day-panel" aria-live="polite">
-          <header>
-            <strong>{formatDayTitle(selected.date, locale)}</strong>
-            <small>{t("calendar.lessonsCount", { count: selected.lessons.length })}</small>
+        <section
+          className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4"
+          aria-live="polite"
+        >
+          <header className="flex items-baseline gap-3">
+            <strong className="flex-1 text-title text-ink">
+              {`${selected.date.getDate()}-${(t("list.monthsLong", { returnObjects: true }) as string[])[selected.date.getMonth()]}`}
+            </strong>
+            <small className="text-caption text-ink-tertiary">
+              {t("calendar.lessonsCount", { count: selected.lessons.length })}
+            </small>
           </header>
 
           {selected.lessons.length ? (
-            <ul>
+            <ul className="flex flex-col divide-y divide-line">
               {selected.lessons.map((lesson) => {
                 const meta = lessonStatusMeta(lesson.status);
                 return (
-                  <li key={lesson.id}>
-                    <span className="calendar-day-time">
-                      <b>{lesson.time}</b>
-                      <i>{t("list.durationMinutes", { count: lesson.durationMinutes })}</i>
+                  <li key={lesson.id} className="flex flex-wrap items-center gap-3 py-3">
+                    <span className="flex w-14 shrink-0 flex-col">
+                      <b className="font-numeric text-title text-ink">{lesson.time}</b>
+                      <i className="text-caption text-ink-tertiary not-italic">
+                        {t("list.durationShort", { count: lesson.durationMinutes })}
+                      </i>
                     </span>
-                    <span className="calendar-day-info">
-                      {hasLessonTopic(lesson) ? (
-                        <strong>{lesson.title}</strong>
-                      ) : (
-                        <strong className="lesson-missing-topic">{t("list.missingTopic")}</strong>
-                      )}
-                      <em className={`lesson-status lesson-status--${meta.tone}`}>{meta.label}</em>
+                    <span className="flex min-w-0 flex-1 flex-col gap-1">
+                      <strong
+                        className={`truncate text-label-strong ${
+                          hasLessonTopic(lesson) ? "text-ink" : "text-ink-tertiary italic"
+                        }`}
+                      >
+                        {hasLessonTopic(lesson) ? lesson.title : t("list.missingTopic")}
+                      </strong>
+                      <em
+                        className={`inline-flex h-6 w-fit items-center rounded-full px-2.5 text-caption-strong not-italic ${
+                          CHIP_TONE[meta.tone] ?? CHIP_TONE.scheduled
+                        }`}
+                      >
+                        {meta.label}
+                      </em>
                     </span>
                     <LessonActions lesson={lesson} compact {...actions} />
                   </li>
@@ -188,7 +201,7 @@ export function LessonCalendar({ lessons, ...actions }: LessonCalendarProps) {
               })}
             </ul>
           ) : (
-            <p className="portal-muted">{t("calendar.noLessonsThisDay")}</p>
+            <p className="text-body-sm text-ink-tertiary">{t("calendar.noLessonsThisDay")}</p>
           )}
         </section>
       ) : null}

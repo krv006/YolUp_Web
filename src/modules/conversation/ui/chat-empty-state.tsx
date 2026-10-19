@@ -30,7 +30,7 @@ export function ChatEmptyState({ onOpenConversations }: { onOpenConversations?: 
           <Icon name="groups" size={32} />
         </span>
         <h2 className="font-heading text-h3 text-ink">{t("emptyState.noChatsTitle")}</h2>
-        <p className="max-w-[380px] text-body-sm text-ink-secondary">
+        <p className="max-w-[330px] text-body-sm text-ink-secondary">
           {isTeacher ? t("emptyState.noChatsTeacher") : t("emptyState.noChatsStudent")}
         </p>
         <button

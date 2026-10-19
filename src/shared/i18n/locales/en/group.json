@@ -13,9 +13,10 @@
     "subtitle": "Scheduled live sessions.",
     "addLesson": "Add lesson",
     "deleteDialogTitle": "Delete lesson",
-    "deleteDialogDescription": "\"{{title}}\" cannot be restored.",
+    "deleteDialogDescription": "The lesson leaves the schedule and students are notified. The attached quiz and attendance records go too.",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete the “{{title}}” lesson?"
   },
   "assignments": {
     "eyebrow": "GROUP ASSIGNMENTS",
@@ -49,15 +50,27 @@
     "removeAria": "Remove {{name}} from the course",
     "empty": "No students found.",
     "removeDialogTitle": "Remove from course",
-    "removeDialogDescription": "{{name}} will be removed from the course, chat, and assignments.",
+    "removeDialogDescription": "They lose access to the chat, lessons and assignments. Their grades and attendance stay.",
     "cancel": "Cancel",
-    "remove": "Remove"
+    "remove": "Remove",
+    "removeConfirmTitle": "Remove {{name}} from the group?"
   },
   "attendance": {
     "eyebrow": "COURSE REPORT",
     "title": "Attendance and focus",
     "summary": "{{lessonCount}} lessons · {{recordCount}} records",
-    "empty": "No attendance yet."
+    "empty": "No attendance yet.",
+    "emptyTitle": "No attendance yet",
+    "emptyDescription": "Once a lesson runs, student attendance and the focus score show up here.",
+    "filterAll": "All lessons",
+    "filterMonth": "Last 30 days",
+    "filterCurrent": "This month",
+    "statAttendance": "Attendance",
+    "statFocus": "Focus",
+    "statLessons": "Lessons",
+    "studentsTitle": "Students",
+    "studentsMeta": "Attendance · focus",
+    "focusSuffix": "focus"
   },
   "dialogs": {
     "lesson": {
@@ -106,7 +119,9 @@
       "saveMultiple": "Save {{count}} lessons",
       "saveSingle": "Save lesson",
       "quizLabel": "Attach a quiz",
-      "quizNone": "No quiz attached"
+      "quizNone": "No quiz attached",
+      "editDescription": "Change the topic, time and attached quiz. Students get a notification.",
+      "deleteLesson": "Delete the lesson"
     },
     "conflict": {
       "singleTitle": "You already have a lesson at this time",
@@ -150,5 +165,39 @@
         "speaking": "Speaking"
       }
     }
+  },
+  "addStudent": {
+    "title": "Add a student",
+    "description": "Find a student on the platform or create a new account for them.",
+    "searchPlaceholder": "Name or username",
+    "searchHint": "Type at least 2 characters to search.",
+    "notFound": "No student found — create an account.",
+    "alreadyMember": "Already in the group",
+    "createAccount": "Create a student account",
+    "shareInvite": "Share the invite link",
+    "cancel": "Cancel",
+    "submit": "Add ({{count}})",
+    "added": "{{count}} students added",
+    "createTitle": "New student account",
+    "createDescription": "If the student is not on the platform, you create the account and they join the group right away.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "login": "Login",
+    "regenerate": "Regenerate the login",
+    "password": "Temporary password",
+    "copyPassword": "Copy the password",
+    "passwordCopied": "Password copied",
+    "parentPhone": "Parent phone · optional",
+    "createNote": "Send the login and password to the student. They change the password on first sign-in.",
+    "createSubmit": "Create the account",
+    "inviteUnavailable": "The invite link is not supported by the backend yet",
+    "requestsTitle": "Join requests · {{count}}",
+    "requestsDescription": "Requests that came through the invite link. Accepted people join the group right away.",
+    "requestsEmpty": "No new requests.",
+    "accept": "Accept",
+    "decline": "Decline",
+    "acceptAll": "Accept ({{count}})",
+    "close": "Close",
+    "parentFor": "Parent · for {{name}}"
   }
 }
