@@ -12,6 +12,9 @@ export function PinnedMessageBar({ roomId }: { roomId: string }) {
   return (
     <div className="flex shrink-0 items-start gap-3 border-b border-line bg-saffron-subtle px-4 py-2.5 lg:px-6">
       <span className="mt-0.5 h-9 w-0.5 shrink-0 rounded-full bg-saffron-strong" />
+      <span className="mt-1.5 shrink-0 text-saffron-strong">
+        <Icon name="pin" size={16} />
+      </span>
       <span className="flex min-w-0 flex-1 flex-col">
         <small className="text-caption-strong text-saffron-strong">{t("pinned.label")}</small>
         <span className="truncate text-body-sm text-ink">{pinned.text}</span>
