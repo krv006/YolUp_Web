@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { Bold, Italic, Link2, List, Underline } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourses } from "@/modules/course";
@@ -14,6 +15,9 @@ export interface AssignmentFormDialogProps {
   onOpenChange: (open: boolean) => void;
   courseId?: string | null;
   assignment?: Assignment | null;
+  submittedCount?: number;
+  lessons?: Array<{ id: string; title: string; date: string }>;
+  onDelete?: (assignment: Assignment) => void;
 }
 
 type Grading = "five" | "hundred" | "none";
@@ -23,6 +27,9 @@ export function AssignmentFormDialog({
   onOpenChange,
   courseId = null,
   assignment = null,
+  submittedCount = 0,
+  lessons = [],
+  onDelete,
 }: AssignmentFormDialogProps) {
   const { t } = useTranslation("homework");
   const courses = useCourses();
@@ -37,6 +44,9 @@ export function AssignmentFormDialog({
   const [time, setTime] = useState("18:00");
   const [grading, setGrading] = useState<Grading>("five");
   const [file, setFile] = useState<File | null>(null);
+  const [lessonId, setLessonId] = useState("");
+  const [grading2, setGrading2] = useState("");
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
   const [aiCheck, setAiCheck] = useState(true);
   const [announce, setAnnounce] = useState(true);
   const [allowLate, setAllowLate] = useState(false);
@@ -49,6 +59,8 @@ export function AssignmentFormDialog({
     setCourse(assignment?.courseId ?? courseId ?? "");
     setTitle(assignment?.title ?? "");
     setBody(assignment?.description ?? "");
+    setLessonId(assignment?.lessonId ?? "");
+    setGrading2("");
     setFile(null);
     if (assignment?.dueAt) {
       const due = new Date(assignment.dueAt);
@@ -66,6 +78,30 @@ export function AssignmentFormDialog({
     }
   }
   if (!formKey && syncedKey) setSyncedKey("");
+
+  const lessonChoices = useMemo(
+    () => [
+      { value: "", label: t("form.lessonNone") },
+      ...lessons.map((lesson) => ({
+        value: lesson.id,
+        label: `${lesson.title} · ${lesson.date}`,
+      })),
+    ],
+    [lessons, t]
+  );
+
+  function wrapSelection(prefix: string, suffix: string) {
+    const element = bodyRef.current;
+    if (!element) return;
+    const start = element.selectionStart ?? body.length;
+    const end = element.selectionEnd ?? body.length;
+    const next = `${body.slice(0, start)}${prefix}${body.slice(start, end)}${suffix}${body.slice(end)}`;
+    setBody(next);
+    requestAnimationFrame(() => {
+      element.focus();
+      element.setSelectionRange(start + prefix.length, end + prefix.length);
+    });
+  }
 
   const options = (courses.data ?? []).map((item) => ({
     value: item.id,
@@ -86,6 +122,7 @@ export function AssignmentFormDialog({
       body: body.trim(),
       dueAt: date ? new Date(`${date}T${time}`).toISOString() : undefined,
       file,
+      ...(assignment ? { lessonId: lessonId || null, extraInstructions: grading2 } : {}),
     };
     try {
       if (assignment) await update.mutateAsync({ id: assignment.id, form });
@@ -102,15 +139,21 @@ export function AssignmentFormDialog({
       onOpenChange={onOpenChange}
       width="lg:w-[640px]"
       title={assignment ? t("form.editTitle") : t("form.title")}
-      description={t("form.subtitle")}
+      description={
+        assignment && submittedCount
+          ? t("form.editSubtitle", { count: submittedCount })
+          : t("form.subtitle")
+      }
       footer={
         <>
           <button
             type="button"
             className={dialogButton.secondary}
-            onClick={() => toast.info(t("form.draftUnavailable"))}
+            onClick={() =>
+              assignment ? onOpenChange(false) : toast.info(t("form.draftUnavailable"))
+            }
           >
-            {t("form.draft")}
+            {assignment ? t("form.cancel") : t("form.draft")}
           </button>
           <button
             type="button"
@@ -118,11 +161,151 @@ export function AssignmentFormDialog({
             disabled={create.isPending || update.isPending}
             onClick={save}
           >
-            {t("form.submit")}
+            {assignment ? t("form.save") : t("form.submit")}
           </button>
         </>
       }
     >
+      {assignment ? (
+        <div className="flex flex-col gap-4">
+          <label className="field-group">
+            <span>{t("form.nameLabel")}</span>
+            <input value={title} onChange={(event) => setTitle(event.target.value)} />
+          </label>
+
+          <div className="flex flex-col overflow-hidden rounded-xl border border-line">
+            <div className="flex items-center gap-1 border-b border-line bg-subtle px-2 py-1.5">
+              {(
+                [
+                  [Bold, "b", t("form.rich.bold")],
+                  [Italic, "i", t("form.rich.italic")],
+                  [Underline, "u", t("form.rich.underline")],
+                ] as const
+              ).map(([RichIcon, tag, label]) => (
+                <button
+                  key={tag}
+                  type="button"
+                  className="grid size-8 place-items-center rounded-lg text-ink-secondary transition-colors hover:bg-surface hover:text-ink"
+                  aria-label={label}
+                  onClick={() => wrapSelection(`<${tag}>`, `</${tag}>`)}
+                >
+                  <RichIcon size={15} />
+                </button>
+              ))}
+              <span className="mx-1 h-5 w-px bg-line" />
+              <button
+                type="button"
+                className="grid size-8 place-items-center rounded-lg text-ink-secondary transition-colors hover:bg-surface hover:text-ink"
+                aria-label={t("form.rich.list")}
+                onClick={() => wrapSelection("• ", "")}
+              >
+                <List size={15} />
+              </button>
+              <button
+                type="button"
+                className="grid size-8 place-items-center rounded-lg text-ink-secondary transition-colors hover:bg-surface hover:text-ink"
+                aria-label={t("form.rich.link")}
+                onClick={() => {
+                  const url = window.prompt(t("form.rich.linkPrompt"));
+                  if (url) wrapSelection(`<a href="${url}">`, "</a>");
+                }}
+              >
+                <Link2 size={15} />
+              </button>
+            </div>
+            <textarea
+              ref={bodyRef}
+              className="min-h-[120px] w-full resize-none bg-surface px-4 py-3 text-body text-ink outline-none"
+              value={body}
+              onChange={(event) => setBody(event.target.value)}
+              placeholder={t("form.bodyPlaceholder")}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <input
+              ref={fileRef}
+              type="file"
+              hidden
+              onChange={(event) => {
+                const next = event.target.files?.[0] ?? null;
+                event.target.value = "";
+                if (next) setFile(next);
+              }}
+            />
+            <button
+              type="button"
+              className="flex h-11 w-fit items-center gap-2 rounded-xl bg-action-subtle px-4 text-label-strong text-action transition-opacity hover:opacity-80"
+              onClick={() => fileRef.current?.click()}
+            >
+              <Icon name="assign" size={17} /> {t("form.attachFile")}
+            </button>
+
+            {file || assignment.hasAttachment ? (
+              <span className="flex items-center gap-3 rounded-xl border border-line bg-surface px-3 py-2.5">
+                <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-error-bg text-caption-strong text-error-text">
+                  {(file?.name ?? assignment.attachmentName ?? "FILE")
+                    .split(".")
+                    .pop()
+                    ?.slice(0, 4)
+                    .toUpperCase()}
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-label-strong text-ink">
+                    {file?.name ?? assignment.attachmentName ?? "—"}
+                  </strong>
+                  {file ? (
+                    <small className="text-caption text-ink-tertiary">
+                      {(file.size / 1024 / 1024).toFixed(1)} MB
+                    </small>
+                  ) : null}
+                </span>
+                {file ? (
+                  <button
+                    type="button"
+                    className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+                    onClick={() => setFile(null)}
+                    aria-label={t("form.removeFile")}
+                  >
+                    <Icon name="add" size={16} className="rotate-45" />
+                  </button>
+                ) : null}
+              </span>
+            ) : null}
+          </div>
+
+          <DatePicker label={t("form.dueDate")} value={date} onChange={setDate} optional />
+
+          <SelectPicker
+            label={t("form.lessonLabel")}
+            value={lessonId}
+            onChange={setLessonId}
+            options={lessonChoices}
+          />
+
+          <label className="field-group">
+            <span>{t("form.gradingNote")}</span>
+            <input
+              value={grading2}
+              onChange={(event) => setGrading2(event.target.value)}
+              placeholder={t("form.gradingNotePlaceholder")}
+            />
+          </label>
+
+          {onDelete ? (
+            <button
+              type="button"
+              className="mx-auto flex h-11 items-center gap-2 rounded-full px-4 text-label-strong text-error-text transition-colors hover:bg-error-bg"
+              onClick={() => {
+                onOpenChange(false);
+                onDelete(assignment);
+              }}
+            >
+              <Icon name="trash" size={17} /> {t("form.deleteAssignment")}
+            </button>
+          ) : null}
+        </div>
+      ) : (
       <div className="flex flex-col gap-4">
         <div className="grid gap-4 lg:grid-cols-2">
           <SelectPicker
@@ -266,6 +449,7 @@ export function AssignmentFormDialog({
           ))}
         </div>
       </div>
+      )}
     </AppDialog>
   );
 }

@@ -120,7 +120,8 @@
       "blankRequired": "the text needs at least one {{syntax}} blank",
       "blankAnswerRequired": "write an answer inside every blank",
       "chooseSubject": "Choose a subject",
-      "enterTopic": "Enter a topic"
+      "enterTopic": "Enter a topic",
+      "enterTopicOrImport": "Enter a topic or import from a file"
     },
     "subjectLabel": "Which subject",
     "topicLabel": "Topic",
@@ -137,7 +138,16 @@
       "unsupportedType": "Question {{number}} was not imported: only single and multiple choice questions are supported"
     },
     "saveDraft": "Save as draft",
-    "previewLabel": "Student sees"
+    "previewLabel": "Student sees",
+    "unsavedTitle": "Changes are not saved",
+    "unsavedDescription": "If you leave, {{count}} changes made after the last save are lost.",
+    "unsavedStay": "Stay",
+    "unsavedLeave": "Leave",
+    "missingAnswersTitle": "{{count}} questions have no correct answer",
+    "missingAnswersDescription_one": "Question {{list}} has no correct answer marked. Until it is filled in, the test stays hidden from students.",
+    "missingAnswersDescription_other": "Questions {{list}} have no correct answer marked. Until they are filled in, the test stays hidden from students.",
+    "missingAnswersLater": "Later",
+    "missingAnswersGo": "Go to the question"
   },
   "preview": {
     "regionAria": "How the student will see it",
@@ -269,7 +279,12 @@
     "audioTooBig": "The file must not exceed {{size}} MB",
     "questionGroupLabel": "Group",
     "noGroup": "No group",
-    "transcriptToggle": "Audio script (hidden from students)"
+    "transcriptToggle": "Audio script (hidden from students)",
+    "playOnce": "Can be played only once",
+    "audioPlay": "Play the audio",
+    "audioPause": "Pause",
+    "uploadingAudio": "Uploading...",
+    "audioFile": "Audio file"
   },
   "aiPage": {
     "title": "New test",

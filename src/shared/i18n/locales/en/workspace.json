@@ -92,5 +92,8 @@
   "sectionMessages": "MESSAGES · {{count}}",
   "quizQuestions": "{{count}} questions",
   "draft": "Draft",
-  "published": "Published"
+  "published": "Published",
+  "searchSubtitle": "Across groups, lessons, tests, students and messages",
+  "searchHotkeys": "↑↓ select · Enter open · Esc close",
+  "searchAllResults": "All results"
 }

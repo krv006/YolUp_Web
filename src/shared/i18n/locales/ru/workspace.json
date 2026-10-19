@@ -92,5 +92,8 @@
   "sectionMessages": "СООБЩЕНИЯ · {{count}}",
   "quizQuestions": "{{count}} вопросов",
   "draft": "Черновик",
-  "published": "Опубликован"
+  "published": "Опубликован",
+  "searchSubtitle": "По группам, урокам, тестам, ученикам и сообщениям",
+  "searchHotkeys": "↑↓ выбор · Enter открыть · Esc закрыть",
+  "searchAllResults": "Все результаты"
 }

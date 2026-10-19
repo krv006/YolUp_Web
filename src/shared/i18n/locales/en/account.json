@@ -188,6 +188,13 @@
     "passwordChanged": "Password updated",
     "passwordMismatch": "The new passwords do not match",
     "sessionClosed": "Device signed out",
-    "otherSessionsClosed": "{{count}} devices signed out"
+    "otherSessionsClosed": "{{count}} devices signed out",
+    "certificatePending": "Under review",
+    "switchAccount": "Switch account",
+    "switchAccountHint": "Roles linked to one phone number",
+    "switchAccountDescription": "Roles linked to one phone number. Switching does not require signing in again.",
+    "accountActive": "active",
+    "addAccount": "Add another account",
+    "close": "Close"
   }
 }

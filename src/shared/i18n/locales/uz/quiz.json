@@ -120,7 +120,8 @@
       "blankRequired": "matnda kamida bitta {{syntax}} bo'sh joy bo'lishi kerak",
       "blankAnswerRequired": "har bir bo'sh joy ichiga javob yozing",
       "chooseSubject": "Fanni tanlang",
-      "enterTopic": "Mavzuni kiriting"
+      "enterTopic": "Mavzuni kiriting",
+      "enterTopicOrImport": "Mavzuni kiriting yoki fayldan import qiling"
     },
     "subjectLabel": "Qaysi fan uchun",
     "topicLabel": "Mavzu",
@@ -137,7 +138,16 @@
       "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
     },
     "saveDraft": "Qoralama saqlash",
-    "previewLabel": "O‘quvchi ko‘radi"
+    "previewLabel": "O‘quvchi ko‘radi",
+    "unsavedTitle": "O‘zgarishlar saqlanmadi",
+    "unsavedDescription": "Chiqib ketsangiz, oxirgi saqlashdan keyingi {{count}} ta o‘zgarish yo‘qoladi.",
+    "unsavedStay": "Qolish",
+    "unsavedLeave": "Chiqish",
+    "missingAnswersTitle": "{{count}} ta savolda to‘g‘ri javob yo‘q",
+    "missingAnswersDescription_one": "{{list}}-savolda to‘g‘ri javob belgilanmagan. Uni to‘ldirmaguncha test o‘quvchilarga ko‘rinmaydi.",
+    "missingAnswersDescription_other": "{{list}}-savollarda to‘g‘ri javob belgilanmagan. Ularni to‘ldirmaguncha test o‘quvchilarga ko‘rinmaydi.",
+    "missingAnswersLater": "Keyinroq",
+    "missingAnswersGo": "Savolga o‘tish"
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",
@@ -269,7 +279,12 @@
     "audioTooBig": "Fayl {{size}} MB dan katta bo'lmasligi kerak",
     "questionGroupLabel": "Guruh",
     "noGroup": "Guruhsiz",
-    "transcriptToggle": "Audio skripti (o'quvchiga ko'rinmaydi)"
+    "transcriptToggle": "Audio skripti (o'quvchiga ko'rinmaydi)",
+    "playOnce": "Faqat 1 marta tinglanadi",
+    "audioPlay": "Audioni tinglash",
+    "audioPause": "To‘xtatish",
+    "uploadingAudio": "Yuklanmoqda...",
+    "audioFile": "Audio fayl"
   },
   "aiPage": {
     "title": "Yangi test",

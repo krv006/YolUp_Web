@@ -188,6 +188,13 @@
     "passwordChanged": "Parol yangilandi",
     "passwordMismatch": "Yangi parollar mos emas",
     "sessionClosed": "Qurilma chiqarildi",
-    "otherSessionsClosed": "{{count}} ta qurilma chiqarildi"
+    "otherSessionsClosed": "{{count}} ta qurilma chiqarildi",
+    "certificatePending": "Tekshirilmoqda",
+    "switchAccount": "Akkauntni almashtirish",
+    "switchAccountHint": "Bir telefon raqamiga bog‘langan rollar",
+    "switchAccountDescription": "Bir telefon raqamiga bog‘langan rollar. Almashtirganda qayta kirish shart emas.",
+    "accountActive": "faol",
+    "addAccount": "Boshqa akkaunt qo‘shish",
+    "close": "Yopish"
   }
 }

@@ -394,18 +394,23 @@ export function AddLessonDialog({
               />
             )}
 
-            {!isRepeating && quizOptions.length ? (
-              <SelectPicker
-                label={t("dialogs.lesson.quizLabel")}
-                icon={FileQuestion}
-                value={form.quizId}
-                onChange={(value) => update("quizId", value)}
-                options={[
-                  { value: "", label: t("dialogs.lesson.quizNone") },
-                  ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
-                ]}
-              />
-            ) : null}
+            {isRepeating ? null : (
+              <div className="flex flex-col gap-1.5">
+                <SelectPicker
+                  label={t("dialogs.lesson.quizLabel")}
+                  icon={FileQuestion}
+                  value={form.quizId}
+                  onChange={(value) => update("quizId", value)}
+                  options={[
+                    { value: "", label: t("dialogs.lesson.quizNone") },
+                    ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
+                  ]}
+                />
+                <small className="px-1 text-caption text-ink-tertiary">
+                  {t("dialogs.lesson.quizHint")}
+                </small>
+              </div>
+            )}
 
             {isRepeating ? (
               <p className={`schedule-summary ${dates.length ? "" : "is-empty"}`}>

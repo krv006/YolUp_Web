@@ -332,3 +332,12 @@ textarea.quiz-page-question-text:focus {
   color: var(--text-secondary);
   font-size: var(--fs-xs);
 }
+
+/* Xato holatidagi maydonlar */
+.field-invalid input,
+.field-invalid textarea,
+.field-invalid [data-slot="picker-trigger"],
+.field-invalid .picker-trigger,
+.field-invalid button[aria-haspopup="listbox"] {
+  border-color: var(--status-error) !important;
+}
