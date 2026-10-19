@@ -7,6 +7,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage } from "@/shared/types";
 import { MessageAttachment } from "./message-attachment";
+import { VoiceMessage } from "./voice-message";
 import { MessageText } from "./message-text";
 
 export interface MessageBubbleProps {
@@ -138,9 +139,17 @@ export function MessageBubble({
         )}
 
         {message.text && <MessageText text={message.text} />}
-        {message.attachment && (
-          <MessageAttachment attachment={message.attachment} failed={message.failed} />
-        )}
+        {message.attachment ? (
+          message.attachment.mimeType?.startsWith("audio/") ? (
+            <VoiceMessage attachment={message.attachment} outgoing={outgoing} />
+          ) : (
+            <MessageAttachment
+              attachment={message.attachment}
+              failed={message.failed}
+              uploading={message.pending}
+            />
+          )
+        ) : null}
 
         <span
           className={`flex items-center justify-end gap-1 font-numeric text-caption ${

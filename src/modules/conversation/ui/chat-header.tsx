@@ -23,6 +23,9 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
   const setSearchOpen = useChatUiStore((state) => state.setSearchOpen);
   const setSearch = useChatUiStore((state) => state.setSearch);
   const online = useOnlineStatus();
+  const searchIndex = useChatUiStore((state) => state.searchIndex);
+  const searchCount = useChatUiStore((state) => state.searchCount);
+  const stepSearch = useChatUiStore((state) => state.stepSearch);
 
   useEffect(() => {
     setSearchOpen(false);
@@ -46,25 +49,52 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
         </button>
 
         {searchOpen ? (
-          <label className="flex h-11 flex-1 items-center gap-3 rounded-full border border-line bg-canvas px-4">
-            <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
-            <input
-              autoFocus
-              className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              onKeyDown={(event) => event.key === "Escape" && closeSearch()}
-              placeholder={t("header.searchPlaceholder")}
-              aria-label={t("header.searchPlaceholder")}
-            />
+          <>
+            <label className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-xl border border-action bg-surface px-4">
+              <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
+              <input
+                autoFocus
+                className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") closeSearch();
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    stepSearch(event.shiftKey ? -1 : 1);
+                  }
+                }}
+                placeholder={t("header.searchPlaceholder")}
+                aria-label={t("header.searchPlaceholder")}
+              />
+            </label>
+            <span className="shrink-0 font-numeric text-body-sm text-ink-tertiary">
+              {searchCount ? searchIndex + 1 : 0} / {searchCount}
+            </span>
             <button
-              className="grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary hover:text-ink"
+              className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
+              onClick={() => stepSearch(-1)}
+              disabled={!searchCount}
+              aria-label={t("header.searchPrevAria")}
+            >
+              <Icon name="chevron-down" size={18} className="rotate-180" />
+            </button>
+            <button
+              className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
+              onClick={() => stepSearch(1)}
+              disabled={!searchCount}
+              aria-label={t("header.searchNextAria")}
+            >
+              <Icon name="chevron-down" size={18} />
+            </button>
+            <button
+              className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
               onClick={closeSearch}
               aria-label={t("header.closeSearchAria")}
             >
-              <Icon name="add" size={18} className="rotate-45" />
+              <Icon name="add" size={20} className="rotate-45" />
             </button>
-          </label>
+          </>
         ) : (
           <button
             className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-1 py-1 text-left transition-colors hover:bg-subtle"

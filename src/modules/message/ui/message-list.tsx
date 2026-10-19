@@ -8,7 +8,8 @@ import { DateSeparator } from "./date-separator";
 import { MessageBubble } from "./message-bubble";
 import { TypingIndicator } from "./typing-indicator";
 import { MessageActionsMenu } from "./message-actions-menu";
-import type { ChatMessage, Conversation, MessageCapabilities } from "@/shared/types";
+import { HomeworkChatCard } from "@/modules/homework";
+import type { Assignment, ChatMessage, Conversation, MessageCapabilities } from "@/shared/types";
 
 export interface MessageListProps {
   messages?: ChatMessage[];
@@ -23,7 +24,15 @@ export interface MessageListProps {
   onRetryMessage?: (message: ChatMessage) => void;
   currentUserId?: string | null;
   capabilities?: MessageCapabilities;
+  assignments?: Assignment[];
 }
+
+type TimelineEntry =
+  | { kind: "message"; message: ChatMessage; at?: number }
+  | { kind: "assignment"; assignment: Assignment; at?: number };
+
+const SELECTION_ACTION =
+  "flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-3 text-label-strong transition-colors hover:bg-subtle lg:px-4";
 
 export function MessageList({
   messages,
@@ -38,6 +47,7 @@ export function MessageList({
   onRetryMessage,
   currentUserId = null,
   capabilities,
+  assignments,
 }: MessageListProps) {
   const { t } = useTranslation("chat");
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -57,7 +67,35 @@ export function MessageList({
   const toggleSelected = useChatUiStore((state) => state.toggleSelected);
   const clearSelection = useChatUiStore((state) => state.clearSelection);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteForEveryone, setDeleteForEveryone] = useState(true);
   const selectionMode = selected.length > 0;
+  const announcement = useChatUiStore((state) => Boolean(state.announcement[conversation.id]));
+  const searchIndex = useChatUiStore((state) => state.searchIndex);
+  const setSearchCount = useChatUiStore((state) => state.setSearchCount);
+  const activeMatchId = search ? (visible[searchIndex]?.id ?? null) : null;
+  const timeline: TimelineEntry[] = search
+    ? visible.map((message) => ({ kind: "message" as const, message }))
+    : [
+        ...visible.map((message) => ({
+          kind: "message" as const,
+          message,
+          at: new Date(message.createdAt).getTime(),
+        })),
+        ...(assignments ?? []).map((assignment) => ({
+          kind: "assignment" as const,
+          assignment,
+          at: new Date(assignment.createdAt).getTime(),
+        })),
+      ].sort((a, b) => (a.at || 0) - (b.at || 0));
+  const matchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (search) setSearchCount(visible.length);
+  }, [search, visible.length, setSearchCount]);
+
+  useEffect(() => {
+    if (activeMatchId) matchRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [activeMatchId]);
 
   const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
     bottomRef.current?.scrollIntoView({ behavior });
@@ -142,31 +180,31 @@ export function MessageList({
             <Icon name="add" size={20} className="rotate-45" />
           </button>
           <strong className="flex-1 text-label-strong text-ink">
-            {t("actionsMenu.selectedCount", { count: selected.length })}
+            {t("actionsMenu.selectedMessages", { count: selected.length })}
           </strong>
           <button
             type="button"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-            onClick={copySelection}
-            aria-label={t("actionsMenu.copy")}
-          >
-            <Icon name="assign" size={19} />
-          </button>
-          <button
-            type="button"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
+            className={`${SELECTION_ACTION} text-ink`}
             onClick={() => toast.info(t("actions.notAvailable"))}
-            aria-label={t("actionsMenu.forward")}
           >
-            <Icon name="send" size={19} />
+            <Icon name="send" size={18} />
+            <span className="hidden lg:inline">{t("actionsMenu.forward")}</span>
           </button>
           <button
             type="button"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
-            onClick={() => setDeleteOpen(true)}
-            aria-label={t("actionsMenu.delete")}
+            className={`${SELECTION_ACTION} text-ink`}
+            onClick={copySelection}
           >
-            <Icon name="trash" size={19} />
+            <Icon name="assign" size={18} />
+            <span className="hidden lg:inline">{t("actionsMenu.copy")}</span>
+          </button>
+          <button
+            type="button"
+            className={`${SELECTION_ACTION} border-error-bg text-error-text hover:bg-error-bg`}
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Icon name="trash" size={18} />
+            <span className="hidden lg:inline">{t("actionsMenu.delete")}</span>
           </button>
         </div>
       ) : null}
@@ -179,39 +217,74 @@ export function MessageList({
         onScroll={handleScroll}
       >
       <div className="mx-auto mt-auto flex w-full max-w-[920px] flex-col gap-3">
+        {search ? null : announcement ? (
+          <div className="flex justify-center py-1">
+            <span className="flex items-center gap-2 rounded-full bg-subtle px-3 py-1.5 text-caption text-ink-secondary">
+              <Icon name="bell" size={14} className="shrink-0" />
+              {t("list.announcementOn")}
+            </span>
+          </div>
+        ) : null}
         {search ? null : <DateSeparator>{t("list.today")}</DateSeparator>}
         {search && !visible.length ? (
-          <p className="py-10 text-center text-body-sm text-ink-tertiary">
-            {t("list.searchEmpty")}
-          </p>
+          <div className="flex flex-col items-center gap-3 py-16 text-center">
+            <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+              <Icon name="search" size={26} />
+            </span>
+            <strong className="font-heading text-h3 text-ink">{t("list.searchEmpty")}</strong>
+            <p className="max-w-[320px] text-body-sm text-ink-secondary">
+              {t("list.searchEmptyHint", { query: search })}
+            </p>
+          </div>
         ) : null}
-        {visible.map((message) => (
-          <Fragment key={message.id}>
-            {dividerId === message.id ? (
-              <DateSeparator>{t("actionsMenu.newMessages", { count: unread })}</DateSeparator>
-            ) : null}
-            <MessageBubble
-            message={message}
-            currentUserId={currentUserId}
-            selectionMode={selectionMode}
-            selected={selected.includes(message.id)}
-            onToggleSelect={(item) => toggleSelected(item.id)}
-            onReply={onReply}
-            onReact={onReact}
-            onRetryMessage={onRetryMessage}
-            onOpenActions={(selected, position) => {
-              const mobile = window.innerWidth <= 768;
-              const menuWidth = mobile ? 226 : 234;
-              const menuHeight = mobile ? 270 : 292;
-              setActionMessage(selected);
-              setMenuPosition({
-                x: Math.max(10, Math.min(mobile ? position.x - menuWidth / 2 : position.x, window.innerWidth - menuWidth - 10)),
-                y: Math.max(64, Math.min(mobile ? position.y - 126 : position.y, window.innerHeight - menuHeight - 10)),
-              });
-            }}
-            />
-          </Fragment>
-        ))}
+        {timeline.map((entry) =>
+          entry.kind === "assignment" ? (
+            <div key={`assignment-${entry.assignment.id}`} className="flex justify-start">
+              <HomeworkChatCard assignment={entry.assignment} />
+            </div>
+          ) : (
+            <Fragment key={entry.message.id}>
+              {dividerId === entry.message.id ? (
+                <DateSeparator>{t("actionsMenu.newMessages", { count: unread })}</DateSeparator>
+              ) : null}
+              <div ref={entry.message.id === activeMatchId ? matchRef : undefined}>
+                <MessageBubble
+                  message={entry.message}
+                  currentUserId={currentUserId}
+                  selectionMode={selectionMode}
+                  selected={selected.includes(entry.message.id)}
+                  onToggleSelect={(item) => toggleSelected(item.id)}
+                  onReply={onReply}
+                  onReact={onReact}
+                  onRetryMessage={onRetryMessage}
+                  onOpenActions={(target, position) => {
+                    const mobile = window.innerWidth <= 768;
+                    const menuWidth = mobile ? 226 : 234;
+                    const menuHeight = mobile ? 270 : 292;
+                    setActionMessage(target);
+                    setMenuPosition({
+                      x: Math.max(
+                        10,
+                        Math.min(
+                          mobile ? position.x - menuWidth / 2 : position.x,
+                          window.innerWidth - menuWidth - 10
+                        )
+                      ),
+                      y: Math.max(
+                        64,
+                        Math.min(
+                          mobile ? position.y - 126 : position.y,
+                          window.innerHeight - menuHeight - 10
+                        )
+                      ),
+                    });
+                  }}
+                  highlighted={entry.message.id === activeMatchId}
+                />
+              </div>
+            </Fragment>
+          )
+        )}
         {!search && conversation.typing && (
           <TypingIndicator name={conversation.typingName || conversation.title} />
         )}
@@ -239,6 +312,11 @@ export function MessageList({
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         variant="confirm"
+        icon={
+          <span className="grid size-11 place-items-center rounded-full bg-error-bg text-error-text">
+            <Icon name="trash" size={20} />
+          </span>
+        }
         title={t("actionsMenu.deleteTitle", { count: selected.length })}
         description={t("actionsMenu.deleteDescription")}
         footer={
@@ -257,7 +335,9 @@ export function MessageList({
                 if (capabilities?.delete) {
                   (messages ?? [])
                     .filter((message) => selected.includes(message.id))
-                    .forEach((message) => onDelete(message, "everyone"));
+                    .forEach((message) =>
+                      onDelete(message, deleteForEveryone ? "everyone" : "me")
+                    );
                 } else {
                   toast.info(t("actions.notAvailable"));
                 }
@@ -269,7 +349,17 @@ export function MessageList({
             </button>
           </>
         }
-      />
+      >
+        <label className="flex cursor-pointer items-center gap-3 text-body-sm text-ink">
+          <input
+            type="checkbox"
+            className="size-5 accent-[var(--action-primary)]"
+            checked={deleteForEveryone}
+            onChange={(event) => setDeleteForEveryone(event.target.checked)}
+          />
+          {t("actionsMenu.deleteForEveryone")}
+        </label>
+      </AppDialog>
 
       <MessageActionsMenu
         message={actionMessage}

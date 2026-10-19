@@ -17,7 +17,9 @@
     "recentlyActive": "Yaqinda faol edi",
     "searchAria": "Xabarlardan qidirish",
     "searchPlaceholder": "Xabarlardan qidirish",
-    "closeSearchAria": "Qidiruvni yopish"
+    "closeSearchAria": "Qidiruvni yopish",
+    "searchPrevAria": "Oldingi natija",
+    "searchNextAria": "Keyingi natija"
   },
   "directStatus": {
     "pending": "So'rov kutilmoqda",
@@ -73,11 +75,20 @@
     "deleteConfirm": "O‘chirish",
     "descriptionOptional": "Qisqa tavsif · ixtiyoriy",
     "joinRequests": "Qo‘shilish so‘rovlari · {{count}}",
-    "joinRequestsHint": "Taklif havolasi orqali kelganlar"
+    "joinRequestsHint": "Taklif havolasi orqali kelganlar",
+    "pinned": "Qadalgan",
+    "pinHint": "Qadalgan xabar yo‘q",
+    "tabMembers": "A’zolar — {{count}}",
+    "tabFiles": "Fayllar",
+    "tabMedia": "Media",
+    "filesEmpty": "Fayllar yo‘q",
+    "mediaEmpty": "Media yo‘q",
+    "sectionPending": "Backend tayyor bo‘lgach shu yerda ko‘rinadi"
   },
   "item": {
     "liveNow": "Dars ketmoqda",
-    "typing": "yozmoqda..."
+    "typing": "yozmoqda...",
+    "mentionTitle": "Sizni eslatib o‘tishdi"
   },
   "newDialog": {
     "title": "Yangi guruh",
@@ -111,7 +122,10 @@
     "loadError": "Xabarlar yuklanmadi",
     "loadErrorHint": "Bir ozdan so'ng yana urinib ko'ring.",
     "retry": "Qayta urinish",
-    "searchEmpty": "Xabar topilmadi"
+    "searchEmpty": "Hech narsa topilmadi",
+    "searchEmptyHint": "“{{query}}” bo‘yicha xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
+    "announcementOn": "E’lon rejimi yoqildi — faqat o‘qituvchilar yozadi",
+    "announcementLocked": "Bu guruhda faqat o‘qituvchilar yozishi mumkin"
   },
   "composer": {
     "editingLabel": "Xabarni tahrirlash",
@@ -130,7 +144,10 @@
     "saveEditAria": "Tahrirlangan xabarni saqlash",
     "sendAria": "Xabarni yuborish",
     "attachUnavailable": "Fayl yuborish hozircha mavjud emas",
-    "voiceUnavailable": "Ovozli xabar hozircha mavjud emas"
+    "voiceUnavailable": "Ovozli xabar hozircha mavjud emas",
+    "recordCancel": "Yozuvni bekor qilish",
+    "recordSend": "Ovozli xabarni yuborish",
+    "micDenied": "Mikrofonga ruxsat berilmadi"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -155,7 +172,8 @@
     "newMessages": "{{count}} ta yangi xabar",
     "scrollDown": "Pastga tushish",
     "mentionAria": "Eslatib o‘tish",
-    "voiceAria": "Ovozli xabar"
+    "voiceAria": "Ovozli xabar",
+    "selectedMessages": "{{count}} ta xabar tanlandi"
   },
   "bubble": {
     "edited": "tahrirlangan",
@@ -174,7 +192,11 @@
   "attachment": {
     "openAria": "{{name}} — ochish",
     "openSuffix": "ochish",
-    "uploadFailed": "Yuklanmadi"
+    "uploadFailed": "Yuklanmadi",
+    "voicePlay": "Ovozli xabarni tinglash",
+    "voicePause": "To‘xtatish",
+    "voiceFailed": "Ovozli xabar yuklanmadi",
+    "uploading": "Yuklanmoqda..."
   },
   "removedFromGroup": "Siz bu guruhdan chiqarildingiz",
   "directPage": {

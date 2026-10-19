@@ -9,9 +9,11 @@ import { messageApi } from "../api/message.api";
 export function MessageAttachment({
   attachment,
   failed = false,
+  uploading = false,
 }: {
   attachment: Attachment;
   failed?: boolean;
+  uploading?: boolean;
 }) {
   const { t } = useTranslation("chat");
   const [open, setOpen] = useState(false);
@@ -44,7 +46,9 @@ export function MessageAttachment({
           >
             {failed
               ? `${t("attachment.uploadFailed")} · ${fileKindLabel(kind)}`
-              : `${fileKindLabel(kind)} · ${t("attachment.openSuffix")}`}
+              : uploading
+                ? t("attachment.uploading")
+                : `${fileKindLabel(kind)} · ${t("attachment.openSuffix")}`}
           </small>
         </span>
         <span
@@ -55,6 +59,12 @@ export function MessageAttachment({
           <Icon name={failed ? "refresh" : "download"} size={16} />
         </span>
       </button>
+
+      {uploading && !failed ? (
+        <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-muted">
+          <span className="block h-full w-1/3 animate-[pulse_1.1s_ease-in-out_infinite] rounded-full bg-action" />
+        </span>
+      ) : null}
 
       <FileViewer
         open={open}

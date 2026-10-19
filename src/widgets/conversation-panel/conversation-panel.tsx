@@ -47,6 +47,11 @@ export interface ConversationPanelProps {
   hidden?: boolean;
 }
 
+function mentionsMe(lastMessage: string, username?: string | null): boolean {
+  if (!username) return false;
+  return new RegExp(`@${username}\\b`, "i").test(lastMessage || "");
+}
+
 export function ConversationPanel({ role = "teacher", hidden = false }: ConversationPanelProps) {
   const { t } = useTranslation("chat");
   const FILTERS = useFilters();
@@ -218,7 +223,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
           Array.from({ length: 6 }, (_, index) => (
             <div
               key={index}
-              className="flex h-[82px] shrink-0 animate-pulse items-center gap-3.5 px-1 py-4"
+              className="flex shrink-0 animate-pulse items-center gap-3.5 rounded-2xl border border-line bg-surface p-4"
             >
               <span className="size-12 shrink-0 rounded-[14px] bg-muted" />
               <div className="flex min-w-0 flex-1 flex-col gap-2.5">
@@ -260,6 +265,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                   live={Boolean(conversation.courseId && liveCourses.has(conversation.courseId))}
                   muted={mutedRooms.includes(conversation.id)}
                   pinned={pinnedRooms.includes(conversation.id)}
+                  mentioned={mentionsMe(conversation.lastMessage, user?.username)}
                   onOpenActions={setActionsFor}
                 />
               ))}

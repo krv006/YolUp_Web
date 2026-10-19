@@ -123,7 +123,7 @@ export function GroupWorkspace({
     { course: courseId, page_size: 100 },
     activeTab === "lessons" || activeTab === "attendance"
   );
-  const assignments = useAssignments(courseId, activeTab === "assignments");
+  const assignments = useAssignments(courseId, activeTab === "assignments" || activeTab === "chat");
   const attendance = useAttendance({ page_size: 100 }, activeTab === "attendance");
 
   async function send(payload: SendMessagePayload) {
@@ -199,6 +199,7 @@ export function GroupWorkspace({
               onDelete={() => undefined}
               onReact={() => undefined}
               capabilities={{ reply: true, edit: false, delete: false, react: false }}
+              assignments={assignments.data}
             />
           ) : null}
           {activeTab === "lessons" ? (
