@@ -8,10 +8,15 @@ import {
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation, useParams } from "react-router-dom";
-import { ConversationRail, type ConversationSection } from "@/modules/conversation";
+import {
+  ConversationRail,
+  NewConversationDialog,
+  useNewConversationStore,
+  type ConversationSection,
+} from "@/modules/conversation";
+import { StudentEnrollmentDialog } from "@/modules/student";
 import { ConversationPanel } from "@/widgets/conversation-panel";
 import { ConversationTopbar } from "@/widgets/conversation-topbar";
-import { AccountMenu } from "@/widgets/account-menu";
 import { STORAGE_KEYS } from "@/shared/constants";
 import { storage } from "@/shared/lib";
 import type { ConversationRole } from "@/shared/types";
@@ -27,8 +32,11 @@ const DEFAULT_WIDTH = 400;
 
 function sectionFromPath(pathname: string): ConversationSection {
   if (pathname.endsWith("/schedule")) return "schedule";
+  if (pathname.includes("/profile")) return "profile";
   if (
     pathname.endsWith("/workspace") ||
+    pathname.endsWith("/search") ||
+    pathname.endsWith("/notifications") ||
     pathname.endsWith("/quizzes") ||
     pathname.endsWith("/ai") ||
     pathname.endsWith("/analytics") ||
@@ -43,8 +51,6 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
   const { t } = useTranslation("nav");
   const { conversationId } = useParams();
   const { pathname } = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const section = sectionFromPath(pathname);
   const wideSection = section !== "chat";
   const storageKey = WIDTH_KEYS[role] ?? WIDTH_KEYS.teacher;
@@ -55,6 +61,8 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
       : DEFAULT_WIDTH;
   });
   const [resizing, setResizing] = useState(false);
+  const newGroupOpen = useNewConversationStore((state) => state.open);
+  const setNewGroupOpen = useNewConversationStore((state) => state.setOpen);
 
   useEffect(() => {
     if (!resizing) return undefined;
@@ -101,11 +109,10 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
         role={role}
         section={section}
         hiddenOnMobile={Boolean(conversationId)}
-        onOpenMenu={() => setMenuOpen(true)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <ConversationTopbar role={role} title={t(`titles.${section}`)} />
+        <ConversationTopbar role={role} section={section} title={t(`titles.${section}`)} />
 
         <div className="flex min-h-0 flex-1">
           {wideSection ? null : <ConversationPanel role={role} hidden={Boolean(conversationId)} />}
@@ -146,16 +153,12 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
         </div>
       </div>
 
-      <AccountMenu
-        open={menuOpen}
-        onOpenChange={setMenuOpen}
-        profileOpen={profileOpen}
-        onProfileOpenChange={setProfileOpen}
-        roleLabel={role === "teacher" ? t("roles.teacher") : t("roles.student")}
-        workspaceLabel={
-          role === "teacher" ? t("rail.teacherWorkspace") : t("rail.studentWorkspace")
-        }
-      />
+      {role === "teacher" ? (
+        <NewConversationDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />
+      ) : (
+        <StudentEnrollmentDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />
+      )}
+
     </div>
   );
 }

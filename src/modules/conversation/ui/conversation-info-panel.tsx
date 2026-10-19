@@ -17,6 +17,7 @@ import {
 import { useChatUiStore } from "@/modules/message";
 import {
   DIRECT_STATUS,
+  InviteStudentsDialog,
   useDirectStatusLabel,
   useRespondDirect,
   useSetRoomImage,
@@ -60,6 +61,7 @@ export function ConversationInfoPanel({
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [requestsOpen, setRequestsOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [courseForm, setCourseForm] = useState<CourseFormInput>({
     title: "",
     subject: "",
@@ -246,9 +248,9 @@ export function ConversationInfoPanel({
                   {muted ? t("info.muteOn") : t("info.muteOff")}
                 </button>
                 {teacherGroup ? (
-                  <button className={TILE} onClick={beginEdit}>
-                    <Icon name="edit" size={20} className="text-action" />
-                    {t("info.editCourse")}
+                  <button className={TILE} onClick={() => setInviteOpen(true)}>
+                    <Icon name="add" size={20} className="text-action" />
+                    {t("info.invite")}
                   </button>
                 ) : null}
               </div>
@@ -406,6 +408,12 @@ export function ConversationInfoPanel({
           </div>
         </DialogContent>
       </Dialog>
+
+      <InviteStudentsDialog
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+        title={conversation.title}
+      />
 
       <JoinRequestsDialog
         courseId={conversation.courseId}

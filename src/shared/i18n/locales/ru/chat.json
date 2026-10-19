@@ -80,7 +80,7 @@
     "typing": "печатает..."
   },
   "newDialog": {
-    "title": "Новый курс и группа",
+    "title": "Новая группа",
     "description": "После создания курса сервер автоматически откроет его групповой чат.",
     "pendingEnrollments": "ОЖИДАЮЩИЕ ЗАЯВКИ",
     "decline": "Отклонить",
@@ -88,13 +88,23 @@
     "createdToast": "Курс и групповой чат созданы",
     "noteTitle": "Новое учебное пространство",
     "noteDescription": "Чат, уроки, задания и ученики — всё в одном курсе.",
-    "courseNameLabel": "Название курса",
-    "courseNamePlaceholder": "Например: Английский — Intermediate",
+    "courseNameLabel": "Название группы",
+    "courseNamePlaceholder": "Например: Математика, вечерняя группа",
     "subjectLabel": "Предмет",
     "descriptionLabel": "Краткое описание",
     "descriptionPlaceholder": "Цель и направление курса...",
     "cancel": "Отмена",
-    "create": "Создать курс"
+    "create": "Создать группу",
+    "lessonsPerWeekLabel": "Занятий в неделю",
+    "lessonsPerWeekValue": "{{count}}",
+    "feeLabel": "Ежемесячная оплата (необязательно)",
+    "feePlaceholder": "450 000 сум",
+    "inviteTitle": "Пригласите учеников",
+    "inviteDescription": "Ученики, перешедшие по ссылке, автоматически попадут в группу «{{title}}».",
+    "inviteCopy": "Копировать",
+    "inviteCopied": "Ссылка скопирована",
+    "inviteShare": "Поделиться ссылкой",
+    "invitePending": "Ссылка-приглашение появится, когда её добавит бэкенд"
   },
   "list": {
     "today": "Сегодня",

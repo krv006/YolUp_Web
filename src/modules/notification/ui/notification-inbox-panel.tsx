@@ -44,20 +44,26 @@ function groupKeyOf(value: string): GroupKey {
 export interface NotificationInboxPanelProps {
   onOpenLink?: (link: NotificationLink) => void;
   onClose: () => void;
-  /** Rendered inside a dialog that already shows the title. */
+  /** Rendered inside a dialog or page that already shows the title. */
   embedded?: boolean;
+  /** Fills the available width instead of the popover's fixed one. */
+  fullWidth?: boolean;
+  unreadOnly?: boolean;
 }
 
 export function NotificationInboxPanel({
   onOpenLink,
   onClose,
   embedded = false,
+  fullWidth = false,
+  unreadOnly = false,
 }: NotificationInboxPanelProps) {
   const { t } = useTranslation("notification");
   const inbox = useNotificationInbox({ page_size: 30 });
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
-  const items = inbox.data?.items ?? [];
+  const all = inbox.data?.items ?? [];
+  const items = unreadOnly ? all.filter((item) => !item.isRead) : all;
   const unread = items.filter((item) => !item.isRead);
 
   const groups = (["today", "yesterday", "earlier"] as GroupKey[])
@@ -74,7 +80,9 @@ export function NotificationInboxPanel({
 
   return (
     <div
-      className={`flex max-h-[520px] flex-col overflow-hidden ${embedded ? "w-full" : "w-[360px]"}`}
+      className={`flex flex-col overflow-hidden ${
+        fullWidth ? "h-full w-full" : `max-h-[520px] ${embedded ? "w-full" : "w-[360px]"}`
+      }`}
     >
       <div className="flex items-center gap-3 px-5 pt-4 pb-3">
         {embedded ? (

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -7,11 +6,9 @@ import {
   ConversationActionsSheet,
   ConversationItem,
   matchesConversationFilter,
-  NewConversationDialog,
   useConversationFilter,
   useConversations,
   useConversationPrefsStore,
-  useNewConversationStore,
   useRequestDirect,
   useTeachersForDirect,
   type ConversationFilter,
@@ -21,7 +18,6 @@ import { useLiveLessons } from "@/modules/lesson";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { useAuth } from "@/modules/auth";
-import { StudentEnrollmentDialog } from "@/modules/student";
 import type { Conversation, ConversationRole } from "@/shared/types";
 
 type GroupKey = "today" | "yesterday" | "earlier";
@@ -56,8 +52,6 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
   const FILTERS = useFilters();
   const [search, setSearch] = useState("");
   const { filter, setFilter } = useConversationFilter();
-  const dialogOpen = useNewConversationStore((state) => state.open);
-  const setDialogOpen = useNewConversationStore((state) => state.setOpen);
   const { conversationId } = useParams();
   const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
   const [online, setOnline] = useState(() => navigator.onLine);
@@ -316,25 +310,9 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
         )}
       </div>
 
-      {data.length > 0 ? (
-        <motion.button
-          className="absolute right-5 bottom-5 hidden size-14 place-items-center rounded-full bg-action text-on-action shadow-lg lg:grid"
-          onClick={() => setDialogOpen(true)}
-          aria-label={isTeacher ? t("panel.newGroupAria") : t("panel.findTeacherAria")}
-          whileHover={{ y: -3, scale: 1.03 }}
-          whileTap={{ scale: 0.94 }}
-        >
-          <Icon name="add" size={22} />
-        </motion.button>
-      ) : null}
 
       <ConversationActionsSheet conversation={actionsFor} onClose={() => setActionsFor(null)} />
 
-      {isTeacher ? (
-        <NewConversationDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      ) : (
-        <StudentEnrollmentDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-      )}
     </section>
   );
 }

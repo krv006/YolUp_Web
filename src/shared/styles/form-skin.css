@@ -51,6 +51,11 @@
   font-size: var(--fs-body);
 }
 
+.field-group input,
+.field-group select {
+  padding: 0 16px;
+}
+
 .field-group textarea {
   padding: 14px 16px;
   line-height: 1.5;
@@ -232,4 +237,39 @@
 .star-rating svg.is-filled {
   color: var(--accent-saffron-strong);
   fill: var(--accent-saffron-strong);
+}
+
+/* any field inside the redesigned dialogs keeps its inner spacing */
+[data-slot="dialog-content"] input:not([type="checkbox"]):not([type="radio"]),
+[data-slot="dialog-content"] textarea,
+.group-action-form input,
+.group-action-form textarea {
+  padding-inline: 16px;
+}
+
+[data-slot="dialog-content"] .input-shell input,
+[data-slot="dialog-content"] .form-picker-trigger input,
+[data-slot="dialog-content"] label > span + span input,
+.group-action-form .form-picker-trigger input,
+.group-action-form .duration-picker-input {
+  padding-inline: 0;
+}
+
+[data-slot="dialog-content"] textarea,
+.group-action-form textarea {
+  padding-block: 14px;
+}
+
+/* legacy dialogs: the same inner spacing for plain fields */
+.dialog-content input:not([type="checkbox"]):not([type="radio"]),
+.dialog-content textarea {
+  padding-inline: 16px;
+}
+
+.dialog-content .input-shell input,
+.dialog-content .input-shell textarea,
+.dialog-content .form-picker-trigger input,
+.dialog-content .duration-picker-input,
+.dialog-content .select-picker-search input {
+  padding-inline: 0;
 }

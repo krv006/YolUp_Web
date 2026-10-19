@@ -1,21 +1,22 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { GraduationCap, Sparkles } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { conversationApi, conversationKeys } from "@/modules/conversation";
-import { useCourseRequests, useRespondCourseRequest, useSubjects } from "@/modules/course";
+import { useSubjects } from "@/modules/course";
 import type { Conversation } from "@/shared/types";
-import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 
 interface GroupDraft {
   name: string;
   subject: string;
-  description: string;
+  lessonsPerWeek: string;
+  fee: string;
 }
+
+const EMPTY: GroupDraft = { name: "", subject: "", lessonsPerWeek: "3", fee: "" };
 
 export interface NewConversationDialogProps {
   open: boolean;
@@ -24,18 +25,16 @@ export interface NewConversationDialogProps {
 
 export function NewConversationDialog({ open, onOpenChange }: NewConversationDialogProps) {
   const { t } = useTranslation("chat");
-  const [group, setGroup] = useState<GroupDraft>({ name: "", subject: "", description: "" });
+  const [group, setGroup] = useState<GroupDraft>(EMPTY);
   const navigate = useNavigate();
   const client = useQueryClient();
-  const requests = useCourseRequests({ page_size: 20 }, open);
   const subjects = useSubjects(open);
-  const respond = useRespondCourseRequest();
   const create = useMutation({
     mutationFn: conversationApi.createGroup.bind(conversationApi),
     onSuccess: (room: Conversation) => {
       client.invalidateQueries({ queryKey: conversationKeys.all });
       onOpenChange(false);
-      setGroup({ name: "", subject: "", description: "" });
+      setGroup(EMPTY);
       navigate(`/teacher/chats/${room.id}`);
       toast.success(t("newDialog.createdToast"));
     },
@@ -45,104 +44,89 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
     setGroup((current) => ({ ...current, [field]: value }));
   }
 
+  function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!group.name.trim() || !group.subject.trim()) return;
+    create.mutate({ name: group.name, subject: group.subject, description: "" });
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {open ? (
-        <DialogContent title={t("newDialog.title")} description={t("newDialog.description")}>
-          <motion.div initial={{ opacity: 0, y: 7 }} animate={{ opacity: 1, y: 0 }}>
-            {requests.data?.items?.length ? (
-              <section className="enrollment-request-box">
-                <span className="dialog-section-label">{t("newDialog.pendingEnrollments")}</span>
-                {requests.data.items.map((request) => (
-                  <article key={request.id}>
-                    <div>
-                      <strong>{request.student.name}</strong>
-                      <small>
-                        {request.courseTitle} · @{request.student.username}
-                      </small>
-                    </div>
-                    <div className="inline-actions">
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        loading={respond.isPending}
-                        onClick={() => respond.mutate({ enrollmentId: request.id, action: "decline" })}
-                      >
-                        {t("newDialog.decline")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        loading={respond.isPending}
-                        onClick={() => respond.mutate({ enrollmentId: request.id, action: "approve" })}
-                      >
-                        {t("newDialog.approve")}
-                      </Button>
-                    </div>
-                  </article>
-                ))}
-              </section>
-            ) : null}
-            <form
-              className="create-group-form"
-              onSubmit={(event) => {
-                event.preventDefault();
-                if (group.name.trim() && group.subject.trim()) create.mutate(group);
-              }}
-            >
-              <div className="group-create-note">
-                <span>
-                  <Sparkles size={17} />
-                </span>
-                <p>
-                  <strong>{t("newDialog.noteTitle")}</strong>
-                  <small>{t("newDialog.noteDescription")}</small>
-                </p>
-              </div>
-              <label>
-                {t("newDialog.courseNameLabel")}
-                <input
-                  autoFocus
-                  value={group.name}
-                  onChange={(event) => update("name", event.target.value)}
-                  placeholder={t("newDialog.courseNamePlaceholder")}
-                />
-              </label>
-              <SelectPicker
-                label={t("newDialog.subjectLabel")}
-                icon={GraduationCap}
-                searchable
-                value={group.subject}
-                onChange={(value) => update("subject", value)}
-                options={(subjects.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
-              />
-              <label>
-                {t("newDialog.descriptionLabel")}
-                <textarea
-                  rows={3}
-                  value={group.description}
-                  onChange={(event) => update("description", event.target.value)}
-                  placeholder={t("newDialog.descriptionPlaceholder")}
-                />
-              </label>
-              {create.isError || requests.isError ? (
-                <div className="form-alert">{create.error?.message || requests.error?.message}</div>
-              ) : null}
-              <div className="dialog-actions">
-                <Button type="button" variant="ghost" onClick={() => onOpenChange(false)}>
-                  {t("newDialog.cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  loading={create.isPending}
-                  disabled={!group.name.trim() || !group.subject.trim()}
-                >
-                  {t("newDialog.create")}
-                </Button>
-              </div>
-            </form>
-          </motion.div>
-        </DialogContent>
-      ) : null}
-    </Dialog>
+    <AppDialog
+      open={open}
+      onOpenChange={(next) => {
+        onOpenChange(next);
+        if (!next) setGroup(EMPTY);
+      }}
+      title={t("newDialog.title")}
+      footer={
+        <>
+          <button
+            type="button"
+            className={dialogButton.secondary}
+            onClick={() => onOpenChange(false)}
+          >
+            {t("newDialog.cancel")}
+          </button>
+          <button
+            type="submit"
+            form="new-group-form"
+            className={dialogButton.primary}
+            disabled={!group.name.trim() || !group.subject.trim() || create.isPending}
+          >
+            {t("newDialog.create")}
+          </button>
+        </>
+      }
+    >
+      <form id="new-group-form" className="flex flex-col gap-4" onSubmit={submit}>
+        <label className="field-group">
+          <span>{t("newDialog.courseNameLabel")}</span>
+          <input
+            autoFocus
+            value={group.name}
+            onChange={(event) => update("name", event.target.value)}
+            placeholder={t("newDialog.courseNamePlaceholder")}
+          />
+        </label>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <SelectPicker
+            label={t("newDialog.subjectLabel")}
+            searchable
+            value={group.subject}
+            onChange={(value) => update("subject", value)}
+            options={(subjects.data ?? []).map((item) => ({
+              value: item.value,
+              label: item.label,
+            }))}
+          />
+          <SelectPicker
+            label={t("newDialog.lessonsPerWeekLabel")}
+            value={group.lessonsPerWeek}
+            onChange={(value) => update("lessonsPerWeek", value)}
+            options={[1, 2, 3, 4, 5, 6, 7].map((count) => ({
+              value: String(count),
+              label: t("newDialog.lessonsPerWeekValue", { count }),
+            }))}
+          />
+        </div>
+
+        <label className="field-group">
+          <span>{t("newDialog.feeLabel")}</span>
+          <input
+            value={group.fee}
+            onChange={(event) => update("fee", event.target.value)}
+            placeholder={t("newDialog.feePlaceholder")}
+            inputMode="numeric"
+          />
+        </label>
+
+        {create.isError ? (
+          <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
+            {create.error.message}
+          </p>
+        ) : null}
+      </form>
+    </AppDialog>
   );
 }

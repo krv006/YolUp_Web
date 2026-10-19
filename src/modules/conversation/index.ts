@@ -28,3 +28,4 @@ export { ConversationItem } from "./ui/conversation-item";
 export { ConversationRail } from "./ui/conversation-rail";
 export type { ConversationRailProps, ConversationSection } from "./ui/conversation-rail";
 export { NewConversationDialog } from "./ui/new-conversation-dialog";
+export { InviteStudentsDialog } from "./ui/invite-students-dialog";

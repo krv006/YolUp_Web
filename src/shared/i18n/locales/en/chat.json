@@ -80,7 +80,7 @@
     "typing": "typing..."
   },
   "newDialog": {
-    "title": "New course & group",
+    "title": "New group",
     "description": "Once the course is created, the backend automatically opens its group chat.",
     "pendingEnrollments": "PENDING ENROLLMENTS",
     "decline": "Decline",
@@ -88,13 +88,23 @@
     "createdToast": "Course and group chat created",
     "noteTitle": "A new learning space",
     "noteDescription": "Chat, lessons, homework and students, all in one course.",
-    "courseNameLabel": "Course name",
-    "courseNamePlaceholder": "E.g. English — Intermediate",
+    "courseNameLabel": "Group name",
+    "courseNamePlaceholder": "For example: Maths, evening group",
     "subjectLabel": "Subject",
     "descriptionLabel": "Short description",
     "descriptionPlaceholder": "The course's goal and direction...",
     "cancel": "Cancel",
-    "create": "Create course"
+    "create": "Create the group",
+    "lessonsPerWeekLabel": "Lessons per week",
+    "lessonsPerWeekValue": "{{count}}",
+    "feeLabel": "Monthly fee (optional)",
+    "feePlaceholder": "450 000 soʻm",
+    "inviteTitle": "Invite students",
+    "inviteDescription": "Students who follow the link join the “{{title}}” group automatically.",
+    "inviteCopy": "Copy",
+    "inviteCopied": "Link copied",
+    "inviteShare": "Share the link",
+    "invitePending": "The invite link appears once the backend provides it"
   },
   "list": {
     "today": "Today",

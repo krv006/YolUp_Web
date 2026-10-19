@@ -80,7 +80,7 @@
     "typing": "yozmoqda..."
   },
   "newDialog": {
-    "title": "Yangi kurs va guruh",
+    "title": "Yangi guruh",
     "description": "Kurs yaratilganda backend uning guruh chatini avtomatik ochadi.",
     "pendingEnrollments": "KUTILAYOTGAN YOZILISHLAR",
     "decline": "Rad etish",
@@ -89,12 +89,22 @@
     "noteTitle": "Yangi o'quv maydoni",
     "noteDescription": "Chat, darslar, vazifalar va o'quvchilar bitta kursda.",
     "courseNameLabel": "Guruh nomi",
-    "courseNamePlaceholder": "Masalan: Ingliz tili — Intermediate",
+    "courseNamePlaceholder": "Masalan: Matematika, kechki guruh",
     "subjectLabel": "Fan",
     "descriptionLabel": "Qisqa tavsif",
     "descriptionPlaceholder": "Kurs maqsadi va yo'nalishi...",
     "cancel": "Bekor qilish",
-    "create": "Kurs yaratish"
+    "create": "Guruh yaratish",
+    "lessonsPerWeekLabel": "Haftasiga darslar",
+    "lessonsPerWeekValue": "{{count}} ta",
+    "feeLabel": "Oylik to‘lov (ixtiyoriy)",
+    "feePlaceholder": "450 000 so‘m",
+    "inviteTitle": "O‘quvchilarni taklif qiling",
+    "inviteDescription": "Havola orqali qo‘shilgan o‘quvchilar avtomatik ravishda “{{title}}” guruhiga tushadi.",
+    "inviteCopy": "Nusxalash",
+    "inviteCopied": "Havola nusxalandi",
+    "inviteShare": "Havolani ulashish",
+    "invitePending": "Taklif havolasi backend tayyor bo‘lgach chiqadi"
   },
   "list": {
     "today": "Bugun",
