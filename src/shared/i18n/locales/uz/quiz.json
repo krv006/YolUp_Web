@@ -319,7 +319,7 @@
       "ielts": "IELTS Academic",
       "sat": "Digital SAT"
     },
-    "jobsTitle": "Mening AI testlarim",
+    "jobsTitle": "Yaratilayotgan testlar",
     "jobsEmpty": "Hali AI bilan yaratilgan test yo'q.",
     "jobsLoading": "Yuklanmoqda…",
     "jobsError": "Ro'yxatni yuklab bo'lmadi",
@@ -377,7 +377,13 @@
     "myTestsEmpty": "Hali AI test yaratilmagan",
     "myTestsHint": "AI yaratgan testlar shu yerda qoralama sifatida ko‘rinadi.",
     "readyBadge": "Tayyor",
-    "openTest": "Testni ochish"
+    "openTest": "Testni ochish",
+    "fileHintShort": "Har biri 20 MB gacha, 5 tagacha",
+    "fileCount": "{{count}} / {{max}} fayl",
+    "countDecrease": "Kamaytirish",
+    "countIncrease": "Ko‘paytirish",
+    "emptyTitle": "Hali AI test yo‘q",
+    "emptyHint": "Yuqoridagi formani to‘ldirib, birinchi testingizni yarating."
   },
   "assignDialog": {
     "title": "Testni guruhga berish",

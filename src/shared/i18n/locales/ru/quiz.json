@@ -319,7 +319,7 @@
       "ielts": "IELTS Academic",
       "sat": "Digital SAT"
     },
-    "jobsTitle": "Мои тесты с ИИ",
+    "jobsTitle": "Тесты в обработке",
     "jobsEmpty": "Тестов, созданных с ИИ, пока нет.",
     "jobsLoading": "Загрузка…",
     "jobsError": "Не удалось загрузить список",
@@ -377,7 +377,13 @@
     "myTestsEmpty": "ИИ-тесты ещё не созданы",
     "myTestsHint": "Созданные ИИ тесты появятся здесь как черновики.",
     "readyBadge": "Готов",
-    "openTest": "Открыть тест"
+    "openTest": "Открыть тест",
+    "fileHintShort": "До 20 МБ каждый, до 5 файлов",
+    "fileCount": "{{count}} / {{max}} файлов",
+    "countDecrease": "Уменьшить",
+    "countIncrease": "Увеличить",
+    "emptyTitle": "Пока нет AI-тестов",
+    "emptyHint": "Заполните форму выше и создайте первый тест."
   },
   "assignDialog": {
     "title": "Дать тест группе",

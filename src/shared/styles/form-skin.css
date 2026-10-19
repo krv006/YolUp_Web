@@ -516,3 +516,72 @@ textarea.quiz-page-question-text:focus {
 .select-picker-sheet .picker-mini-heading { display: none; }
 .select-picker-sheet .select-picker-options { max-height: 60dvh; overflow-y: auto; }
 .select-picker-sheet .select-picker-options > button { min-height: 52px; }
+
+.ai-quiz-dropzone {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 18px 16px;
+  border: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bg-subtle);
+  color: var(--action-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.ai-quiz-dropzone-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--action-primary);
+  color: var(--action-primary-foreground);
+}
+.ai-quiz-dropzone strong { font-size: var(--fs-sm); font-weight: 650; }
+.ai-quiz-dropzone small { color: var(--text-tertiary); font-size: var(--fs-xs); font-weight: 500; }
+.ai-quiz-file-count { text-align: right; color: var(--text-tertiary); }
+
+.ai-quiz-stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+}
+.ai-quiz-stepper > button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.ai-quiz-stepper > button:disabled { opacity: .4; cursor: not-allowed; }
+.ai-quiz-stepper > input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  font-weight: 700;
+  outline: 0;
+}
+.ai-quiz-stepper > input::-webkit-outer-spin-button,
+.ai-quiz-stepper > input::-webkit-inner-spin-button { appearance: none; margin: 0; }
+
+@media (max-width: 1023px) {
+  .ai-quiz-row { flex-direction: column; gap: 14px; }
+  .ai-quiz-row > .ai-quiz-field { width: 100%; min-width: 0; }
+}
+
+@media (max-width: 1023px) {
+  .ai-quiz-form > .dialog-actions { display: block; }
+  .ai-quiz-form > .dialog-actions > button { width: 100%; justify-content: center; }
+}

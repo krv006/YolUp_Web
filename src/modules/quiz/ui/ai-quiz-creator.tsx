@@ -1,16 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import {
-  BookOpen,
-  CircleAlert,
-  FileText,
-  FileUp,
-  GraduationCap,
-  Library,
-  Loader2,
-  Sparkles,
-  Users,
-  X,
-} from "lucide-react";
+import { BookOpen, CircleAlert, FileText, FileUp, GraduationCap, Library, Loader2, Minus, Plus, Sparkles, Users, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
@@ -312,13 +301,16 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
             />
             <button
               type="button"
-              className={`quiz-generate-button quiz-generate-button--ghost ${files.length ? "is-active" : ""}`}
+              className="ai-quiz-dropzone"
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileUp size={14} />{" "}
-              {files.length === 0
-                ? t("aiPage.chooseFiles")
-                : t("aiPage.addMoreFiles")}
+              <span className="ai-quiz-dropzone-icon">
+                <FileUp size={18} />
+              </span>
+              <strong>
+                {files.length === 0 ? t("aiPage.chooseFiles") : t("aiPage.addMoreFiles")}
+              </strong>
+              <small>{t("aiPage.fileHintShort")}</small>
             </button>
             {files.length ? (
               <ul className="ai-quiz-files">
@@ -337,20 +329,44 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
                 ))}
               </ul>
             ) : null}
-            <small>{t("aiPage.fileHint")}</small>
+            {files.length ? (
+              <small className="ai-quiz-file-count">
+                {t("aiPage.fileCount", { count: files.length, max: MAX_FILES })}
+              </small>
+            ) : null}
           </div>
           {isSimple || useBank ? (
-            <label className="ai-quiz-field">
+            <div className="ai-quiz-field">
               <span>{t("aiPage.countLabel")}</span>
-              <input
-                type="number"
-                min={MIN_QUESTIONS}
-                max={MAX_QUESTIONS}
-                value={count}
-                onChange={(event) => setCount(Number(event.target.value))}
-              />
+              <div className="ai-quiz-stepper">
+                <button
+                  type="button"
+                  aria-label={t("aiPage.countDecrease")}
+                  disabled={count <= MIN_QUESTIONS}
+                  onClick={() => setCount(Math.max(MIN_QUESTIONS, count - 1))}
+                >
+                  <Minus size={17} />
+                </button>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  min={MIN_QUESTIONS}
+                  max={MAX_QUESTIONS}
+                  value={count}
+                  aria-label={t("aiPage.countLabel")}
+                  onChange={(event) => setCount(Number(event.target.value))}
+                />
+                <button
+                  type="button"
+                  aria-label={t("aiPage.countIncrease")}
+                  disabled={count >= MAX_QUESTIONS}
+                  onClick={() => setCount(Math.min(MAX_QUESTIONS, count + 1))}
+                >
+                  <Plus size={17} />
+                </button>
+              </div>
               <small>{t("aiPage.countHint")}</small>
-            </label>
+            </div>
           ) : null}
         </div>
 
