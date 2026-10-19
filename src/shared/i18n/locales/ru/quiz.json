@@ -40,7 +40,8 @@
     "sectionToggleAria": "Развернуть или свернуть: {{subject}}",
     "openQuestionsAria": "Открыть вопросы: {{title}}",
     "giveToGroup": "Дать группе",
-    "exportAria": "Скачать (PDF / Word / Excel)"
+    "exportAria": "Скачать (PDF / Word / Excel)",
+    "exportShort": "Скачать"
   },
   "studentPage": {
     "loading": "Загрузка тестов",
@@ -135,7 +136,8 @@
       "notEnoughOptions": "Вопрос {{number}}: недостаточно вариантов — проверьте",
       "unsupportedType": "Вопрос {{number}} не импортирован: берутся только вопросы с одним и несколькими вариантами"
     },
-    "saveDraft": "Сохранить черновик"
+    "saveDraft": "Сохранить черновик",
+    "previewLabel": "Ученик видит"
   },
   "preview": {
     "regionAria": "Как это увидит ученик",
@@ -348,7 +350,12 @@
     "bankNeedsOneFile": "Для банка тестов загрузите ровно один файл материала.",
     "levelLabel": "Сложность (целевой band)",
     "levelAny": "Стандартная (средняя)",
-    "levelTopic": "уровень band {{band}}"
+    "levelTopic": "уровень band {{band}}",
+    "myTestsTitle": "Мои ИИ-тесты",
+    "myTestsEmpty": "ИИ-тесты ещё не созданы",
+    "myTestsHint": "Созданные ИИ тесты появятся здесь как черновики.",
+    "readyBadge": "Готов",
+    "openTest": "Открыть тест"
   },
   "assignDialog": {
     "title": "Дать тест группе",

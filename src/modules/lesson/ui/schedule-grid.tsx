@@ -313,6 +313,92 @@ export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: Schedu
   );
 }
 
+export function ScheduleList({ anchor, lessons, onSelect, onSelectDay }: ScheduleViewProps) {
+  const { t } = useTranslation("lesson");
+  const months = t("list.months", { returnObjects: true }) as string[];
+  const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
+  const byDay = groupLessonsByDay(lessons);
+  const days = Array.from({ length: 7 }, (_, index) => addDays(anchor, index));
+
+  function dayLabel(day: Date): string {
+    const weekday = weekdaysLong?.[(day.getDay() + 6) % 7] ?? "";
+    const date = `${day.getDate()}-${(months[day.getMonth()] ?? "").toLowerCase()}`;
+    if (isToday(day)) return `${t("schedule.today")}, ${date} · ${weekday}`;
+    if (isSameDay(day, addDays(new Date(), 1))) return `${t("schedule.tomorrow")}, ${date} · ${weekday}`;
+    return `${date} · ${weekday}`;
+  }
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
+      {days.map((day) => {
+        const items = byDay.get(toDayKey(day)) ?? [];
+        const weekend = day.getDay() === 0 || day.getDay() === 6;
+        return (
+          <section key={day.toISOString()} className="flex flex-col gap-2">
+            <button
+              type="button"
+              className="flex items-baseline gap-3 text-left"
+              onClick={() => onSelectDay?.(day)}
+            >
+              <strong className="flex-1 truncate text-title text-ink">{dayLabel(day)}</strong>
+              <small className={`shrink-0 text-label-strong ${items.length ? "text-action" : "text-ink-tertiary"}`}>
+                {items.length
+                  ? t("schedule.lessonCountShort", { count: items.length })
+                  : weekend
+                    ? t("schedule.dayOff")
+                    : ""}
+              </small>
+            </button>
+
+            {items.length ? (
+              items.map((lesson) => (
+                <button
+                  key={lesson.id}
+                  type="button"
+                  className="flex items-start gap-3 rounded-2xl border border-line bg-surface px-4 py-3 text-left transition-colors hover:bg-subtle"
+                  onClick={() => onSelect(lesson)}
+                >
+                  <span
+                    className={`mt-0.5 h-10 w-1 shrink-0 rounded-full ${
+                      lesson.status === "live"
+                        ? "bg-error"
+                        : lesson.status === "finished"
+                          ? "bg-muted"
+                          : "bg-action"
+                    }`}
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="truncate text-label-strong text-ink">
+                      {lesson.courseTitle}
+                    </strong>
+                    <small className="truncate text-caption text-ink-tertiary">
+                      {[lesson.topic || t("schedule.online"), lesson.quizId ? t("schedule.quizAttached") : ""]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </small>
+                  </span>
+                  <span className="flex shrink-0 flex-col items-end">
+                    <strong className="font-numeric text-label-strong text-ink">{lesson.time}</strong>
+                    <small className="font-numeric text-caption text-ink-tertiary">
+                      {endTimeOf(lesson)}
+                    </small>
+                  </span>
+                </button>
+              ))
+            ) : (
+              <p className="text-body-sm text-ink-tertiary">{t("schedule.noLessonsDay")}</p>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+function endTimeOf(lesson: Lesson): string {
+  return endTime(lesson);
+}
+
 export function ScheduleEmpty({
   title,
   onCreate,

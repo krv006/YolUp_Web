@@ -34,7 +34,7 @@
     "retry": "Qayta urinish",
     "attemptCount": "Urinishlar",
     "avgPercentage": "O'rtacha natija",
-    "recentAttempts": "SO'NGGI URINISHLAR",
+    "recentAttempts": "So‘nggi urinishlar",
     "noAttempts": "Hali test yechilmagan.",
     "avgRating": "O'rtacha baho",
     "ratingCount": "Baholar soni",
@@ -42,11 +42,12 @@
     "studentCount": "O'quvchilar",
     "lessonsFinished": "O'tilgan darslar",
     "reliability": "Ishonchlilik",
-    "byCourse": "KURSLAR BO'YICHA",
+    "byCourse": "Kurslar bo‘yicha",
     "course": "Kurs",
     "quizAvg": "Test o'rtachasi",
     "attendance": "Davomat",
-    "noCourses": "Kurs topilmadi."
+    "noCourses": "Kurs topilmadi.",
+    "studentCountValue": "{{count}} o‘quvchi"
   },
   "createGroup": "Guruh yaratish",
   "statGroups": "Guruh",

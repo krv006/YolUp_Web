@@ -217,6 +217,14 @@
     "selectGroup": "Guruhni tanlang",
     "durationLabel": "Davomiyligi",
     "inHours": "{{count}} soat qoldi",
-    "inDays": "{{count}} kun qoldi"
+    "inDays": "{{count}} kun qoldi",
+    "list": "Ro‘yxat",
+    "tomorrow": "Ertaga",
+    "dayOff": "Dam olish",
+    "noLessonsDay": "Bu kunda dars yo‘q",
+    "lessonCountShort": "{{count}} ta",
+    "recurring": "Takrorlanuvchi",
+    "quizAttached": "Test biriktirilgan",
+    "online": "Onlayn"
   }
 }

@@ -34,7 +34,7 @@
     "retry": "Повторить",
     "attemptCount": "Попытки",
     "avgPercentage": "Средний результат",
-    "recentAttempts": "ПОСЛЕДНИЕ ПОПЫТКИ",
+    "recentAttempts": "Последние попытки",
     "noAttempts": "Тесты ещё не пройдены.",
     "avgRating": "Средняя оценка",
     "ratingCount": "Всего оценок",
@@ -42,11 +42,12 @@
     "studentCount": "Ученики",
     "lessonsFinished": "Проведено уроков",
     "reliability": "Надёжность",
-    "byCourse": "ПО КУРСАМ",
+    "byCourse": "По курсам",
     "course": "Курс",
     "quizAvg": "Среднее по тестам",
     "attendance": "Посещаемость",
-    "noCourses": "Курсы не найдены."
+    "noCourses": "Курсы не найдены.",
+    "studentCountValue": "{{count}} учеников"
   },
   "createGroup": "Создать группу",
   "statGroups": "Группы",

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { addDays, addMonths, startOfDay } from "date-fns";
 
-export type ScheduleView = "day" | "week" | "month";
+export type ScheduleView = "list" | "day" | "week" | "month";
 
 interface ScheduleState {
   view: ScheduleView;
@@ -15,7 +15,7 @@ interface ScheduleState {
 }
 
 export const useScheduleStore = create<ScheduleState>((set) => ({
-  view: "week",
+  view: "list",
   anchor: startOfDay(new Date()).getTime(),
   createOpen: false,
   setView: (view) => set({ view }),
@@ -26,7 +26,7 @@ export const useScheduleStore = create<ScheduleState>((set) => ({
       const next =
         state.view === "month"
           ? addMonths(current, direction)
-          : addDays(current, state.view === "week" ? direction * 7 : direction);
+          : addDays(current, state.view === "week" || state.view === "list" ? direction * 7 : direction);
       return { anchor: startOfDay(next).getTime() };
     }),
   goToday: () => set({ anchor: startOfDay(new Date()).getTime() }),

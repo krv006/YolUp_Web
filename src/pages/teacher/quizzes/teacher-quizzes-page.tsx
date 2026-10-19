@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookOpen, ChevronDown, Download, FileQuestion, History, ListFilter, Pencil, Plus, Send, Trash2 } from "lucide-react";
+import { BookOpen, ChevronDown, Download, FileQuestion, History, ListFilter, Pencil, Send, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -25,8 +25,9 @@ import {
   quizDisplayTitle,
 } from "@/modules/quiz";
 import type { QuizImportWarning, QuizSummary } from "@/shared/types";
-import { Button, Dialog, DialogContent, LoadingFallback, PageBackLink, RouteState } from "@/shared/ui/legacy";
+import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
+import { usePageCreateStore } from "@/shared/model";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -37,6 +38,9 @@ function useQuizHighlight(quizId: string | null, ready: boolean) {
   }, [quizId, ready]);
 }
 
+const QUIZ_ACTION =
+  "flex h-11 items-center justify-center gap-2 rounded-xl px-3 text-label-strong transition-colors";
+
 export function TeacherQuizzesPage() {
   const { t, i18n } = useTranslation("quiz");
   const courses = useCourses();
@@ -44,7 +48,8 @@ export function TeacherQuizzesPage() {
   const quizzes = useQuizzes(null);
   const create = useCreateQuiz();
   const remove = useDeleteQuiz();
-  const [dialog, setDialog] = useState(false);
+  const dialog = usePageCreateStore((state) => state.open.quiz);
+  const setDialog = (value: boolean) => usePageCreateStore.getState().setOpen("quiz", value);
   const [subjectFilter, setSubjectFilter] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
@@ -119,148 +124,163 @@ export function TeacherQuizzesPage() {
   const groups = [...groupMap.values()].sort((a, b) => a.label.localeCompare(b.label, i18n.language));
 
   return (
-    <div className="portal-page">
-      <div className="portal-page-heading">
-        <div>
-          <PageBackLink />
-          <span className="portal-eyebrow">{t("teacherPage.allCourses")}</span>
-          <h1>{t("teacherPage.title")}</h1>
-          <p>{t("teacherPage.subtitle")}</p>
-        </div>
-        <div className="heading-actions quiz-heading-actions">
-          {filterOptions.length > 1 ? (
-            <div className="quiz-subject-filter">
-              <SelectPicker
-                label={t("teacherPage.subjectFilterLabel")}
-                hideLabel
-                searchable
-                icon={ListFilter}
-                value={subjectFilter}
-                onChange={setSubjectFilter}
-                options={filterOptions}
-              />
-            </div>
-          ) : null}
-          <Button onClick={() => setDialog(true)} disabled={!canCreate}>
-            <Plus size={17} /> {t("teacherPage.createButton")}
-          </Button>
-        </div>
+    <div className="flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 lg:p-6">
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="min-w-0 flex-1 text-body-sm text-ink-secondary">{t("teacherPage.subtitle")}</p>
+        {filterOptions.length > 1 ? (
+          <div className="w-full shrink-0 sm:w-[240px]">
+            <SelectPicker
+              label={t("teacherPage.subjectFilterLabel")}
+              hideLabel
+              searchable
+              icon={ListFilter}
+              value={subjectFilter}
+              onChange={setSubjectFilter}
+              options={filterOptions}
+            />
+          </div>
+        ) : null}
       </div>
 
       {groups.length ? (
-        <div className="quiz-subject-groups">
+        <div className="flex flex-col gap-3">
           {groups.map((group, index) => {
             const isOpen =
               expanded[group.key] ?? (index === 0 || group.items.some((item) => item.id === highlightId));
             const drafts = group.items.filter((item) => item.status === "draft").length;
             return (
-              <section key={group.key} className={`quiz-subject-group ${isOpen ? "is-open" : ""}`}>
+              <section
+                key={group.key}
+                className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4"
+              >
                 <button
                   type="button"
-                  className="quiz-subject-head"
+                  className="flex items-center gap-3 text-left"
                   aria-expanded={isOpen}
                   aria-label={t("teacherPage.sectionToggleAria", { subject: group.label })}
                   onClick={() => setExpanded((prev) => ({ ...prev, [group.key]: !isOpen }))}
                 >
-                  <span className="quiz-subject-icon">
-                    <BookOpen size={22} />
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+                    <BookOpen size={20} />
                   </span>
-                  <span className="quiz-subject-title">
-                    <strong>{group.label}</strong>
-                    <small>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="truncate text-title text-ink">{group.label}</strong>
+                    <small className="truncate text-caption text-ink-tertiary">
                       {t("teacherPage.sectionCount", { count: group.items.length })}
                       {drafts ? (
-                        <span className="quiz-subject-drafts">
-                          {" "}
-                          · {t("teacherPage.sectionDrafts", { count: drafts })}
+                        <span className="text-saffron-strong">
+                          {" · "}
+                          {t("teacherPage.sectionDrafts", { count: drafts })}
                         </span>
                       ) : null}
                     </small>
                   </span>
-                  <ChevronDown size={22} className="quiz-subject-chevron" />
+                  <ChevronDown
+                    size={20}
+                    className={`shrink-0 text-ink-tertiary transition-transform ${isOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
+
                 {isOpen ? (
-                  <div className="assignment-list quiz-subject-body">
+                  <div className="flex flex-col gap-3">
                     {group.items.map((item) => (
                       <motion.article
                         key={item.id}
                         data-quiz-id={item.id}
-                        className={`assignment-card is-clickable ${item.id === highlightId ? "is-highlighted" : ""}`}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={t("teacherPage.openQuestionsAria", { title: quizDisplayTitle(item) })}
-                        onClick={(event) => {
-                          if ((event.target as HTMLElement).closest("button")) return;
-                          openQuestions(item);
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.target !== event.currentTarget) return;
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            openQuestions(item);
-                          }
-                        }}
+                        className={`flex flex-col gap-3 rounded-2xl p-4 transition-colors ${
+                          item.id === highlightId ? "bg-action-subtle" : "bg-subtle"
+                        }`}
                         initial={{ opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                       >
-                        <span className="assignment-card-icon">
-                          <FileQuestion size={20} />
-                        </span>
-                        <div>
-                          <strong>
-                            {quizDisplayTitle(item)}
-                            {item.status === "draft" ? (
-                              <span className="quiz-draft-badge">{t("teacherPage.draftBadge")}</span>
+                        <button
+                          type="button"
+                          className="flex items-start gap-3 text-left"
+                          aria-label={t("teacherPage.openQuestionsAria", {
+                            title: quizDisplayTitle(item),
+                          })}
+                          onClick={() => openQuestions(item)}
+                        >
+                          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+                            <FileQuestion size={18} />
+                          </span>
+                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <strong className="flex flex-wrap items-center gap-2 text-label-strong text-ink">
+                              {quizDisplayTitle(item)}
+                              {item.status === "draft" ? (
+                                <span className="rounded-full bg-saffron-subtle px-2.5 py-0.5 text-caption-strong text-saffron-strong">
+                                  {t("teacherPage.draftBadge")}
+                                </span>
+                              ) : null}
+                            </strong>
+                            {item.description ? (
+                              <p className="line-clamp-2 text-body-sm text-ink-secondary">
+                                {item.description}
+                              </p>
                             ) : null}
-                          </strong>
-                          <p>{item.description}</p>
-                          <small>
-                            {courseTitleById.get(item.courseId) || item.subjectLabel || t("teacherPage.courseFallback")} ·{" "}
-                            {item.dueAt
-                              ? t("teacherPage.dueLabel", {
-                                  date: new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
-                                    dateStyle: "medium",
-                                    timeStyle: "short",
-                                  }).format(new Date(item.dueAt)),
-                                })
-                              : t("teacherPage.noDue")}{" "}
-                            · {t("teacherPage.questionCount", { count: item.questionCount })}
-                          </small>
+                            <small className="truncate text-caption text-ink-tertiary">
+                              {courseTitleById.get(item.courseId) ||
+                                item.subjectLabel ||
+                                t("teacherPage.courseFallback")}{" "}
+                              ·{" "}
+                              {item.dueAt
+                                ? t("teacherPage.dueLabel", {
+                                    date: new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
+                                      dateStyle: "medium",
+                                      timeStyle: "short",
+                                    }).format(new Date(item.dueAt)),
+                                  })
+                                : t("teacherPage.noDue")}{" "}
+                              · {t("teacherPage.questionCount", { count: item.questionCount })}
+                            </small>
+                          </span>
+                        </button>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          {item.courseId ? null : (
+                            <button
+                              type="button"
+                              className={`${QUIZ_ACTION} bg-action-subtle text-action`}
+                              onClick={() => setGiveTarget(item)}
+                            >
+                              <Send size={16} /> {t("teacherPage.giveToGroup")}
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            className={`${QUIZ_ACTION} border border-line bg-surface text-ink hover:bg-subtle`}
+                            onClick={() => setAttemptsOf(item)}
+                          >
+                            <History size={16} /> {t("teacherPage.attemptsButton")}
+                          </button>
+                          <button
+                            type="button"
+                            className={`${QUIZ_ACTION} border border-line bg-surface text-ink hover:bg-subtle`}
+                            onClick={() => setExportTarget(item)}
+                          >
+                            <Download size={16} /> {t("teacherPage.exportShort")}
+                          </button>
+                          <span className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              className={`${QUIZ_ACTION} flex-1 border border-line bg-surface text-ink hover:bg-subtle`}
+                              onClick={() => {
+                                setOpenOnQuestions(false);
+                                setEditTarget(item);
+                              }}
+                            >
+                              <Pencil size={16} /> {t("editDialog.editAria")}
+                            </button>
+                            <button
+                              type="button"
+                              className="grid size-11 shrink-0 place-items-center rounded-xl bg-error-bg text-error-text transition-opacity hover:opacity-80"
+                              onClick={() => setDeleteTarget(item)}
+                              aria-label={t("teacherPage.deleteAria")}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </span>
                         </div>
-                        {item.courseId ? null : (
-                          <Button size="sm" variant="secondary" onClick={() => setGiveTarget(item)}>
-                            <Send size={15} /> {t("teacherPage.giveToGroup")}
-                          </Button>
-                        )}
-                        <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(item)}>
-                          <History size={15} /> {t("teacherPage.attemptsButton")}
-                        </Button>
-                        <button
-                          className="icon-button"
-                          aria-label={t("teacherPage.exportAria")}
-                          title={t("teacherPage.exportAria")}
-                          onClick={() => setExportTarget(item)}
-                        >
-                          <Download size={16} />
-                        </button>
-                        <button
-                          className="icon-button"
-                          aria-label={t("editDialog.editAria")}
-                          title={t("editDialog.editAria")}
-                          onClick={() => {
-                            setOpenOnQuestions(false);
-                            setEditTarget(item);
-                          }}
-                        >
-                          <Pencil size={16} />
-                        </button>
-                        <button
-                          className="icon-button destructive-icon"
-                          onClick={() => setDeleteTarget(item)}
-                          aria-label={t("teacherPage.deleteAria")}
-                        >
-                          <Trash2 size={16} />
-                        </button>
                       </motion.article>
                     ))}
                   </div>
@@ -270,15 +290,29 @@ export function TeacherQuizzesPage() {
           })}
         </div>
       ) : (
-        <div className="premium-empty">
-          <FileQuestion size={30} />
-          <h3>{subjectFilter ? t("teacherPage.emptyForSubject") : t("teacherPage.emptyTitle")}</h3>
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
+          <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+            <FileQuestion size={28} />
+          </span>
+          <strong className="font-heading text-h3 text-ink">
+            {subjectFilter ? t("teacherPage.emptyForSubject") : t("teacherPage.emptyTitle")}
+          </strong>
           {subjectFilter ? (
-            <Button variant="secondary" onClick={() => setSubjectFilter("")}>
+            <button
+              type="button"
+              className="mt-1 flex h-12 items-center rounded-full border border-line bg-surface px-5 text-label-strong text-ink transition-colors hover:bg-subtle"
+              onClick={() => setSubjectFilter("")}
+            >
               {t("teacherPage.clearFilter")}
-            </Button>
+            </button>
           ) : canCreate ? (
-            <Button onClick={() => setDialog(true)}>{t("teacherPage.emptyCreateFirst")}</Button>
+            <button
+              type="button"
+              className="mt-1 flex h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+              onClick={() => setDialog(true)}
+            >
+              {t("teacherPage.emptyCreateFirst")}
+            </button>
           ) : null}
         </div>
       )}

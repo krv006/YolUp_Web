@@ -40,7 +40,8 @@
     "sectionToggleAria": "{{subject}} bo'limini ochish yoki yopish",
     "openQuestionsAria": "Savollarni ko'rish: {{title}}",
     "giveToGroup": "Guruhga berish",
-    "exportAria": "Yuklab olish (PDF / Word / Excel)"
+    "exportAria": "Yuklab olish (PDF / Word / Excel)",
+    "exportShort": "Yuklab olish"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -135,7 +136,8 @@
       "notEnoughOptions": "{{number}}-savol: variantlar yetarli emas — tekshiring",
       "unsupportedType": "{{number}}-savol import qilinmadi: faqat bitta va bir nechta tanlovli savollar olinadi"
     },
-    "saveDraft": "Qoralama saqlash"
+    "saveDraft": "Qoralama saqlash",
+    "previewLabel": "O‘quvchi ko‘radi"
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",
@@ -348,7 +350,12 @@
     "bankNeedsOneFile": "Test banki uchun aynan bitta material fayli yuklang.",
     "levelLabel": "Qiyinlik (maqsadli band)",
     "levelAny": "Standart (o'rtacha)",
-    "levelTopic": "band {{band}} darajasi"
+    "levelTopic": "band {{band}} darajasi",
+    "myTestsTitle": "Mening AI testlarim",
+    "myTestsEmpty": "Hali AI test yaratilmagan",
+    "myTestsHint": "AI yaratgan testlar shu yerda qoralama sifatida ko‘rinadi.",
+    "readyBadge": "Tayyor",
+    "openTest": "Testni ochish"
   },
   "assignDialog": {
     "title": "Testni guruhga berish",

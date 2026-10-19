@@ -8,6 +8,7 @@ import {
   RateLessonDialog,
   ScheduleDay,
   ScheduleEmpty,
+  ScheduleList,
   ScheduleMonth,
   ScheduleSidebar,
   ScheduleSkeleton,
@@ -60,6 +61,11 @@ export function SchedulePage() {
         start: startOfDay(addDays(anchor, -3)),
         end: endOfDay(addDays(anchor, 3)),
       });
+    if (view === "list")
+      return isWithinInterval(date, {
+        start: startOfDay(anchor),
+        end: endOfDay(addDays(anchor, 6)),
+      });
     return isSameMonth(date, anchor);
   });
 
@@ -78,7 +84,9 @@ export function SchedulePage() {
   }
 
   const emptyTitle =
-    view === "day"
+    view === "list"
+      ? t("schedule.emptyWeek")
+      : view === "day"
       ? t("schedule.emptyDay")
       : view === "week"
         ? t("schedule.emptyWeek")
@@ -89,10 +97,20 @@ export function SchedulePage() {
       <ScheduleSidebar
         anchor={anchor}
         rangeStart={
-          view === "day" ? anchor : view === "week" ? addDays(anchor, -3) : startOfMonth(anchor)
+          view === "day"
+            ? anchor
+            : view === "month"
+              ? startOfMonth(anchor)
+              : view === "list"
+                ? anchor
+                : addDays(anchor, -3)
         }
         rangeEnd={
-          view === "day" ? anchor : view === "week" ? addDays(anchor, 3) : endOfMonth(anchor)
+          view === "day"
+            ? anchor
+            : view === "month"
+              ? endOfMonth(anchor)
+              : addDays(anchor, view === "list" ? 6 : 3)
         }
         lessons={items}
         onSelectDay={(date) => setAnchor(date)}
@@ -122,6 +140,13 @@ export function SchedulePage() {
             title={emptyTitle}
             canCreate={canManage}
             onCreate={() => setCreateOpen(true)}
+          />
+        ) : view === "list" ? (
+          <ScheduleList
+            anchor={anchor}
+            lessons={inRange}
+            onSelect={setDetail}
+            onSelectDay={(date) => setAnchor(startOfDay(date))}
           />
         ) : view === "day" ? (
           <ScheduleDay anchor={anchor} lessons={inRange} onSelect={setDetail} />
