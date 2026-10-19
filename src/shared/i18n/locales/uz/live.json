@@ -45,7 +45,10 @@
     "canChangeLater": "Darsga kirgandan keyin ham o'zgartirishingiz mumkin.",
     "needPermission": "Darsda gapirish uchun o'qituvchidan ruxsat so'raysiz.",
     "cancel": "Bekor qilish",
-    "join": "Darsga kirish"
+    "join": "Darsga qo‘shilish",
+    "mobileTitle": "Darsga qo‘shilish",
+    "minutes": "daqiqa",
+    "recordingNote": "Dars avtomatik yoziladi — audio va video"
   },
   "connection": {
     "connecting": "Ulanmoqda…",
@@ -93,7 +96,12 @@
     "youLabel": "Siz",
     "reconnecting": "Internet uzildi — qayta ulanmoqda ({{attempt}}/{{total}}). Dars davom etmoqda.",
     "participantsCount": "Ishtirokchilar ({{count}})",
-    "moreAria": "Boshqa amallar"
+    "moreAria": "Boshqa amallar",
+    "switch": {
+      "video": "Videoga qaytish",
+      "board": "Doska",
+      "people": "Ishtirokchilar"
+    }
   },
   "mic": {
     "label": "Mikrofon",
@@ -145,7 +153,7 @@
     "teacherYou": "O‘qituvchi · Siz",
     "speaking": "Gapirmoqda",
     "raisedHand": "Qo‘l ko‘tardi",
-    "muteAll": "Ovozsiz",
+    "muteAll": "Hammasini ovozsiz",
     "invite": "Taklif qilish",
     "muteAllUnavailable": "Hammani ovozsiz qilish backendda hali mavjud emas."
   },

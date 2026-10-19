@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePreviewTracks } from "@livekit/components-react";
 import { Track, type LocalVideoTrack } from "livekit-client";
-import { Mic, MicOff, Video, VideoOff } from "lucide-react";
+import { Mic, MicOff, Video, VideoOff, Volume2, X } from "lucide-react";
 import { Trans, useTranslation } from "react-i18next";
 import { i18n } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
 import { Avatar, Button } from "@/shared/ui/legacy";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 
 export interface LessonPreJoinChoices {
   micOn: boolean;
@@ -31,6 +32,7 @@ export function LessonPreJoin({
   onCancel,
 }: LessonPreJoinProps) {
   const { t } = useTranslation("live");
+  const isCompact = useIsCompact();
   const [micOn, setMicOn] = useState(false);
   const [cameraOn, setCameraOn] = useState(false);
   const [deviceError, setDeviceError] = useState<string | null>(null);
@@ -61,7 +63,7 @@ export function LessonPreJoin({
   async function join() {
     tracks?.forEach((track) => track.stop());
 
-    if (!isTeacher) {
+    if (!isTeacher || isCompact) {
       onJoin({ micOn, cameraOn });
       return;
     }
@@ -105,6 +107,102 @@ export function LessonPreJoin({
     setDeviceError(null);
     setCameraOn((value) => !value);
   }
+
+  if (isCompact)
+    return (
+      <main
+        data-theme="dark"
+        className="dark flex h-dvh min-h-0 flex-col bg-canvas px-4 pt-3 pb-6 text-ink"
+      >
+        <div className="flex h-11 shrink-0 items-center gap-2">
+          <button
+            type="button"
+            className="-ml-2 grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-subtle"
+            aria-label={t("preJoin.cancel")}
+            onClick={onCancel}
+          >
+            <X size={22} />
+          </button>
+          <strong className="text-title text-ink">{t("preJoin.mobileTitle")}</strong>
+        </div>
+
+        <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-2xl bg-subtle">
+          {cameraOn && videoTrack ? (
+            <video ref={videoRef} className="size-full object-cover" muted playsInline autoPlay />
+          ) : (
+            <div className="flex size-full flex-col items-center justify-center gap-3">
+              <Avatar name={userName || t("preJoin.you")} size="lg" />
+              <p className="text-body-sm text-ink-tertiary">{t("preJoin.cameraOff")}</p>
+            </div>
+          )}
+          <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-label-strong text-white">
+            {micOn ? <Mic size={15} /> : <MicOff size={15} />}
+            {t("preJoin.you")}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 justify-center gap-4 py-4">
+          <button
+            type="button"
+            className={`grid size-12 place-items-center rounded-full transition-colors ${
+              micOn ? "bg-subtle text-ink" : "bg-[#d93a3a] text-white"
+            }`}
+            aria-pressed={micOn}
+            aria-label={micOn ? t("preJoin.muteMicAria") : t("preJoin.unmuteMicAria")}
+            disabled={!micAllowed}
+            onClick={toggleMic}
+          >
+            {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+          </button>
+          <button
+            type="button"
+            className={`grid size-12 place-items-center rounded-full transition-colors ${
+              cameraOn ? "bg-subtle text-ink" : "bg-[#d93a3a] text-white"
+            }`}
+            aria-pressed={cameraOn}
+            aria-label={cameraOn ? t("preJoin.muteCameraAria") : t("preJoin.unmuteCameraAria")}
+            onClick={toggleCamera}
+          >
+            {cameraOn ? <Video size={20} /> : <VideoOff size={20} />}
+          </button>
+          <span
+            className="grid size-12 place-items-center rounded-full bg-subtle text-ink"
+            aria-hidden="true"
+          >
+            <Volume2 size={20} />
+          </span>
+        </div>
+
+        <div className="flex shrink-0 flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <h1 className="font-heading text-h2 text-ink">{lesson.title}</h1>
+            <p className="text-body-sm text-ink-tertiary">
+              {lesson.courseTitle} · {lesson.date} · {lesson.time} · {lesson.durationMinutes}{" "}
+              {t("preJoin.minutes")}
+            </p>
+          </div>
+
+          {deviceError ? (
+            <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
+              {t("preJoin.deviceErrorMessage", { error: deviceError })}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            className="flex h-14 w-full items-center justify-center rounded-full bg-action text-title text-on-action transition-colors hover:bg-action-hover disabled:opacity-60"
+            disabled={joining}
+            onClick={join}
+          >
+            {t("preJoin.join")}
+          </button>
+
+          <small className="text-center text-caption text-ink-tertiary">
+            {t("preJoin.recordingNote")}
+          </small>
+        </div>
+      </main>
+    );
 
   return (
     <div className="pre-join">

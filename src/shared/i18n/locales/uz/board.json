@@ -137,5 +137,33 @@
     "pdfFailed": "PDF yuklab bo‘lmadi",
     "roomNotFound": "Bu guruhning chati topilmadi",
     "chatMessage": "“{{title}}” darsining doskasi"
+  },
+  "permissionDialog": {
+    "title": "Doskaga ruxsat",
+    "description": "Kim doskaga chiza oladi?",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "saved": "{{count}} ta o‘quvchiga ruxsat berildi",
+    "pickStudent": "Kamida bitta o‘quvchini tanlang",
+    "revokeUnavailable": "Ruxsatni qaytarib olish backendda hali mavjud emas.",
+    "modes": {
+      "teacher": {
+        "title": "Faqat men",
+        "hint": "O‘quvchilar faqat ko‘radi"
+      },
+      "selected": {
+        "title": "Tanlangan o‘quvchilar",
+        "hint": "Quyidagi ro‘yxatdan belgilang"
+      },
+      "everyone": {
+        "title": "Hamma",
+        "hint": "Barcha ishtirokchilar chiza oladi"
+      }
+    }
+  },
+  "pages": {
+    "title": "Sahifalar",
+    "hint": "O‘quvchilar siz ochgan sahifani ko‘radi",
+    "new": "Yangi"
   }
 }

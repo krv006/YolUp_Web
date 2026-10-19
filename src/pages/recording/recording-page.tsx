@@ -10,6 +10,8 @@ import {
 } from "@/modules/lesson";
 import { ROLES } from "@/shared/constants";
 import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { Users } from "lucide-react";
 
 const LESSON_DATE = new Intl.DateTimeFormat("uz-UZ", {
   day: "numeric",
@@ -23,6 +25,7 @@ export function RecordingPage() {
   const { user } = useAuth();
   const lesson = useLesson(lessonId ?? null);
   const recording = useLessonRecording(lessonId ?? null);
+  const isCompact = useIsCompact();
 
   if (lesson.isLoading || (!lesson.isError && !lesson.data))
     return <LoadingFallback label="Dars yuklanmoqda" />;
@@ -40,6 +43,59 @@ export function RecordingPage() {
 
   const data = lesson.data!;
   const isStudent = user?.role === ROLES.STUDENT;
+
+  if (isCompact)
+    return (
+      <div
+        data-theme="dark"
+        className="dark flex min-h-dvh flex-col bg-canvas px-4 pt-3 pb-6 text-ink"
+      >
+        <header className="flex h-11 shrink-0 items-center gap-2">
+          <button
+            type="button"
+            className="-ml-2 grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-subtle"
+            aria-label="Orqaga"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft size={22} />
+          </button>
+          <strong className="font-heading text-title text-ink">Dars yozuvi</strong>
+        </header>
+
+        <div className="-mr-4 flex shrink-0 items-center gap-2 overflow-x-auto py-3 pr-4">
+          <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+            <Users size={14} /> {data.courseTitle}
+          </span>
+          <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+            <CalendarDays size={14} /> {data.date}
+          </span>
+          <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+            <Clock3 size={14} /> {data.time} · {data.durationMinutes} daqiqa
+          </span>
+        </div>
+
+        <div data-theme="light" className="flex min-h-0 flex-1 flex-col gap-4">
+          {recording.isLoading ? (
+            <LoadingFallback label="Yozuv yuklanmoqda" />
+          ) : recording.isError ? (
+            <RouteState
+              title="Yozuvni yuklab bo‘lmadi"
+              description={recording.error?.message}
+              actionLabel="Qayta urinish"
+              onAction={recording.refetch}
+            />
+          ) : (
+            <LessonRecordingPlayer
+              lessonId={data.id}
+              recording={recording.data}
+              canDelete={user?.role === ROLES.TEACHER}
+            />
+          )}
+
+          {isStudent ? <LessonRatingForm lesson={data} currentUserId={user?.id} /> : null}
+        </div>
+      </div>
+    );
 
   return (
     <div className="portal-page recording-page">

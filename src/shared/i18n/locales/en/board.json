@@ -137,5 +137,33 @@
     "pdfFailed": "Could not download the PDF",
     "roomNotFound": "No chat found for this group",
     "chatMessage": "Board of the “{{title}}” lesson"
+  },
+  "permissionDialog": {
+    "title": "Board access",
+    "description": "Who can draw on the board?",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Access granted to {{count}} students",
+    "pickStudent": "Pick at least one student",
+    "revokeUnavailable": "Revoking access is not available on the backend yet.",
+    "modes": {
+      "teacher": {
+        "title": "Only me",
+        "hint": "Students can only watch"
+      },
+      "selected": {
+        "title": "Selected students",
+        "hint": "Mark them in the list below"
+      },
+      "everyone": {
+        "title": "Everyone",
+        "hint": "All participants can draw"
+      }
+    }
+  },
+  "pages": {
+    "title": "Pages",
+    "hint": "Students see the page you open",
+    "new": "New"
   }
 }

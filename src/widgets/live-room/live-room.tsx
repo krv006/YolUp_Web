@@ -33,6 +33,7 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { AwayStudentsNotice, BoardPanel } from "@/modules/board";
+import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
 import { i18n } from "@/shared/i18n";
 import {
   FinishLessonDialog,
@@ -554,7 +555,9 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   const connectionLabels = useConnectionLabels();
   const audioRecordingLabels = useAudioRecordingLabels();
   const videoRecordingLabels = useVideoRecordingLabels();
-  const [panel, setPanel] = useState<SidePanel>("people");
+  const [panel, setPanel] = useState<SidePanel>(() =>
+    window.matchMedia("(max-width: 1023px)").matches ? null : "people"
+  );
   const [inviteOpen, setInviteOpen] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
   const connectionState = useConnectionState();
@@ -623,7 +626,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
       data-lk-theme="default"
       className="live-room-shell dark relative flex h-dvh min-h-0 flex-col overflow-hidden bg-canvas text-ink"
     >
-      <header className="flex shrink-0 flex-col gap-2.5 px-5 pt-4 pb-3">
+      <header className="flex shrink-0 flex-col gap-2.5 px-4 pt-3 pb-2.5 lg:px-5 lg:pt-4 lg:pb-3">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -683,9 +686,30 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
         ) : null}
       </header>
 
+      {boardOpen || peopleOpen ? (
+        <div className="flex shrink-0 items-center gap-1 px-4 pb-2 lg:hidden">
+          {(["video", "board", "people"] as const).map((item) => {
+            const active =
+              item === "video" ? !boardOpen && !peopleOpen : item === "board" ? boardOpen : peopleOpen;
+            return (
+              <button
+                key={item}
+                type="button"
+                className={`h-9 rounded-full px-3.5 text-label-strong transition-colors ${
+                  active ? "bg-subtle text-ink" : "text-ink-tertiary"
+                }`}
+                onClick={() => setPanel(item === "video" ? null : item)}
+              >
+                {t(`room.switch.${item}`)}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+
       <ReconnectBanner />
 
-      <div className="flex min-h-0 flex-1 gap-4 px-5 pb-24">
+      <div className="flex min-h-0 flex-1 gap-4 px-4 pb-24 lg:px-5">
         <main className="flex min-w-0 flex-1 flex-col">
           {boardOpen ? (
             <BoardPanel
@@ -727,7 +751,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
 
         {boardOpen ? (
           <div
-            className="flex w-[180px] shrink-0 flex-col gap-3 overflow-y-auto"
+            className="hidden w-[180px] shrink-0 flex-col gap-3 overflow-y-auto lg:flex"
             aria-label={t("room.filmstripAria")}
           >
             {cameraTracks.map((track) => (
@@ -740,7 +764,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           </div>
         ) : peopleOpen ? (
           <aside
-            className="flex w-[340px] shrink-0 flex-col gap-3 self-start rounded-2xl bg-surface p-4"
+            className="hidden w-[340px] shrink-0 flex-col gap-3 self-start rounded-2xl bg-surface p-4 lg:flex"
             aria-label={t("room.sidePanelAria")}
           >
             <div className="flex items-center justify-between gap-2">
@@ -880,8 +904,36 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           lesson={finishOpen ? lesson : null}
           onOpenChange={(open) => setFinishOpen(open)}
           onFinished={onLeave}
+          onLeaveOnly={onLeave}
         />
       ) : null}
+
+      <Drawer
+        open={peopleOpen}
+        onOpenChange={(open) => (open ? setPanel("people") : setPanel(null))}
+      >
+        <DrawerContent className="max-h-[80dvh] px-4 pb-6 lg:hidden">
+          <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
+            {t("room.participantsCount", { count: participants.length })}
+          </DrawerTitle>
+          <ParticipantsPanel
+            lessonId={lesson.id}
+            isTeacher={isTeacher}
+            micRequests={mic.requests}
+            onGrantMic={mic.grant.mutate}
+            onDenyMic={mic.deny.mutate}
+            micAnswerPending={mic.grant.isPending || mic.deny.isPending}
+            cameraRequests={camera.requests}
+            onGrantCamera={camera.grant.mutate}
+            onDenyCamera={camera.deny.mutate}
+            cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
+            onInvite={() => {
+              setPanel(null);
+              setInviteOpen(true);
+            }}
+          />
+        </DrawerContent>
+      </Drawer>
 
       <MediaPermissionDialog open={permissionOpen} onOpenChange={setPermissionOpen} />
       <MediaPermissionWatcher onDenied={() => setPermissionOpen(true)} />
