@@ -261,6 +261,7 @@ export function GroupWorkspace({
           }}
           currentUserId={user?.id}
           roomId={conversation.id}
+          onAssignment={() => setParams({ tab: "assignments" })}
         />
       ) : null}
 

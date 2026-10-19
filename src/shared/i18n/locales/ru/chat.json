@@ -152,7 +152,8 @@
     "voiceUnavailable": "Голосовые сообщения пока недоступны",
     "recordCancel": "Отменить запись",
     "recordSend": "Отправить голосовое",
-    "micDenied": "Доступ к микрофону не разрешён"
+    "micDenied": "Доступ к микрофону не разрешён",
+    "recordHint": "‹ Проведите, чтобы отменить"
   },
   "actionsMenu": {
     "closeAria": "Закрыть меню сообщения",
@@ -299,5 +300,23 @@
     "recordingTitle": "Видеозапись урока готова",
     "recordingHint": "Запись доступна только на платформе",
     "recordingAction": "Смотреть"
+  },
+  "attach": {
+    "title": "Прикрепить",
+    "sizeHint": "Каждый файл до {{size}} МБ",
+    "gallery": "Галерея",
+    "camera": "Камера",
+    "document": "Документ",
+    "assignment": "Задание"
+  },
+  "preview": {
+    "title": "{{count}} фото",
+    "cancel": "Отмена",
+    "captionPlaceholder": "Добавьте подпись...",
+    "send": "Отправить",
+    "addMore": "Добавить ещё",
+    "selectAria": "Фото {{number}}",
+    "removeAria": "Убрать фото {{number}}",
+    "quality": "Фото отправятся в исходном качестве · {{size}}"
   }
 }
