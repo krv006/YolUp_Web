@@ -28,6 +28,7 @@ import type { QuizImportWarning, QuizSummary } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import { usePageCreateStore } from "@/shared/model";
+import { SubjectFilterSheet } from "@/modules/quiz";
 
 function useQuizHighlight(quizId: string | null, ready: boolean) {
   useEffect(() => {
@@ -52,6 +53,7 @@ export function TeacherQuizzesPage() {
   const setDialog = (value: boolean) => usePageCreateStore.getState().setOpen("quiz", value);
   const [subjectFilter, setSubjectFilter] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [subjectSheet, setSubjectSheet] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<QuizSummary | null>(null);
   const [editTarget, setEditTarget] = useState<QuizSummary | null>(null);
   const [openOnQuestions, setOpenOnQuestions] = useState(false);
@@ -124,11 +126,25 @@ export function TeacherQuizzesPage() {
   const groups = [...groupMap.values()].sort((a, b) => a.label.localeCompare(b.label, i18n.language));
 
   return (
-    <div className="flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 lg:p-6">
+    <div className="relative flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 pb-24 lg:p-6 lg:pb-6">
       <div className="flex flex-wrap items-center gap-3">
         <p className="min-w-0 flex-1 text-body-sm text-ink-secondary">{t("teacherPage.subtitle")}</p>
         {filterOptions.length > 1 ? (
-          <div className="w-full shrink-0 sm:w-[240px]">
+          <>
+            <button
+              type="button"
+              className="flex h-12 w-full shrink-0 items-center gap-3 rounded-2xl bg-subtle px-4 text-left text-title text-ink lg:hidden"
+              onClick={() => setSubjectSheet(true)}
+            >
+              <ListFilter size={18} className="shrink-0 text-ink-secondary" />
+              <span className="min-w-0 flex-1 truncate">
+                {filterOptions.find((item) => item.value === subjectFilter)?.label ??
+                  filterOptions[0]?.label}
+              </span>
+              <ChevronDown size={18} className="shrink-0 text-ink-secondary" />
+            </button>
+
+            <div className="hidden w-full shrink-0 sm:w-[240px] lg:block">
             <SelectPicker
               label={t("teacherPage.subjectFilterLabel")}
               hideLabel
@@ -138,7 +154,8 @@ export function TeacherQuizzesPage() {
               onChange={setSubjectFilter}
               options={filterOptions}
             />
-          </div>
+            </div>
+          </>
         ) : null}
       </div>
 
@@ -269,7 +286,7 @@ export function TeacherQuizzesPage() {
                                 setEditTarget(item);
                               }}
                             >
-                              <Pencil size={16} /> {t("editDialog.editAria")}
+                              <Pencil size={16} /> {t("teacherPage.editShort")}
                             </button>
                             <button
                               type="button"
@@ -290,13 +307,18 @@ export function TeacherQuizzesPage() {
           })}
         </div>
       ) : (
-        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-center">
-          <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-line px-6 py-10 text-center">
+          <span className="grid size-16 place-items-center rounded-2xl bg-action text-on-action">
             <FileQuestion size={28} />
           </span>
           <strong className="font-heading text-h3 text-ink">
             {subjectFilter ? t("teacherPage.emptyForSubject") : t("teacherPage.emptyTitle")}
           </strong>
+          {subjectFilter ? null : (
+            <p className="max-w-[320px] text-body-sm text-ink-secondary">
+              {t("teacherPage.emptyDescription")}
+            </p>
+          )}
           {subjectFilter ? (
             <button
               type="button"
@@ -308,7 +330,7 @@ export function TeacherQuizzesPage() {
           ) : canCreate ? (
             <button
               type="button"
-              className="mt-1 flex h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+              className="mt-1 hidden h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
               onClick={() => setDialog(true)}
             >
               {t("teacherPage.emptyCreateFirst")}
@@ -316,6 +338,26 @@ export function TeacherQuizzesPage() {
           ) : null}
         </div>
       )}
+
+      {canCreate ? (
+        <div className="sticky bottom-0 -mx-4 mt-auto bg-canvas px-4 pt-3 pb-1 lg:hidden">
+          <button
+            type="button"
+            className="flex h-14 w-full items-center justify-center rounded-full bg-action text-title text-on-action transition-colors hover:bg-action-hover"
+            onClick={() => setDialog(true)}
+          >
+            {t("teacherPage.createButton")}
+          </button>
+        </div>
+      ) : null}
+
+      <SubjectFilterSheet
+        open={subjectSheet}
+        onOpenChange={setSubjectSheet}
+        value={subjectFilter}
+        options={filterOptions}
+        onChange={setSubjectFilter}
+      />
 
       {editTarget && editDetail.data && !editAttempts.isLoading ? (
         <AddQuizDialog

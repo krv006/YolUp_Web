@@ -23,7 +23,7 @@
     "dueLabel": "Due: {{date}}",
     "noDue": "No due date set",
     "questionCount": "{{count}} questions",
-    "emptyTitle": "No quizzes created yet",
+    "emptyTitle": "No tests yet",
     "emptyCreateFirst": "Create your first quiz",
     "deleteDialogTitle": "Delete quiz",
     "deleteDialogDescription": "\"{{title}}\" and its attempts will be deleted.",
@@ -41,7 +41,10 @@
     "openQuestionsAria": "View questions: {{title}}",
     "giveToGroup": "Give to a group",
     "exportAria": "Download (PDF / Word / Excel)",
-    "exportShort": "Download"
+    "exportShort": "Download",
+    "editShort": "Edit",
+    "emptyDescription": "Create your first test or import it from a .docx / .xlsx / .json file.",
+    "subjectSearch": "Search"
   },
   "studentPage": {
     "loading": "Loading quizzes",
@@ -390,9 +393,10 @@
     "teacherHint": "With the answer key (and the Listening script).",
     "type": {
       "pdf": "PDF",
-      "docx": "Word",
-      "xlsx": "Excel"
+      "docx": "Word (.docx)",
+      "xlsx": "Excel (.xlsx)"
     },
-    "close": "Close"
+    "close": "Close",
+    "phoneDescription": "In which format should the “{{title}}” test be downloaded?"
   }
 }

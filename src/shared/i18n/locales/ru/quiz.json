@@ -23,7 +23,7 @@
     "dueLabel": "Срок: {{date}}",
     "noDue": "Срок не установлен",
     "questionCount": "{{count}} вопросов",
-    "emptyTitle": "Тестов пока нет",
+    "emptyTitle": "Пока нет тестов",
     "emptyCreateFirst": "Создать первый тест",
     "deleteDialogTitle": "Удалить тест",
     "deleteDialogDescription": "«{{title}}» и связанные с ним попытки будут удалены.",
@@ -41,7 +41,10 @@
     "openQuestionsAria": "Открыть вопросы: {{title}}",
     "giveToGroup": "Дать группе",
     "exportAria": "Скачать (PDF / Word / Excel)",
-    "exportShort": "Скачать"
+    "exportShort": "Скачать",
+    "editShort": "Изменить",
+    "emptyDescription": "Создайте первый тест или импортируйте из файла .docx / .xlsx / .json.",
+    "subjectSearch": "Поиск"
   },
   "studentPage": {
     "loading": "Загрузка тестов",
@@ -390,9 +393,10 @@
     "teacherHint": "С правильными ответами (и скриптом Listening).",
     "type": {
       "pdf": "PDF",
-      "docx": "Word",
-      "xlsx": "Excel"
+      "docx": "Word (.docx)",
+      "xlsx": "Excel (.xlsx)"
     },
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "phoneDescription": "В каком формате скачать тест «{{title}}»?"
   }
 }

@@ -11,6 +11,8 @@ import {
   type TouchEvent as ReactTouchEvent,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { createPortal } from "react-dom";
 import { FocusScope } from "@radix-ui/react-focus-scope";
 import { AnimatePresence, motion } from "framer-motion";
@@ -712,6 +714,7 @@ export function DatePicker({
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
   const labelId = useId();
+  const isCompact = useIsCompact();
   const selectedDate = parseDateValue(value);
   const [viewDate, setViewDate] = useState<Date>(() => selectedDate ?? new Date());
   const timeValue = getTimeValue(value);
@@ -742,6 +745,67 @@ export function DatePicker({
         placeholder={includeTime ? t("formPickers.chooseDateTime") : t("formPickers.chooseDate")}
         labelledBy={labelId}
       />
+      {isCompact ? (
+        <Drawer open={open} onOpenChange={setOpen}>
+          <DrawerContent className="px-4 pb-6">
+            <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
+              {label}
+            </DrawerTitle>
+            <div className="picker-sheet">
+        <CalendarGrid
+          value={value}
+          onChange={selectDate}
+          viewDate={viewDate}
+          onViewDateChange={setViewDate}
+          minDate={minDate}
+          maxDate={maxDate}
+        />
+        {includeTime ? (
+          <div className="datetime-time-section">
+            <div className="picker-section-title">
+              <Clock3 size={15} />
+              <span>{t("formPickers.dueTimeSection")}</span>
+            </div>
+            <TimeControl value={timeValue} onChange={selectTime} compact />
+          </div>
+        ) : null}
+        <div className="picker-footer">
+          {optional ? (
+            <button
+              type="button"
+              className="picker-clear"
+              onClick={() => {
+                onChange("");
+                setOpen(false);
+              }}
+            >
+              {t("formPickers.clear")}
+            </button>
+          ) : (
+            <span />
+          )}
+          <button
+            type="button"
+            className="picker-today"
+            disabled={Boolean(
+              (minDate && toDateValue(new Date()) < minDate) ||
+                (maxDate && toDateValue(new Date()) > maxDate)
+            )}
+            onClick={() => {
+              selectDate(toDateValue(new Date()));
+              setViewDate(new Date());
+            }}
+          >
+            {t("formPickers.today")}
+          </button>
+          <button type="button" className="picker-done" onClick={() => setOpen(false)}>
+            {t("formPickers.done")}
+          </button>
+        </div>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
       <FloatingPicker
         open={open}
         onClose={() => setOpen(false)}
@@ -800,6 +864,7 @@ export function DatePicker({
           </button>
         </div>
       </FloatingPicker>
+      )}
     </FieldShell>
   );
 }

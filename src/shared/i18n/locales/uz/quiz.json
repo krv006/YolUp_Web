@@ -23,7 +23,7 @@
     "dueLabel": "Muddat: {{date}}",
     "noDue": "Muddat belgilanmagan",
     "questionCount": "{{count}} ta savol",
-    "emptyTitle": "Hali test yaratilmagan",
+    "emptyTitle": "Hali test yo‘q",
     "emptyCreateFirst": "Birinchi testni yaratish",
     "deleteDialogTitle": "Testni o'chirish",
     "deleteDialogDescription": "\"{{title}}\" va unga bog'liq urinishlar o'chadi.",
@@ -41,7 +41,10 @@
     "openQuestionsAria": "Savollarni ko'rish: {{title}}",
     "giveToGroup": "Guruhga berish",
     "exportAria": "Yuklab olish (PDF / Word / Excel)",
-    "exportShort": "Yuklab olish"
+    "exportShort": "Yuklab olish",
+    "editShort": "Tahrirlash",
+    "emptyDescription": "Birinchi testingizni yarating yoki .docx / .xlsx / .json fayldan import qiling.",
+    "subjectSearch": "Qidirish"
   },
   "studentPage": {
     "loading": "Testlar yuklanmoqda",
@@ -390,9 +393,10 @@
     "teacherHint": "To'g'ri javoblar (va Listening skripti) bilan.",
     "type": {
       "pdf": "PDF",
-      "docx": "Word",
-      "xlsx": "Excel"
+      "docx": "Word (.docx)",
+      "xlsx": "Excel (.xlsx)"
     },
-    "close": "Yopish"
+    "close": "Yopish",
+    "phoneDescription": "“{{title}}” testini qaysi formatda yuklab olasiz?"
   }
 }
