@@ -19,6 +19,10 @@
     "exams": {
       "title": "Mock test",
       "description": "IELTS, SAT, National certificate and your own mock test."
+    },
+    "assignments": {
+      "title": "Assignments",
+      "description": "Give homework and review it with AI."
     }
   },
   "analytics": {

@@ -38,6 +38,7 @@ function sectionFromPath(pathname: string): ConversationSection {
     pathname.endsWith("/search") ||
     pathname.endsWith("/notifications") ||
     pathname.endsWith("/quizzes") ||
+    pathname.endsWith("/assignments") ||
     pathname.endsWith("/ai") ||
     pathname.endsWith("/analytics") ||
     pathname.includes("/exams") ||
@@ -112,7 +113,13 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <ConversationTopbar role={role} section={section} title={t(`titles.${section}`)} />
+        <ConversationTopbar
+          role={role}
+          section={section}
+          title={
+            pathname.endsWith("/assignments") ? t("titles.assignments") : t(`titles.${section}`)
+          }
+        />
 
         <div className="flex min-h-0 flex-1">
           {wideSection ? null : <ConversationPanel role={role} hidden={Boolean(conversationId)} />}

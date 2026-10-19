@@ -19,6 +19,10 @@
     "exams": {
       "title": "Mock test",
       "description": "IELTS, SAT, Milliy sertifikat va o'z mock testingiz."
+    },
+    "assignments": {
+      "title": "Vazifalar",
+      "description": "Uy vazifalarini berish va AI yordamida tekshirish."
     }
   },
   "analytics": {

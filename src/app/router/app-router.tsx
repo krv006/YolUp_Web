@@ -22,6 +22,9 @@ const RegisterPage = lazy(() =>
 );
 const loadTeacherLayout = () => import("@/app/layouts/teacher-layout");
 const loadChatsPage = () => import("@/pages/teacher/chats-page");
+const AssignmentsPage = lazy(() =>
+  import("@/pages/homework/assignments-page").then((module) => ({ default: module.AssignmentsPage }))
+);
 const WorkspaceSearchPage = lazy(() =>
   import("@/pages/workspace/workspace-search-page").then((module) => ({
     default: module.WorkspaceSearchPage,
@@ -198,6 +201,7 @@ export function AppRouter() {
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="quizzes" element={<TeacherQuizzesPage />} />
+                    <Route path="assignments" element={<AssignmentsPage />} />
                     <Route path="exams" element={<TeacherExamsPage />} />
                     <Route
                       path=":conversationId"
