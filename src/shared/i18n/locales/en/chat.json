@@ -12,14 +12,15 @@
   "header": {
     "backAria": "Back to conversations",
     "openInfoAria": "Open {{title}} info",
-    "memberCount": "{{count}} students",
+    "memberCount": "{{count}} members",
     "online": "Online now",
     "recentlyActive": "Recently active",
     "searchAria": "Search messages",
     "searchPlaceholder": "Search messages",
     "closeSearchAria": "Close search",
     "searchPrevAria": "Previous match",
-    "searchNextAria": "Next match"
+    "searchNextAria": "Next match",
+    "onlineCount": "{{count}} online"
   },
   "directStatus": {
     "pending": "Request pending",
@@ -200,7 +201,8 @@
     "voicePlay": "Play voice message",
     "voicePause": "Pause",
     "voiceFailed": "Could not load the voice message",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "pages": "{{count}} pages"
   },
   "removedFromGroup": "You were removed from this group",
   "directPage": {
@@ -231,9 +233,9 @@
     "loadErrorHint": "Check your internet connection and try again.",
     "retry": "Retry",
     "peopleLabel": "PEOPLE",
-    "emptyTitle": "No conversations found",
-    "emptyHint": "Try a different search term or filter.",
-    "clearFilters": "Clear filters",
+    "emptyTitle": "No chat found",
+    "emptyHint": "Try a different search term or filters",
+    "clearFilters": "Clear the filter",
     "newGroupAria": "Create a new group or conversation",
     "findTeacherAria": "Find a teacher or course",
     "assignmentGroupNotFound": "Assignment group not found",
@@ -248,7 +250,12 @@
     "loading": "Loading",
     "resultCount": "{{count}} results",
     "offlineTitle": "No internet connection",
-    "offlineRetry": "Try again"
+    "offlineRetry": "Try again",
+    "noChatsTitle": "No chats yet",
+    "noChatsTeacherHint": "Create a group and invite your students. Chats will show up here.",
+    "noChatsStudentHint": "Join a group — lessons and chats will show up here.",
+    "createGroup": "Create a group",
+    "joinGroup": "Join a group"
   },
   "pinned": {
     "label": "Pinned message",

@@ -12,14 +12,15 @@
   "header": {
     "backAria": "Назад к списку бесед",
     "openInfoAria": "Открыть информацию — {{title}}",
-    "memberCount": "{{count}} учеников",
+    "memberCount": "{{count}} участников",
     "online": "Сейчас в сети",
     "recentlyActive": "Недавно был(а) в сети",
     "searchAria": "Поиск по сообщениям",
     "searchPlaceholder": "Поиск по сообщениям",
     "closeSearchAria": "Закрыть поиск",
     "searchPrevAria": "Предыдущий результат",
-    "searchNextAria": "Следующий результат"
+    "searchNextAria": "Следующий результат",
+    "onlineCount": "{{count}} онлайн"
   },
   "directStatus": {
     "pending": "Запрос ожидает",
@@ -200,7 +201,8 @@
     "voicePlay": "Прослушать голосовое",
     "voicePause": "Пауза",
     "voiceFailed": "Голосовое не загрузилось",
-    "uploading": "Загружается..."
+    "uploading": "Загружается...",
+    "pages": "{{count}} стр."
   },
   "removedFromGroup": "Вы были удалены из этой группы",
   "directPage": {
@@ -231,9 +233,9 @@
     "loadErrorHint": "Проверьте интернет-соединение и попробуйте снова.",
     "retry": "Повторить",
     "peopleLabel": "ЛЮДИ",
-    "emptyTitle": "Беседы не найдены",
-    "emptyHint": "Попробуйте изменить поисковый запрос или фильтр.",
-    "clearFilters": "Очистить фильтры",
+    "emptyTitle": "Чат не найден",
+    "emptyHint": "Измените поисковый запрос или фильтры",
+    "clearFilters": "Сбросить фильтр",
     "newGroupAria": "Создать новую группу или беседу",
     "findTeacherAria": "Найти учителя или курс",
     "assignmentGroupNotFound": "Группа задания не найдена",
@@ -248,7 +250,12 @@
     "loading": "Загрузка",
     "resultCount": "{{count}} результатов",
     "offlineTitle": "Нет подключения к интернету",
-    "offlineRetry": "Повторить"
+    "offlineRetry": "Повторить",
+    "noChatsTitle": "Пока нет чатов",
+    "noChatsTeacherHint": "Создайте группу и пригласите учеников. Чаты появятся здесь.",
+    "noChatsStudentHint": "Присоединитесь к группе — уроки и чаты появятся здесь.",
+    "createGroup": "Создать группу",
+    "joinGroup": "Вступить в группу"
   },
   "pinned": {
     "label": "Закреплённое сообщение",

@@ -12,14 +12,15 @@
   "header": {
     "backAria": "Suhbatlar ro'yxatiga qaytish",
     "openInfoAria": "{{title}} ma'lumotlarini ochish",
-    "memberCount": "{{count}} o'quvchi",
+    "memberCount": "{{count}} a’zo",
     "online": "Hozir onlayn",
     "recentlyActive": "Yaqinda faol edi",
     "searchAria": "Xabarlardan qidirish",
     "searchPlaceholder": "Xabarlardan qidirish",
     "closeSearchAria": "Qidiruvni yopish",
     "searchPrevAria": "Oldingi natija",
-    "searchNextAria": "Keyingi natija"
+    "searchNextAria": "Keyingi natija",
+    "onlineCount": "{{count}} nafari onlayn"
   },
   "directStatus": {
     "pending": "So'rov kutilmoqda",
@@ -200,7 +201,8 @@
     "voicePlay": "Ovozli xabarni tinglash",
     "voicePause": "To‘xtatish",
     "voiceFailed": "Ovozli xabar yuklanmadi",
-    "uploading": "Yuklanmoqda..."
+    "uploading": "Yuklanmoqda...",
+    "pages": "{{count}} sahifa"
   },
   "removedFromGroup": "Siz bu guruhdan chiqarildingiz",
   "directPage": {
@@ -232,8 +234,8 @@
     "retry": "Qayta urinish",
     "peopleLabel": "ODAMLAR",
     "emptyTitle": "Suhbat topilmadi",
-    "emptyHint": "Qidiruv so'zi yoki filterni o'zgartirib ko'ring.",
-    "clearFilters": "Filtrlarni tozalash",
+    "emptyHint": "Qidiruv so‘zi yoki filtrlarni o‘zgartirib ko‘ring",
+    "clearFilters": "Filtrni tozalash",
     "newGroupAria": "Yangi guruh yoki suhbat yaratish",
     "findTeacherAria": "O'qituvchi yoki kurs topish",
     "assignmentGroupNotFound": "Vazifa guruhi topilmadi",
@@ -248,7 +250,12 @@
     "loading": "Yuklanmoqda",
     "resultCount": "{{count}} ta natija",
     "offlineTitle": "Internet aloqasi yo‘q",
-    "offlineRetry": "Qayta urinish"
+    "offlineRetry": "Qayta urinish",
+    "noChatsTitle": "Hali suhbatlar yo‘q",
+    "noChatsTeacherHint": "Guruh yarating va o‘quvchilaringizni taklif qiling. Suhbatlar shu yerda paydo bo‘ladi.",
+    "noChatsStudentHint": "Guruhga qo‘shiling — darslar va suhbatlar shu yerda paydo bo‘ladi.",
+    "createGroup": "Guruh yaratish",
+    "joinGroup": "Guruhga qo‘shilish"
   },
   "pinned": {
     "label": "Qadalgan xabar",

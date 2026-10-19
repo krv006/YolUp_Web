@@ -35,6 +35,8 @@ export interface MessageListProps {
 
 type TimelineEntry = { kind: "message" | "assignment"; message: ChatMessage };
 
+const GROUP_WINDOW_MS = 5 * 60 * 1000;
+
 const SELECTION_ACTION =
   "flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-3 text-label-strong transition-colors hover:bg-subtle lg:px-4";
 
@@ -255,8 +257,22 @@ export function MessageList({
             </p>
           </div>
         ) : null}
-        {timeline.map((entry) =>
-          entry.kind === "assignment" && entry.message.assignment ? (
+        {timeline.map((entry, index) => {
+          const previous = timeline[index - 1]?.message;
+          const next = timeline[index + 1]?.message;
+          const sameAs = (other?: ChatMessage) =>
+            Boolean(
+              other &&
+                other.senderId === entry.message.senderId &&
+                other.type !== "system" &&
+                Math.abs(
+                  new Date(other.createdAt).getTime() -
+                    new Date(entry.message.createdAt).getTime()
+                ) < GROUP_WINDOW_MS
+            );
+          const showName = !sameAs(previous);
+          const showAvatar = !sameAs(next);
+          return entry.kind === "assignment" && entry.message.assignment ? (
             <div key={entry.message.id} className="flex justify-start">
               <HomeworkMessageCard
                 assignment={entry.message.assignment}
@@ -272,6 +288,8 @@ export function MessageList({
                 <MessageBubble
                   message={entry.message}
                   currentUserId={currentUserId}
+                  showName={showName}
+                  showAvatar={showAvatar}
                   selectionMode={selectionMode}
                   selected={selected.includes(entry.message.id)}
                   onToggleSelect={(item) => toggleSelected(item.id)}
@@ -304,8 +322,8 @@ export function MessageList({
                 />
               </div>
             </Fragment>
-          )
-        )}
+          );
+        })}
         {!search && conversation.typing && (
           <TypingIndicator name={conversation.typingName || conversation.title} />
         )}

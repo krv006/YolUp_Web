@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { fileKindLabel, fileKindOf } from "@/shared/lib";
+import { fileKindLabel, fileKindOf, formatFileSize } from "@/shared/lib";
 import type { MessageAttachment as Attachment } from "@/shared/types";
 import { FileViewer } from "@/shared/ui/file-viewer";
 import { Icon } from "@/shared/ui/icon";
@@ -19,6 +19,12 @@ export function MessageAttachment({
   const [open, setOpen] = useState(false);
   const kind = fileKindOf(attachment.mimeType, attachment.name);
   const extension = attachment.name.split(".").pop()?.slice(0, 4).toUpperCase() ?? "FILE";
+  const meta = [
+    attachment.size ? formatFileSize(attachment.size) : "",
+    attachment.pageCount ? t("attachment.pages", { count: attachment.pageCount }) : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
 
   const load = useCallback(
     (signal: AbortSignal) => messageApi.downloadFile(attachment.messageId, { signal }),
@@ -48,7 +54,7 @@ export function MessageAttachment({
               ? `${t("attachment.uploadFailed")} · ${fileKindLabel(kind)}`
               : uploading
                 ? t("attachment.uploading")
-                : `${fileKindLabel(kind)} · ${t("attachment.openSuffix")}`}
+                : meta || `${fileKindLabel(kind)} · ${t("attachment.openSuffix")}`}
           </small>
         </span>
         <span

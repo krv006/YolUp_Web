@@ -3,15 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Icon } from "@/shared/ui/icon";
 import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogTitle,
-} from "@/shared/ui/alert-dialog";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import type { Conversation } from "@/shared/types";
 import {
   useLeaveConversation,
@@ -92,20 +84,24 @@ export function ConversationActionsSheet({
         </DrawerContent>
       </Drawer>
 
-      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
-        <AlertDialogContent className="max-w-[340px] rounded-2xl border-line bg-surface">
-          <AlertDialogTitle className="font-heading text-h3 text-ink">
-            {t("actions.deleteTitle")}
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-body-sm text-ink-secondary">
-            {t("actions.deleteDescription")}
-          </AlertDialogDescription>
-          <AlertDialogFooter className="mt-2 flex-row gap-3">
-            <AlertDialogCancel className="h-12 flex-1 rounded-full border border-line bg-surface text-label-strong text-ink">
+      <AppDialog
+        open={confirmDelete}
+        onOpenChange={setConfirmDelete}
+        variant="confirm"
+        title={t("actions.deleteTitle")}
+        description={t("actions.deleteDescription")}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setConfirmDelete(false)}
+            >
               {t("actions.cancel")}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              className="h-12 flex-1 rounded-full bg-error text-label-strong text-white hover:opacity-90"
+            </button>
+            <button
+              type="button"
+              className={dialogButton.danger}
               onClick={() => {
                 if (conversation)
                   leaveRoom.mutate(conversation.id, {
@@ -117,10 +113,10 @@ export function ConversationActionsSheet({
               }}
             >
               {t("actions.confirmDelete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </button>
+          </>
+        }
+      />
     </>
   );
 }
