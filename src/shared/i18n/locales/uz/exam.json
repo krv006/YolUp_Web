@@ -110,7 +110,8 @@
     "deleteDescription": "“{{title}}” o'chiriladi. Buni qaytarib bo'lmaydi.",
     "save": "Saqlash",
     "cancel": "Bekor qilish",
-    "delete": "O'chirish"
+    "delete": "O'chirish",
+    "emptyDescription": "Guruhingiz uchun birinchi mock imtihonni yarating — natijalar shu yerda ko‘rinadi."
   },
   "createDialog": {
     "title": "Yangi imtihon",
@@ -260,6 +261,9 @@
     "pickExam": "Chapdan imtihonni tanlang",
     "noEssays": "Yozma javoblar yo‘q",
     "hoursOnly": "{{count}} soat",
-    "taskNumber": "Task {{number}}"
+    "taskNumber": "Task {{number}}",
+    "backToList": "Ro‘yxatga qaytish",
+    "share": "Natijalarni ulashish",
+    "shareUnavailable": "Natijalarni ulashish backendda hali mavjud emas."
   }
 }
