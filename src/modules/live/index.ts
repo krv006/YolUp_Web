@@ -26,6 +26,7 @@ export {
   useRequestMic,
   useUnbanFromLesson,
 } from "./model/live.queries";
+export { MediaPermissionDialog } from "./ui/media-permission-dialog";
 export { useCameraSignals } from "./model/use-camera-signals";
 export type { CameraRequest } from "./model/use-camera-signals";
 export { useMicSignals } from "./model/use-mic-signals";

@@ -1,20 +1,26 @@
 {
   "attentionCheck": {
     "title": "Siz shu yerdamisiz?",
-    "description": "Diqqat tekshiruviga vaqtida javob bering.",
+    "description": "Javob bermasangiz, {{time}} dan keyin davomatda “darsdan chiqqan” deb belgilanasiz.",
     "secondsLeft": "soniya qoldi",
-    "respond": "Shu yerdaman"
+    "respond": "Ha, shu yerdaman"
   },
   "invite": {
     "title": "Darsga taklif qilish",
-    "description": "Taklif — bu ogohlantirish; o'quvchi darsga o'zi kiradi.",
-    "sendToAll": "Hammaga yuborish",
+    "description": "Guruhdagi {{count}} o‘quvchi hali darsga kirmagan. Chaqiruv ularga bildirishnoma bo‘lib boradi.",
+    "sendToAll": "Hammasini chaqirish",
     "searchPlaceholder": "Ism yoki username bo'yicha",
-    "invite": "Taklif",
+    "invite": "Chaqirish",
     "banAria": "{{name}}ni darsdan chetlashtirish",
     "banTitle": "Darsdan chetlashtirish",
     "empty": "O'quvchi topilmadi.",
-    "note": "Chetlashtirish faqat shu darsga tegishli — o'quvchi kursda qoladi va keyingi darslarga kira oladi."
+    "note": "O‘quvchilarning onlayn holati backendda hali mavjud emas.",
+    "copyLink": "Havolani nusxalash",
+    "called": "Chaqirildi",
+    "calledJustNow": "Chaqirildi · hozir",
+    "sentToAll": "Chaqiruv hammaga yuborildi",
+    "linkCopied": "Havola nusxalandi",
+    "linkCopyFailed": "Havolani nusxalab bo‘lmadi"
   },
   "preJoin": {
     "you": "Siz",
@@ -83,7 +89,11 @@
     "leave": "Chiqish",
     "finish": "Yakunlash",
     "finishAria": "Darsni yakunlash",
-    "finishTitle": "Darsni hamma uchun yakunlash — video yozuv shundan keyin saqlanadi"
+    "finishTitle": "Darsni hamma uchun yakunlash — video yozuv shundan keyin saqlanadi",
+    "youLabel": "Siz",
+    "reconnecting": "Internet uzildi — qayta ulanmoqda ({{attempt}}/{{total}}). Dars davom etmoqda.",
+    "participantsCount": "Ishtirokchilar ({{count}})",
+    "moreAria": "Boshqa amallar"
   },
   "mic": {
     "label": "Mikrofon",
@@ -131,6 +141,30 @@
     "allowShare": "Ruxsat",
     "banAria": "{{name}}ni darsdan chetlashtirish",
     "banTitle": "Darsdan chetlashtirish",
-    "empty": "Hozircha hech kim yo'q."
+    "empty": "Hozircha hech kim yo'q.",
+    "teacherYou": "O‘qituvchi · Siz",
+    "speaking": "Gapirmoqda",
+    "raisedHand": "Qo‘l ko‘tardi",
+    "muteAll": "Ovozsiz",
+    "invite": "Taklif qilish",
+    "muteAllUnavailable": "Hammani ovozsiz qilish backendda hali mavjud emas."
+  },
+  "permissionDialog": {
+    "title": "Kamera va mikrofonga ruxsat kerak",
+    "description": "Brauzer manzil satridagi qulf belgisini bosing va kamera hamda mikrofonga ruxsat bering. Ruxsatsiz faqat tinglovchi sifatida qo‘shilasiz.",
+    "joinWithout": "Ruxsatsiz kirish",
+    "recheck": "Qayta tekshirish"
+  },
+  "state": {
+    "notFoundTitle": "Darsni topib bo‘lmadi",
+    "back": "Orqaga",
+    "retry": "Qayta urinish",
+    "finishedTitle": "Dars yakunlandi",
+    "finishedDescription": "Chiqishdan oldin o‘qituvchi uchun fikringizni qoldiring.",
+    "exit": "Chiqish",
+    "joinFailedTitle": "Darsga kirib bo‘lmadi",
+    "joinFailedFinished": "“{{title}}” darsi {{time}} da tugagan. Dars yozuvi tayyor bo‘lgach guruh chatiga yuboriladi.",
+    "backToChat": "Guruh chatiga qaytish",
+    "openRecording": "Dars yozuvini ko‘rish"
   }
 }

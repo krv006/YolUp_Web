@@ -56,58 +56,80 @@ export function BoardToolbar({
   const { t } = useTranslation("board");
 
   return (
-    <div className="board-tools" role="toolbar" aria-label={t("tools.toolbarAria")}>
-      <div className="board-tool-group">
+    <div
+      className="flex flex-col gap-2 rounded-2xl bg-surface p-2 shadow-xl"
+      role="toolbar"
+      aria-label={t("tools.toolbarAria")}
+    >
+      <div className="flex items-center gap-1">
         {TOOLS.map(({ id, labelKey, icon: Icon }) => {
           const label = t(labelKey);
+          const active = tool === id;
           return (
             <button
               key={id}
               type="button"
-              className={`${tool === id ? "is-active" : ""} ${id === "erase" ? "is-erase-tool" : ""}`}
+              className={`grid size-9 shrink-0 place-items-center rounded-xl transition-colors disabled:opacity-40 ${
+                active
+                  ? id === "erase"
+                    ? "bg-error-bg text-error-text"
+                    : "bg-action text-on-action"
+                  : "text-ink-secondary hover:bg-subtle hover:text-ink"
+              }`}
               disabled={!canDraw}
               title={label}
               aria-label={label}
-              aria-pressed={tool === id}
+              aria-pressed={active}
               onClick={() => onToolChange(id)}
             >
-              <Icon size={16} />
+              <Icon size={17} />
             </button>
           );
         })}
       </div>
 
-      <div className="board-tool-group board-colors">
-        {BOARD_COLORS.map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={color === value ? "is-active" : ""}
-            style={{ background: value }}
-            disabled={!canDraw}
-            title={t("tools.colorLabel", { value })}
-            aria-label={t("tools.colorLabel", { value })}
-            aria-pressed={color === value}
-            onClick={() => onColorChange(value)}
-          />
-        ))}
-      </div>
+      <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1.5">
+          {BOARD_COLORS.map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`size-6 shrink-0 rounded-full transition-shadow disabled:opacity-40 ${
+                color === value ? "ring-2 ring-action ring-offset-2 ring-offset-surface" : ""
+              }`}
+              style={{ background: value }}
+              disabled={!canDraw}
+              title={t("tools.colorLabel", { value })}
+              aria-label={t("tools.colorLabel", { value })}
+              aria-pressed={color === value}
+              onClick={() => onColorChange(value)}
+            />
+          ))}
+        </div>
 
-      <div className="board-tool-group board-widths">
-        {BOARD_WIDTHS.map((value) => (
-          <button
-            key={value}
-            type="button"
-            className={width === value ? "is-active" : ""}
-            disabled={!canDraw}
-            title={t("tools.widthLabel", { value })}
-            aria-label={t("tools.widthLabel", { value })}
-            aria-pressed={width === value}
-            onClick={() => onWidthChange(value)}
-          >
-            <span style={{ height: Math.min(value, 10) }} />
-          </button>
-        ))}
+        <span className="h-6 w-px shrink-0 bg-line" aria-hidden="true" />
+
+        <div className="flex items-center gap-1">
+          {BOARD_WIDTHS.map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`grid h-9 w-10 shrink-0 place-items-center rounded-xl transition-colors disabled:opacity-40 ${
+                width === value ? "bg-action-subtle" : "hover:bg-subtle"
+              }`}
+              disabled={!canDraw}
+              title={t("tools.widthLabel", { value })}
+              aria-label={t("tools.widthLabel", { value })}
+              aria-pressed={width === value}
+              onClick={() => onWidthChange(value)}
+            >
+              <span
+                className="block w-5 rounded-full bg-ink"
+                style={{ height: Math.min(value, 10) }}
+              />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

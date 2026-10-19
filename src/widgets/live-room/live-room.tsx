@@ -13,12 +13,15 @@ import {
 } from "@livekit/components-react";
 import { ConnectionState, RoomEvent, Track, type Participant } from "livekit-client";
 import {
+  ArrowLeft,
   CircleStop,
   Hand,
+  Info,
   LayoutDashboard,
   Mic,
   MicOff,
   MonitorUp,
+  MoreHorizontal,
   PhoneOff,
   UserRoundPlus,
   UserRoundX,
@@ -45,6 +48,7 @@ import {
   decodeScreenShareRequest,
   encodeScreenShareRequest,
   LessonInviteDialog,
+  MediaPermissionDialog,
   MICROPHONE_SOURCE,
   SCREEN_SHARE_SOURCE,
   useAllowShare,
@@ -60,6 +64,8 @@ import type { Lesson } from "@/shared/types";
 import { Avatar, Button } from "@/shared/ui/legacy";
 
 type SidePanel = "board" | "people" | null;
+
+const MAX_RECONNECT_ATTEMPTS = 5;
 
 function useConnectionLabels(): Record<string, string> {
   const { t } = useTranslation("live");
@@ -97,6 +103,10 @@ function useVideoRecordingLabels(): Record<TeacherVideoRecordingSnapshot["phase"
   };
 }
 
+function firstName(value: string): string {
+  return value.trim().split(/\s+/)[0] ?? value;
+}
+
 function CameraTile({
   track,
   compact = false,
@@ -108,22 +118,91 @@ function CameraTile({
   const publication = "publication" in track ? track.publication : undefined;
   const cameraOff = !publication || publication.isMuted;
   const name = track.participant.name || track.participant.identity;
+  const speaking = track.participant.isSpeaking;
+  const micOn = track.participant.isMicrophoneEnabled;
 
   return (
     <article
-      className={`live-camera-tile ${compact ? "is-compact" : ""} ${cameraOff ? "is-camera-off" : ""}`}
+      className={`live-camera-tile relative isolate overflow-hidden rounded-2xl bg-subtle ${
+        compact ? "is-compact" : ""
+      } ${cameraOff ? "is-camera-off" : ""} ${
+        speaking ? "ring-2 ring-success" : "ring-1 ring-line"
+      }`}
     >
       <ParticipantTile trackRef={track} disableSpeakingIndicator={cameraOff} />
       {cameraOff ? (
-        <div className="live-camera-placeholder" aria-label={t("room.cameraOffAria", { name })}>
-          <Avatar name={name} size={compact ? "sm" : "md"} />
+        <div
+          className="live-camera-placeholder absolute inset-0 grid place-items-center bg-subtle"
+          aria-label={t("room.cameraOffAria", { name })}
+        >
+          <Avatar name={name} size={compact ? "sm" : "lg"} />
         </div>
       ) : null}
-      <span className="live-camera-name">
-        {track.participant.isLocal ? `${name} ${t("room.youSuffix")}` : name}
+      <span className="live-camera-name absolute bottom-3 left-3 z-10 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-label-strong text-white backdrop-blur-sm">
+        {micOn ? (
+          <Mic size={15} className="shrink-0" />
+        ) : (
+          <MicOff size={15} className="shrink-0 text-white/70" />
+        )}
+        {track.participant.isLocal ? t("room.youLabel") : firstName(name)}
       </span>
     </article>
   );
+}
+
+function ReconnectBanner() {
+  const { t } = useTranslation("live");
+  const room = useRoomContext();
+  const connectionState = useConnectionState();
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    function onReconnecting() {
+      setAttempt((current) => Math.min(current + 1, MAX_RECONNECT_ATTEMPTS));
+    }
+    function onReconnected() {
+      setAttempt(0);
+    }
+    room.on(RoomEvent.Reconnecting, onReconnecting);
+    room.on(RoomEvent.Reconnected, onReconnected);
+    return () => {
+      room.off(RoomEvent.Reconnecting, onReconnecting);
+      room.off(RoomEvent.Reconnected, onReconnected);
+    };
+  }, [room]);
+
+  if (connectionState !== ConnectionState.Reconnecting) return null;
+
+  return (
+    <div
+      role="status"
+      className="pointer-events-none absolute inset-x-0 top-3 z-30 flex justify-center px-4"
+    >
+      <span className="flex items-center gap-2.5 rounded-xl bg-saffron-subtle px-4 py-3 text-body-sm text-ink-inverse shadow-lg">
+        <Info size={17} className="shrink-0 text-saffron-strong" />
+        {t("room.reconnecting", {
+          attempt: Math.max(1, attempt),
+          total: MAX_RECONNECT_ATTEMPTS,
+        })}
+      </span>
+    </div>
+  );
+}
+
+function MediaPermissionWatcher({ onDenied }: { onDenied: () => void }) {
+  const room = useRoomContext();
+
+  useEffect(() => {
+    function onError(error: Error) {
+      if (error.name === "NotAllowedError" || error.name === "SecurityError") onDenied();
+    }
+    room.on(RoomEvent.MediaDevicesError, onError);
+    return () => {
+      room.off(RoomEvent.MediaDevicesError, onError);
+    };
+  }, [room, onDenied]);
+
+  return null;
 }
 
 function StudentMicControl({
@@ -475,7 +554,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   const connectionLabels = useConnectionLabels();
   const audioRecordingLabels = useAudioRecordingLabels();
   const videoRecordingLabels = useVideoRecordingLabels();
-  const [panel, setPanel] = useState<SidePanel>(null);
+  const [panel, setPanel] = useState<SidePanel>("people");
   const [inviteOpen, setInviteOpen] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
   const connectionState = useConnectionState();
@@ -517,224 +596,272 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   }, [screenStream]);
   const videoRecording = useTeacherVideoRecording(lesson.id, screenVideoOnlyStream, isTeacher);
 
-  const togglePanel = (next: Exclude<SidePanel, null>) =>
-    setPanel((current) => (current === next ? null : next));
-  const boardFull = panel === "board";
+  const boardOpen = panel === "board";
+  const peopleOpen = panel === "people";
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [permissionOpen, setPermissionOpen] = useState(false);
+  const [joinedAt] = useState(() => new Date());
+  const joinedLabel = `${String(joinedAt.getHours()).padStart(2, "0")}:${String(
+    joinedAt.getMinutes()
+  ).padStart(2, "0")}`;
+  const connected = connectionState === ConnectionState.Connected;
+
+  const recordingChips = isTeacher
+    ? [
+        audioRecording.phase === "recording"
+          ? { id: "audio", label: audioRecordingLabels.recording }
+          : null,
+        screenStream && videoRecording.phase === "recording"
+          ? { id: "video", label: videoRecordingLabels.recording }
+          : null,
+      ].filter(Boolean)
+    : [];
 
   return (
     <div
-      className={`live-room ${panel ? "has-panel" : ""} ${boardFull ? "is-board-full" : ""}`}
+      data-theme="dark"
       data-lk-theme="default"
+      className="live-room-shell dark relative flex h-dvh min-h-0 flex-col overflow-hidden bg-canvas text-ink"
     >
-      <header className="live-room-topbar">
-        <div className="live-room-identity">
-          <span className={`live-dot live-dot--${connectionState}`} aria-hidden="true" />
-          <div>
-            <strong>{lesson.title}</strong>
-            <small>
+      <header className="flex shrink-0 flex-col gap-2.5 px-5 pt-4 pb-3">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
+            aria-label={t("room.leaveAria")}
+            onClick={onLeave}
+          >
+            <ArrowLeft size={20} />
+          </button>
+
+          <div className="flex min-w-0 flex-1 flex-col">
+            <strong className="flex min-w-0 items-center gap-2 font-heading text-title text-ink">
+              <span
+                className={`size-2 shrink-0 rounded-full ${
+                  connected ? "bg-success" : "bg-saffron-strong"
+                }`}
+                aria-hidden="true"
+              />
+              <span className="truncate">{lesson.title}</span>
+            </strong>
+            <small className="truncate text-caption text-ink-tertiary">
               {lesson.courseTitle} · {connectionLabels[connectionState] ?? connectionState}
+              {connected ? ` · ${joinedLabel}` : ""}
             </small>
           </div>
-        </div>
-        <div className="live-room-topbar-actions">
-          {isTeacher ? (
-            <span
-              className={`live-audio-recording live-audio-recording--${audioRecording.phase}`}
-              title={audioRecording.error ?? audioRecordingLabels[audioRecording.phase]}
-              role={audioRecording.phase === "error" ? "alert" : "status"}
-            >
-              <span className="live-audio-recording-dot" aria-hidden="true" />
-              <span>{audioRecordingLabels[audioRecording.phase]}</span>
-              {audioRecording.pendingChunks ? (
-                <b aria-label={t("room.pendingChunksAria", { count: audioRecording.pendingChunks })}>
-                  {audioRecording.pendingChunks}
-                </b>
-              ) : null}
-            </span>
-          ) : null}
-          {isTeacher && screenStream ? (
-            <span
-              className={`live-video-recording live-video-recording--${videoRecording.phase}`}
-              title={videoRecording.error ?? videoRecordingLabels[videoRecording.phase]}
-              role={videoRecording.phase === "error" ? "alert" : "status"}
-            >
-              <span className="live-video-recording-dot" aria-hidden="true" />
-              <span>{videoRecordingLabels[videoRecording.phase]}</span>
-              {videoRecording.pendingChunks ? (
-                <b aria-label={t("room.pendingChunksAria", { count: videoRecording.pendingChunks })}>
-                  {videoRecording.pendingChunks}
-                </b>
-              ) : null}
-            </span>
-          ) : null}
-          <span className="live-room-count">
+
+          <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-label-strong text-ink">
             <Users size={15} /> {participants.length}
           </span>
+
           {isTeacher ? (
             <button
-              className="icon-button"
+              type="button"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
               onClick={() => setInviteOpen(true)}
               aria-label={t("room.inviteAria")}
               title={t("room.inviteAria")}
             >
-              <UserRoundPlus size={19} />
+              <UserRoundPlus size={18} />
             </button>
           ) : null}
-          <button className="icon-button" onClick={onLeave} aria-label={t("room.leaveAria")}>
-            <X size={19} />
-          </button>
         </div>
+
+        {recordingChips.length ? (
+          <div className="flex flex-wrap items-center gap-2">
+            {recordingChips.map((chip) => (
+              <span
+                key={chip!.id}
+                className="flex h-7 items-center gap-2 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary"
+                role="status"
+              >
+                <i className="size-1.5 shrink-0 rounded-full bg-error-text" aria-hidden="true" />
+                {chip!.label}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </header>
 
-      <div className="live-room-body">
-        {!boardFull ? (
-          <main className={`live-room-stage ${activeShare ? "has-presentation" : ""}`}>
-            {activeShare ? (
-              <div className="live-presentation-layout">
-                <div className="live-presentation-stage">
-                  <ParticipantTile trackRef={activeShare} />
-                </div>
-                <div className="live-camera-filmstrip" aria-label={t("room.filmstripAria")}>
-                  {cameraTracks.map((track) => (
-                    <CameraTile
-                      key={`${track.participant.identity}-${track.source}`}
-                      track={track}
-                      compact
-                    />
-                  ))}
-                </div>
+      <ReconnectBanner />
+
+      <div className="flex min-h-0 flex-1 gap-4 px-5 pb-24">
+        <main className="flex min-w-0 flex-1 flex-col">
+          {boardOpen ? (
+            <BoardPanel
+              lessonId={lesson.id}
+              courseId={lesson.courseId}
+              currentUserId={room.localParticipant.identity}
+            />
+          ) : activeShare ? (
+            <div className="flex min-h-0 flex-1 gap-3">
+              <div className="min-w-0 flex-1 overflow-hidden rounded-2xl bg-subtle">
+                <ParticipantTile trackRef={activeShare} />
               </div>
-            ) : cameraTracks.length ? (
-              <div className="live-camera-grid">
+              <div
+                className="flex w-[180px] shrink-0 flex-col gap-3 overflow-y-auto"
+                aria-label={t("room.filmstripAria")}
+              >
                 {cameraTracks.map((track) => (
-                  <CameraTile key={`${track.participant.identity}-${track.source}`} track={track} />
+                  <CameraTile
+                    key={`${track.participant.identity}-${track.source}`}
+                    track={track}
+                    compact
+                  />
                 ))}
               </div>
-            ) : (
-              <div className="live-room-empty">
-                <Video size={30} />
-                <p>{t("room.empty")}</p>
-              </div>
-            )}
-          </main>
-        ) : null}
+            </div>
+          ) : cameraTracks.length ? (
+            <div className="grid min-h-0 flex-1 auto-rows-min grid-cols-2 content-start gap-4 overflow-y-auto lg:grid-cols-3">
+              {cameraTracks.map((track) => (
+                <CameraTile key={`${track.participant.identity}-${track.source}`} track={track} />
+              ))}
+            </div>
+          ) : (
+            <div className="m-auto flex flex-col items-center gap-3 text-ink-tertiary">
+              <Video size={30} />
+              <p className="text-body-sm">{t("room.empty")}</p>
+            </div>
+          )}
+        </main>
 
-        {panel ? (
-          <aside className="live-room-panel" aria-label={t("room.sidePanelAria")}>
-            <nav className="live-room-panel-tabs">
-              <button onClick={() => setPanel(null)}>
-                <Video size={16} /> {t("room.backToVideo")}
-              </button>
+        {boardOpen ? (
+          <div
+            className="flex w-[180px] shrink-0 flex-col gap-3 overflow-y-auto"
+            aria-label={t("room.filmstripAria")}
+          >
+            {cameraTracks.map((track) => (
+              <CameraTile
+                key={`${track.participant.identity}-${track.source}`}
+                track={track}
+                compact
+              />
+            ))}
+          </div>
+        ) : peopleOpen ? (
+          <aside
+            className="flex w-[340px] shrink-0 flex-col gap-3 self-start rounded-2xl bg-surface p-4"
+            aria-label={t("room.sidePanelAria")}
+          >
+            <div className="flex items-center justify-between gap-2">
+              <strong className="font-heading text-h3 text-ink">
+                {t("room.participantsCount", { count: participants.length })}
+              </strong>
               <button
-                className={panel === "board" ? "is-active" : ""}
-                onClick={() => setPanel("board")}
+                type="button"
+                className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:bg-subtle hover:text-ink"
+                onClick={() => setPanel(null)}
+                aria-label={t("room.closePanelAria")}
               >
-                <LayoutDashboard size={16} /> {t("room.board")}
-              </button>
-              <button
-                className={panel === "people" ? "is-active" : ""}
-                onClick={() => setPanel("people")}
-              >
-                <Users size={16} /> {t("room.participants")}
-              </button>
-              <button className="icon-button" onClick={() => setPanel(null)} aria-label={t("room.closePanelAria")}>
                 <X size={17} />
               </button>
-            </nav>
-            <div className="live-room-panel-body">
-              {panel === "board" ? (
-                <BoardPanel
-                  lessonId={lesson.id}
-                  courseId={lesson.courseId}
-                  currentUserId={room.localParticipant.identity}
-                />
-              ) : (
-                <ParticipantsPanel
-                  lessonId={lesson.id}
-                  isTeacher={isTeacher}
-                  micRequests={mic.requests}
-                  onGrantMic={mic.grant.mutate}
-                  onDenyMic={mic.deny.mutate}
-                  micAnswerPending={mic.grant.isPending || mic.deny.isPending}
-                  cameraRequests={camera.requests}
-                  onGrantCamera={camera.grant.mutate}
-                  onDenyCamera={camera.deny.mutate}
-                  cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
-                />
-              )}
             </div>
+
+            <ParticipantsPanel
+              lessonId={lesson.id}
+              isTeacher={isTeacher}
+              micRequests={mic.requests}
+              onGrantMic={mic.grant.mutate}
+              onDenyMic={mic.deny.mutate}
+              micAnswerPending={mic.grant.isPending || mic.deny.isPending}
+              cameraRequests={camera.requests}
+              onGrantCamera={camera.grant.mutate}
+              onDenyCamera={camera.deny.mutate}
+              cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
+              onInvite={() => setInviteOpen(true)}
+            />
           </aside>
         ) : null}
       </div>
 
-      <footer className="live-room-controls">
-        {isTeacher ? (
-          <TeacherMicControl />
-        ) : (
-          <StudentMicControl
-            onRequest={mic.requestMic}
-            requesting={mic.requesting}
-            waiting={mic.waiting}
-          />
-        )}
-        {isTeacher ? (
-          <TeacherCameraControl />
-        ) : (
-          <StudentCameraControl
-            onRequest={camera.requestCamera}
-            requesting={camera.requesting}
-            waiting={camera.waiting}
-          />
-        )}
-        {isTeacher ? (
-          screenStream && <TeacherShareControl screenStream={screenStream} />
-        ) : (
-          <StudentShareControl />
-        )}
+      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-5">
+        <div className="pointer-events-auto flex items-center gap-3">
+          {isTeacher ? (
+            <TeacherMicControl />
+          ) : (
+            <StudentMicControl
+              onRequest={mic.requestMic}
+              requesting={mic.requesting}
+              waiting={mic.waiting}
+            />
+          )}
+          {isTeacher ? (
+            <TeacherCameraControl />
+          ) : (
+            <StudentCameraControl
+              onRequest={camera.requestCamera}
+              requesting={camera.requesting}
+              waiting={camera.waiting}
+            />
+          )}
+          {isTeacher ? (
+            screenStream && <TeacherShareControl screenStream={screenStream} />
+          ) : (
+            <StudentShareControl />
+          )}
 
-        <span className="live-control-divider" aria-hidden="true" />
-
-        <button
-          className={`live-control ${panel === "board" ? "is-active" : ""}`}
-          onClick={() => togglePanel("board")}
-          aria-label={t("room.openBoardAria")}
-          aria-pressed={panel === "board"}
-        >
-          <LayoutDashboard size={19} />
-        </button>
-        <button
-          className={`live-control ${panel === "people" ? "is-active" : ""}`}
-          onClick={() => togglePanel("people")}
-          aria-label={
-            pendingRequestsCount
-              ? t("room.participantsWithRequestsAria", { count: pendingRequestsCount })
-              : t("room.participants")
-          }
-          aria-pressed={panel === "people"}
-        >
-          <Users size={19} />
-          {pendingRequestsCount ? (
-            <span className="live-control-badge">{pendingRequestsCount}</span>
-          ) : null}
-        </button>
-
-        <DisconnectButton className="live-control live-control--leave">
-          <PhoneOff size={19} />
-          <span>{t("room.leave")}</span>
-        </DisconnectButton>
-
-        {isTeacher ? (
           <button
             type="button"
-            className="live-control live-control--finish"
-            aria-label={t("room.finishAria")}
-            title={t("room.finishTitle")}
-            onClick={() => setFinishOpen(true)}
+            className={`live-control ${boardOpen ? "is-active" : ""}`}
+            onClick={() => setPanel(boardOpen ? null : "board")}
+            aria-label={t("room.openBoardAria")}
+            aria-pressed={boardOpen}
           >
-            <CircleStop size={19} />
-            <span>{t("room.finish")}</span>
+            <LayoutDashboard size={19} />
           </button>
-        ) : null}
+
+          <div className="relative">
+            <button
+              type="button"
+              className={`live-control ${moreOpen ? "is-active" : ""}`}
+              onClick={() => setMoreOpen((current) => !current)}
+              aria-label={t("room.moreAria")}
+              aria-expanded={moreOpen}
+            >
+              <MoreHorizontal size={19} />
+              {pendingRequestsCount ? (
+                <span className="live-control-badge">{pendingRequestsCount}</span>
+              ) : null}
+            </button>
+
+            {moreOpen ? (
+              <div className="absolute bottom-[calc(100%+10px)] right-0 z-30 flex w-[230px] flex-col gap-1 rounded-2xl bg-surface p-2 shadow-xl">
+                <button
+                  type="button"
+                  className="flex h-11 items-center gap-2.5 rounded-xl px-3 text-left text-label-strong text-ink transition-colors hover:bg-subtle"
+                  onClick={() => {
+                    setMoreOpen(false);
+                    setPanel(peopleOpen ? null : "people");
+                  }}
+                >
+                  <Users size={17} />
+                  {t("room.participants")}
+                  {pendingRequestsCount ? (
+                    <b className="ml-auto grid size-6 place-items-center rounded-full bg-action text-caption-strong text-on-action">
+                      {pendingRequestsCount}
+                    </b>
+                  ) : null}
+                </button>
+                {isTeacher ? (
+                  <button
+                    type="button"
+                    className="flex h-11 items-center gap-2.5 rounded-xl px-3 text-left text-label-strong text-error-text transition-colors hover:bg-error-bg"
+                    onClick={() => {
+                      setMoreOpen(false);
+                      setFinishOpen(true);
+                    }}
+                  >
+                    <CircleStop size={17} /> {t("room.finish")}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          <DisconnectButton className="live-control live-control--leave">
+            <PhoneOff size={19} />
+          </DisconnectButton>
+        </div>
       </footer>
 
       <AwayStudentsNotice lessonId={lesson.id} enabled={isTeacher} />
@@ -756,6 +883,8 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
         />
       ) : null}
 
+      <MediaPermissionDialog open={permissionOpen} onOpenChange={setPermissionOpen} />
+      <MediaPermissionWatcher onDenied={() => setPermissionOpen(true)} />
       <RoomAudioRenderer />
       <ShareRequestListener lessonId={lesson.id} enabled={isTeacher} />
       {!isTeacher ? <AttentionCheckDialog lessonId={lesson.id} check={attention.data} /> : null}
@@ -774,6 +903,51 @@ interface ParticipantsPanelProps {
   onGrantCamera: (studentId: string) => void;
   onDenyCamera: (studentId: string) => void;
   cameraAnswerPending: boolean;
+  onInvite: () => void;
+}
+
+function RequestRow({
+  name,
+  index,
+  note,
+  pending,
+  onGrant,
+  onDeny,
+}: {
+  name: string;
+  index: number;
+  note: string;
+  pending: boolean;
+  onGrant: () => void;
+  onDeny: () => void;
+}) {
+  const { t } = useTranslation("live");
+
+  return (
+    <article className="flex items-center gap-2.5 rounded-xl bg-subtle p-2.5">
+      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-action text-caption-strong text-on-action">
+        {index + 1}
+      </span>
+      <Avatar name={name} size="sm" />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <strong className="truncate text-label-strong text-ink">{name}</strong>
+        <small className="truncate text-caption text-ink-tertiary">{note}</small>
+      </span>
+      <Button size="sm" disabled={pending} onClick={onGrant}>
+        {t("participantsPanel.grant")}
+      </Button>
+      <button
+        type="button"
+        className="grid size-8 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
+        aria-label={t("participantsPanel.denyAria", { name })}
+        title={t("participantsPanel.denyTitle")}
+        disabled={pending}
+        onClick={onDeny}
+      >
+        <X size={16} />
+      </button>
+    </article>
+  );
 }
 
 function ParticipantsPanel({
@@ -787,119 +961,164 @@ function ParticipantsPanel({
   onGrantCamera,
   onDenyCamera,
   cameraAnswerPending,
+  onInvite,
 }: ParticipantsPanelProps) {
   const { t } = useTranslation("live");
   const participants = useParticipants();
   const allowShare = useAllowShare(lessonId);
   const ban = useBanFromLesson(lessonId);
+  const raisedHands = new Set([
+    ...micRequests.map((request) => request.name),
+    ...cameraRequests.map((request) => request.name),
+  ]);
 
   return (
-    <div className="live-participants">
+    <div className="flex min-h-0 flex-col gap-3">
       {micRequests.length ? (
-        <section className="live-mic-requests" aria-label={t("participantsPanel.micRequestsAria")}>
-          <h4>
-            <Hand size={14} /> {t("participantsPanel.wantsToSpeak", { count: micRequests.length })}
+        <section
+          className="flex flex-col gap-2"
+          aria-label={t("participantsPanel.micRequestsAria")}
+        >
+          <h4 className="flex items-center gap-1.5 px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
+            <Hand size={13} /> {t("participantsPanel.wantsToSpeak", { count: micRequests.length })}
           </h4>
           {micRequests.map((request, index) => (
-            <article key={request.studentId}>
-              <span className="live-mic-queue-number" aria-hidden="true">
-                {index + 1}
-              </span>
-              <Avatar name={request.name} size="sm" />
-              <div>
-                <strong>{request.name}</strong>
-                <small>{t("participantsPanel.micRequesting")}</small>
-              </div>
-              <Button
-                size="sm"
-                disabled={micAnswerPending}
-                onClick={() => onGrantMic(request.studentId)}
-              >
-                {t("participantsPanel.grant")}
-              </Button>
-              <button
-                type="button"
-                className="icon-button destructive-icon"
-                aria-label={t("participantsPanel.denyAria", { name: request.name })}
-                title={t("participantsPanel.denyTitle")}
-                disabled={micAnswerPending}
-                onClick={() => onDenyMic(request.studentId)}
-              >
-                <X size={16} />
-              </button>
-            </article>
+            <RequestRow
+              key={request.studentId}
+              name={request.name}
+              index={index}
+              note={t("participantsPanel.micRequesting")}
+              pending={micAnswerPending}
+              onGrant={() => onGrantMic(request.studentId)}
+              onDeny={() => onDenyMic(request.studentId)}
+            />
           ))}
         </section>
       ) : null}
+
       {cameraRequests.length ? (
-        <section className="live-mic-requests" aria-label={t("participantsPanel.cameraRequestsAria")}>
-          <h4>
-            <Video size={14} /> {t("participantsPanel.wantsCamera", { count: cameraRequests.length })}
+        <section
+          className="flex flex-col gap-2"
+          aria-label={t("participantsPanel.cameraRequestsAria")}
+        >
+          <h4 className="flex items-center gap-1.5 px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
+            <Video size={13} />{" "}
+            {t("participantsPanel.wantsCamera", { count: cameraRequests.length })}
           </h4>
           {cameraRequests.map((request, index) => (
-            <article key={request.studentId}>
-              <span className="live-mic-queue-number" aria-hidden="true">
-                {index + 1}
-              </span>
-              <Avatar name={request.name} size="sm" />
-              <div>
-                <strong>{request.name}</strong>
-                <small>{t("participantsPanel.cameraRequesting")}</small>
-              </div>
-              <Button
-                size="sm"
-                disabled={cameraAnswerPending}
-                onClick={() => onGrantCamera(request.studentId)}
-              >
-                {t("participantsPanel.grant")}
-              </Button>
-              <button
-                type="button"
-                className="icon-button destructive-icon"
-                aria-label={t("participantsPanel.denyAria", { name: request.name })}
-                title={t("participantsPanel.denyTitle")}
-                disabled={cameraAnswerPending}
-                onClick={() => onDenyCamera(request.studentId)}
-              >
-                <X size={16} />
-              </button>
-            </article>
+            <RequestRow
+              key={request.studentId}
+              name={request.name}
+              index={index}
+              note={t("participantsPanel.cameraRequesting")}
+              pending={cameraAnswerPending}
+              onGrant={() => onGrantCamera(request.studentId)}
+              onDeny={() => onDenyCamera(request.studentId)}
+            />
           ))}
         </section>
       ) : null}
-      {participants.map((participant) => (
-        <article key={participant.identity}>
-          <Avatar name={participant.name || participant.identity} size="sm" />
-          <div>
-            <strong>{participant.name || participant.identity}</strong>
-            <small>{participant.isLocal ? t("participantsPanel.you") : t("participantsPanel.participant")}</small>
-          </div>
-          {isTeacher && !participant.isLocal ? (
-            <>
-              <Button
-                size="sm"
-                variant="secondary"
-                loading={allowShare.isPending}
-                onClick={() => allowShare.mutate(participant.identity)}
-              >
-                <MonitorUp size={15} /> {t("participantsPanel.allowShare")}
-              </Button>
-              <button
-                className="icon-button destructive-icon"
-                aria-label={t("participantsPanel.banAria", {
-                  name: participant.name || participant.identity,
-                })}
-                title={t("participantsPanel.banTitle")}
-                disabled={ban.isPending}
-                onClick={() => ban.mutate(participant.identity)}
-              >
-                <UserRoundX size={16} />
-              </button>
-            </>
-          ) : null}
-        </article>
-      ))}
-      {!participants.length ? <p className="portal-muted">{t("participantsPanel.empty")}</p> : null}
+
+      <div className="-mr-1 flex min-h-0 flex-col gap-0.5 overflow-y-auto pr-1">
+        {participants.map((participant) => {
+          const name = participant.name || participant.identity;
+          const speaking = participant.isSpeaking;
+          const micOn = participant.isMicrophoneEnabled;
+          const cameraOn = participant.isCameraEnabled;
+          const raisedHand = raisedHands.has(name);
+          const note = participant.isLocal
+            ? isTeacher
+              ? t("participantsPanel.teacherYou")
+              : t("participantsPanel.you")
+            : speaking
+              ? t("participantsPanel.speaking")
+              : raisedHand
+                ? t("participantsPanel.raisedHand")
+                : t("participantsPanel.participant");
+
+          return (
+            <article
+              key={participant.identity}
+              className="group flex items-center gap-2.5 rounded-xl px-1 py-2 transition-colors hover:bg-subtle"
+            >
+              <Avatar name={name} size="sm" />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-label-strong text-ink">{name}</strong>
+                <small
+                  className={`truncate text-caption ${
+                    speaking ? "text-success-text" : "text-ink-tertiary"
+                  }`}
+                >
+                  {note}
+                </small>
+              </span>
+
+              {raisedHand ? (
+                <Hand size={16} className="shrink-0 text-saffron-strong" aria-hidden="true" />
+              ) : null}
+              {micOn ? (
+                <Mic size={16} className="shrink-0 text-ink-secondary" aria-hidden="true" />
+              ) : (
+                <MicOff size={16} className="shrink-0 text-error-text" aria-hidden="true" />
+              )}
+              {cameraOn ? (
+                <Video size={16} className="shrink-0 text-ink-secondary" aria-hidden="true" />
+              ) : (
+                <VideoOff size={16} className="shrink-0 text-error-text" aria-hidden="true" />
+              )}
+
+              {isTeacher && !participant.isLocal ? (
+                <span className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                  <button
+                    type="button"
+                    className="grid size-8 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-muted hover:text-ink disabled:opacity-50"
+                    disabled={allowShare.isPending}
+                    aria-label={t("participantsPanel.allowShare")}
+                    title={t("participantsPanel.allowShare")}
+                    onClick={() => allowShare.mutate(participant.identity)}
+                  >
+                    <MonitorUp size={15} />
+                  </button>
+                  <button
+                    type="button"
+                    className="grid size-8 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg disabled:opacity-50"
+                    aria-label={t("participantsPanel.banAria", { name })}
+                    title={t("participantsPanel.banTitle")}
+                    disabled={ban.isPending}
+                    onClick={() => ban.mutate(participant.identity)}
+                  >
+                    <UserRoundX size={15} />
+                  </button>
+                </span>
+              ) : null}
+            </article>
+          );
+        })}
+        {!participants.length ? (
+          <p className="px-1 py-3 text-body-sm text-ink-tertiary">
+            {t("participantsPanel.empty")}
+          </p>
+        ) : null}
+      </div>
+
+      {isTeacher ? (
+        <div className="flex items-center gap-2 border-t border-line pt-3">
+          <button
+            type="button"
+            className="h-11 flex-1 rounded-full border border-line text-label-strong text-ink transition-colors hover:bg-subtle"
+            onClick={() => toast.info(t("participantsPanel.muteAllUnavailable"))}
+          >
+            {t("participantsPanel.muteAll")}
+          </button>
+          <button
+            type="button"
+            className="h-11 flex-1 rounded-full bg-action text-label-strong text-on-action transition-colors hover:bg-action-hover"
+            onClick={onInvite}
+          >
+            {t("participantsPanel.invite")}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

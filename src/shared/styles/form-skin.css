@@ -341,3 +341,140 @@ textarea.quiz-page-question-text:focus {
 .field-invalid button[aria-haspopup="listbox"] {
   border-color: var(--status-error) !important;
 }
+
+.live-room-shell .live-camera-tile { position: relative; height: 100%; border: 0; }
+.live-room-shell .live-camera-tile.is-compact { height: 104px; }
+.live-room-shell .live-camera-placeholder { background: var(--bg-subtle); }
+.live-room-shell .live-camera-placeholder .avatar { box-shadow: none; }
+.live-room-shell .live-camera-name { position: absolute; text-shadow: none; }
+
+.live-room-shell .live-control {
+  display: grid;
+  place-items: center;
+  gap: 0;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+.live-room-shell .live-control:hover:not(:disabled) { background: var(--bg-muted); }
+.live-room-shell .live-control.is-active { background: var(--action-primary); color: var(--text-on-action); }
+.live-room-shell .live-control[data-lk-enabled="false"]:not(.live-control--share) {
+  background: var(--status-error);
+  color: #fff;
+}
+.live-room-shell .live-control--share[data-lk-enabled="true"] { background: var(--action-primary); color: var(--text-on-action); }
+.live-room-shell .live-control--mic-request { background: var(--saffron-subtle); color: var(--saffron-strong); }
+.live-room-shell .live-control--leave { width: 52px; min-height: 52px; background: var(--status-error); color: #fff; }
+.live-room-shell .live-control--leave:hover { background: var(--status-error); opacity: .9; }
+.live-room-shell .live-control-badge { top: 2px; right: 2px; }
+
+.board-panel .board-canvas { background-image: none; }
+.board-panel .board-canvas-wrap { background: transparent; }
+
+.periodic-grid { grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 2px; }
+.periodic-cell { min-height: 40px; }
+.periodic-cell strong { font-size: var(--fs-sm); }
+
+/* Doska kabi qorong‘i ekran ichidagi oq maydonlar uchun yorug‘ qamrov */
+[data-theme="light"] {
+  --background: #f5f7fa;
+  --foreground: #1a1f26;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --primary: #5d0cfe;
+  --primary-hover: #4e08d8;
+  --primary-foreground: #ffffff;
+  --primary-soft: #efe9ff;
+  --primary-text: #5d0cfe;
+  --primary-rgb: 93 12 254;
+  --primary-bright: #7c3aff;
+  --secondary: #eef1f6;
+  --secondary-foreground: #1a1f26;
+  --muted: #eef1f6;
+  --muted-foreground: #5a6672;
+  --accent: #efe9ff;
+  --accent-foreground: #4a15c0;
+  --card: #ffffff;
+  --card-foreground: #1a1f26;
+  --popover: #ffffff;
+  --popover-foreground: #1a1f26;
+  --border: #e2e7ef;
+  --border-strong: #d2d9e4;
+  --input: #e2e7ef;
+  --ring: #7c3aff;
+  --destructive: #cd3a4b;
+  --destructive-foreground: #ffffff;
+  --success: #22a979;
+  --warning: #e99a3d;
+  --chart-1: #2b7fff;
+  --chart-2: #22a979;
+  --chart-3: #e99a3d;
+  --chart-4: #d94555;
+  --chart-5: #7c5cf0;
+  --sidebar: #101720;
+  --sidebar-muted: #8b98a5;
+  --sidebar-foreground: #e6edf3;
+  --sidebar-primary: #5d0cfe;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #20193a;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #232c36;
+  --sidebar-ring: #7c3aff;
+  --surface-subtle: #f7f9fc;
+  --surface-tint: #f6faff;
+  --chat-bg: #f5f7fa;
+  --primary-tint: #f7f4ff;
+  --primary-tint-strong: #e5dcff;
+  --border-accent: #d4c4ff;
+  --border-accent-strong: #b9a1ff;
+  --destructive-soft: #fff0f2;
+  --destructive-soft-border: #f4dadd;
+  --destructive-strong: #b4233a;
+  --success-soft: #e8f8f2;
+  --success-strong: #0f7a59;
+  --warning-soft: #fff5d9;
+  --warning-strong: #7a5100;
+  --tone-violet-fg: #5643c9;  --tone-violet-bg: #f0edff;
+  --tone-blue-fg:   #2f6fb8;  --tone-blue-bg:   #ebf4ff;
+  --tone-amber-fg:  #9c6017;  --tone-amber-bg:  #fff4e3;
+  --tone-emerald-fg:#0f7a59;  --tone-emerald-bg:#e7f8f1;
+  --tone-rose-fg:   #b73f56;  --tone-rose-bg:   #ffedf1;
+  --surface-rgb: 255 255 255;
+  --shadow-rgb: 26 31 38;
+  --scrim-rgb: 10 14 19;
+  --overlay: rgba(10, 14, 19, 0.55);
+  --glass: rgba(255, 255, 255, 0.94);
+  --glass-border: rgba(226, 231, 239, 0.9);
+  --shadow-sm: 0 1px 3px rgba(26, 31, 38, 0.08);
+  --shadow-md: 0 10px 26px rgba(26, 31, 38, 0.1);
+  --shadow-primary: 0 10px 26px rgb(var(--primary-rgb) / 0.22);
+  --shadow-float: 0 18px 50px rgba(26, 31, 38, 0.12);
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 13px;
+  --fs-md: 14px;
+  --fs-lg: 15px;
+  --fs-xl: 16px;
+  --fs-2xl: 17px;
+  --fs-3xl: 19px;
+  --fs-4xl: 21px;
+  --fs-5xl: 24px;
+  --fs-6xl: 28px;
+  --fs-7xl: 44px;
+  --r-xs: 7px;
+  --r-sm: var(--radius-sm);
+  --r-md: var(--radius-md);
+  --r-lg: var(--radius-lg);
+  --r-xl: var(--radius-xl);
+  --r-full: 999px;
+}
+
+.live-room-shell .live-camera-tile { aspect-ratio: 4 / 3; height: auto; }
+.live-room-shell .live-camera-tile.is-compact { aspect-ratio: 4 / 3; height: auto; }
+.live-room-shell .live-control--leave { background: #d93a3a; }
+.live-room-shell .live-control--leave:hover { background: #c22f2f; opacity: 1; }
+.live-room-shell .lk-participant-placeholder { display: none; }

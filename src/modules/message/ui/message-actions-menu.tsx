@@ -21,6 +21,7 @@ export interface MessageActionsMenuProps {
 }
 
 const QUICK_REACTIONS = ["👍", "❤️", "😂", "😮", "🙏"];
+const EDGE_GAP = 12;
 
 export function MessageActionsMenu({
   message,
@@ -181,7 +182,14 @@ export function MessageActionsMenu({
 
       <motion.div
         key="menu"
-        className="fixed z-50 hidden w-[240px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:flex"
+        ref={(node) => {
+          if (!node) return;
+          const left = Math.min(position.x, window.innerWidth - node.offsetWidth - EDGE_GAP);
+          const top = Math.min(position.y, window.innerHeight - node.offsetHeight - EDGE_GAP);
+          node.style.left = `${Math.max(EDGE_GAP, left)}px`;
+          node.style.top = `${Math.max(EDGE_GAP, top)}px`;
+        }}
+        className="fixed z-50 hidden max-h-[calc(100dvh-24px)] w-[240px] flex-col overflow-y-auto rounded-2xl border border-line bg-surface shadow-xl lg:flex"
         role="menu"
         style={{ left: position.x, top: position.y }}
         initial={{ opacity: 0, scale: 0.96, y: -5 }}

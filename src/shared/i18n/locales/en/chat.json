@@ -287,5 +287,10 @@
     "searchPlaceholder": "Search a chat",
     "empty": "No chat found",
     "done": "Message forwarded"
+  },
+  "system": {
+    "recordingTitle": "The lesson recording is ready",
+    "recordingHint": "The recording can only be watched on the platform",
+    "recordingAction": "Watch"
   }
 }

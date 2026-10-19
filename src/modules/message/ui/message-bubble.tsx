@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion";
+import { Play } from "lucide-react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
 import { Avatar } from "@/shared/ui/legacy";
@@ -21,6 +23,49 @@ export interface MessageBubbleProps {
   selected?: boolean;
   onToggleSelect?: (message: ChatMessage) => void;
   highlighted?: boolean;
+}
+
+const RECORDING_PATH = /\/recordings\/[\w-]+/;
+const QUOTED_TITLE = /[“"']([^“”"']+)[”"']/;
+
+function SystemMessage({ text }: { text: string }) {
+  const { t } = useTranslation("chat");
+  const path = text.match(RECORDING_PATH)?.[0] ?? null;
+
+  if (path) {
+    const title = text.match(QUOTED_TITLE)?.[1] ?? "";
+    return (
+      <div className="flex justify-end py-1">
+        <div className="flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-sm">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action-subtle text-action">
+            <Play size={18} />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <strong className="truncate text-label-strong text-ink">
+              {t("system.recordingTitle")}
+            </strong>
+            <small className="truncate text-caption text-ink-tertiary">
+              {title || t("system.recordingHint")}
+            </small>
+          </span>
+          <Link
+            to={path}
+            className="flex h-9 shrink-0 items-center rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+          >
+            {t("system.recordingAction")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex justify-center py-1">
+      <span className="max-w-[460px] rounded-full bg-subtle px-3 py-1 text-center text-caption text-ink-tertiary">
+        {text}
+      </span>
+    </div>
+  );
 }
 
 export function MessageBubble({
@@ -47,14 +92,7 @@ export function MessageBubble({
     }
   }
 
-  if (message.type === "system")
-    return (
-      <div className="flex justify-center py-1">
-        <span className="rounded-full bg-subtle px-3 py-1 text-caption text-ink-tertiary">
-          {message.text}
-        </span>
-      </div>
-    );
+  if (message.type === "system") return <SystemMessage text={message.text} />;
 
   return (
     <motion.div

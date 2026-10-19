@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 import { DisconnectReason } from "livekit-client";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/modules/auth";
@@ -13,10 +14,11 @@ import {
   type LessonPreJoinChoices,
 } from "@/modules/live";
 import { RateLessonDialog, useLesson } from "@/modules/lesson";
-import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
-import { LiveRoom, useLeaveGuard } from "@/widgets/live-room";
+import { LoadingFallback } from "@/shared/ui/legacy";
+import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
 
 export function LiveLessonPage() {
+  const { t } = useTranslation("live");
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -80,12 +82,12 @@ export function LiveLessonPage() {
   if (lesson.isError || !lesson.data) {
     return (
       <main className="live-page">
-        <RouteState
-          eyebrow="JONLI DARS"
-          title="Darsni topib bo‘lmadi"
+        <LiveRoomState
+          title={t("state.notFoundTitle")}
           description={lesson.error?.message}
-          actionLabel="Orqaga"
+          actionLabel={t("state.back")}
           onAction={handleLeave}
+          onBack={handleLeave}
         />
       </main>
     );
@@ -94,11 +96,13 @@ export function LiveLessonPage() {
   if (ratePrompt) {
     return (
       <main className="live-page">
-        <RouteState
-          eyebrow="DARS YAKUNLANDI"
-          title={lesson.data.title}
-          description="Chiqishdan oldin o‘qituvchi uchun fikringizni qoldiring."
-          actionLabel="Chiqish"
+        <LiveRoomState
+          tone="neutral"
+          lessonTitle={lesson.data.title}
+          subtitle={lesson.data.courseTitle}
+          title={t("state.finishedTitle")}
+          description={t("state.finishedDescription")}
+          actionLabel={t("state.exit")}
           onAction={() => navigate(-1)}
         />
         <RateLessonDialog
@@ -113,14 +117,28 @@ export function LiveLessonPage() {
   }
 
   if (token.isError || !token.data) {
+    const finished = lesson.data.status === "finished";
     return (
       <main className="live-page">
-        <RouteState
-          eyebrow="JONLI DARS"
-          title="Darsga kirib bo‘lmadi"
-          description={token.error?.message}
-          actionLabel="Qayta urinish"
-          onAction={token.refetch}
+        <LiveRoomState
+          lessonTitle={lesson.data.title}
+          subtitle={`${lesson.data.courseTitle} · ${lesson.data.date} · ${lesson.data.time}`}
+          title={t("state.joinFailedTitle")}
+          description={
+            finished
+              ? t("state.joinFailedFinished", {
+                  title: lesson.data.title,
+                  time: lesson.data.time,
+                })
+              : token.error?.message
+          }
+          actionLabel={t("state.backToChat")}
+          onAction={handleLeave}
+          secondaryLabel={finished ? t("state.openRecording") : t("state.retry")}
+          onSecondary={
+            finished ? () => navigate(`/recordings/${lesson.data!.id}`) : () => void token.refetch()
+          }
+          onBack={handleLeave}
         />
       </main>
     );

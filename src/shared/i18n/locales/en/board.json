@@ -50,11 +50,17 @@
   },
   "eraseDialog": {
     "title": "Delete element",
-    "description": "Enter a reason for deletion, for the audit log.",
+    "description": "You are deleting the selected element. Pick a reason — the student will see it.",
     "reasonLabel": "Reason",
     "cancel": "Cancel",
     "confirm": "Delete",
-    "deleted": "Element deleted"
+    "deleted": "Element deleted",
+    "reasons": {
+      "wrongAnswer": "Wrong answer",
+      "offTopic": "Off topic",
+      "cleanup": "Clearing the board",
+      "other": "Other"
+    }
   },
   "grantDialog": {
     "title": "Board drawing permission",
@@ -64,11 +70,15 @@
   },
   "formulaDialog": {
     "title": "Formula solver",
-    "description": "E.g.: 2x^2 - 5x + 3 = 0",
-    "formulaLabel": "Formula",
+    "description": "Enter an equation — the step-by-step solution is added to the board.",
+    "formulaLabel": "Equation",
     "solve": "Solve",
     "place": "Add to board",
-    "solveError": "Couldn't solve the formula"
+    "solveError": "Couldn't solve the formula",
+    "placeholder": "x² − 5x + 6 = 0",
+    "solutionSteps": "Solution · {{count}} steps",
+    "answer": "Answer: {{value}}",
+    "resultOnly": "Answer only"
   },
   "away": {
     "title": "Left the lesson"
@@ -76,7 +86,7 @@
   "periodic": {
     "button": "Periodic table",
     "title": "Periodic table",
-    "description": "Pick an element to see its structure and Bohr model.",
+    "description": "Pick an element — its symbol and data are added to the board.",
     "loading": "Loading the table",
     "loadError": "Could not load the periodic table",
     "searchPlaceholder": "Element, symbol or number",
@@ -88,10 +98,14 @@
     "group": "Group",
     "shells": "Electron shells",
     "noShells": "No shell data for this element.",
-    "placeCard": "Put on the board",
+    "placeCard": "Add to board",
     "placeBohr": "Draw the Bohr model",
     "electronLabel": "e",
-    "electronSuffix": "e"
+    "electronSuffix": "e",
+    "close": "Close",
+    "tableNote": "Periods 1–4 shown · {{count}} elements",
+    "periodShort": "Period {{value}}",
+    "groupShort": "Group {{value}}"
   },
   "palette": {
     "aria": "Equation builder",
@@ -110,5 +124,18 @@
       "symbol": "Symbols",
       "chemistry": "Chemistry"
     }
+  },
+  "page": {
+    "loading": "Loading the board",
+    "notFound": "Lesson not found",
+    "back": "Back",
+    "lessonFinished": "Lesson finished",
+    "sendToChat": "Send to chat",
+    "downloadPdf": "Download PDF",
+    "sentToChat": "The board was sent to the group chat",
+    "sendFailed": "Could not send the board to the chat",
+    "pdfFailed": "Could not download the PDF",
+    "roomNotFound": "No chat found for this group",
+    "chatMessage": "Board of the “{{title}}” lesson"
   }
 }
