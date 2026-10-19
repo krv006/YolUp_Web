@@ -88,5 +88,17 @@
     "schedule": "Schedule",
     "searchPlaceholder": "Search",
     "searchEmpty": "Nothing found"
+  },
+  "routeState": {
+    "errorEyebrow": "Error",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "That one is on us. Refresh the page — if it keeps happening, write to support.",
+    "errorAction": "Try again",
+    "notFoundTitle": "Page not found",
+    "notFoundDescription": "The address is wrong or the page has moved. Head back home.",
+    "notFoundAction": "Back to home",
+    "forbiddenTitle": "You do not have access here",
+    "forbiddenDescription": "This page belongs to another role. Switch account or ask the group owner for access.",
+    "forbiddenAction": "Switch account"
   }
 }

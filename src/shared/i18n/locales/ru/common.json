@@ -88,5 +88,17 @@
     "schedule": "Расписание",
     "searchPlaceholder": "Поиск",
     "searchEmpty": "Ничего не найдено"
+  },
+  "routeState": {
+    "errorEyebrow": "Ошибка",
+    "errorTitle": "Что-то пошло не так",
+    "errorDescription": "Это наша ошибка. Обновите страницу — если повторится, напишите в поддержку.",
+    "errorAction": "Повторить",
+    "notFoundTitle": "Страница не найдена",
+    "notFoundDescription": "Неверный адрес или страница перемещена. Вернитесь на главную.",
+    "notFoundAction": "На главную",
+    "forbiddenTitle": "Нет доступа к этому разделу",
+    "forbiddenDescription": "Страница для другой роли. Смените аккаунт или попросите доступ у владельца группы.",
+    "forbiddenAction": "Сменить аккаунт"
   }
 }
