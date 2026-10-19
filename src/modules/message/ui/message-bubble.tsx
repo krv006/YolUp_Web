@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
@@ -16,10 +16,6 @@ export interface MessageBubbleProps {
   onOpenActions: (message: ChatMessage, position: { x: number; y: number }) => void;
   onReact: (message: ChatMessage, emoji: string) => void;
   onRetryMessage?: (message: ChatMessage) => void;
-  selectionMode?: boolean;
-  selected?: boolean;
-  onToggleSelect?: (message: ChatMessage) => void;
-  highlighted?: boolean;
 }
 
 export function MessageBubble({
@@ -29,22 +25,11 @@ export function MessageBubble({
   onOpenActions,
   onReact,
   onRetryMessage,
-  selectionMode = false,
-  selected = false,
-  onToggleSelect,
-  highlighted = false,
 }: MessageBubbleProps) {
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
   const isTeacherSender = message.senderRole === ROLES.TEACHER;
-  const longPressRef = useRef<number | null>(null);
-
-  function cancelLongPress() {
-    if (longPressRef.current !== null) {
-      window.clearTimeout(longPressRef.current);
-      longPressRef.current = null;
-    }
-  }
+  const [dragging, setDragging] = useState(false);
 
   if (message.type === "system")
     return (
@@ -57,53 +42,35 @@ export function MessageBubble({
 
   return (
     <motion.div
-      className={`group relative flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${
+      className={`group flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${
         message.pending ? "opacity-70" : ""
-      } ${selectionMode ? "cursor-pointer select-none" : ""} ${
-        selected ? "rounded-2xl bg-action-subtle/70" : ""
-      } ${highlighted ? "rounded-2xl ring-2 ring-action" : ""}`}
+      }`}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      drag={selectionMode ? false : "x"}
+      drag="x"
       dragConstraints={{ left: 0, right: 0 }}
       dragElastic={0.16}
       dragMomentum={false}
+      onDragStart={() => setDragging(true)}
       onDragEnd={(_event, info) => {
+        setDragging(false);
         if (Math.abs(info.offset.x) > 46) onReply(message);
       }}
       onDoubleClick={() => onReply(message)}
-      onPointerDown={(event) => {
-        if (selectionMode || event.pointerType === "mouse") return;
-        const point = { x: event.clientX, y: event.clientY };
-        cancelLongPress();
-        longPressRef.current = window.setTimeout(() => {
-          longPressRef.current = null;
-          onOpenActions(message, point);
-        }, 450);
-      }}
-      onPointerUp={cancelLongPress}
-      onPointerCancel={cancelLongPress}
-      onPointerMove={cancelLongPress}
-      onClick={() => {
-        if (selectionMode) onToggleSelect?.(message);
+      onClick={(event) => {
+        if (!dragging && window.matchMedia("(max-width: 768px), (pointer: coarse)").matches) {
+          onOpenActions(message, {
+            x: event.clientX || 20,
+            y: event.clientY || window.innerHeight - 330,
+          });
+        }
       }}
       onContextMenu={(event) => {
         event.preventDefault();
         onOpenActions(message, { x: event.clientX, y: event.clientY });
       }}
     >
-      {selectionMode ? (
-        <span
-          className={`mb-2 grid size-5 shrink-0 place-items-center rounded-full border transition-colors ${
-            selected ? "border-action bg-action text-on-action" : "border-line bg-surface"
-          }`}
-          aria-hidden="true"
-        >
-          {selected ? <Icon name="check-circle" size={14} /> : null}
-        </span>
-      ) : null}
-
       {outgoing ? null : (
         <span className="mb-1 shrink-0">
           <Avatar name={message.senderName} size="sm" />
@@ -207,33 +174,12 @@ export function MessageBubble({
         </AnimatePresence>
       </div>
 
-      {selectionMode ? null : (
-        <span className="mb-2 hidden items-center gap-1 rounded-full border border-line bg-surface px-1 py-1 opacity-0 shadow-xs transition-opacity group-hover:opacity-100 lg:flex">
-          <button
-            type="button"
-            className="grid size-7 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-            onClick={(event) => {
-              event.stopPropagation();
-              onReply(message);
-            }}
-            aria-label={t("bubble.replyAria")}
-          >
-            <Icon name="arrow-back" size={16} />
-          </button>
-          <button
-            type="button"
-            className="grid size-7 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-            onClick={(event) => {
-              event.stopPropagation();
-              const rect = event.currentTarget.getBoundingClientRect();
-              onOpenActions(message, { x: rect.left, y: rect.bottom + 6 });
-            }}
-            aria-label={t("bubble.moreAria")}
-          >
-            <Icon name="more" size={16} />
-          </button>
-        </span>
-      )}
+      <span
+        className="pointer-events-none mb-2 text-ink-tertiary opacity-0 transition-opacity group-hover:opacity-100"
+        aria-hidden="true"
+      >
+        <Icon name="arrow-back" size={16} />
+      </span>
     </motion.div>
   );
 }

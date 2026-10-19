@@ -16,10 +16,6 @@ interface ChatUiState {
   pinned: Record<string, PinnedMessage>;
   pin: (roomId: string, message: PinnedMessage) => void;
   unpin: (roomId: string) => void;
-  selected: string[];
-  toggleSelected: (messageId: string) => void;
-  startSelection: (messageId: string) => void;
-  clearSelection: () => void;
 }
 
 export const useChatUiStore = create<ChatUiState>()(
@@ -32,15 +28,6 @@ export const useChatUiStore = create<ChatUiState>()(
       pinned: {},
       pin: (roomId, message) =>
         set((state) => ({ pinned: { ...state.pinned, [roomId]: message } })),
-      selected: [],
-      toggleSelected: (messageId) =>
-        set((state) => ({
-          selected: state.selected.includes(messageId)
-            ? state.selected.filter((id) => id !== messageId)
-            : [...state.selected, messageId],
-        })),
-      startSelection: (messageId) => set({ selected: [messageId] }),
-      clearSelection: () => set({ selected: [] }),
       unpin: (roomId) =>
         set((state) => {
           const pinned = { ...state.pinned };

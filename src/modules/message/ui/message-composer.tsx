@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AtSign, LoaderCircle, Mic } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
@@ -187,17 +187,6 @@ export function MessageComposer({
             }
             aria-label={t("composer.textAria")}
           />
-          <button
-            type="button"
-            className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
-            onClick={() => {
-              setDraft((value) => (value.endsWith("@") ? value : `${value}@`));
-              textareaRef.current?.focus();
-            }}
-            aria-label={t("actionsMenu.mentionAria")}
-          >
-            <AtSign size={18} />
-          </button>
           <Dropdown>
             <DropdownTrigger asChild>
               <button
@@ -216,14 +205,6 @@ export function MessageComposer({
             </DropdownContent>
           </Dropdown>
         </div>
-        <button
-          type="button"
-          className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
-          onClick={() => toast.info(t("composer.voiceUnavailable"))}
-          aria-label={t("actionsMenu.voiceAria")}
-        >
-          <Mic size={20} />
-        </button>
         <button
           className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40"
           onClick={submit}

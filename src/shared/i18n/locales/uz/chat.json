@@ -129,8 +129,7 @@
     "emojiAria": "Emoji tanlash",
     "saveEditAria": "Tahrirlangan xabarni saqlash",
     "sendAria": "Xabarni yuborish",
-    "attachUnavailable": "Fayl yuborish hozircha mavjud emas",
-    "voiceUnavailable": "Ovozli xabar hozircha mavjud emas"
+    "attachUnavailable": "Fayl yuborish hozircha mavjud emas"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -141,28 +140,12 @@
     "deleteForMe": "Men uchun o'chirish",
     "deleteForEveryone": "Hamma uchun o'chirish",
     "pin": "Qadash",
-    "unpin": "Qadalganni olib tashlash",
-    "copy": "Nusxalash",
-    "forward": "Uzatish",
-    "select": "Tanlash",
-    "delete": "O‘chirish",
-    "copied": "Matn nusxalandi",
-    "selectedCount": "{{count}} ta tanlandi",
-    "cancelSelection": "Tanlovni bekor qilish",
-    "deleteTitle": "{{count}} ta xabarni o‘chirasizmi?",
-    "deleteDescription": "Xabarlar guruhning barcha a’zolari uchun o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
-    "cancel": "Bekor qilish",
-    "newMessages": "{{count}} ta yangi xabar",
-    "scrollDown": "Pastga tushish",
-    "mentionAria": "Eslatib o‘tish",
-    "voiceAria": "Ovozli xabar"
+    "unpin": "Qadalganni olib tashlash"
   },
   "bubble": {
     "edited": "tahrirlangan",
     "retry": "Qayta yuborish",
-    "reactionsAria": "Xabar reaksiyalari",
-    "replyAria": "Javob berish",
-    "moreAria": "Xabar amallari"
+    "reactionsAria": "Xabar reaksiyalari"
   },
   "text": {
     "viewRecording": "Video yozuvni ko'rish",

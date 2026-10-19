@@ -129,8 +129,7 @@
     "emojiAria": "Выбрать эмодзи",
     "saveEditAria": "Сохранить отредактированное сообщение",
     "sendAria": "Отправить сообщение",
-    "attachUnavailable": "Отправка файлов пока недоступна",
-    "voiceUnavailable": "Голосовые сообщения пока недоступны"
+    "attachUnavailable": "Отправка файлов пока недоступна"
   },
   "actionsMenu": {
     "closeAria": "Закрыть меню сообщения",
@@ -141,28 +140,12 @@
     "deleteForMe": "Удалить у себя",
     "deleteForEveryone": "Удалить у всех",
     "pin": "Закрепить",
-    "unpin": "Открепить",
-    "copy": "Копировать",
-    "forward": "Переслать",
-    "select": "Выбрать",
-    "delete": "Удалить",
-    "copied": "Текст скопирован",
-    "selectedCount": "Выбрано: {{count}}",
-    "cancelSelection": "Отменить выбор",
-    "deleteTitle": "Удалить {{count}} сообщений?",
-    "deleteDescription": "Сообщения удалятся у всех участников группы. Это действие нельзя отменить.",
-    "cancel": "Отмена",
-    "newMessages": "{{count}} новых сообщений",
-    "scrollDown": "Вниз",
-    "mentionAria": "Упомянуть",
-    "voiceAria": "Голосовое сообщение"
+    "unpin": "Открепить"
   },
   "bubble": {
     "edited": "изменено",
     "retry": "Отправить снова",
-    "reactionsAria": "Реакции на сообщение",
-    "replyAria": "Ответить",
-    "moreAria": "Действия с сообщением"
+    "reactionsAria": "Реакции на сообщение"
   },
   "text": {
     "viewRecording": "Посмотреть видеозапись",
