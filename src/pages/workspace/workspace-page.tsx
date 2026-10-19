@@ -82,14 +82,20 @@ export function WorkspacePage() {
   if (courses.isLoading)
     return (
       <div className="flex h-full flex-col gap-4 overflow-y-auto bg-canvas p-4 lg:p-6">
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-          {Array.from({ length: 3 }, (_, index) => (
+        <div className="flex flex-col gap-2">
+          <span className="h-3 w-3/4 animate-pulse rounded-full bg-muted" />
+          <span className="h-3 w-1/2 animate-pulse rounded-full bg-muted" />
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="h-40 animate-pulse rounded-2xl bg-muted" />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {Array.from({ length: 2 }, (_, index) => (
             <div key={index} className="h-24 animate-pulse rounded-2xl bg-muted" />
           ))}
         </div>
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="h-28 animate-pulse rounded-2xl bg-muted" />
-        ))}
       </div>
     );
 
@@ -121,7 +127,7 @@ export function WorkspacePage() {
               key={stat.id}
               className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 lg:p-4"
             >
-              <span className={`grid size-9 place-items-center rounded-xl ${stat.tone}`}>
+              <span className={`grid size-9 place-items-center rounded-lg ${stat.tone}`}>
                 <Icon name={stat.icon} size={18} />
               </span>
               <strong className="font-heading text-h3 text-ink lg:text-h2">{stat.value}</strong>
@@ -147,7 +153,7 @@ export function WorkspacePage() {
                   className="flex h-full flex-col gap-2 rounded-2xl border border-line bg-surface p-4 transition-colors hover:bg-subtle"
                   to={card.to ?? "."}
                 >
-                  <span className={`grid size-11 place-items-center rounded-xl ${card.tone}`}>
+                  <span className={`grid size-11 place-items-center rounded-lg ${card.tone}`}>
                     <CardIcon size={20} />
                   </span>
                   <strong className="text-title text-ink">{t(`cards.${card.id}.title`)}</strong>

@@ -95,5 +95,6 @@
   "published": "Опубликован",
   "searchSubtitle": "По группам, урокам, тестам, ученикам и сообщениям",
   "searchHotkeys": "↑↓ выбор · Enter открыть · Esc закрыть",
-  "searchAllResults": "Все результаты"
+  "searchAllResults": "Все результаты",
+  "searchBack": "Назад"
 }

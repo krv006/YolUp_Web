@@ -8,6 +8,7 @@ import { useLessons } from "@/modules/lesson";
 import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
 import { ROLES } from "@/shared/constants";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 
@@ -132,37 +133,9 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
     { id: "messages", label: t("sectionMessages", { count: hits.filter((h) => h.section === "messages").length }) },
   ];
 
-  return (
-    <AppDialog
-      open={open}
-      onOpenChange={(next) => {
-        if (!next) {
-          setTerm("");
-          setFilter("all");
-        }
-        onOpenChange(next);
-      }}
-      width="lg:w-[640px]"
-      title={t("searchTitle")}
-      description={t("searchSubtitle")}
-      footer={
-        <>
-          <small className="mr-auto hidden text-caption text-ink-tertiary lg:block">
-            {t("searchHotkeys")}
-          </small>
-          <button
-            type="button"
-            className={dialogButton.primary}
-            onClick={() => {
-              onOpenChange(false);
-              navigate(`${basePath}/search`);
-            }}
-          >
-            {t("searchAllResults")}
-          </button>
-        </>
-      }
-    >
+  const isCompact = useIsCompact();
+
+  const body = (
       <div
         className="flex flex-col gap-3"
         onKeyDown={(event) => {
@@ -180,7 +153,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           }
         }}
       >
-        <label className="flex h-12 items-center gap-3 rounded-xl border border-action bg-surface px-4">
+        <label className="hidden h-12 items-center gap-3 rounded-xl border border-action bg-surface px-4 lg:flex">
           <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
           <input
             ref={inputRef}
@@ -206,7 +179,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           ) : null}
         </label>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:px-0">
           {(
             [
               { id: "all" as const, label: t("filterAll", { count: hits.length }) },
@@ -216,7 +189,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
             <button
               key={item.id}
               type="button"
-              className={`h-9 rounded-full px-3.5 text-caption-strong transition-colors ${
+              className={`h-9 shrink-0 rounded-full px-3.5 text-caption-strong transition-colors ${
                 filter === item.id
                   ? "bg-subtle text-ink"
                   : "border border-line bg-surface text-ink-secondary hover:bg-subtle"
@@ -276,6 +249,85 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           )}
         </div>
       </div>
+  );
+
+  function close() {
+    setTerm("");
+    setFilter("all");
+    onOpenChange(false);
+  }
+
+  if (isCompact)
+    return open ? (
+      <div className="fixed inset-0 z-50 flex flex-col bg-canvas">
+        <header className="flex shrink-0 items-center gap-2 px-3 pt-3 pb-2">
+          <button
+            type="button"
+            className="grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle"
+            aria-label={t("searchBack")}
+            onClick={close}
+          >
+            <Icon name="arrow-back" size={22} />
+          </button>
+          <label className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-2xl border border-action bg-surface px-4">
+            <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
+            <input
+              autoFocus
+              className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+              value={term}
+              onChange={(event) => setTerm(event.target.value)}
+              placeholder={t("searchPlaceholder")}
+              aria-label={t("searchPlaceholder")}
+            />
+            {term ? (
+              <button
+                type="button"
+                className="grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary"
+                onClick={() => setTerm("")}
+                aria-label={t("searchTitle")}
+              >
+                <Icon name="add" size={18} className="rotate-45" />
+              </button>
+            ) : null}
+          </label>
+        </header>
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-6">{body}</div>
+      </div>
+    ) : null;
+
+  return (
+    <AppDialog
+      open={open}
+      onOpenChange={(next) => {
+        if (!next) {
+          setTerm("");
+          setFilter("all");
+        }
+        onOpenChange(next);
+      }}
+      width="lg:w-[640px]"
+      title={t("searchTitle")}
+      description={t("searchSubtitle")}
+      footer={
+        <>
+          <small className="mr-auto hidden text-caption text-ink-tertiary lg:block">
+            {t("searchHotkeys")}
+          </small>
+          <button
+            type="button"
+            className={dialogButton.primary}
+            onClick={() => {
+              onOpenChange(false);
+              navigate(`${basePath}/search`);
+            }}
+          >
+            {t("searchAllResults")}
+          </button>
+        </>
+      }
+    >
+        {body}
     </AppDialog>
   );
 }
