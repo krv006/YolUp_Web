@@ -129,7 +129,8 @@
     "emojiAria": "Choose emoji",
     "saveEditAria": "Save edited message",
     "sendAria": "Send message",
-    "attachUnavailable": "Sending files is not available yet"
+    "attachUnavailable": "Sending files is not available yet",
+    "voiceUnavailable": "Voice messages are not available yet"
   },
   "actionsMenu": {
     "closeAria": "Close message menu",
@@ -140,12 +141,28 @@
     "deleteForMe": "Delete for me",
     "deleteForEveryone": "Delete for everyone",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "copy": "Copy",
+    "forward": "Forward",
+    "select": "Select",
+    "delete": "Delete",
+    "copied": "Text copied",
+    "selectedCount": "{{count}} selected",
+    "cancelSelection": "Cancel selection",
+    "deleteTitle": "Delete {{count}} messages?",
+    "deleteDescription": "The messages are removed for everyone in the group. This cannot be undone.",
+    "cancel": "Cancel",
+    "newMessages": "{{count}} new messages",
+    "scrollDown": "Scroll down",
+    "mentionAria": "Mention",
+    "voiceAria": "Voice message"
   },
   "bubble": {
     "edited": "edited",
     "retry": "Resend",
-    "reactionsAria": "Message reactions"
+    "reactionsAria": "Message reactions",
+    "replyAria": "Reply",
+    "moreAria": "Message actions"
   },
   "text": {
     "viewRecording": "View the video recording",
