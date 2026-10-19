@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useOnlineStatus } from "@/shared/model";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { PinnedMessageBar, useChatUiStore } from "@/modules/message";
@@ -21,6 +22,7 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
   const searchOpen = useChatUiStore((state) => state.searchOpen);
   const setSearchOpen = useChatUiStore((state) => state.setSearchOpen);
   const setSearch = useChatUiStore((state) => state.setSearch);
+  const online = useOnlineStatus();
 
   useEffect(() => {
     setSearchOpen(false);
@@ -107,6 +109,13 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
           <Icon name="more" size={20} />
         </button>
       </header>
+
+      {online ? null : (
+        <div className="flex shrink-0 items-center gap-2.5 bg-error-bg px-4 py-2.5 text-error-text lg:px-6">
+          <Icon name="error" size={17} className="shrink-0" />
+          <span className="text-body-sm">{t("offline.banner")}</span>
+        </div>
+      )}
 
       <PinnedMessageBar roomId={conversation.id} />
 

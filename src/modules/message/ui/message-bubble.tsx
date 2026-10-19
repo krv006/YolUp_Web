@@ -138,7 +138,9 @@ export function MessageBubble({
         )}
 
         {message.text && <MessageText text={message.text} />}
-        {message.attachment && <MessageAttachment attachment={message.attachment} />}
+        {message.attachment && (
+          <MessageAttachment attachment={message.attachment} failed={message.failed} />
+        )}
 
         <span
           className={`flex items-center justify-end gap-1 font-numeric text-caption ${
@@ -158,15 +160,20 @@ export function MessageBubble({
         </span>
 
         {message.failed ? (
-          <button
-            className="flex items-center gap-1 self-end text-caption-strong text-error-text"
-            onClick={(event) => {
-              event.stopPropagation();
-              onRetryMessage?.(message);
-            }}
-          >
-            <Icon name="refresh" size={14} /> {t("bubble.retry")}
-          </button>
+          <span className="flex items-center gap-1.5 self-end text-caption-strong text-error-text">
+            <Icon name="error" size={14} />
+            {t("offline.failed")}
+            <button
+              type="button"
+              className="underline underline-offset-2"
+              onClick={(event) => {
+                event.stopPropagation();
+                onRetryMessage?.(message);
+              }}
+            >
+              {t("offline.retry")}
+            </button>
+          </span>
         ) : null}
 
         <AnimatePresence initial={false}>
