@@ -173,7 +173,8 @@
   },
   "attachment": {
     "openAria": "{{name}} — open",
-    "openSuffix": "open"
+    "openSuffix": "open",
+    "uploadFailed": "Upload failed"
   },
   "removedFromGroup": "You were removed from this group",
   "directPage": {
@@ -239,5 +240,17 @@
     "cancel": "Cancel",
     "confirmDelete": "Delete",
     "notAvailable": "The backend does not support this action yet"
+  },
+  "offline": {
+    "banner": "No internet connection. Messages will be sent once you are back online.",
+    "composer": "You are offline — messages will be sent once the connection is back",
+    "failed": "Not sent",
+    "retry": "Try again"
+  },
+  "mention": {
+    "title": "Group members",
+    "empty": "No members found",
+    "teacher": "Teacher",
+    "parent": "Parent"
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BarChart3, ClipboardCheck, FileQuestion, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import { InviteStudentsDialog, useNewConversationStore } from "@/modules/convers
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { ROLES } from "@/shared/constants";
+import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
 
 interface WorkspaceCard {
@@ -39,23 +40,11 @@ export function WorkspacePage() {
   const navigate = useNavigate();
   const isStudent = user?.role === ROLES.STUDENT;
   const openNewGroup = useNewConversationStore((state) => state.setOpen);
-  const [online, setOnline] = useState(() => navigator.onLine);
+  const online = useOnlineStatus();
   const [inviteFor, setInviteFor] = useState<string | null>(null);
 
   const courses = useCourses();
   const lessons = useLessons({ page_size: 200 }, !isStudent);
-
-  useEffect(() => {
-    function update() {
-      setOnline(navigator.onLine);
-    }
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
-  }, []);
 
   const cards = CARDS.filter((card) => !(card.hiddenForStudent && isStudent));
   const groups = courses.data ?? [];

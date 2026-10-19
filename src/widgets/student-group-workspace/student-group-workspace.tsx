@@ -196,6 +196,7 @@ export function StudentGroupWorkspace({
           replyTo={reply}
           currentUserId={currentUserId}
           onCancelContext={() => setReply(null)}
+          courseId={conversation.courseId}
         />
       ) : null}
     </section>

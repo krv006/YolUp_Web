@@ -230,6 +230,7 @@ export function GroupWorkspace({
           replyTo={reply}
           onCancelContext={() => setReply(null)}
           currentUserId={user?.id}
+          courseId={conversation.courseId}
         />
       ) : null}
     </section>
