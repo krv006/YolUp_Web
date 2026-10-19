@@ -4,11 +4,13 @@ import {
   isSameDay,
   isSameMonth,
   isToday,
+  startOfDay,
   startOfMonth,
   startOfWeek,
 } from "date-fns";
 import type { Lesson } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { groupLessonsByDay, toDayKey } from "../lib/lesson-calendar";
 
 const WEEK_OPTIONS = { weekStartsOn: 1 } as const;
@@ -90,8 +92,88 @@ function LessonBlock({
 export function ScheduleWeek({ anchor, lessons, onSelect, onSelectDay }: ScheduleViewProps) {
   const { t } = useTranslation("lesson");
   const weekdays = useWeekdays();
+  const isCompact = useIsCompact();
   const byDay = groupLessonsByDay(lessons);
   const days = Array.from({ length: 7 }, (_, index) => addDays(anchor, index - 3));
+
+  if (isCompact) {
+    const weekStart = addDays(anchor, -((anchor.getDay() + 6) % 7));
+    const rest = Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)).filter(
+      (day) => day.getTime() >= startOfDay(anchor).getTime()
+    );
+    const restCount = rest.reduce((sum, day) => sum + (byDay.get(toDayKey(day)) ?? []).length, 0);
+
+    return (
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto bg-canvas px-4 pt-1 pb-6">
+        <div className="flex items-baseline justify-between gap-2">
+          <strong className="font-heading text-title text-ink">{t("schedule.restOfWeek")}</strong>
+          <small className="shrink-0 text-label-strong text-action">
+            {t("schedule.lessonCount", { count: restCount })}
+          </small>
+        </div>
+
+        {rest.map((day) => {
+          const items = byDay.get(toDayKey(day)) ?? [];
+          const weekdayIndex = (day.getDay() + 6) % 7;
+          return (
+            <div key={day.toISOString()} className="flex items-start gap-3">
+              <button
+                type="button"
+                className="flex w-8 shrink-0 flex-col items-center pt-2"
+                onClick={() => onSelectDay?.(day)}
+              >
+                <small
+                  className={`text-caption ${
+                    isSameDay(day, anchor) ? "text-action" : "text-ink-tertiary"
+                  }`}
+                >
+                  {weekdays[weekdayIndex]}
+                </small>
+                <strong
+                  className={`font-numeric text-title ${
+                    isSameDay(day, anchor) ? "text-action" : "text-ink"
+                  }`}
+                >
+                  {day.getDate()}
+                </strong>
+              </button>
+
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                {items.length ? (
+                  items.map((lesson) => (
+                    <button
+                      key={lesson.id}
+                      type="button"
+                      className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-3 text-left"
+                      onClick={() => onSelect(lesson)}
+                    >
+                      <span className="mt-0.5 h-10 w-1 shrink-0 rounded-full bg-action" />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <strong className="truncate text-label-strong text-ink">
+                          {lesson.title || lesson.courseTitle}
+                        </strong>
+                        <small className="truncate text-caption text-ink-tertiary">
+                          {lesson.courseTitle}
+                        </small>
+                      </span>
+                      <span className="flex shrink-0 flex-col items-end font-numeric text-caption text-ink-secondary">
+                        <b className="text-label-strong text-ink">{lesson.time}</b>
+                        {endTimeOf(lesson)}
+                      </span>
+                    </button>
+                  ))
+                ) : (
+                  <span className="rounded-2xl border border-dashed border-line px-3 py-3 text-body-sm text-ink-tertiary">
+                    {t("schedule.noLessonsDay")}
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-canvas">
@@ -193,7 +275,7 @@ export function ScheduleDay({ anchor, lessons, onSelect }: ScheduleViewProps) {
             {t("schedule.lessonCount", { count: items.length })}
           </small>
         </span>
-        <span className="flex shrink-0 items-center gap-2">
+        <span className="flex w-full shrink-0 items-center gap-2 lg:w-auto">
           <span className="rounded-full bg-success-bg px-3 py-1 text-caption-strong text-success-text">
             {t("schedule.finishedCount", { count: finished })}
           </span>
@@ -231,6 +313,8 @@ export function ScheduleDay({ anchor, lessons, onSelect }: ScheduleViewProps) {
 export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: ScheduleViewProps) {
   const { t } = useTranslation("lesson");
   const weekdays = useWeekdays();
+  const monthNames = t("list.months", { returnObjects: true }) as string[];
+  const weekdayNames = t("list.weekdaysLong", { returnObjects: true }) as string[];
   const byDay = groupLessonsByDay(lessons);
   const start = startOfWeek(startOfMonth(anchor), WEEK_OPTIONS);
   const weeks = Array.from({ length: 6 }, (_, week) =>
@@ -254,7 +338,7 @@ export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: Schedu
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
         {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex min-h-[120px] flex-1 border-b border-line">
+          <div key={weekIndex} className="flex min-h-[52px] flex-1 border-b border-line lg:min-h-[120px]">
             {week.map((day, index) => {
               const items = byDay.get(toDayKey(day)) ?? [];
               const outside = !isSameMonth(day, anchor);
@@ -262,7 +346,7 @@ export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: Schedu
                 <button
                   key={day.toISOString()}
                   type="button"
-                  className={`flex min-w-0 flex-1 flex-col gap-1.5 border-l border-line p-2 text-left transition-colors hover:bg-subtle ${
+                  className={`flex min-w-0 flex-1 flex-col items-center gap-1 border-l border-line p-1.5 text-left transition-colors hover:bg-subtle lg:items-start lg:gap-1.5 lg:p-2 ${
                     outside ? "bg-canvas" : "bg-surface"
                   } ${index > 4 && !outside ? "bg-subtle/50" : ""} ${
                     isSameDay(day, anchor) ? "bg-action-subtle/40" : ""
@@ -282,11 +366,20 @@ export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: Schedu
                       {day.getDate()}
                     </span>
                     {isToday(day) ? (
-                      <small className="text-caption text-action">{t("schedule.today")}</small>
+                      <small className="hidden text-caption text-action lg:block">
+                        {t("schedule.today")}
+                      </small>
                     ) : null}
                   </span>
 
-                  <span className="flex min-w-0 flex-col gap-1">
+                  {items.length ? (
+                    <span
+                      className="size-1.5 shrink-0 rounded-full bg-action lg:hidden"
+                      aria-hidden="true"
+                    />
+                  ) : null}
+
+                  <span className="hidden min-w-0 flex-col gap-1 lg:flex">
                     {items.slice(0, 3).map((lesson) => (
                       <span
                         key={lesson.id}
@@ -308,6 +401,58 @@ export function ScheduleMonth({ anchor, lessons, onSelect, onSelectDay }: Schedu
             })}
           </div>
         ))}
+
+        <div className="flex flex-col gap-3 px-4 py-4 lg:hidden">
+          <span className="flex items-center gap-4 text-caption text-ink-tertiary">
+            <span className="flex items-center gap-1.5">
+              <i className="size-1.5 rounded-full bg-action" /> {t("schedule.legendHasLesson")}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <i className="size-1.5 rounded-full bg-muted" /> {t("schedule.legendWeekend")}
+            </span>
+          </span>
+
+          <div className="flex items-baseline justify-between gap-2">
+            <strong className="font-heading text-title text-ink">
+              {anchor.getDate()}-{(monthNames[anchor.getMonth()] ?? "").toLowerCase()},{" "}
+              {weekdayNames[(anchor.getDay() + 6) % 7]}
+            </strong>
+            {isToday(anchor) ? (
+              <small className="shrink-0 text-label-strong text-action">
+                {t("schedule.today")}
+              </small>
+            ) : null}
+          </div>
+
+          {(byDay.get(toDayKey(anchor)) ?? []).length ? (
+            (byDay.get(toDayKey(anchor)) ?? []).map((lesson) => (
+              <button
+                key={lesson.id}
+                type="button"
+                className="flex items-start gap-3 rounded-2xl border border-line bg-surface p-3 text-left"
+                onClick={() => onSelect(lesson)}
+              >
+                <span className="mt-0.5 h-10 w-1 shrink-0 rounded-full bg-action" />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-label-strong text-ink">
+                    {lesson.title || lesson.courseTitle}
+                  </strong>
+                  <small className="truncate text-caption text-ink-tertiary">
+                    {lesson.courseTitle}
+                  </small>
+                </span>
+                <span className="flex shrink-0 flex-col items-end font-numeric text-caption text-ink-secondary">
+                  <b className="text-label-strong text-ink">{lesson.time}</b>
+                  {endTimeOf(lesson)}
+                </span>
+              </button>
+            ))
+          ) : (
+            <span className="rounded-2xl border border-dashed border-line px-3 py-3 text-body-sm text-ink-tertiary">
+              {t("schedule.noLessonsDay")}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

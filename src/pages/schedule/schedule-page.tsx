@@ -116,6 +116,8 @@ export function SchedulePage() {
         onSelectDay={(date) => setAnchor(date)}
         onAttendance={openAttendance}
         onMonthStep={(direction) => setAnchor(addMonths(anchor, direction))}
+        compact={view === "month" || view === "list"}
+        hideUpcoming={view === "day"}
       />
 
       <section className="flex min-h-0 flex-1 flex-col overflow-hidden">

@@ -49,6 +49,10 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const months = lessonT("list.months", { returnObjects: true }) as string[];
   const monthsLong = lessonT("list.monthsLong", { returnObjects: true }) as string[];
 
+  function monthName(index: number): string {
+    return (monthsLong[index] ?? "").toLowerCase();
+  }
+
   function rangeLabel(): string {
     const date = new Date(anchor);
     if (view === "month") return `${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
@@ -56,18 +60,18 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
       const end = new Date(date);
       end.setDate(date.getDate() + 6);
       return date.getMonth() === end.getMonth()
-        ? `${date.getDate()} – ${end.getDate()} ${monthsLong[date.getMonth()]}, ${date.getFullYear()}`
+        ? `${date.getDate()} – ${end.getDate()} ${monthName(date.getMonth())}, ${date.getFullYear()}`
         : `${date.getDate()} ${months[date.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]}, ${end.getFullYear()}`;
     }
     if (view === "day")
-      return `${date.getDate()} ${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
+      return `${date.getDate()} ${monthName(date.getMonth())}, ${date.getFullYear()}`;
     const start = new Date(date);
     start.setDate(date.getDate() - 3);
     const end = new Date(date);
     end.setDate(date.getDate() + 3);
     const sameMonth = start.getMonth() === end.getMonth();
     return sameMonth
-      ? `${start.getDate()} – ${end.getDate()} ${monthsLong[start.getMonth()]}, ${start.getFullYear()}`
+      ? `${start.getDate()} – ${end.getDate()} ${monthName(start.getMonth())}, ${start.getFullYear()}`
       : `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]}, ${end.getFullYear()}`;
   }
   const basePath = role === "teacher" ? "/teacher/chats" : "/student/chats";
@@ -127,7 +131,8 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   }
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-canvas px-5 lg:h-(--layout-topbar) lg:gap-4 lg:border-line lg:bg-surface lg:px-8">
+    <>
+    <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-canvas px-4 lg:px-5 lg:h-(--layout-topbar) lg:gap-4 lg:border-line lg:bg-surface lg:px-8">
       {section === "chat" ? (
         <img className="size-8 shrink-0 lg:hidden" src={logoUrl} alt="YolUp" />
       ) : null}
@@ -169,7 +174,7 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
             <span className="truncate text-body-sm text-ink-secondary">{rangeLabel()}</span>
           </span>
 
-          <span className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-subtle p-1">
+          <span className="ml-auto hidden shrink-0 items-center gap-1 rounded-full bg-subtle p-1 lg:flex">
             {(["list", "day", "week", "month"] as const).map((item) => (
               <button
                 key={item}
@@ -185,13 +190,23 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
           </span>
 
           {role === "teacher" ? (
-            <button
-              type="button"
-              className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
-              onClick={() => setCreateOpen(true)}
-            >
-              <Icon name="add" size={18} /> {lessonT("schedule.addLesson")}
-            </button>
+            <>
+              <button
+                type="button"
+                className="ml-auto grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover lg:hidden"
+                onClick={() => setCreateOpen(true)}
+                aria-label={lessonT("schedule.addLesson")}
+              >
+                <Icon name="add" size={20} />
+              </button>
+              <button
+                type="button"
+                className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
+                onClick={() => setCreateOpen(true)}
+              >
+                <Icon name="add" size={18} /> {lessonT("schedule.addLesson")}
+              </button>
+            </>
           ) : null}
         </>
       ) : null}
@@ -247,5 +262,54 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
 
       <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
+
+    {schedule ? (
+      <div className="flex shrink-0 flex-col gap-2.5 border-b border-line bg-canvas px-4 pb-3 lg:hidden">
+        <span className="flex items-center gap-1 rounded-full bg-subtle p-1">
+          {(["list", "day", "week", "month"] as const).map((item) => (
+            <button
+              key={item}
+              type="button"
+              className={`h-10 flex-1 rounded-full text-label-strong transition-colors ${
+                view === item ? "bg-surface text-ink shadow-xs" : "text-ink-secondary"
+              }`}
+              onClick={() => setView(item)}
+            >
+              {lessonT(`schedule.${item}`)}
+            </button>
+          ))}
+        </span>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink-secondary"
+            onClick={() => step(-1)}
+            aria-label={lessonT("calendar.prevMonth")}
+          >
+            <Icon name="chevron-left" size={18} />
+          </button>
+          <span className="min-w-0 flex-1 truncate text-center text-label-strong text-ink">
+            {rangeLabel()}
+          </span>
+          <button
+            type="button"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink-secondary"
+            onClick={() => step(1)}
+            aria-label={lessonT("calendar.nextMonth")}
+          >
+            <Icon name="chevron-right" size={18} />
+          </button>
+          <button
+            type="button"
+            className="h-10 shrink-0 rounded-full border border-line bg-surface px-4 text-label-strong text-ink"
+            onClick={goToday}
+          >
+            {lessonT("schedule.today")}
+          </button>
+        </div>
+      </div>
+    ) : null}
+    </>
   );
 }
