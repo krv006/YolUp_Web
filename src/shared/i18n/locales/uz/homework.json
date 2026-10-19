@@ -238,7 +238,16 @@
     "noStudents": "O‘quvchi topilmadi",
     "deleteTitle": "Vazifani o‘chirasizmi?",
     "deleteDescription": "{{count}} ta o‘quvchi topshirgan javoblar va baholar ham o‘chadi. Bu amalni qaytarib bo‘lmaydi.",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "backToList": "Ro‘yxatga qaytish",
+    "remindTitle": "Eslatma yuborilsinmi?",
+    "remindDescription": "{{count}} ta o‘quvchiga ilovada bildirishnoma yuboriladi.",
+    "remindMessageLabel": "Xabar",
+    "remindMessage": "“{{title}}” vazifasi muddati {{due}} da tugaydi. Iltimos, javobingizni yuklang.",
+    "remindCancel": "Bekor qilish",
+    "remindSend": "Yuborish",
+    "remindParentsNote": "Ota-onalarga yuborish backendda hali mavjud emas.",
+    "openAnswers": "Javoblarni ko‘rish"
   },
   "messageCard": {
     "submitted": "{{done}} / {{total}} topshirdi",

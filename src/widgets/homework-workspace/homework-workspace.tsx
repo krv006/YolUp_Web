@@ -6,7 +6,9 @@ import { useCourses, useCourseStudents } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { homeworkApi, homeworkKeys, useAssignments, useDeleteAssignment } from "@/modules/homework";
 import type { Assignment, Submission } from "@/shared/types";
+import { useSendNotification } from "@/modules/notification";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
@@ -54,6 +56,9 @@ export function HomeworkWorkspace({
 
   const [filter, setFilter] = useState<ListFilter>("active");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const isCompact = useIsCompact();
+  const [remindOpen, setRemindOpen] = useState(false);
+  const sendNotification = useSendNotification();
   const [rowFilter, setRowFilter] = useState<RowFilter>("all");
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Assignment | null>(null);
@@ -61,7 +66,8 @@ export function HomeworkWorkspace({
   const [reviewId, setReviewId] = useState<string | null>(null);
 
   const items = useMemo(() => assignments.data ?? [], [assignments.data]);
-  const selected = items.find((item) => item.id === selectedId) ?? items[0] ?? null;
+  const selected =
+    items.find((item) => item.id === selectedId) ?? (isCompact ? null : (items[0] ?? null));
   const students = useCourseStudents(selected?.courseId ?? null, { page_size: 100 });
   const courseLessons = useLessons(
     { course: selected?.courseId ?? "", page_size: 100 },
@@ -147,7 +153,7 @@ export function HomeworkWorkspace({
         >
           {t("workspace.emptyAction")}
         </button>
-        <AssignmentFormDialog
+      <AssignmentFormDialog
           open={createOpen}
           onOpenChange={(open) => onCreateOpenChange?.(open)}
           courseId={courseId}
@@ -252,7 +258,11 @@ export function HomeworkWorkspace({
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-canvas lg:flex-row">
-      <aside className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto border-line bg-canvas p-4 lg:w-[380px] lg:border-r lg:p-5">
+      <aside
+        className={`w-full shrink-0 flex-col gap-3 overflow-y-auto border-line bg-canvas p-4 lg:flex lg:w-[380px] lg:border-r lg:p-5 ${
+          selected ? "hidden" : "flex"
+        }`}
+      >
         <div className="flex flex-wrap items-center gap-2">
           {(
             [
@@ -360,6 +370,10 @@ export function HomeworkWorkspace({
                         style={{ width: `${progress}%` }}
                       />
                     </span>
+
+                    <span className="mt-1 flex h-11 w-full items-center justify-center rounded-full border border-line bg-surface text-label-strong text-ink lg:hidden">
+                      {t("workspace.openAnswers")}
+                    </span>
                   </button>
                 );
               })}
@@ -368,10 +382,22 @@ export function HomeworkWorkspace({
         )}
       </aside>
 
-      <section className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:p-6">
+      <section
+        className={`min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex lg:p-6 ${
+          selected ? "flex" : "hidden"
+        }`}
+      >
         {selected ? (
           <>
             <div className="flex flex-wrap items-start gap-3">
+              <button
+                type="button"
+                className="-ml-1 grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink lg:hidden"
+                aria-label={t("workspace.backToList")}
+                onClick={() => setSelectedId(null)}
+              >
+                <Icon name="arrow-back" size={19} />
+              </button>
               <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <h2 className="truncate font-heading text-h2 text-ink">{selected.title}</h2>
                 <small className="truncate text-body-sm text-ink-tertiary">
@@ -382,7 +408,8 @@ export function HomeworkWorkspace({
               <button
                 type="button"
                 className="flex h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
-                onClick={() => toast.info(t("workspace.remindPending"))}
+                disabled={!missing}
+                onClick={() => setRemindOpen(true)}
               >
                 <Icon name="bell" size={17} /> {t("workspace.remind", { count: missing })}
               </button>
@@ -547,6 +574,53 @@ export function HomeworkWorkspace({
           </>
         ) : null}
       </section>
+
+      <AppDialog
+        open={remindOpen}
+        onOpenChange={setRemindOpen}
+        title={t("workspace.remindTitle")}
+        description={t("workspace.remindDescription", { count: missing })}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setRemindOpen(false)}
+            >
+              {t("workspace.remindCancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.primary}
+              disabled={sendNotification.isPending || !missing}
+              onClick={() => {
+                const text = t("workspace.remindMessage", {
+                  title: selected?.title ?? "",
+                  due: formatDue(selected?.dueAt ?? null),
+                });
+                for (const row of rows.filter((item) => !item.submission))
+                  sendNotification.mutate({ description: text, targetType: "user", userId: row.id });
+                setRemindOpen(false);
+              }}
+            >
+              {t("workspace.remindSend")}
+            </button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-2 rounded-xl bg-subtle p-3.5">
+          <span className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
+            {t("workspace.remindMessageLabel")}
+          </span>
+          <p className="text-body-sm text-ink">
+            {t("workspace.remindMessage", {
+              title: selected?.title ?? "",
+              due: formatDue(selected?.dueAt ?? null),
+            })}
+          </p>
+        </div>
+        <p className="text-caption text-ink-tertiary">{t("workspace.remindParentsNote")}</p>
+      </AppDialog>
 
       <AssignmentFormDialog
         open={createOpen || Boolean(editing)}

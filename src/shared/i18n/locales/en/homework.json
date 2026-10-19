@@ -238,7 +238,16 @@
     "noStudents": "No student found",
     "deleteTitle": "Delete this assignment?",
     "deleteDescription": "The answers and grades of {{count}} students are deleted too. This cannot be undone.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "backToList": "Back to the list",
+    "remindTitle": "Send a reminder?",
+    "remindDescription": "{{count}} students will get an in-app notification.",
+    "remindMessageLabel": "Message",
+    "remindMessage": "The “{{title}}” assignment is due {{due}}. Please upload your answer.",
+    "remindCancel": "Cancel",
+    "remindSend": "Send",
+    "remindParentsNote": "Sending to parents is not available on the backend yet.",
+    "openAnswers": "View answers"
   },
   "messageCard": {
     "submitted": "{{done}} / {{total}} submitted",
