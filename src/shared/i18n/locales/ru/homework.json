@@ -238,7 +238,16 @@
     "noStudents": "Ученик не найден",
     "deleteTitle": "Удалить задание?",
     "deleteDescription": "Ответы и оценки {{count}} учеников тоже удалятся. Действие необратимо.",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "backToList": "К списку",
+    "remindTitle": "Отправить напоминание?",
+    "remindDescription": "Уведомление получат {{count}} учеников.",
+    "remindMessageLabel": "Сообщение",
+    "remindMessage": "Срок задания «{{title}}» истекает {{due}}. Пожалуйста, загрузите ответ.",
+    "remindCancel": "Отмена",
+    "remindSend": "Отправить",
+    "remindParentsNote": "Отправка родителям пока недоступна на бэкенде.",
+    "openAnswers": "Посмотреть ответы"
   },
   "messageCard": {
     "submitted": "сдали {{done}} / {{total}}",
