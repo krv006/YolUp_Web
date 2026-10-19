@@ -380,7 +380,7 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
         </div>
       </div>
 
-      {loading ? (
+      {loading && !lessons.length ? (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 3 }, (_, index) => (
             <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
@@ -638,7 +638,7 @@ function AssignmentsPanel({
         </div>
       ) : null}
 
-      {loading ? (
+      {loading && !assignments.length ? (
         <div className="flex flex-col gap-3">
           {Array.from({ length: 3 }, (_, index) => (
             <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
