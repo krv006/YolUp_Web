@@ -1,8 +1,7 @@
-import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { Icon } from "@/shared/ui/icon";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import type { ChatMessage, MessageCapabilities } from "@/shared/types";
 import { useChatUiStore } from "../model/chat-ui.store";
 
@@ -14,12 +13,11 @@ export interface MessageActionsMenuProps {
   onEdit: (message: ChatMessage) => void;
   onDelete: (message: ChatMessage, scope: "me" | "everyone") => void;
   onReact: (message: ChatMessage, emoji: string) => void;
-  onForward?: (message: ChatMessage) => void;
   currentUserId?: string | null;
   capabilities?: MessageCapabilities;
 }
 
-const QUICK_REACTIONS = ["👍", "❤️", "😂", "😮", "🙏"];
+const quickReactions = ["👍", "❤️", "🔥", "👏", "😁", "🤔"];
 
 export function MessageActionsMenu({
   message,
@@ -29,7 +27,6 @@ export function MessageActionsMenu({
   onEdit,
   onDelete,
   onReact,
-  onForward,
   currentUserId = null,
   capabilities = { reply: true, edit: false, delete: false, react: false },
 }: MessageActionsMenuProps) {
@@ -40,7 +37,6 @@ export function MessageActionsMenu({
   );
   const pin = useChatUiStore((state) => state.pin);
   const unpin = useChatUiStore((state) => state.unpin);
-  const startSelection = useChatUiStore((state) => state.startSelection);
 
   useEffect(() => {
     if (!message) return undefined;
@@ -51,155 +47,109 @@ export function MessageActionsMenu({
     return () => window.removeEventListener("keydown", handleEscape);
   }, [message, onClose]);
 
-  if (!message) return null;
-
-  const isPinned = pinned?.id === message.id;
-
-  const items = [
-    {
-      id: "reply",
-      icon: "arrow-back",
-      label: t("actionsMenu.reply"),
-      run: () => onReply(message),
-      hidden: !capabilities.reply,
-    },
-    {
-      id: "copy",
-      icon: "assign",
-      label: t("actionsMenu.copy"),
-      run: () => {
-        void navigator.clipboard.writeText(message.text);
-        toast.success(t("actionsMenu.copied"));
-      },
-      hidden: !message.text,
-    },
-    {
-      id: "edit",
-      icon: "edit",
-      label: t("actionsMenu.edit"),
-      run: () => (capabilities.edit ? onEdit(message) : toast.info(t("actions.notAvailable"))),
-      hidden: !outgoing,
-    },
-    {
-      id: "pin",
-      icon: "pin",
-      label: isPinned ? t("actionsMenu.unpin") : t("actionsMenu.pin"),
-      run: () =>
-        isPinned
-          ? unpin(message.conversationId)
-          : pin(message.conversationId, {
-              id: message.id,
-              author: message.senderName,
-              text: message.text || message.attachment?.name || "",
-            }),
-      hidden: false,
-    },
-    {
-      id: "forward",
-      icon: "send",
-      label: t("actionsMenu.forward"),
-      run: () => (onForward ? onForward(message) : toast.info(t("actions.notAvailable"))),
-      hidden: false,
-    },
-    {
-      id: "select",
-      icon: "check-circle",
-      label: t("actionsMenu.select"),
-      run: () => startSelection(message.id),
-      hidden: false,
-    },
-  ].filter((item) => !item.hidden);
-
-  const body = (
-    <>
-      <div className="flex items-center gap-1 border-b border-line px-2 py-2">
-        {QUICK_REACTIONS.map((emoji) => (
-          <button
-            key={emoji}
-            type="button"
-            className="grid size-9 place-items-center rounded-full text-xl transition-colors hover:bg-subtle"
-            onClick={() => {
-              if (capabilities.react) onReact(message, emoji);
-              else toast.info(t("actions.notAvailable"));
-              onClose();
-            }}
-          >
-            {emoji}
-          </button>
-        ))}
-        <span className="grid size-9 place-items-center rounded-full text-ink-tertiary">
-          <Icon name="emoji" size={18} />
-        </span>
-      </div>
-
-      <div className="flex flex-col py-1">
-        {items.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            role="menuitem"
-            className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-ink transition-colors hover:bg-subtle"
-            onClick={() => {
-              item.run();
-              onClose();
-            }}
-          >
-            <Icon name={item.icon} size={18} className="shrink-0 text-ink-secondary" />
-            {item.label}
-          </button>
-        ))}
-        <button
-          type="button"
-          role="menuitem"
-          className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-error-text transition-colors hover:bg-error-bg"
-          onClick={() => {
-            if (capabilities.delete) onDelete(message, "everyone");
-            else toast.info(t("actions.notAvailable"));
-            onClose();
-          }}
-        >
-          <Icon name="trash" size={18} className="shrink-0" />
-          {t("actionsMenu.delete")}
-        </button>
-      </div>
-    </>
-  );
-
   return (
     <AnimatePresence>
-      <motion.button
-        key="overlay"
-        className="fixed inset-0 z-40 bg-scrim lg:bg-transparent"
-        aria-label={t("actionsMenu.closeAria")}
-        onClick={onClose}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      />
-
-      <motion.div
-        key="sheet"
-        className="fixed inset-x-0 bottom-0 z-50 flex flex-col overflow-hidden rounded-t-2xl bg-surface shadow-2xl lg:hidden"
-        role="menu"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 24 }}
-      >
-        <span className="mx-auto mt-3 h-1 w-10 rounded-full bg-muted" aria-hidden="true" />
-        {body}
-      </motion.div>
-
-      <motion.div
-        key="menu"
-        className="fixed z-50 hidden w-[240px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:flex"
-        role="menu"
-        style={{ left: position.x, top: position.y }}
-        initial={{ opacity: 0, scale: 0.96, y: -5 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.97 }}
-      >
-        {body}
-      </motion.div>
+      {message && (
+        <>
+          <motion.button
+            className="message-menu-overlay"
+            aria-label={t("actionsMenu.closeAria")}
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
+          <motion.div
+            className="message-actions-menu"
+            role="menu"
+            style={{ left: position.x, top: position.y }}
+            initial={{ opacity: 0, scale: 0.94, y: -5 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.14 }}
+          >
+            {capabilities.react ? <div
+              className="message-reaction-picker"
+              aria-label={t("actionsMenu.reactionsAria")}
+            >
+              {quickReactions.map((emoji) => (
+                <motion.button
+                  key={emoji}
+                  whileHover={{ y: -3, scale: 1.08 }}
+                  whileTap={{ scale: 1.28, rotate: -7 }}
+                  onClick={() => {
+                    onReact(message, emoji);
+                    onClose();
+                  }}
+                  aria-label={t("actionsMenu.addReactionAria", { emoji })}
+                >
+                  {emoji}
+                </motion.button>
+              ))}
+            </div> : null}
+            {capabilities.react ? <span className="message-menu-divider" /> : null}
+            {capabilities.reply ? <button
+              role="menuitem"
+              onClick={() => {
+                onReply(message);
+                onClose();
+              }}
+            >
+              <Icon name="arrow-back" size={17} /> {t("actionsMenu.reply")}
+            </button> : null}
+            {capabilities.edit && outgoing && (
+              <button
+                role="menuitem"
+                onClick={() => {
+                  onEdit(message);
+                  onClose();
+                }}
+              >
+                <Icon name="edit" size={16} /> {t("actionsMenu.edit")}
+              </button>
+            )}
+            <button
+              role="menuitem"
+              onClick={() => {
+                if (pinned?.id === message.id) unpin(message.conversationId);
+                else
+                  pin(message.conversationId, {
+                    id: message.id,
+                    author: message.senderName,
+                    text: message.text || message.attachment?.name || "",
+                  });
+                onClose();
+              }}
+            >
+              <Icon name="pin" size={16} />{" "}
+              {pinned?.id === message.id ? t("actionsMenu.unpin") : t("actionsMenu.pin")}
+            </button>
+            {capabilities.delete ? <span className="message-menu-divider" /> : null}
+            {capabilities.delete ? <button
+              role="menuitem"
+              className="destructive"
+              onClick={() => {
+                onDelete(message, "me");
+                onClose();
+              }}
+            >
+              <Icon name="trash" size={16} /> {t("actionsMenu.deleteForMe")}
+            </button> : null}
+            {capabilities.delete && outgoing && (
+              <button
+                role="menuitem"
+                className="destructive"
+                onClick={() => {
+                  onDelete(message, "everyone");
+                  onClose();
+                }}
+              >
+                <Icon name="groups" size={16} /> {t("actionsMenu.deleteForEveryone")}
+              </button>
+            )}
+          </motion.div>
+        </>
+      )}
     </AnimatePresence>
   );
 }
