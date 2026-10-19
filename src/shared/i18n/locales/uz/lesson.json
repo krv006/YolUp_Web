@@ -116,10 +116,11 @@
     "aria": "Darslar ko'rinishi"
   },
   "finishDialog": {
-    "title": "Darsni yakunlash",
-    "description": "\"{{title}}\" darsini yakunlamoqchimisiz? Oxirgi audio bo'lagi xavfsiz yuborilgach dars yopiladi.",
+    "title": "Darsni yakunlaysizmi?",
+    "description": "Barcha ishtirokchilar xonadan chiqariladi. Dars yozuvi saqlanadi va guruh chatiga yuboriladi.",
     "cancel": "Bekor",
-    "confirm": "Yakunlash"
+    "confirm": "Yakunlash",
+    "leaveOnly": "Faqat chiqish"
   },
   "rateDialog": {
     "title": "Darsni baholang",

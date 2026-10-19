@@ -45,7 +45,10 @@
     "canChangeLater": "You can change this after joining the lesson too.",
     "needPermission": "You'll need to ask the teacher for permission to speak in the lesson.",
     "cancel": "Cancel",
-    "join": "Join lesson"
+    "join": "Join the lesson",
+    "mobileTitle": "Join the lesson",
+    "minutes": "minutes",
+    "recordingNote": "The lesson is recorded automatically — audio and video"
   },
   "connection": {
     "connecting": "Connecting…",
@@ -93,7 +96,12 @@
     "youLabel": "You",
     "reconnecting": "Connection lost — reconnecting ({{attempt}}/{{total}}). The lesson continues.",
     "participantsCount": "Participants ({{count}})",
-    "moreAria": "More actions"
+    "moreAria": "More actions",
+    "switch": {
+      "video": "Back to video",
+      "board": "Board",
+      "people": "Participants"
+    }
   },
   "mic": {
     "label": "Microphone",
@@ -145,7 +153,7 @@
     "teacherYou": "Teacher · You",
     "speaking": "Speaking",
     "raisedHand": "Raised hand",
-    "muteAll": "Mute all",
+    "muteAll": "Mute everyone",
     "invite": "Invite",
     "muteAllUnavailable": "Muting everyone is not available on the backend yet."
   },

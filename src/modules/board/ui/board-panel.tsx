@@ -3,7 +3,6 @@ import { Atom, Calculator, Check, Eye, FilePlus2, Pencil, UserCheck, X } from "l
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
-import { AppDialog } from "@/shared/ui/app-dialog";
 import type { BoardSource, FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
 import { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
@@ -21,6 +20,8 @@ import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
 import { BoardStroke } from "./board-stroke";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
+import { BoardPagesSheet } from "./board-pages-sheet";
+import { BoardPermissionDialog } from "./board-permission-dialog";
 import { EraseReasonDialog } from "./erase-reason-dialog";
 import { FormulaSolverDialog } from "./formula-solver-dialog";
 import { FormulaPalette } from "./formula-palette";
@@ -67,6 +68,7 @@ export function BoardPanel({
   const [reasonOpen, setReasonOpen] = useState(false);
   const [reason, setReason] = useState("");
   const [grantOpen, setGrantOpen] = useState(false);
+  const [pagesOpen, setPagesOpen] = useState(false);
 
   const [placement, setPlacement] = useState<{ tool: "text" | "math"; point: Point } | null>(null);
   const [draftText, setDraftText] = useState("");
@@ -312,6 +314,15 @@ export function BoardPanel({
         <span className="flex-1" />
 
         <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            className={`${chip} lg:hidden`}
+            onClick={() => setPagesOpen(true)}
+          >
+            <FilePlus2 size={14} /> #{sheet + 1}
+          </button>
+
+          <span className="hidden items-center gap-1.5 lg:flex">
           {state.sheets.map((item) => (
             <button
               key={item.index}
@@ -336,6 +347,7 @@ export function BoardPanel({
               <FilePlus2 size={14} /> {t("sheet.addSheet")}
             </button>
           ) : null}
+          </span>
 
           {state.mathEnabled ? (
             <button type="button" className={chip} onClick={() => setFormulaOpen(true)}>
@@ -464,41 +476,45 @@ export function BoardPanel({
         onConfirm={removeSelected}
       />
 
-      <AppDialog
+      <BoardPagesSheet
+        open={pagesOpen}
+        onOpenChange={setPagesOpen}
+        sheets={state.sheets}
+        active={sheet}
+        boardWidth={state.width}
+        boardHeight={state.height}
+        canAdd={state.isTeacher || Boolean(source)}
+        onSelect={(index) => {
+          setSheet(index);
+          setPagesOpen(false);
+        }}
+        onAdd={() => (source ? source.addSheet() : addSheet.mutate())}
+      />
+
+      <BoardPermissionDialog
         open={grantOpen}
         onOpenChange={setGrantOpen}
-        title={t("grantDialog.title")}
-        description={t("grantDialog.description")}
-      >
-        <div className="flex flex-col gap-2">
-          {(members.data?.items ?? []).map(({ student }) => (
-            <button
-              key={student.id}
-              type="button"
-              className="flex items-center justify-between gap-3 rounded-xl border border-line bg-surface px-3 py-2.5 text-left transition-colors hover:bg-subtle disabled:opacity-50"
-              disabled={grant.isPending}
-              onClick={() =>
-                grant.mutate(student.id, {
-                  onSuccess: () => toast.success(t("grantDialog.granted", { name: student.name })),
-                })
-              }
-            >
-              <span className="flex min-w-0 flex-col">
-                <strong className="truncate text-label-strong text-ink">{student.name}</strong>
-                <small className="truncate text-caption text-ink-tertiary">
-                  @{student.username}
-                </small>
-              </span>
-              <UserCheck size={17} className="shrink-0 text-ink-tertiary" />
-            </button>
-          ))}
-          {!members.isLoading && !members.data?.items?.length ? (
-            <p className="py-3 text-center text-body-sm text-ink-tertiary">
-              {t("grantDialog.noStudents")}
-            </p>
-          ) : null}
-        </div>
-      </AppDialog>
+        pending={grant.isPending}
+        students={(members.data?.items ?? []).map(({ student }) => ({
+          id: student.id,
+          name: student.name,
+          username: student.username,
+        }))}
+        onGrant={(studentIds) => {
+          let done = 0;
+          for (const studentId of studentIds)
+            grant.mutate(studentId, {
+              onSuccess: () => {
+                done += 1;
+                if (done === studentIds.length) {
+                  toast.success(t("permissionDialog.saved", { count: studentIds.length }));
+                  setGrantOpen(false);
+                }
+              },
+              onError: (error) => toast.error(error.message),
+            });
+        }}
+      />
 
       <FormulaSolverDialog
         open={formulaOpen}

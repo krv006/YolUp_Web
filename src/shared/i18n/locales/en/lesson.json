@@ -116,10 +116,11 @@
     "aria": "Lessons view"
   },
   "finishDialog": {
-    "title": "Finish lesson",
-    "description": "Finish the lesson \"{{title}}\"? It will close once the last audio chunk is safely uploaded.",
+    "title": "Finish the lesson?",
+    "description": "Everyone will be removed from the room. The recording is saved and sent to the group chat.",
     "cancel": "Cancel",
-    "confirm": "Finish"
+    "confirm": "Finish",
+    "leaveOnly": "Just leave"
   },
   "rateDialog": {
     "title": "Rate the lesson",
