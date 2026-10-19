@@ -195,6 +195,7 @@
     "switchAccountDescription": "Bir telefon raqamiga bog‘langan rollar. Almashtirganda qayta kirish shart emas.",
     "accountActive": "faol",
     "addAccount": "Boshqa akkaunt qo‘shish",
-    "close": "Yopish"
+    "close": "Yopish",
+    "subjectNone": "Tanlanmagan"
   }
 }
