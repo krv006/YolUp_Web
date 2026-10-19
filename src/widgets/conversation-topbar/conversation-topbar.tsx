@@ -37,6 +37,7 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const openPageCreate = usePageCreateStore((state) => state.setOpen);
   const quizzes = pathname.endsWith("/quizzes");
   const exams = pathname.endsWith("/exams");
+  const isSubPage = workspace && !pathname.endsWith("/workspace");
   const quizT = useTranslation("quiz").t;
   const [searchOpen, setSearchOpen] = useState(false);
   const lessonT = useTranslation("lesson").t;
@@ -135,6 +136,16 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
     <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-canvas px-4 lg:px-5 lg:h-(--layout-topbar) lg:gap-4 lg:border-line lg:bg-surface lg:px-8">
       {section === "chat" ? (
         <img className="size-8 shrink-0 lg:hidden" src={logoUrl} alt="YolUp" />
+      ) : null}
+      {isSubPage ? (
+        <button
+          type="button"
+          className="-ml-2 grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:hidden"
+          onClick={() => navigate(-1)}
+          aria-label={t("searchBack")}
+        >
+          <Icon name="arrow-back" size={22} />
+        </button>
       ) : null}
       <h1
         className={`min-w-0 truncate font-heading text-h2 text-ink ${

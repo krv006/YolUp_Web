@@ -57,3 +57,4 @@ export { QuizAttemptsDialog } from "./ui/quiz-attempts-dialog";
 export { AddQuizDialog } from "./ui/quiz-create-dialog";
 export { AiQuizCreator } from "./ui/ai-quiz-creator";
 export { QuizPreview } from "./ui/quiz-preview";
+export { SubjectFilterSheet } from "./ui/subject-filter-sheet";
