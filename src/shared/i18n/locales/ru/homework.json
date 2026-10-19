@@ -103,5 +103,14 @@
       "saving": "Сохраняется…",
       "error": "Не сохранилось — повторим"
     }
+  },
+  "chatCard": {
+    "label": "Домашнее задание",
+    "submitted": "Сдано",
+    "daysLeft": "Осталось {{count}} дн.",
+    "overdue": "Срок истёк",
+    "fileCount": "{{count}} файл",
+    "submittedAt": "Сдано · {{value}}",
+    "submit": "Сдать задание"
   }
 }

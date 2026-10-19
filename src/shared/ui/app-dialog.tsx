@@ -10,6 +10,7 @@ export interface AppDialogProps {
   onOpenChange: (open: boolean) => void;
   /** sheet: bottom sheet on phones · fullscreen: whole screen on phones · confirm: centred card everywhere */
   variant?: AppDialogVariant;
+  icon?: ReactNode;
   title: ReactNode;
   description?: ReactNode;
   children?: ReactNode;
@@ -30,6 +31,7 @@ const PLACEMENT: Record<AppDialogVariant, string> = {
 };
 
 export function AppDialog({
+  icon,
   open,
   onOpenChange,
   variant = "sheet",
@@ -56,8 +58,10 @@ export function AppDialog({
             />
           ) : null}
 
+          {icon ? <div className="shrink-0 px-5 pt-5 lg:px-6">{icon}</div> : null}
+
           <div
-            className={`flex shrink-0 items-start gap-3 px-5 pt-5 ${
+            className={`flex shrink-0 items-start gap-3 px-5 ${icon ? "pt-3" : "pt-5"} ${
               variant === "fullscreen" ? "lg:px-6" : "lg:px-6"
             } ${description ? "pb-3" : "pb-4"}`}
           >

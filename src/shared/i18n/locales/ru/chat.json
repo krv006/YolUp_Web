@@ -17,7 +17,9 @@
     "recentlyActive": "Недавно был(а) в сети",
     "searchAria": "Поиск по сообщениям",
     "searchPlaceholder": "Поиск по сообщениям",
-    "closeSearchAria": "Закрыть поиск"
+    "closeSearchAria": "Закрыть поиск",
+    "searchPrevAria": "Предыдущий результат",
+    "searchNextAria": "Следующий результат"
   },
   "directStatus": {
     "pending": "Запрос ожидает",
@@ -73,11 +75,20 @@
     "deleteConfirm": "Удалить",
     "descriptionOptional": "Краткое описание · необязательно",
     "joinRequests": "Заявки на вступление · {{count}}",
-    "joinRequestsHint": "Пришли по ссылке-приглашению"
+    "joinRequestsHint": "Пришли по ссылке-приглашению",
+    "pinned": "Закреплённое",
+    "pinHint": "Закреплённых сообщений нет",
+    "tabMembers": "Участники — {{count}}",
+    "tabFiles": "Файлы",
+    "tabMedia": "Медиа",
+    "filesEmpty": "Файлов нет",
+    "mediaEmpty": "Медиа нет",
+    "sectionPending": "Появится, когда бэкенд будет готов"
   },
   "item": {
     "liveNow": "Идёт урок",
-    "typing": "печатает..."
+    "typing": "печатает...",
+    "mentionTitle": "Вас упомянули"
   },
   "newDialog": {
     "title": "Новая группа",
@@ -111,7 +122,10 @@
     "loadError": "Не удалось загрузить сообщения",
     "loadErrorHint": "Повторите попытку через некоторое время.",
     "retry": "Повторить",
-    "searchEmpty": "Сообщения не найдены"
+    "searchEmpty": "Ничего не найдено",
+    "searchEmptyHint": "По запросу «{{query}}» ничего не найдено. Попробуйте другое слово.",
+    "announcementOn": "Режим объявлений включён — пишут только учителя",
+    "announcementLocked": "В этой группе писать могут только учителя"
   },
   "composer": {
     "editingLabel": "Редактирование сообщения",
@@ -129,7 +143,11 @@
     "emojiAria": "Выбрать эмодзи",
     "saveEditAria": "Сохранить отредактированное сообщение",
     "sendAria": "Отправить сообщение",
-    "attachUnavailable": "Отправка файлов пока недоступна"
+    "attachUnavailable": "Отправка файлов пока недоступна",
+    "voiceUnavailable": "Голосовые сообщения пока недоступны",
+    "recordCancel": "Отменить запись",
+    "recordSend": "Отправить голосовое",
+    "micDenied": "Доступ к микрофону не разрешён"
   },
   "actionsMenu": {
     "closeAria": "Закрыть меню сообщения",
@@ -140,12 +158,29 @@
     "deleteForMe": "Удалить у себя",
     "deleteForEveryone": "Удалить у всех",
     "pin": "Закрепить",
-    "unpin": "Открепить"
+    "unpin": "Открепить",
+    "copy": "Копировать",
+    "forward": "Переслать",
+    "select": "Выбрать",
+    "delete": "Удалить",
+    "copied": "Текст скопирован",
+    "selectedCount": "Выбрано: {{count}}",
+    "cancelSelection": "Отменить выбор",
+    "deleteTitle": "Удалить {{count}} сообщений?",
+    "deleteDescription": "Сообщения удалятся у всех участников группы. Это действие нельзя отменить.",
+    "cancel": "Отмена",
+    "newMessages": "{{count}} новых сообщений",
+    "scrollDown": "Вниз",
+    "mentionAria": "Упомянуть",
+    "voiceAria": "Голосовое сообщение",
+    "selectedMessages": "Выбрано сообщений: {{count}}"
   },
   "bubble": {
     "edited": "изменено",
     "retry": "Отправить снова",
-    "reactionsAria": "Реакции на сообщение"
+    "reactionsAria": "Реакции на сообщение",
+    "replyAria": "Ответить",
+    "moreAria": "Действия с сообщением"
   },
   "text": {
     "viewRecording": "Посмотреть видеозапись",
@@ -156,7 +191,12 @@
   },
   "attachment": {
     "openAria": "{{name}} — открыть",
-    "openSuffix": "открыть"
+    "openSuffix": "открыть",
+    "uploadFailed": "Не загружено",
+    "voicePlay": "Прослушать голосовое",
+    "voicePause": "Пауза",
+    "voiceFailed": "Голосовое не загрузилось",
+    "uploading": "Загружается..."
   },
   "removedFromGroup": "Вы были удалены из этой группы",
   "directPage": {
@@ -222,5 +262,17 @@
     "cancel": "Отмена",
     "confirmDelete": "Удалить",
     "notAvailable": "Это действие пока не поддерживается бэкендом"
+  },
+  "offline": {
+    "banner": "Нет соединения. Сообщения будут отправлены после восстановления связи.",
+    "composer": "Нет интернета — сообщения уйдут после восстановления связи",
+    "failed": "Не отправлено",
+    "retry": "Повторить"
+  },
+  "mention": {
+    "title": "Участники группы",
+    "empty": "Участник не найден",
+    "teacher": "Учитель",
+    "parent": "Родитель"
   }
 }

@@ -17,7 +17,9 @@
     "recentlyActive": "Yaqinda faol edi",
     "searchAria": "Xabarlardan qidirish",
     "searchPlaceholder": "Xabarlardan qidirish",
-    "closeSearchAria": "Qidiruvni yopish"
+    "closeSearchAria": "Qidiruvni yopish",
+    "searchPrevAria": "Oldingi natija",
+    "searchNextAria": "Keyingi natija"
   },
   "directStatus": {
     "pending": "So'rov kutilmoqda",
@@ -73,11 +75,20 @@
     "deleteConfirm": "O‘chirish",
     "descriptionOptional": "Qisqa tavsif · ixtiyoriy",
     "joinRequests": "Qo‘shilish so‘rovlari · {{count}}",
-    "joinRequestsHint": "Taklif havolasi orqali kelganlar"
+    "joinRequestsHint": "Taklif havolasi orqali kelganlar",
+    "pinned": "Qadalgan",
+    "pinHint": "Qadalgan xabar yo‘q",
+    "tabMembers": "A’zolar — {{count}}",
+    "tabFiles": "Fayllar",
+    "tabMedia": "Media",
+    "filesEmpty": "Fayllar yo‘q",
+    "mediaEmpty": "Media yo‘q",
+    "sectionPending": "Backend tayyor bo‘lgach shu yerda ko‘rinadi"
   },
   "item": {
     "liveNow": "Dars ketmoqda",
-    "typing": "yozmoqda..."
+    "typing": "yozmoqda...",
+    "mentionTitle": "Sizni eslatib o‘tishdi"
   },
   "newDialog": {
     "title": "Yangi guruh",
@@ -111,7 +122,10 @@
     "loadError": "Xabarlar yuklanmadi",
     "loadErrorHint": "Bir ozdan so'ng yana urinib ko'ring.",
     "retry": "Qayta urinish",
-    "searchEmpty": "Xabar topilmadi"
+    "searchEmpty": "Hech narsa topilmadi",
+    "searchEmptyHint": "“{{query}}” bo‘yicha xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
+    "announcementOn": "E’lon rejimi yoqildi — faqat o‘qituvchilar yozadi",
+    "announcementLocked": "Bu guruhda faqat o‘qituvchilar yozishi mumkin"
   },
   "composer": {
     "editingLabel": "Xabarni tahrirlash",
@@ -129,7 +143,11 @@
     "emojiAria": "Emoji tanlash",
     "saveEditAria": "Tahrirlangan xabarni saqlash",
     "sendAria": "Xabarni yuborish",
-    "attachUnavailable": "Fayl yuborish hozircha mavjud emas"
+    "attachUnavailable": "Fayl yuborish hozircha mavjud emas",
+    "voiceUnavailable": "Ovozli xabar hozircha mavjud emas",
+    "recordCancel": "Yozuvni bekor qilish",
+    "recordSend": "Ovozli xabarni yuborish",
+    "micDenied": "Mikrofonga ruxsat berilmadi"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -140,12 +158,29 @@
     "deleteForMe": "Men uchun o'chirish",
     "deleteForEveryone": "Hamma uchun o'chirish",
     "pin": "Qadash",
-    "unpin": "Qadalganni olib tashlash"
+    "unpin": "Qadalganni olib tashlash",
+    "copy": "Nusxalash",
+    "forward": "Uzatish",
+    "select": "Tanlash",
+    "delete": "O‘chirish",
+    "copied": "Matn nusxalandi",
+    "selectedCount": "{{count}} ta tanlandi",
+    "cancelSelection": "Tanlovni bekor qilish",
+    "deleteTitle": "{{count}} ta xabarni o‘chirasizmi?",
+    "deleteDescription": "Xabarlar guruhning barcha a’zolari uchun o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
+    "cancel": "Bekor qilish",
+    "newMessages": "{{count}} ta yangi xabar",
+    "scrollDown": "Pastga tushish",
+    "mentionAria": "Eslatib o‘tish",
+    "voiceAria": "Ovozli xabar",
+    "selectedMessages": "{{count}} ta xabar tanlandi"
   },
   "bubble": {
     "edited": "tahrirlangan",
     "retry": "Qayta yuborish",
-    "reactionsAria": "Xabar reaksiyalari"
+    "reactionsAria": "Xabar reaksiyalari",
+    "replyAria": "Javob berish",
+    "moreAria": "Xabar amallari"
   },
   "text": {
     "viewRecording": "Video yozuvni ko'rish",
@@ -156,7 +191,12 @@
   },
   "attachment": {
     "openAria": "{{name}} — ochish",
-    "openSuffix": "ochish"
+    "openSuffix": "ochish",
+    "uploadFailed": "Yuklanmadi",
+    "voicePlay": "Ovozli xabarni tinglash",
+    "voicePause": "To‘xtatish",
+    "voiceFailed": "Ovozli xabar yuklanmadi",
+    "uploading": "Yuklanmoqda..."
   },
   "removedFromGroup": "Siz bu guruhdan chiqarildingiz",
   "directPage": {
@@ -222,5 +262,17 @@
     "cancel": "Bekor qilish",
     "confirmDelete": "O‘chirish",
     "notAvailable": "Bu amal backendda hali mavjud emas"
+  },
+  "offline": {
+    "banner": "Internet aloqasi yo‘q. Xabarlar ulanish tiklanganda yuboriladi.",
+    "composer": "Internet yo‘q — xabarlar ulanish tiklanganda yuboriladi",
+    "failed": "Yuborilmadi",
+    "retry": "Qayta urinish"
+  },
+  "mention": {
+    "title": "Guruh a’zolari",
+    "empty": "A’zo topilmadi",
+    "teacher": "O‘qituvchi",
+    "parent": "Ota-ona"
   }
 }

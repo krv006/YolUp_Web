@@ -103,5 +103,14 @@
       "saving": "Saqlanmoqda…",
       "error": "Saqlanmadi — qayta uriniladi"
     }
+  },
+  "chatCard": {
+    "label": "Uy vazifasi",
+    "submitted": "Topshirildi",
+    "daysLeft": "{{count}} kun qoldi",
+    "overdue": "Muddati o‘tgan",
+    "fileCount": "{{count}} ta fayl",
+    "submittedAt": "Topshirildi · {{value}}",
+    "submit": "Vazifani topshirish"
   }
 }

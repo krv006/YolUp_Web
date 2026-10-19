@@ -13,6 +13,7 @@ export interface ConversationItemProps {
   live?: boolean;
   muted?: boolean;
   pinned?: boolean;
+  mentioned?: boolean;
   onOpenActions?: (conversation: Conversation) => void;
 }
 
@@ -23,6 +24,7 @@ export function ConversationItem({
   live = false,
   muted = false,
   pinned = false,
+  mentioned = false,
   onOpenActions,
 }: ConversationItemProps) {
   const { t } = useTranslation("chat");
@@ -106,6 +108,14 @@ export function ConversationItem({
               </span>
             </span>
           )}
+          {mentioned ? (
+            <span
+              className="grid size-5 shrink-0 place-items-center rounded-full bg-action font-numeric text-[11px] leading-none font-semibold text-ink-inverse"
+              title={t("item.mentionTitle")}
+            >
+              @
+            </span>
+          ) : null}
           {unread && (
             <span
               className={`inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 font-numeric text-[11px] leading-none font-semibold text-ink-inverse ${

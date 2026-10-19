@@ -19,7 +19,8 @@ import { useTranslation } from "react-i18next";
 import { ChatHeader } from "@/modules/conversation";
 import { VoiceRoomBar } from "@/modules/voice";
 import { useCourse } from "@/modules/course";
-import { MessageComposer, MessageList } from "@/modules/message";
+import { MessageComposer, MessageList, useAnnouncementMode } from "@/modules/message";
+import { Icon } from "@/shared/ui/icon";
 import {
   HomeworkResultDialog,
   homeworkFieldError,
@@ -89,6 +90,8 @@ export function StudentGroupWorkspace({
   currentUserId,
 }: StudentGroupWorkspaceProps) {
   const { t } = useTranslation("student");
+  const chatT = useTranslation("chat").t;
+  const announcementMode = useAnnouncementMode(conversation.id);
   const TABS = useTabs();
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
@@ -98,7 +101,7 @@ export function StudentGroupWorkspace({
   const active: TabId = TABS.some((item) => item.id === tabParam) ? (tabParam as TabId) : "chat";
 
   const lessons = useLessons({ course: courseId, page_size: 100 }, active === "lessons");
-  const assignments = useAssignments(courseId, active === "assignments");
+  const assignments = useAssignments(courseId, active === "assignments" || active === "chat");
   const quizzes = useQuizzes(courseId, active === "assignments" && Boolean(courseId));
 
   const course = useCourse(courseId);
@@ -169,6 +172,7 @@ export function StudentGroupWorkspace({
               onDelete={() => undefined}
               onReact={() => undefined}
               capabilities={{ reply: true, edit: false, delete: false, react: false }}
+              assignments={assignments.data}
             />
           ) : null}
           {active === "lessons" ? (
@@ -188,7 +192,16 @@ export function StudentGroupWorkspace({
         </motion.div>
       </AnimatePresence>
 
-      {active === "chat" ? (
+      {active === "chat" && announcementMode ? (
+        <div className="shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+          <div className="mx-auto flex w-full max-w-[920px] items-center justify-center gap-2.5 rounded-2xl bg-subtle px-4 py-3.5 text-body-sm text-ink-secondary">
+            <Icon name="bell" size={17} className="shrink-0" />
+            {chatT("list.announcementLocked")}
+          </div>
+        </div>
+      ) : null}
+
+      {active === "chat" && !announcementMode ? (
         <MessageComposer
           onSend={send}
           onTyping={sendTyping}
@@ -196,6 +209,7 @@ export function StudentGroupWorkspace({
           replyTo={reply}
           currentUserId={currentUserId}
           onCancelContext={() => setReply(null)}
+          courseId={conversation.courseId}
         />
       ) : null}
     </section>

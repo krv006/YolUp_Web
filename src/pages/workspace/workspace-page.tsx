@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { BarChart3, ClipboardCheck, FileQuestion, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
@@ -9,6 +9,7 @@ import { InviteStudentsDialog, useNewConversationStore } from "@/modules/convers
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { ROLES } from "@/shared/constants";
+import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
 
 interface WorkspaceCard {
@@ -39,23 +40,11 @@ export function WorkspacePage() {
   const navigate = useNavigate();
   const isStudent = user?.role === ROLES.STUDENT;
   const openNewGroup = useNewConversationStore((state) => state.setOpen);
-  const [online, setOnline] = useState(() => navigator.onLine);
+  const online = useOnlineStatus();
   const [inviteFor, setInviteFor] = useState<string | null>(null);
 
   const courses = useCourses();
   const lessons = useLessons({ page_size: 200 }, !isStudent);
-
-  useEffect(() => {
-    function update() {
-      setOnline(navigator.onLine);
-    }
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
-    };
-  }, []);
 
   const cards = CARDS.filter((card) => !(card.hiddenForStudent && isStudent));
   const groups = courses.data ?? [];
@@ -115,7 +104,7 @@ export function WorkspacePage() {
 
 
       {!isStudent && groups.length ? (
-        <div className="hidden gap-3 lg:grid lg:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 lg:gap-3">
           {[
             { id: "groups", icon: "groups", tone: "bg-action text-on-action", value: String(groups.length), label: t("statGroups") },
             { id: "students", icon: "person", tone: "bg-success text-white", value: String(studentTotal), label: t("statStudents") },
@@ -123,13 +112,13 @@ export function WorkspacePage() {
           ].map((stat) => (
             <div
               key={stat.id}
-              className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-4"
+              className="flex flex-col gap-2 rounded-2xl border border-line bg-surface p-3 lg:p-4"
             >
               <span className={`grid size-9 place-items-center rounded-xl ${stat.tone}`}>
                 <Icon name={stat.icon} size={18} />
               </span>
-              <strong className="font-heading text-h2 text-ink">{stat.value}</strong>
-              <small className="text-body-sm text-ink-secondary">{stat.label}</small>
+              <strong className="font-heading text-h3 text-ink lg:text-h2">{stat.value}</strong>
+              <small className="text-caption text-ink-secondary lg:text-body-sm">{stat.label}</small>
             </div>
           ))}
         </div>
@@ -166,7 +155,7 @@ export function WorkspacePage() {
       </section>
 
       {isStudent ? null : (
-        <section className="hidden flex-col gap-3 lg:flex">
+        <section className="flex flex-col gap-3">
           <h2 className="text-title text-ink">{t("quickActions")}</h2>
           <div className="grid gap-3 lg:grid-cols-2">
             {QUICK.map((item) => (
@@ -197,7 +186,7 @@ export function WorkspacePage() {
       )}
 
       {isStudent ? null : groups.length ? (
-        <section className="hidden flex-col gap-3 lg:flex">
+        <section className="flex flex-col gap-3">
           <div className="flex items-baseline gap-3">
             <h2 className="flex-1 text-title text-ink">{t("myGroups")}</h2>
             <button
@@ -256,7 +245,7 @@ export function WorkspacePage() {
           </div>
         </section>
       ) : (
-        <section className="hidden flex-col items-center gap-3 px-6 py-10 text-center lg:flex">
+        <section className="flex flex-col items-center gap-3 px-6 py-10 text-center">
           <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
             <Icon name="groups" size={28} />
           </span>

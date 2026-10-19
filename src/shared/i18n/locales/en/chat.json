@@ -17,7 +17,9 @@
     "recentlyActive": "Recently active",
     "searchAria": "Search messages",
     "searchPlaceholder": "Search messages",
-    "closeSearchAria": "Close search"
+    "closeSearchAria": "Close search",
+    "searchPrevAria": "Previous match",
+    "searchNextAria": "Next match"
   },
   "directStatus": {
     "pending": "Request pending",
@@ -73,11 +75,20 @@
     "deleteConfirm": "Delete",
     "descriptionOptional": "Short description · optional",
     "joinRequests": "Join requests · {{count}}",
-    "joinRequestsHint": "They came through the invite link"
+    "joinRequestsHint": "They came through the invite link",
+    "pinned": "Pinned",
+    "pinHint": "No pinned message",
+    "tabMembers": "Members — {{count}}",
+    "tabFiles": "Files",
+    "tabMedia": "Media",
+    "filesEmpty": "No files",
+    "mediaEmpty": "No media",
+    "sectionPending": "Will appear once the backend is ready"
   },
   "item": {
     "liveNow": "Lesson in progress",
-    "typing": "typing..."
+    "typing": "typing...",
+    "mentionTitle": "You were mentioned"
   },
   "newDialog": {
     "title": "New group",
@@ -111,7 +122,10 @@
     "loadError": "Couldn't load messages",
     "loadErrorHint": "Please try again shortly.",
     "retry": "Retry",
-    "searchEmpty": "No messages found"
+    "searchEmpty": "Nothing found",
+    "searchEmptyHint": "Nothing found for “{{query}}”. Try another word.",
+    "announcementOn": "Announcement mode is on — only teachers can post",
+    "announcementLocked": "Only teachers can write in this group"
   },
   "composer": {
     "editingLabel": "Editing message",
@@ -129,7 +143,11 @@
     "emojiAria": "Choose emoji",
     "saveEditAria": "Save edited message",
     "sendAria": "Send message",
-    "attachUnavailable": "Sending files is not available yet"
+    "attachUnavailable": "Sending files is not available yet",
+    "voiceUnavailable": "Voice messages are not available yet",
+    "recordCancel": "Cancel recording",
+    "recordSend": "Send voice message",
+    "micDenied": "Microphone access was denied"
   },
   "actionsMenu": {
     "closeAria": "Close message menu",
@@ -140,12 +158,29 @@
     "deleteForMe": "Delete for me",
     "deleteForEveryone": "Delete for everyone",
     "pin": "Pin",
-    "unpin": "Unpin"
+    "unpin": "Unpin",
+    "copy": "Copy",
+    "forward": "Forward",
+    "select": "Select",
+    "delete": "Delete",
+    "copied": "Text copied",
+    "selectedCount": "{{count}} selected",
+    "cancelSelection": "Cancel selection",
+    "deleteTitle": "Delete {{count}} messages?",
+    "deleteDescription": "The messages are removed for everyone in the group. This cannot be undone.",
+    "cancel": "Cancel",
+    "newMessages": "{{count}} new messages",
+    "scrollDown": "Scroll down",
+    "mentionAria": "Mention",
+    "voiceAria": "Voice message",
+    "selectedMessages": "{{count}} messages selected"
   },
   "bubble": {
     "edited": "edited",
     "retry": "Resend",
-    "reactionsAria": "Message reactions"
+    "reactionsAria": "Message reactions",
+    "replyAria": "Reply",
+    "moreAria": "Message actions"
   },
   "text": {
     "viewRecording": "View the video recording",
@@ -156,7 +191,12 @@
   },
   "attachment": {
     "openAria": "{{name}} — open",
-    "openSuffix": "open"
+    "openSuffix": "open",
+    "uploadFailed": "Upload failed",
+    "voicePlay": "Play voice message",
+    "voicePause": "Pause",
+    "voiceFailed": "Could not load the voice message",
+    "uploading": "Uploading..."
   },
   "removedFromGroup": "You were removed from this group",
   "directPage": {
@@ -222,5 +262,17 @@
     "cancel": "Cancel",
     "confirmDelete": "Delete",
     "notAvailable": "The backend does not support this action yet"
+  },
+  "offline": {
+    "banner": "No internet connection. Messages will be sent once you are back online.",
+    "composer": "You are offline — messages will be sent once the connection is back",
+    "failed": "Not sent",
+    "retry": "Try again"
+  },
+  "mention": {
+    "title": "Group members",
+    "empty": "No members found",
+    "teacher": "Teacher",
+    "parent": "Parent"
   }
 }

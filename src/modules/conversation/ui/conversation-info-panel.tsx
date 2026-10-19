@@ -15,6 +15,7 @@ import {
   useUpdateCourse,
 } from "@/modules/course";
 import { useChatUiStore } from "@/modules/message";
+import { usePinnedMessage } from "@/modules/message";
 import {
   DIRECT_STATUS,
   InviteStudentsDialog,
@@ -73,6 +74,11 @@ export function ConversationInfoPanel({
   const deleteCourse = useDeleteCourse();
   const setRoomImage = useSetRoomImage();
   const openChatSearch = useChatUiStore((state) => state.setSearchOpen);
+  const announcement = useChatUiStore((state) => Boolean(state.announcement[conversation.id]));
+  const setAnnouncement = useChatUiStore((state) => state.setAnnouncement);
+  const pinnedMessage = usePinnedMessage(conversation.id);
+  const unpinMessage = useChatUiStore((state) => state.unpin);
+  const [tab, setTab] = useState<"members" | "files" | "media">("members");
   const imageRef = useRef<HTMLInputElement>(null);
 
   function toggleMute() {
@@ -161,6 +167,15 @@ export function ConversationInfoPanel({
               <span className="lg:hidden">{t("info.panelTitle")}</span>
               <span className="hidden lg:inline">{conversation.title}</span>
             </DialogTitle>
+            {teacherGroup ? (
+              <button
+                className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
+                onClick={beginEdit}
+                aria-label={t("info.editCourse")}
+              >
+                <Icon name="edit" size={19} />
+              </button>
+            ) : null}
             <button
               className="hidden size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:grid"
               onClick={() => onOpenChange(false)}
@@ -255,18 +270,49 @@ export function ConversationInfoPanel({
                 ) : null}
               </div>
 
-              <div className="mt-5 hidden w-full gap-3 lg:grid lg:grid-cols-2">
+              <div className="mt-5 hidden w-full gap-3 lg:grid lg:grid-cols-3">
                 <button className={WIDE_ACTION} onClick={toggleMute}>
                   <Icon name="volume" size={20} />
                   {muted ? t("info.muteOn") : t("info.muteOff")}
                 </button>
-                {teacherGroup ? (
-                  <button className={WIDE_ACTION} onClick={beginEdit}>
-                    <Icon name="edit" size={20} />
-                    {t("info.editCourse")}
-                  </button>
-                ) : null}
+                <button
+                  className={WIDE_ACTION}
+                  onClick={() => {
+                    onOpenChange(false);
+                    openChatSearch(true);
+                  }}
+                >
+                  <Icon name="search" size={20} />
+                  {t("info.search")}
+                </button>
+                <button
+                  className={WIDE_ACTION}
+                  onClick={() =>
+                    pinnedMessage ? unpinMessage(conversation.id) : toast.info(t("info.pinHint"))
+                  }
+                >
+                  <Icon name="pin" size={20} />
+                  {t("info.pinned")}
+                </button>
               </div>
+
+              {teacherGroup ? (
+                <section className="mt-4 hidden w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 lg:flex">
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="text-label-strong text-ink">
+                      {t("info.announcementTitle")}
+                    </strong>
+                    <small className="text-caption text-ink-tertiary">
+                      {t("info.announcementHint")}
+                    </small>
+                  </span>
+                  <Switch
+                    checked={announcement}
+                    onCheckedChange={(value) => setAnnouncement(conversation.id, value)}
+                    aria-label={t("info.announcementTitle")}
+                  />
+                </section>
+              ) : null}
             </section>
 
             {teacherGroup ? (
@@ -281,8 +327,8 @@ export function ConversationInfoPanel({
                   </small>
                 </span>
                 <Switch
-                  checked={false}
-                  onCheckedChange={() => toast.info(t("actions.notAvailable"))}
+                  checked={announcement}
+                  onCheckedChange={(value) => setAnnouncement(conversation.id, value)}
                   aria-label={t("info.announcementTitle")}
                 />
               </section>
@@ -340,7 +386,52 @@ export function ConversationInfoPanel({
               </button>
             ) : null}
 
-            {teacherGroup ? <CourseMembersSection courseId={conversation.courseId} canManage /> : null}
+            {isGroup ? (
+              <section className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  {(
+                    [
+                      ["members", t("info.tabMembers", { count: conversation.memberCount ?? 0 })],
+                      ["files", t("info.tabFiles")],
+                      ["media", t("info.tabMedia")],
+                    ] as const
+                  ).map(([id, label]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      className={`h-9 rounded-full px-3.5 text-label-strong transition-colors ${
+                        tab === id
+                          ? "bg-action-subtle text-action"
+                          : "text-ink-secondary hover:bg-subtle"
+                      }`}
+                      onClick={() => setTab(id)}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+
+                {tab === "members" ? (
+                  teacherGroup ? (
+                    <CourseMembersSection courseId={conversation.courseId} canManage />
+                  ) : (
+                    <CourseMembersSection courseId={conversation.courseId} canManage={false} />
+                  )
+                ) : (
+                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-6 py-10 text-center">
+                    <span className="grid size-12 place-items-center rounded-full bg-subtle text-ink-tertiary">
+                      <Icon name={tab === "files" ? "assign" : "camera"} size={22} />
+                    </span>
+                    <strong className="text-label-strong text-ink">
+                      {tab === "files" ? t("info.filesEmpty") : t("info.mediaEmpty")}
+                    </strong>
+                    <small className="text-caption text-ink-tertiary">
+                      {t("info.sectionPending")}
+                    </small>
+                  </div>
+                )}
+              </section>
+            ) : null}
 
             {isGroup && !teacherGroup ? (
               <section className="flex flex-col gap-2">

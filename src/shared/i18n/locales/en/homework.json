@@ -103,5 +103,14 @@
       "saving": "Saving…",
       "error": "Not saved — retrying"
     }
+  },
+  "chatCard": {
+    "label": "Homework",
+    "submitted": "Submitted",
+    "daysLeft": "{{count}} days left",
+    "overdue": "Overdue",
+    "fileCount": "{{count}} file",
+    "submittedAt": "Submitted · {{value}}",
+    "submit": "Submit homework"
   }
 }

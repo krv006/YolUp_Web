@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { LoaderCircle } from "lucide-react";
+import { AtSign, LoaderCircle, Mic } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
+import { useCourseStudents } from "@/modules/course";
+import { useOnlineStatus } from "@/shared/model";
+import { Avatar, Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 
@@ -16,9 +18,12 @@ export interface MessageComposerProps {
   currentUserId?: string | null;
   onTyping?: () => void;
   allowAttachments?: boolean;
+  courseId?: string | null;
 }
 
 const emojis = ["🔥", "💎", "🚀", "👑", "⚡", "🎯"];
+
+const WAVE = Array.from({ length: 34 }, (_, index) => 6 + ((index * 7) % 17));
 
 export function MessageComposer({
   onSend,
@@ -29,12 +34,64 @@ export function MessageComposer({
   currentUserId = null,
   onTyping,
   allowAttachments = false,
+  courseId = null,
 }: MessageComposerProps) {
   const { t } = useTranslation("chat");
   const [draft, setDraft] = useState(() => editingMessage?.text ?? "");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
+  const [recording, setRecording] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const cancelRef = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [mention, setMention] = useState<{ query: string; start: number } | null>(null);
+  const [activeMention, setActiveMention] = useState(0);
+  const online = useOnlineStatus();
+  const members = useCourseStudents(courseId, { page_size: 100 }, Boolean(courseId) && Boolean(mention));
+
+  const suggestions = (() => {
+    if (!mention) return [];
+    const query = mention.query.toLowerCase();
+    return (members.data?.items ?? [])
+      .map((item) => item.student)
+      .filter((student) =>
+        query ? `${student.name} ${student.username}`.toLowerCase().includes(query) : true
+      )
+      .slice(0, 6);
+  })();
+
+  function detectMention(value: string, caret: number) {
+    const before = value.slice(0, caret);
+    const at = before.lastIndexOf("@");
+    if (at === -1) {
+      setMention(null);
+      return;
+    }
+    const previous = at === 0 ? " " : before[at - 1];
+    const query = before.slice(at + 1);
+    if (!/\s/.test(previous) || /\s/.test(query)) {
+      setMention(null);
+      return;
+    }
+    setActiveMention(0);
+    setMention({ query, start: at });
+  }
+
+  function applyMention(username: string) {
+    if (!mention) return;
+    const element = textareaRef.current;
+    const caret = element?.selectionStart ?? draft.length;
+    const next = `${draft.slice(0, mention.start)}@${username} ${draft.slice(caret)}`;
+    setDraft(next);
+    setMention(null);
+    requestAnimationFrame(() => {
+      const position = mention.start + username.length + 2;
+      element?.focus();
+      element?.setSelectionRange(position, position);
+    });
+  }
 
   useEffect(() => {
     const element = textareaRef.current;
@@ -47,23 +104,102 @@ export function MessageComposer({
     if (editingMessage || replyTo) textareaRef.current?.focus();
   }, [editingMessage, replyTo]);
 
+  useEffect(() => {
+    if (!recording) return undefined;
+    const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000);
+    return () => window.clearInterval(timer);
+  }, [recording]);
+
   async function submit() {
     const text = draft.trim();
-    if ((!text && !selectedFile) || sending) return;
-    const attachment = selectedFile
-      ? {
-          name: selectedFile.name,
-          size: formatFileSize(selectedFile.size),
-          mimeType: selectedFile.type,
-          url: URL.createObjectURL(selectedFile),
-        }
-      : undefined;
-    await onSend({ text, attachment });
+    if ((!text && !files.length) || sending) return;
+    if (!files.length) {
+      await onSend({ text });
+    } else {
+      for (const [index, file] of files.entries()) {
+        await onSend({
+          text: index === 0 ? text : "",
+          attachment: {
+            name: file.name,
+            size: formatFileSize(file.size),
+            mimeType: file.type,
+            url: URL.createObjectURL(file),
+          },
+        });
+      }
+    }
     setDraft("");
-    setSelectedFile(null);
+    setFiles([]);
+  }
+
+  function addFiles(list: FileList | null) {
+    if (!list?.length) return;
+    const accepted: File[] = [];
+    for (const file of Array.from(list)) {
+      if (file.size > 20 * 1024 * 1024) {
+        toast.error(t("composer.fileTooLarge"));
+        continue;
+      }
+      accepted.push(file);
+    }
+    if (!accepted.length) return;
+    setFiles((current) => [...current, ...accepted]);
+    toast.success(t("composer.fileAttached"));
+  }
+
+  async function startRecording() {
+    if (recording) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      cancelRef.current = false;
+      recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        if (cancelRef.current) return;
+        toast.info(t("actions.notAvailable"));
+      };
+      recorderRef.current = recorder;
+      recorder.start();
+      setSeconds(0);
+      setRecording(true);
+    } catch {
+      toast.error(t("composer.micDenied"));
+    }
+  }
+
+  function stopRecording(cancel: boolean) {
+    cancelRef.current = cancel;
+    recorderRef.current?.stop();
+    recorderRef.current = null;
+    setRecording(false);
+    setSeconds(0);
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (mention && suggestions.length) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActiveMention((index) => (index + 1) % suggestions.length);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveMention((index) => (index - 1 + suggestions.length) % suggestions.length);
+        return;
+      }
+      if (event.key === "Enter" || event.key === "Tab") {
+        event.preventDefault();
+        applyMention(suggestions[activeMention].username);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMention(null);
+        return;
+      }
+    }
     if (event.key === "Escape" && (replyTo || editingMessage)) {
       onCancelContext();
       if (editingMessage) setDraft("");
@@ -76,9 +212,57 @@ export function MessageComposer({
   }
 
   const context = editingMessage || replyTo;
+  const hasContent = Boolean(draft.trim() || files.length);
 
   return (
-    <div className="shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+    <div className="relative shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+      {online ? null : (
+        <div className="mb-3 flex items-center gap-2.5 rounded-xl bg-saffron-subtle px-3 py-2 text-saffron-strong">
+          <Icon name="error" size={16} className="shrink-0" />
+          <span className="text-caption">{t("offline.composer")}</span>
+        </div>
+      )}
+
+      <AnimatePresence>
+        {mention ? (
+          <motion.div
+            className="absolute bottom-full left-4 z-30 mb-2 flex w-[280px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:left-6"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+          >
+            <span className="px-4 pt-3 pb-2 text-caption-strong text-ink-tertiary">
+              {t("mention.title")}
+            </span>
+            {suggestions.length ? (
+              suggestions.map((student, index) => (
+                <button
+                  key={student.id}
+                  type="button"
+                  className={`flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                    index === activeMention ? "bg-subtle" : "hover:bg-subtle"
+                  }`}
+                  onMouseEnter={() => setActiveMention(index)}
+                  onClick={() => applyMention(student.username)}
+                >
+                  <Avatar name={student.name} tone={student.avatarTone} size="sm" />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="truncate text-label-strong text-ink">{student.name}</strong>
+                    <small className="truncate text-caption text-ink-tertiary">
+                      @{student.username}
+                    </small>
+                  </span>
+                </button>
+              ))
+            ) : (
+              <span className="px-4 pb-3 text-caption text-ink-tertiary">
+                {members.isLoading ? "..." : t("mention.empty")}
+              </span>
+            )}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       <AnimatePresence initial={false}>
         {context && (
           <motion.div
@@ -119,46 +303,116 @@ export function MessageComposer({
         )}
       </AnimatePresence>
       <AnimatePresence initial={false}>
-        {selectedFile && (
+        {files.length ? (
           <motion.div
-            className="mb-3 flex items-center gap-3 rounded-xl border border-line bg-canvas px-3 py-2"
-            initial={{ opacity: 0, y: 6, height: 0 }}
-            animate={{ opacity: 1, y: 0, height: "auto" }}
-            exit={{ opacity: 0, y: 4, height: 0 }}
+            className="mb-3 flex flex-wrap items-center gap-2"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 4 }}
           >
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
-              <Icon name="assign" size={16} />
-            </span>
-            <div className="flex min-w-0 flex-1 flex-col">
-              <strong className="truncate text-caption-strong text-ink">{selectedFile.name}</strong>
-              <small className="text-caption text-ink-tertiary">
-                {formatFileSize(selectedFile.size)}
-              </small>
-            </div>
+            {files.map((file, index) => {
+              const image = file.type.startsWith("image/");
+              return (
+                <span
+                  key={`${file.name}-${index}`}
+                  className={`relative flex items-center gap-2 rounded-xl border border-line bg-canvas ${
+                    image ? "size-16 overflow-hidden p-0" : "h-16 pr-9 pl-3"
+                  }`}
+                >
+                  {image ? (
+                    <img
+                      className="size-full object-cover"
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                    />
+                  ) : (
+                    <>
+                      <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-error-bg text-caption-strong text-error-text">
+                        {file.name.split(".").pop()?.slice(0, 4).toUpperCase() ?? "FILE"}
+                      </span>
+                      <span className="flex min-w-0 max-w-[150px] flex-col">
+                        <strong className="truncate text-caption-strong text-ink">
+                          {file.name}
+                        </strong>
+                        <small className="text-caption text-ink-tertiary">
+                          {formatFileSize(file.size)}
+                        </small>
+                      </span>
+                    </>
+                  )}
+                  <button
+                    type="button"
+                    className="absolute top-1 right-1 grid size-6 place-items-center rounded-full bg-surface text-ink-tertiary shadow-xs transition-colors hover:text-ink"
+                    onClick={() => setFiles((current) => current.filter((_, i) => i !== index))}
+                    aria-label={t("composer.removeAttachmentAria")}
+                  >
+                    <Icon name="add" size={14} className="rotate-45" />
+                  </button>
+                </span>
+              );
+            })}
             <button
-              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:bg-subtle hover:text-ink"
-              onClick={() => setSelectedFile(null)}
-              aria-label={t("composer.removeAttachmentAria")}
+              type="button"
+              className="grid size-16 place-items-center rounded-xl border border-dashed border-line text-ink-tertiary transition-colors hover:bg-subtle hover:text-ink"
+              onClick={() => fileRef.current?.click()}
+              aria-label={t("composer.attachAria")}
             >
-              <Icon name="add" size={17} className="rotate-45" />
+              <Icon name="add" size={20} />
             </button>
           </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
+      {recording ? (
+        <div className="mx-auto flex w-full max-w-[920px] items-center gap-3 rounded-3xl border border-line bg-canvas px-4 py-3">
+          <button
+            type="button"
+            className="grid size-10 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
+            onClick={() => stopRecording(true)}
+            aria-label={t("composer.recordCancel")}
+          >
+            <Icon name="trash" size={19} />
+          </button>
+          <span className="flex size-2.5 shrink-0 animate-pulse rounded-full bg-error" />
+          <span className="shrink-0 font-numeric text-label-strong text-ink">
+            {formatDuration(seconds)}
+          </span>
+          <span
+            className="flex min-w-0 flex-1 items-center justify-between gap-[3px] overflow-hidden"
+            aria-hidden="true"
+          >
+            {WAVE.map((height, index) => (
+              <motion.span
+                key={index}
+                className="w-[3px] shrink-0 rounded-full bg-action/70"
+                animate={{ height: [height * 0.4, height, height * 0.5] }}
+                transition={{
+                  duration: 0.9,
+                  repeat: Infinity,
+                  delay: (index % 7) * 0.08,
+                  ease: "easeInOut",
+                }}
+                style={{ height }}
+              />
+            ))}
+          </span>
+          <button
+            type="button"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover"
+            onClick={() => stopRecording(false)}
+            aria-label={t("composer.recordSend")}
+          >
+            <Icon name="send" size={19} />
+          </button>
+        </div>
+      ) : (
       <div className="mx-auto flex w-full max-w-[920px] items-end gap-3">
         <input
           ref={fileRef}
           type="file"
+          multiple
           hidden
           onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
-            if (file.size > 20 * 1024 * 1024) {
-              toast.error(t("composer.fileTooLarge"));
-              return;
-            }
-            setSelectedFile(file);
-            toast.success(t("composer.fileAttached"));
+            addFiles(event.target.files);
             event.target.value = "";
           }}
         />
@@ -179,14 +433,31 @@ export function MessageComposer({
             value={draft}
             onChange={(event) => {
               setDraft(event.target.value);
+              detectMention(event.target.value, event.target.selectionStart ?? 0);
               onTyping?.();
             }}
+            onClick={(event) =>
+              detectMention(event.currentTarget.value, event.currentTarget.selectionStart ?? 0)
+            }
             onKeyDown={handleKeyDown}
             placeholder={
               editingMessage ? t("composer.editPlaceholder") : t("composer.sendPlaceholder")
             }
             aria-label={t("composer.textAria")}
           />
+          <button
+            type="button"
+            className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+            onClick={() => {
+              const next = draft.endsWith("@") ? draft : `${draft}${draft && !draft.endsWith(" ") ? " " : ""}@`;
+              setDraft(next);
+              textareaRef.current?.focus();
+              detectMention(next, next.length);
+            }}
+            aria-label={t("actionsMenu.mentionAria")}
+          >
+            <AtSign size={18} />
+          </button>
           <Dropdown>
             <DropdownTrigger asChild>
               <button
@@ -205,23 +476,41 @@ export function MessageComposer({
             </DropdownContent>
           </Dropdown>
         </div>
-        <button
-          className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40"
-          onClick={submit}
-          disabled={(!draft.trim() && !selectedFile) || sending}
-          aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
-        >
-          {sending ? (
-            <LoaderCircle className="animate-spin" size={19} />
-          ) : editingMessage ? (
-            <Icon name="edit" size={18} />
-          ) : (
-            <Icon name="send" size={20} />
-          )}
+        {hasContent || editingMessage ? (
+          <button
+            className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40"
+            onClick={submit}
+            disabled={(!draft.trim() && !files.length) || sending}
+            aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
+          >
+            {sending ? (
+              <LoaderCircle className="animate-spin" size={19} />
+            ) : editingMessage ? (
+              <Icon name="edit" size={18} />
+            ) : (
+              <Icon name="send" size={20} />
+            )}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover"
+            onClick={startRecording}
+            aria-label={t("actionsMenu.voiceAria")}
+          >
+            <Mic size={20} />
         </button>
+        )}
       </div>
+      )}
     </div>
   );
+}
+
+function formatDuration(total: number): string {
+  const minutes = Math.floor(total / 60);
+  const seconds = total % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
 function formatFileSize(bytes: number): string {
