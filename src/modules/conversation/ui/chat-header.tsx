@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOnlineStatus } from "@/shared/model";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -17,7 +17,15 @@ export interface ChatHeaderProps {
 export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHeaderProps) {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
-  const [infoOpen, setInfoOpen] = useState(false);
+  const [params, setParams] = useSearchParams();
+  const infoOpen = params.has("info");
+
+  function setInfoOpen(open: boolean) {
+    const next = new URLSearchParams(params);
+    if (open) next.set("info", "1");
+    else next.delete("info");
+    setParams(next, { replace: !open });
+  }
   const search = useChatUiStore((state) => state.search);
   const searchOpen = useChatUiStore((state) => state.searchOpen);
   const setSearchOpen = useChatUiStore((state) => state.setSearchOpen);

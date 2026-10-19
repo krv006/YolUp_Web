@@ -31,7 +31,7 @@
   "info": {
     "groupSubjectFallback": "Kurs guruhi",
     "profileInfo": "Profil ma'lumotlari",
-    "memberCount": "{{count}} o'quvchi",
+    "memberCount": "{{count}} a’zo",
     "changeGroupImageAria": "Guruh rasmini o'zgartirish",
     "groupImageUpdated": "Guruh rasmi yangilandi",
     "muteOn": "Ovozni yoqish",

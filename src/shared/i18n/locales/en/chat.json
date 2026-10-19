@@ -31,7 +31,7 @@
   "info": {
     "groupSubjectFallback": "Course group",
     "profileInfo": "Profile info",
-    "memberCount": "{{count}} students",
+    "memberCount": "{{count}} members",
     "changeGroupImageAria": "Change group photo",
     "groupImageUpdated": "Group photo updated",
     "muteOn": "Unmute",

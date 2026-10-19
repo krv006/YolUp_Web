@@ -31,7 +31,7 @@
   "info": {
     "groupSubjectFallback": "Группа курса",
     "profileInfo": "Информация о профиле",
-    "memberCount": "{{count}} учеников",
+    "memberCount": "{{count}} участников",
     "changeGroupImageAria": "Изменить фото группы",
     "groupImageUpdated": "Фото группы обновлено",
     "muteOn": "Включить звук",

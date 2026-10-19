@@ -365,11 +365,11 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
           <h2 className="font-heading text-h2 text-ink">{t("lessons.title")}</h2>
           <p className="text-body-sm text-ink-secondary">{t("lessons.subtitle")}</p>
         </div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2">
           <LessonViewSwitch view={view} onChange={setView} />
           <button
             type="button"
-            className="flex h-12 items-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+            className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-action px-4 text-label-strong whitespace-nowrap text-on-action transition-colors hover:bg-action-hover lg:h-12 lg:gap-2 lg:px-5"
             onClick={() => {
               setEditing(null);
               setDialog(true);
