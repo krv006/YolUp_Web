@@ -3,7 +3,8 @@ import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
-import { LoginForm, resolveHomeRoute } from "@/modules/auth";
+import { LoginForm, MobileLoginForm, resolveHomeRoute } from "@/modules/auth";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { LoginCredentials } from "@/shared/types";
 import { Brand } from "@/shared/ui/legacy";
 
@@ -11,8 +12,10 @@ export function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const isCompact = useIsCompact();
 
   if (user) return <Navigate to={resolveHomeRoute(user)} replace />;
+  if (isCompact) return <MobileLoginForm onSubmit={handleLogin} />;
 
   async function handleLogin(credentials: LoginCredentials) {
     const nextUser = await login(credentials);

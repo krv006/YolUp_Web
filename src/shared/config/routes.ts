@@ -8,6 +8,8 @@ export const ROUTES = Object.freeze({
     login: "/login",
     register: "/register",
     forgotPassword: "/forgot-password",
+    verifyCode: "/verify-code",
+    newPassword: "/new-password",
   }),
   teacher: Object.freeze({
     root: "/teacher",

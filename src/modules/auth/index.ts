@@ -50,3 +50,14 @@ export { resolveHomeRoute } from "./lib/resolve-home-route";
 export { describeCreateError } from "./lib/teacher-approval";
 export { LoginForm } from "./ui/login-form";
 export { RegisterForm } from "./ui/register-form";
+export {
+  AuthButton,
+  AuthField,
+  AuthFieldError,
+  AuthPasswordField,
+  AuthPhoneField,
+  AuthScreen,
+} from "./ui/auth-screen";
+export { MobileLoginForm } from "./ui/mobile-login-form";
+export { MobileRegisterForm } from "./ui/mobile-register-form";
+export { OtpInput } from "./ui/otp-input";
