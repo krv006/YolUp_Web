@@ -120,7 +120,8 @@
       "blankRequired": "в тексте нужен хотя бы один пропуск {{syntax}}",
       "blankAnswerRequired": "впишите ответ в каждый пропуск",
       "chooseSubject": "Выберите предмет",
-      "enterTopic": "Введите тему"
+      "enterTopic": "Введите тему",
+      "enterTopicOrImport": "Введите тему или импортируйте из файла"
     },
     "subjectLabel": "Для какого предмета",
     "topicLabel": "Тема",
@@ -137,7 +138,16 @@
       "unsupportedType": "Вопрос {{number}} не импортирован: берутся только вопросы с одним и несколькими вариантами"
     },
     "saveDraft": "Сохранить черновик",
-    "previewLabel": "Ученик видит"
+    "previewLabel": "Ученик видит",
+    "unsavedTitle": "Изменения не сохранены",
+    "unsavedDescription": "Если выйти, потеряются {{count}} изменений после последнего сохранения.",
+    "unsavedStay": "Остаться",
+    "unsavedLeave": "Выйти",
+    "missingAnswersTitle": "В {{count}} вопросах нет правильного ответа",
+    "missingAnswersDescription_one": "В вопросе {{list}} не отмечен правильный ответ. Пока он не заполнен, тест не виден ученикам.",
+    "missingAnswersDescription_other": "В вопросах {{list}} не отмечен правильный ответ. Пока они не заполнены, тест не виден ученикам.",
+    "missingAnswersLater": "Позже",
+    "missingAnswersGo": "Перейти к вопросу"
   },
   "preview": {
     "regionAria": "Как это увидит ученик",
@@ -269,7 +279,12 @@
     "audioTooBig": "Файл не должен превышать {{size}} МБ",
     "questionGroupLabel": "Группа",
     "noGroup": "Без группы",
-    "transcriptToggle": "Текст аудио (ученик не видит)"
+    "transcriptToggle": "Текст аудио (ученик не видит)",
+    "playOnce": "Прослушивается только один раз",
+    "audioPlay": "Прослушать аудио",
+    "audioPause": "Пауза",
+    "uploadingAudio": "Загружается...",
+    "audioFile": "Аудиофайл"
   },
   "aiPage": {
     "title": "Новый тест",

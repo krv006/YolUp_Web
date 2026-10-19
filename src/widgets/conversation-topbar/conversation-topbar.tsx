@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -8,6 +9,7 @@ import { useNewConversationStore } from "@/modules/conversation";
 import { useScheduleStore } from "@/modules/lesson";
 import { useAssignmentCreateStore } from "@/widgets/homework-workspace";
 import { usePageCreateStore } from "@/shared/model";
+import { GlobalSearchDialog } from "@/widgets/global-search";
 import { Icon } from "@/shared/ui/icon";
 import { useConversations } from "@/modules/conversation";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
@@ -36,6 +38,7 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const quizzes = pathname.endsWith("/quizzes");
   const exams = pathname.endsWith("/exams");
   const quizT = useTranslation("quiz").t;
+  const [searchOpen, setSearchOpen] = useState(false);
   const lessonT = useTranslation("lesson").t;
   const view = useScheduleStore((state) => state.view);
   const anchor = useScheduleStore((state) => state.anchor);
@@ -196,8 +199,8 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
       {workspace ? (
         <button
           type="button"
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle lg:hidden"
-          onClick={() => navigate("search")}
+          className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
+          onClick={() => setSearchOpen(true)}
           aria-label={t("workspace:searchAria")}
         >
           <Icon name="search" size={19} />
@@ -241,6 +244,8 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         className="relative grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
         onOpenLink={openNotificationLink}
       />
+
+      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
   );
 }

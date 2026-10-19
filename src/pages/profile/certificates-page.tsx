@@ -4,6 +4,16 @@ import { useAuth, useDeleteCertificate, useUploadCertificate } from "@/modules/a
 import { Icon } from "@/shared/ui/icon";
 import { ProfileSubPage } from "./profile-shell";
 
+function fileKind(file: string): string {
+  const extension = file.split("?")[0].split(".").pop()?.toUpperCase() ?? "";
+  return extension.length <= 4 ? extension : "";
+}
+
+function formatYear(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : String(date.getFullYear());
+}
+
 export function CertificatesPage() {
   const { t } = useTranslation("account");
   const { user } = useAuth();
@@ -52,7 +62,12 @@ export function CertificatesPage() {
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-label-strong text-ink">{item.title || "—"}</strong>
-                  <small className="truncate text-caption text-ink-tertiary">{item.file}</small>
+                  <small className="truncate text-caption text-ink-tertiary">
+                    {[fileKind(item.file), formatYear(item.createdAt)].filter(Boolean).join(" · ")}
+                  </small>
+                </span>
+                <span className="shrink-0 rounded-full bg-saffron-subtle px-2.5 py-1 text-caption-strong text-saffron-strong">
+                  {t("page.certificatePending")}
                 </span>
                 <button
                   type="button"

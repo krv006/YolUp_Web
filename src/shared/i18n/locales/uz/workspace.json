@@ -92,5 +92,8 @@
   "sectionMessages": "XABARLAR · {{count}}",
   "quizQuestions": "{{count}} ta savol",
   "draft": "Qoralama",
-  "published": "E’lon qilingan"
+  "published": "E’lon qilingan",
+  "searchSubtitle": "Guruhlar, darslar, testlar, o‘quvchilar va xabarlar bo‘yicha",
+  "searchHotkeys": "↑↓ tanlash · Enter ochish · Esc yopish",
+  "searchAllResults": "Barcha natijalar"
 }

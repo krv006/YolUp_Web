@@ -145,7 +145,25 @@
       "late": "Kech topshirishga ruxsat",
       "lateHint": "Muddatdan keyin ham qabul qilinadi",
       "pending": "Backend tayyor bo‘lgach yoqiladi"
-    }
+    },
+    "editSubtitle": "{{count}} ta o‘quvchi allaqachon topshirgan. Muddatni uzaytirsangiz, ularga bildirishnoma boradi.",
+    "attachFile": "Fayl biriktirish",
+    "lessonLabel": "Qaysi dars uchun",
+    "lessonNone": "Darsga bog‘lanmagan",
+    "gradingNote": "Baholash izohi - ixtiyoriy",
+    "gradingNotePlaceholder": "Masalan: har bir misol 2 balldan",
+    "deleteAssignment": "Vazifani o‘chirish",
+    "rich": {
+      "bold": "Qalin",
+      "italic": "Qiya",
+      "underline": "Tagi chizilgan",
+      "list": "Ro‘yxat",
+      "link": "Havola",
+      "linkPrompt": "Havola manzilini kiriting"
+    },
+    "nameLabel": "Vazifa nomi",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash"
   },
   "review": {
     "back": "Orqaga",
@@ -219,7 +237,7 @@
     },
     "noStudents": "O‘quvchi topilmadi",
     "deleteTitle": "Vazifani o‘chirasizmi?",
-    "deleteDescription": "Vazifa va unga topshirilgan ishlar o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
+    "deleteDescription": "{{count}} ta o‘quvchi topshirgan javoblar va baholar ham o‘chadi. Bu amalni qaytarib bo‘lmaydi.",
     "cancel": "Bekor qilish"
   },
   "messageCard": {

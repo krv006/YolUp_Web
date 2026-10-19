@@ -3,6 +3,7 @@ import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourses, useCourseStudents } from "@/modules/course";
+import { useLessons } from "@/modules/lesson";
 import { homeworkApi, homeworkKeys, useAssignments, useDeleteAssignment } from "@/modules/homework";
 import type { Assignment, Submission } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -62,6 +63,10 @@ export function HomeworkWorkspace({
   const items = useMemo(() => assignments.data ?? [], [assignments.data]);
   const selected = items.find((item) => item.id === selectedId) ?? items[0] ?? null;
   const students = useCourseStudents(selected?.courseId ?? null, { page_size: 100 });
+  const courseLessons = useLessons(
+    { course: selected?.courseId ?? "", page_size: 100 },
+    Boolean(selected?.courseId)
+  );
 
   const [now] = useState(() => Date.now());
 
@@ -552,6 +557,13 @@ export function HomeworkWorkspace({
         }}
         courseId={courseId}
         assignment={editing}
+        submittedCount={editing?.submissions.length ?? 0}
+        lessons={(courseLessons.data ?? []).map((lesson) => ({
+          id: lesson.id,
+          title: lesson.title,
+          date: lesson.date,
+        }))}
+        onDelete={(item) => setDeleteTarget(item)}
       />
 
       <AppDialog
@@ -564,7 +576,9 @@ export function HomeworkWorkspace({
           </span>
         }
         title={t("workspace.deleteTitle")}
-        description={t("workspace.deleteDescription")}
+        description={t("workspace.deleteDescription", {
+          count: deleteTarget?.submissions.length ?? 0,
+        })}
         footer={
           <>
             <button

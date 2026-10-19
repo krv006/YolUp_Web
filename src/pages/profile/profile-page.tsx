@@ -2,7 +2,12 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth, useUpdateAvatarMutation } from "@/modules/auth";
+import {
+  useAuth,
+  useSwitchAccountMutation,
+  useSwitchRoleMutation,
+  useUpdateAvatarMutation,
+} from "@/modules/auth";
 import { useCourses } from "@/modules/course";
 import { ROLES } from "@/shared/constants";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -18,6 +23,10 @@ export function ProfilePage() {
   const updateAvatar = useUpdateAvatarMutation();
   const fileRef = useRef<HTMLInputElement>(null);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [switchOpen, setSwitchOpen] = useState(false);
+  const switchAccount = useSwitchAccountMutation();
+  const switchRole = useSwitchRoleMutation();
+  const linkedAccounts = user?.linkedAccounts ?? [];
 
   const isTeacher = user?.role === ROLES.TEACHER;
   const groups = courses.data ?? [];
@@ -147,6 +156,16 @@ export function ProfilePage() {
 
             <div className="overflow-hidden rounded-2xl border border-line bg-surface">
               <SettingsRow
+                icon="person"
+                tone="bg-action text-on-action"
+                title={t("page.switchAccount")}
+                hint={t("page.switchAccountHint")}
+                onClick={() => setSwitchOpen(true)}
+              />
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-line bg-surface">
+              <SettingsRow
                 icon="trash"
                 tone="bg-error text-white"
                 title={t("page.logout")}
@@ -158,6 +177,90 @@ export function ProfilePage() {
           </section>
         </div>
       </div>
+
+      <AppDialog
+        open={switchOpen}
+        onOpenChange={setSwitchOpen}
+        title={t("page.switchAccount")}
+        description={t("page.switchAccountDescription")}
+        footer={
+          <button
+            type="button"
+            className={dialogButton.primary}
+            onClick={() => setSwitchOpen(false)}
+          >
+            {t("page.close")}
+          </button>
+        }
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line">
+            <span className="flex items-center gap-3 px-4 py-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-action-subtle font-heading text-label-strong text-action">
+                {(user?.name ?? "")
+                  .split(" ")
+                  .map((part) => part[0])
+                  .slice(0, 2)
+                  .join("")
+                  .toUpperCase()}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-label-strong text-ink">{user?.name}</strong>
+                <small className="truncate text-caption text-success-text">
+                  {`${tn(`roles.${user?.role?.toLowerCase() ?? "teacher"}`, {
+                    defaultValue: user?.role ?? "",
+                  })} · ${t("page.accountActive")}`}
+                </small>
+              </span>
+              <Icon name="check-circle" size={20} className="shrink-0 text-action" />
+            </span>
+
+            {linkedAccounts.map((account) => (
+              <button
+                key={account.id}
+                type="button"
+                className="flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-subtle disabled:opacity-60"
+                disabled={switchAccount.isPending}
+                onClick={() =>
+                  switchAccount.mutate(account.id, {
+                    onSuccess: () => setSwitchOpen(false),
+                    onError: (error: Error) => toast.error(error.message),
+                  })
+                }
+              >
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-subtle font-heading text-label-strong text-ink-secondary">
+                  {(account.name ?? account.username)
+                    .split(" ")
+                    .map((part) => part[0])
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase()}
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-label-strong text-ink">
+                    {account.name || account.username}
+                  </strong>
+                  <small className="truncate text-caption text-ink-tertiary">
+                    {tn(`roles.${account.role?.toLowerCase() ?? "student"}`, {
+                      defaultValue: account.role,
+                    })}
+                  </small>
+                </span>
+                <Icon name="chevron-right" size={18} className="shrink-0 text-ink-tertiary" />
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="flex h-11 w-fit items-center gap-2 rounded-full px-3 text-label-strong text-action transition-colors hover:bg-action-subtle disabled:opacity-60"
+            disabled={switchRole.isPending}
+            onClick={() => navigate("account")}
+          >
+            <Icon name="add" size={18} /> {t("page.addAccount")}
+          </button>
+        </div>
+      </AppDialog>
 
       <AppDialog
         open={logoutOpen}

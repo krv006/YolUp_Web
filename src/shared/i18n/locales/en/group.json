@@ -121,7 +121,8 @@
       "quizLabel": "Attach a quiz",
       "quizNone": "No quiz attached",
       "editDescription": "Change the topic, time and attached quiz. Students get a notification.",
-      "deleteLesson": "Delete the lesson"
+      "deleteLesson": "Delete the lesson",
+      "quizHint": "The quiz opens for students automatically once the lesson ends."
     },
     "conflict": {
       "singleTitle": "You already have a lesson at this time",

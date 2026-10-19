@@ -125,6 +125,10 @@ export function AddQuizDialog({
   const titleComboRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const saveAsDraftRef = useRef(false);
+  const [dirtyCount, setDirtyCount] = useState(0);
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false);
+  const [answerWarningOpen, setAnswerWarningOpen] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ target?: string; topic?: string }>({});
   const [importWarnings, setImportWarnings] = useState<QuizImportWarning[]>(initialWarnings);
   const loadQuizDetail = useQuizDetailLoader();
   const importFile = useImportQuizDocx();
@@ -257,29 +261,41 @@ export function AddQuizDialog({
   }
 
   function goToQuestions() {
-    const missingTarget = targetError();
-    if (missingTarget) {
-      setError(missingTarget);
-      return;
-    }
+    const next: { target?: string; topic?: string } = {};
+    if (!editing && subjectMode && !subject) next.target = t("createDialog.validation.chooseSubject");
+    if (!editing && !subjectMode && !courseId) next.target = t("createDialog.validation.chooseCourse");
+    if (!topic.trim()) next.topic = t("createDialog.validation.enterTopicOrImport");
+    setFieldErrors(next);
+    if (next.target || next.topic) return;
     setError(null);
     if (!questions.length) setQuestions([newQuestion()]);
     setStep("questions");
   }
 
+  function markDirty() {
+    setDirtyCount((count) => count + 1);
+  }
+
   function addQuestion() {
+    markDirty();
     setQuestions((current) => [...current, newQuestion(current[current.length - 1]?.type)]);
   }
 
   function removeQuestion(questionKey: string) {
+    markDirty();
     setQuestions((current) => current.filter((question) => question.key !== questionKey));
   }
 
   function updateQuestion(questionKey: string, update: (draft: QuestionDraft) => QuestionDraft) {
+    markDirty();
     setQuestions((current) =>
       current.map((question) => (question.key === questionKey ? update(question) : question))
     );
   }
+
+  const missingAnswerNumbers = questions
+    .map((question, index) => (validateDraft(question) ? index + 1 : 0))
+    .filter((number, index) => number > 0 && Boolean(validateDraft(questions[index])));
 
   function validate(asDraft: boolean): string | null {
     const missingTarget = targetError();
@@ -319,6 +335,7 @@ export function AddQuizDialog({
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setDirtyCount(0);
     const asDraft = saveAsDraftRef.current;
     saveAsDraftRef.current = false;
     const validationError = validate(asDraft || isDraft);
@@ -415,7 +432,13 @@ export function AddQuizDialog({
               type="button"
               className={HEADER_PRIMARY}
               disabled={publishing}
-              onClick={onPublish}
+              onClick={() => {
+                if (missingAnswerNumbers.length) {
+                  setAnswerWarningOpen(true);
+                  return;
+                }
+                onPublish?.();
+              }}
             >
               {t("editDialog.publish")}
             </button>
@@ -426,6 +449,10 @@ export function AddQuizDialog({
             className="grid size-11 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
             aria-label={t("createDialog.cancel")}
             onClick={() => {
+              if (dirtyCount > 0) {
+                setCloseConfirmOpen(true);
+                return;
+              }
               reset();
               onOpenChange(false);
             }}
@@ -473,7 +500,10 @@ export function AddQuizDialog({
                 groups={groups}
                 savedGroups={editQuiz?.groups ?? []}
                 uploading={Boolean(uploadingAudio)}
-                onChange={setGroups}
+                onChange={(next) => {
+                  markDirty();
+                  setGroups(next);
+                }}
                 onUploadAudio={onUploadAudio}
                 onRemoveAudio={onRemoveAudio}
               />
@@ -509,6 +539,76 @@ export function AddQuizDialog({
             <QuizPreview title={title} questions={questions} />
           </aside>
         </div>
+
+        <AppDialog
+          open={closeConfirmOpen}
+          onOpenChange={setCloseConfirmOpen}
+          variant="confirm"
+          title={t("createDialog.unsavedTitle")}
+          description={t("createDialog.unsavedDescription", { count: dirtyCount })}
+          footer={
+            <>
+              <button
+                type="button"
+                className={dialogButton.secondary}
+                onClick={() => setCloseConfirmOpen(false)}
+              >
+                {t("createDialog.unsavedStay")}
+              </button>
+              <button
+                type="button"
+                className={dialogButton.danger}
+                onClick={() => {
+                  setCloseConfirmOpen(false);
+                  reset();
+                  onOpenChange(false);
+                }}
+              >
+                {t("createDialog.unsavedLeave")}
+              </button>
+            </>
+          }
+        />
+
+        <AppDialog
+          open={answerWarningOpen}
+          onOpenChange={setAnswerWarningOpen}
+          variant="confirm"
+          icon={
+            <span className="grid size-9 place-items-center rounded-full bg-saffron-subtle text-saffron-strong">
+              <X size={18} />
+            </span>
+          }
+          title={t("createDialog.missingAnswersTitle", { count: missingAnswerNumbers.length })}
+          description={t("createDialog.missingAnswersDescription", {
+            count: missingAnswerNumbers.length,
+            list: missingAnswerNumbers.join(", "),
+          })}
+          footer={
+            <>
+              <button
+                type="button"
+                className={dialogButton.secondary}
+                onClick={() => setAnswerWarningOpen(false)}
+              >
+                {t("createDialog.missingAnswersLater")}
+              </button>
+              <button
+                type="button"
+                className={dialogButton.primary}
+                onClick={() => {
+                  setAnswerWarningOpen(false);
+                  const first = missingAnswerNumbers[0];
+                  if (!first) return;
+                  const cards = document.querySelectorAll(".quiz-page-question");
+                  cards[first - 1]?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+              >
+                {t("createDialog.missingAnswersGo")}
+              </button>
+            </>
+          }
+        />
       </div>
     );
   }
@@ -541,17 +641,25 @@ export function AddQuizDialog({
         animate={{ opacity: 1, y: 0 }}
       >
         {editing ? null : subjects ? (
-          <SelectPicker
-            label={t("createDialog.subjectLabel")}
-            icon={BookOpen}
-            searchable
-            value={subject}
-            onChange={(value) => {
-              setSubject(value);
-              setError(null);
-            }}
-            options={subjects.map((item) => ({ value: item.value, label: item.label }))}
-          />
+          <div className={`flex flex-col gap-1.5 ${fieldErrors.target ? "field-invalid" : ""}`}>
+            <SelectPicker
+              label={t("createDialog.subjectLabel")}
+              icon={BookOpen}
+              searchable
+              value={subject}
+              onChange={(value) => {
+                setSubject(value);
+                setError(null);
+                setFieldErrors((current) => ({ ...current, target: undefined }));
+              }}
+              options={subjects.map((item) => ({ value: item.value, label: item.label }))}
+            />
+            {fieldErrors.target ? (
+              <small className="flex items-center gap-1.5 px-1 text-caption text-error-text">
+                <X size={13} /> {fieldErrors.target}
+              </small>
+            ) : null}
+          </div>
         ) : courses.length > 1 ? (
           <SelectPicker
             label={t("createDialog.courseLabel")}
@@ -562,16 +670,22 @@ export function AddQuizDialog({
           />
         ) : null}
 
-        <label className="field-group">
+        <label className={`field-group ${fieldErrors.topic ? "field-invalid" : ""}`}>
           <span>{t("createDialog.topicLabel")}</span>
           <input
             value={topic}
             onChange={(event) => {
               setTopic(event.target.value);
               setError(null);
+              setFieldErrors((current) => ({ ...current, topic: undefined }));
             }}
             placeholder={t("createDialog.topicPlaceholder")}
           />
+          {fieldErrors.topic ? (
+            <small className="flex items-center gap-1.5 px-1 text-caption text-error-text">
+              <X size={13} /> {fieldErrors.topic}
+            </small>
+          ) : null}
         </label>
 
         <div className="field-group">

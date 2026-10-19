@@ -145,7 +145,25 @@
       "late": "Allow late submissions",
       "lateHint": "Accepted after the due date too",
       "pending": "Enabled once the backend is ready"
-    }
+    },
+    "editSubtitle": "{{count}} students have already submitted. Extending the deadline notifies them.",
+    "attachFile": "Attach a file",
+    "lessonLabel": "Which lesson",
+    "lessonNone": "Not linked to a lesson",
+    "gradingNote": "Grading note — optional",
+    "gradingNotePlaceholder": "For example: 2 points per problem",
+    "deleteAssignment": "Delete the assignment",
+    "rich": {
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "list": "List",
+      "link": "Link",
+      "linkPrompt": "Enter the link address"
+    },
+    "nameLabel": "Assignment name",
+    "cancel": "Cancel",
+    "save": "Save"
   },
   "review": {
     "back": "Back",
@@ -219,7 +237,7 @@
     },
     "noStudents": "No student found",
     "deleteTitle": "Delete this assignment?",
-    "deleteDescription": "The assignment and its submissions are deleted. This cannot be undone.",
+    "deleteDescription": "The answers and grades of {{count}} students are deleted too. This cannot be undone.",
     "cancel": "Cancel"
   },
   "messageCard": {
