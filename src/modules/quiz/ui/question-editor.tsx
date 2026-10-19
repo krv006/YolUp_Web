@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ArrowDown, ArrowUp, Check, Plus, Sigma, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, FileQuestion, Layers, Plus, Sigma, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FormulaPalette, MathFieldInput, type MathFieldInputHandle } from "@/modules/board";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -212,6 +212,7 @@ export function QuestionEditor({
           <SelectPicker
             label={t("editor.typeLabel")}
             hideLabel
+            icon={FileQuestion}
             value={draft.type}
             onChange={(value) => onChange((current) => changeDraftType(current, value as QuizQuestionType, newKey))}
             options={typeOptions}
@@ -222,6 +223,7 @@ export function QuestionEditor({
             <SelectPicker
               label={t("groups.questionGroupLabel")}
               hideLabel
+              icon={Layers}
               value={draft.groupKey ?? ""}
               onChange={(value) => patch({ groupKey: value || null })}
               options={[
@@ -253,8 +255,13 @@ export function QuestionEditor({
         <>
           <div className="quiz-page-options">
             {draft.options.map((option, optionIndex) => (
-              <div key={option.key} className="quiz-page-option">
-                <span className="quiz-page-option-letter">{optionLetter(optionIndex)})</span>
+              <div
+                key={option.key}
+                className={`quiz-page-option ${
+                  draft.correctKeys.includes(option.key) ? "is-correct" : ""
+                }`}
+              >
+                <span className="quiz-page-option-letter">{optionLetter(optionIndex)}</span>
                 <input
                   value={option.text}
                   onChange={(event) => updateOption(option.key, event.target.value)}

@@ -150,7 +150,11 @@
     "missingAnswersDescription_one": "{{list}}-savolda to‘g‘ri javob belgilanmagan. Uni to‘ldirmaguncha test o‘quvchilarga ko‘rinmaydi.",
     "missingAnswersDescription_other": "{{list}}-savollarda to‘g‘ri javob belgilanmagan. Ularni to‘ldirmaguncha test o‘quvchilarga ko‘rinmaydi.",
     "missingAnswersLater": "Keyinroq",
-    "missingAnswersGo": "Savolga o‘tish"
+    "missingAnswersGo": "Savolga o‘tish",
+    "tab": {
+      "edit": "Tahrirlash",
+      "preview": "O‘quvchi ko‘radi"
+    }
   },
   "preview": {
     "regionAria": "O'quvchiga qanday ko'rinishi",

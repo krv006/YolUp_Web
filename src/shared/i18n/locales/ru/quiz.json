@@ -150,7 +150,11 @@
     "missingAnswersDescription_one": "В вопросе {{list}} не отмечен правильный ответ. Пока он не заполнен, тест не виден ученикам.",
     "missingAnswersDescription_other": "В вопросах {{list}} не отмечен правильный ответ. Пока они не заполнены, тест не виден ученикам.",
     "missingAnswersLater": "Позже",
-    "missingAnswersGo": "Перейти к вопросу"
+    "missingAnswersGo": "Перейти к вопросу",
+    "tab": {
+      "edit": "Редактировать",
+      "preview": "Вид ученика"
+    }
   },
   "preview": {
     "regionAria": "Как это увидит ученик",
