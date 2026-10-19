@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
 import { AiQuizCreator, useQuizzes, quizDisplayTitle } from "@/modules/quiz";
+import { Sparkles } from "lucide-react";
 import { Icon } from "@/shared/ui/icon";
 
 export function AiPage() {
@@ -64,12 +65,14 @@ export function AiPage() {
             </article>
           ))
         ) : (
-          <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-6 py-10 text-center">
-            <span className="grid size-12 place-items-center rounded-full bg-subtle text-ink-tertiary">
-              <Icon name="assign" size={22} />
+          <div className="flex flex-col items-center gap-2 rounded-2xl border border-dashed border-line bg-surface px-6 py-10 text-center">
+            <span className="grid size-12 place-items-center rounded-xl bg-saffron-strong text-white">
+              <Sparkles size={22} />
             </span>
-            <strong className="text-label-strong text-ink">{t("aiPage.myTestsEmpty")}</strong>
-            <small className="text-caption text-ink-tertiary">{t("aiPage.myTestsHint")}</small>
+            <strong className="text-label-strong text-ink">{t("aiPage.emptyTitle")}</strong>
+            <small className="max-w-[260px] text-caption text-ink-tertiary">
+              {t("aiPage.emptyHint")}
+            </small>
           </div>
         )}
       </aside>
