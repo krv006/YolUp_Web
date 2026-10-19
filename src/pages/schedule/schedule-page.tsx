@@ -135,7 +135,7 @@ export function SchedulePage() {
           </div>
         )}
 
-        {lessons.isLoading ? (
+        {lessons.isLoading && !items.length ? (
           <ScheduleSkeleton />
         ) : !inRange.length ? (
           <ScheduleEmpty
