@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  BarChart3,
   BookOpen,
   CalendarDays,
   CheckCircle2,
@@ -16,7 +17,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
 import { formatDayTime } from "@/shared/lib";
-import { AttendanceAccordion, useAttendance } from "@/modules/attendance";
+import { useAttendance } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -69,7 +70,8 @@ import type {
   SendMessagePayload,
 } from "@/shared/types";
 import type { ChatController } from "@/modules/message";
-import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { ROUTES } from "@/shared/config";
 import {
   AddAssignmentDialog,
@@ -150,19 +152,25 @@ export function GroupWorkspace({
       <ChatHeader conversation={hydrated} />
       <LiveLessonBar courseId={courseId} />
       <VoiceRoomBar courseId={courseId} />
-      <nav className="group-tabs">
+      <nav className="flex shrink-0 items-stretch border-b border-line bg-surface px-1 lg:gap-1 lg:px-4">
         {TABS.map((tab) => {
-          const Icon = tab.icon;
+          const TabIcon = tab.icon;
+          const active = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              className={activeTab === tab.id ? "is-active" : ""}
+              className={`relative flex flex-1 items-center justify-center gap-2 px-2 py-3.5 text-label-strong whitespace-nowrap transition-colors lg:px-4 ${
+                active ? "text-action" : "text-ink-secondary hover:text-ink"
+              }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
-              {activeTab === tab.id ? (
-                <motion.span layoutId="group-tab-indicator" className="group-tab-indicator" />
+              {active ? (
+                <motion.span
+                  layoutId="group-tab-indicator"
+                  className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-action"
+                />
               ) : null}
-              <Icon size={16} />
+              <TabIcon size={16} className="hidden lg:block" />
               <span>{tab.label}</span>
             </button>
           );
@@ -302,29 +310,35 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
   };
 
   return (
-    <div className="group-panel">
-      <div className="group-panel-head">
-        <div>
-          <span>{t("lessons.eyebrow")}</span>
-          <h2>{t("lessons.title")}</h2>
-          <p>{t("lessons.subtitle")}</p>
+    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-caption-strong tracking-wide text-action uppercase">
+            {t("lessons.eyebrow")}
+          </span>
+          <h2 className="font-heading text-h2 text-ink">{t("lessons.title")}</h2>
+          <p className="text-body-sm text-ink-secondary">{t("lessons.subtitle")}</p>
         </div>
-        <div className="group-panel-tools">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <LessonViewSwitch view={view} onChange={setView} />
-          <Button
+          <button
+            type="button"
+            className="flex h-12 items-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
             onClick={() => {
               setEditing(null);
               setDialog(true);
             }}
           >
             <Plus size={17} /> {t("lessons.addLesson")}
-          </Button>
+          </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="student-tab-loading">
-          <span />
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
+          ))}
         </div>
       ) : view === "calendar" ? (
         <LessonCalendar lessons={lessons} {...actions} />
@@ -334,6 +348,7 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
 
       <AddLessonDialog
         key={editing?.id ?? "new-lesson"}
+        onDelete={editing ? () => setDeleteTarget(editing) : undefined}
         open={dialog}
         onOpenChange={(open) => {
           setDialog(open);
@@ -345,28 +360,36 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
         onCreate={save}
         onCreateSchedule={saveSchedule}
       />
-      <Dialog
+      <AppDialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-      >
-        {deleteTarget && (
-          <DialogContent title={t("lessons.deleteDialogTitle")} description={t("lessons.deleteDialogDescription", { title: deleteTarget.title })}>
-            <div className="dialog-actions">
-              <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-                {t("lessons.cancel")}
-              </Button>
-              <Button
-                loading={remove.isPending}
-                onClick={() => remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))}
-              >
-                {t("lessons.delete")}
-              </Button>
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
+        variant="confirm"
+        title={t("lessons.deleteConfirmTitle", { title: deleteTarget?.title ?? "" })}
+        description={t("lessons.deleteDialogDescription", { title: deleteTarget?.title ?? "" })}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setDeleteTarget(null)}
+            >
+              {t("lessons.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.danger}
+              disabled={remove.isPending}
+              onClick={() =>
+                deleteTarget && remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))
+              }
+            >
+              {t("lessons.delete")}
+            </button>
+          </>
+        }
+      />
       <FinishLessonDialog
         lesson={finishTarget}
         onOpenChange={(open) => {
@@ -474,137 +497,198 @@ function AssignmentsPanel({
   }, [allQuizzes.data, courseQuizList, courseSubject]);
 
   return (
-    <div className="group-panel">
-      <div className="group-panel-head">
-        <div>
-          <span>{t("assignments.eyebrow")}</span>
-          <h2>{t("assignments.title")}</h2>
-          <p>{t("assignments.subtitle")}</p>
+    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
+      <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="text-caption-strong tracking-wide text-action uppercase">
+            {t("assignments.eyebrow")}
+          </span>
+          <h2 className="font-heading text-h2 text-ink">{t("assignments.title")}</h2>
+          <p className="text-body-sm text-ink-secondary">{t("assignments.subtitle")}</p>
         </div>
-        <div className="group-panel-tools">
-          <Button variant="secondary" onClick={() => setBankDialog(true)}>
-            <Library size={17} /> {t("assignments.fromBank")}
-          </Button>
-          <Button variant="secondary" onClick={() => setQuizDialog(true)}>
-            <FileQuestion size={17} /> {t("assignments.addQuiz")}
-          </Button>
-          <Button onClick={() => setDialog(true)}>
+        <div className="flex flex-col gap-3 lg:flex-row-reverse lg:justify-start">
+          <button
+            type="button"
+            className="flex h-12 items-center justify-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+            onClick={() => setDialog(true)}
+          >
             <Plus size={17} /> {t("assignments.addAssignment")}
-          </Button>
+          </button>
+          <div className="grid grid-cols-2 gap-3 lg:flex">
+            <button
+              type="button"
+              className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
+              onClick={() => setBankDialog(true)}
+            >
+              <Library size={17} /> {t("assignments.fromBank")}
+            </button>
+            <button
+              type="button"
+              className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
+              onClick={() => setQuizDialog(true)}
+            >
+              <Pencil size={17} /> {t("assignments.addQuiz")}
+            </button>
+          </div>
         </div>
       </div>
 
       {courseQuizList.length ? (
-        <div className="assignment-list group-quiz-list">
+        <div className="flex flex-col gap-3">
           {courseQuizList.map((quiz) => (
             <motion.article
               key={quiz.id}
               data-quiz-id={quiz.id}
-              className="assignment-card"
+              className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <span className="assignment-card-icon">
-                <FileQuestion size={20} />
-              </span>
-              <div>
-                <strong>
-                  {quizDisplayTitle(quiz)}
-                  {quiz.status === "draft" ? (
-                    <span className="quiz-draft-badge">{quizT("teacherPage.draftBadge")}</span>
-                  ) : null}
-                </strong>
-                <p>{quiz.description}</p>
-                <small>
-                  {quiz.dueAt
-                    ? t("assignments.dueLabel", { date: formatDayTime(quiz.dueAt) })
-                    : t("assignments.noDue")}{" "}
-                  · {t("assignments.quizQuestions", { count: quiz.questionCount })}
-                </small>
+              <div className="flex items-start gap-3">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+                  <FileQuestion size={20} />
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <strong className="flex flex-wrap items-center gap-2 text-title text-ink">
+                    {quizDisplayTitle(quiz)}
+                    <span
+                      className={`inline-flex h-6 items-center rounded-full px-2.5 text-caption-strong ${
+                        quiz.status === "draft"
+                          ? "bg-saffron-subtle text-saffron-strong"
+                          : "bg-success-bg text-success-text"
+                      }`}
+                    >
+                      {quiz.status === "draft"
+                        ? quizT("teacherPage.draftBadge")
+                        : t("assignments.quizBadge")}
+                    </span>
+                  </strong>
+                  <small className="text-body-sm text-ink-tertiary">
+                    {quiz.dueAt
+                      ? t("assignments.dueLabel", { date: formatDayTime(quiz.dueAt) })
+                      : t("assignments.noDue")}{" "}
+                    · {t("assignments.quizQuestions", { count: quiz.questionCount })}
+                  </small>
+                </div>
               </div>
-              <span className="assignment-subject is-quiz">{t("assignments.quizBadge")}</span>
-              <Button size="sm" variant="secondary" onClick={() => setAttemptsOf(quiz)}>
-                <CheckCircle2 size={15} /> {t("assignments.results")}
-              </Button>
-              <button
-                className="icon-button"
-                aria-label={quizT("editDialog.editAria")}
-                title={quizT("editDialog.editAria")}
-                onClick={() => setEditQuizTarget(quiz)}
-              >
-                <Pencil size={16} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle"
+                  onClick={() => setAttemptsOf(quiz)}
+                >
+                  <BarChart3 size={17} /> {t("assignments.results")}
+                </button>
+                <button
+                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
+                  aria-label={quizT("editDialog.editAria")}
+                  title={quizT("editDialog.editAria")}
+                  onClick={() => setEditQuizTarget(quiz)}
+                >
+                  <Pencil size={17} />
+                </button>
+              </div>
             </motion.article>
           ))}
         </div>
       ) : null}
 
       {loading ? (
-        <div className="student-tab-loading">
-          <span />
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
+          ))}
         </div>
       ) : assignments.length ? (
-        <div className="assignment-list">
+        <div className="flex flex-col gap-3">
           {assignments.map((item) => (
             <motion.article
               key={item.id}
               data-assignment-id={item.id}
-              className={`assignment-card ${item.id === highlightId ? "is-highlighted" : ""}`}
+              className={`flex flex-col gap-3 rounded-2xl border bg-surface p-4 ${
+                item.id === highlightId ? "border-action" : "border-line"
+              }`}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <span className="assignment-card-icon">
-                <ClipboardList size={20} />
-              </span>
-              <div>
-                <strong>{item.title}</strong>
-                <p>{item.description}</p>
-                <small>
-                  {item.dueAt
-                    ? t("assignments.dueLabel", { date: formatDayTime(item.dueAt) })
-                    : t("assignments.noDue")}{" "}
-                  · {t("assignments.submissionsCount", { count: item.submissionsCount ?? 0 })}
-                </small>
-                {item.lessonTitle ? (
-                  <span className="assignment-lesson-tag">
-                    <CalendarDays size={12} /> {item.lessonTitle}
-                  </span>
-                ) : null}
+              <div className="flex items-start gap-3">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+                  <ClipboardList size={20} />
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-1">
+                  <strong className="flex flex-wrap items-center gap-2 text-title text-ink">
+                    {item.title}
+                    {item.subject ? (
+                      <span className="inline-flex h-6 items-center rounded-full bg-subtle px-2.5 text-caption-strong text-ink-secondary">
+                        {item.subject}
+                      </span>
+                    ) : null}
+                  </strong>
+                  {item.description ? (
+                    <p className="line-clamp-2 text-body-sm text-ink-secondary">
+                      {item.description}
+                    </p>
+                  ) : null}
+                  <small className="text-body-sm text-ink-tertiary">
+                    {item.dueAt
+                      ? t("assignments.dueLabel", { date: formatDayTime(item.dueAt) })
+                      : t("assignments.noDue")}{" "}
+                    · {t("assignments.submissionsCount", { count: item.submissionsCount ?? 0 })}
+                  </small>
+                  {item.lessonTitle ? (
+                    <span className="flex items-center gap-1.5 text-caption text-ink-tertiary">
+                      <CalendarDays size={13} /> {item.lessonTitle}
+                    </span>
+                  ) : null}
+                </div>
               </div>
-              <span className="assignment-subject">{item.subject}</span>
-              <Button size="sm" variant="secondary" onClick={() => setDetailId(item.id)}>
-                <CheckCircle2 size={15} /> {t("assignments.results")}
-              </Button>
-              <button
-                className="icon-button"
-                onClick={() => {
-                  setEditingAssignment(item);
-                  setDialog(true);
-                }}
-                aria-label={t("assignments.editAria")}
-                title={t("assignments.editTitle")}
-              >
-                <Pencil size={16} />
-              </button>
-              <button
-                className="icon-button destructive-icon"
-                onClick={() => setDeleteTarget(item)}
-                aria-label={t("assignments.deleteAria")}
-              >
-                <Trash2 size={16} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle"
+                  onClick={() => setDetailId(item.id)}
+                >
+                  <BarChart3 size={17} /> {t("assignments.results")}
+                </button>
+                <button
+                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
+                  onClick={() => {
+                    setEditingAssignment(item);
+                    setDialog(true);
+                  }}
+                  aria-label={t("assignments.editAria")}
+                  title={t("assignments.editTitle")}
+                >
+                  <Pencil size={17} />
+                </button>
+                <button
+                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-error-bg text-error-text transition-opacity hover:opacity-80"
+                  onClick={() => setDeleteTarget(item)}
+                  aria-label={t("assignments.deleteAria")}
+                >
+                  <Trash2 size={17} />
+                </button>
+              </div>
             </motion.article>
           ))}
         </div>
       ) : courseQuizList.length ? null : (
-        <div className="premium-empty">
-          <ClipboardList size={30} />
-          <h3>{t("assignments.emptyTitle")}</h3>
-          <Button onClick={() => setDialog(true)}>{t("assignments.emptyCreateFirst")}</Button>
+        <div className="flex flex-col items-center gap-3 px-6 py-14 text-center">
+          <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+            <ClipboardList size={28} />
+          </span>
+          <h3 className="font-heading text-h3 text-ink">{t("assignments.emptyTitle")}</h3>
+          <button
+            type="button"
+            className="mt-1 flex h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action"
+            onClick={() => setDialog(true)}
+          >
+            {t("assignments.emptyCreateFirst")}
+          </button>
         </div>
       )}
 
       <QuizAttemptsDialog
+        courseId={courseId}
         quizId={attemptsOf?.id ?? null}
         open={Boolean(attemptsOf)}
         onOpenChange={(open) => {
@@ -750,27 +834,185 @@ interface AttendancePanelProps {
 
 function AttendancePanel({ lessons = [], rows = [], loading }: AttendancePanelProps) {
   const { t } = useTranslation("group");
-  const lessonIds = new Set(lessons.map((lesson) => lesson.id));
-  const filtered = rows.filter((row) => lessonIds.has(row.lessonId));
+  const [range, setRange] = useState<"all" | "month" | "current">("all");
+
+  const lessonDates = useMemo(
+    () => new Map(lessons.map((lesson) => [lesson.id, new Date(lesson.startsAt)])),
+    [lessons]
+  );
+
+  const filtered = useMemo(() => {
+    const lessonIds = new Set(lessons.map((lesson) => lesson.id));
+    const now = new Date();
+    const monthAgo = new Date(now.getTime() - 30 * 86_400_000);
+    return rows.filter((row) => {
+      if (!lessonIds.has(row.lessonId)) return false;
+      const date = lessonDates.get(row.lessonId);
+      if (!date) return range === "all";
+      if (range === "month") return date >= monthAgo;
+      if (range === "current")
+        return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+      return true;
+    });
+  }, [rows, lessons, lessonDates, range]);
+
   const lessonCount = new Set(filtered.map((row) => row.lessonId)).size;
+
+  const students = useMemo(() => {
+    const map = new Map<
+      string,
+      { name: string; tone?: string; lessons: Set<string>; answered: number; total: number }
+    >();
+    for (const row of filtered) {
+      const current = map.get(row.studentId) ?? {
+        name: row.student?.name || row.child,
+        tone: row.student?.avatarTone,
+        lessons: new Set<string>(),
+        answered: 0,
+        total: 0,
+      };
+      current.lessons.add(row.lessonId);
+      current.answered += row.attentionAnswered;
+      current.total += row.attentionTotal;
+      map.set(row.studentId, current);
+    }
+    return [...map.entries()]
+      .map(([id, value]) => ({
+        id,
+        name: value.name,
+        tone: value.tone,
+        attendance: lessonCount ? Math.round((value.lessons.size / lessonCount) * 100) : 0,
+        focus: value.total ? Math.round((value.answered / value.total) * 100) : null,
+      }))
+      .sort((a, b) => b.attendance - a.attendance);
+  }, [filtered, lessonCount]);
+
+  const avgAttendance = students.length
+    ? Math.round(students.reduce((sum, item) => sum + item.attendance, 0) / students.length)
+    : 0;
+  const focusValues = students.map((item) => item.focus).filter((value): value is number => value !== null);
+  const avgFocus = focusValues.length
+    ? Math.round(focusValues.reduce((sum, value) => sum + value, 0) / focusValues.length)
+    : 0;
 
   if (loading)
     return (
-      <div className="student-tab-loading">
-        <span />
+      <div className="flex h-full flex-col gap-3 bg-canvas p-4 lg:p-6">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index} className="h-24 animate-pulse rounded-2xl bg-muted" />
+        ))}
       </div>
     );
 
+  const FILTERS = [
+    { id: "all" as const, label: t("attendance.filterAll") },
+    { id: "month" as const, label: t("attendance.filterMonth") },
+    { id: "current" as const, label: t("attendance.filterCurrent") },
+  ];
+
   return (
-    <div className="group-panel">
-      <div className="group-panel-head">
-        <div>
-          <span>{t("attendance.eyebrow")}</span>
-          <h2>{t("attendance.title")}</h2>
-          <p>{t("attendance.summary", { lessonCount, recordCount: filtered.length })}</p>
-        </div>
+    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
+      <div className="flex min-w-0 flex-col gap-1">
+        <span className="text-caption-strong tracking-wide text-action uppercase">
+          {t("attendance.eyebrow")}
+        </span>
+        <h2 className="font-heading text-h2 text-ink">{t("attendance.title")}</h2>
+        <p className="text-body-sm text-ink-secondary">
+          {t("attendance.summary", { lessonCount, recordCount: filtered.length })}
+        </p>
       </div>
-      <AttendanceAccordion rows={filtered} emptyLabel={t("attendance.empty")} />
+
+      {rows.length ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {FILTERS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`flex h-11 items-center rounded-full px-4 text-label-strong transition-colors ${
+                range === item.id
+                  ? "bg-action text-on-action"
+                  : "bg-subtle text-ink-secondary hover:bg-muted hover:text-ink"
+              }`}
+              onClick={() => setRange(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {students.length ? (
+        <>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
+              { value: `${avgFocus}%`, label: t("attendance.statFocus") },
+              { value: String(lessonCount), label: t("attendance.statLessons") },
+            ].map((tile) => (
+              <div
+                key={tile.label}
+                className="flex flex-col gap-1 rounded-2xl border border-line bg-surface px-4 py-3"
+              >
+                <strong className="font-heading text-h2 text-ink">{tile.value}</strong>
+                <small className="text-body-sm text-ink-secondary">{tile.label}</small>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
+            <div className="flex items-baseline gap-3">
+              <strong className="flex-1 text-title text-ink">{t("attendance.studentsTitle")}</strong>
+              <small className="text-caption text-ink-tertiary">{t("attendance.studentsMeta")}</small>
+            </div>
+            <ul className="flex flex-col divide-y divide-line">
+              {students.map((student) => (
+                <li key={student.id} className="flex items-center gap-3 py-3">
+                  <Avatar name={student.name} tone={student.tone} size="sm" />
+                  <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <strong className="truncate text-label-strong text-ink">{student.name}</strong>
+                    <span className="flex items-center gap-2">
+                      <span className="h-1.5 w-full max-w-[160px] overflow-hidden rounded-full bg-subtle">
+                        <span
+                          className={`block h-full rounded-full ${
+                            student.attendance >= 70 ? "bg-success" : "bg-error"
+                          }`}
+                          style={{ width: `${student.attendance}%` }}
+                        />
+                      </span>
+                      <small
+                        className={`font-numeric text-caption ${
+                          student.attendance >= 70 ? "text-ink-secondary" : "text-error-text"
+                        }`}
+                      >
+                        {student.attendance}%
+                      </small>
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 flex-col items-end">
+                    <strong className="font-numeric text-title text-ink">
+                      {student.focus === null ? "—" : `${student.focus}%`}
+                    </strong>
+                    <small className="text-caption text-ink-tertiary">
+                      {t("attendance.focusSuffix")}
+                    </small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
+      ) : (
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line px-6 py-12 text-center">
+          <span className="grid size-16 place-items-center rounded-2xl bg-action text-on-action">
+            <CheckCircle2 size={30} />
+          </span>
+          <strong className="font-heading text-h3 text-ink">{t("attendance.emptyTitle")}</strong>
+          <p className="max-w-[380px] text-body-sm text-ink-secondary">
+            {t("attendance.emptyDescription")}
+          </p>
+        </div>
+      )}
     </div>
   );
 }
+

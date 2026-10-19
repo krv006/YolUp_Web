@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Mic, Users } from "lucide-react";
+import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
 import { formatDayTime } from "@/shared/lib";
 import type { VoiceRoom, VoiceToken } from "@/shared/types";
@@ -57,15 +57,22 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
 
   return (
     <>
-      <div className="voice-room-bar">
-        <span className={`voice-room-bar-icon ${active?.status === "live" ? "is-live" : ""}`} aria-hidden="true">
-          <Mic size={15} />
+      <div className="flex shrink-0 items-center gap-3 border-b border-line bg-action-subtle/50 px-4 py-3 lg:px-6">
+        <span
+          className={`grid size-9 shrink-0 place-items-center rounded-full ${
+            active?.status === "live" ? "bg-action text-on-action" : "bg-surface text-action"
+          }`}
+          aria-hidden="true"
+        >
+          <Icon name="volume" size={18} />
         </span>
         {active ? (
           <>
-            <span className="voice-room-bar-text">
-              <strong>{active.title || t("room.defaultTitle")}</strong>
-              <small>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-label-strong text-ink">
+                {active.title || t("room.defaultTitle")}
+              </strong>
+              <small className="truncate text-caption text-ink-secondary">
                 {scheduled && active.scheduledAt
                   ? t("bar.scheduledAt", { time: formatDayTime(active.scheduledAt) })
                   : t("bar.live")}
@@ -76,15 +83,16 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
             </span>
             <button
               type="button"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-60"
               disabled={join.isPending || requestJoin.isPending}
               onClick={() => enterRoom(active)}
             >
-              <Users size={15} /> {t("bar.join")}
+              <Icon name="groups" size={18} /> {t("bar.join")}
             </button>
             {active.accessMode === "invite_only" ? (
               <button
                 type="button"
-                className="voice-room-bar-ghost"
+                className="flex h-10 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-label-strong text-ink disabled:opacity-60"
                 disabled={requestJoin.isPending}
                 onClick={() => requestJoin.mutate(active.id)}
               >
@@ -94,12 +102,18 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
           </>
         ) : (
           <>
-            <span className="voice-room-bar-text">
-              <strong>{t("bar.emptyTitle")}</strong>
-              <small>{t("bar.emptyHint")}</small>
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-label-strong text-ink">{t("bar.emptyTitle")}</strong>
+              <small className="truncate text-caption text-ink-secondary">
+                {t("bar.emptyHint")}
+              </small>
             </span>
-            <button type="button" onClick={() => setCreateOpen(true)}>
-              <Mic size={15} /> {t("bar.create")}
+            <button
+              type="button"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+              onClick={() => setCreateOpen(true)}
+            >
+              <Icon name="volume" size={18} /> {t("bar.create")}
             </button>
           </>
         )}

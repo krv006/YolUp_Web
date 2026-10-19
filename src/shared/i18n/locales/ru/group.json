@@ -13,9 +13,10 @@
     "subtitle": "Запланированные живые занятия.",
     "addLesson": "Добавить урок",
     "deleteDialogTitle": "Удалить урок",
-    "deleteDialogDescription": "«{{title}}» нельзя будет восстановить.",
+    "deleteDialogDescription": "Занятие исчезнет из расписания, ученики получат уведомление. Привязанный тест и отметки посещаемости тоже удалятся.",
     "cancel": "Отмена",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "deleteConfirmTitle": "Удалить занятие «{{title}}»?"
   },
   "assignments": {
     "eyebrow": "ЗАДАНИЯ ГРУППЫ",
@@ -49,15 +50,27 @@
     "removeAria": "Удалить {{name}} с курса",
     "empty": "Ученики не найдены.",
     "removeDialogTitle": "Удалить с курса",
-    "removeDialogDescription": "{{name}} будет удалён с курса, из чата и заданий.",
+    "removeDialogDescription": "Ученик потеряет доступ к чату, занятиям и заданиям. Оценки и посещаемость сохранятся.",
     "cancel": "Отмена",
-    "remove": "Удалить"
+    "remove": "Удалить",
+    "removeConfirmTitle": "Удалить {{name}} из группы?"
   },
   "attendance": {
     "eyebrow": "ОТЧЁТ ПО КУРСУ",
     "title": "Посещаемость и внимание",
     "summary": "{{lessonCount}} уроков · {{recordCount}} записей",
-    "empty": "Посещаемости пока нет."
+    "empty": "Посещаемости пока нет.",
+    "emptyTitle": "Посещаемости пока нет",
+    "emptyDescription": "После занятия здесь появятся посещаемость учеников и показатель фокуса.",
+    "filterAll": "Все занятия",
+    "filterMonth": "Последние 30 дней",
+    "filterCurrent": "Этот месяц",
+    "statAttendance": "Посещаемость",
+    "statFocus": "Фокус",
+    "statLessons": "Занятий",
+    "studentsTitle": "Ученики",
+    "studentsMeta": "Посещаемость · фокус",
+    "focusSuffix": "фокус"
   },
   "dialogs": {
     "lesson": {
@@ -106,7 +119,9 @@
       "saveMultiple": "Сохранить {{count}} уроков",
       "saveSingle": "Сохранить урок",
       "quizLabel": "Прикрепить тест",
-      "quizNone": "Тест не прикреплён"
+      "quizNone": "Тест не прикреплён",
+      "editDescription": "Измените тему, время и привязанный тест. Ученики получат уведомление.",
+      "deleteLesson": "Удалить занятие"
     },
     "conflict": {
       "singleTitle": "У вас уже есть урок в это время",
@@ -150,5 +165,39 @@
         "speaking": "Speaking"
       }
     }
+  },
+  "addStudent": {
+    "title": "Добавить ученика",
+    "description": "Найдите ученика на платформе или создайте ему новый аккаунт.",
+    "searchPlaceholder": "Имя или username",
+    "searchHint": "Введите минимум 2 символа.",
+    "notFound": "Ученик не найден — создайте аккаунт.",
+    "alreadyMember": "Уже в группе",
+    "createAccount": "Создать аккаунт ученика",
+    "shareInvite": "Поделиться ссылкой-приглашением",
+    "cancel": "Отмена",
+    "submit": "Добавить ({{count}})",
+    "added": "Добавлено учеников: {{count}}",
+    "createTitle": "Новый аккаунт ученика",
+    "createDescription": "Если ученика нет на платформе, вы создаёте аккаунт — он сразу попадёт в группу.",
+    "firstName": "Имя",
+    "lastName": "Фамилия",
+    "login": "Логин",
+    "regenerate": "Обновить логин",
+    "password": "Временный пароль",
+    "copyPassword": "Скопировать пароль",
+    "passwordCopied": "Пароль скопирован",
+    "parentPhone": "Телефон родителя · необязательно",
+    "createNote": "Отправьте логин и пароль ученику. При первом входе он сменит пароль.",
+    "createSubmit": "Создать аккаунт",
+    "inviteUnavailable": "Ссылка-приглашение пока не поддерживается бэкендом",
+    "requestsTitle": "Заявки на вступление · {{count}}",
+    "requestsDescription": "Заявки по ссылке-приглашению. Принятые сразу попадают в группу.",
+    "requestsEmpty": "Новых заявок нет.",
+    "accept": "Принять",
+    "decline": "Отклонить",
+    "acceptAll": "Принять ({{count}})",
+    "close": "Закрыть",
+    "parentFor": "Родитель · для {{name}}"
   }
 }

@@ -1,0 +1,235 @@
+/* Figma redesign skin for the dialogs and form controls that still use legacy markup.
+   Loaded after legacy.css so these rules win. */
+
+.dialog-content {
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-2xl);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xl);
+}
+
+.dialog-heading h2 {
+  font-family: var(--font-heading);
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-h3);
+  letter-spacing: var(--tracking-heading);
+  color: var(--text-primary);
+}
+
+.dialog-heading p {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-sm);
+}
+
+.dialog-actions {
+  gap: 12px;
+}
+
+.field-group label,
+.field-group > span,
+.form-picker-label {
+  color: var(--text-primary);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.form-picker-label svg {
+  color: var(--text-tertiary);
+}
+
+.input-shell,
+.form-picker-trigger,
+.field-group textarea,
+.field-group input {
+  min-height: 52px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+}
+
+.field-group textarea {
+  padding: 14px 16px;
+  line-height: 1.5;
+}
+
+.input-shell {
+  padding: 0 16px;
+}
+
+.input-shell input,
+.input-shell textarea {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.form-picker-trigger {
+  padding: 6px 14px;
+  background: var(--bg-subtle);
+}
+
+.form-picker-trigger:hover {
+  background: var(--bg-muted);
+}
+
+.form-picker-trigger.is-open,
+.input-shell:focus-within,
+.field-group input:focus,
+.field-group textarea:focus {
+  border-color: var(--border-focus);
+  background: var(--bg-surface);
+  outline: none;
+}
+
+.form-picker-trigger-icon {
+  color: var(--text-tertiary);
+  background: transparent;
+}
+
+.form-picker-trigger-value {
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+}
+
+.schedule-mode,
+.view-switch,
+.dialog-tabs {
+  padding: 4px;
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+}
+
+.schedule-mode button,
+.dialog-tabs button {
+  border: 0;
+  border-radius: var(--radius-full);
+  color: var(--text-secondary);
+  background: transparent;
+  font-weight: 600;
+}
+
+.schedule-mode button.is-active,
+.dialog-tabs button.is-active {
+  color: var(--action-primary-foreground);
+  background: var(--action-primary);
+}
+
+.dialog-actions .button {
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: var(--radius-full);
+  font-size: var(--fs-label);
+  font-weight: 600;
+}
+
+.dialog-actions .button--secondary {
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+/* primary buttons follow the new action colour, not the legacy violet */
+.button--primary {
+  background: var(--action-primary);
+  color: var(--action-primary-foreground);
+  border-color: transparent;
+}
+
+.button--primary:hover:not(:disabled) {
+  background: var(--action-primary-hover);
+}
+
+.form-picker-trigger.is-open,
+.input-shell:focus-within,
+.field-group input:focus,
+.field-group textarea:focus {
+  box-shadow: none;
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.duration-picker-input {
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+}
+
+.form-picker-label svg {
+  display: none;
+}
+
+.group-action-form > label > span,
+.group-action-form .field-block-label {
+  color: var(--text-primary);
+  font-size: var(--fs-label);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.group-action-form input,
+.group-action-form textarea {
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: var(--fs-body);
+}
+
+.group-action-form textarea {
+  padding: 14px 16px;
+}
+
+.group-action-form input:focus,
+.group-action-form textarea:focus {
+  border-color: var(--border-focus);
+  background: var(--bg-surface);
+  box-shadow: none;
+  outline: none;
+}
+
+.group-action-form .duration-picker-input,
+.group-action-form .form-picker-trigger input {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+/* the legacy violet maps onto the new action colour everywhere */
+:root,
+.dark,
+[data-theme="dark"] {
+  --primary: var(--action-primary);
+  --primary-hover: var(--action-primary-hover);
+  --primary-foreground: var(--action-primary-foreground);
+  --primary-soft: var(--action-primary-subtle);
+  --primary-text: var(--action-primary);
+  --primary-bright: var(--action-primary);
+  --primary-rgb: 69 103 245;
+  --primary-tint: var(--action-primary-subtle);
+  --primary-tint-strong: var(--action-primary-subtle);
+  --accent: var(--action-primary-subtle);
+  --accent-foreground: var(--action-primary);
+  --ring: var(--border-focus);
+  --border-accent: var(--action-primary-subtle);
+  --border-accent-strong: var(--action-primary);
+}
+
+/* star rating uses the accent colour from the new palette */
+.star-rating svg {
+  color: var(--border-default);
+}
+
+.star-rating svg.is-filled {
+  color: var(--accent-saffron-strong);
+  fill: var(--accent-saffron-strong);
+}

@@ -19,7 +19,47 @@
     "empty": "No lessons scheduled yet.",
     "dayCount": "{{count}}",
     "durationMinutes": "{{count}} min",
-    "missingTopic": "No topic set"
+    "missingTopic": "No topic set",
+    "durationShort": "{{count}} min",
+    "today": "TODAY",
+    "yesterday": "YESTERDAY",
+    "months": [
+      "JAN",
+      "FEB",
+      "MAR",
+      "APR",
+      "MAY",
+      "JUN",
+      "JUL",
+      "AUG",
+      "SEP",
+      "OCT",
+      "NOV",
+      "DEC"
+    ],
+    "weekdays": [
+      "SUNDAY",
+      "MONDAY",
+      "TUESDAY",
+      "WEDNESDAY",
+      "THURSDAY",
+      "FRIDAY",
+      "SATURDAY"
+    ],
+    "monthsLong": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ]
   },
   "calendar": {
     "todayButton": "Today",
@@ -28,7 +68,15 @@
     "lessonsCount": "{{count}} lessons",
     "dayCellAria": "{{date}} — {{count}} lessons",
     "noLessonsThisDay": "No lessons on this day.",
-    "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    "weekdays": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ]
   },
   "actions": {
     "join": "Join",
@@ -39,7 +87,10 @@
     "rate": "Rate",
     "editAria": "Edit lesson",
     "deleteAria": "Delete lesson",
-    "ratingsAria": "Lesson ratings — {{count}}"
+    "ratingsAria": "Lesson ratings — {{count}}",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "joinLesson": "Join the lesson"
   },
   "viewSwitch": {
     "list": "List",
@@ -75,7 +126,8 @@
     "loadError": "Couldn't load ratings.",
     "retry": "Retry",
     "empty": "No one has rated this lesson yet.",
-    "disabled": "Rating isn't enabled on the server yet."
+    "disabled": "Rating isn't enabled on the server yet.",
+    "close": "Close"
   },
   "starRating": {
     "aria": "Lesson rating",

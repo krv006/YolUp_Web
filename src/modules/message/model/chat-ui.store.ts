@@ -11,6 +11,8 @@ export interface PinnedMessage {
 interface ChatUiState {
   search: string;
   setSearch: (search: string) => void;
+  searchOpen: boolean;
+  setSearchOpen: (open: boolean) => void;
   pinned: Record<string, PinnedMessage>;
   pin: (roomId: string, message: PinnedMessage) => void;
   unpin: (roomId: string) => void;
@@ -21,6 +23,8 @@ export const useChatUiStore = create<ChatUiState>()(
     (set) => ({
       search: "",
       setSearch: (search) => set({ search }),
+      searchOpen: false,
+      setSearchOpen: (searchOpen) => set({ searchOpen, search: searchOpen ? "" : "" }),
       pinned: {},
       pin: (roomId, message) =>
         set((state) => ({ pinned: { ...state.pinned, [roomId]: message } })),

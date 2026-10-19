@@ -162,10 +162,17 @@
     "essayReview": "O'qituvchi tekshiradi"
   },
   "attemptsDialog": {
-    "defaultTitle": "Urinishlar tarixi",
+    "defaultTitle": "Test natijalari",
     "description": "Cheklanmagan qayta urinish — har biri alohida qatorda.",
     "loading": "Yuklanmoqda…",
-    "empty": "Hali urinish yo'q."
+    "empty": "Hali urinish yo‘q.",
+    "attemptNo": "{{count}}-urinish",
+    "notAttempted": "Hali urinmagan",
+    "close": "Yopish",
+    "download": "Yuklab olish",
+    "csvName": "Ism",
+    "csvDate": "Sana",
+    "csvScore": "Ball"
   },
   "types": {
     "single": "Bitta to'g'ri javob",

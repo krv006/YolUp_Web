@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { Search, UserMinus, UserPlus } from "lucide-react";
+import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
 import type { DomainUser } from "@/shared/types";
-import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { Avatar } from "@/shared/ui/legacy";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { useCourseStudents, useUnenrollStudent } from "../model/course.queries";
 import { AddStudentDialog } from "./add-student-dialog";
 
@@ -40,24 +41,19 @@ export function CourseMembersSection({ courseId, canManage }: CourseMembersSecti
   }
 
   return (
-    <div className="info-section info-members">
-      <div className="info-members-head">
-        <span className="info-section-title">{t("students.title")}</span>
-        <span className="info-members-count">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-baseline gap-3 px-1">
+        <span className="flex-1 text-label-strong text-ink-tertiary">{t("students.title")}</span>
+        <span className="text-caption text-ink-tertiary">
           {t("students.countSuffix", { count: studentsQuery.data?.total ?? all.length })}
         </span>
       </div>
 
-      {canManage ? (
-        <button type="button" className="info-members-add" onClick={() => setAddOpen(true)}>
-          <UserPlus size={16} /> {t("students.addStudent")}
-        </button>
-      ) : null}
-
       {all.length > SEARCH_THRESHOLD ? (
-        <label className="info-members-search">
-          <Search size={16} />
+        <label className="flex h-12 items-center gap-3 rounded-xl border border-line bg-surface px-4">
+          <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
           <input
+            className="h-full min-w-0 flex-1 bg-transparent text-body-sm text-ink outline-none placeholder:text-ink-tertiary"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t("students.searchPlaceholder")}
@@ -66,57 +62,82 @@ export function CourseMembersSection({ courseId, canManage }: CourseMembersSecti
       ) : null}
 
       {studentsQuery.isLoading ? (
-        <div className="student-tab-loading">
-          <span />
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 3 }, (_, index) => (
+            <div key={index} className="h-16 animate-pulse rounded-xl bg-muted" />
+          ))}
         </div>
       ) : (
-        <div className="info-members-list">
+        <div className="flex flex-col gap-2">
           {students.map((student) => (
-            <div className="info-member-row" key={student.id}>
+            <div
+              className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3"
+              key={student.id}
+            >
               <Avatar name={student.name} tone={student.avatarTone} size="sm" />
-              <span className="info-member-identity">
-                <strong>{student.name}</strong>
-                <small>@{student.username}</small>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-label-strong text-ink">{student.name}</strong>
+                <small className="truncate text-caption text-ink-tertiary">
+                  @{student.username}
+                </small>
               </span>
               {canManage ? (
                 <button
                   type="button"
-                  className="info-member-remove"
+                  className="grid size-9 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:bg-error-bg hover:text-error-text"
                   aria-label={t("students.removeAria", { name: student.name })}
                   onClick={() => setRemoveTarget(student)}
                 >
-                  <UserMinus size={16} />
+                  <Icon name="person" size={18} />
                 </button>
               ) : null}
             </div>
           ))}
-          {!students.length ? <p className="info-description">{t("students.empty")}</p> : null}
+          {!students.length ? (
+            <p className="px-1 text-body-sm text-ink-secondary">{t("students.empty")}</p>
+          ) : null}
         </div>
       )}
 
+      {canManage ? (
+        <button
+          type="button"
+          className="flex h-12 items-center justify-center gap-2 rounded-xl bg-action-subtle text-label-strong text-action transition-colors hover:bg-action-subtle/70"
+          onClick={() => setAddOpen(true)}
+        >
+          <Icon name="person" size={18} /> {t("students.addStudent")}
+        </button>
+      ) : null}
+
       {canManage ? <AddStudentDialog courseId={courseId} open={addOpen} onOpenChange={setAddOpen} /> : null}
-      <Dialog
+      <AppDialog
         open={Boolean(removeTarget)}
         onOpenChange={(open) => {
           if (!open) setRemoveTarget(null);
         }}
-      >
-        {removeTarget && (
-          <DialogContent
-            title={t("students.removeDialogTitle")}
-            description={t("students.removeDialogDescription", { name: removeTarget.name })}
-          >
-            <div className="dialog-actions">
-              <Button variant="secondary" onClick={() => setRemoveTarget(null)}>
-                {t("students.cancel")}
-              </Button>
-              <Button loading={unenroll.isPending} onClick={confirmRemove}>
-                {t("students.remove")}
-              </Button>
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
+        variant="confirm"
+        title={t("students.removeConfirmTitle", { name: removeTarget?.name ?? "" })}
+        description={t("students.removeDialogDescription", { name: removeTarget?.name ?? "" })}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setRemoveTarget(null)}
+            >
+              {t("students.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.danger}
+              disabled={unenroll.isPending}
+              onClick={confirmRemove}
+            >
+              {t("students.remove")}
+            </button>
+          </>
+        }
+      />
     </div>
   );
 }

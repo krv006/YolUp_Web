@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { CalendarX2, Clock3 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { toIntlLocale } from "@/shared/i18n";
+import { Icon } from "@/shared/ui/icon";
 import type { Lesson } from "@/shared/types";
 import { groupLessonsByDay, toDayKey } from "../lib/lesson-calendar";
 import { hasLessonTopic, useLessonStatusMeta } from "../lib/lesson-status";
@@ -18,6 +17,20 @@ interface DaySection {
   lessons: Lesson[];
 }
 
+const TIME_BADGE: Record<string, string> = {
+  live: "bg-error text-white",
+  finished: "bg-action text-on-action",
+  scheduled: "bg-saffron-strong text-white",
+  cancelled: "bg-muted text-ink-secondary",
+};
+
+const STATUS_PILL: Record<string, string> = {
+  live: "bg-error-bg text-error-text",
+  finished: "bg-success-bg text-success-text",
+  scheduled: "bg-saffron-subtle text-saffron-strong",
+  cancelled: "bg-subtle text-ink-tertiary",
+};
+
 function buildSections(lessons: Lesson[]): DaySection[] {
   const byDay = groupLessonsByDay(lessons);
   const todayKey = toDayKey(new Date());
@@ -32,63 +45,89 @@ function buildSections(lessons: Lesson[]): DaySection[] {
 }
 
 export function LessonList({ lessons, ...actions }: LessonListProps) {
-  const { t, i18n } = useTranslation("lesson");
+  const { t } = useTranslation("lesson");
   const lessonStatusMeta = useLessonStatusMeta();
   const sections = useMemo(() => buildSections(lessons), [lessons]);
-  const dayFormat = useMemo(
-    () =>
-      new Intl.DateTimeFormat(toIntlLocale(i18n.language), {
-        weekday: "short",
-        day: "numeric",
-        month: "long",
-      }),
-    [i18n.language]
-  );
+  const months = t("list.months", { returnObjects: true }) as string[];
+  const weekdays = t("list.weekdays", { returnObjects: true }) as string[];
+
+  function dayLabel(date: Date): string {
+    const stamp = `${date.getDate()}-${months[date.getMonth()] ?? ""}`;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const day = new Date(date);
+    day.setHours(0, 0, 0, 0);
+    const diff = Math.round((day.getTime() - today.getTime()) / 86_400_000);
+    if (diff === 0) return `${t("list.today")}, ${stamp}`;
+    if (diff === -1) return `${t("list.yesterday")}, ${stamp}`;
+    return `${stamp}, ${weekdays[date.getDay()] ?? ""}`;
+  }
 
   if (!sections.length) {
     return (
-      <div className="lesson-empty">
-        <CalendarX2 size={26} />
-        <p>{t("list.empty")}</p>
+      <div className="flex flex-col items-center gap-3 px-6 py-16 text-center">
+        <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+          <Icon name="nav-calendar" size={28} />
+        </span>
+        <p className="text-body-sm text-ink-secondary">{t("list.empty")}</p>
       </div>
     );
   }
 
   return (
-    <div className="lesson-sections">
+    <div className="flex flex-col gap-6">
       {sections.map((section) => (
-        <section key={section.key}>
-          <h3 className="lesson-section-title">
-            {dayFormat.format(section.date)}
-            <span>{t("list.dayCount", { count: section.lessons.length })}</span>
+        <section key={section.key} className="flex flex-col gap-3">
+          <h3 className="flex items-center gap-3 text-caption-strong tracking-wide text-ink-tertiary uppercase">
+            {dayLabel(section.date)}
+            <span className="h-px flex-1 bg-line" />
+            <span className="shrink-0 normal-case">
+              {t("list.dayCount", { count: section.lessons.length })}
+            </span>
           </h3>
 
-          <div className="lesson-list">
+          <div className="flex flex-col gap-3">
             {section.lessons.map((lesson) => {
               const meta = lessonStatusMeta(lesson.status);
               return (
                 <motion.article
                   key={lesson.id}
-                  className="lesson-feature-card"
+                  className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4"
                   initial={{ opacity: 0, y: 7 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  <div className="lesson-date">
-                    <strong>{lesson.time}</strong>
-                    <span>{t("list.durationMinutes", { count: lesson.durationMinutes })}</span>
-                  </div>
+                  <div className="flex items-start gap-4">
+                    <div
+                      className={`flex size-16 shrink-0 flex-col items-center justify-center rounded-xl ${
+                        TIME_BADGE[lesson.status] ?? TIME_BADGE.scheduled
+                      }`}
+                    >
+                      <strong className="font-numeric text-title">{lesson.time}</strong>
+                      <span className="text-[11px] opacity-80">
+                        {t("list.durationShort", { count: lesson.durationMinutes })}
+                      </span>
+                    </div>
 
-                  <div className="lesson-main">
-                    <span className={`lesson-status lesson-status--${meta.tone}`}>{meta.label}</span>
-                    {hasLessonTopic(lesson) ? (
-                      <h4>{lesson.title}</h4>
-                    ) : (
-                      <h4 className="lesson-missing-topic">{t("list.missingTopic")}</h4>
-                    )}
-                    <p>
-                      <Clock3 size={14} /> {lesson.time} —{" "}
-                      {t("list.durationMinutes", { count: lesson.durationMinutes })}
-                    </p>
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
+                      <span
+                        className={`inline-flex h-6 w-fit items-center rounded-full px-2.5 text-caption-strong ${
+                          STATUS_PILL[meta.tone] ?? STATUS_PILL.scheduled
+                        }`}
+                      >
+                        {meta.label}
+                      </span>
+                      <h4
+                        className={`truncate text-title ${
+                          hasLessonTopic(lesson) ? "text-ink" : "text-ink-tertiary italic"
+                        }`}
+                      >
+                        {hasLessonTopic(lesson) ? lesson.title : t("list.missingTopic")}
+                      </h4>
+                      <p className="flex items-center gap-1.5 text-body-sm text-ink-tertiary">
+                        <Icon name="clock" size={15} /> {lesson.time} —{" "}
+                        {t("list.durationShort", { count: lesson.durationMinutes })}
+                      </p>
+                    </div>
                   </div>
 
                   <LessonActions lesson={lesson} {...actions} />

@@ -30,4 +30,5 @@ export {
   useUpdateCourse,
 } from "./model/course.queries";
 export { AddStudentDialog } from "./ui/add-student-dialog";
+export { JoinRequestsDialog } from "./ui/join-requests-dialog";
 export { CourseMembersSection } from "./ui/course-members-section";

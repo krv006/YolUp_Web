@@ -17,8 +17,9 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const [infoOpen, setInfoOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const search = useChatUiStore((state) => state.search);
+  const searchOpen = useChatUiStore((state) => state.searchOpen);
+  const setSearchOpen = useChatUiStore((state) => state.setSearchOpen);
   const setSearch = useChatUiStore((state) => state.setSearch);
 
   useEffect(() => {
