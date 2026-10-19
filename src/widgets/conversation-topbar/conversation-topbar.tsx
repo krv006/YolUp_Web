@@ -1,10 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import logoUrl from "@/shared/assets/y-logo.svg";
 import { useAuth } from "@/modules/auth";
 import { useNewConversationStore } from "@/modules/conversation";
+import { useScheduleStore } from "@/modules/lesson";
+import { useAssignmentCreateStore } from "@/widgets/homework-workspace";
 import { Icon } from "@/shared/ui/icon";
 import { useConversations } from "@/modules/conversation";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
@@ -25,6 +27,34 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const { data = [] } = useConversations(role);
   const openNewGroup = useNewConversationStore((state) => state.setOpen);
   const workspace = section === "workspace";
+  const schedule = section === "schedule";
+  const { pathname } = useLocation();
+  const assignments = pathname.endsWith("/assignments");
+  const openAssignment = useAssignmentCreateStore((state) => state.setOpen);
+  const lessonT = useTranslation("lesson").t;
+  const view = useScheduleStore((state) => state.view);
+  const anchor = useScheduleStore((state) => state.anchor);
+  const setView = useScheduleStore((state) => state.setView);
+  const step = useScheduleStore((state) => state.step);
+  const goToday = useScheduleStore((state) => state.goToday);
+  const setCreateOpen = useScheduleStore((state) => state.setCreateOpen);
+  const months = lessonT("list.months", { returnObjects: true }) as string[];
+  const monthsLong = lessonT("list.monthsLong", { returnObjects: true }) as string[];
+
+  function rangeLabel(): string {
+    const date = new Date(anchor);
+    if (view === "month") return `${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
+    if (view === "day")
+      return `${date.getDate()} ${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
+    const start = new Date(date);
+    start.setDate(date.getDate() - 3);
+    const end = new Date(date);
+    end.setDate(date.getDate() + 3);
+    const sameMonth = start.getMonth() === end.getMonth();
+    return sameMonth
+      ? `${start.getDate()} – ${end.getDate()} ${monthsLong[start.getMonth()]}, ${start.getFullYear()}`
+      : `${start.getDate()} ${months[start.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]}, ${end.getFullYear()}`;
+  }
   const basePath = role === "teacher" ? "/teacher/chats" : "/student/chats";
 
   async function openNotificationLink(link: NotificationLink) {
@@ -87,13 +117,69 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         <img className="size-8 shrink-0 lg:hidden" src={logoUrl} alt="YolUp" />
       ) : null}
       <h1
-        className={`min-w-0 flex-1 truncate font-heading text-h2 text-ink ${
-          section === "chat" ? "hidden lg:block" : ""
-        }`}
+        className={`min-w-0 truncate font-heading text-h2 text-ink ${
+          schedule ? "shrink-0" : "flex-1"
+        } ${section === "chat" ? "hidden lg:block" : ""}`}
       >
         {title}
       </h1>
       {section === "chat" ? <span className="flex-1 lg:hidden" /> : null}
+
+      {schedule ? (
+        <>
+          <span className="hidden shrink-0 items-center gap-2 lg:flex">
+            <button
+              type="button"
+              className="flex h-10 items-center rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
+              onClick={goToday}
+            >
+              {lessonT("schedule.today")}
+            </button>
+            <button
+              type="button"
+              className="grid size-9 place-items-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:bg-subtle"
+              onClick={() => step(-1)}
+              aria-label={lessonT("calendar.prevMonth")}
+            >
+              <Icon name="chevron-left" size={18} />
+            </button>
+            <button
+              type="button"
+              className="grid size-9 place-items-center rounded-full border border-line bg-surface text-ink-secondary transition-colors hover:bg-subtle"
+              onClick={() => step(1)}
+              aria-label={lessonT("calendar.nextMonth")}
+            >
+              <Icon name="chevron-right" size={18} />
+            </button>
+            <span className="truncate text-body-sm text-ink-secondary">{rangeLabel()}</span>
+          </span>
+
+          <span className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-subtle p-1">
+            {(["day", "week", "month"] as const).map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`h-9 rounded-full px-3 text-label-strong transition-colors ${
+                  view === item ? "bg-surface text-ink shadow-xs" : "text-ink-secondary"
+                }`}
+                onClick={() => setView(item)}
+              >
+                {lessonT(`schedule.${item}`)}
+              </button>
+            ))}
+          </span>
+
+          {role === "teacher" ? (
+            <button
+              type="button"
+              className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
+              onClick={() => setCreateOpen(true)}
+            >
+              <Icon name="add" size={18} /> {lessonT("schedule.addLesson")}
+            </button>
+          ) : null}
+        </>
+      ) : null}
 
       {workspace ? (
         <button
@@ -106,7 +192,17 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         </button>
       ) : null}
 
-      {workspace && role === "teacher" ? (
+      {assignments && role === "teacher" ? (
+        <button
+          type="button"
+          className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+          onClick={() => openAssignment(true)}
+        >
+          <Icon name="add" size={18} /> {t("homework:form.title")}
+        </button>
+      ) : null}
+
+      {workspace && !assignments && role === "teacher" ? (
         <button
           type="button"
           className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"

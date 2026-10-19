@@ -19,6 +19,10 @@
     "exams": {
       "title": "Мок-тест",
       "description": "IELTS, SAT, Национальный сертификат и свой мок-тест."
+    },
+    "assignments": {
+      "title": "Задания",
+      "description": "Выдача домашних заданий и проверка с ИИ."
     }
   },
   "analytics": {

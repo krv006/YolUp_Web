@@ -86,4 +86,16 @@ export { LiveLessonBar } from "./ui/live-lesson-bar";
 export { LessonRecordingPlayer } from "./ui/lesson-recording-player";
 export { LessonViewSwitch } from "./ui/lesson-view-switch";
 export { RateLessonDialog } from "./ui/rate-lesson-dialog";
+export { LessonDetailDialog } from "./ui/lesson-detail-dialog";
+export { LessonCreateDialog } from "./ui/lesson-create-dialog";
+export {
+  ScheduleDay,
+  ScheduleEmpty,
+  ScheduleMonth,
+  ScheduleSkeleton,
+  ScheduleWeek,
+} from "./ui/schedule-grid";
+export { ScheduleSidebar } from "./ui/schedule-sidebar";
+export { useScheduleStore } from "./model/schedule.store";
+export type { ScheduleView } from "./model/schedule.store";
 export { RatingSummary, StarRating } from "./ui/star-rating";

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { BarChart3, ClipboardCheck, FileQuestion, Sparkles } from "lucide-react";
+import { BarChart3, ClipboardCheck, ClipboardList, FileQuestion, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
@@ -22,6 +22,13 @@ interface WorkspaceCard {
 
 const CARDS: WorkspaceCard[] = [
   { id: "quizzes", icon: FileQuestion, to: "../quizzes", tone: "bg-action text-on-action" },
+  {
+    id: "assignments",
+    icon: ClipboardList,
+    to: "../assignments",
+    tone: "bg-action text-on-action",
+    hiddenForStudent: true,
+  },
   { id: "analytics", icon: BarChart3, to: "../analytics", tone: "bg-action text-on-action" },
   { id: "ai", icon: Sparkles, to: "../ai", tone: "bg-saffron-strong text-white", hiddenForStudent: true },
   { id: "exams", icon: ClipboardCheck, to: "../exams", tone: "bg-success text-white" },
