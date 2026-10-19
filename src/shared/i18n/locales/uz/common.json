@@ -88,5 +88,17 @@
     "schedule": "Jadval",
     "searchPlaceholder": "Qidirish",
     "searchEmpty": "Hech narsa topilmadi"
+  },
+  "routeState": {
+    "errorEyebrow": "Xato",
+    "errorTitle": "Nimadir noto‘g‘ri ketdi",
+    "errorDescription": "Bu bizning xatoimiz. Sahifani yangilang — muammo takrorlansa, yordam markaziga yozing.",
+    "errorAction": "Qayta urinish",
+    "notFoundTitle": "Sahifa topilmadi",
+    "notFoundDescription": "Manzil noto‘g‘ri yoki sahifa ko‘chirilgan. Bosh sahifaga qayting.",
+    "notFoundAction": "Bosh sahifaga qaytish",
+    "forbiddenTitle": "Bu bo‘limga ruxsatingiz yo‘q",
+    "forbiddenDescription": "Sahifa boshqa rol uchun. Akkauntni almashtiring yoki guruh egasidan ruxsat so‘rang.",
+    "forbiddenAction": "Akkauntni almashtirish"
   }
 }

@@ -1,7 +1,9 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { env } from "@/shared/config";
-import { RouteState } from "@/shared/ui/legacy";
+import { i18n } from "@/shared/i18n";
+import { Icon } from "@/shared/ui/icon";
+import { RouteStatus, routeStatusButton } from "@/shared/ui/route-status";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -38,13 +40,20 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render() {
     if (!this.state.error) return this.props.children;
     return (
-      <RouteState
-        eyebrow="XATOLIK"
-        title="Sahifani ochib bo‘lmadi"
-        description="Kutilmagan xatolik yuz berdi. Sahifani yangilab qayta urinib ko‘ring."
+      <RouteStatus
+        tone="error"
+        eyebrow={i18n.t("common:routeState.errorEyebrow")}
+        icon={<Icon name="error" size={28} />}
+        title={i18n.t("common:routeState.errorTitle")}
+        description={i18n.t("common:routeState.errorDescription")}
         action={
-          <button className="button button--primary" onClick={() => window.location.reload()}>
-            Qayta yuklash
+          <button
+            type="button"
+            className={routeStatusButton}
+            onClick={() => window.location.reload()}
+          >
+            <Icon name="refresh" size={18} />
+            {i18n.t("common:routeState.errorAction")}
           </button>
         }
       />

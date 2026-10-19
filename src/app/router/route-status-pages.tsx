@@ -1,25 +1,45 @@
-import { Link } from "react-router-dom";
-import { RouteState } from "@/shared/ui/legacy";
+import { Lock } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/config";
+import { Icon } from "@/shared/ui/icon";
+import { RouteStatus, routeStatusButton } from "@/shared/ui/route-status";
 
 export function ForbiddenPage() {
+  const { t } = useTranslation("common");
+  const navigate = useNavigate();
+
   return (
-    <RouteState
+    <RouteStatus
+      tone="warning"
       eyebrow="403"
-      title="Bu bo‘limga ruxsat yo‘q"
-      description="Hisobingiz ushbu sahifani ko‘rish huquqiga ega emas."
-      action={<Link className="button button--primary" to={ROUTES.root}>Bosh sahifaga qaytish</Link>}
+      icon={<Lock size={28} />}
+      title={t("routeState.forbiddenTitle")}
+      description={t("routeState.forbiddenDescription")}
+      action={
+        <button type="button" className={routeStatusButton} onClick={() => navigate(ROUTES.root)}>
+          <Icon name="person" size={18} /> {t("routeState.forbiddenAction")}
+        </button>
+      }
     />
   );
 }
 
 export function NotFoundPage() {
+  const { t } = useTranslation("common");
+  const navigate = useNavigate();
+
   return (
-    <RouteState
+    <RouteStatus
       eyebrow="404"
-      title="Sahifa topilmadi"
-      description="Manzil noto‘g‘ri yoki sahifa boshqa joyga ko‘chirilgan."
-      action={<Link className="button button--primary" to={ROUTES.root}>Bosh sahifaga qaytish</Link>}
+      icon={<Icon name="search" size={26} />}
+      title={t("routeState.notFoundTitle")}
+      description={t("routeState.notFoundDescription")}
+      action={
+        <button type="button" className={routeStatusButton} onClick={() => navigate(ROUTES.root)}>
+          <Icon name="arrow-back" size={18} /> {t("routeState.notFoundAction")}
+        </button>
+      }
     />
   );
 }
