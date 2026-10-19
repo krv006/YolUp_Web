@@ -172,7 +172,8 @@
     "download": "Скачать",
     "csvName": "Имя",
     "csvDate": "Дата",
-    "csvScore": "Балл"
+    "csvScore": "Балл",
+    "exportFailed": "Не удалось скачать файл"
   },
   "types": {
     "single": "Один правильный ответ",

@@ -7,6 +7,7 @@ const TYPING_THROTTLE_MS = 1500;
 
 export interface ChatSocketManagerInit {
   roomId: string;
+  currentUserId?: string | null;
   onEvent?: (event: ParsedSocketEvent) => void;
   onState?: (state: SocketState) => void;
 }
@@ -15,13 +16,13 @@ export class ChatSocketManager {
   private readonly socket: RealtimeSocket;
   private lastTypingAt = 0;
 
-  constructor({ roomId, onEvent, onState }: ChatSocketManagerInit) {
+  constructor({ roomId, currentUserId = null, onEvent, onState }: ChatSocketManagerInit) {
     this.socket = new RealtimeSocket({
       path: `/ws/chat/${encodeURIComponent(roomId)}/`,
       onState,
       onMessage: (raw) => {
         try {
-          const parsed = parseSocketEvent(raw);
+          const parsed = parseSocketEvent(raw, currentUserId);
           if (parsed) onEvent?.(parsed);
         } catch {
           onEvent?.({ type: "error", detail: "Socket javobi noto‘g‘ri" });

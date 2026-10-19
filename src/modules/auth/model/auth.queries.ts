@@ -22,6 +22,22 @@ export function useLoginHistory(studentId: string | null = null, enabled = true)
   });
 }
 
+export function useSessions(enabled = true) {
+  return useQuery({
+    queryKey: ["auth", "sessions"],
+    queryFn: () => authApi.getSessions(),
+    enabled,
+  });
+}
+
+export function useMyStats(enabled = true) {
+  return useQuery({
+    queryKey: ["auth", "me", "stats"],
+    queryFn: () => authApi.getMyStats(),
+    enabled,
+  });
+}
+
 export function useMyRatings(enabled = true) {
   return useQuery({
     queryKey: authKeys.myRatings,

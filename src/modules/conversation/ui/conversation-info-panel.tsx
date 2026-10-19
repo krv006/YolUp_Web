@@ -1,4 +1,5 @@
 import { useRef, useState, type FormEvent } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GraduationCap, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -14,11 +15,11 @@ import {
   useSubjects,
   useUpdateCourse,
 } from "@/modules/course";
-import { useChatUiStore } from "@/modules/message";
-import { usePinnedMessage } from "@/modules/message";
+import { useChatUiStore, messageApi, messageKeys } from "@/modules/message";
 import {
   DIRECT_STATUS,
   InviteStudentsDialog,
+  useAnnouncementMode,
   useDirectStatusLabel,
   useRespondDirect,
   useSetRoomImage,
@@ -74,12 +75,22 @@ export function ConversationInfoPanel({
   const deleteCourse = useDeleteCourse();
   const setRoomImage = useSetRoomImage();
   const openChatSearch = useChatUiStore((state) => state.setSearchOpen);
-  const announcement = useChatUiStore((state) => Boolean(state.announcement[conversation.id]));
-  const setAnnouncement = useChatUiStore((state) => state.setAnnouncement);
-  const pinnedMessage = usePinnedMessage(conversation.id);
-  const unpinMessage = useChatUiStore((state) => state.unpin);
+  const announcement = Boolean(conversation.announcementOnly);
+  const announcementMode = useAnnouncementMode();
+  const pinnedQuery = useQuery({
+    queryKey: messageKeys.pinned(conversation.id),
+    queryFn: ({ signal }) => messageApi.getPinned(conversation.id, { signal }),
+    enabled: open && conversation.type === "group",
+  });
+  const pinnedMessage = (pinnedQuery.data ?? [])[0];
+  const roomMembers = useQuery({
+    queryKey: messageKeys.members(conversation.id, ""),
+    queryFn: ({ signal }) => messageApi.getMembers(conversation.id, "", { signal }),
+    enabled: open && isGroup,
+  });
   const [tab, setTab] = useState<"members" | "files" | "media">("members");
   const imageRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   function toggleMute() {
     const next = !muted;
@@ -243,7 +254,13 @@ export function ConversationInfoPanel({
               </h3>
               <p className="text-body-sm text-ink-tertiary">
                 {isGroup
-                  ? t("info.memberCount", { count: conversation.memberCount ?? 0 })
+                  ? `${t("info.memberCount", {
+                      count: roomMembers.data?.length ?? conversation.memberCount ?? 0,
+                    })}${
+                      conversation.onlineCount
+                        ? ` · ${t("info.onlineCount", { count: conversation.onlineCount })}`
+                        : ""
+                    }`
                   : directStatusLabel(conversation.directStatus, t("directStatus.active"))}
               </p>
 
@@ -287,9 +304,17 @@ export function ConversationInfoPanel({
                 </button>
                 <button
                   className={WIDE_ACTION}
-                  onClick={() =>
-                    pinnedMessage ? unpinMessage(conversation.id) : toast.info(t("info.pinHint"))
-                  }
+                  onClick={() => {
+                    if (!pinnedMessage) {
+                      toast.info(t("info.pinHint"));
+                      return;
+                    }
+                    void messageApi
+                      .unpin(conversation.id, pinnedMessage.messageId)
+                      .then((items) =>
+                        queryClient.setQueryData(messageKeys.pinned(conversation.id), items)
+                      );
+                  }}
                 >
                   <Icon name="pin" size={20} />
                   {t("info.pinned")}
@@ -308,7 +333,12 @@ export function ConversationInfoPanel({
                   </span>
                   <Switch
                     checked={announcement}
-                    onCheckedChange={(value) => setAnnouncement(conversation.id, value)}
+                    onCheckedChange={(value) =>
+                      announcementMode.mutate(
+                        { roomId: conversation.id, enabled: value },
+                        { onError: (error: Error) => toast.error(error.message) }
+                      )
+                    }
                     aria-label={t("info.announcementTitle")}
                   />
                 </section>
@@ -328,7 +358,12 @@ export function ConversationInfoPanel({
                 </span>
                 <Switch
                   checked={announcement}
-                  onCheckedChange={(value) => setAnnouncement(conversation.id, value)}
+                  onCheckedChange={(value) =>
+                    announcementMode.mutate(
+                      { roomId: conversation.id, enabled: value },
+                      { onError: (error: Error) => toast.error(error.message) }
+                    )
+                  }
                   aria-label={t("info.announcementTitle")}
                 />
               </section>
@@ -391,7 +426,12 @@ export function ConversationInfoPanel({
                 <div className="flex items-center gap-2">
                   {(
                     [
-                      ["members", t("info.tabMembers", { count: conversation.memberCount ?? 0 })],
+                      [
+                        "members",
+                        t("info.tabMembers", {
+                          count: roomMembers.data?.length ?? conversation.memberCount ?? 0,
+                        }),
+                      ],
                       ["files", t("info.tabFiles")],
                       ["media", t("info.tabMedia")],
                     ] as const
@@ -415,7 +455,38 @@ export function ConversationInfoPanel({
                   teacherGroup ? (
                     <CourseMembersSection courseId={conversation.courseId} canManage />
                   ) : (
-                    <CourseMembersSection courseId={conversation.courseId} canManage={false} />
+                    <div className="flex flex-col gap-2">
+                      {(roomMembers.data ?? []).map((member) => (
+                        <div
+                          key={member.id}
+                          className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3"
+                        >
+                          <Avatar name={member.name} src={member.avatarUrl ?? undefined} size="sm" />
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <strong className="truncate text-label-strong text-ink">
+                              {member.name}
+                            </strong>
+                            <small
+                              className={`truncate text-caption ${
+                                member.isOnline ? "text-success-text" : "text-ink-tertiary"
+                              }`}
+                            >
+                              {member.isOnline ? t("info.online") : `@${member.username}`}
+                            </small>
+                          </span>
+                          {member.role === "teacher" ? (
+                            <span className="shrink-0 rounded-full bg-saffron-subtle px-2.5 py-1 text-caption-strong text-saffron-strong">
+                              {t("info.teacherBadge")}
+                            </span>
+                          ) : null}
+                        </div>
+                      ))}
+                      {!roomMembers.data?.length ? (
+                        <p className="px-1 text-body-sm text-ink-tertiary">
+                          {roomMembers.isLoading ? t("info.loading") : t("info.noInfo")}
+                        </p>
+                      ) : null}
+                    </div>
                   )
                 ) : (
                   <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-6 py-10 text-center">

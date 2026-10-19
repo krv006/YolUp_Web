@@ -34,12 +34,28 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
     lastMessage: dto.last_message?.text ?? "Hozircha xabar yo‘q",
     lastSender: dto.last_message?.sender ?? null,
     updatedAt: dto.last_message?.created_at ?? dto.updated_at,
-    unreadCount: Number(dto.unread ?? 0),
+    unreadCount: Number(dto.unread_count ?? dto.unread ?? 0),
     status: "offline",
     typing: false,
     avatarTone: toneFor(dto.id),
-    memberCount: 0,
-    imageUrl: normalizeMediaUrl(dto.image_url),
+    memberCount: Number(dto.member_count ?? 0),
+    imageUrl: normalizeMediaUrl(dto.image_url ?? dto.image ?? null),
+    isPinned: Boolean(dto.is_pinned),
+    isMuted: Boolean(dto.is_muted),
+    hasUnreadMention: Boolean(dto.has_unread_mention),
+    announcementOnly: Boolean(dto.announcement_only),
+    onlineCount: Number(dto.online_count ?? 0),
+    firstUnreadMessageId: dto.first_unread_message_id
+      ? String(dto.first_unread_message_id)
+      : null,
+    lastReadMessageId: dto.last_read_message_id ? String(dto.last_read_message_id) : null,
+    pinnedMessages: (dto.pinned_messages ?? []).map((item) => ({
+      messageId: String(item.message_id),
+      authorName: item.author_name ?? "",
+      text: item.text ?? "",
+      messageType: item.message_type ?? "text",
+      pinnedAt: item.pinned_at ?? "",
+    })),
   };
 }
 

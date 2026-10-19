@@ -256,6 +256,8 @@ function CreateStudentDialog({
       password,
       first_name: firstName.trim(),
       last_name: lastName.trim(),
+      ...(phone.trim() ? { parent_phone: phone.trim() } : {}),
+      course_id: courseId,
     };
     createStudent.mutate(
       { courseId, form: payload },

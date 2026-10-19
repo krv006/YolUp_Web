@@ -83,7 +83,10 @@
     "tabMedia": "Media",
     "filesEmpty": "Fayllar yo‘q",
     "mediaEmpty": "Media yo‘q",
-    "sectionPending": "Backend tayyor bo‘lgach shu yerda ko‘rinadi"
+    "sectionPending": "Backend tayyor bo‘lgach shu yerda ko‘rinadi",
+    "online": "onlayn",
+    "onlineCount": "{{count}} nafari onlayn",
+    "teacherBadge": "O‘qituvchi"
   },
   "item": {
     "liveNow": "Dars ketmoqda",
@@ -125,7 +128,8 @@
     "searchEmpty": "Hech narsa topilmadi",
     "searchEmptyHint": "“{{query}}” bo‘yicha xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
     "announcementOn": "E’lon rejimi yoqildi — faqat o‘qituvchilar yozadi",
-    "announcementLocked": "Bu guruhda faqat o‘qituvchilar yozishi mumkin"
+    "announcementLocked": "Bu guruhda faqat o‘qituvchilar yozishi mumkin",
+    "searchOlder": "Yana {{count}} ta natija eski xabarlarda — yuqoriga suring"
   },
   "composer": {
     "editingLabel": "Xabarni tahrirlash",
@@ -248,7 +252,8 @@
   },
   "pinned": {
     "label": "Qadalgan xabar",
-    "removeAria": "Qadalganni olib tashlash"
+    "removeAria": "Qadalganni olib tashlash",
+    "attachment": "Biriktirilgan fayl"
   },
   "actions": {
     "pin": "Qadash",
@@ -261,7 +266,8 @@
     "deleteDescription": "Barcha xabarlar faqat sizning qurilmangizdan o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
     "cancel": "Bekor qilish",
     "confirmDelete": "O‘chirish",
-    "notAvailable": "Bu amal backendda hali mavjud emas"
+    "notAvailable": "Bu amal backendda hali mavjud emas",
+    "deleted": "Suhbat ro‘yxatdan olib tashlandi"
   },
   "offline": {
     "banner": "Internet aloqasi yo‘q. Xabarlar ulanish tiklanganda yuboriladi.",
@@ -274,5 +280,12 @@
     "empty": "A’zo topilmadi",
     "teacher": "O‘qituvchi",
     "parent": "Ota-ona"
+  },
+  "forward": {
+    "title": "Xabarni uzatish",
+    "description": "{{count}} ta xabar tanlangan suhbatlarga yuboriladi",
+    "searchPlaceholder": "Suhbatni qidirish",
+    "empty": "Suhbat topilmadi",
+    "done": "Xabar uzatildi"
   }
 }

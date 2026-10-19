@@ -1,7 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth, useLoginHistory } from "@/modules/auth";
+import {
+  useAuth,
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+  useLogoutOtherSessionsMutation,
+  useRevokeSessionMutation,
+  useSessions,
+} from "@/modules/auth";
+import { useAuthStore } from "@/modules/auth";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
@@ -12,10 +20,18 @@ type DialogId = "password" | "logoutOthers" | "delete" | null;
 export function AccountSettingsPage() {
   const { t } = useTranslation("account");
   const { user } = useAuth();
-  const logins = useLoginHistory(null, true);
+  const sessionList = useSessions();
+  const changePassword = useChangePasswordMutation();
+  const revokeSession = useRevokeSessionMutation();
+  const logoutOthers = useLogoutOtherSessionsMutation();
+  const deleteAccount = useDeleteAccountMutation();
+  const logout = useAuthStore((state) => state.logout);
   const [dialog, setDialog] = useState<DialogId>(null);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
-  const sessions = (logins.data ?? []).slice(0, 4);
+  const sessions = sessionList.data ?? [];
 
   return (
     <ProfileSubPage title={t("page.accountTitle")}>
@@ -39,7 +55,7 @@ export function AccountSettingsPage() {
         <SettingsRow
           icon="more"
           title={t("page.changePassword")}
-          hint="—"
+          hint={user?.passwordChangedAt ?? "—"}
           onClick={() => setDialog("password")}
         />
       </SettingsSection>
@@ -61,22 +77,22 @@ export function AccountSettingsPage() {
       </SettingsSection>
 
       <SettingsSection label={t("page.sessionsSection")}>
-        {logins.isLoading ? (
+        {sessionList.isLoading ? (
           <div className="flex flex-col gap-2 p-4">
             {Array.from({ length: 2 }, (_, index) => (
               <div key={index} className="h-12 animate-pulse rounded-xl bg-muted" />
             ))}
           </div>
         ) : sessions.length ? (
-          sessions.map((item, index) => (
+          sessions.map((item) => (
             <SettingsRow
-              key={item.id ?? index}
+              key={item.id}
               icon="eye"
               tone="bg-ink-tertiary text-white"
-              title={item.device || item.userAgent || "—"}
-              hint={[item.ip, item.at].filter(Boolean).join(" · ")}
+              title={item.device || "—"}
+              hint={[item.ip, item.city, item.lastActive].filter(Boolean).join(" · ")}
               right={
-                index === 0 ? (
+                item.isCurrent ? (
                   <span className="flex h-7 shrink-0 items-center rounded-full bg-action-subtle px-2.5 text-caption-strong text-action">
                     {t("page.thisDevice")}
                   </span>
@@ -84,7 +100,12 @@ export function AccountSettingsPage() {
                   <button
                     type="button"
                     className="grid size-9 shrink-0 place-items-center rounded-full text-ink-tertiary hover:text-ink"
-                    onClick={() => toast.info(t("page.notAvailable"))}
+                    onClick={() =>
+                      revokeSession.mutate(item.id, {
+                        onSuccess: () => toast.success(t("page.sessionClosed")),
+                        onError: (error: Error) => toast.error(error.message),
+                      })
+                    }
                     aria-label={t("page.logoutOthers")}
                   >
                     <Icon name="arrow-back" size={18} className="rotate-180" />
@@ -132,9 +153,29 @@ export function AccountSettingsPage() {
             <button
               type="button"
               className={dialogButton.primary}
+              disabled={changePassword.isPending}
               onClick={() => {
-                toast.info(t("page.notAvailable"));
-                setDialog(null);
+                if (!currentPassword || !newPassword) {
+                  toast.error(t("page.passwordRule"));
+                  return;
+                }
+                if (newPassword !== repeatPassword) {
+                  toast.error(t("page.passwordMismatch"));
+                  return;
+                }
+                changePassword.mutate(
+                  { currentPassword, newPassword },
+                  {
+                    onSuccess: () => {
+                      toast.success(t("page.passwordChanged"));
+                      setCurrentPassword("");
+                      setNewPassword("");
+                      setRepeatPassword("");
+                      setDialog(null);
+                    },
+                    onError: (error: Error) => toast.error(error.message),
+                  }
+                );
               }}
             >
               {t("page.updatePassword")}
@@ -144,15 +185,31 @@ export function AccountSettingsPage() {
       >
         <label className="field-group">
           <span>{t("page.currentPassword")}</span>
-          <input type="password" autoComplete="current-password" />
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={currentPassword}
+            onChange={(event) => setCurrentPassword(event.target.value)}
+          />
         </label>
         <label className="field-group">
           <span>{t("page.newPassword")}</span>
-          <input type="password" autoComplete="new-password" />
+          <input
+            type="password"
+            autoComplete="new-password"
+            value={newPassword}
+            onChange={(event) => setNewPassword(event.target.value)}
+          />
         </label>
         <label className="field-group">
           <span>{t("page.repeatPassword")}</span>
-          <input type="password" placeholder={t("page.repeatPlaceholder")} autoComplete="new-password" />
+          <input
+            type="password"
+            placeholder={t("page.repeatPlaceholder")}
+            autoComplete="new-password"
+            value={repeatPassword}
+            onChange={(event) => setRepeatPassword(event.target.value)}
+          />
         </label>
         <small className="px-1 text-caption text-ink-tertiary">{t("page.passwordRule")}</small>
       </AppDialog>
@@ -171,10 +228,16 @@ export function AccountSettingsPage() {
             <button
               type="button"
               className={dialogButton.danger}
-              onClick={() => {
-                toast.info(t("page.notAvailable"));
-                setDialog(null);
-              }}
+              disabled={logoutOthers.isPending}
+              onClick={() =>
+                logoutOthers.mutate(undefined, {
+                  onSuccess: (count) => {
+                    toast.success(t("page.otherSessionsClosed", { count }));
+                    setDialog(null);
+                  },
+                  onError: (error: Error) => toast.error(error.message),
+                })
+              }
             >
               {t("page.logout")}
             </button>
@@ -196,10 +259,16 @@ export function AccountSettingsPage() {
             <button
               type="button"
               className={dialogButton.danger}
-              onClick={() => {
-                toast.info(t("page.notAvailable"));
-                setDialog(null);
-              }}
+              disabled={deleteAccount.isPending}
+              onClick={() =>
+                deleteAccount.mutate(undefined, {
+                  onSuccess: () => {
+                    setDialog(null);
+                    logout();
+                  },
+                  onError: (error: Error) => toast.error(error.message),
+                })
+              }
             >
               {t("page.delete")}
             </button>

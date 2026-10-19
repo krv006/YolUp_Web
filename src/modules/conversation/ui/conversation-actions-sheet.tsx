@@ -13,7 +13,12 @@ import {
   AlertDialogTitle,
 } from "@/shared/ui/alert-dialog";
 import type { Conversation } from "@/shared/types";
-import { useConversationPrefsStore } from "../model/conversation-prefs.store";
+import {
+  useLeaveConversation,
+  useMuteConversation,
+  usePinConversation,
+} from "../model/use-conversations";
+import { messageApi } from "@/modules/message";
 
 export interface ConversationActionsSheetProps {
   conversation: Conversation | null;
@@ -26,32 +31,32 @@ export function ConversationActionsSheet({
 }: ConversationActionsSheetProps) {
   const { t } = useTranslation("chat");
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const pinned = useConversationPrefsStore((state) => state.pinned);
-  const muted = useConversationPrefsStore((state) => state.muted);
-  const togglePinned = useConversationPrefsStore((state) => state.togglePinned);
-  const toggleMuted = useConversationPrefsStore((state) => state.toggleMuted);
+  const pinRoom = usePinConversation();
+  const muteRoom = useMuteConversation();
+  const leaveRoom = useLeaveConversation();
 
-  const isPinned = conversation ? pinned.includes(conversation.id) : false;
-  const isMuted = conversation ? muted.includes(conversation.id) : false;
+  const isPinned = Boolean(conversation?.isPinned);
+  const isMuted = Boolean(conversation?.isMuted);
 
   const actions = [
     {
       id: "pin",
       icon: "pin",
       label: isPinned ? t("actions.unpin") : t("actions.pin"),
-      run: () => conversation && togglePinned(conversation.id),
+      run: () =>
+        conversation && pinRoom.mutate({ roomId: conversation.id, pinned: !isPinned }),
     },
     {
       id: "mute",
       icon: "volume",
       label: isMuted ? t("actions.unmute") : t("actions.mute"),
-      run: () => conversation && toggleMuted(conversation.id),
+      run: () => conversation && muteRoom.mutate({ roomId: conversation.id, muted: !isMuted }),
     },
     {
       id: "read",
       icon: "done-all",
       label: t("actions.markRead"),
-      run: () => toast.info(t("actions.notAvailable")),
+      run: () => conversation && void messageApi.markRead(conversation.id),
     },
   ];
 
@@ -102,7 +107,11 @@ export function ConversationActionsSheet({
             <AlertDialogAction
               className="h-12 flex-1 rounded-full bg-error text-label-strong text-white hover:opacity-90"
               onClick={() => {
-                toast.info(t("actions.notAvailable"));
+                if (conversation)
+                  leaveRoom.mutate(conversation.id, {
+                    onSuccess: () => toast.success(t("actions.deleted")),
+                    onError: (error: Error) => toast.error(error.message),
+                  });
                 setConfirmDelete(false);
                 onClose();
               }}

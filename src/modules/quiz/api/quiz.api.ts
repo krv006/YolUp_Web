@@ -176,4 +176,23 @@ export const quizApi = {
     const dto = await apiClient.get<unknown>(quizEndpoints.attempts(quizId), options);
     return normalizePagination<QuizAttemptSummaryDto>(dto).items.map(mapQuizAttemptSummaryDto);
   },
+
+  exportAttempts(quizId: string, type: "xlsx" | "csv" = "xlsx") {
+    return apiClient.get<Blob>(quizEndpoints.attemptsExport(quizId), {
+      query: { type },
+      responseType: "blob",
+    });
+  },
+
+  async getNotAttempted(quizId: string, options?: RequestOptions) {
+    const items = await apiClient.get<
+      Array<{ id: string | number; name?: string; username?: string; avatar_url?: string | null }>
+    >(quizEndpoints.notAttempted(quizId), options);
+    return (items ?? []).map((item) => ({
+      id: String(item.id),
+      name: item.name ?? item.username ?? "",
+      username: item.username ?? "",
+      avatarUrl: item.avatar_url ?? null,
+    }));
+  },
 };

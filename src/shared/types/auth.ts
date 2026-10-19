@@ -34,6 +34,14 @@ export interface AuthUser {
   preferredLanguage: string;
   lessonReminderMinutes: number | null;
   linkedAccounts: LinkedAccount[];
+  middleName: string | null;
+  birthDate: string | null;
+  subject: string | null;
+  city: string | null;
+  bio: string | null;
+  experienceYears: number | null;
+  parentPhone: string | null;
+  passwordChangedAt: string | null;
 }
 
 export interface TeacherRating {

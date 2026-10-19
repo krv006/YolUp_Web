@@ -44,9 +44,7 @@ export function useMarkNotificationRead() {
 export function useMarkAllNotificationsRead() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (notificationIds: string[]) => {
-      await Promise.allSettled(notificationIds.map((id) => notificationApi.markRead(id)));
-    },
+    mutationFn: () => notificationApi.markAllRead(),
     onSuccess: () => client.invalidateQueries({ queryKey: notificationKeys.all }),
   });
 }

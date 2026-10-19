@@ -39,6 +39,14 @@ export const notificationApi = {
     return notificationId;
   },
 
+  async markAllRead() {
+    const response = await apiClient.post<{ updated?: number }>(
+      notificationEndpoints.readAll,
+      {}
+    );
+    return response?.updated ?? 0;
+  },
+
   async send(input: SendNotificationInput) {
     return apiClient.post(notificationEndpoints.send, mapSendRequest(input));
   },

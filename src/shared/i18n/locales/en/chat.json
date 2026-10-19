@@ -83,7 +83,10 @@
     "tabMedia": "Media",
     "filesEmpty": "No files",
     "mediaEmpty": "No media",
-    "sectionPending": "Will appear once the backend is ready"
+    "sectionPending": "Will appear once the backend is ready",
+    "online": "online",
+    "onlineCount": "{{count}} online",
+    "teacherBadge": "Teacher"
   },
   "item": {
     "liveNow": "Lesson in progress",
@@ -125,7 +128,8 @@
     "searchEmpty": "Nothing found",
     "searchEmptyHint": "Nothing found for “{{query}}”. Try another word.",
     "announcementOn": "Announcement mode is on — only teachers can post",
-    "announcementLocked": "Only teachers can write in this group"
+    "announcementLocked": "Only teachers can write in this group",
+    "searchOlder": "{{count}} more matches in older messages — scroll up"
   },
   "composer": {
     "editingLabel": "Editing message",
@@ -248,7 +252,8 @@
   },
   "pinned": {
     "label": "Pinned message",
-    "removeAria": "Unpin"
+    "removeAria": "Unpin",
+    "attachment": "Attachment"
   },
   "actions": {
     "pin": "Pin",
@@ -261,7 +266,8 @@
     "deleteDescription": "All messages will be removed from this device only. This cannot be undone.",
     "cancel": "Cancel",
     "confirmDelete": "Delete",
-    "notAvailable": "The backend does not support this action yet"
+    "notAvailable": "The backend does not support this action yet",
+    "deleted": "The chat was removed from the list"
   },
   "offline": {
     "banner": "No internet connection. Messages will be sent once you are back online.",
@@ -274,5 +280,12 @@
     "empty": "No members found",
     "teacher": "Teacher",
     "parent": "Parent"
+  },
+  "forward": {
+    "title": "Forward message",
+    "description": "{{count}} message(s) will be sent to the selected chats",
+    "searchPlaceholder": "Search a chat",
+    "empty": "No chat found",
+    "done": "Message forwarded"
   }
 }

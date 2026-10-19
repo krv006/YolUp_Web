@@ -5,8 +5,6 @@ import { useAuth, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/mo
 import { Icon } from "@/shared/ui/icon";
 import { ProfileSubPage } from "./profile-shell";
 
-const LOCKED = "pointer-events-none opacity-60";
-
 export function PersonalInfoPage() {
   const { t } = useTranslation("account");
   const { user } = useAuth();
@@ -17,14 +15,33 @@ export function PersonalInfoPage() {
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     phone: user?.phone ?? "",
+    middleName: user?.middleName ?? "",
+    birthDate: user?.birthDate ?? "",
+    email: user?.email ?? "",
+    subject: user?.subject ?? "",
+    city: user?.city ?? "",
+    bio: user?.bio ?? "",
   });
   const [emailError, setEmailError] = useState(false);
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     update.mutate(
-      { firstName: form.firstName, lastName: form.lastName, phone: form.phone },
-      { onSuccess: () => toast.success(t("page.saved")) }
+      {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        middleName: form.middleName,
+        birthDate: form.birthDate,
+        email: form.email,
+        subject: form.subject,
+        city: form.city,
+        bio: form.bio,
+      },
+      {
+        onSuccess: () => toast.success(t("page.saved")),
+        onError: (error: Error) => toast.error(error.message),
+      }
     );
   }
 
@@ -126,15 +143,22 @@ export function PersonalInfoPage() {
           </label>
         </div>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.fatherName")}</span>
-          <input placeholder={t("page.fatherName")} disabled />
-          <small className="px-1 text-caption text-ink-tertiary">{t("page.backendPending")}</small>
+          <input
+            value={form.middleName}
+            onChange={(event) => setForm((c) => ({ ...c, middleName: event.target.value }))}
+            placeholder={t("page.fatherName")}
+          />
         </label>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.birthDate")}</span>
-          <input placeholder="XX.XX.2009" disabled />
+          <input
+            type="date"
+            value={form.birthDate}
+            onChange={(event) => setForm((c) => ({ ...c, birthDate: event.target.value }))}
+          />
         </label>
 
         <label className="field-group">
@@ -147,30 +171,45 @@ export function PersonalInfoPage() {
           <small className="px-1 text-caption text-ink-tertiary">{t("page.phoneNote")}</small>
         </label>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.email")}</span>
           <input
             className={emailError ? "border-error" : undefined}
-            defaultValue={user?.email ?? ""}
-            onBlur={(event) => setEmailError(Boolean(event.target.value) && !event.target.value.includes("@"))}
-            disabled
+            value={form.email}
+            onChange={(event) => setForm((c) => ({ ...c, email: event.target.value }))}
+            onBlur={(event) =>
+              setEmailError(Boolean(event.target.value) && !event.target.value.includes("@"))
+            }
+            inputMode="email"
           />
-          <small className="px-1 text-caption text-ink-tertiary">{t("page.backendPending")}</small>
         </label>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.subject")}</span>
-          <input placeholder="—" disabled />
+          <input
+            value={form.subject}
+            onChange={(event) => setForm((c) => ({ ...c, subject: event.target.value }))}
+            placeholder="—"
+          />
         </label>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.city")}</span>
-          <input placeholder="—" disabled />
+          <input
+            value={form.city}
+            onChange={(event) => setForm((c) => ({ ...c, city: event.target.value }))}
+            placeholder="—"
+          />
         </label>
 
-        <label className={`field-group ${LOCKED}`}>
+        <label className="field-group">
           <span>{t("page.about")}</span>
-          <textarea rows={3} placeholder="—" disabled />
+          <textarea
+            rows={3}
+            value={form.bio}
+            onChange={(event) => setForm((c) => ({ ...c, bio: event.target.value }))}
+            placeholder="—"
+          />
         </label>
 
         {update.isError ? (

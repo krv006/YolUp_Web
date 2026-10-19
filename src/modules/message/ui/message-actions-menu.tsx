@@ -15,7 +15,8 @@ export interface MessageActionsMenuProps {
   onDelete: (message: ChatMessage, scope: "me" | "everyone") => void;
   onReact: (message: ChatMessage, emoji: string) => void;
   onForward?: (message: ChatMessage) => void;
-  currentUserId?: string | null;
+  onPin?: (message: ChatMessage, pinned: boolean) => void;
+  pinnedIds?: string[];
   capabilities?: MessageCapabilities;
 }
 
@@ -30,17 +31,14 @@ export function MessageActionsMenu({
   onDelete,
   onReact,
   onForward,
-  currentUserId = null,
-  capabilities = { reply: true, edit: false, delete: false, react: false },
+  onPin,
+  pinnedIds = [],
+  capabilities,
 }: MessageActionsMenuProps) {
   const { t } = useTranslation("chat");
-  const outgoing = message?.senderId === currentUserId;
-  const pinned = useChatUiStore((state) =>
-    message ? state.pinned[message.conversationId] : undefined
-  );
-  const pin = useChatUiStore((state) => state.pin);
-  const unpin = useChatUiStore((state) => state.unpin);
   const startSelection = useChatUiStore((state) => state.startSelection);
+  const rights: MessageCapabilities = message?.capabilities ??
+    capabilities ?? { reply: true, edit: false, delete: true, react: true };
 
   useEffect(() => {
     if (!message) return undefined;
@@ -53,7 +51,7 @@ export function MessageActionsMenu({
 
   if (!message) return null;
 
-  const isPinned = pinned?.id === message.id;
+  const isPinned = pinnedIds.includes(message.id);
 
   const items = [
     {
@@ -61,7 +59,7 @@ export function MessageActionsMenu({
       icon: "arrow-back",
       label: t("actionsMenu.reply"),
       run: () => onReply(message),
-      hidden: !capabilities.reply,
+      hidden: rights.reply === false,
     },
     {
       id: "copy",
@@ -77,29 +75,22 @@ export function MessageActionsMenu({
       id: "edit",
       icon: "edit",
       label: t("actionsMenu.edit"),
-      run: () => (capabilities.edit ? onEdit(message) : toast.info(t("actions.notAvailable"))),
-      hidden: !outgoing,
+      run: () => onEdit(message),
+      hidden: !rights.edit,
     },
     {
       id: "pin",
       icon: "pin",
       label: isPinned ? t("actionsMenu.unpin") : t("actionsMenu.pin"),
-      run: () =>
-        isPinned
-          ? unpin(message.conversationId)
-          : pin(message.conversationId, {
-              id: message.id,
-              author: message.senderName,
-              text: message.text || message.attachment?.name || "",
-            }),
-      hidden: false,
+      run: () => onPin?.(message, isPinned),
+      hidden: !rights.pin || !onPin,
     },
     {
       id: "forward",
       icon: "send",
       label: t("actionsMenu.forward"),
       run: () => (onForward ? onForward(message) : toast.info(t("actions.notAvailable"))),
-      hidden: false,
+      hidden: rights.forward === false,
     },
     {
       id: "select",
@@ -119,7 +110,7 @@ export function MessageActionsMenu({
             type="button"
             className="grid size-9 place-items-center rounded-full text-xl transition-colors hover:bg-subtle"
             onClick={() => {
-              if (capabilities.react) onReact(message, emoji);
+              if (rights.react !== false) onReact(message, emoji);
               else toast.info(t("actions.notAvailable"));
               onClose();
             }}
@@ -153,8 +144,7 @@ export function MessageActionsMenu({
           role="menuitem"
           className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-error-text transition-colors hover:bg-error-bg"
           onClick={() => {
-            if (capabilities.delete) onDelete(message, "everyone");
-            else toast.info(t("actions.notAvailable"));
+            onDelete(message, rights.deleteEveryone ? "everyone" : "me");
             onClose();
           }}
         >

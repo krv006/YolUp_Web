@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
+import { ForwardDialog } from "@/widgets/forward-dialog";
 import { ChatHeader } from "@/modules/conversation";
 import { MessageComposer, MessageList, useChat } from "@/modules/message";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
@@ -13,6 +14,10 @@ export function ConversationPage() {
   const { conversationId } = useParams();
   const { user } = useAuth();
   const currentUserId = user?.id ?? null;
+  const chat = useChat(conversationId, {
+    role: "teacher",
+    senderId: currentUserId,
+  });
   const {
     conversation,
     messages,
@@ -21,10 +26,24 @@ export function ConversationPage() {
     updateMessage,
     deleteMessage,
     toggleReaction,
+    deleteMessages,
+    forwardMessages,
+    pinnedMessages,
+    pinMessage,
+    markRead,
     sendTyping,
-  } = useChat(conversationId, { role: "teacher", senderId: currentUserId });
+  } = chat;
   const [replyMessage, setReplyMessage] = useState<ChatMessage | null>(null);
   const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
+  const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
+  const lastMessageId = messages.data?.[messages.data.length - 1]?.id ?? null;
+  const readRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!lastMessageId || readRef.current === lastMessageId) return;
+    readRef.current = lastMessageId;
+    markRead.mutate(lastMessageId);
+  }, [lastMessageId, markRead]);
 
   const activeConversation = conversation.data;
 
@@ -47,6 +66,7 @@ export function ConversationPage() {
     return (
       <GroupWorkspace
         conversation={activeConversation}
+        chat={chat}
         messages={messages}
         sendMessage={sendMessage}
         sendTyping={sendTyping}
@@ -116,7 +136,10 @@ export function ConversationPage() {
         }}
         onDelete={handleDelete}
         onReact={(message, emoji) => toggleReaction.mutate({ messageId: message.id, emoji })}
-        capabilities={{ reply: true, edit: false, delete: false, react: false }}
+        pinnedIds={(pinnedMessages.data ?? []).map((item) => item.messageId)}
+        onPin={(message, pinned) => pinMessage.mutate({ messageId: message.id, pinned })}
+        onForward={(items) => setForwardTarget(items)}
+        onBulkDelete={(messageIds, scope) => deleteMessages.mutate({ messageIds, scope })}
         onRetryMessage={retryMessage}
       />
       <MessageComposer
@@ -131,6 +154,26 @@ export function ConversationPage() {
           setEditingMessage(null);
         }}
         onTyping={sendTyping}
+        roomId={conversationId ?? null}
+      />
+
+      <ForwardDialog
+        open={forwardTarget.length > 0}
+        onOpenChange={(open) => !open && setForwardTarget([])}
+        messages={forwardTarget}
+        role="teacher"
+        pending={forwardMessages.isPending}
+        onConfirm={(roomIds) =>
+          forwardMessages.mutate(
+            { messageIds: forwardTarget.map((item) => item.id), roomIds },
+            {
+              onSuccess: () => {
+                setForwardTarget([]);
+                toast.success(t("forward.done"));
+              },
+            }
+          )
+        }
       />
     </section>
   );

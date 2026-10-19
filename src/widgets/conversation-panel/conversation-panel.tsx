@@ -8,7 +8,6 @@ import {
   matchesConversationFilter,
   useConversationFilter,
   useConversations,
-  useConversationPrefsStore,
   useRequestDirect,
   useTeachersForDirect,
   type ConversationFilter,
@@ -60,11 +59,11 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
   const { conversationId } = useParams();
   const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
   const [online, setOnline] = useState(() => navigator.onLine);
-  const pinnedRooms = useConversationPrefsStore((state) => state.pinned);
-  const mutedRooms = useConversationPrefsStore((state) => state.muted);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data = [], isLoading, isError, refetch } = useConversations(role);
+  const pinnedRooms = data.filter((item) => item.isPinned).map((item) => item.id);
+  const mutedRooms = data.filter((item) => item.isMuted).map((item) => item.id);
   const isTeacher = role === "teacher";
   const basePath = isTeacher ? "/teacher/chats" : "/student/chats";
 
@@ -265,7 +264,10 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                   live={Boolean(conversation.courseId && liveCourses.has(conversation.courseId))}
                   muted={mutedRooms.includes(conversation.id)}
                   pinned={pinnedRooms.includes(conversation.id)}
-                  mentioned={mentionsMe(conversation.lastMessage, user?.username)}
+                  mentioned={
+                    conversation.hasUnreadMention ??
+                    mentionsMe(conversation.lastMessage, user?.username)
+                  }
                   onOpenActions={setActionsFor}
                 />
               ))}

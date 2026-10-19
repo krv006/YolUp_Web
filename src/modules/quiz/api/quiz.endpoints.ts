@@ -5,6 +5,8 @@ export const quizEndpoints = Object.freeze({
   publish: (id: string) => `/api/v1/quizzes/${id}/publish/`,
   groupAudio: (quizId: string, groupId: string) => `/api/v1/quizzes/${quizId}/groups/${groupId}/audio/`,
   attempts: (id: string) => `/api/v1/quizzes/${id}/attempts/`,
+  attemptsExport: (id: string) => `/api/v1/quizzes/${id}/attempts/export/`,
+  notAttempted: (id: string) => `/api/v1/quizzes/${id}/not-attempted/`,
   import: "/api/v1/quizzes/import/",
   importGoogleDoc: "/api/v1/quizzes/import-google-doc/",
   importGoogleForm: "/api/v1/quizzes/import-google-form/",
