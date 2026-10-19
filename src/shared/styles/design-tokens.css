@@ -39,6 +39,7 @@
 }
 
 :root {
+  --text-scale: 1;
   --ink-50: #f1f1f6;
   --ink-100: #e2e3ec;
   --ink-200: #c5c7d8;
@@ -188,54 +189,54 @@
   --tracking-heading: -0.02em;
   --tracking-body: 0em;
 
-  --fs-display: 40px;
-  --lh-display: 48px;
+  --fs-display: calc(40px * var(--text-scale));
+  --lh-display: calc(48px * var(--text-scale));
   --fw-display: 600;
-  --fs-h1: 32px;
-  --lh-h1: 40px;
+  --fs-h1: calc(32px * var(--text-scale));
+  --lh-h1: calc(40px * var(--text-scale));
   --fw-h1: 600;
-  --fs-h2: 24px;
-  --lh-h2: 32px;
+  --fs-h2: calc(24px * var(--text-scale));
+  --lh-h2: calc(32px * var(--text-scale));
   --fw-h2: 500;
-  --fs-h3: 20px;
-  --lh-h3: 28px;
+  --fs-h3: calc(20px * var(--text-scale));
+  --lh-h3: calc(28px * var(--text-scale));
   --fw-h3: 500;
-  --fs-title: 16px;
-  --lh-title: 24px;
+  --fs-title: calc(16px * var(--text-scale));
+  --lh-title: calc(24px * var(--text-scale));
   --fw-title: 600;
-  --fs-body-lg: 18px;
-  --lh-body-lg: 28px;
-  --fs-body: 16px;
-  --lh-body: 24px;
-  --fs-body-sm: 14px;
-  --lh-body-sm: 20px;
-  --fs-body-xs: 12px;
-  --lh-body-xs: 16px;
-  --fs-label: 14px;
-  --lh-label: 20px;
-  --fs-caption: 12px;
-  --lh-caption: 16px;
-  --fs-numeric-lg: 32px;
-  --lh-numeric-lg: 40px;
+  --fs-body-lg: calc(18px * var(--text-scale));
+  --lh-body-lg: calc(28px * var(--text-scale));
+  --fs-body: calc(16px * var(--text-scale));
+  --lh-body: calc(24px * var(--text-scale));
+  --fs-body-sm: calc(14px * var(--text-scale));
+  --lh-body-sm: calc(20px * var(--text-scale));
+  --fs-body-xs: calc(12px * var(--text-scale));
+  --lh-body-xs: calc(16px * var(--text-scale));
+  --fs-label: calc(14px * var(--text-scale));
+  --lh-label: calc(20px * var(--text-scale));
+  --fs-caption: calc(12px * var(--text-scale));
+  --lh-caption: calc(16px * var(--text-scale));
+  --fs-numeric-lg: calc(32px * var(--text-scale));
+  --lh-numeric-lg: calc(40px * var(--text-scale));
   --fw-numeric-lg: 500;
 }
 
 @media (max-width: 1023px) {
   :root {
-    --fs-display: 32px;
-    --lh-display: 40px;
+    --fs-display: calc(32px * var(--text-scale));
+    --lh-display: calc(40px * var(--text-scale));
     --fw-display: 500;
-    --fs-h1: 28px;
-    --lh-h1: 36px;
+    --fs-h1: calc(28px * var(--text-scale));
+    --lh-h1: calc(36px * var(--text-scale));
     --fw-h1: 500;
-    --fs-h2: 22px;
-    --lh-h2: 30px;
-    --fs-h3: 18px;
-    --lh-h3: 26px;
-    --fs-body-lg: 17px;
-    --lh-body-lg: 26px;
-    --fs-numeric-lg: 28px;
-    --lh-numeric-lg: 36px;
+    --fs-h2: calc(22px * var(--text-scale));
+    --lh-h2: calc(30px * var(--text-scale));
+    --fs-h3: calc(18px * var(--text-scale));
+    --lh-h3: calc(26px * var(--text-scale));
+    --fs-body-lg: calc(17px * var(--text-scale));
+    --lh-body-lg: calc(26px * var(--text-scale));
+    --fs-numeric-lg: calc(28px * var(--text-scale));
+    --lh-numeric-lg: calc(36px * var(--text-scale));
   }
 }
 

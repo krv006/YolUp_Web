@@ -7,3 +7,5 @@ export {
   useLanguageStore,
 } from "./language.store";
 export type { AppLanguage } from "./language.store";
+export { useTextSizeStore, applyTextSize } from "./text-size.store";
+export type { TextSize } from "./text-size.store";

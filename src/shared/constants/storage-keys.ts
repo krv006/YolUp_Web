@@ -10,6 +10,7 @@ export const STORAGE_KEYS = Object.freeze({
   CONVERSATION_FILTER: "fokus_conversation_filter",
   CHAT_PINNED_MESSAGES: "fokus_chat_pinned",
   CONVERSATION_PREFS: "fokus_conversation_prefs",
+  TEXT_SIZE: "fokus_text_size",
 });
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

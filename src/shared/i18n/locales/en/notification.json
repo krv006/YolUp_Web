@@ -22,5 +22,7 @@
     "exam": "Open exam",
     "submission": "Open submission",
     "default": "Open"
-  }
+  },
+  "filterAll": "All",
+  "filterUnread": "Unread · {{count}}"
 }

@@ -22,5 +22,7 @@
     "exam": "К экзамену",
     "submission": "Открыть работу",
     "default": "Открыть"
-  }
+  },
+  "filterAll": "Все",
+  "filterUnread": "Непрочитанные · {{count}}"
 }

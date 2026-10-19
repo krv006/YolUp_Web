@@ -5,7 +5,7 @@ import { Icon } from "@/shared/ui/icon";
 import type { ConversationRole } from "@/shared/types";
 import { useConversations } from "../model/use-conversations";
 
-export type ConversationSection = "chat" | "schedule" | "workspace";
+export type ConversationSection = "chat" | "schedule" | "workspace" | "profile";
 
 type SectionItem = {
   id: ConversationSection;
@@ -31,14 +31,13 @@ export interface ConversationRailProps {
   role: ConversationRole;
   section: ConversationSection;
   hiddenOnMobile?: boolean;
-  onOpenMenu: () => void;
+  onOpenMenu?: () => void;
 }
 
 export function ConversationRail({
   role,
   section,
   hiddenOnMobile = false,
-  onOpenMenu,
 }: ConversationRailProps) {
   const { t } = useTranslation("nav");
   const navigate = useNavigate();
@@ -82,11 +81,11 @@ export function ConversationRail({
       })}
 
       <button
-        className={`${ITEM_BASE} ${ITEM_IDLE}`}
-        onClick={onOpenMenu}
+        className={`${ITEM_BASE} ${section === "profile" ? ITEM_ACTIVE : ITEM_IDLE}`}
+        onClick={() => navigate(`${chatsPath}/profile`)}
         aria-label={t("rail.openProfileMenu")}
       >
-        <span className={PILL_BASE}>
+        <span className={`${PILL_BASE} ${section === "profile" ? PILL_ACTIVE : ""}`}>
           <Icon name="nav-profile" size={24} />
         </span>
         <span className="truncate">{t("titles.profile")}</span>

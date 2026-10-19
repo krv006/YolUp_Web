@@ -22,6 +22,47 @@ const RegisterPage = lazy(() =>
 );
 const loadTeacherLayout = () => import("@/app/layouts/teacher-layout");
 const loadChatsPage = () => import("@/pages/teacher/chats-page");
+const WorkspaceSearchPage = lazy(() =>
+  import("@/pages/workspace/workspace-search-page").then((module) => ({
+    default: module.WorkspaceSearchPage,
+  }))
+);
+const ProfilePage = lazy(() =>
+  import("@/pages/profile/profile-page").then((module) => ({ default: module.ProfilePage }))
+);
+const PersonalInfoPage = lazy(() =>
+  import("@/pages/profile/personal-info-page").then((module) => ({
+    default: module.PersonalInfoPage,
+  }))
+);
+const AccountSettingsPage = lazy(() =>
+  import("@/pages/profile/account-settings-page").then((module) => ({
+    default: module.AccountSettingsPage,
+  }))
+);
+const SystemSettingsPage = lazy(() =>
+  import("@/pages/profile/system-settings-page").then((module) => ({
+    default: module.SystemSettingsPage,
+  }))
+);
+const MyRatingsPage = lazy(() =>
+  import("@/pages/profile/my-ratings-page").then((module) => ({ default: module.MyRatingsPage }))
+);
+const CertificatesPage = lazy(() =>
+  import("@/pages/profile/certificates-page").then((module) => ({
+    default: module.CertificatesPage,
+  }))
+);
+const LoginHistoryPage = lazy(() =>
+  import("@/pages/profile/login-history-page").then((module) => ({
+    default: module.LoginHistoryPage,
+  }))
+);
+const NotificationsPage = lazy(() =>
+  import("@/pages/notifications/notifications-page").then((module) => ({
+    default: module.NotificationsPage,
+  }))
+);
 const loadConversationPage = () => import("@/pages/teacher/conversation-page");
 const loadStudentLayout = () => import("@/app/layouts/student-layout");
 const loadStudentConversationPage = () => import("@/pages/student/conversation-page");
@@ -143,6 +184,15 @@ export function AppRouter() {
                   >
                     <Route index element={<ChatsPage />} />
                     <Route path="schedule" element={<SchedulePage />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="profile/personal" element={<PersonalInfoPage />} />
+                    <Route path="profile/account" element={<AccountSettingsPage />} />
+                    <Route path="profile/system" element={<SystemSettingsPage />} />
+                    <Route path="profile/ratings" element={<MyRatingsPage />} />
+                    <Route path="profile/certificates" element={<CertificatesPage />} />
+                    <Route path="profile/logins" element={<LoginHistoryPage />} />
+                    <Route path="search" element={<WorkspaceSearchPage />} />
+                    <Route path="notifications" element={<NotificationsPage />} />
                     <Route path="ai" element={<AiPage />} />
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
@@ -186,6 +236,15 @@ export function AppRouter() {
                   >
                     <Route index element={<ChatsPage />} />
                     <Route path="schedule" element={<SchedulePage />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="profile/personal" element={<PersonalInfoPage />} />
+                    <Route path="profile/account" element={<AccountSettingsPage />} />
+                    <Route path="profile/system" element={<SystemSettingsPage />} />
+                    <Route path="profile/ratings" element={<MyRatingsPage />} />
+                    <Route path="profile/certificates" element={<CertificatesPage />} />
+                    <Route path="profile/logins" element={<LoginHistoryPage />} />
+                    <Route path="search" element={<WorkspaceSearchPage />} />
+                    <Route path="notifications" element={<NotificationsPage />} />
                     <Route path="workspace" element={<WorkspacePage />} />
                     <Route path="analytics" element={<AnalyticsPage />} />
                     <Route path="exams" element={<StudentExamsPage />} />
