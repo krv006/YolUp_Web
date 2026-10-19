@@ -8,6 +8,7 @@ import {
   matchesConversationFilter,
   useConversationFilter,
   useConversations,
+  useNewConversationStore,
   useRequestDirect,
   useTeachersForDirect,
   type ConversationFilter,
@@ -62,6 +63,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
   const navigate = useNavigate();
   const { user } = useAuth();
   const { data = [], isLoading, isError, refetch } = useConversations(role);
+  const openNewConversation = useNewConversationStore((state) => state.setOpen);
   const pinnedRooms = data.filter((item) => item.isPinned).map((item) => item.id);
   const mutedRooms = data.filter((item) => item.isMuted).map((item) => item.id);
   const isTeacher = role === "teacher";
@@ -298,6 +300,26 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
               </button>
             ))}
           </>
+        ) : null}
+
+        {!isLoading && !isError && data.length === 0 ? (
+          <div className="my-auto flex flex-col items-center gap-3 px-6 text-center">
+            <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
+              <Icon name="groups" size={28} />
+            </span>
+            <strong className="font-heading text-h3 text-ink">{t("panel.noChatsTitle")}</strong>
+            <p className="max-w-[280px] text-body-sm text-ink-secondary">
+              {isTeacher ? t("panel.noChatsTeacherHint") : t("panel.noChatsStudentHint")}
+            </p>
+            <button
+              type="button"
+              className="mt-1 flex h-12 items-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+              onClick={() => openNewConversation(true)}
+            >
+              <Icon name="add" size={18} />
+              {isTeacher ? t("panel.createGroup") : t("panel.joinGroup")}
+            </button>
+          </div>
         ) : null}
 
         {!isLoading && !isError && data.length > 0 && visible.length === 0 && !people.length && (

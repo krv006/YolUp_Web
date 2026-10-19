@@ -39,7 +39,7 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
 
   return (
     <>
-      <header className="flex h-[72px] shrink-0 items-center gap-3 border-b border-line bg-surface px-4 lg:px-6">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 lg:h-[72px] lg:gap-3 lg:px-6">
         <button
           className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle lg:hidden"
           onClick={() => navigate(backTo)}
@@ -109,10 +109,19 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
               status={conversation.type === "direct" ? conversation.status : undefined}
             />
             <span className="flex min-w-0 flex-col">
-              <strong className="truncate text-title text-ink">{conversation.title}</strong>
-              <span className="truncate text-body-sm text-ink-tertiary">
+              <strong className="truncate text-label-strong text-ink lg:text-title">
+                {conversation.title}
+              </strong>
+              <span className="truncate text-caption text-ink-tertiary lg:text-body-sm">
                 {conversation.type === "group"
-                  ? t("header.memberCount", { count: conversation.memberCount ?? 1 })
+                  ? [
+                      t("header.memberCount", { count: conversation.memberCount ?? 1 }),
+                      conversation.onlineCount
+                        ? t("header.onlineCount", { count: conversation.onlineCount })
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")
                   : conversation.status === "online"
                     ? t("header.online")
                     : t("header.recentlyActive")}
@@ -123,7 +132,7 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
 
         {searchOpen ? null : (
           <button
-            className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle lg:size-11"
             onClick={() => setSearchOpen(true)}
             aria-label={t("header.searchAria")}
           >

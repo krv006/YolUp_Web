@@ -23,6 +23,17 @@ export interface MessageBubbleProps {
   selected?: boolean;
   onToggleSelect?: (message: ChatMessage) => void;
   highlighted?: boolean;
+  /** Ketma-ket xabarlarda avatar va ism faqat guruhning oxirgi/birinchi xabarida ko'rsatiladi. */
+  showAvatar?: boolean;
+  showName?: boolean;
+}
+
+const SENDER_COLORS = ["text-action", "text-success-text", "text-saffron-strong", "text-link"];
+
+function senderColor(id: string): string {
+  let total = 0;
+  for (const char of id) total += char.charCodeAt(0);
+  return SENDER_COLORS[total % SENDER_COLORS.length];
 }
 
 const RECORDING_PATH = /\/recordings\/[\w-]+/;
@@ -79,6 +90,8 @@ export function MessageBubble({
   selected = false,
   onToggleSelect,
   highlighted = false,
+  showAvatar = true,
+  showName = true,
 }: MessageBubbleProps) {
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
@@ -144,20 +157,24 @@ export function MessageBubble({
       ) : null}
 
       {outgoing ? null : (
-        <span className="mb-1 shrink-0">
-          <Avatar name={message.senderName} size="sm" />
+        <span className="mb-1 w-8 shrink-0">
+          {showAvatar ? <Avatar name={message.senderName} size="sm" /> : null}
         </span>
       )}
 
       <div
-        className={`flex max-w-[78%] flex-col gap-1.5 rounded-2xl px-4 py-3 lg:max-w-[560px] ${
+        className={`flex max-w-[80%] flex-col gap-1 rounded-2xl px-3.5 py-2.5 text-body-sm lg:max-w-[560px] lg:gap-1.5 lg:px-4 lg:py-3 lg:text-body ${
           outgoing
             ? "rounded-br-md bg-action text-on-action"
             : "rounded-bl-md border border-line bg-surface text-ink"
         }`}
       >
-        {message.senderName && !outgoing && (
-          <span className="flex items-center gap-1 text-caption-strong text-action">
+        {message.senderName && !outgoing && showName && (
+          <span
+            className={`flex items-center gap-1 text-caption-strong ${senderColor(
+              message.senderId || message.senderName
+            )}`}
+          >
             {isTeacherSender && <Icon name="school" size={13} />}
             {message.senderName}
           </span>
