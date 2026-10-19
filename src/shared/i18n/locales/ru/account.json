@@ -184,6 +184,10 @@
     "certificatesDescription": "Sertifikatlaringiz profilingizda ko‘rinadi va o‘quvchilar ishonchini oshiradi. PDF yoki rasm, 10 MB gacha.",
     "certificatesUploaded": "YUKLANGAN · {{count}}",
     "uploadCertificate": "Sertifikat yuklash",
-    "noCertificates": "Hali sertifikat yuklanmagan."
+    "noCertificates": "Hali sertifikat yuklanmagan.",
+    "passwordChanged": "Пароль обновлён",
+    "passwordMismatch": "Новые пароли не совпадают",
+    "sessionClosed": "Устройство отключено",
+    "otherSessionsClosed": "Отключено устройств: {{count}}"
   }
 }

@@ -80,14 +80,17 @@ export const courseApi = {
   async createStudent(courseId: string, dto: CreateChildRequestDto): Promise<Enrollment> {
     let created: { id?: string | number } | null;
     try {
-      created = await apiClient.post<{ id?: string | number } | null>(authEndpoints.children, dto);
+      created = await apiClient.post<{ id?: string | number } | null>(authEndpoints.children, {
+        ...dto,
+        course_id: dto.course_id ?? courseId,
+      });
     } catch (error) {
       if (error instanceof AppError && error.status === 403) {
         throw new AppError({
           code: API_ERROR_CODES.FORBIDDEN,
           status: 403,
           message:
-            "O‘quvchi hisobini hozircha faqat ota-ona yarata oladi — serverda o‘qituvchiga ruxsat ochilmagan. Mavjud o‘quvchini «Qidirish» orqali qo‘shing.",
+            "O‘quvchi hisobini yaratish uchun administrator o‘qituvchi hisobingizni tasdiqlashi kerak.",
           originalError: error,
         });
       }
@@ -95,6 +98,25 @@ export const courseApi = {
     }
 
     let studentId = created && created.id != null ? String(created.id) : null;
+    if (studentId) {
+      const enrolled = await this.searchStudents(courseId, dto.username);
+      const match = enrolled.find((item) => item.username === dto.username);
+      if (match?.enrollStatus === "approved") {
+        return {
+          id: studentId,
+          courseId,
+          courseTitle: "",
+          student: {
+            id: studentId,
+            username: dto.username,
+            name: `${dto.first_name} ${dto.last_name}`.trim(),
+            avatarTone: "violet",
+          } as Enrollment["student"],
+          status: "approved",
+          createdAt: new Date().toISOString(),
+        };
+      }
+    }
     if (!studentId) {
       const found = await this.searchStudents(courseId, dto.username);
       studentId = found.find((item) => item.username === dto.username)?.id ?? null;

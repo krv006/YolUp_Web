@@ -14,7 +14,11 @@ export { useNewConversationStore } from "./model/new-conversation.store";
 export { useConversationPrefsStore } from "./model/conversation-prefs.store";
 export {
   readCachedConversation,
+  useAnnouncementMode,
   useConversations,
+  useLeaveConversation,
+  useMuteConversation,
+  usePinConversation,
   useTeachersForDirect,
   useRequestDirect,
   useRespondDirect,

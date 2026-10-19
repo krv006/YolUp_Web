@@ -18,5 +18,4 @@ export { MessageText } from "./ui/message-text";
 export { TypingIndicator } from "./ui/typing-indicator";
 export { PinnedMessageBar } from "./ui/pinned-message-bar";
 export { VoiceMessage } from "./ui/voice-message";
-export { useAnnouncementMode, useChatUiStore, usePinnedMessage } from "./model/chat-ui.store";
-export type { PinnedMessage } from "./model/chat-ui.store";
+export { useChatUiStore } from "./model/chat-ui.store";

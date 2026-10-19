@@ -29,6 +29,8 @@ export function mapCourseDto(dto: CourseDto): Course {
     isLanguageSubject: Boolean(dto.is_language_subject),
     createdAt: dto.created_at ?? null,
     color: toneFor(dto.id),
+    lessonsPerWeek: dto.lessons_per_week ?? null,
+    monthlyFee: dto.monthly_fee ?? null,
   };
 }
 
@@ -68,5 +70,7 @@ export function mapCourseRequest(form: CourseFormInput): CourseRequestDto {
     title: form.name ?? form.title ?? "",
     subject: form.subject ?? "",
     description: form.description ?? "",
+    ...(form.lessonsPerWeek != null ? { lessons_per_week: form.lessonsPerWeek } : {}),
+    ...(form.monthlyFee != null ? { monthly_fee: form.monthlyFee } : {}),
   };
 }

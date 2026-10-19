@@ -65,7 +65,7 @@ export function mapUserDto(dto: unknown): AuthUser {
     phone: parsed.phone ?? null,
     inviteCode: parsed.invite_code ?? null,
     avatarUrl: normalizeMediaUrl(parsed.avatar),
-    email: null,
+    email: parsed.email ?? null,
     status: "online",
     avgRating: parsed.avg_rating ?? null,
     ratingCount: parsed.rating_count ?? null,
@@ -74,6 +74,14 @@ export function mapUserDto(dto: unknown): AuthUser {
     preferredLanguage: parsed.preferred_language,
     lessonReminderMinutes: parsed.lesson_reminder_minutes ?? null,
     linkedAccounts: parsed.linked_accounts.map(mapLinkedAccountDto),
+    middleName: parsed.middle_name ?? null,
+    birthDate: parsed.birth_date ?? null,
+    subject: parsed.subject ?? null,
+    city: parsed.city ?? null,
+    bio: parsed.bio ?? null,
+    experienceYears: parsed.experience_years ?? null,
+    parentPhone: parsed.parent_phone ?? null,
+    passwordChangedAt: parsed.password_changed_at ?? null,
   };
 }
 

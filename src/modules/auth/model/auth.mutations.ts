@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { AuthUser } from "@/shared/types";
 import { authApi } from "../api/auth.api";
@@ -42,10 +42,53 @@ export function useUpdateProfileMutation() {
           last_name: values.lastName.trim(),
           phone: values.phone?.trim() || "",
           ...(username ? { username } : {}),
-        })
+          ...(values.middleName !== undefined ? { middle_name: values.middleName.trim() } : {}),
+          ...(values.birthDate !== undefined ? { birth_date: values.birthDate || null } : {}),
+          ...(values.email !== undefined ? { email: values.email.trim() } : {}),
+          ...(values.subject !== undefined ? { subject: values.subject } : {}),
+          ...(values.city !== undefined ? { city: values.city.trim() } : {}),
+          ...(values.bio !== undefined ? { bio: values.bio.trim() } : {}),
+          ...(values.experienceYears !== undefined
+            ? { experience_years: values.experienceYears }
+            : {}),
+        } as Record<string, unknown>)
       );
     },
     onSuccess: (user) => useAuthStore.getState().setUser(user),
+  });
+}
+
+export function useChangePasswordMutation() {
+  return useMutation({
+    mutationFn: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string;
+      newPassword: string;
+    }) => authApi.changePassword(currentPassword, newPassword),
+  });
+}
+
+export function useRevokeSessionMutation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => authApi.revokeSession(id),
+    onSuccess: () => client.invalidateQueries({ queryKey: ["auth", "sessions"] }),
+  });
+}
+
+export function useLogoutOtherSessionsMutation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: () => authApi.logoutOtherSessions(),
+    onSuccess: () => client.invalidateQueries({ queryKey: ["auth", "sessions"] }),
+  });
+}
+
+export function useDeleteAccountMutation() {
+  return useMutation({
+    mutationFn: (password?: string) => authApi.deleteAccount(password),
   });
 }
 

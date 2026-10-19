@@ -36,6 +36,15 @@ export const userDtoSchema = z.object({
   preferred_language: z.string().default("uz"),
   lesson_reminder_minutes: z.number().nullable().optional(),
   linked_accounts: z.array(linkedAccountDtoSchema).optional().default([]),
+  middle_name: z.string().nullable().optional(),
+  birth_date: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  subject: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  bio: z.string().nullable().optional(),
+  experience_years: z.number().nullable().optional(),
+  parent_phone: z.string().nullable().optional(),
+  password_changed_at: z.string().nullable().optional(),
 });
 
 export const loginRecordDtoSchema = z.object({
@@ -101,6 +110,8 @@ export interface CreateChildRequestDto {
   password: string;
   first_name: string;
   last_name: string;
+  parent_phone?: string;
+  course_id?: string;
 }
 
 export interface ConsentRequestDto {
@@ -130,4 +141,11 @@ export interface ProfileFormValues {
   lastName: string;
   phone?: string;
   username?: string;
+  middleName?: string;
+  birthDate?: string;
+  email?: string;
+  subject?: string;
+  city?: string;
+  bio?: string;
+  experienceYears?: number | null;
 }

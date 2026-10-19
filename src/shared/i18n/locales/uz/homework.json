@@ -221,5 +221,9 @@
     "deleteTitle": "Vazifani o‘chirasizmi?",
     "deleteDescription": "Vazifa va unga topshirilgan ishlar o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
     "cancel": "Bekor qilish"
+  },
+  "messageCard": {
+    "submitted": "{{done}} / {{total}} topshirdi",
+    "review": "Ishlarni ko‘rish"
   }
 }

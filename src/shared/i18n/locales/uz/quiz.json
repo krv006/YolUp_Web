@@ -172,7 +172,8 @@
     "download": "Yuklab olish",
     "csvName": "Ism",
     "csvDate": "Sana",
-    "csvScore": "Ball"
+    "csvScore": "Ball",
+    "exportFailed": "Faylni yuklab bo‘lmadi"
   },
   "types": {
     "single": "Bitta to'g'ri javob",

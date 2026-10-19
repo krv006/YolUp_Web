@@ -23,6 +23,41 @@ export function readCachedConversation(
   return page?.items.find((item) => item.id === id);
 }
 
+export function usePinConversation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ roomId, pinned }: { roomId: string; pinned: boolean }) =>
+      conversationApi.setPinned(roomId, pinned),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
+export function useMuteConversation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ roomId, muted }: { roomId: string; muted: boolean }) =>
+      conversationApi.setMuted(roomId, muted),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
+export function useAnnouncementMode() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ roomId, enabled }: { roomId: string; enabled: boolean }) =>
+      conversationApi.setAnnouncementOnly(roomId, enabled),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
+export function useLeaveConversation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (roomId: string) => conversationApi.leave(roomId),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
 export function useTeachersForDirect(enabled = true) {
   return useQuery({
     queryKey: ["conversations", "teachers"],

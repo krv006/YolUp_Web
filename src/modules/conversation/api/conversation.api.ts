@@ -46,6 +46,32 @@ export const conversationApi = {
       await apiClient.post<ChatRoomDto>(conversationEndpoints.directRequest, { teacher })
     );
   },
+  async setPinned(roomId: string, pinned: boolean): Promise<Conversation> {
+    const url = conversationEndpoints.pinRoom(roomId);
+    return mapConversationDto(
+      pinned
+        ? await apiClient.post<ChatRoomDto>(url, {})
+        : await apiClient.delete<ChatRoomDto>(url)
+    );
+  },
+  async setMuted(roomId: string, muted: boolean, until: string | null = null): Promise<Conversation> {
+    const url = conversationEndpoints.mute(roomId);
+    return mapConversationDto(
+      muted
+        ? await apiClient.post<ChatRoomDto>(url, { until })
+        : await apiClient.delete<ChatRoomDto>(url)
+    );
+  },
+  async setAnnouncementOnly(roomId: string, announcementOnly: boolean): Promise<Conversation> {
+    return mapConversationDto(
+      await apiClient.patch<ChatRoomDto>(conversationEndpoints.detail(roomId), {
+        announcement_only: announcementOnly,
+      })
+    );
+  },
+  async leave(roomId: string): Promise<void> {
+    await apiClient.delete(conversationEndpoints.leave(roomId));
+  },
   async respondDirect(roomId: string, action: DirectAction) {
     return mapConversationDto(
       await apiClient.post<ChatRoomDto>(conversationEndpoints.directRespond, { room_id: roomId, action })

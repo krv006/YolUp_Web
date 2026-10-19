@@ -40,6 +40,47 @@ export const authApi = {
   updateCurrentUser(dto: Partial<RegisterRequestDto>) {
     return apiClient.patch<AuthUserDto>(authEndpoints.me, dto);
   },
+  changePassword(currentPassword: string, newPassword: string) {
+    return apiClient.post<{ password_changed_at?: string | null }>(authEndpoints.passwordChange, {
+      current_password: currentPassword,
+      new_password: newPassword,
+    });
+  },
+  getMyStats() {
+    return apiClient.get<{ groups?: number; students?: number; experience_years?: number }>(
+      authEndpoints.meStats
+    );
+  },
+  async getSessions() {
+    const items = await apiClient.get<
+      Array<{
+        id: string | number;
+        device?: string;
+        ip?: string;
+        city?: string | null;
+        last_active?: string;
+        is_current?: boolean;
+      }>
+    >(authEndpoints.sessions);
+    return (items ?? []).map((item) => ({
+      id: String(item.id),
+      device: item.device ?? "",
+      ip: item.ip ?? "",
+      city: item.city ?? null,
+      lastActive: item.last_active ?? "",
+      isCurrent: Boolean(item.is_current),
+    }));
+  },
+  revokeSession(id: string) {
+    return apiClient.delete(authEndpoints.session(id));
+  },
+  async logoutOtherSessions() {
+    const response = await apiClient.post<{ revoked?: number }>(authEndpoints.logoutOthers, {});
+    return response?.revoked ?? 0;
+  },
+  deleteAccount(password?: string) {
+    return apiClient.delete(authEndpoints.me, password ? { body: { password } } : undefined);
+  },
   updateLanguage(language: string) {
     return apiClient.patch<AuthUserDto>(authEndpoints.me, { preferred_language: language });
   },

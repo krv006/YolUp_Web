@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
 import { formatDayTime } from "@/shared/lib";
-import { useAttendance } from "@/modules/attendance";
+import { useAttendance, useAttendanceSummary } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -57,6 +57,7 @@ import {
   useUpdateQuiz,
 } from "@/modules/quiz";
 import { ChatHeader } from "@/modules/conversation";
+import { ForwardDialog } from "@/widgets/forward-dialog";
 import { VoiceRoomBar } from "@/modules/voice";
 import { MessageComposer, MessageList } from "@/modules/message";
 import type {
@@ -95,6 +96,7 @@ function useTabs(): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
 
 export interface GroupWorkspaceProps {
   conversation: Conversation;
+  chat: ChatController;
   messages: ChatController["messages"];
   sendMessage: ChatController["sendMessage"];
   sendTyping: () => void;
@@ -103,6 +105,7 @@ export interface GroupWorkspaceProps {
 
 export function GroupWorkspace({
   conversation,
+  chat,
   messages,
   sendMessage,
   sendTyping,
@@ -113,6 +116,8 @@ export function GroupWorkspace({
   const { user } = useAuth();
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
+  const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
+  const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
   const courseId = conversation.courseId;
 
   const tabParam = params.get("tab") as TabId | null;
@@ -128,8 +133,17 @@ export function GroupWorkspace({
 
   async function send(payload: SendMessagePayload) {
     try {
+      if (editingMessageTarget) {
+        await chat.updateMessage.mutateAsync({
+          messageId: editingMessageTarget.id,
+          text: payload.text,
+        });
+        setEditingMessageTarget(null);
+        return;
+      }
       await sendMessage.mutateAsync({
         ...payload,
+        replyToId: reply?.id ?? null,
         replyTo: reply ? { author: reply.senderName || t("replyFallback"), text: reply.text } : undefined,
       });
       setReply(null);
@@ -195,11 +209,21 @@ export function GroupWorkspace({
               onRetryMessage={retryMessage}
               currentUserId={user?.id}
               onReply={setReply}
-              onEdit={() => undefined}
-              onDelete={() => undefined}
-              onReact={() => undefined}
-              capabilities={{ reply: true, edit: false, delete: false, react: false }}
-              assignments={assignments.data}
+              onEdit={setEditingMessageTarget}
+              onDelete={(message, scope) =>
+                chat.deleteMessage.mutate({ messageId: message.id, scope })
+              }
+              onReact={(message, emoji) =>
+                chat.toggleReaction.mutate({ messageId: message.id, emoji })
+              }
+              pinnedIds={(chat.pinnedMessages.data ?? []).map((item) => item.messageId)}
+              onPin={(message, pinned) =>
+                chat.pinMessage.mutate({ messageId: message.id, pinned })
+              }
+              onForward={(items) => setForwardTarget(items)}
+              onBulkDelete={(messageIds, scope) =>
+                chat.deleteMessages.mutate({ messageIds, scope })
+              }
             />
           ) : null}
           {activeTab === "lessons" ? (
@@ -208,13 +232,13 @@ export function GroupWorkspace({
           {activeTab === "assignments" ? (
             <AssignmentsPanel
               courseId={courseId}
-              assignments={assignments.data}
               loading={assignments.isLoading}
               isLanguageSubject={Boolean(course.data?.isLanguageSubject)}
             />
           ) : null}
           {activeTab === "attendance" ? (
             <AttendancePanel
+              courseId={courseId}
               lessons={lessons.data}
               rows={attendance.data}
               loading={attendance.isLoading}
@@ -225,15 +249,34 @@ export function GroupWorkspace({
 
       {activeTab === "chat" ? (
         <MessageComposer
+          key={editingMessageTarget?.id ?? "compose"}
           onSend={send}
           onTyping={sendTyping}
-          sending={sendMessage.isPending}
+          sending={sendMessage.isPending || chat.updateMessage.isPending}
           replyTo={reply}
-          onCancelContext={() => setReply(null)}
+          editingMessage={editingMessageTarget}
+          onCancelContext={() => {
+            setReply(null);
+            setEditingMessageTarget(null);
+          }}
           currentUserId={user?.id}
-          courseId={conversation.courseId}
+          roomId={conversation.id}
         />
       ) : null}
+
+      <ForwardDialog
+        open={forwardTarget.length > 0}
+        onOpenChange={(open) => !open && setForwardTarget([])}
+        messages={forwardTarget}
+        role="teacher"
+        pending={chat.forwardMessages.isPending}
+        onConfirm={(roomIds) =>
+          chat.forwardMessages.mutate(
+            { messageIds: forwardTarget.map((item) => item.id), roomIds },
+            { onSuccess: () => setForwardTarget([]) }
+          )
+        }
+      />
     </section>
   );
 }
@@ -829,14 +872,19 @@ function AssignmentsPanel({
 }
 
 interface AttendancePanelProps {
+  courseId: string | null;
   lessons?: Lesson[];
   rows?: AttendanceRow[];
   loading: boolean;
 }
 
-function AttendancePanel({ lessons = [], rows = [], loading }: AttendancePanelProps) {
+function AttendancePanel({ courseId, lessons = [], rows = [], loading }: AttendancePanelProps) {
   const { t } = useTranslation("group");
   const [range, setRange] = useState<"all" | "month" | "current">("all");
+  const summary = useAttendanceSummary(
+    courseId,
+    range === "month" ? "30d" : range === "current" ? "month" : "all"
+  );
 
   const lessonDates = useMemo(
     () => new Map(lessons.map((lesson) => [lesson.id, new Date(lesson.startsAt)])),
@@ -858,9 +906,10 @@ function AttendancePanel({ lessons = [], rows = [], loading }: AttendancePanelPr
     });
   }, [rows, lessons, lessonDates, range]);
 
-  const lessonCount = new Set(filtered.map((row) => row.lessonId)).size;
+  const computedLessonCount = new Set(filtered.map((row) => row.lessonId)).size;
+  const lessonCount = summary.data?.lessonCount ?? computedLessonCount;
 
-  const students = useMemo(() => {
+  const computedStudents = useMemo(() => {
     const map = new Map<
       string,
       { name: string; tone?: string; lessons: Set<string>; answered: number; total: number }
@@ -887,15 +936,33 @@ function AttendancePanel({ lessons = [], rows = [], loading }: AttendancePanelPr
         focus: value.total ? Math.round((value.answered / value.total) * 100) : null,
       }))
       .sort((a, b) => b.attendance - a.attendance);
-  }, [filtered, lessonCount]);
+  }, [filtered, computedLessonCount]);
 
-  const avgAttendance = students.length
-    ? Math.round(students.reduce((sum, item) => sum + item.attendance, 0) / students.length)
-    : 0;
-  const focusValues = students.map((item) => item.focus).filter((value): value is number => value !== null);
-  const avgFocus = focusValues.length
-    ? Math.round(focusValues.reduce((sum, value) => sum + value, 0) / focusValues.length)
-    : 0;
+  const students = summary.data?.students.length
+    ? summary.data.students
+        .map((item) => ({
+          id: item.id,
+          name: item.name,
+          tone: undefined as string | undefined,
+          attendance: item.attendancePercent,
+          focus: item.focusPercent,
+        }))
+        .sort((a, b) => b.attendance - a.attendance)
+    : computedStudents;
+
+  const avgAttendance =
+    summary.data?.attendancePercent ??
+    (students.length
+      ? Math.round(students.reduce((sum, item) => sum + item.attendance, 0) / students.length)
+      : 0);
+  const focusValues = students
+    .map((item) => item.focus)
+    .filter((value): value is number => value !== null);
+  const avgFocus =
+    summary.data?.focusPercent ??
+    (focusValues.length
+      ? Math.round(focusValues.reduce((sum, value) => sum + value, 0) / focusValues.length)
+      : 0);
 
   if (loading)
     return (

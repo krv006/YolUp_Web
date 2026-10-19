@@ -47,7 +47,14 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!group.name.trim() || !group.subject.trim()) return;
-    create.mutate({ name: group.name, subject: group.subject, description: "" });
+    const fee = Number(group.fee.replace(/\s/g, ""));
+    create.mutate({
+      name: group.name,
+      subject: group.subject,
+      description: "",
+      lessonsPerWeek: group.lessonsPerWeek ? Number(group.lessonsPerWeek) : null,
+      monthlyFee: Number.isFinite(fee) && fee > 0 ? fee : null,
+    });
   }
 
   return (

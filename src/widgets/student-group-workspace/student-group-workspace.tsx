@@ -17,9 +17,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { ChatHeader } from "@/modules/conversation";
+import { ForwardDialog } from "@/widgets/forward-dialog";
 import { VoiceRoomBar } from "@/modules/voice";
 import { useCourse } from "@/modules/course";
-import { MessageComposer, MessageList, useAnnouncementMode } from "@/modules/message";
+import { MessageComposer, MessageList } from "@/modules/message";
 import { Icon } from "@/shared/ui/icon";
 import {
   HomeworkResultDialog,
@@ -74,6 +75,7 @@ function isAssignmentOverdue(assignment: Assignment): boolean {
 
 export interface StudentGroupWorkspaceProps {
   conversation: Conversation;
+  chat: ChatController;
   messages: ChatController["messages"];
   sendMessage: ChatController["sendMessage"];
   sendTyping: () => void;
@@ -83,6 +85,7 @@ export interface StudentGroupWorkspaceProps {
 
 export function StudentGroupWorkspace({
   conversation,
+  chat,
   messages,
   sendMessage,
   sendTyping,
@@ -91,10 +94,12 @@ export function StudentGroupWorkspace({
 }: StudentGroupWorkspaceProps) {
   const { t } = useTranslation("student");
   const chatT = useTranslation("chat").t;
-  const announcementMode = useAnnouncementMode(conversation.id);
+  const announcementMode = Boolean(conversation.announcementOnly);
   const TABS = useTabs();
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
+  const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
+  const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
   const courseId = conversation.courseId;
 
   const tabParam = params.get("tab") as TabId | null;
@@ -117,8 +122,17 @@ export function StudentGroupWorkspace({
 
   async function send(payload: SendMessagePayload) {
     try {
+      if (editingMessageTarget) {
+        await chat.updateMessage.mutateAsync({
+          messageId: editingMessageTarget.id,
+          text: payload.text,
+        });
+        setEditingMessageTarget(null);
+        return;
+      }
       await sendMessage.mutateAsync({
         ...payload,
+        replyToId: reply?.id ?? null,
         replyTo: reply ? { author: reply.senderName || t("groupWorkspace.replyFallback"), text: reply.text } : undefined,
       });
       setReply(null);
@@ -168,11 +182,21 @@ export function StudentGroupWorkspace({
               onRetryMessage={retryMessage}
               currentUserId={currentUserId}
               onReply={setReply}
-              onEdit={() => undefined}
-              onDelete={() => undefined}
-              onReact={() => undefined}
-              capabilities={{ reply: true, edit: false, delete: false, react: false }}
-              assignments={assignments.data}
+              onEdit={setEditingMessageTarget}
+              onDelete={(message, scope) =>
+                chat.deleteMessage.mutate({ messageId: message.id, scope })
+              }
+              onReact={(message, emoji) =>
+                chat.toggleReaction.mutate({ messageId: message.id, emoji })
+              }
+              pinnedIds={(chat.pinnedMessages.data ?? []).map((item) => item.messageId)}
+              onPin={(message, pinned) =>
+                chat.pinMessage.mutate({ messageId: message.id, pinned })
+              }
+              onForward={(items) => setForwardTarget(items)}
+              onBulkDelete={(messageIds, scope) =>
+                chat.deleteMessages.mutate({ messageIds, scope })
+              }
             />
           ) : null}
           {active === "lessons" ? (
@@ -184,7 +208,6 @@ export function StudentGroupWorkspace({
           ) : null}
           {active === "assignments" ? (
             <StudentAssignments
-              assignments={assignments.data}
               loading={assignments.isLoading}
               quizzes={(quizzes.data ?? []).filter((quiz) => quiz.courseId === courseId)}
             />
@@ -203,15 +226,34 @@ export function StudentGroupWorkspace({
 
       {active === "chat" && !announcementMode ? (
         <MessageComposer
+          key={editingMessageTarget?.id ?? "compose"}
           onSend={send}
           onTyping={sendTyping}
-          sending={sendMessage.isPending}
+          sending={sendMessage.isPending || chat.updateMessage.isPending}
           replyTo={reply}
+          editingMessage={editingMessageTarget}
           currentUserId={currentUserId}
-          onCancelContext={() => setReply(null)}
-          courseId={conversation.courseId}
+          onCancelContext={() => {
+            setReply(null);
+            setEditingMessageTarget(null);
+          }}
+          roomId={conversation.id}
         />
       ) : null}
+
+      <ForwardDialog
+        open={forwardTarget.length > 0}
+        onOpenChange={(open) => !open && setForwardTarget([])}
+        messages={forwardTarget}
+        role="student"
+        pending={chat.forwardMessages.isPending}
+        onConfirm={(roomIds) =>
+          chat.forwardMessages.mutate(
+            { messageIds: forwardTarget.map((item) => item.id), roomIds },
+            { onSuccess: () => setForwardTarget([]) }
+          )
+        }
+      />
     </section>
   );
 }

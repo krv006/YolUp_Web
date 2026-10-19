@@ -94,7 +94,7 @@ export function NotificationInboxPanel({
           <button
             className="text-label-strong text-action transition-opacity hover:opacity-80 disabled:opacity-50"
             disabled={markAllRead.isPending}
-            onClick={() => markAllRead.mutate(unread.map((item) => item.notificationId))}
+            onClick={() => markAllRead.mutate()}
           >
             {t("markAllRead")}
           </button>

@@ -19,6 +19,8 @@ export {
   useApproveTeacher,
   useLoginHistory,
   useMyRatings,
+  useMyStats,
+  useSessions,
   usePendingTeachers,
   useTeacherRatings,
   useTeacherStats,
@@ -30,6 +32,10 @@ export { describeUserAgent } from "./lib/describe-user-agent";
 export { useAuth, useCurrentUser, useIsAuthenticated } from "./model/use-auth";
 export { createLoginSchema, createRegisterSchema } from "./model/auth.schemas";
 export {
+  useChangePasswordMutation,
+  useDeleteAccountMutation,
+  useLogoutOtherSessionsMutation,
+  useRevokeSessionMutation,
   useRegisterMutation,
   useSwitchAccountMutation,
   useSwitchRoleMutation,

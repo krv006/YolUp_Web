@@ -1,5 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { quizApi } from "../api/quiz.api";
+import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
 import { Avatar } from "@/shared/ui/legacy";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -61,22 +63,19 @@ export function QuizAttemptsDialog({
       .filter((student) => !attempted.has(student.id));
   }, [rows, students.data]);
 
-  function download() {
-    const header = [t("attemptsDialog.csvName"), t("attemptsDialog.csvDate"), t("attemptsDialog.csvScore")];
-    const lines = rows.map((row) => [
-      row.studentName,
-      formatMoment(row.createdAt),
-      `${row.score}/${row.maxScore}`,
-    ]);
-    const csv = [header, ...lines]
-      .map((cells) => cells.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
-      .join("\n");
-    const url = URL.createObjectURL(new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8" }));
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${title ?? "quiz"}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+  async function download() {
+    if (!quizId) return;
+    try {
+      const blob = await quizApi.exportAttempts(quizId, "xlsx");
+      const url = URL.createObjectURL(blob as Blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${title ?? "quiz"}.xlsx`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("attemptsDialog.exportFailed"));
+    }
   }
 
   return (

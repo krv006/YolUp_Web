@@ -3,8 +3,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AtSign, LoaderCircle, Mic } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useCourseStudents } from "@/modules/course";
+import { useQuery } from "@tanstack/react-query";
 import { useOnlineStatus } from "@/shared/model";
+import { messageApi } from "../api/message.api";
+import { messageKeys } from "../model/message.keys";
 import { Avatar, Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
@@ -18,7 +20,7 @@ export interface MessageComposerProps {
   currentUserId?: string | null;
   onTyping?: () => void;
   allowAttachments?: boolean;
-  courseId?: string | null;
+  roomId?: string | null;
 }
 
 const emojis = ["🔥", "💎", "🚀", "👑", "⚡", "🎯"];
@@ -33,8 +35,8 @@ export function MessageComposer({
   onCancelContext,
   currentUserId = null,
   onTyping,
-  allowAttachments = false,
-  courseId = null,
+  allowAttachments = true,
+  roomId = null,
 }: MessageComposerProps) {
   const { t } = useTranslation("chat");
   const [draft, setDraft] = useState(() => editingMessage?.text ?? "");
@@ -42,6 +44,7 @@ export function MessageComposer({
   const [recording, setRecording] = useState(false);
   const [seconds, setSeconds] = useState(0);
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const secondsRef = useRef(0);
   const chunksRef = useRef<Blob[]>([]);
   const cancelRef = useRef(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,18 +52,15 @@ export function MessageComposer({
   const [mention, setMention] = useState<{ query: string; start: number } | null>(null);
   const [activeMention, setActiveMention] = useState(0);
   const online = useOnlineStatus();
-  const members = useCourseStudents(courseId, { page_size: 100 }, Boolean(courseId) && Boolean(mention));
+  const members = useQuery({
+    queryKey: messageKeys.members(roomId ?? "", mention?.query ?? ""),
+    queryFn: ({ signal }) =>
+      messageApi.getMembers(roomId as string, mention?.query ?? "", { signal }),
+    enabled: Boolean(roomId) && Boolean(mention),
+  });
 
-  const suggestions = (() => {
-    if (!mention) return [];
-    const query = mention.query.toLowerCase();
-    return (members.data?.items ?? [])
-      .map((item) => item.student)
-      .filter((student) =>
-        query ? `${student.name} ${student.username}`.toLowerCase().includes(query) : true
-      )
-      .slice(0, 6);
-  })();
+  const suggestions = (members.data ?? []).slice(0, 6);
+  const [mentioned, setMentioned] = useState<Record<string, string>>({});
 
   function detectMention(value: string, caret: number) {
     const before = value.slice(0, caret);
@@ -79,8 +79,9 @@ export function MessageComposer({
     setMention({ query, start: at });
   }
 
-  function applyMention(username: string) {
+  function applyMention(username: string, userId?: string) {
     if (!mention) return;
+    if (userId) setMentioned((current) => ({ ...current, [username]: userId }));
     const element = textareaRef.current;
     const caret = element?.selectionStart ?? draft.length;
     const next = `${draft.slice(0, mention.start)}@${username} ${draft.slice(caret)}`;
@@ -106,25 +107,36 @@ export function MessageComposer({
 
   useEffect(() => {
     if (!recording) return undefined;
-    const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000);
+    const timer = window.setInterval(
+      () =>
+        setSeconds((value) => {
+          secondsRef.current = value + 1;
+          return value + 1;
+        }),
+      1000
+    );
     return () => window.clearInterval(timer);
   }, [recording]);
+
+  function activeMentions(text: string): string[] {
+    return Object.entries(mentioned)
+      .filter(([username]) => text.includes(`@${username}`))
+      .map(([, id]) => id);
+  }
 
   async function submit() {
     const text = draft.trim();
     if ((!text && !files.length) || sending) return;
+    const mentions = activeMentions(text);
     if (!files.length) {
-      await onSend({ text });
+      await onSend({ text, mentions, clientMessageId: crypto.randomUUID() });
     } else {
       for (const [index, file] of files.entries()) {
         await onSend({
           text: index === 0 ? text : "",
-          attachment: {
-            name: file.name,
-            size: formatFileSize(file.size),
-            mimeType: file.type,
-            url: URL.createObjectURL(file),
-          },
+          file,
+          mentions: index === 0 ? mentions : [],
+          clientMessageId: crypto.randomUUID(),
         });
       }
     }
@@ -158,10 +170,21 @@ export function MessageComposer({
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         if (cancelRef.current) return;
-        toast.info(t("actions.notAvailable"));
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        if (!blob.size) return;
+        const extension = (recorder.mimeType || "audio/webm").includes("mp4") ? "m4a" : "webm";
+        void onSend({
+          text: "",
+          clientMessageId: crypto.randomUUID(),
+          voice: {
+            file: new File([blob], `voice-${Date.now()}.${extension}`, { type: blob.type }),
+            durationMs: Math.max(1000, secondsRef.current * 1000),
+          },
+        });
       };
       recorderRef.current = recorder;
       recorder.start();
+      secondsRef.current = 0;
       setSeconds(0);
       setRecording(true);
     } catch {
@@ -191,7 +214,7 @@ export function MessageComposer({
       }
       if (event.key === "Enter" || event.key === "Tab") {
         event.preventDefault();
-        applyMention(suggestions[activeMention].username);
+        applyMention(suggestions[activeMention].username, suggestions[activeMention].id);
         return;
       }
       if (event.key === "Escape") {
@@ -243,9 +266,9 @@ export function MessageComposer({
                     index === activeMention ? "bg-subtle" : "hover:bg-subtle"
                   }`}
                   onMouseEnter={() => setActiveMention(index)}
-                  onClick={() => applyMention(student.username)}
+                  onClick={() => applyMention(student.username, student.id)}
                 >
-                  <Avatar name={student.name} tone={student.avatarTone} size="sm" />
+                  <Avatar name={student.name} src={student.avatarUrl ?? undefined} size="sm" />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <strong className="truncate text-label-strong text-ink">{student.name}</strong>
                     <small className="truncate text-caption text-ink-tertiary">

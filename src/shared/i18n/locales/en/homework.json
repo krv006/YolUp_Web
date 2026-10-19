@@ -221,5 +221,9 @@
     "deleteTitle": "Delete this assignment?",
     "deleteDescription": "The assignment and its submissions are deleted. This cannot be undone.",
     "cancel": "Cancel"
+  },
+  "messageCard": {
+    "submitted": "{{done}} / {{total}} submitted",
+    "review": "Review submissions"
   }
 }

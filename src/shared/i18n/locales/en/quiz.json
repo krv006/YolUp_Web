@@ -172,7 +172,8 @@
     "download": "Download",
     "csvName": "Name",
     "csvDate": "Date",
-    "csvScore": "Score"
+    "csvScore": "Score",
+    "exportFailed": "Could not download the file"
   },
   "types": {
     "single": "Single correct answer",

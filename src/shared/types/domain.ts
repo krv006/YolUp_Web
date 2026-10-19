@@ -1,3 +1,4 @@
+import type { MessageCapabilities } from "./chat";
 import type { TeacherStats } from "./auth";
 
 export type AvatarTone = "violet" | "blue" | "emerald" | "amber" | "rose";
@@ -47,6 +48,14 @@ export interface Conversation {
   avatarTone: string;
   memberCount: number;
   imageUrl: string | null;
+  isPinned?: boolean;
+  isMuted?: boolean;
+  hasUnreadMention?: boolean;
+  announcementOnly?: boolean;
+  onlineCount?: number;
+  firstUnreadMessageId?: string | null;
+  lastReadMessageId?: string | null;
+  pinnedMessages?: PinnedChatMessage[];
   subject?: string;
   subjectLabel?: string;
   description?: string;
@@ -60,6 +69,11 @@ export interface MessageReply {
 export interface SendMessagePayload {
   text: string;
   replyTo?: MessageReply;
+  replyToId?: string | null;
+  mentions?: string[];
+  clientMessageId?: string;
+  file?: File | null;
+  voice?: { file: File; durationMs: number; waveform?: number[] } | null;
   attachment?: unknown;
 }
 
@@ -73,6 +87,44 @@ export interface MessageAttachment {
   messageId: string;
   name: string;
   mimeType: string;
+  url?: string | null;
+  size?: number | null;
+  pageCount?: number | null;
+  durationMs?: number | null;
+  waveform?: number[];
+  kind?: "voice" | "image" | "file";
+}
+
+export interface MessageForwardSource {
+  messageId: string;
+  authorId: string;
+  authorName: string;
+  roomId: string;
+}
+
+export interface MessageAssignment {
+  id: string;
+  title: string;
+  dueAt: string | null;
+  submittedCount: number;
+  totalCount: number;
+}
+
+export interface PinnedChatMessage {
+  messageId: string;
+  authorName: string;
+  text: string;
+  messageType: string;
+  pinnedAt: string;
+}
+
+export interface ChatMember {
+  id: string;
+  name: string;
+  username: string;
+  role: string;
+  isOnline: boolean;
+  avatarUrl: string | null;
 }
 
 export interface ChatMessage {
@@ -93,6 +145,13 @@ export interface ChatMessage {
   retryPayload?: SendMessagePayload;
   attachment?: MessageAttachment;
   reactions?: MessageReaction[];
+  capabilities?: MessageCapabilities;
+  forwardedFrom?: MessageForwardSource | null;
+  assignment?: MessageAssignment | null;
+  mentions?: string[];
+  clientMessageId?: string | null;
+  replyToId?: string | null;
+  replyToDeleted?: boolean;
 }
 
 export interface Course {
@@ -111,6 +170,8 @@ export interface Course {
   isLanguageSubject: boolean;
   createdAt: string | null;
   color: string;
+  lessonsPerWeek: number | null;
+  monthlyFee: number | null;
 }
 
 export type EnrollmentStatus = "pending" | "approved" | "declined";

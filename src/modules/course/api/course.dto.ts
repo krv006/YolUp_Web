@@ -12,6 +12,8 @@ export interface CourseDto {
   is_active?: boolean;
   is_language_subject?: boolean;
   created_at?: string | null;
+  lessons_per_week?: number | null;
+  monthly_fee?: number | null;
 }
 
 export interface EnrollmentDto {
@@ -36,6 +38,8 @@ export interface CourseRequestDto {
   title: string;
   subject: string;
   description: string;
+  lessons_per_week?: number;
+  monthly_fee?: number;
 }
 
 export interface CourseFormInput {
@@ -43,6 +47,8 @@ export interface CourseFormInput {
   title?: string;
   subject?: string;
   description?: string;
+  lessonsPerWeek?: number | null;
+  monthlyFee?: number | null;
 }
 
 export interface EnrollPayload {
