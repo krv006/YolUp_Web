@@ -16,6 +16,10 @@ export interface ScheduleSidebarProps {
   onSelectDay: (date: Date) => void;
   onAttendance: (lesson: Lesson) => void;
   onMonthStep: (direction: 1 | -1) => void;
+  /** Oy ko'rinishida telefon uchun qisqa holat: hafta chizig'i va "hozir" kartasi yashiriladi. */
+  compact?: boolean;
+  /** Kun ko'rinishida telefon uchun "hozir" kartasi yashiriladi. */
+  hideUpcoming?: boolean;
 }
 
 export function ScheduleSidebar({
@@ -26,6 +30,8 @@ export function ScheduleSidebar({
   onSelectDay,
   onAttendance,
   onMonthStep,
+  compact = false,
+  hideUpcoming = false,
 }: ScheduleSidebarProps) {
   const { t } = useTranslation("lesson");
   const weekdays = t("list.weekdaysShort", { returnObjects: true }) as string[];
@@ -56,11 +62,60 @@ export function ScheduleSidebar({
     hoursByCourse.set(lesson.courseId, entry);
   }
   const groups = [...hoursByCourse.entries()];
+  const weekStart = addDays(anchor, -((anchor.getDay() + 6) % 7));
 
   return (
-    <aside className="flex w-full shrink-0 flex-col gap-5 overflow-y-auto border-line bg-surface p-4 lg:w-[320px] lg:border-r lg:p-5">
+    <aside className={`w-full shrink-0 flex-col gap-3 bg-canvas px-4 py-3 lg:flex lg:w-[320px] lg:gap-5 lg:overflow-y-auto lg:border-r lg:border-line lg:bg-surface lg:p-5 ${compact ? "hidden" : "flex"}`}>
+      <div
+        className={`flex-col gap-2 rounded-2xl border border-line bg-surface p-2 lg:hidden ${
+          compact ? "hidden" : "flex"
+        }`}
+      >
+        <div className="grid grid-cols-7">
+          {weekdays.map((label) => (
+            <span key={label} className="text-center text-caption text-ink-tertiary">
+              {label}
+            </span>
+          ))}
+        </div>
+        <div className="grid grid-cols-7">
+          {Array.from({ length: 7 }, (_, index) => {
+            const day = addDays(weekStart, index);
+            const selected = isSameDay(day, anchor);
+            const count = (byDay.get(toDayKey(day)) ?? []).length;
+            return (
+              <button
+                key={day.toISOString()}
+                type="button"
+                className="relative grid place-items-center py-1"
+                onClick={() => onSelectDay(day)}
+              >
+                <span
+                  className={`grid size-9 place-items-center rounded-full font-numeric text-body-sm ${
+                    selected
+                      ? "bg-action text-on-action"
+                      : isToday(day)
+                        ? "text-action"
+                        : "text-ink"
+                  }`}
+                >
+                  {day.getDate()}
+                </span>
+                {count && !selected ? (
+                  <span className="absolute bottom-0 size-1 rounded-full bg-action" />
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {upcoming ? (
-        <section className="flex flex-col gap-3 rounded-2xl bg-action-subtle p-4">
+        <section
+          className={`flex-col gap-3 rounded-2xl bg-action-subtle p-4 lg:flex ${
+            compact || hideUpcoming ? "hidden" : "flex"
+          }`}
+        >
           <small className="text-caption-strong text-action">
             {live
               ? t("schedule.liveNow")
@@ -86,7 +141,7 @@ export function ScheduleSidebar({
         </section>
       ) : null}
 
-      <section className="flex flex-col gap-3">
+      <section className="hidden flex-col gap-3 lg:flex">
         <div className="flex items-center gap-2">
           <strong className="flex-1 font-heading text-title text-ink">
             {months[anchor.getMonth()]} {anchor.getFullYear()}
@@ -149,7 +204,7 @@ export function ScheduleSidebar({
         </div>
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="hidden flex-col gap-3 lg:flex">
         <strong className="font-heading text-title text-ink">{t("schedule.myGroups")}</strong>
         {groups.length ? (
           groups.map(([id, group], index) => (

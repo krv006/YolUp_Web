@@ -222,10 +222,13 @@
     "list": "Список",
     "tomorrow": "Завтра",
     "dayOff": "Выходной",
-    "noLessonsDay": "В этот день уроков нет",
+    "noLessonsDay": "Нет уроков",
     "lessonCountShort": "{{count}}",
     "recurring": "Повторяющийся",
     "quizAttached": "Тест прикреплён",
-    "online": "Онлайн"
+    "online": "Онлайн",
+    "restOfWeek": "Оставшиеся дни недели",
+    "legendHasLesson": "Есть урок",
+    "legendWeekend": "Выходной"
   }
 }

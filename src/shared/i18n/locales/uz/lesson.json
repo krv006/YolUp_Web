@@ -222,10 +222,13 @@
     "list": "Ro‘yxat",
     "tomorrow": "Ertaga",
     "dayOff": "Dam olish",
-    "noLessonsDay": "Bu kunda dars yo‘q",
+    "noLessonsDay": "Dars yo‘q",
     "lessonCountShort": "{{count}} ta",
     "recurring": "Takrorlanuvchi",
     "quizAttached": "Test biriktirilgan",
-    "online": "Onlayn"
+    "online": "Onlayn",
+    "restOfWeek": "Haftaning qolgan kunlari",
+    "legendHasLesson": "Dars bor",
+    "legendWeekend": "Dam olish kuni"
   }
 }

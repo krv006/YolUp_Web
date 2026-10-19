@@ -222,10 +222,13 @@
     "list": "List",
     "tomorrow": "Tomorrow",
     "dayOff": "Day off",
-    "noLessonsDay": "No lessons on this day",
+    "noLessonsDay": "No lessons",
     "lessonCountShort": "{{count}}",
     "recurring": "Recurring",
     "quizAttached": "Quiz attached",
-    "online": "Online"
+    "online": "Online",
+    "restOfWeek": "Rest of the week",
+    "legendHasLesson": "Has a lesson",
+    "legendWeekend": "Day off"
   }
 }
