@@ -2,8 +2,15 @@ import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent 
 import { motion } from "framer-motion";
 import { BookOpen, ChevronDown, Download, FileUp, Link2, Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
+
+const HEADER_PRIMARY =
+  "flex h-11 shrink-0 items-center rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-50";
+const HEADER_SECONDARY =
+  "flex h-11 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50";
+const IMPORT_BUTTON =
+  "flex h-12 items-center justify-center gap-2 rounded-xl border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50";
 import type {
   QuizDetail,
   QuizEditValues,
@@ -351,252 +358,319 @@ export function AddQuizDialog({
 
   if (step === "questions") {
     return (
-      <div className="quiz-page">
-        <div className="quiz-page-header">
-          <div>
-            <span className="quiz-page-eyebrow">{title.trim() || topic.trim() || t("createDialog.title")}</span>
-            <h2>
+      <div className="fixed inset-0 z-50 flex flex-col bg-canvas">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-line bg-surface px-4 lg:h-[72px] lg:px-6">
+          <span className="flex min-w-0 flex-1 flex-col">
+            <strong className="truncate font-heading text-h3 text-ink">
               {questionsLocked
                 ? t("editDialog.lockedPageTitle")
                 : editing
                   ? t("editDialog.questionsPageTitle")
                   : t("createDialog.questionsPageTitle")}
-            </h2>
-          </div>
-          <div className="quiz-page-header-actions">
-            <Button type="button" variant="ghost" onClick={() => setStep("details")}>
-              {t("createDialog.backButton")}
-            </Button>
-            {editing ? null : (
-              <Button
-                type="submit"
-                form="quiz-questions-form"
-                variant="secondary"
-                loading={saving}
-                onClick={() => {
-                  saveAsDraftRef.current = true;
-                }}
-              >
-                {t("createDialog.saveDraft")}
-              </Button>
-            )}
-            <Button
+            </strong>
+            <small className="truncate text-caption text-ink-tertiary">
+              {[
+                title.trim() || topic.trim(),
+                isDraft ? t("teacherPage.draftBadge") : "",
+                t("teacherPage.questionCount", { count: questions.length }),
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </small>
+          </span>
+
+          <button
+            type="button"
+            className="hidden h-11 items-center rounded-full px-4 text-label-strong text-ink-secondary transition-colors hover:bg-subtle lg:flex"
+            onClick={() => setStep("details")}
+          >
+            {t("createDialog.backButton")}
+          </button>
+
+          {editing ? null : (
+            <button
               type="submit"
               form="quiz-questions-form"
-              variant={isDraft ? "secondary" : "primary"}
-              loading={saving}
-            >
-              {editing ? t("editDialog.save") : t("createDialog.create")}
-            </Button>
-            {isDraft ? (
-              <Button type="button" loading={publishing} onClick={onPublish}>
-                {t("editDialog.publish")}
-              </Button>
-            ) : null}
-            <button
-              type="button"
-              className="icon-button"
-              aria-label={t("createDialog.cancel")}
+              className={HEADER_SECONDARY}
+              disabled={saving}
               onClick={() => {
-                reset();
-                onOpenChange(false);
+                saveAsDraftRef.current = true;
               }}
             >
-              <X size={19} />
-            </button>
-          </div>
-        </div>
-
-        {error ? <div className="form-alert quiz-page-alert">{error}</div> : null}
-
-        {publishError ? <div className="form-alert quiz-page-alert">{publishError}</div> : null}
-
-        {isDraft ? (
-          <div className="form-alert form-alert--warning quiz-page-alert">{t("editDialog.draftNotice")}</div>
-        ) : null}
-
-        {importWarnings.length ? (
-          <div className="form-alert form-alert--warning quiz-page-alert">
-            {allAnswersMissing ? <p>{t("createDialog.importWarningAllAnswersMissing")}</p> : null}
-            {listedWarnings.map((warning) => (
-              <p key={`${warning.questionNumber}-${warning.reason}`}>
-                {t(`createDialog.importWarning.${warningKey(warning.reason)}`, {
-                  number: warning.questionNumber,
-                })}
-              </p>
-            ))}
-          </div>
-        ) : null}
-
-        {questionsLocked ? (
-          <div className="form-alert form-alert--warning quiz-page-alert">{t("editDialog.lockedNotice")}</div>
-        ) : null}
-
-        <div className={`quiz-page-split ${questionsLocked ? "is-locked" : ""}`}>
-          <form id="quiz-questions-form" className="quiz-page-body" onSubmit={submit}>
-          <QuestionGroupEditor
-            groups={groups}
-            savedGroups={editQuiz?.groups ?? []}
-            uploading={Boolean(uploadingAudio)}
-            onChange={setGroups}
-            onUploadAudio={onUploadAudio}
-            onRemoveAudio={onRemoveAudio}
-          />
-
-          {questionsLocked
-            ? null
-            : questions.map((question, index) => (
-                <QuestionEditor
-                  key={question.key}
-                  draft={question}
-                  groups={groups}
-                  index={index}
-                  canRemove={questions.length > 1}
-                  newKey={newKey}
-                  onChange={(update) => updateQuestion(question.key, update)}
-                  onRemove={() => removeQuestion(question.key)}
-                />
-              ))}
-          {questionsLocked ? null : (
-            <button type="button" className="quiz-page-add-question" onClick={addQuestion}>
-              <Plus size={16} /> {t("createDialog.addQuestion")}
+              {t("createDialog.saveDraft")}
             </button>
           )}
-          </form>
 
-          <QuizPreview title={title} questions={questions} />
+          <button
+            type="submit"
+            form="quiz-questions-form"
+            className={isDraft ? HEADER_SECONDARY : HEADER_PRIMARY}
+            disabled={saving}
+          >
+            {editing ? t("editDialog.save") : t("createDialog.create")}
+          </button>
+
+          {isDraft ? (
+            <button
+              type="button"
+              className={HEADER_PRIMARY}
+              disabled={publishing}
+              onClick={onPublish}
+            >
+              {t("editDialog.publish")}
+            </button>
+          ) : null}
+
+          <button
+            type="button"
+            className="grid size-11 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
+            aria-label={t("createDialog.cancel")}
+            onClick={() => {
+              reset();
+              onOpenChange(false);
+            }}
+          >
+            <X size={19} />
+          </button>
+        </header>
+
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex-row lg:gap-6 lg:p-6">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            {error ? (
+              <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">{error}</p>
+            ) : null}
+            {publishError ? (
+              <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
+                {publishError}
+              </p>
+            ) : null}
+            {isDraft ? (
+              <p className="flex items-start gap-2.5 rounded-xl bg-saffron-subtle px-4 py-3 text-body-sm text-ink">
+                <span className="text-saffron-strong">i</span>
+                {t("editDialog.draftNotice")}
+              </p>
+            ) : null}
+            {importWarnings.length ? (
+              <div className="flex flex-col gap-1 rounded-xl bg-saffron-subtle px-4 py-3 text-body-sm text-ink">
+                {allAnswersMissing ? <p>{t("createDialog.importWarningAllAnswersMissing")}</p> : null}
+                {listedWarnings.map((warning) => (
+                  <p key={`${warning.questionNumber}-${warning.reason}`}>
+                    {t(`createDialog.importWarning.${warningKey(warning.reason)}`, {
+                      number: warning.questionNumber,
+                    })}
+                  </p>
+                ))}
+              </div>
+            ) : null}
+            {questionsLocked ? (
+              <p className="rounded-xl bg-saffron-subtle px-4 py-3 text-body-sm text-ink">
+                {t("editDialog.lockedNotice")}
+              </p>
+            ) : null}
+
+            <form id="quiz-questions-form" className="flex flex-col gap-4" onSubmit={submit}>
+              <QuestionGroupEditor
+                groups={groups}
+                savedGroups={editQuiz?.groups ?? []}
+                uploading={Boolean(uploadingAudio)}
+                onChange={setGroups}
+                onUploadAudio={onUploadAudio}
+                onRemoveAudio={onRemoveAudio}
+              />
+
+              {questionsLocked
+                ? null
+                : questions.map((question, index) => (
+                    <QuestionEditor
+                      key={question.key}
+                      draft={question}
+                      groups={groups}
+                      index={index}
+                      canRemove={questions.length > 1}
+                      newKey={newKey}
+                      onChange={(update) => updateQuestion(question.key, update)}
+                      onRemove={() => removeQuestion(question.key)}
+                    />
+                  ))}
+
+              {questionsLocked ? null : (
+                <button
+                  type="button"
+                  className="flex h-12 items-center justify-center gap-2 rounded-xl border border-dashed border-line text-label-strong text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
+                  onClick={addQuestion}
+                >
+                  <Plus size={16} /> {t("createDialog.addQuestion")}
+                </button>
+              )}
+            </form>
+          </div>
+
+          <aside className="flex w-full shrink-0 flex-col gap-3 lg:w-[380px]">
+            <QuizPreview title={title} questions={questions} />
+          </aside>
         </div>
       </div>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="group-action-dialog"
-        title={editing ? t("editDialog.title") : t("createDialog.title")}
-        description={editing ? t("editDialog.description") : t("createDialog.description")}
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      width="lg:w-[560px]"
+      title={editing ? t("editDialog.title") : t("createDialog.title")}
+      description={editing ? t("editDialog.description") : t("createDialog.description")}
+      footer={
+        <>
+          <button
+            type="button"
+            className={dialogButton.secondary}
+            onClick={() => onOpenChange(false)}
+          >
+            {t("createDialog.cancel")}
+          </button>
+          <button type="button" className={dialogButton.primary} onClick={goToQuestions}>
+            {editing ? t("editDialog.continueButton") : t("createDialog.continueButton")}
+          </button>
+        </>
+      }
+    >
+      <motion.div
+        className="flex flex-col gap-4"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
       >
-        <motion.div
-          className="group-action-form"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {editing ? null : subjects ? (
-            <SelectPicker
-              label={t("createDialog.subjectLabel")}
-              icon={BookOpen}
-              searchable
-              value={subject}
-              onChange={(value) => {
-                setSubject(value);
-                setError(null);
-              }}
-              options={subjects.map((item) => ({ value: item.value, label: item.label }))}
-            />
-          ) : courses.length > 1 ? (
-            <SelectPicker
-              label={t("createDialog.courseLabel")}
-              icon={BookOpen}
-              value={courseId}
-              onChange={(value) => setSelectedCourseId(value)}
-              options={courses.map((course) => ({ value: course.id, label: course.title }))}
-            />
-          ) : null}
-          <label className="quiz-topic-field">
-            {t("createDialog.topicLabel")}
+        {editing ? null : subjects ? (
+          <SelectPicker
+            label={t("createDialog.subjectLabel")}
+            icon={BookOpen}
+            searchable
+            value={subject}
+            onChange={(value) => {
+              setSubject(value);
+              setError(null);
+            }}
+            options={subjects.map((item) => ({ value: item.value, label: item.label }))}
+          />
+        ) : courses.length > 1 ? (
+          <SelectPicker
+            label={t("createDialog.courseLabel")}
+            icon={BookOpen}
+            value={courseId}
+            onChange={(value) => setSelectedCourseId(value)}
+            options={courses.map((course) => ({ value: course.id, label: course.title }))}
+          />
+        ) : null}
+
+        <label className="field-group">
+          <span>{t("createDialog.topicLabel")}</span>
+          <input
+            value={topic}
+            onChange={(event) => {
+              setTopic(event.target.value);
+              setError(null);
+            }}
+            placeholder={t("createDialog.topicPlaceholder")}
+          />
+        </label>
+
+        <div className="field-group">
+          <span>{t("createDialog.titleLabel")}</span>
+          <div className="relative" ref={titleComboRef}>
             <input
-              value={topic}
+              autoFocus
+              className="h-12 w-full rounded-xl border border-line bg-canvas px-4 text-body text-ink outline-none"
+              value={title}
               onChange={(event) => {
-                setTopic(event.target.value);
-                setError(null);
+                setTitle(event.target.value);
+                setCopiedFrom(null);
+                setSuggestOpen(true);
               }}
-              placeholder={t("createDialog.topicPlaceholder")}
+              onClick={() => setSuggestOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape" && suggestOpen) {
+                  event.stopPropagation();
+                  setSuggestOpen(false);
+                }
+              }}
+              placeholder={t("createDialog.titlePlaceholder")}
+              role="combobox"
+              aria-expanded={suggestOpen && suggestions.length > 0}
+              aria-autocomplete="list"
             />
-          </label>
-          <div className="quiz-title-field">
-            <span className="quiz-title-field-label">{t("createDialog.titleLabel")}</span>
-            <div className="quiz-title-combo" ref={titleComboRef}>
-              <input
-                autoFocus
-                value={title}
-                onChange={(event) => {
-                  setTitle(event.target.value);
-                  setCopiedFrom(null);
-                  setSuggestOpen(true);
-                }}
-                onClick={() => setSuggestOpen(true)}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape" && suggestOpen) {
-                    event.stopPropagation();
-                    setSuggestOpen(false);
-                  }
-                }}
-                placeholder={t("createDialog.titlePlaceholder")}
-                role="combobox"
-                aria-expanded={suggestOpen && suggestions.length > 0}
-                aria-autocomplete="list"
-              />
-              {existingQuizzes.length ? (
-                <button
-                  type="button"
-                  className={`quiz-title-combo-toggle ${suggestOpen ? "is-open" : ""}`}
-                  aria-label={t("createDialog.existingTitlesAria")}
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => setSuggestOpen((current) => !current)}
-                >
-                  <ChevronDown size={16} />
-                </button>
-              ) : null}
-              {suggestOpen && suggestions.length ? (
-                <div className="quiz-title-suggest" role="listbox">
-                  <span className="quiz-title-suggest-head">{t("createDialog.existingTitlesLabel")}</span>
-                  {suggestions.map((quiz) => (
-                    <button
-                      key={quiz.id}
-                      type="button"
-                      role="option"
-                      aria-selected={quiz.title === title}
-                      disabled={copyingId !== null}
-                      onClick={() => void copyFromQuiz(quiz)}
-                    >
-                      {quiz.title}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-            {copyingId ? (
-              <small className="quiz-title-hint">{t("createDialog.copyLoading")}</small>
-            ) : copiedFrom ? (
-              <small className="quiz-title-hint is-done">
-                {t("createDialog.copyDone", { title: copiedFrom, count: questions.length })}
-              </small>
+            {existingQuizzes.length ? (
+              <button
+                type="button"
+                className="absolute top-1/2 right-3 grid size-7 -translate-y-1/2 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+                aria-label={t("createDialog.existingTitlesAria")}
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => setSuggestOpen((current) => !current)}
+              >
+                <ChevronDown size={16} className={suggestOpen ? "rotate-180" : ""} />
+              </button>
+            ) : null}
+            {suggestOpen && suggestions.length ? (
+              <div
+                className="absolute inset-x-0 top-full z-20 mt-1 flex max-h-[220px] flex-col overflow-y-auto rounded-xl border border-line bg-surface py-1 shadow-xl"
+                role="listbox"
+              >
+                <span className="px-4 py-1.5 text-caption-strong text-ink-tertiary">
+                  {t("createDialog.existingTitlesLabel")}
+                </span>
+                {suggestions.map((quiz) => (
+                  <button
+                    key={quiz.id}
+                    type="button"
+                    role="option"
+                    className="px-4 py-2 text-left text-body-sm text-ink transition-colors hover:bg-subtle"
+                    aria-selected={quiz.title === title}
+                    disabled={copyingId !== null}
+                    onClick={() => void copyFromQuiz(quiz)}
+                  >
+                    {quiz.title}
+                  </button>
+                ))}
+              </div>
             ) : null}
           </div>
-          {showSchedule ? (
-            <div className="form-grid-two">
-              <DatePicker
-                label={t("createDialog.dueLabel")}
-                value={dueAt}
-                onChange={setDueAt}
-                includeTime
-                optional
-              />
-              <DatePicker
-                label={t("createDialog.opensLabel")}
-                value={opensAt}
-                onChange={setOpensAt}
-                includeTime
-                optional
-              />
-            </div>
+          {copyingId ? (
+            <small className="px-1 text-caption text-ink-tertiary">
+              {t("createDialog.copyLoading")}
+            </small>
+          ) : copiedFrom ? (
+            <small className="px-1 text-caption text-success-text">
+              {t("createDialog.copyDone", { title: copiedFrom, count: questions.length })}
+            </small>
           ) : null}
+        </div>
 
-          {editing ? null : (
-            <>
-          <div className="quiz-import-row">
-            <span className="quiz-template-gen-or">{t("createDialog.importOr")}</span>
+        {showSchedule ? (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <DatePicker
+              label={t("createDialog.dueLabel")}
+              value={dueAt}
+              onChange={setDueAt}
+              includeTime
+              optional
+            />
+            <DatePicker
+              label={t("createDialog.opensLabel")}
+              value={opensAt}
+              onChange={setOpensAt}
+              includeTime
+              optional
+            />
+          </div>
+        ) : null}
+
+        {editing ? null : (
+          <>
+            <span className="flex items-center gap-3 text-caption text-ink-tertiary">
+              <span className="h-px flex-1 bg-line" />
+              {t("createDialog.importOr")}
+              <span className="h-px flex-1 bg-line" />
+            </span>
+
             <input
               ref={fileInputRef}
               type="file"
@@ -606,91 +680,91 @@ export function AddQuizDialog({
             />
             <button
               type="button"
-              className="quiz-generate-button quiz-generate-button--ghost"
+              className={IMPORT_BUTTON}
               disabled={importFile.isPending}
               onClick={() => fileInputRef.current?.click()}
             >
-              <FileUp size={14} />{" "}
-              {importFile.isPending ? t("createDialog.importButtonLoading") : t("createDialog.importButton")}
+              <FileUp size={17} />
+              {importFile.isPending
+                ? t("createDialog.importButtonLoading")
+                : t("createDialog.importButton")}
             </button>
             <button
               type="button"
-              className={`quiz-generate-button quiz-generate-button--ghost ${googleOpen ? "is-active" : ""}`}
+              className={`${IMPORT_BUTTON} ${googleOpen ? "border-action text-action" : ""}`}
               aria-expanded={googleOpen}
               onClick={() => {
                 setGoogleOpen((current) => !current);
-                            setError(null);
+                setError(null);
               }}
             >
-              <Link2 size={14} /> {t("createDialog.googleImportButton")}
+              <Link2 size={17} /> {t("createDialog.googleImportButton")}
             </button>
-          </div>
 
+            {googleOpen ? (
+              <div className="flex flex-col gap-2 rounded-xl border border-line bg-canvas p-3">
+                <input
+                  autoFocus
+                  className="h-11 w-full rounded-lg border border-line bg-surface px-3 text-body-sm text-ink outline-none"
+                  value={googleUrl}
+                  onChange={(event) => {
+                    setGoogleUrl(event.target.value);
+                    setError(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      handleImportGoogle();
+                    }
+                  }}
+                  placeholder={t("createDialog.googleLinkPlaceholder")}
+                />
+                <button
+                  type="button"
+                  className="flex h-11 items-center justify-center rounded-lg bg-action text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-50"
+                  disabled={importGoogle.isPending || !googleUrl.trim()}
+                  onClick={handleImportGoogle}
+                >
+                  {importGoogle.isPending
+                    ? t("createDialog.importButtonLoading")
+                    : t("createDialog.googleImportSubmit")}
+                </button>
+                <small className="text-caption text-ink-tertiary">
+                  {t("createDialog.googleShareHint")}
+                </small>
+              </div>
+            ) : null}
 
-          {googleOpen ? (
-            <div className="quiz-google-import">
-              <input
-                autoFocus
-                value={googleUrl}
-                onChange={(event) => {
-                  setGoogleUrl(event.target.value);
-                  setError(null);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    handleImportGoogle();
-                  }
-                }}
-                placeholder={t("createDialog.googleLinkPlaceholder")}
-              />
-              <button
-                type="button"
-                className="quiz-generate-button"
-                disabled={importGoogle.isPending || !googleUrl.trim()}
-                onClick={handleImportGoogle}
-              >
-                {importGoogle.isPending ? t("createDialog.importButtonLoading") : t("createDialog.googleImportSubmit")}
-              </button>
-              <small>{t("createDialog.googleShareHint")}</small>
+            <div className="flex flex-col gap-2 rounded-xl bg-subtle p-3">
+              <span className="text-caption text-ink-secondary">
+                {t("createDialog.downloadTemplateLabel")}
+              </span>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className={IMPORT_BUTTON}
+                  disabled={downloadTemplate.isPending}
+                  onClick={() => downloadTemplate.mutate({ type: "docx", count: TEMPLATE_QUESTION_COUNT })}
+                >
+                  <Download size={16} /> {t("createDialog.downloadTemplateWord")}
+                </button>
+                <button
+                  type="button"
+                  className={IMPORT_BUTTON}
+                  disabled={downloadTemplate.isPending}
+                  onClick={() => downloadTemplate.mutate({ type: "xlsx", count: TEMPLATE_QUESTION_COUNT })}
+                >
+                  <Download size={16} /> {t("createDialog.downloadTemplateExcel")}
+                </button>
+              </div>
             </div>
-          ) : null}
+          </>
+        )}
 
-          <div className="quiz-template-download">
-            <span className="quiz-template-download-label">{t("createDialog.downloadTemplateLabel")}</span>
-            <button
-              type="button"
-              className="quiz-generate-button quiz-generate-button--ghost"
-              disabled={downloadTemplate.isPending}
-              onClick={() => downloadTemplate.mutate({ type: "docx", count: TEMPLATE_QUESTION_COUNT })}
-            >
-              <Download size={14} /> {t("createDialog.downloadTemplateWord")}
-            </button>
-            <button
-              type="button"
-              className="quiz-generate-button quiz-generate-button--ghost"
-              disabled={downloadTemplate.isPending}
-              onClick={() => downloadTemplate.mutate({ type: "xlsx", count: TEMPLATE_QUESTION_COUNT })}
-            >
-              <Download size={14} /> {t("createDialog.downloadTemplateExcel")}
-            </button>
-          </div>
-
-            </>
-          )}
-
-          {error ? <div className="form-alert">{error}</div> : null}
-
-          <div className="dialog-actions">
-            <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-              {t("createDialog.cancel")}
-            </Button>
-            <Button type="button" onClick={goToQuestions}>
-              {editing ? t("editDialog.continueButton") : t("createDialog.continueButton")}
-            </Button>
-          </div>
-        </motion.div>
-      </DialogContent>
-    </Dialog>
+        {error ? (
+          <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">{error}</p>
+        ) : null}
+      </motion.div>
+    </AppDialog>
   );
 }

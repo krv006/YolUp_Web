@@ -7,6 +7,7 @@ import { useAuth } from "@/modules/auth";
 import { useNewConversationStore } from "@/modules/conversation";
 import { useScheduleStore } from "@/modules/lesson";
 import { useAssignmentCreateStore } from "@/widgets/homework-workspace";
+import { usePageCreateStore } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
 import { useConversations } from "@/modules/conversation";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
@@ -31,6 +32,10 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const { pathname } = useLocation();
   const assignments = pathname.endsWith("/assignments");
   const openAssignment = useAssignmentCreateStore((state) => state.setOpen);
+  const openPageCreate = usePageCreateStore((state) => state.setOpen);
+  const quizzes = pathname.endsWith("/quizzes");
+  const exams = pathname.endsWith("/exams");
+  const quizT = useTranslation("quiz").t;
   const lessonT = useTranslation("lesson").t;
   const view = useScheduleStore((state) => state.view);
   const anchor = useScheduleStore((state) => state.anchor);
@@ -44,6 +49,13 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   function rangeLabel(): string {
     const date = new Date(anchor);
     if (view === "month") return `${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
+    if (view === "list") {
+      const end = new Date(date);
+      end.setDate(date.getDate() + 6);
+      return date.getMonth() === end.getMonth()
+        ? `${date.getDate()} – ${end.getDate()} ${monthsLong[date.getMonth()]}, ${date.getFullYear()}`
+        : `${date.getDate()} ${months[date.getMonth()]} – ${end.getDate()} ${months[end.getMonth()]}, ${end.getFullYear()}`;
+    }
     if (view === "day")
       return `${date.getDate()} ${monthsLong[date.getMonth()]}, ${date.getFullYear()}`;
     const start = new Date(date);
@@ -155,7 +167,7 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
           </span>
 
           <span className="ml-auto flex shrink-0 items-center gap-1 rounded-full bg-subtle p-1">
-            {(["day", "week", "month"] as const).map((item) => (
+            {(["list", "day", "week", "month"] as const).map((item) => (
               <button
                 key={item}
                 type="button"
@@ -202,7 +214,18 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         </button>
       ) : null}
 
-      {workspace && !assignments && role === "teacher" ? (
+      {(quizzes || exams) && role === "teacher" ? (
+        <button
+          type="button"
+          className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+          onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
+        >
+          <Icon name="add" size={18} />
+          {quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")}
+        </button>
+      ) : null}
+
+      {workspace && !assignments && !quizzes && !exams && role === "teacher" ? (
         <button
           type="button"
           className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"

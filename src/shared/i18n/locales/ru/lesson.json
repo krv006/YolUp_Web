@@ -217,6 +217,14 @@
     "selectGroup": "Выберите группу",
     "durationLabel": "Длительность",
     "inHours": "осталось {{count}} ч",
-    "inDays": "осталось {{count}} дн."
+    "inDays": "осталось {{count}} дн.",
+    "list": "Список",
+    "tomorrow": "Завтра",
+    "dayOff": "Выходной",
+    "noLessonsDay": "В этот день уроков нет",
+    "lessonCountShort": "{{count}}",
+    "recurring": "Повторяющийся",
+    "quizAttached": "Тест прикреплён",
+    "online": "Онлайн"
   }
 }

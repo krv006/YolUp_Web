@@ -217,6 +217,14 @@
     "selectGroup": "Select a group",
     "durationLabel": "Duration",
     "inHours": "{{count}} h left",
-    "inDays": "{{count}} days left"
+    "inDays": "{{count}} days left",
+    "list": "List",
+    "tomorrow": "Tomorrow",
+    "dayOff": "Day off",
+    "noLessonsDay": "No lessons on this day",
+    "lessonCountShort": "{{count}}",
+    "recurring": "Recurring",
+    "quizAttached": "Quiz attached",
+    "online": "Online"
   }
 }

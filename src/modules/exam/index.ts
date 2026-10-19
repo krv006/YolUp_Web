@@ -25,6 +25,7 @@ export { formatClock, secondsUntil, serverNow, syncServerTime } from "./lib/serv
 export { ExamCountdown } from "./ui/exam-countdown";
 export { ExamCreateDialog } from "./ui/exam-create-dialog";
 export { ExamResultsView } from "./ui/exam-results-view";
+export { ExamScoreDialog } from "./ui/exam-score-dialog";
 export { ExamTemplateDialog } from "./ui/exam-template-dialog";
 export { ExamWritingReview } from "./ui/exam-writing-review";
 export { ExamResultCard } from "./ui/exam-result-card";

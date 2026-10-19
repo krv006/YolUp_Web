@@ -34,7 +34,7 @@
     "retry": "Retry",
     "attemptCount": "Attempts",
     "avgPercentage": "Average score",
-    "recentAttempts": "RECENT ATTEMPTS",
+    "recentAttempts": "Recent attempts",
     "noAttempts": "No quizzes taken yet.",
     "avgRating": "Average rating",
     "ratingCount": "Ratings",
@@ -42,11 +42,12 @@
     "studentCount": "Students",
     "lessonsFinished": "Lessons held",
     "reliability": "Reliability",
-    "byCourse": "BY COURSE",
+    "byCourse": "By course",
     "course": "Course",
     "quizAvg": "Quiz average",
     "attendance": "Attendance",
-    "noCourses": "No courses found."
+    "noCourses": "No courses found.",
+    "studentCountValue": "{{count}} students"
   },
   "createGroup": "Create a group",
   "statGroups": "Groups",

@@ -273,3 +273,62 @@
 .dialog-content .select-picker-search input {
   padding-inline: 0;
 }
+
+/* Savollar muharriri — Figma ko'rinishi */
+.quiz-page-question {
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background: var(--bg-surface);
+  padding: 16px;
+  gap: 12px;
+}
+
+.quiz-page-question-number {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+}
+
+.quiz-page-question-text,
+textarea.quiz-page-question-text {
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  padding: 10px 14px;
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+.quiz-page-question-text:focus,
+textarea.quiz-page-question-text:focus {
+  border-color: var(--border-focus);
+  background: var(--bg-surface);
+}
+
+.quiz-page-option input {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-surface);
+  padding: 10px 14px;
+}
+
+.quiz-page-option input:focus {
+  border-color: var(--border-focus);
+}
+
+.quiz-page-option-letter {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-size: var(--fs-xs);
+}

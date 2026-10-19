@@ -91,6 +91,7 @@ export { LessonCreateDialog } from "./ui/lesson-create-dialog";
 export {
   ScheduleDay,
   ScheduleEmpty,
+  ScheduleList,
   ScheduleMonth,
   ScheduleSkeleton,
   ScheduleWeek,
