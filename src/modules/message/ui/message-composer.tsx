@@ -3,7 +3,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AtSign, LoaderCircle, Mic } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
+import { useCourseStudents } from "@/modules/course";
+import { useOnlineStatus } from "@/shared/model";
+import { Avatar, Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 
@@ -16,6 +18,7 @@ export interface MessageComposerProps {
   currentUserId?: string | null;
   onTyping?: () => void;
   allowAttachments?: boolean;
+  courseId?: string | null;
 }
 
 const emojis = ["🔥", "💎", "🚀", "👑", "⚡", "🎯"];
@@ -29,12 +32,59 @@ export function MessageComposer({
   currentUserId = null,
   onTyping,
   allowAttachments = false,
+  courseId = null,
 }: MessageComposerProps) {
   const { t } = useTranslation("chat");
   const [draft, setDraft] = useState(() => editingMessage?.text ?? "");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [mention, setMention] = useState<{ query: string; start: number } | null>(null);
+  const [activeMention, setActiveMention] = useState(0);
+  const online = useOnlineStatus();
+  const members = useCourseStudents(courseId, { page_size: 100 }, Boolean(courseId) && Boolean(mention));
+
+  const suggestions = (() => {
+    if (!mention) return [];
+    const query = mention.query.toLowerCase();
+    return (members.data?.items ?? [])
+      .map((item) => item.student)
+      .filter((student) =>
+        query ? `${student.name} ${student.username}`.toLowerCase().includes(query) : true
+      )
+      .slice(0, 6);
+  })();
+
+  function detectMention(value: string, caret: number) {
+    const before = value.slice(0, caret);
+    const at = before.lastIndexOf("@");
+    if (at === -1) {
+      setMention(null);
+      return;
+    }
+    const previous = at === 0 ? " " : before[at - 1];
+    const query = before.slice(at + 1);
+    if (!/\s/.test(previous) || /\s/.test(query)) {
+      setMention(null);
+      return;
+    }
+    setActiveMention(0);
+    setMention({ query, start: at });
+  }
+
+  function applyMention(username: string) {
+    if (!mention) return;
+    const element = textareaRef.current;
+    const caret = element?.selectionStart ?? draft.length;
+    const next = `${draft.slice(0, mention.start)}@${username} ${draft.slice(caret)}`;
+    setDraft(next);
+    setMention(null);
+    requestAnimationFrame(() => {
+      const position = mention.start + username.length + 2;
+      element?.focus();
+      element?.setSelectionRange(position, position);
+    });
+  }
 
   useEffect(() => {
     const element = textareaRef.current;
@@ -64,6 +114,28 @@ export function MessageComposer({
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (mention && suggestions.length) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setActiveMention((index) => (index + 1) % suggestions.length);
+        return;
+      }
+      if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setActiveMention((index) => (index - 1 + suggestions.length) % suggestions.length);
+        return;
+      }
+      if (event.key === "Enter" || event.key === "Tab") {
+        event.preventDefault();
+        applyMention(suggestions[activeMention].username);
+        return;
+      }
+      if (event.key === "Escape") {
+        event.preventDefault();
+        setMention(null);
+        return;
+      }
+    }
     if (event.key === "Escape" && (replyTo || editingMessage)) {
       onCancelContext();
       if (editingMessage) setDraft("");
@@ -78,7 +150,54 @@ export function MessageComposer({
   const context = editingMessage || replyTo;
 
   return (
-    <div className="shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+    <div className="relative shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+      {online ? null : (
+        <div className="mb-3 flex items-center gap-2.5 rounded-xl bg-saffron-subtle px-3 py-2 text-saffron-strong">
+          <Icon name="error" size={16} className="shrink-0" />
+          <span className="text-caption">{t("offline.composer")}</span>
+        </div>
+      )}
+
+      <AnimatePresence>
+        {mention ? (
+          <motion.div
+            className="absolute bottom-full left-4 z-30 mb-2 flex w-[280px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:left-6"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+          >
+            <span className="px-4 pt-3 pb-2 text-caption-strong text-ink-tertiary">
+              {t("mention.title")}
+            </span>
+            {suggestions.length ? (
+              suggestions.map((student, index) => (
+                <button
+                  key={student.id}
+                  type="button"
+                  className={`flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
+                    index === activeMention ? "bg-subtle" : "hover:bg-subtle"
+                  }`}
+                  onMouseEnter={() => setActiveMention(index)}
+                  onClick={() => applyMention(student.username)}
+                >
+                  <Avatar name={student.name} tone={student.avatarTone} size="sm" />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="truncate text-label-strong text-ink">{student.name}</strong>
+                    <small className="truncate text-caption text-ink-tertiary">
+                      @{student.username}
+                    </small>
+                  </span>
+                </button>
+              ))
+            ) : (
+              <span className="px-4 pb-3 text-caption text-ink-tertiary">
+                {members.isLoading ? "..." : t("mention.empty")}
+              </span>
+            )}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       <AnimatePresence initial={false}>
         {context && (
           <motion.div
@@ -179,8 +298,12 @@ export function MessageComposer({
             value={draft}
             onChange={(event) => {
               setDraft(event.target.value);
+              detectMention(event.target.value, event.target.selectionStart ?? 0);
               onTyping?.();
             }}
+            onClick={(event) =>
+              detectMention(event.currentTarget.value, event.currentTarget.selectionStart ?? 0)
+            }
             onKeyDown={handleKeyDown}
             placeholder={
               editingMessage ? t("composer.editPlaceholder") : t("composer.sendPlaceholder")
@@ -191,8 +314,10 @@ export function MessageComposer({
             type="button"
             className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
             onClick={() => {
-              setDraft((value) => (value.endsWith("@") ? value : `${value}@`));
+              const next = draft.endsWith("@") ? draft : `${draft}${draft && !draft.endsWith(" ") ? " " : ""}@`;
+              setDraft(next);
               textareaRef.current?.focus();
+              detectMention(next, next.length);
             }}
             aria-label={t("actionsMenu.mentionAria")}
           >

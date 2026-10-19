@@ -9,3 +9,4 @@ export {
 export type { AppLanguage } from "./language.store";
 export { useTextSizeStore, applyTextSize } from "./text-size.store";
 export type { TextSize } from "./text-size.store";
+export { useOnlineStatus } from "./use-online-status";
