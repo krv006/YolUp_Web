@@ -11,6 +11,7 @@ import { RoleRoute } from "./role-route";
 import { RouteErrorBoundary } from "./route-error-boundary";
 import { ForbiddenPage, NotFoundPage } from "./route-status-pages";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 
 const LoginPage = lazy(() =>
   import("@/pages/auth/login-page").then((module) => ({
@@ -20,6 +21,27 @@ const LoginPage = lazy(() =>
 const RegisterPage = lazy(() =>
   import("@/pages/auth/register-page").then((module) => ({ default: module.RegisterPage }))
 );
+const WelcomePage = lazy(() =>
+  import("@/pages/auth/welcome-page").then((module) => ({ default: module.WelcomePage }))
+);
+const ForgotPasswordPage = lazy(() =>
+  import("@/pages/auth/forgot-password-page").then((module) => ({
+    default: module.ForgotPasswordPage,
+  }))
+);
+const VerifyCodePage = lazy(() =>
+  import("@/pages/auth/verify-code-page").then((module) => ({ default: module.VerifyCodePage }))
+);
+const NewPasswordPage = lazy(() =>
+  import("@/pages/auth/new-password-page").then((module) => ({ default: module.NewPasswordPage }))
+);
+
+function WelcomeRoute() {
+  const isCompact = useIsCompact();
+  if (!isCompact) return <Navigate to={ROUTES.auth.login} replace />;
+  return <WelcomePage />;
+}
+
 const loadTeacherLayout = () => import("@/app/layouts/teacher-layout");
 const loadChatsPage = () => import("@/pages/teacher/chats-page");
 const AssignmentsPage = lazy(() =>
@@ -158,14 +180,14 @@ export function AppRouter() {
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route element={<RootLayout />}>
-              <Route
-                index
-                element={<Navigate to={ROUTES.auth.login} replace />}
-              />
               <Route element={<PublicRoute />}>
+                <Route index element={<WelcomeRoute />} />
                 <Route element={<AuthLayout />}>
                   <Route path={ROUTES.auth.login} element={<LoginPage />} />
                   <Route path={ROUTES.auth.register} element={<RegisterPage />} />
+                  <Route path={ROUTES.auth.forgotPassword} element={<ForgotPasswordPage />} />
+                  <Route path={ROUTES.auth.verifyCode} element={<VerifyCodePage />} />
+                  <Route path={ROUTES.auth.newPassword} element={<NewPasswordPage />} />
                 </Route>
               </Route>
 
