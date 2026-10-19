@@ -234,24 +234,46 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
       ) : null}
 
       {assignments && role === "teacher" ? (
-        <button
-          type="button"
-          className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-          onClick={() => openAssignment(true)}
-        >
-          <Icon name="add" size={18} /> {t("homework:form.title")}
-        </button>
+        <>
+          <button
+            type="button"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover lg:hidden"
+            onClick={() => openAssignment(true)}
+            aria-label={t("homework:form.title")}
+          >
+            <Icon name="add" size={20} />
+          </button>
+          <button
+            type="button"
+            className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
+            onClick={() => openAssignment(true)}
+          >
+            <Icon name="add" size={18} /> {t("homework:form.title")}
+          </button>
+        </>
       ) : null}
 
       {(quizzes || exams) && role === "teacher" ? (
-        <button
-          type="button"
-          className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-          onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
-        >
-          <Icon name="add" size={18} />
-          {quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")}
-        </button>
+        <>
+          <button
+            type="button"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover lg:hidden"
+            onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
+            aria-label={
+              quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")
+            }
+          >
+            <Icon name="add" size={20} />
+          </button>
+          <button
+            type="button"
+            className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
+            onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
+          >
+            <Icon name="add" size={18} />
+            {quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")}
+          </button>
+        </>
       ) : null}
 
       {workspace && !assignments && !quizzes && !exams && role === "teacher" ? (

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ClipboardCheck } from "lucide-react";
+import { ClipboardCheck, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ import { usePageCreateStore } from "@/shared/model";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { DatePicker } from "@/shared/ui/legacy/form-pickers";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 
 type Filter = "all" | "ielts" | "sat" | "cert" | "custom";
@@ -67,13 +68,15 @@ export function TeacherExamsPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [templateOpen, setTemplateOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const isCompact = useIsCompact();
   const [editTarget, setEditTarget] = useState<ExamSummary | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ExamSummary | null>(null);
   const [essayStudent, setEssayStudent] = useState<ExamStudentResult | null>(null);
   const [scoreStudent, setScoreStudent] = useState<ExamStudentResult | null>(null);
 
   const list = (exams.data ?? []).filter((exam) => matchesFilter(exam, filter));
-  const selected = list.find((exam) => exam.id === selectedId) ?? list[0] ?? null;
+  const selected =
+    list.find((exam) => exam.id === selectedId) ?? (isCompact ? null : (list[0] ?? null));
   const results = useExamResults(selected?.id ?? null, Boolean(selected));
   const saveScores = useSaveManualScores(selected?.id ?? "");
   const courseOptions = (courses.data ?? []).map((course) => ({ id: course.id, title: course.title }));
@@ -155,22 +158,27 @@ export function TeacherExamsPage() {
 
   if (!list.length)
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-3 bg-canvas px-6 text-center">
-        <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
-          <ClipboardCheck size={28} />
-        </span>
-        <strong className="font-heading text-h3 text-ink">{t("teacherList.empty")}</strong>
-        {courseOptions.length ? (
-          <button
-            type="button"
-            className="mt-1 flex h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-            onClick={() => setCreateOpen(true)}
-          >
-            {t("teacherList.createFirst")}
-          </button>
-        ) : (
-          <p className="text-body-sm text-ink-tertiary">{t("teacherList.needCourse")}</p>
-        )}
+      <div className="flex h-full flex-col bg-canvas p-4 lg:p-6">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line px-6 py-10 text-center">
+          <span className="grid size-16 place-items-center rounded-2xl bg-action text-on-action">
+            <ClipboardCheck size={28} />
+          </span>
+          <strong className="font-heading text-h3 text-ink">{t("teacherList.empty")}</strong>
+          <p className="max-w-[320px] text-body-sm text-ink-secondary">
+            {t("teacherList.emptyDescription")}
+          </p>
+          {courseOptions.length ? (
+            <button
+              type="button"
+              className="mt-1 flex h-12 w-full max-w-[320px] items-center justify-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+              onClick={() => setCreateOpen(true)}
+            >
+              <Plus size={18} /> {t("teacherList.createFirst")}
+            </button>
+          ) : (
+            <p className="text-body-sm text-ink-tertiary">{t("teacherList.needCourse")}</p>
+          )}
+        </div>
 
         <ExamCreateDialog
           open={createOpen}
@@ -312,7 +320,11 @@ export function TeacherExamsPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-canvas lg:flex-row">
-      <aside className="flex w-full shrink-0 flex-col gap-3 overflow-y-auto border-line p-4 lg:w-[380px] lg:border-r lg:p-5">
+      <aside
+        className={`w-full shrink-0 flex-col gap-3 overflow-y-auto border-line p-4 lg:flex lg:w-[380px] lg:border-r lg:p-5 ${
+          selected ? "hidden" : "flex"
+        }`}
+      >
         {essayStudent ? (
           <section className="flex flex-col overflow-hidden rounded-2xl border border-line bg-surface">
             <span className="flex items-center gap-3 border-b border-line px-4 py-3">
@@ -365,7 +377,22 @@ export function TeacherExamsPage() {
         )}
       </aside>
 
-      <section className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:p-6">
+      <section
+        className={`min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 lg:flex lg:p-6 ${
+          selected ? "flex" : "hidden"
+        }`}
+      >
+        {selected ? (
+          <button
+            type="button"
+            className="-ml-1 grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink lg:hidden"
+            aria-label={t("mock.backToList")}
+            onClick={() => setSelectedId(null)}
+          >
+            <Icon name="add" size={19} className="rotate-45" />
+          </button>
+        ) : null}
+
         {!selected ? (
           <p className="text-body-sm text-ink-tertiary">{t("mock.pickExam")}</p>
         ) : essayStudent ? (
@@ -418,6 +445,14 @@ export function TeacherExamsPage() {
                 disabled={!rows.length}
               >
                 <Icon name="download" size={17} /> {t("mock.download")}
+              </button>
+              <button
+                type="button"
+                className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+                disabled={!rows.length}
+                onClick={() => toast.info(t("mock.shareUnavailable"))}
+              >
+                <Icon name="send" size={17} /> {t("mock.share")}
               </button>
             </div>
 

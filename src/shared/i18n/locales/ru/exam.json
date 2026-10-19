@@ -110,7 +110,8 @@
     "deleteDescription": "«{{title}}» будет удалён. Это нельзя отменить.",
     "save": "Сохранить",
     "cancel": "Отмена",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "emptyDescription": "Создайте первый мок-экзамен для группы — результаты появятся здесь."
   },
   "createDialog": {
     "title": "Новый экзамен",
@@ -260,6 +261,9 @@
     "pickExam": "Выберите экзамен слева",
     "noEssays": "Письменных ответов нет",
     "hoursOnly": "{{count}} ч",
-    "taskNumber": "Task {{number}}"
+    "taskNumber": "Task {{number}}",
+    "backToList": "К списку",
+    "share": "Поделиться результатами",
+    "shareUnavailable": "Публикация результатов пока недоступна на бэкенде."
   }
 }

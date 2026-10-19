@@ -110,7 +110,8 @@
     "deleteDescription": "“{{title}}” will be deleted. This cannot be undone.",
     "save": "Save",
     "cancel": "Cancel",
-    "delete": "Delete"
+    "delete": "Delete",
+    "emptyDescription": "Create the first mock exam for your group — results will show up here."
   },
   "createDialog": {
     "title": "New exam",
@@ -260,6 +261,9 @@
     "pickExam": "Pick an exam on the left",
     "noEssays": "No written answers",
     "hoursOnly": "{{count}} h",
-    "taskNumber": "Task {{number}}"
+    "taskNumber": "Task {{number}}",
+    "backToList": "Back to the list",
+    "share": "Share the results",
+    "shareUnavailable": "Sharing results is not available on the backend yet."
   }
 }
