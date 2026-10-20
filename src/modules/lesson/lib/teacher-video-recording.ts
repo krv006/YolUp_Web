@@ -34,6 +34,11 @@ function isRetryableUpload(error: unknown): boolean {
   return error.status === 0 || error.status === 408 || error.status === 429 || error.status >= 500;
 }
 
+function newSessionId(): string {
+  const random = globalThis.crypto?.randomUUID?.();
+  return random ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
 function wait(milliseconds: number): Promise<void> {
   return new Promise((resolve) => globalThis.setTimeout(resolve, milliseconds));
 }
@@ -50,7 +55,10 @@ export class TeacherVideoRecordingSession {
 
   private stream: MediaStream | null = null;
   private recorder: MediaRecorder | null = null;
-  private pendingChunks: Blob[] = [];
+  private pendingChunks: Array<{ blob: Blob; index: number }> = [];
+  // Bo'lak raqami: javob yo'qolib qayta yuborilsa server uni ikkinchi marta yozmaydi
+  private readonly sessionId = newSessionId();
+  private nextIndex = 0;
   private listeners = new Set<SnapshotListener>();
   private uploadLoop: Promise<void> | null = null;
   private stopPromise: Promise<void> | null = null;
@@ -151,7 +159,7 @@ export class TeacherVideoRecordingSession {
   }
 
   private enqueue(chunk: Blob): void {
-    this.pendingChunks.push(chunk);
+    this.pendingChunks.push({ blob: chunk, index: this.nextIndex++ });
     this.setState("uploading", null);
     void this.drainUploads().catch(() => undefined);
   }
@@ -174,8 +182,9 @@ export class TeacherVideoRecordingSession {
       try {
         await lessonApi.uploadRecordingVideo(
           this.lessonId,
-          chunk,
-          this.firstChunkUploaded ? undefined : (this.startedAt ?? undefined)
+          chunk.blob,
+          this.firstChunkUploaded ? undefined : (this.startedAt ?? undefined),
+          { session: this.sessionId, index: chunk.index }
         );
         this.pendingChunks.shift();
         this.firstChunkUploaded = true;

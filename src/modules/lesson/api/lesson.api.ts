@@ -27,6 +27,18 @@ function isMissingRatingApi(error: unknown): boolean {
   );
 }
 
+/** Yozuv bo'lagining tartibi: sessiya id'si va shu sessiyadagi 0 dan boshlanuvchi raqam — server takror yuborilgan bo'lakni qayta yozmaydi. */
+export interface RecordingChunkSequence {
+  session: string;
+  index: number;
+}
+
+function appendSequence(formData: FormData, sequence?: RecordingChunkSequence) {
+  if (!sequence) return;
+  formData.append("session", sequence.session);
+  formData.append("index", String(sequence.index));
+}
+
 export const lessonApi = {
   async getAll(options: RequestOptions = {}) {
     return mapLessonPage(await apiClient.get(lessonEndpoints.list, options), options.query);
@@ -109,10 +121,11 @@ export const lessonApi = {
     await apiClient.delete(lessonEndpoints.recording(id));
     return id;
   },
-  async uploadRecordingAudio(id: string, chunk: Blob, startedAt?: string) {
+  async uploadRecordingAudio(id: string, chunk: Blob, startedAt?: string, sequence?: RecordingChunkSequence) {
     const formData = new FormData();
     formData.append("chunk", chunk, `lesson-${id}-${Date.now()}.webm`);
     if (startedAt) formData.append("started_at", startedAt);
+    appendSequence(formData, sequence);
     await apiClient.post<void>(lessonEndpoints.recordingAudio(id), formData, {
       timeoutMs: 60_000,
     });
@@ -120,10 +133,11 @@ export const lessonApi = {
   async finalizeRecordingAudio(id: string) {
     await apiClient.post<void>(lessonEndpoints.finalizeRecordingAudio(id));
   },
-  async uploadRecordingVideo(id: string, chunk: Blob, startedAt?: string) {
+  async uploadRecordingVideo(id: string, chunk: Blob, startedAt?: string, sequence?: RecordingChunkSequence) {
     const formData = new FormData();
     formData.append("chunk", chunk, `lesson-${id}-${Date.now()}.webm`);
     if (startedAt) formData.append("started_at", startedAt);
+    appendSequence(formData, sequence);
     await apiClient.post<void>(lessonEndpoints.recordingVideo(id), formData, {
       timeoutMs: 120_000,
     });
