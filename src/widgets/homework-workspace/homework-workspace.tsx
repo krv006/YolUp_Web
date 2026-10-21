@@ -1,16 +1,23 @@
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import { useCourses, useCourseStudents } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
-import { homeworkApi, homeworkKeys, useAssignments, useDeleteAssignment } from "@/modules/homework";
+import {
+  homeworkApi,
+  homeworkKeys,
+  useAssignmentAiSummary,
+  useAssignments,
+  useDeleteAssignment,
+  useRemindAssignment,
+} from "@/modules/homework";
 import type { Assignment, Submission } from "@/shared/types";
 import { useSendNotification } from "@/modules/notification";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { Switch } from "@/shared/ui/switch";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
 import { SubmissionReview } from "./submission-review";
 
@@ -22,6 +29,13 @@ export interface HomeworkWorkspaceProps {
 
 type ListFilter = "active" | "review" | "done" | "draft";
 type RowFilter = "all" | "unchecked" | "graded" | "missing";
+
+interface AiSummaryState {
+  assignmentId: string;
+  summary: string;
+  topics: string[];
+  recommendations: string[];
+}
 
 interface StudentRow {
   id: string;
@@ -53,11 +67,15 @@ export function HomeworkWorkspace({
         isLoading: courses.isLoading || perCourse.some((query) => query.isLoading),
       };
   const remove = useDeleteAssignment();
+  const remind = useRemindAssignment();
+  const aiSummary = useAssignmentAiSummary();
 
   const [filter, setFilter] = useState<ListFilter>("active");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const isCompact = useIsCompact();
   const [remindOpen, setRemindOpen] = useState(false);
+  const [remindParents, setRemindParents] = useState(false);
+  const [aiResult, setAiResult] = useState<AiSummaryState | null>(null);
   const sendNotification = useSendNotification();
   const [rowFilter, setRowFilter] = useState<RowFilter>("all");
   const [search, setSearch] = useState("");
@@ -113,13 +131,17 @@ export function HomeworkWorkspace({
   });
 
   const listItems = items.filter((item) => {
+    if (filter === "draft") return item.status === "draft";
+    if (item.status === "draft") return false;
     const due = item.dueAt ? new Date(item.dueAt).getTime() : null;
     const open = due === null || due >= now;
     if (filter === "active") return open;
     if (filter === "review") return item.submissions.some((entry) => !entry.grade);
-    if (filter === "done") return !open;
-    return false;
+    return !open;
   });
+
+  const draftCount = items.filter((item) => item.status === "draft").length;
+  const missingIds = rows.filter((row) => !row.submission).map((row) => row.id);
 
   const thisWeek = listItems.filter((item) => withinWeek(item.createdAt));
   const earlier = listItems.filter((item) => !withinWeek(item.createdAt));
@@ -245,6 +267,8 @@ export function HomeworkWorkspace({
 
         <SubmissionReview
           submission={reviewSubmission}
+          grading={selected.grading}
+          maxScore={selected.maxScore}
           onClose={() => setReviewId(null)}
           onStep={(direction) => {
             const all = selected.submissions;
@@ -269,7 +293,7 @@ export function HomeworkWorkspace({
               ["active", t("workspace.filterActive", { count: items.length })],
               ["review", t("workspace.filterReview", { count: unchecked })],
               ["done", t("workspace.filterDone")],
-              ["draft", t("workspace.filterDraft")],
+              ["draft", t("workspace.filterDraftCount", { count: draftCount })],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -281,11 +305,8 @@ export function HomeworkWorkspace({
                   : "border border-line bg-surface text-ink-secondary hover:bg-subtle"
               }`}
               onClick={() => {
-                if (id === "draft") {
-                  toast.info(t("workspace.draftPending"));
-                  return;
-                }
                 setFilter(id);
+                setSelectedId(null);
               }}
             >
               {label}
@@ -339,6 +360,11 @@ export function HomeworkWorkspace({
                           {item.courseTitle}
                         </strong>
                       </span>
+                      {item.status === "draft" ? (
+                        <span className="shrink-0 rounded-full bg-subtle px-2 py-1 text-caption-strong text-ink-secondary">
+                          {t("workspace.draftBadge")}
+                        </span>
+                      ) : null}
                       <small className="shrink-0 text-caption-strong text-action">
                         {total
                           ? t("workspace.submittedOf", { done, total })
@@ -461,15 +487,50 @@ export function HomeworkWorkspace({
                 </strong>
                 <button
                   type="button"
-                  className="text-label-strong text-action"
-                  onClick={() => toast.info(t("workspace.aiPending"))}
+                  className="text-label-strong text-action disabled:opacity-60"
+                  disabled={aiSummary.isPending}
+                  onClick={() =>
+                    aiSummary.mutate(selected.id, {
+                      onSuccess: (data) =>
+                        setAiResult({
+                          assignmentId: selected.id,
+                          summary: data.summary,
+                          topics: data.topics,
+                          recommendations: data.recommendations,
+                        }),
+                    })
+                  }
                 >
-                  {t("workspace.aiAction")}
+                  {aiSummary.isPending ? t("workspace.aiLoading") : t("workspace.aiAction")}
                 </button>
               </span>
               <p className="text-body-sm text-ink-secondary">
-                {summaryText(selected) || t("workspace.aiEmpty")}
+                {aiResult?.assignmentId === selected.id && aiResult.summary
+                  ? aiResult.summary
+                  : summaryText(selected) || t("workspace.aiEmpty")}
               </p>
+              {aiResult?.assignmentId === selected.id && aiResult.topics.length ? (
+                <span className="flex flex-wrap gap-1.5">
+                  {aiResult.topics.map((topic) => (
+                    <span
+                      key={topic}
+                      className="rounded-full bg-surface px-2.5 py-1 text-caption-strong text-ink-secondary"
+                    >
+                      {topic}
+                    </span>
+                  ))}
+                </span>
+              ) : null}
+              {aiResult?.assignmentId === selected.id && aiResult.recommendations.length ? (
+                <ul className="flex flex-col gap-1">
+                  {aiResult.recommendations.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-body-sm text-ink-secondary">
+                      <Icon name="check-circle" size={14} className="mt-0.5 shrink-0 text-success" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
@@ -518,13 +579,15 @@ export function HomeworkWorkspace({
               </div>
 
               {visibleRows.map((row) => {
-                const state = row.submission
-                  ? row.submission.grade
-                    ? "graded"
-                    : row.submission.isLate
-                      ? "late"
-                      : "unchecked"
-                  : "missing";
+                const state = !row.submission
+                  ? "missing"
+                  : row.submission.status === "resubmit_requested"
+                    ? "resubmit"
+                    : row.submission.grade
+                      ? "graded"
+                      : row.submission.isLate
+                        ? "late"
+                        : "unchecked";
                 return (
                   <button
                     key={row.id}
@@ -544,8 +607,8 @@ export function HomeworkWorkspace({
                         className={`inline-flex rounded-full px-2.5 py-1 text-caption-strong ${
                           state === "graded"
                             ? "bg-success-bg text-success-text"
-                            : state === "late"
-                              ? "bg-error-bg text-error-text"
+                            : state === "resubmit"
+                              ? "bg-action-subtle text-action"
                               : state === "unchecked"
                                 ? "bg-saffron-subtle text-saffron-strong"
                                 : "bg-error-bg text-error-text"
@@ -577,7 +640,10 @@ export function HomeworkWorkspace({
 
       <AppDialog
         open={remindOpen}
-        onOpenChange={setRemindOpen}
+        onOpenChange={(open) => {
+          setRemindOpen(open);
+          if (!open) setRemindParents(false);
+        }}
         title={t("workspace.remindTitle")}
         description={t("workspace.remindDescription", { count: missing })}
         footer={
@@ -592,15 +658,22 @@ export function HomeworkWorkspace({
             <button
               type="button"
               className={dialogButton.primary}
-              disabled={sendNotification.isPending || !missing}
+              disabled={remind.isPending || sendNotification.isPending || !missing || !selected}
               onClick={() => {
-                const text = t("workspace.remindMessage", {
-                  title: selected?.title ?? "",
-                  due: formatDue(selected?.dueAt ?? null),
-                });
-                for (const row of rows.filter((item) => !item.submission))
-                  sendNotification.mutate({ description: text, targetType: "user", userId: row.id });
+                if (!selected) return;
+                remind.mutate(selected.id);
+                if (remindParents && missingIds.length)
+                  sendNotification.mutate({
+                    description: t("workspace.remindMessage", {
+                      title: selected.title,
+                      due: formatDue(selected.dueAt),
+                    }),
+                    targetType: "parents_of",
+                    userIds: missingIds,
+                    kind: "homework_reminder",
+                  });
                 setRemindOpen(false);
+                setRemindParents(false);
               }}
             >
               {t("workspace.remindSend")}
@@ -608,18 +681,38 @@ export function HomeworkWorkspace({
           </>
         }
       >
-        <div className="flex flex-col gap-2 rounded-xl bg-subtle p-3.5">
-          <span className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
-            {t("workspace.remindMessageLabel")}
+        <span className="flex items-center gap-3 rounded-2xl border border-line px-4 py-3">
+          <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-action text-on-action">
+            <Icon name="groups" size={17} />
           </span>
-          <p className="text-body-sm text-ink">
-            {t("workspace.remindMessage", {
-              title: selected?.title ?? "",
-              due: formatDue(selected?.dueAt ?? null),
-            })}
-          </p>
-        </div>
-        <p className="text-caption text-ink-tertiary">{t("workspace.remindParentsNote")}</p>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <strong className="text-label-strong text-ink">{t("workspace.remindParents")}</strong>
+            <small className="text-caption text-ink-tertiary">
+              {t("workspace.remindParentsHint")}
+            </small>
+          </span>
+          <Switch
+            checked={remindParents}
+            onCheckedChange={setRemindParents}
+            aria-label={t("workspace.remindParents")}
+          />
+        </span>
+
+        {remindParents ? (
+          <div className="flex flex-col gap-2 rounded-xl bg-subtle p-3.5">
+            <span className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
+              {t("workspace.remindMessageLabel")}
+            </span>
+            <p className="text-body-sm text-ink">
+              {t("workspace.remindMessage", {
+                title: selected?.title ?? "",
+                due: formatDue(selected?.dueAt ?? null),
+              })}
+            </p>
+          </div>
+        ) : null}
+
+        <p className="text-caption text-ink-tertiary">{t("workspace.remindThrottleNote")}</p>
       </AppDialog>
 
       <AssignmentFormDialog

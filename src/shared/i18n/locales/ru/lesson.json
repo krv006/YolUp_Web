@@ -167,7 +167,10 @@
     "delete": "Удалить",
     "deleteDialogTitle": "Удалить запись",
     "deleteDialogDescription": "Видео будет полностью удалено без возможности восстановления.",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "participants": "Участников: {{count}}",
+    "attendanceRate": "Посещаемость: {{value}}%",
+    "boardPages": "Доска: {{count}} стр."
   },
   "schedule": {
     "now": "СЕЙЧАС",
@@ -197,7 +200,7 @@
     "edit": "Редактировать",
     "cancelLesson": "Отменить урок",
     "cancelTitle": "Отменить урок?",
-    "cancelDescription": "Урок удалится из расписания, напоминание не придёт.",
+    "cancelDescription": "Урок останется в расписании как «отменён», ученикам придёт уведомление.",
     "cancelConfirm": "Отменить",
     "keep": "Закрыть",
     "memberCount": "{{count}} учеников",
@@ -229,6 +232,11 @@
     "online": "Онлайн",
     "restOfWeek": "Оставшиеся дни недели",
     "legendHasLesson": "Есть урок",
-    "legendWeekend": "Выходной"
+    "legendWeekend": "Выходной",
+    "cancelled": "Отменено уроков: {{count}}",
+    "cancelScope": {
+      "one": "Только этот урок",
+      "series": "Этот и все следующие уроки"
+    }
   }
 }

@@ -133,11 +133,29 @@ export function useCreateLessonSchedule() {
 export function useUpdateLesson() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, form }: { id: string; form: LessonFormInput }) => lessonApi.update(id, form),
+    mutationFn: ({
+      id,
+      form,
+      scope,
+    }: {
+      id: string;
+      form: LessonFormInput;
+      scope?: "one" | "series";
+    }) => lessonApi.update(id, form, scope),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: lessonKeys.all });
       toast.success("Dars yangilandi");
     },
+  });
+}
+
+export function useCancelLesson() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, scope = "one" }: { id: string; scope?: "one" | "series" }) =>
+      lessonApi.cancel(id, scope),
+    onSuccess: () => client.invalidateQueries({ queryKey: lessonKeys.all }),
+    onError: (error: Error) => toast.error(error.message),
   });
 }
 

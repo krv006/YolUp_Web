@@ -74,6 +74,32 @@ export function useGrantDraw(lessonId: string) {
   return useMutation({ mutationFn: (studentId: string) => boardApi.grant(lessonId, studentId) });
 }
 
+export type BoardGrantInput = { studentIds: string[] } | { mode: "all" | "none" };
+
+export function useSetBoardPermissions(lessonId: string) {
+  return useMutation({
+    mutationFn: (input: BoardGrantInput) =>
+      "mode" in input
+        ? boardApi.grantMode(lessonId, input.mode)
+        : boardApi.grantMany(lessonId, input.studentIds),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useRevokeDraw(lessonId: string) {
+  return useMutation({
+    mutationFn: (studentId: string) => boardApi.revoke(lessonId, studentId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useSendBoardToChat(lessonId: string) {
+  return useMutation({
+    mutationFn: () => boardApi.sendToChat(lessonId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useSolveFormula(lessonId: string) {
   return useMutation({ mutationFn: (expression: string) => boardApi.solve(lessonId, expression) });
 }

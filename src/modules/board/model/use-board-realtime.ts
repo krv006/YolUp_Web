@@ -49,10 +49,11 @@ export function useBoardRealtime(lessonId: string, enabled = true, identity?: st
 
   const handleEvent = useCallback(
     (event: BoardSocketEvent) => {
-      if (event.type === "board_granted") {
+      if (event.type === "board_granted" || event.type === "board_revoked") {
         if (!identity || event.studentId !== identity) return;
+        const canDraw = event.type === "board_granted";
         queryClient.setQueryData<BoardState>(boardKeys.state(lessonId), (current) =>
-          current ? { ...current, canDraw: true } : current
+          current ? { ...current, canDraw } : current
         );
         return;
       }

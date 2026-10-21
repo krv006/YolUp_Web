@@ -3,7 +3,12 @@ import { toast } from "sonner";
 import type { QueryParams } from "@/shared/api";
 import { describeCreateError, type CreateChildRequestDto } from "@/modules/auth";
 import { courseApi } from "../api/course.api";
-import type { CourseFormInput, EnrollmentAction, EnrollPayload } from "../api/course.dto";
+import type {
+  CourseFormInput,
+  CourseInviteLinkInput,
+  EnrollmentAction,
+  EnrollPayload,
+} from "../api/course.dto";
 
 export const courseKeys = Object.freeze({
   all: ["courses"] as const,
@@ -13,6 +18,8 @@ export const courseKeys = Object.freeze({
   detail: (id: string) => ["courses", "detail", id] as const,
   students: (id: string, params: QueryParams = {}) => ["courses", id, "students", params] as const,
   searchStudents: (id: string, query: string) => ["courses", id, "search-students", query] as const,
+  inviteLink: (id: string) => ["courses", id, "invite-link"] as const,
+  presence: (id: string) => ["courses", id, "presence"] as const,
   requests: ["courses", "requests"] as const,
   subjects: ["courses", "subjects"] as const,
 });
@@ -143,6 +150,51 @@ export function useCreateCourseStudent() {
           : "O‘quvchi yaratildi, so‘rov yuborildi"
       );
     },
+  });
+}
+
+export function useInviteLink(courseId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: courseKeys.inviteLink(courseId ?? ""),
+    queryFn: ({ signal }) => courseApi.getInviteLink(courseId as string, { signal }),
+    enabled: Boolean(courseId) && enabled,
+  });
+}
+
+export function useCreateInviteLink() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, input }: { courseId: string; input?: CourseInviteLinkInput }) =>
+      courseApi.createInviteLink(courseId, input),
+    onSuccess: (link, variables) =>
+      client.setQueryData(courseKeys.inviteLink(variables.courseId), link),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useDeleteInviteLink() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) => courseApi.deleteInviteLink(courseId),
+    onSuccess: (courseId) => client.setQueryData(courseKeys.inviteLink(courseId), null),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useJoinCourse() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) => courseApi.join(code),
+    onSuccess: () => client.invalidateQueries({ queryKey: courseKeys.all }),
+  });
+}
+
+export function useCourseStudentPresence(courseId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: courseKeys.presence(courseId ?? ""),
+    queryFn: ({ signal }) => courseApi.getStudentPresence(courseId as string, { signal }),
+    enabled: Boolean(courseId) && enabled,
+    staleTime: 15_000,
   });
 }
 

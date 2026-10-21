@@ -51,12 +51,12 @@ export interface AddLessonDialogProps {
   onDelete?: () => void;
 }
 
-interface AssignmentDraft { title: string; description: string; dueAt: string; skillKey: string; grading: string; lessonId: string }
+interface AssignmentDraft { title: string; description: string; dueAt: string; skillKey: string; gradingNote: string; lessonId: string }
 
 export interface AddAssignmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (values: AssignmentDraft & { body: string; extraInstructions: string; file: File | null }) => void;
+  onCreate: (values: Omit<AssignmentDraft, "gradingNote"> & { body: string; extraInstructions: string; file: File | null }) => void;
   lessons?: readonly Lesson[];
   isLanguageSubject?: boolean;
   initialValues?: Assignment | null;
@@ -513,7 +513,7 @@ const EMPTY_ASSIGNMENT: AssignmentDraft = {
   description: "",
   dueAt: "",
   skillKey: "",
-  grading: "",
+  gradingNote: "",
   lessonId: "",
 };
 
@@ -534,7 +534,7 @@ export function AddAssignmentDialog({
           description: initialValues.description,
           dueAt: initialValues.dueAt ?? "",
           skillKey: initialValues.skillKey || "",
-          grading: "",
+          gradingNote: "",
           lessonId: initialValues.lessonId ?? "",
         }
       : EMPTY_ASSIGNMENT
@@ -560,11 +560,12 @@ export function AddAssignmentDialog({
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.title.trim() || !form.description.trim()) return;
+    const { gradingNote, ...rest } = form;
     onCreate({
-      ...form,
-      skillKey: isLanguageSubject ? form.skillKey : "",
-      body: form.description,
-      extraInstructions: form.grading,
+      ...rest,
+      skillKey: isLanguageSubject ? rest.skillKey : "",
+      body: rest.description,
+      extraInstructions: gradingNote,
       file,
     });
     setForm(EMPTY_ASSIGNMENT);
@@ -684,8 +685,8 @@ export function AddAssignmentDialog({
             <label>
               <span>{t("dialogs.assignment.gradingLabel")}</span>
               <input
-                value={form.grading}
-                onChange={(event) => update("grading", event.target.value)}
+                value={form.gradingNote}
+                onChange={(event) => update("gradingNote", event.target.value)}
                 placeholder={t("dialogs.assignment.gradingPlaceholder")}
               />
             </label>

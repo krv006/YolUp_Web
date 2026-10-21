@@ -58,6 +58,7 @@ import {
   useCameraSignals,
   useFocusTracker,
   useMicSignals,
+  useMuteAll,
   type CameraRequest,
   type MicRequest,
 } from "@/modules/live";
@@ -1019,6 +1020,7 @@ function ParticipantsPanel({
   const participants = useParticipants();
   const allowShare = useAllowShare(lessonId);
   const ban = useBanFromLesson(lessonId);
+  const muteAll = useMuteAll(lessonId);
   const raisedHands = new Set([
     ...micRequests.map((request) => request.name),
     ...cameraRequests.map((request) => request.name),
@@ -1157,8 +1159,14 @@ function ParticipantsPanel({
         <div className="flex items-center gap-2 border-t border-line pt-3">
           <button
             type="button"
-            className="h-11 flex-1 rounded-full border border-line text-label-strong text-ink transition-colors hover:bg-subtle"
-            onClick={() => toast.info(t("participantsPanel.muteAllUnavailable"))}
+            className="h-11 flex-1 rounded-full border border-line text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-60"
+            disabled={muteAll.isPending}
+            onClick={() =>
+              muteAll.mutate([], {
+                onSuccess: (count) =>
+                  toast.success(t("participantsPanel.muteAllDone", { count })),
+              })
+            }
           >
             {t("participantsPanel.muteAll")}
           </button>

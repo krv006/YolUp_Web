@@ -264,6 +264,6 @@
     "taskNumber": "Task {{number}}",
     "backToList": "Ro‘yxatga qaytish",
     "share": "Natijalarni ulashish",
-    "shareUnavailable": "Natijalarni ulashish backendda hali mavjud emas."
+    "shared": "Natijalar guruh chatiga yuborildi ({{count}} ta o‘quvchi)"
   }
 }

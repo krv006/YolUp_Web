@@ -13,4 +13,6 @@ export const liveEndpoints = Object.freeze({
   invite: "/api/v1/live/invite/",
   ban: "/api/v1/live/ban/",
   unban: "/api/v1/live/unban/",
+  muteAll: "/api/v1/live/mute-all/",
+  presence: (lessonId: string) => `/api/v1/live/lesson/${lessonId}/presence/`,
 });

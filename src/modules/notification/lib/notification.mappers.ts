@@ -84,9 +84,12 @@ export function mapRecipientRows(dto: unknown): NotificationRecipientRow[] {
 }
 
 export function mapSendRequest(input: SendNotificationInput): SendNotificationDto {
+  const bulk = input.targetType === "users" || input.targetType === "parents_of";
   return {
     description: input.description.trim(),
     target_type: input.targetType,
     ...(input.targetType === "user" && input.userId ? { user_id: input.userId } : {}),
+    ...(bulk && input.userIds?.length ? { user_ids: input.userIds } : {}),
+    ...(input.kind ? { kind: input.kind } : {}),
   };
 }

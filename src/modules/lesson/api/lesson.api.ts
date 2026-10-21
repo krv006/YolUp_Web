@@ -37,8 +37,20 @@ export const lessonApi = {
   async create(form: LessonFormInput) {
     return mapLessonDto(await apiClient.post<LessonDto>(lessonEndpoints.list, mapLessonRequest(form)));
   },
-  async update(id: string, form: LessonFormInput) {
-    return mapLessonDto(await apiClient.patch<LessonDto>(lessonEndpoints.detail(id), mapLessonRequest(form)));
+  async update(id: string, form: LessonFormInput, scope: "one" | "series" = "one") {
+    return mapLessonDto(
+      await apiClient.patch<LessonDto>(lessonEndpoints.detail(id), mapLessonRequest(form), {
+        query: scope === "series" ? { scope } : undefined,
+      })
+    );
+  },
+  async cancel(id: string, scope: "one" | "series" = "one") {
+    const dto = await apiClient.post<{ cancelled_count?: number }>(
+      lessonEndpoints.cancel(id),
+      {},
+      { query: { scope } }
+    );
+    return dto.cancelled_count ?? 1;
   },
   async createSchedule(
     courseId: string,

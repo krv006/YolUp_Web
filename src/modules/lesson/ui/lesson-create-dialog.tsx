@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useCourses } from "@/modules/course";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, DurationPicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
-import { useCreateLesson, useCreateLessonSchedule, useUpdateLesson } from "../model/lesson.queries";
+import { useCreateLesson, useUpdateLesson } from "../model/lesson.queries";
 import type { Lesson } from "@/shared/types";
 
 export interface LessonCreateDialogProps {
@@ -25,7 +25,6 @@ export function LessonCreateDialog({ open, onOpenChange, date, lesson }: LessonC
   const courses = useCourses();
   const create = useCreateLesson();
   const update = useUpdateLesson();
-  const createSchedule = useCreateLessonSchedule();
 
   const [courseId, setCourseId] = useState("");
   const [day, setDay] = useState(() => toDateValue(date));
@@ -58,7 +57,7 @@ export function LessonCreateDialog({ open, onOpenChange, date, lesson }: LessonC
     value: course.id,
     label: course.title,
   }));
-  const pending = create.isPending || update.isPending || createSchedule.isPending;
+  const pending = create.isPending || update.isPending;
 
   async function save() {
     if (!courseId) {
@@ -73,20 +72,17 @@ export function LessonCreateDialog({ open, onOpenChange, date, lesson }: LessonC
         });
       } else if (repeat === "weekly") {
         const start = new Date(`${day}T${time}`);
-        const dates = Array.from({ length: weeks }, (_, index) => {
-          const next = new Date(start);
-          next.setDate(next.getDate() + index * 7);
-          return toDateValue(next);
-        });
-        await createSchedule.mutateAsync({
+        await create.mutateAsync({
           courseId,
-          title: note || t("schedule.newLesson"),
+          topic: note,
+          date: day,
           time,
-          durationMinutes: duration,
-          weekdays: [start.getDay()],
-          startsOn: day,
-          endsOn: dates[dates.length - 1],
-          dates,
+          duration,
+          recurrence: {
+            freq: "weekly",
+            weeks,
+            weekdays: [(start.getDay() + 6) % 7],
+          },
         });
       } else {
         await create.mutateAsync({ courseId, topic: note, date: day, time, duration });

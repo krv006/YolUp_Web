@@ -201,6 +201,9 @@ export interface LessonRecording {
   createdAt: string | null;
   endedAt: string | null;
   error: string | null;
+  participantsCount: number | null;
+  attendanceRate: number | null;
+  boardPages: number | null;
 }
 
 export interface Lesson {
@@ -220,6 +223,8 @@ export interface Lesson {
   avgRating: number | null;
   ratingCount: number;
   quizId: string | null;
+  note: string;
+  recurrenceId: string | null;
 }
 
 export interface LessonRating {
@@ -239,7 +244,16 @@ export interface LessonFormValues {
   duration: number;
 }
 
-export type SubmissionStatus = "checking" | "done" | "error";
+export type SubmissionStatus =
+  | "checking"
+  | "pending_review"
+  | "done"
+  | "error"
+  | "resubmit_requested";
+
+export type AssignmentStatus = "draft" | "active";
+
+export type GradingScale = "five" | "hundred" | "none";
 
 export interface AiQuestion {
   questionNumber?: number;
@@ -284,6 +298,9 @@ export interface Submission {
   checkedAt: string | null;
   result: AiResult | null;
   rawResult: Record<string, unknown> | null;
+  gradeValue: number | null;
+  shareWithParent: boolean;
+  resubmitComment: string;
 }
 
 export interface AssignmentStats {
@@ -311,6 +328,11 @@ export interface Assignment {
   mySubmission: Submission | null;
   submissions: Submission[];
   stats: AssignmentStats | null;
+  status: AssignmentStatus;
+  announceInChat: boolean;
+  allowLate: boolean;
+  grading: GradingScale;
+  maxScore: number;
 }
 
 export interface AssignmentFormValues {

@@ -56,3 +56,45 @@ export interface EnrollPayload {
 }
 
 export type EnrollmentAction = "approve" | "decline";
+
+export interface CourseInviteLinkDto {
+  code: string | null;
+  url: string | null;
+  expires_at: string | null;
+  require_approval?: boolean;
+}
+
+export interface CourseInviteLink {
+  code: string;
+  url: string;
+  expiresAt: string | null;
+  requireApproval: boolean;
+}
+
+export interface CourseInviteLinkInput {
+  requireApproval?: boolean;
+  expiresInDays?: number;
+}
+
+export interface CourseJoinResultDto {
+  course_id: string | number;
+  status: "joined" | "pending";
+}
+
+export interface CourseStudentPresenceDto {
+  id: string | number;
+  name?: string;
+  username?: string;
+  avatar?: string | null;
+  is_online?: boolean;
+  last_seen?: string | null;
+}
+
+export interface CourseStudentPresence {
+  id: string;
+  name: string;
+  username: string;
+  avatar: string | null;
+  isOnline: boolean;
+  lastSeen: string | null;
+}

@@ -15,12 +15,14 @@ export interface BoardPermissionStudent {
   username: string;
 }
 
+export type BoardPermissionInput = { studentIds: string[] } | { mode: "all" | "none" };
+
 export interface BoardPermissionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   students: BoardPermissionStudent[];
   pending: boolean;
-  onGrant: (studentIds: string[]) => void;
+  onSubmit: (input: BoardPermissionInput) => void;
 }
 
 export function BoardPermissionDialog({
@@ -28,7 +30,7 @@ export function BoardPermissionDialog({
   onOpenChange,
   students,
   pending,
-  onGrant,
+  onSubmit,
 }: BoardPermissionDialogProps) {
   const { t } = useTranslation("board");
   const [mode, setMode] = useState<BoardPermissionMode>("selected");
@@ -36,15 +38,18 @@ export function BoardPermissionDialog({
 
   function save() {
     if (mode === "teacher") {
-      toast.info(t("permissionDialog.revokeUnavailable"));
+      onSubmit({ mode: "none" });
       return;
     }
-    const ids = mode === "everyone" ? students.map((student) => student.id) : allowed;
-    if (!ids.length) {
+    if (mode === "everyone") {
+      onSubmit({ mode: "all" });
+      return;
+    }
+    if (!allowed.length) {
       toast.info(t("permissionDialog.pickStudent"));
       return;
     }
-    onGrant(ids);
+    onSubmit({ studentIds: allowed });
   }
 
   return (

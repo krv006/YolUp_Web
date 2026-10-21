@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Link2, Search, UserRoundX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useCourseStudents } from "@/modules/course";
+import { useCourseStudents, useCourseStudentPresence } from "@/modules/course";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { useBanFromLesson, useInviteToLesson } from "../model/live.queries";
@@ -24,8 +24,14 @@ export function LessonInviteDialog({
   const [search, setSearch] = useState("");
   const [invited, setInvited] = useState<string[]>([]);
   const students = useCourseStudents(courseId, { page_size: 100 }, open);
+  const presence = useCourseStudentPresence(courseId, open);
   const invite = useInviteToLesson(lessonId);
   const ban = useBanFromLesson(lessonId);
+
+  const online = useMemo(
+    () => new Map((presence.data ?? []).map((row) => [row.id, row])),
+    [presence.data]
+  );
 
   const visible = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -97,11 +103,20 @@ export function LessonInviteDialog({
             const called = invited.includes(student.id);
             return (
               <article key={student.id} className="group flex items-center gap-2.5 rounded-xl p-2">
-                <Avatar name={student.name} tone={student.avatarTone} size="sm" />
+                <span className="relative shrink-0">
+                  <Avatar name={student.name} tone={student.avatarTone} size="sm" />
+                  {online.get(student.id)?.isOnline ? (
+                    <span className="absolute right-0 bottom-0 size-3 rounded-full border-2 border-surface bg-success" />
+                  ) : null}
+                </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-label-strong text-ink">{student.name}</strong>
                   <small className="truncate text-caption text-ink-tertiary">
-                    {called ? t("invite.calledJustNow") : `@${student.username}`}
+                    {called
+                      ? t("invite.calledJustNow")
+                      : online.get(student.id)?.isOnline
+                        ? t("invite.online")
+                        : `@${student.username}`}
                   </small>
                 </span>
 
@@ -141,7 +156,6 @@ export function LessonInviteDialog({
         </div>
       )}
 
-      <p className="text-caption text-ink-tertiary">{t("invite.note")}</p>
     </AppDialog>
   );
 }

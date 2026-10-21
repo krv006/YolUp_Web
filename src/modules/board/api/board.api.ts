@@ -23,6 +23,18 @@ export const boardApi = {
     apiClient.post(boardEndpoints.erase(lessonId), { sheet, stroke_ids: strokeIds, reason }),
   grant: (lessonId: string, studentId: string) =>
     apiClient.post(boardEndpoints.grant(lessonId), { student_id: studentId }),
+  grantMany: (lessonId: string, studentIds: string[]) =>
+    apiClient.post<{ granted?: number; revoked?: number }>(boardEndpoints.grant(lessonId), {
+      student_ids: studentIds,
+    }),
+  grantMode: (lessonId: string, mode: "all" | "none") =>
+    apiClient.post<{ granted?: number; revoked?: number }>(boardEndpoints.grant(lessonId), { mode }),
+  revoke: (lessonId: string, studentId: string) =>
+    apiClient.post<{ ok?: boolean; revoked?: boolean }>(boardEndpoints.revoke(lessonId), {
+      student_id: studentId,
+    }),
+  sendToChat: (lessonId: string) =>
+    apiClient.post<{ message_id?: string }>(boardEndpoints.sendToChat(lessonId), {}),
   solve: (lessonId: string, expression: string) =>
     apiClient.post<FormulaSolutionDto>(boardEndpoints.solve(lessonId), { expr: expression }),
   downloadPdf: (lessonId: string, options?: RequestOptions) =>

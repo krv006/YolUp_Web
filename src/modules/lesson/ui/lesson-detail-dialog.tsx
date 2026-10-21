@@ -5,7 +5,7 @@ import type { Lesson } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { useCourses } from "@/modules/course";
-import { useDeleteLesson } from "../model/lesson.queries";
+import { useCancelLesson } from "../model/lesson.queries";
 
 export interface LessonDetailDialogProps {
   lesson: Lesson | null;
@@ -35,7 +35,8 @@ export function LessonDetailDialog({
   const months = t("list.months", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const deleteLesson = useDeleteLesson();
+  const [scope, setScope] = useState<"one" | "series">("one");
+  const cancelLesson = useCancelLesson();
   const courses = useCourses();
 
   if (!lesson) return null;
@@ -140,22 +141,53 @@ export function LessonDetailDialog({
             <button
               type="button"
               className={dialogButton.danger}
-              disabled={deleteLesson.isPending}
+              disabled={cancelLesson.isPending}
               onClick={() =>
-                deleteLesson.mutate(lesson.id, {
-                  onSuccess: () => {
-                    setConfirmOpen(false);
-                    onOpenChange(false);
-                  },
-                  onError: (error: Error) => toast.error(error.message),
-                })
+                cancelLesson.mutate(
+                  { id: lesson.id, scope },
+                  {
+                    onSuccess: (count) => {
+                      toast.success(t("schedule.cancelled", { count }));
+                      setConfirmOpen(false);
+                      onOpenChange(false);
+                    },
+                  }
+                )
               }
             >
               {t("schedule.cancelConfirm")}
             </button>
           </>
         }
-      />
+      >
+        {lesson.recurrenceId ? (
+            <div className="flex flex-col gap-2" role="radiogroup">
+              {(["one", "series"] as const).map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  role="radio"
+                  aria-checked={scope === item}
+                  className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors ${
+                    scope === item ? "border-action bg-action-subtle" : "border-line bg-surface"
+                  }`}
+                  onClick={() => setScope(item)}
+                >
+                  <span
+                    className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${
+                      scope === item ? "border-action" : "border-line"
+                    }`}
+                  >
+                    {scope === item ? <span className="size-2.5 rounded-full bg-action" /> : null}
+                  </span>
+                  <span className="text-label-strong text-ink">
+                    {t(`schedule.cancelScope.${item}`)}
+                  </span>
+                </button>
+              ))}
+            </div>
+        ) : null}
+      </AppDialog>
     </>
   );
 }

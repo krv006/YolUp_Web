@@ -27,6 +27,13 @@ import {
 import { syncServerTime } from "../lib/server-time";
 
 export const examApi = {
+  async shareResults(examId: string) {
+    const dto = await apiClient.post<{ ok?: boolean; message_id?: string; students?: number }>(
+      examEndpoints.shareResults(examId),
+      { to: "group_chat" }
+    );
+    return { messageId: dto.message_id ?? "", students: dto.students ?? 0 };
+  },
   async getTemplates(options?: RequestOptions) {
     const dto = await apiClient.get<unknown>(examEndpoints.templates, options);
     return normalizePagination<ExamTemplateDto>(dto).items.map(mapExamTemplateDto);

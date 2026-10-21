@@ -3,12 +3,8 @@ import { ArrowLeft, Download, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth } from "@/modules/auth";
-import { boardApi, BoardPanel } from "@/modules/board";
-import { useConversations } from "@/modules/conversation";
+import { boardApi, BoardPanel, useSendBoardToChat } from "@/modules/board";
 import { useLesson } from "@/modules/lesson";
-import { messageApi } from "@/modules/message";
-import { ROLES } from "@/shared/constants/roles";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoomState } from "@/widgets/live-room";
 
@@ -16,11 +12,9 @@ export function BoardPage() {
   const { t } = useTranslation("board");
   const { lessonId } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const lesson = useLesson(lessonId ?? null);
-  const role = user?.role === ROLES.TEACHER ? "teacher" : "student";
-  const conversations = useConversations(role);
-  const [busy, setBusy] = useState<"pdf" | "chat" | null>(null);
+  const sendToChat = useSendBoardToChat(lessonId ?? "");
+  const [busy, setBusy] = useState<"pdf" | null>(null);
 
   if (lesson.isLoading || (!lesson.isError && !lesson.data))
     return <LoadingFallback label={t("page.loading")} />;
@@ -50,25 +44,6 @@ export function BoardPage() {
       URL.revokeObjectURL(url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("page.pdfFailed"));
-    } finally {
-      setBusy(null);
-    }
-  }
-
-  async function sendToChat() {
-    const room = (conversations.data ?? []).find((item) => item.courseId === data.courseId);
-    if (!room) {
-      toast.error(t("page.roomNotFound"));
-      return;
-    }
-    setBusy("chat");
-    try {
-      const blob = await boardApi.downloadPdf(data.id);
-      const file = new File([blob], `${data.title}.pdf`, { type: "application/pdf" });
-      await messageApi.send(room.id, { text: t("page.chatMessage", { title: data.title }), file });
-      toast.success(t("page.sentToChat"));
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : t("page.sendFailed"));
     } finally {
       setBusy(null);
     }
@@ -112,8 +87,12 @@ export function BoardPage() {
               <button
                 type="button"
                 className={`${action} border border-line bg-surface text-ink hover:bg-muted`}
-                disabled={busy !== null}
-                onClick={sendToChat}
+                disabled={busy !== null || sendToChat.isPending}
+                onClick={() =>
+                  sendToChat.mutate(undefined, {
+                    onSuccess: () => toast.success(t("page.sentToChat")),
+                  })
+                }
               >
                 <Send size={16} /> {t("page.sendToChat")}
               </button>

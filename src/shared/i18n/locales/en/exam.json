@@ -264,6 +264,6 @@
     "taskNumber": "Task {{number}}",
     "backToList": "Back to the list",
     "share": "Share the results",
-    "shareUnavailable": "Sharing results is not available on the backend yet."
+    "shared": "Results shared in the group chat ({{count}})"
   }
 }

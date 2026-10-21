@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Loader2, ShieldCheck, Trash2, TriangleAlert, VideoOff } from "lucide-react";
+import {
+  Loader2,
+  PenLine,
+  ShieldCheck,
+  Trash2,
+  TriangleAlert,
+  Users,
+  VideoOff,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { formatDateTime } from "@/shared/lib";
 import type { LessonRecording } from "@/shared/types";
@@ -65,6 +73,31 @@ export function LessonRecordingPlayer({
         disablePictureInPicture
         onContextMenu={(event) => event.preventDefault()}
       />
+
+      {recording.participantsCount !== null ||
+      recording.attendanceRate !== null ||
+      recording.boardPages !== null ? (
+        <div className="flex flex-wrap items-center gap-2 px-1">
+          {recording.participantsCount !== null ? (
+            <span className="flex h-9 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+              <Users size={14} />
+              {t("recording.participants", { count: recording.participantsCount })}
+            </span>
+          ) : null}
+          {recording.attendanceRate !== null ? (
+            <span className="flex h-9 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+              <ShieldCheck size={14} />
+              {t("recording.attendanceRate", { value: recording.attendanceRate })}
+            </span>
+          ) : null}
+          {recording.boardPages !== null ? (
+            <span className="flex h-9 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">
+              <PenLine size={14} />
+              {t("recording.boardPages", { count: recording.boardPages })}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="recording-meta">
         <div>

@@ -167,7 +167,10 @@
     "delete": "Delete",
     "deleteDialogTitle": "Delete recording",
     "deleteDialogDescription": "The video will be permanently deleted and cannot be restored.",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "participants": "{{count}} participants",
+    "attendanceRate": "Attendance: {{value}}%",
+    "boardPages": "Board: {{count}} pages"
   },
   "schedule": {
     "now": "NOW",
@@ -197,7 +200,7 @@
     "edit": "Edit",
     "cancelLesson": "Cancel lesson",
     "cancelTitle": "Cancel this lesson?",
-    "cancelDescription": "The lesson is removed from the schedule and no reminder is sent.",
+    "cancelDescription": "The lesson stays in the schedule as cancelled and students are notified.",
     "cancelConfirm": "Cancel lesson",
     "keep": "Close",
     "memberCount": "{{count}} students",
@@ -229,6 +232,11 @@
     "online": "Online",
     "restOfWeek": "Rest of the week",
     "legendHasLesson": "Has a lesson",
-    "legendWeekend": "Day off"
+    "legendWeekend": "Day off",
+    "cancelled": "{{count}} lessons cancelled",
+    "cancelScope": {
+      "one": "This lesson only",
+      "series": "This and all following lessons"
+    }
   }
 }

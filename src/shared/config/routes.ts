@@ -55,6 +55,7 @@ export const ROUTES = Object.freeze({
     payments: "/admin/payments",
     reports: "/admin/reports",
   }),
+  join: (code: string) => `/j/${segment(code)}`,
   live: (lessonId: string) => `/live/${segment(lessonId)}`,
   board: (lessonId: string) => `/boards/${segment(lessonId)}`,
   recording: (lessonId: string) => `/recordings/${segment(lessonId)}`,

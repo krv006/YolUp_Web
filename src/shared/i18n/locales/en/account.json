@@ -69,7 +69,11 @@
     "pushUnsupported": "Not supported in this browser",
     "pushBlocked": "Notifications are blocked in your browser settings — allow them there first.",
     "reminderLabel": "Lesson reminder",
-    "reminderOption": "{{count}} minutes before"
+    "reminderOption": "{{count}} minutes before",
+    "messagesLabel": "Chat messages",
+    "messagesHint": "Push for chat messages is not sent yet — the setting is saved.",
+    "emailLabel": "Email notifications",
+    "emailHint": "Email delivery is not connected yet — the setting is saved."
   },
   "roleSwitcher": {
     "triggerAria": "Your other accounts",
@@ -196,6 +200,20 @@
     "accountActive": "active",
     "addAccount": "Add another account",
     "close": "Close",
-    "subjectNone": "Not selected"
+    "subjectNone": "Not selected",
+    "twoFactorOn": "On",
+    "twoFactorOff": "Off",
+    "twoFactorEnableTitle": "Turn on two-step verification",
+    "twoFactorEnableDescription": "Enter your password — we will send an SMS code to your phone.",
+    "twoFactorCodeTitle": "Enter the SMS code",
+    "twoFactorCodeDescription": "Enter the 5-digit code sent to your phone number.",
+    "twoFactorCodeRequired": "Enter all 5 digits of the code",
+    "twoFactorEnabled": "Two-step verification is on",
+    "twoFactorDisableTitle": "Turn off two-step verification",
+    "twoFactorDisableDescription": "After turning it off, only your password will be required to sign in.",
+    "twoFactorDisabled": "Two-step verification is off",
+    "twoFactorSmsUnavailable": "The SMS service is not connected yet, so this cannot be turned on.",
+    "enable": "Turn on",
+    "confirmCode": "Verify"
   }
 }

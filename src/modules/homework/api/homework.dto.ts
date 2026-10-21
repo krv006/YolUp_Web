@@ -1,4 +1,4 @@
-import type { SubmissionStatus } from "@/shared/types";
+import type { AssignmentStatus, GradingScale, SubmissionStatus } from "@/shared/types";
 
 import type { StrokeDto } from "@/modules/board";
 
@@ -51,12 +51,29 @@ export interface SubmissionDto {
   created_at: string;
   checked_at: string | null;
   result?: AiResultDto | null;
+  grade_value?: number | null;
+  share_with_parent?: boolean;
+  resubmit_comment?: string | null;
 }
 
 export interface SubmissionReviewInput {
   overallScore?: number | null;
   grade?: string;
+  gradeValue?: number | null;
+  shareWithParent?: boolean;
   result?: Record<string, unknown> | null;
+}
+
+export interface ResubmitRequestInput {
+  id: string;
+  comment: string;
+}
+
+export interface HomeworkAiSummaryDto {
+  summary?: string;
+  topics?: string[];
+  recommendations?: string[];
+  submissions_count?: number;
 }
 
 export interface AssignmentStatsDto {
@@ -85,6 +102,12 @@ export interface AssignmentDto {
   my_submission?: SubmissionDto | null;
   submissions?: SubmissionDto[];
   stats?: AssignmentStatsDto | null;
+  status?: AssignmentStatus | "published";
+  published?: boolean;
+  announce_in_chat?: boolean;
+  allow_late?: boolean;
+  grading?: GradingScale;
+  max_score?: number | null;
 }
 
 export interface HomeworkCourseReportDto {
@@ -122,4 +145,9 @@ export interface AssignmentFormInput {
   lessonId?: string | null;
   extraInstructions?: string;
   file?: File | null;
+  status?: AssignmentStatus;
+  announceInChat?: boolean;
+  allowLate?: boolean;
+  grading?: GradingScale;
+  maxScore?: number;
 }

@@ -33,6 +33,8 @@ export interface AuthUser {
   certificates: Certificate[];
   preferredLanguage: string;
   lessonReminderMinutes: number | null;
+  notifyMessages: boolean;
+  notifyEmail: boolean;
   linkedAccounts: LinkedAccount[];
   middleName: string | null;
   birthDate: string | null;

@@ -14,13 +14,13 @@
     "banAria": "Remove {{name}} from the lesson",
     "banTitle": "Remove from lesson",
     "empty": "No students found.",
-    "note": "Student online status is not available on the backend yet.",
     "copyLink": "Copy link",
     "called": "Called",
     "calledJustNow": "Called · just now",
     "sentToAll": "Invitation sent to everyone",
     "linkCopied": "Link copied",
-    "linkCopyFailed": "Could not copy the link"
+    "linkCopyFailed": "Could not copy the link",
+    "online": "Online"
   },
   "preJoin": {
     "you": "You",
@@ -155,7 +155,7 @@
     "raisedHand": "Raised hand",
     "muteAll": "Mute everyone",
     "invite": "Invite",
-    "muteAllUnavailable": "Muting everyone is not available on the backend yet."
+    "muteAllDone": "Muted {{count}} participants"
   },
   "permissionDialog": {
     "title": "Camera and microphone access needed",

@@ -28,6 +28,7 @@ export {
   useLiveLessons,
   useCreateLesson,
   useCreateLessonSchedule,
+  useCancelLesson,
   useDeleteLesson,
   useDeleteRecording,
   useFinishLesson,

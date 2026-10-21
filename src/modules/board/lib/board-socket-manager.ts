@@ -14,6 +14,7 @@ export type BoardSocketEvent =
   | { type: "camera_granted"; studentId: string }
   | { type: "camera_denied"; studentId: string }
   | { type: "board_granted"; studentId: string }
+  | { type: "board_revoked"; studentId: string }
   | { type: "error"; detail: string };
 
 interface RawBoardEvent {
@@ -66,6 +67,8 @@ export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
       return event.student_id ? { type: "camera_denied", studentId: String(event.student_id) } : null;
     case "board_granted":
       return event.student_id ? { type: "board_granted", studentId: String(event.student_id) } : null;
+    case "board_revoked":
+      return event.student_id ? { type: "board_revoked", studentId: String(event.student_id) } : null;
     case "error":
       return { type: "error", detail: event.detail || "Doska ulanishida xatolik" };
     default:

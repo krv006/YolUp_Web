@@ -13,7 +13,7 @@ import {
   useAddStroke,
   useBoard,
   useEraseStrokes,
-  useGrantDraw,
+  useSetBoardPermissions,
   useSolveFormula,
 } from "../model/board.queries";
 import { useBoardDrawing } from "../model/use-board-drawing";
@@ -55,7 +55,7 @@ export function BoardPanel({
   const addStroke = useAddStroke(lessonId);
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
-  const grant = useGrantDraw(lessonId);
+  const permissions = useSetBoardPermissions(lessonId);
   const solve = useSolveFormula(lessonId);
   const members = useCourseStudents(board.data?.isTeacher ? courseId : null, { page_size: 100 });
 
@@ -494,26 +494,24 @@ export function BoardPanel({
       <BoardPermissionDialog
         open={grantOpen}
         onOpenChange={setGrantOpen}
-        pending={grant.isPending}
+        pending={permissions.isPending}
         students={(members.data?.items ?? []).map(({ student }) => ({
           id: student.id,
           name: student.name,
           username: student.username,
         }))}
-        onGrant={(studentIds) => {
-          let done = 0;
-          for (const studentId of studentIds)
-            grant.mutate(studentId, {
-              onSuccess: () => {
-                done += 1;
-                if (done === studentIds.length) {
-                  toast.success(t("permissionDialog.saved", { count: studentIds.length }));
-                  setGrantOpen(false);
-                }
-              },
-              onError: (error) => toast.error(error.message),
-            });
-        }}
+        onSubmit={(input) =>
+          permissions.mutate(input, {
+            onSuccess: (result) => {
+              toast.success(
+                "mode" in input && input.mode === "none"
+                  ? t("permissionDialog.revoked", { count: result.revoked ?? 0 })
+                  : t("permissionDialog.saved", { count: result.granted ?? 0 })
+              );
+              setGrantOpen(false);
+            },
+          })
+        }
       />
 
       <FormulaSolverDialog

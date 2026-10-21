@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "sonner";
 import {
   useDownloadSubmissionFile,
   useRecheckSubmission,
+  useRequestResubmit,
   useReviewSubmission,
   useSubmission,
 } from "@/modules/homework";
-import type { Submission } from "@/shared/types";
+import type { GradingScale, Submission } from "@/shared/types";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
 
 export interface SubmissionReviewProps {
   submission: Submission;
+  grading?: GradingScale;
+  maxScore?: number;
   onClose: () => void;
   onStep: (direction: 1 | -1) => void;
 }
@@ -22,6 +25,8 @@ const SCORES = [2, 3, 4, 5];
 
 export function SubmissionReview({
   submission,
+  grading = "five",
+  maxScore = 100,
   onClose,
   onStep,
 }: SubmissionReviewProps) {
@@ -31,21 +36,25 @@ export function SubmissionReview({
   const review = useReviewSubmission();
   const recheck = useRecheckSubmission();
   const download = useDownloadSubmissionFile();
+  const requestResubmit = useRequestResubmit();
 
   const current = detail.data ?? submission;
   const ai = current.result;
   const aiScore = ai?.overallScore ?? null;
 
-  const [score, setScore] = useState<number | null>(current.overallScore ?? aiScore);
-  const [comment, setComment] = useState(current.grade || aiComment(current.result) || "");
-  const [shareWithParent, setShareWithParent] = useState(false);
+  const [score, setScore] = useState<number | null>(initialScore(current, aiScore));
+  const [comment, setComment] = useState(initialComment(current));
+  const [shareWithParent, setShareWithParent] = useState(current.shareWithParent);
+  const [resubmitOpen, setResubmitOpen] = useState(false);
+  const [resubmitComment, setResubmitComment] = useState("");
 
   const [syncedId, setSyncedId] = useState(current.id);
 
   if (syncedId !== current.id) {
     setSyncedId(current.id);
-    setScore(current.overallScore ?? current.result?.overallScore ?? null);
-    setComment(current.grade || aiComment(current.result) || "");
+    setScore(initialScore(current, current.result?.overallScore ?? null));
+    setComment(initialComment(current));
+    setShareWithParent(current.shareWithParent);
   }
 
   const questions = ai?.questions ?? [];
@@ -136,6 +145,16 @@ export function SubmissionReview({
           </div>
         </div>
 
+        {current.status === "resubmit_requested" ? (
+          <p className="flex items-start gap-2 rounded-2xl border border-line bg-action-subtle/40 px-4 py-3 text-body-sm text-ink">
+            <Icon name="refresh" size={16} className="mt-0.5 shrink-0 text-action" />
+            <span className="flex-1">
+              {t("review.resubmitRequested")}
+              {current.resubmitComment ? ` · ${current.resubmitComment}` : ""}
+            </span>
+          </p>
+        ) : null}
+
         {current.error ? (
           <p className="rounded-2xl border border-error-bg bg-error-bg/50 px-4 py-3 text-body-sm text-error-text">
             {current.error}
@@ -157,7 +176,9 @@ export function SubmissionReview({
               <strong className="font-heading text-h1 text-ink">
                 {aiScore === null ? "—" : aiScore}
               </strong>
-              <small className="text-caption text-ink-tertiary">/5</small>
+              <small className="text-caption text-ink-tertiary">
+                /{grading === "hundred" ? maxScore : 5}
+              </small>
             </span>
           </div>
 
@@ -215,23 +236,44 @@ export function SubmissionReview({
           <small className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
             {t("review.yourGrade")}
           </small>
-          <div className="grid grid-cols-4 gap-2">
-            {SCORES.map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={`h-14 rounded-xl border font-heading text-h3 transition-colors ${
-                  score === value
-                    ? "border-action bg-action text-on-action"
-                    : "border-line bg-surface text-ink hover:bg-subtle"
-                }`}
-                onClick={() => setScore(value)}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-          {aiScore !== null ? (
+          {grading === "five" ? (
+            <div className="grid grid-cols-4 gap-2">
+              {SCORES.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`h-14 rounded-xl border font-heading text-h3 transition-colors ${
+                    score === value
+                      ? "border-action bg-action text-on-action"
+                      : "border-line bg-surface text-ink hover:bg-subtle"
+                  }`}
+                  onClick={() => setScore(value)}
+                >
+                  {value}
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          {grading === "hundred" ? (
+            <label className="field-group">
+              <span>{t("review.scoreOf", { max: maxScore })}</span>
+              <input
+                inputMode="numeric"
+                value={score === null ? "" : String(score)}
+                onChange={(event) => {
+                  const digits = event.target.value.replace(/\D/g, "");
+                  setScore(digits ? Math.min(Number(digits), maxScore) : null);
+                }}
+              />
+            </label>
+          ) : null}
+
+          {grading === "none" ? (
+            <p className="text-caption text-ink-tertiary">{t("review.gradingNone")}</p>
+          ) : null}
+
+          {aiScore !== null && grading !== "none" ? (
             <small className="flex items-center gap-1.5 text-caption text-ink-tertiary">
               <Icon name="check-circle" size={14} className="text-saffron-strong" />
               {t("review.aiSuggestion", {
@@ -262,10 +304,7 @@ export function SubmissionReview({
             </span>
             <Switch
               checked={shareWithParent}
-              onCheckedChange={() => {
-                setShareWithParent(false);
-                toast.info(t("review.sharePending"));
-              }}
+              onCheckedChange={setShareWithParent}
               aria-label={t("review.shareParent")}
             />
           </span>
@@ -273,19 +312,24 @@ export function SubmissionReview({
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="flex h-12 flex-1 items-center justify-center rounded-full border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle"
-              onClick={() => toast.info(t("review.resubmitPending"))}
+              className="flex h-12 flex-1 items-center justify-center rounded-full border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+              disabled={current.status === "resubmit_requested" || current.status === "checking"}
+              onClick={() => setResubmitOpen(true)}
             >
               {t("review.resubmit")}
             </button>
             <button
               type="button"
               className="flex h-12 flex-1 items-center justify-center rounded-full bg-action text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-50"
-              disabled={review.isPending || score === null}
+              disabled={review.isPending || (grading !== "none" && score === null)}
               onClick={() =>
                 review.mutate({
                   id: current.id,
-                  input: { overallScore: score, grade: comment },
+                  input: {
+                    gradeValue: grading === "none" ? undefined : score,
+                    shareWithParent,
+                    result: { ...(current.rawResult ?? {}), teacher_comment: comment },
+                  },
                 })
               }
             >
@@ -294,8 +338,67 @@ export function SubmissionReview({
           </div>
         </section>
       </aside>
+
+      <AppDialog
+        open={resubmitOpen}
+        onOpenChange={(open) => {
+          setResubmitOpen(open);
+          if (!open) setResubmitComment("");
+        }}
+        title={t("review.resubmitTitle")}
+        description={t("review.resubmitDescription", { name: current.studentName })}
+        footer={
+          <>
+            <button
+              type="button"
+              className={dialogButton.secondary}
+              onClick={() => setResubmitOpen(false)}
+            >
+              {t("review.resubmitCancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.primary}
+              disabled={requestResubmit.isPending || !resubmitComment.trim()}
+              onClick={() =>
+                requestResubmit.mutate(
+                  { id: current.id, comment: resubmitComment.trim() },
+                  {
+                    onSuccess: () => {
+                      setResubmitOpen(false);
+                      setResubmitComment("");
+                    },
+                  }
+                )
+              }
+            >
+              {t("review.resubmitSend")}
+            </button>
+          </>
+        }
+      >
+        <label className="field-group">
+          <span>{t("review.resubmitComment")}</span>
+          <textarea
+            rows={4}
+            value={resubmitComment}
+            onChange={(event) => setResubmitComment(event.target.value)}
+            placeholder={t("review.resubmitPlaceholder")}
+          />
+        </label>
+      </AppDialog>
     </section>
   );
+}
+
+function initialScore(submission: Submission, fallback: number | null): number | null {
+  return submission.gradeValue ?? submission.overallScore ?? fallback;
+}
+
+function initialComment(submission: Submission): string {
+  const stored = submission.rawResult?.teacher_comment;
+  if (typeof stored === "string" && stored) return stored;
+  return aiComment(submission.result) || "";
 }
 
 function aiComment(result: Submission["result"] | null | undefined): string {

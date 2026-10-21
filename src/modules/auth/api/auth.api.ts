@@ -8,10 +8,12 @@ import type {
   CreateChildRequestDto,
   LinkAction,
   LoginRequestDto,
+  LoginResponseDto,
   RefreshRequestDto,
   RegisterRequestDto,
   SwitchAccountResponseDto,
   TokenPairDto,
+  TwoFactorLoginRequestDto,
 } from "./auth.dto";
 
 export const authApi = {
@@ -23,7 +25,13 @@ export const authApi = {
     );
   },
   login(dto: LoginRequestDto) {
-    return apiClient.post<TokenPairDto>(authEndpoints.login, dto, {
+    return apiClient.post<LoginResponseDto>(authEndpoints.login, dto, {
+      skipAuth: true,
+      skipRefresh: true,
+    });
+  },
+  twoFactorLogin(dto: TwoFactorLoginRequestDto) {
+    return apiClient.post<TokenPairDto>(authEndpoints.twoFactorLogin, dto, {
       skipAuth: true,
       skipRefresh: true,
     });
@@ -45,6 +53,48 @@ export const authApi = {
       current_password: currentPassword,
       new_password: newPassword,
     });
+  },
+  updateNotificationPrefs(prefs: { notifyMessages?: boolean; notifyEmail?: boolean }) {
+    return apiClient.patch<AuthUserDto>(authEndpoints.me, {
+      ...(prefs.notifyMessages === undefined ? {} : { notify_messages: prefs.notifyMessages }),
+      ...(prefs.notifyEmail === undefined ? {} : { notify_email: prefs.notifyEmail }),
+    });
+  },
+  getTwoFactor(options?: RequestOptions) {
+    return apiClient.get<{ enabled?: boolean }>(authEndpoints.twoFactor, options);
+  },
+  enableTwoFactor(password: string) {
+    return apiClient.post<{ sent?: boolean; expires_in?: number; retry_after?: number }>(
+      authEndpoints.twoFactorEnable,
+      { password }
+    );
+  },
+  confirmTwoFactor(code: string) {
+    return apiClient.post<{ enabled?: boolean }>(authEndpoints.twoFactorConfirm, { code });
+  },
+  disableTwoFactor(password: string) {
+    return apiClient.post<{ enabled?: boolean }>(authEndpoints.twoFactorDisable, { password });
+  },
+  requestPasswordReset(phone: string) {
+    return apiClient.post<{ sent?: boolean; expires_in?: number; retry_after?: number }>(
+      authEndpoints.passwordResetRequest,
+      { phone },
+      { skipAuth: true, skipRefresh: true }
+    );
+  },
+  verifyPasswordReset(phone: string, code: string) {
+    return apiClient.post<{ reset_token: string; expires_in?: number }>(
+      authEndpoints.passwordResetVerify,
+      { phone, code },
+      { skipAuth: true, skipRefresh: true }
+    );
+  },
+  confirmPasswordReset(resetToken: string, password: string) {
+    return apiClient.post<{ ok?: boolean }>(
+      authEndpoints.passwordResetConfirm,
+      { reset_token: resetToken, password },
+      { skipAuth: true, skipRefresh: true }
+    );
   },
   getMyStats() {
     return apiClient.get<{ groups?: number; students?: number; experience_years?: number }>(

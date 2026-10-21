@@ -11,7 +11,17 @@ export const authKeys = Object.freeze({
   myRatings: ["auth", "ratings", "me"] as const,
   teacherRatings: (id: string) => ["auth", "ratings", id] as const,
   teacherStats: (id: string) => ["auth", "stats", id] as const,
+  twoFactor: ["auth", "2fa"] as const,
 });
+
+export function useTwoFactorStatus(enabled = true) {
+  return useQuery({
+    queryKey: authKeys.twoFactor,
+    queryFn: ({ signal }) => authApi.getTwoFactor({ signal }),
+    enabled,
+    staleTime: 30_000,
+  });
+}
 
 export function useLoginHistory(studentId: string | null = null, enabled = true) {
   return useQuery({

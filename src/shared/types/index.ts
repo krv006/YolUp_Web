@@ -72,6 +72,8 @@ export type {
   StudentAttemptSummary,
   Submission,
   SubmissionStatus,
+  AssignmentStatus,
+  GradingScale,
   TeacherAnalytics,
   TeacherCourseAnalytics,
   TeacherVideoStat,

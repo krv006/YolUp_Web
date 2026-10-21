@@ -13,6 +13,7 @@ import {
   certificateDtoSchema,
   lessonRatingDtoSchema,
   loginRecordDtoSchema,
+  loginResponseDtoSchema,
   switchAccountResponseDtoSchema,
   tokenPairDtoSchema,
   userDtoSchema,
@@ -20,6 +21,7 @@ import {
   type LoginRecord,
   type LoginRequestDto,
   type TokenPair,
+  type TwoFactorChallenge,
 } from "../api/auth.dto";
 import { describeUserAgent } from "./describe-user-agent";
 
@@ -30,6 +32,26 @@ export function mapLoginRequest(values: LoginCredentials): LoginRequestDto {
 export function mapTokenPairDto(dto: unknown): TokenPair {
   const parsed = tokenPairDtoSchema.parse(dto);
   return { accessToken: parsed.access, refreshToken: parsed.refresh };
+}
+
+export type LoginOutcome =
+  | { kind: "tokens"; tokens: TokenPair }
+  | { kind: "twoFactor"; challenge: TwoFactorChallenge };
+
+export function mapLoginResponse(dto: unknown): LoginOutcome {
+  const parsed = loginResponseDtoSchema.parse(dto);
+  if ("two_factor_required" in parsed) {
+    return {
+      kind: "twoFactor",
+      challenge: {
+        challengeToken: parsed.challenge_token,
+        expiresIn: parsed.expires_in,
+        retryAfter: parsed.retry_after,
+        phoneHint: parsed.phone_hint,
+      },
+    };
+  }
+  return { kind: "tokens", tokens: { accessToken: parsed.access, refreshToken: parsed.refresh } };
 }
 
 export function mapCertificateDto(dto: unknown): Certificate {
@@ -73,6 +95,8 @@ export function mapUserDto(dto: unknown): AuthUser {
     certificates: parsed.certificates.map(mapCertificateDto),
     preferredLanguage: parsed.preferred_language,
     lessonReminderMinutes: parsed.lesson_reminder_minutes ?? null,
+    notifyMessages: parsed.notify_messages !== false,
+    notifyEmail: parsed.notify_email === true,
     linkedAccounts: parsed.linked_accounts.map(mapLinkedAccountDto),
     middleName: parsed.middle_name ?? null,
     birthDate: parsed.birth_date ?? null,

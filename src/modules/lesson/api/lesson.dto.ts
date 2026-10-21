@@ -13,6 +13,14 @@ export interface LessonDto {
   avg_rating?: number | string | null;
   rating_count?: number | null;
   quiz_id?: string | null;
+  note?: string | null;
+  recurrence_id?: string | number | null;
+}
+
+export interface LessonRecurrenceDto {
+  freq: "weekly";
+  weeks: number;
+  weekdays: number[];
 }
 
 export interface LessonRequestDto {
@@ -21,6 +29,8 @@ export interface LessonRequestDto {
   starts_at: string;
   duration_min: number;
   quiz?: string | null;
+  note?: string;
+  recurrence?: LessonRecurrenceDto;
 }
 
 export type RecordingStatusDto = "recording" | "merging" | "completed" | "failed";
@@ -34,6 +44,9 @@ export interface LessonRecordingDto {
   ended_at?: string | null;
   error?: string | null;
   stream_url?: string | null;
+  participants_count?: number | null;
+  attendance_rate?: number | null;
+  board_pages?: number | null;
 }
 
 export interface LessonRatingDto {
@@ -81,4 +94,6 @@ export interface LessonFormInput {
   duration?: string | number;
   durationMinutes?: string | number;
   quizId?: string | null;
+  note?: string;
+  recurrence?: LessonRecurrenceDto;
 }

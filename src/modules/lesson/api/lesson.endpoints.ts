@@ -2,6 +2,7 @@ export const lessonEndpoints = Object.freeze({
   list: "/api/v1/lessons/",
   detail: (id: string) => `/api/v1/lessons/${id}/`,
   finish: (id: string) => `/api/v1/lessons/${id}/finish/`,
+  cancel: (id: string) => `/api/v1/lessons/${id}/cancel/`,
   recording: (id: string) => `/api/v1/lessons/${id}/recording/`,
   recordingAudio: (id: string) => `/api/v1/lessons/${id}/recording/audio/`,
   finalizeRecordingAudio: (id: string) => `/api/v1/lessons/${id}/recording/audio/finalize/`,

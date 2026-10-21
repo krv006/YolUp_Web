@@ -5,7 +5,9 @@
     "submitted": "Homework submitted, AI review started",
     "assignmentDeleted": "Assignment deleted",
     "rechecking": "Rechecking started",
-    "gradeUpdated": "Grade updated"
+    "gradeUpdated": "Grade updated",
+    "resubmitRequested": "Resubmission requested",
+    "reminderSent": "Reminder sent to {{count}}"
   },
   "validation": {
     "chooseFile": "Choose a file",
@@ -129,12 +131,10 @@
     "gradingFive": "5-point",
     "gradingHundred": "100-point",
     "gradingNone": "No grade",
-    "gradingUnavailable": "Other grading scales are not supported by the backend yet",
     "attachments": "Attachments",
     "addFile": "Add a file or photo",
     "removeFile": "Remove the file",
     "draft": "Draft",
-    "draftUnavailable": "Saving drafts is not supported by the backend yet",
     "submit": "Send",
     "required": "Fill in the group and the title",
     "toggle": {
@@ -163,7 +163,9 @@
     },
     "nameLabel": "Assignment name",
     "cancel": "Cancel",
-    "save": "Save"
+    "save": "Save",
+    "publish": "Publish",
+    "maxScore": "Maximum score"
   },
   "review": {
     "back": "Back",
@@ -188,10 +190,17 @@
     "comment": "Comment for the student",
     "shareParent": "Share with the parent",
     "shareParentHint": "The grade and comment appear in the parent app",
-    "sharePending": "Sharing with parents is not supported by the backend yet",
     "resubmit": "Ask to resubmit",
-    "resubmitPending": "Asking to resubmit is not supported by the backend yet",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "scoreOf": "Score (0–{{max}})",
+    "gradingNone": "This assignment is ungraded — comment only.",
+    "resubmitTitle": "Ask for a resubmission",
+    "resubmitDescription": "Tell {{name}} what needs to be fixed.",
+    "resubmitComment": "Comment",
+    "resubmitPlaceholder": "For example: send problem 115 again",
+    "resubmitCancel": "Cancel",
+    "resubmitSend": "Send back",
+    "resubmitRequested": "Resubmission requested"
   },
   "workspace": {
     "emptyTitle": "No homework yet",
@@ -201,14 +210,12 @@
     "filterReview": "To review - {{count}}",
     "filterDone": "Finished",
     "filterDraft": "Drafts",
-    "draftPending": "Drafts are not supported by the backend yet",
     "thisWeek": "This week",
     "earlier": "Earlier",
     "submittedOf": "{{done}} / {{total}} submitted",
     "submittedCount": "{{count}} submitted",
     "dueLabel": "Due: {{value}}",
     "remind": "Send a reminder ({{count}})",
-    "remindPending": "Reminders are not supported by the backend yet",
     "edit": "Edit",
     "delete": "Delete",
     "statSubmitted": "Submitted",
@@ -217,7 +224,6 @@
     "statAverage": "Average grade",
     "aiSummary": "AI summary",
     "aiAction": "Create a group recommendation",
-    "aiPending": "Group recommendations are not supported by the backend yet",
     "aiEmpty": "The AI analysis is not ready yet.",
     "rowAll": "All - {{count}}",
     "rowUnchecked": "To review - {{count}}",
@@ -233,7 +239,8 @@
       "graded": "Graded",
       "unchecked": "To review",
       "late": "Late",
-      "missing": "Missing"
+      "missing": "Missing",
+      "resubmit": "Resubmit"
     },
     "noStudents": "No student found",
     "deleteTitle": "Delete this assignment?",
@@ -246,8 +253,13 @@
     "remindMessage": "The “{{title}}” assignment is due {{due}}. Please upload your answer.",
     "remindCancel": "Cancel",
     "remindSend": "Send",
-    "remindParentsNote": "Sending to parents is not available on the backend yet.",
-    "openAnswers": "View answers"
+    "openAnswers": "View answers",
+    "draftBadge": "Draft",
+    "filterDraftCount": "Drafts ({{count}})",
+    "aiLoading": "Preparing...",
+    "remindParents": "Send to parents too",
+    "remindParentsHint": "Goes to the confirmed parents of students who have not submitted",
+    "remindThrottleNote": "A reminder can be sent once every 10 minutes per assignment."
   },
   "messageCard": {
     "submitted": "{{done}} / {{total}} submitted",

@@ -11,6 +11,7 @@ export {
   useRecordExamFocus,
   useRequestWritingAi,
   useSaveManualScores,
+  useShareExamResults,
   useUpdateExam,
   useExam,
   useExamCurrent,
