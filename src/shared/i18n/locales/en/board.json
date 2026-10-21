@@ -133,10 +133,7 @@
     "sendToChat": "Send to chat",
     "downloadPdf": "Download PDF",
     "sentToChat": "The board was sent to the group chat",
-    "sendFailed": "Could not send the board to the chat",
-    "pdfFailed": "Could not download the PDF",
-    "roomNotFound": "No chat found for this group",
-    "chatMessage": "Board of the “{{title}}” lesson"
+    "pdfFailed": "Could not download the PDF"
   },
   "permissionDialog": {
     "title": "Board access",
@@ -145,7 +142,6 @@
     "save": "Save",
     "saved": "Access granted to {{count}} students",
     "pickStudent": "Pick at least one student",
-    "revokeUnavailable": "Revoking access is not available on the backend yet.",
     "modes": {
       "teacher": {
         "title": "Only me",
@@ -159,7 +155,8 @@
         "title": "Everyone",
         "hint": "All participants can draw"
       }
-    }
+    },
+    "revoked": "Revoked access from {{count}}"
   },
   "pages": {
     "title": "Pages",

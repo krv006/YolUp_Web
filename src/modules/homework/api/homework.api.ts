@@ -6,6 +6,7 @@ import type {
   HomeworkBoardDto,
   AssignmentDto,
   AssignmentFormInput,
+  HomeworkAiSummaryDto,
   HomeworkReportDto,
   SubmissionDto,
   SubmissionReviewInput,
@@ -82,10 +83,30 @@ export const homeworkApi = {
   },
   async review(id: string, input: SubmissionReviewInput) {
     const body: Record<string, unknown> = {};
-    if (input.overallScore !== undefined) body.overall_score = input.overallScore;
-    if (input.grade !== undefined) body.grade = input.grade;
+    if (input.gradeValue !== undefined && input.gradeValue !== null) body.grade = input.gradeValue;
+    else if (input.overallScore !== undefined) body.overall_score = input.overallScore;
+    if (input.shareWithParent !== undefined) body.share_with_parent = input.shareWithParent;
     if (input.result !== undefined) body.result = input.result;
     return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.review(id), body));
+  },
+  async requestResubmit(id: string, comment: string) {
+    await apiClient.post<{ ok?: boolean }>(homeworkEndpoints.requestResubmit(id), { comment });
+    return id;
+  },
+  async remind(assignmentId: string) {
+    return apiClient.post<{ notified?: number }>(homeworkEndpoints.remind(assignmentId), {});
+  },
+  async getAiSummary(assignmentId: string) {
+    const dto = await apiClient.post<HomeworkAiSummaryDto>(
+      homeworkEndpoints.aiSummary(assignmentId),
+      {}
+    );
+    return {
+      summary: dto.summary ?? "",
+      topics: dto.topics ?? [],
+      recommendations: dto.recommendations ?? [],
+      submissionsCount: dto.submissions_count ?? 0,
+    };
   },
   async getReport(studentId?: string | null, options: RequestOptions = {}) {
     const dto = await apiClient.get<HomeworkReportDto>(homeworkEndpoints.report, {

@@ -6,7 +6,11 @@ import { toast } from "sonner";
 import { downloadBlob } from "@/shared/lib";
 import type { Submission } from "@/shared/types";
 import { homeworkApi } from "../api/homework.api";
-import type { AssignmentFormInput, SubmissionReviewInput } from "../api/homework.dto";
+import type {
+  AssignmentFormInput,
+  ResubmitRequestInput,
+  SubmissionReviewInput,
+} from "../api/homework.dto";
 
 const POLL_INTERVAL_MS = 2500;
 const DEFAULT_MAX_POLLING_MS = 5 * 60_000;
@@ -101,6 +105,37 @@ export function useUpdateAssignment() {
       client.invalidateQueries({ queryKey: homeworkKeys.assignments(item.courseId) });
       toast.success(t("toast.assignmentUpdated"));
     },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useRequestResubmit() {
+  const { t } = useTranslation("homework");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, comment }: ResubmitRequestInput) => homeworkApi.requestResubmit(id, comment),
+    onSuccess: (id) => {
+      client.invalidateQueries({ queryKey: homeworkKeys.submission(id) });
+      client.invalidateQueries({ queryKey: homeworkKeys.all });
+      toast.success(t("toast.resubmitRequested"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useRemindAssignment() {
+  const { t } = useTranslation("homework");
+  return useMutation({
+    mutationFn: (assignmentId: string) => homeworkApi.remind(assignmentId),
+    onSuccess: (result) =>
+      toast.success(t("toast.reminderSent", { count: result.notified ?? 0 })),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useAssignmentAiSummary() {
+  return useMutation({
+    mutationFn: (assignmentId: string) => homeworkApi.getAiSummary(assignmentId),
     onError: (error: Error) => toast.error(error.message),
   });
 }

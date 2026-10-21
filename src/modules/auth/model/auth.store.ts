@@ -10,9 +10,10 @@ import { STORAGE_KEYS } from "@/shared/constants";
 import { SUPPORTED_LANGUAGES, useLanguageStore, type AppLanguage } from "@/shared/model";
 import type { AuthStatus, AuthUser, LoginCredentials } from "@/shared/types";
 import { authApi } from "../api/auth.api";
-import type { RegisterRequestDto } from "../api/auth.dto";
+import type { RegisterRequestDto, TwoFactorChallenge } from "../api/auth.dto";
 import {
   mapLoginRequest,
+  mapLoginResponse,
   mapSwitchAccountResponse,
   mapTokenPairDto,
   mapUserDto,
@@ -37,13 +38,22 @@ export const AUTH_STATUS = Object.freeze({
   ERROR: "error",
 }) satisfies Record<string, AuthStatus>;
 
+export type LoginResult =
+  | { status: "authenticated"; user: AuthUser }
+  | { status: "twoFactor"; challenge: TwoFactorChallenge };
+
 interface AuthState {
   user: AuthUser | null;
   status: AuthStatus;
   error: AppError | null;
 
   bootstrap: () => Promise<void>;
-  login: (credentials: LoginCredentials) => Promise<AuthUser>;
+  login: (credentials: LoginCredentials) => Promise<LoginResult>;
+  completeTwoFactorLogin: (
+    challengeToken: string,
+    code: string,
+    remember?: boolean
+  ) => Promise<AuthUser>;
   register: (dto: RegisterRequestDto) => Promise<AuthUser>;
   switchAccount: (userId: string) => Promise<AuthUser>;
   switchRole: (role: string) => Promise<AuthUser>;
@@ -113,8 +123,29 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
   async login(credentials) {
     try {
-      const tokens = mapTokenPairDto(await authApi.login(mapLoginRequest(credentials)));
-      const seq = beginSession(tokens, credentials.remember !== false);
+      const outcome = mapLoginResponse(await authApi.login(mapLoginRequest(credentials)));
+      if (outcome.kind === "twoFactor") {
+        return { status: "twoFactor", challenge: outcome.challenge };
+      }
+      const seq = beginSession(outcome.tokens, credentials.remember !== false);
+      const user = mapUserDto(await authApi.getCurrentUser());
+      if (seq !== sessionSeq) return { status: "authenticated", user };
+      set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
+      syncLanguageFromServer(user.preferredLanguage);
+      return { status: "authenticated", user };
+    } catch (error) {
+      endSession();
+      set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
+      throw error;
+    }
+  },
+
+  async completeTwoFactorLogin(challengeToken, code, remember = true) {
+    try {
+      const tokens = mapTokenPairDto(
+        await authApi.twoFactorLogin({ challenge_token: challengeToken, code })
+      );
+      const seq = beginSession(tokens, remember);
       const user = mapUserDto(await authApi.getCurrentUser());
       if (seq !== sessionSeq) return user;
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });

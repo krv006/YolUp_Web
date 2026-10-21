@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourses } from "@/modules/course";
 import { useCreateAssignment, useUpdateAssignment } from "@/modules/homework";
-import type { Assignment } from "@/shared/types";
+import type { Assignment, AssignmentStatus, GradingScale } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { Icon } from "@/shared/ui/icon";
@@ -20,7 +20,7 @@ export interface AssignmentFormDialogProps {
   onDelete?: (assignment: Assignment) => void;
 }
 
-type Grading = "five" | "hundred" | "none";
+
 
 export function AssignmentFormDialog({
   open,
@@ -42,14 +42,15 @@ export function AssignmentFormDialog({
   const [body, setBody] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("18:00");
-  const [grading, setGrading] = useState<Grading>("five");
+  const [grading, setGrading] = useState<GradingScale>("five");
+  const [maxScore, setMaxScore] = useState("100");
   const [file, setFile] = useState<File | null>(null);
   const [lessonId, setLessonId] = useState("");
-  const [grading2, setGrading2] = useState("");
+  const [gradingNote, setGradingNote] = useState("");
   const bodyRef = useRef<HTMLTextAreaElement>(null);
   const [aiCheck, setAiCheck] = useState(true);
   const [announce, setAnnounce] = useState(true);
-  const [allowLate, setAllowLate] = useState(false);
+  const [allowLate, setAllowLate] = useState(true);
 
   const formKey = open ? `${assignment?.id ?? "new"}|${courseId ?? ""}` : "";
   const [syncedKey, setSyncedKey] = useState("");
@@ -60,8 +61,12 @@ export function AssignmentFormDialog({
     setTitle(assignment?.title ?? "");
     setBody(assignment?.description ?? "");
     setLessonId(assignment?.lessonId ?? "");
-    setGrading2("");
+    setGradingNote("");
     setFile(null);
+    setGrading(assignment?.grading ?? "five");
+    setMaxScore(String(assignment?.maxScore ?? 100));
+    setAnnounce(assignment?.announceInChat ?? true);
+    setAllowLate(assignment?.allowLate ?? true);
     if (assignment?.dueAt) {
       const due = new Date(assignment.dueAt);
       setDate(
@@ -110,7 +115,7 @@ export function AssignmentFormDialog({
       : item.title,
   }));
 
-  async function save() {
+  async function save(status: AssignmentStatus = "active") {
     if (!course || !title.trim()) {
       toast.error(t("form.required"));
       return;
@@ -122,7 +127,12 @@ export function AssignmentFormDialog({
       body: body.trim(),
       dueAt: date ? new Date(`${date}T${time}`).toISOString() : undefined,
       file,
-      ...(assignment ? { lessonId: lessonId || null, extraInstructions: grading2 } : {}),
+      status,
+      announceInChat: announce,
+      allowLate,
+      grading,
+      maxScore: Number(maxScore) || 100,
+      ...(assignment ? { lessonId: lessonId || null, extraInstructions: gradingNote } : {}),
     };
     try {
       if (assignment) await update.mutateAsync({ id: assignment.id, form });
@@ -149,9 +159,8 @@ export function AssignmentFormDialog({
           <button
             type="button"
             className={dialogButton.secondary}
-            onClick={() =>
-              assignment ? onOpenChange(false) : toast.info(t("form.draftUnavailable"))
-            }
+            disabled={create.isPending || update.isPending}
+            onClick={() => (assignment ? onOpenChange(false) : save("draft"))}
           >
             {assignment ? t("form.cancel") : t("form.draft")}
           </button>
@@ -159,9 +168,13 @@ export function AssignmentFormDialog({
             type="button"
             className={dialogButton.primary}
             disabled={create.isPending || update.isPending}
-            onClick={save}
+            onClick={() => save("active")}
           >
-            {assignment ? t("form.save") : t("form.submit")}
+            {assignment
+              ? assignment.status === "draft"
+                ? t("form.publish")
+                : t("form.save")
+              : t("form.submit")}
           </button>
         </>
       }
@@ -286,8 +299,8 @@ export function AssignmentFormDialog({
           <label className="field-group">
             <span>{t("form.gradingNote")}</span>
             <input
-              value={grading2}
-              onChange={(event) => setGrading2(event.target.value)}
+              value={gradingNote}
+              onChange={(event) => setGradingNote(event.target.value)}
               placeholder={t("form.gradingNotePlaceholder")}
             />
           </label>
@@ -339,7 +352,7 @@ export function AssignmentFormDialog({
           <TimePicker label={t("form.dueTime")} value={time} onChange={setTime} />
           <div className="flex flex-col gap-1.5">
             <span className="text-label-strong text-ink-secondary">{t("form.grading")}</span>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {(
                 [
                   ["five", t("form.gradingFive")],
@@ -350,20 +363,28 @@ export function AssignmentFormDialog({
                 <button
                   key={id}
                   type="button"
-                  className={`h-10 rounded-full px-3 text-label-strong transition-colors ${
+                  className={`h-10 rounded-full px-3 text-label-strong whitespace-nowrap transition-colors ${
                     grading === id
                       ? "bg-action-subtle text-action"
                       : "border border-line bg-surface text-ink-secondary hover:bg-subtle"
                   }`}
-                  onClick={() => {
-                    setGrading(id);
-                    if (id !== "five") toast.info(t("form.gradingUnavailable"));
-                  }}
+                  onClick={() => setGrading(id)}
                 >
                   {label}
                 </button>
               ))}
             </div>
+            {grading === "hundred" ? (
+              <label className="field-group">
+                <span>{t("form.maxScore")}</span>
+                <input
+                  inputMode="numeric"
+                  value={maxScore}
+                  onChange={(event) => setMaxScore(event.target.value.replace(/\D/g, ""))}
+                  placeholder="100"
+                />
+              </label>
+            ) : null}
           </div>
         </div>
 
@@ -415,8 +436,8 @@ export function AssignmentFormDialog({
           {(
             [
               ["ai", "check-circle", "bg-saffron-strong", aiCheck, setAiCheck, true],
-              ["announce", "bell", "bg-action", announce, setAnnounce, false],
-              ["late", "clock", "bg-ink-tertiary", allowLate, setAllowLate, false],
+              ["announce", "bell", "bg-action", announce, setAnnounce, true],
+              ["late", "clock", "bg-ink-tertiary", allowLate, setAllowLate, true],
             ] as const
           ).map(([id, icon, tone, value, setValue, supported]) => (
             <span

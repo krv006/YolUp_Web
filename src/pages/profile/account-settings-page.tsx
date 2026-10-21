@@ -2,12 +2,17 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+  OtpInput,
   useAuth,
   useChangePasswordMutation,
+  useConfirmTwoFactorMutation,
   useDeleteAccountMutation,
+  useDisableTwoFactorMutation,
+  useEnableTwoFactorMutation,
   useLogoutOtherSessionsMutation,
   useRevokeSessionMutation,
   useSessions,
+  useTwoFactorStatus,
 } from "@/modules/auth";
 import { useAuthStore } from "@/modules/auth";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -15,7 +20,16 @@ import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
 import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 
-type DialogId = "password" | "logoutOthers" | "delete" | null;
+type DialogId =
+  | "password"
+  | "logoutOthers"
+  | "delete"
+  | "twoFactorEnable"
+  | "twoFactorCode"
+  | "twoFactorDisable"
+  | null;
+
+const TWO_FACTOR_CODE_LENGTH = 5;
 
 export function AccountSettingsPage() {
   const { t } = useTranslation("account");
@@ -25,13 +39,69 @@ export function AccountSettingsPage() {
   const revokeSession = useRevokeSessionMutation();
   const logoutOthers = useLogoutOtherSessionsMutation();
   const deleteAccount = useDeleteAccountMutation();
+  const twoFactor = useTwoFactorStatus();
+  const enableTwoFactor = useEnableTwoFactorMutation();
+  const confirmTwoFactor = useConfirmTwoFactorMutation();
+  const disableTwoFactor = useDisableTwoFactorMutation();
   const logout = useAuthStore((state) => state.logout);
   const [dialog, setDialog] = useState<DialogId>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+  const [twoFactorPassword, setTwoFactorPassword] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
 
   const sessions = sessionList.data ?? [];
+  const twoFactorEnabled = twoFactor.data?.enabled === true;
+
+  function closeTwoFactor() {
+    setDialog(null);
+    setTwoFactorPassword("");
+    setTwoFactorCode("");
+  }
+
+  function startTwoFactor() {
+    if (!twoFactorPassword) {
+      toast.error(t("page.passwordRule"));
+      return;
+    }
+    enableTwoFactor.mutate(twoFactorPassword, {
+      onSuccess: () => {
+        setTwoFactorPassword("");
+        setDialog("twoFactorCode");
+      },
+      onError: (error: Error & { status?: number }) =>
+        toast.error(error.status === 503 ? t("page.twoFactorSmsUnavailable") : error.message),
+    });
+  }
+
+  function finishTwoFactor() {
+    if (twoFactorCode.length < TWO_FACTOR_CODE_LENGTH) {
+      toast.error(t("page.twoFactorCodeRequired"));
+      return;
+    }
+    confirmTwoFactor.mutate(twoFactorCode, {
+      onSuccess: () => {
+        toast.success(t("page.twoFactorEnabled"));
+        closeTwoFactor();
+      },
+      onError: (error: Error) => toast.error(error.message),
+    });
+  }
+
+  function stopTwoFactor() {
+    if (!twoFactorPassword) {
+      toast.error(t("page.passwordRule"));
+      return;
+    }
+    disableTwoFactor.mutate(twoFactorPassword, {
+      onSuccess: () => {
+        toast.success(t("page.twoFactorDisabled"));
+        closeTwoFactor();
+      },
+      onError: (error: Error) => toast.error(error.message),
+    });
+  }
 
   return (
     <ProfileSubPage title={t("page.accountTitle")}>
@@ -65,11 +135,18 @@ export function AccountSettingsPage() {
           icon="check-circle"
           tone="bg-success text-white"
           title={t("page.twoFactor")}
-          hint={t("page.twoFactorHint")}
+          hint={
+            twoFactor.isLoading
+              ? t("page.twoFactorHint")
+              : `${twoFactorEnabled ? t("page.twoFactorOn") : t("page.twoFactorOff")} · ${t("page.twoFactorHint")}`
+          }
           right={
             <Switch
-              checked={false}
-              onCheckedChange={() => toast.info(t("page.notAvailable"))}
+              checked={twoFactorEnabled}
+              disabled={twoFactor.isLoading}
+              onCheckedChange={(next) =>
+                setDialog(next ? "twoFactorEnable" : "twoFactorDisable")
+              }
               aria-label={t("page.twoFactor")}
             />
           }
@@ -212,6 +289,98 @@ export function AccountSettingsPage() {
           />
         </label>
         <small className="px-1 text-caption text-ink-tertiary">{t("page.passwordRule")}</small>
+      </AppDialog>
+
+      <AppDialog
+        open={dialog === "twoFactorEnable"}
+        onOpenChange={(open) => !open && closeTwoFactor()}
+        title={t("page.twoFactorEnableTitle")}
+        description={t("page.twoFactorEnableDescription")}
+        footer={
+          <>
+            <button type="button" className={dialogButton.secondary} onClick={closeTwoFactor}>
+              {t("page.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.primary}
+              disabled={enableTwoFactor.isPending}
+              onClick={startTwoFactor}
+            >
+              {t("page.enable")}
+            </button>
+          </>
+        }
+      >
+        <label className="field-group">
+          <span>{t("page.currentPassword")}</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={twoFactorPassword}
+            onChange={(event) => setTwoFactorPassword(event.target.value)}
+          />
+        </label>
+      </AppDialog>
+
+      <AppDialog
+        open={dialog === "twoFactorCode"}
+        onOpenChange={(open) => !open && closeTwoFactor()}
+        title={t("page.twoFactorCodeTitle")}
+        description={t("page.twoFactorCodeDescription")}
+        footer={
+          <>
+            <button type="button" className={dialogButton.secondary} onClick={closeTwoFactor}>
+              {t("page.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.primary}
+              disabled={confirmTwoFactor.isPending}
+              onClick={finishTwoFactor}
+            >
+              {t("page.confirmCode")}
+            </button>
+          </>
+        }
+      >
+        <OtpInput
+          length={TWO_FACTOR_CODE_LENGTH}
+          value={twoFactorCode}
+          onChange={setTwoFactorCode}
+        />
+      </AppDialog>
+
+      <AppDialog
+        open={dialog === "twoFactorDisable"}
+        onOpenChange={(open) => !open && closeTwoFactor()}
+        title={t("page.twoFactorDisableTitle")}
+        description={t("page.twoFactorDisableDescription")}
+        footer={
+          <>
+            <button type="button" className={dialogButton.secondary} onClick={closeTwoFactor}>
+              {t("page.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.danger}
+              disabled={disableTwoFactor.isPending}
+              onClick={stopTwoFactor}
+            >
+              {t("page.delete")}
+            </button>
+          </>
+        }
+      >
+        <label className="field-group">
+          <span>{t("page.currentPassword")}</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={twoFactorPassword}
+            onChange={(event) => setTwoFactorPassword(event.target.value)}
+          />
+        </label>
       </AppDialog>
 
       <AppDialog

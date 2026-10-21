@@ -1,4 +1,4 @@
-import type { AiResult, Assignment, CourseHomeworkReport, HomeworkReport, HomeworkReportSummary, Submission } from "@/shared/types";
+import type { AiResult, Assignment, CourseHomeworkReport, GradingScale, HomeworkReport, HomeworkReportSummary, Submission } from "@/shared/types";
 import type {
   AiResultDto,
   AssignmentDto,
@@ -55,6 +55,9 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     checkedAt: dto.checked_at,
     result: mapAiResultDto(dto.result),
     rawResult: (dto.result as Record<string, unknown> | null | undefined) ?? null,
+    gradeValue: dto.grade_value ?? null,
+    shareWithParent: dto.share_with_parent !== false,
+    resubmitComment: dto.resubmit_comment || "",
   };
 }
 
@@ -64,6 +67,12 @@ export function mapBoardDto(dto: HomeworkBoardDto) {
     width: Number(dto.size?.[0] ?? 1600),
     height: Number(dto.size?.[1] ?? 900),
   };
+}
+
+export function defaultMaxScore(grading: GradingScale): number {
+  if (grading === "hundred") return 100;
+  if (grading === "none") return 0;
+  return 5;
 }
 
 export function mapAssignmentDto(dto: AssignmentDto): Assignment {
@@ -94,6 +103,11 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
           averageScore: dto.stats.avg_score ?? null,
         }
       : null,
+    status: dto.status === "draft" ? "draft" : "active",
+    announceInChat: dto.announce_in_chat !== false,
+    allowLate: dto.allow_late !== false,
+    grading: dto.grading ?? "five",
+    maxScore: dto.max_score ?? defaultMaxScore(dto.grading ?? "five"),
   };
 }
 
@@ -161,6 +175,11 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.skillKey) data.set("skill_key", form.skillKey);
   if (form.lessonId) data.set("lesson_id", form.lessonId);
   if (form.extraInstructions) data.set("extra_instructions", form.extraInstructions);
+  if (form.status) data.set("status", form.status);
+  if (form.announceInChat !== undefined) data.set("announce_in_chat", String(form.announceInChat));
+  if (form.allowLate !== undefined) data.set("allow_late", String(form.allowLate));
+  if (form.grading) data.set("grading", form.grading);
+  if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);
   return data;
 }

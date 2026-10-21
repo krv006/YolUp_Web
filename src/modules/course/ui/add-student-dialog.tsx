@@ -10,6 +10,7 @@ import {
   useEnrollStudent,
   useSearchCourseStudents,
 } from "../model/course.queries";
+import { InviteLinkDialog } from "./invite-link-dialog";
 
 export type StudentDialogTab = "search" | "create";
 
@@ -63,6 +64,7 @@ export function AddStudentDialog({
   const [debounced, setDebounced] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [createOpen, setCreateOpen] = useState(initialTab === "create");
+  const [inviteOpen, setInviteOpen] = useState(false);
   const results = useSearchCourseStudents(courseId, debounced);
   const enroll = useEnrollStudent();
 
@@ -198,11 +200,13 @@ export function AddStudentDialog({
         <button
           type="button"
           className="flex items-center gap-2 px-1 text-label-strong text-action"
-          onClick={() => toast.info(t("addStudent.inviteUnavailable"))}
+          onClick={() => setInviteOpen(true)}
         >
           <Icon name="assign" size={18} /> {t("addStudent.shareInvite")}
         </button>
       </AppDialog>
+
+      <InviteLinkDialog courseId={courseId} open={inviteOpen} onOpenChange={setInviteOpen} />
 
       <CreateStudentDialog
         courseId={courseId}

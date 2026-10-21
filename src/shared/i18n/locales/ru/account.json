@@ -69,7 +69,11 @@
     "pushUnsupported": "Этот браузер не поддерживает",
     "pushBlocked": "Уведомления заблокированы в настройках браузера — сначала разрешите их там.",
     "reminderLabel": "Напоминание об уроке",
-    "reminderOption": "за {{count}} минут"
+    "reminderOption": "за {{count}} минут",
+    "messagesLabel": "Сообщения чата",
+    "messagesHint": "Пока push для сообщений чата не отправляется — настройка сохраняется.",
+    "emailLabel": "Email-уведомления",
+    "emailHint": "Отправка email пока не подключена — настройка сохраняется."
   },
   "roleSwitcher": {
     "triggerAria": "Другие ваши аккаунты",
@@ -196,6 +200,20 @@
     "accountActive": "активен",
     "addAccount": "Добавить другой аккаунт",
     "close": "Закрыть",
-    "subjectNone": "Не выбрано"
+    "subjectNone": "Не выбрано",
+    "twoFactorOn": "Включено",
+    "twoFactorOff": "Выключено",
+    "twoFactorEnableTitle": "Включить двухэтапное подтверждение",
+    "twoFactorEnableDescription": "Введите пароль — мы отправим SMS-код на ваш номер.",
+    "twoFactorCodeTitle": "Введите SMS-код",
+    "twoFactorCodeDescription": "Введите 5-значный код, отправленный на ваш номер телефона.",
+    "twoFactorCodeRequired": "Введите все 5 цифр кода",
+    "twoFactorEnabled": "Двухэтапное подтверждение включено",
+    "twoFactorDisableTitle": "Отключить двухэтапное подтверждение",
+    "twoFactorDisableDescription": "После отключения при входе будет запрашиваться только пароль.",
+    "twoFactorDisabled": "Двухэтапное подтверждение отключено",
+    "twoFactorSmsUnavailable": "SMS-сервис пока не подключён, поэтому включить нельзя.",
+    "enable": "Включить",
+    "confirmCode": "Подтвердить"
   }
 }

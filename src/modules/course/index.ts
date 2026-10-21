@@ -3,6 +3,9 @@ export type {
   CourseDto,
   CourseFormInput,
   CourseRequestDto,
+  CourseInviteLink,
+  CourseInviteLinkInput,
+  CourseStudentPresence,
   CourseStudentSearchDto,
   EnrollmentAction,
   EnrollmentDto,
@@ -17,6 +20,11 @@ export {
   useCoursePage,
   useCourseCatalog,
   useCourseStudents,
+  useCourseStudentPresence,
+  useCreateInviteLink,
+  useDeleteInviteLink,
+  useInviteLink,
+  useJoinCourse,
   useCourseRequests,
   useCreateCourse,
   useCreateEnrollment,
@@ -30,5 +38,6 @@ export {
   useUpdateCourse,
 } from "./model/course.queries";
 export { AddStudentDialog } from "./ui/add-student-dialog";
+export { InviteLinkDialog } from "./ui/invite-link-dialog";
 export { JoinRequestsDialog } from "./ui/join-requests-dialog";
 export { CourseMembersSection } from "./ui/course-members-section";

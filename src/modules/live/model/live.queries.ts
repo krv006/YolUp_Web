@@ -7,7 +7,25 @@ export const liveKeys = Object.freeze({
   all: ["live"] as const,
   token: (id: string) => ["live", "token", id] as const,
   attention: (id: string) => ["live", "attention", id] as const,
+  presence: (id: string) => ["live", "presence", id] as const,
 });
+
+export function useLessonPresence(lessonId: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: liveKeys.presence(lessonId ?? ""),
+    queryFn: ({ signal }) => liveApi.getPresence(lessonId as string, { signal }),
+    enabled: Boolean(lessonId) && enabled,
+    refetchInterval: 20_000,
+    staleTime: 10_000,
+  });
+}
+
+export function useMuteAll(lessonId: string) {
+  return useMutation({
+    mutationFn: (except: string[] = []) => liveApi.muteAll(lessonId, except),
+    onError: (error) => toast.error(error instanceof Error ? error.message : "Amal bajarilmadi"),
+  });
+}
 
 export function useLiveToken(lessonId: string | undefined, enabled: boolean) {
   return useQuery({

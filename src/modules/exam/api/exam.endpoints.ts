@@ -9,6 +9,7 @@ export const examEndpoints = Object.freeze({
   nextSection: (id: string) => `/api/v1/exams/${id}/next-section/`,
   focus: (id: string) => `/api/v1/exams/${id}/focus/`,
   results: (id: string) => `/api/v1/exams/${id}/results/`,
+  shareResults: (id: string) => `/api/v1/exams/${id}/share-results/`,
   studentResult: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/`,
   writingAi: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/writing-ai/`,
   manualScores: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/manual/`,

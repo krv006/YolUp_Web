@@ -177,6 +177,13 @@ export function useNextExamSection(examId: string) {
   });
 }
 
+export function useShareExamResults() {
+  return useMutation({
+    mutationFn: (examId: string) => examApi.shareResults(examId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useFinishExam(examId: string) {
   const { t } = useTranslation("exam");
   const client = useQueryClient();

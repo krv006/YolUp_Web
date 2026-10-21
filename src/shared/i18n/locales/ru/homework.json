@@ -5,7 +5,9 @@
     "submitted": "Работа отправлена, начата проверка ИИ",
     "assignmentDeleted": "Задание удалено",
     "rechecking": "Повторная проверка начата",
-    "gradeUpdated": "Оценка обновлена"
+    "gradeUpdated": "Оценка обновлена",
+    "resubmitRequested": "Запрошена повторная сдача",
+    "reminderSent": "Напоминание отправлено: {{count}}"
   },
   "validation": {
     "chooseFile": "Выберите файл",
@@ -129,12 +131,10 @@
     "gradingFive": "5-балльная",
     "gradingHundred": "100-балльная",
     "gradingNone": "Без оценки",
-    "gradingUnavailable": "Другой тип оценивания пока не поддерживается бэкендом",
     "attachments": "Вложения",
     "addFile": "Добавить файл или фото",
     "removeFile": "Убрать файл",
     "draft": "Черновик",
-    "draftUnavailable": "Сохранение черновика пока не поддерживается бэкендом",
     "submit": "Отправить",
     "required": "Заполните группу и заголовок",
     "toggle": {
@@ -163,7 +163,9 @@
     },
     "nameLabel": "Название задания",
     "cancel": "Отмена",
-    "save": "Сохранить"
+    "save": "Сохранить",
+    "publish": "Опубликовать",
+    "maxScore": "Максимальный балл"
   },
   "review": {
     "back": "Назад",
@@ -188,10 +190,17 @@
     "comment": "Комментарий ученику",
     "shareParent": "Показать и родителю",
     "shareParentHint": "Оценка и комментарий появятся в приложении родителя",
-    "sharePending": "Показ родителю пока не поддерживается бэкендом",
     "resubmit": "Вернуть на доработку",
-    "resubmitPending": "Возврат на доработку пока не поддерживается бэкендом",
-    "confirm": "Подтвердить"
+    "confirm": "Подтвердить",
+    "scoreOf": "Балл (0–{{max}})",
+    "gradingNone": "Это задание без оценки — только комментарий.",
+    "resubmitTitle": "Вернуть на доработку",
+    "resubmitDescription": "Напишите {{name}}, что нужно исправить.",
+    "resubmitComment": "Комментарий",
+    "resubmitPlaceholder": "Например: пришлите задачу 115 заново",
+    "resubmitCancel": "Отмена",
+    "resubmitSend": "Вернуть",
+    "resubmitRequested": "Запрошена повторная сдача"
   },
   "workspace": {
     "emptyTitle": "Задания ещё не выданы",
@@ -201,14 +210,12 @@
     "filterReview": "На проверке - {{count}}",
     "filterDone": "Завершённые",
     "filterDraft": "Черновики",
-    "draftPending": "Черновики пока не поддерживаются бэкендом",
     "thisWeek": "На этой неделе",
     "earlier": "Ранее",
     "submittedOf": "сдали {{done}} / {{total}}",
     "submittedCount": "сдали {{count}}",
     "dueLabel": "Срок: {{value}}",
     "remind": "Напомнить ({{count}})",
-    "remindPending": "Напоминания пока не поддерживаются бэкендом",
     "edit": "Редактировать",
     "delete": "Удалить",
     "statSubmitted": "Сдали",
@@ -217,7 +224,6 @@
     "statAverage": "Средний балл",
     "aiSummary": "Вывод ИИ",
     "aiAction": "Создать рекомендацию группе",
-    "aiPending": "Рекомендация группе пока не поддерживается бэкендом",
     "aiEmpty": "Анализ ИИ ещё не готов.",
     "rowAll": "Все - {{count}}",
     "rowUnchecked": "Не проверено - {{count}}",
@@ -233,7 +239,8 @@
       "graded": "Оценено",
       "unchecked": "Не проверено",
       "late": "Сдал поздно",
-      "missing": "Не сдал"
+      "missing": "Не сдал",
+      "resubmit": "Возврат"
     },
     "noStudents": "Ученик не найден",
     "deleteTitle": "Удалить задание?",
@@ -246,8 +253,13 @@
     "remindMessage": "Срок задания «{{title}}» истекает {{due}}. Пожалуйста, загрузите ответ.",
     "remindCancel": "Отмена",
     "remindSend": "Отправить",
-    "remindParentsNote": "Отправка родителям пока недоступна на бэкенде.",
-    "openAnswers": "Посмотреть ответы"
+    "openAnswers": "Посмотреть ответы",
+    "draftBadge": "Черновик",
+    "filterDraftCount": "Черновики ({{count}})",
+    "aiLoading": "Готовится...",
+    "remindParents": "Отправить и родителям",
+    "remindParentsHint": "Подтверждённым родителям учеников, которые не сдали",
+    "remindThrottleNote": "Напоминание по одному заданию можно отправлять раз в 10 минут."
   },
   "messageCard": {
     "submitted": "сдали {{done}} / {{total}}",

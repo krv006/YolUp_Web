@@ -1,45 +1,101 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { AuthButton, AuthFieldError, AuthScreen, OtpInput } from "@/modules/auth";
+import {
+  AuthButton,
+  AuthFieldError,
+  AuthScreen,
+  OtpInput,
+  describeResetError,
+  usePasswordResetRequestMutation,
+  usePasswordResetVerifyMutation,
+} from "@/modules/auth";
 
 const CODE_LENGTH = 5;
-const RESEND_SECONDS = 45;
+const DEFAULT_EXPIRES_IN = 120;
+const DEFAULT_RETRY_AFTER = 45;
+
+interface ResetCodeState {
+  phone?: string;
+  expiresIn?: number;
+  retryAfter?: number;
+}
 
 export function VerifyCodePage() {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = (location.state ?? null) as ResetCodeState | null;
+  const phone = state?.phone ?? "";
+  const verifyCode = usePasswordResetVerifyMutation();
+  const requestCode = usePasswordResetRequestMutation();
   const [code, setCode] = useState("");
-  const [invalid, setInvalid] = useState(false);
-  const [seconds, setSeconds] = useState(RESEND_SECONDS);
+  const [error, setError] = useState<string | null>(null);
+  const [expiresIn, setExpiresIn] = useState(state?.expiresIn ?? DEFAULT_EXPIRES_IN);
+  const [retryIn, setRetryIn] = useState(state?.retryAfter ?? DEFAULT_RETRY_AFTER);
 
   useEffect(() => {
-    if (seconds <= 0) return undefined;
-    const timer = globalThis.setTimeout(() => setSeconds((value) => value - 1), 1000);
+    if (expiresIn <= 0 && retryIn <= 0) return undefined;
+    const timer = globalThis.setTimeout(() => {
+      setExpiresIn((value) => (value > 0 ? value - 1 : 0));
+      setRetryIn((value) => (value > 0 ? value - 1 : 0));
+    }, 1000);
     return () => globalThis.clearTimeout(timer);
-  }, [seconds]);
+  }, [expiresIn, retryIn]);
 
-  function confirm() {
+  async function confirm() {
+    if (!phone) return;
     if (code.length < CODE_LENGTH) {
-      setInvalid(true);
+      setError(t("mobile.code.invalid"));
       toast.error(t("mobile.code.errorToastTitle"), {
         description: t("mobile.code.errorToastDescription"),
       });
       return;
     }
-    toast.info(t("mobile.reset.backendMissing"));
-    navigate("/new-password");
+    try {
+      const response = await verifyCode.mutateAsync({ phone, code });
+      navigate("/new-password", { state: { resetToken: response.reset_token }, replace: true });
+    } catch (caught) {
+      const message = describeResetError(caught, t);
+      setError(message);
+      setCode("");
+      toast.error(message);
+    }
   }
 
-  const clock = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+  async function resend() {
+    if (!phone) return;
+    try {
+      const response = await requestCode.mutateAsync(phone);
+      setExpiresIn(response.expires_in ?? DEFAULT_EXPIRES_IN);
+      setRetryIn(response.retry_after ?? DEFAULT_RETRY_AFTER);
+      setCode("");
+      setError(null);
+      toast.success(t("mobile.reset.sent"));
+    } catch (caught) {
+      toast.error(describeResetError(caught, t));
+    }
+  }
+
+  if (!phone) return <Navigate to="/forgot-password" replace />;
+
+  const clock = `${Math.floor(retryIn / 60)}:${String(retryIn % 60).padStart(2, "0")}`;
 
   return (
     <AuthScreen
       onBack={() => navigate(-1)}
       title={t("mobile.code.title")}
-      description={t("mobile.code.description")}
-      action={<AuthButton onClick={confirm}>{t("mobile.code.submit")}</AuthButton>}
+      description={t("mobile.code.descriptionPhone", { phone })}
+      action={
+        <AuthButton
+          onClick={confirm}
+          loading={verifyCode.isPending}
+          loadingLabel={t("mobile.code.submitting")}
+        >
+          {t("mobile.code.submit")}
+        </AuthButton>
+      }
       footer={
         <>
           {t("mobile.reset.remembered")}{" "}
@@ -52,27 +108,29 @@ export function VerifyCodePage() {
       <OtpInput
         length={CODE_LENGTH}
         value={code}
-        invalid={invalid}
+        invalid={Boolean(error)}
         onChange={(next) => {
-          setInvalid(false);
+          setError(null);
           setCode(next);
         }}
       />
 
-      {invalid ? <AuthFieldError>{t("mobile.code.invalid")}</AuthFieldError> : null}
+      {error ? <AuthFieldError>{error}</AuthFieldError> : null}
 
-      {seconds > 0 ? (
+      {expiresIn <= 0 ? (
+        <p className="px-1 text-body-sm text-error-text">{t("mobile.code.expired")}</p>
+      ) : null}
+
+      {retryIn > 0 ? (
         <p className="px-1 text-body-sm text-ink-secondary">
           {t("mobile.code.resendIn")} <b className="font-numeric text-ink">{clock}</b>
         </p>
       ) : (
         <button
           type="button"
-          className="self-start px-1 text-label-strong text-action"
-          onClick={() => {
-            setSeconds(RESEND_SECONDS);
-            toast.info(t("mobile.reset.backendMissing"));
-          }}
+          className="self-start px-1 text-label-strong text-action disabled:opacity-60"
+          disabled={requestCode.isPending}
+          onClick={resend}
         >
           {t("mobile.code.resend")}
         </button>

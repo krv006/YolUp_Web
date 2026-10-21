@@ -10,6 +10,7 @@ export function useAuth() {
       isInitializing: state.status === AUTH_STATUS.INITIALIZING,
       initializationError: state.status === AUTH_STATUS.ERROR ? state.error : null,
       login: state.login,
+      completeTwoFactorLogin: state.completeTwoFactorLogin,
       logout: state.logout,
       retrySession: state.retry,
     }))

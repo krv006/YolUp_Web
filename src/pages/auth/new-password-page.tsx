@@ -1,21 +1,37 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { AuthButton, AuthFieldError, AuthPasswordField, AuthScreen } from "@/modules/auth";
+import {
+  AuthButton,
+  AuthFieldError,
+  AuthPasswordField,
+  AuthScreen,
+  describeResetError,
+  usePasswordResetConfirmMutation,
+} from "@/modules/auth";
 
 const MIN_LENGTH = 8;
+
+interface NewPasswordState {
+  resetToken?: string;
+}
 
 export function NewPasswordPage() {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = (location.state ?? null) as NewPasswordState | null;
+  const resetToken = state?.resetToken ?? "";
+  const confirmReset = usePasswordResetConfirmMutation();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function submit() {
+  async function submit() {
+    if (!resetToken) return;
     if (password.length < MIN_LENGTH) {
       setError(t("validation.passwordMinLength"));
       return;
@@ -25,9 +41,18 @@ export function NewPasswordPage() {
       return;
     }
     setError(null);
-    toast.info(t("mobile.reset.backendMissing"));
-    navigate("/login");
+    try {
+      await confirmReset.mutateAsync({ resetToken, password });
+      toast.success(t("mobile.newPassword.success"));
+      navigate("/login", { replace: true });
+    } catch (caught) {
+      const message = describeResetError(caught, t);
+      setError(message);
+      toast.error(message);
+    }
   }
+
+  if (!resetToken) return <Navigate to="/forgot-password" replace />;
 
   return (
     <AuthScreen
@@ -35,7 +60,12 @@ export function NewPasswordPage() {
       title={t("mobile.newPassword.title")}
       description={t("mobile.newPassword.description")}
       action={
-        <AuthButton onClick={submit} disabled={!password || !confirm}>
+        <AuthButton
+          onClick={submit}
+          loading={confirmReset.isPending}
+          loadingLabel={t("mobile.newPassword.submitting")}
+          disabled={!password || !confirm}
+        >
           {t("mobile.newPassword.submit")}
         </AuthButton>
       }

@@ -1,9 +1,14 @@
 import { AlarmClock, BellRing, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useAuth, useUpdateLessonReminderMutation } from "@/modules/auth";
+import {
+  useAuth,
+  useUpdateLessonReminderMutation,
+  useUpdateNotificationPrefsMutation,
+} from "@/modules/auth";
 import { usePushNotifications } from "@/modules/notification";
 import { ROLES } from "@/shared/constants";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
+import { Switch } from "@/shared/ui/switch";
 
 const MINUTE_OPTIONS = [5, 10, 15, 30, 60];
 
@@ -16,6 +21,7 @@ export function NotificationSettings() {
   const { user } = useAuth();
   const push = usePushNotifications();
   const reminder = useUpdateLessonReminderMutation();
+  const prefs = useUpdateNotificationPrefsMutation();
   const minutes = user?.lessonReminderMinutes ?? defaultMinutes(user?.role);
 
   return (
@@ -43,6 +49,32 @@ export function NotificationSettings() {
         <p className="account-settings-hint">{t("settingsDialog.pushBlocked")}</p>
       ) : null}
       {push.error ? <p className="account-settings-error">{push.error}</p> : null}
+
+      <div className="account-settings-row">
+        <span>{t("settingsDialog.messagesLabel")}</span>
+        <div className="account-settings-control">
+          <Switch
+            checked={user?.notifyMessages !== false}
+            disabled={prefs.isPending}
+            onCheckedChange={(next) => prefs.mutate({ notifyMessages: next })}
+            aria-label={t("settingsDialog.messagesLabel")}
+          />
+        </div>
+      </div>
+      <p className="account-settings-hint">{t("settingsDialog.messagesHint")}</p>
+
+      <div className="account-settings-row">
+        <span>{t("settingsDialog.emailLabel")}</span>
+        <div className="account-settings-control">
+          <Switch
+            checked={user?.notifyEmail === true}
+            disabled={prefs.isPending}
+            onCheckedChange={(next) => prefs.mutate({ notifyEmail: next })}
+            aria-label={t("settingsDialog.emailLabel")}
+          />
+        </div>
+      </div>
+      <p className="account-settings-hint">{t("settingsDialog.emailHint")}</p>
 
       <div className="account-settings-row">
         <span>{t("settingsDialog.reminderLabel")}</span>

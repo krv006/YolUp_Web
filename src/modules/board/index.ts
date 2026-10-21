@@ -25,6 +25,9 @@ export {
   useBoard,
   useEraseStrokes,
   useGrantDraw,
+  useRevokeDraw,
+  useSendBoardToChat,
+  useSetBoardPermissions,
   usePeriodicTable,
   useSolveFormula,
 } from "./model/board.queries";

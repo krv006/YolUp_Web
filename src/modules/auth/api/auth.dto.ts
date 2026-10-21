@@ -5,6 +5,16 @@ export const tokenPairDtoSchema = z.object({
   refresh: z.string().min(1),
 });
 
+export const twoFactorChallengeDtoSchema = z.object({
+  two_factor_required: z.literal(true),
+  challenge_token: z.string().min(1),
+  expires_in: z.number().default(120),
+  retry_after: z.number().default(45),
+  phone_hint: z.string().nullable().default(null),
+});
+
+export const loginResponseDtoSchema = z.union([twoFactorChallengeDtoSchema, tokenPairDtoSchema]);
+
 export const certificateDtoSchema = z.object({
   id: z.string(),
   file: z.string(),
@@ -45,6 +55,9 @@ export const userDtoSchema = z.object({
   experience_years: z.number().nullable().optional(),
   parent_phone: z.string().nullable().optional(),
   password_changed_at: z.string().nullable().optional(),
+  two_factor_enabled: z.boolean().nullable().optional(),
+  notify_messages: z.boolean().nullable().optional(),
+  notify_email: z.boolean().nullable().optional(),
 });
 
 export const loginRecordDtoSchema = z.object({
@@ -71,6 +84,8 @@ export const switchAccountResponseDtoSchema = tokenPairDtoSchema.extend({
 });
 
 export type TokenPairDto = z.infer<typeof tokenPairDtoSchema>;
+export type TwoFactorChallengeDto = z.infer<typeof twoFactorChallengeDtoSchema>;
+export type LoginResponseDto = z.infer<typeof loginResponseDtoSchema>;
 export type AuthUserDto = z.infer<typeof userDtoSchema>;
 export type LinkedAccountDto = z.infer<typeof linkedAccountDtoSchema>;
 export type LoginRecordDto = z.infer<typeof loginRecordDtoSchema>;
@@ -94,6 +109,11 @@ export interface LoginRequestDto {
 
 export interface RefreshRequestDto {
   refresh: string;
+}
+
+export interface TwoFactorLoginRequestDto {
+  challenge_token: string;
+  code: string;
 }
 
 export interface RegisterRequestDto {
@@ -134,6 +154,13 @@ export interface RegisterFormValues {
 export interface TokenPair {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface TwoFactorChallenge {
+  challengeToken: string;
+  expiresIn: number;
+  retryAfter: number;
+  phoneHint: string | null;
 }
 
 export interface ProfileFormValues {

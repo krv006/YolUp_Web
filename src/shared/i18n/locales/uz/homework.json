@@ -5,7 +5,9 @@
     "submitted": "Vazifa topshirildi, AI tekshiruvi boshlandi",
     "assignmentDeleted": "Vazifa o'chirildi",
     "rechecking": "Qayta tekshirish boshlandi",
-    "gradeUpdated": "Baho yangilandi"
+    "gradeUpdated": "Baho yangilandi",
+    "resubmitRequested": "Qayta topshirish so‘raldi",
+    "reminderSent": "{{count}} ta o‘quvchiga eslatma yuborildi"
   },
   "validation": {
     "chooseFile": "Faylni tanlang",
@@ -129,12 +131,10 @@
     "gradingFive": "5 ballik",
     "gradingHundred": "100 ballik",
     "gradingNone": "Bahosiz",
-    "gradingUnavailable": "Boshqa baholash turi backendda hali mavjud emas",
     "attachments": "Ilovalar",
     "addFile": "Fayl yoki rasm qo‘shish",
     "removeFile": "Faylni olib tashlash",
     "draft": "Qoralama",
-    "draftUnavailable": "Qoralama saqlash backendda hali mavjud emas",
     "submit": "Yuborish",
     "required": "Guruh va sarlavhani to‘ldiring",
     "toggle": {
@@ -163,7 +163,9 @@
     },
     "nameLabel": "Vazifa nomi",
     "cancel": "Bekor qilish",
-    "save": "Saqlash"
+    "save": "Saqlash",
+    "publish": "E’lon qilish",
+    "maxScore": "Eng yuqori ball"
   },
   "review": {
     "back": "Orqaga",
@@ -188,10 +190,17 @@
     "comment": "O‘quvchiga izoh",
     "shareParent": "Ota-onaga ham ko‘rsatish",
     "shareParentHint": "Baho va izoh ota-ona ilovasida chiqadi",
-    "sharePending": "Ota-onaga ko‘rsatish backendda hali mavjud emas",
     "resubmit": "Qayta topshirish",
-    "resubmitPending": "Qayta topshirishga so‘rov backendda hali mavjud emas",
-    "confirm": "Tasdiqlash"
+    "confirm": "Tasdiqlash",
+    "scoreOf": "Ball (0–{{max}})",
+    "gradingNone": "Bu vazifa bahosiz — faqat izoh yoziladi.",
+    "resubmitTitle": "Qayta topshirishga qaytarish",
+    "resubmitDescription": "{{name}} ga nimani tuzatish kerakligini yozing.",
+    "resubmitComment": "Izoh",
+    "resubmitPlaceholder": "Masalan: 115-misolni qayta yuboring",
+    "resubmitCancel": "Bekor qilish",
+    "resubmitSend": "Qaytarish",
+    "resubmitRequested": "Qayta topshirish so‘raldi"
   },
   "workspace": {
     "emptyTitle": "Hali vazifa berilmagan",
@@ -201,14 +210,12 @@
     "filterReview": "Tekshirish - {{count}}",
     "filterDone": "Yakunlangan",
     "filterDraft": "Qoralama",
-    "draftPending": "Qoralama backendda hali mavjud emas",
     "thisWeek": "Bu hafta",
     "earlier": "Oldingi",
     "submittedOf": "{{done}} / {{total}} topshirdi",
     "submittedCount": "{{count}} ta topshirdi",
     "dueLabel": "Muddat: {{value}}",
     "remind": "Eslatma yuborish ({{count}})",
-    "remindPending": "Eslatma yuborish backendda hali mavjud emas",
     "edit": "Tahrirlash",
     "delete": "O‘chirish",
     "statSubmitted": "Topshirdi",
@@ -217,7 +224,6 @@
     "statAverage": "O‘rtacha baho",
     "aiSummary": "AI xulosasi",
     "aiAction": "Guruhga tavsiya yaratish",
-    "aiPending": "Guruhga tavsiya yaratish backendda hali mavjud emas",
     "aiEmpty": "AI tahlili hali tayyor emas.",
     "rowAll": "Hammasi - {{count}}",
     "rowUnchecked": "Tekshirilmagan - {{count}}",
@@ -233,7 +239,8 @@
       "graded": "Baholangan",
       "unchecked": "Tekshirilmagan",
       "late": "Kech topshirdi",
-      "missing": "Topshirmagan"
+      "missing": "Topshirmagan",
+      "resubmit": "Qaytarildi"
     },
     "noStudents": "O‘quvchi topilmadi",
     "deleteTitle": "Vazifani o‘chirasizmi?",
@@ -246,8 +253,13 @@
     "remindMessage": "“{{title}}” vazifasi muddati {{due}} da tugaydi. Iltimos, javobingizni yuklang.",
     "remindCancel": "Bekor qilish",
     "remindSend": "Yuborish",
-    "remindParentsNote": "Ota-onalarga yuborish backendda hali mavjud emas.",
-    "openAnswers": "Javoblarni ko‘rish"
+    "openAnswers": "Javoblarni ko‘rish",
+    "draftBadge": "Qoralama",
+    "filterDraftCount": "Qoralama ({{count}})",
+    "aiLoading": "Tayyorlanmoqda...",
+    "remindParents": "Ota-onalarga ham yuborish",
+    "remindParentsHint": "Topshirmagan o‘quvchilarning tasdiqlangan ota-onalariga boradi",
+    "remindThrottleNote": "Bir vazifaga 10 daqiqada bir marta eslatma yuborish mumkin."
   },
   "messageCard": {
     "submitted": "{{done}} / {{total}} topshirdi",

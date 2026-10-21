@@ -14,6 +14,7 @@ import {
   useCreateExamTemplate,
   useDeleteExam,
   useExamResults,
+  useShareExamResults,
   useExamTemplates,
   useExams,
   useSaveManualScores,
@@ -78,6 +79,7 @@ export function TeacherExamsPage() {
   const selected =
     list.find((exam) => exam.id === selectedId) ?? (isCompact ? null : (list[0] ?? null));
   const results = useExamResults(selected?.id ?? null, Boolean(selected));
+  const shareResults = useShareExamResults();
   const saveScores = useSaveManualScores(selected?.id ?? "");
   const courseOptions = (courses.data ?? []).map((course) => ({ id: course.id, title: course.title }));
 
@@ -449,8 +451,14 @@ export function TeacherExamsPage() {
               <button
                 type="button"
                 className="flex h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-                disabled={!rows.length}
-                onClick={() => toast.info(t("mock.shareUnavailable"))}
+                disabled={!rows.length || shareResults.isPending || !selected}
+                onClick={() =>
+                  selected &&
+                  shareResults.mutate(selected.id, {
+                    onSuccess: (result) =>
+                      toast.success(t("mock.shared", { count: result.students })),
+                  })
+                }
               >
                 <Icon name="send" size={17} /> {t("mock.share")}
               </button>

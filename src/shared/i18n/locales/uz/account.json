@@ -69,7 +69,11 @@
     "pushUnsupported": "Bu brauzer qo'llab-quvvatlamaydi",
     "pushBlocked": "Bildirishnomalar brauzer sozlamalarida bloklangan — avval o'sha yerdan ruxsat bering.",
     "reminderLabel": "Dars eslatmasi",
-    "reminderOption": "{{count}} daqiqa oldin"
+    "reminderOption": "{{count}} daqiqa oldin",
+    "messagesLabel": "Chat xabarlari",
+    "messagesHint": "Hozircha chat xabarlari uchun push yuborilmaydi — sozlama saqlanadi.",
+    "emailLabel": "Email xabarnomalar",
+    "emailHint": "Email yuborish hali ulanmagan — sozlama saqlanadi."
   },
   "roleSwitcher": {
     "triggerAria": "Boshqa akkauntlaringiz",
@@ -196,6 +200,20 @@
     "accountActive": "faol",
     "addAccount": "Boshqa akkaunt qo‘shish",
     "close": "Yopish",
-    "subjectNone": "Tanlanmagan"
+    "subjectNone": "Tanlanmagan",
+    "twoFactorOn": "Yoqilgan",
+    "twoFactorOff": "O‘chirilgan",
+    "twoFactorEnableTitle": "Ikki bosqichli tasdiqlashni yoqish",
+    "twoFactorEnableDescription": "Parolingizni kiriting — telefon raqamingizga SMS kod yuboramiz.",
+    "twoFactorCodeTitle": "SMS kodni kiriting",
+    "twoFactorCodeDescription": "Telefon raqamingizga yuborilgan 5 xonali kodni kiriting.",
+    "twoFactorCodeRequired": "5 xonali kodni to‘liq kiriting",
+    "twoFactorEnabled": "Ikki bosqichli tasdiqlash yoqildi",
+    "twoFactorDisableTitle": "Ikki bosqichli tasdiqlashni o‘chirish",
+    "twoFactorDisableDescription": "O‘chirilgandan keyin kirishda faqat parol so‘raladi.",
+    "twoFactorDisabled": "Ikki bosqichli tasdiqlash o‘chirildi",
+    "twoFactorSmsUnavailable": "SMS xizmati hozircha ulanmagan, shuning uchun yoqib bo‘lmaydi.",
+    "enable": "Yoqish",
+    "confirmCode": "Tasdiqlash"
   }
 }

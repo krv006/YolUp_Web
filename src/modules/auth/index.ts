@@ -12,8 +12,10 @@ export type {
   RegisterFormValues,
   TokenPair,
   TokenPairDto,
+  TwoFactorChallenge,
 } from "./api/auth.dto";
 export { AUTH_STATUS, useAuthStore } from "./model/auth.store";
+export type { LoginResult } from "./model/auth.store";
 export {
   authKeys,
   useApproveTeacher,
@@ -25,6 +27,7 @@ export {
   useTeacherRatings,
   useTeacherStats,
   useTeachers,
+  useTwoFactorStatus,
 } from "./model/auth.queries";
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
@@ -34,7 +37,13 @@ export { createLoginSchema, createRegisterSchema } from "./model/auth.schemas";
 export {
   useChangePasswordMutation,
   useDeleteAccountMutation,
+  useConfirmTwoFactorMutation,
+  useDisableTwoFactorMutation,
+  useEnableTwoFactorMutation,
   useLogoutOtherSessionsMutation,
+  usePasswordResetConfirmMutation,
+  usePasswordResetRequestMutation,
+  usePasswordResetVerifyMutation,
   useRevokeSessionMutation,
   useRegisterMutation,
   useSwitchAccountMutation,
@@ -42,10 +51,17 @@ export {
   useDeleteCertificate,
   useUpdateAvatarMutation,
   useUpdateLessonReminderMutation,
+  useUpdateNotificationPrefsMutation,
   useUpdateProfileMutation,
   useUploadCertificate,
 } from "./model/auth.mutations";
-export { mapCertificateDto, mapLoginRequest, mapTokenPairDto, mapUserDto } from "./lib/auth.mappers";
+export {
+  mapCertificateDto,
+  mapLoginRequest,
+  mapLoginResponse,
+  mapTokenPairDto,
+  mapUserDto,
+} from "./lib/auth.mappers";
 export { resolveHomeRoute } from "./lib/resolve-home-route";
 export { describeCreateError } from "./lib/teacher-approval";
 export { LoginForm } from "./ui/login-form";
@@ -61,3 +77,6 @@ export {
 export { MobileLoginForm } from "./ui/mobile-login-form";
 export { MobileRegisterForm } from "./ui/mobile-register-form";
 export { OtpInput } from "./ui/otp-input";
+export { MobileTwoFactorForm, TwoFactorForm } from "./ui/two-factor-form";
+export { describeTwoFactorChallenge } from "./lib/describe-two-factor";
+export { describeResetError } from "./lib/describe-reset-error";

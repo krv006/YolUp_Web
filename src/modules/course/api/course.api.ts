@@ -12,6 +12,10 @@ import { courseEndpoints } from "./course.endpoints";
 import type {
   CourseDto,
   CourseFormInput,
+  CourseInviteLinkDto,
+  CourseInviteLinkInput,
+  CourseJoinResultDto,
+  CourseStudentPresenceDto,
   CourseStudentSearchDto,
   EnrollmentAction,
   SubjectOptionDto,
@@ -56,6 +60,51 @@ export const courseApi = {
   async remove(id: string) {
     await apiClient.delete(courseEndpoints.detail(id));
     return id;
+  },
+  async getInviteLink(id: string, options?: RequestOptions) {
+    const dto = await apiClient.get<CourseInviteLinkDto>(courseEndpoints.inviteLink(id), options);
+    return dto.code && dto.url
+      ? {
+          code: dto.code,
+          url: dto.url,
+          expiresAt: dto.expires_at,
+          requireApproval: Boolean(dto.require_approval),
+        }
+      : null;
+  },
+  async createInviteLink(id: string, input: CourseInviteLinkInput = {}) {
+    const dto = await apiClient.post<CourseInviteLinkDto>(courseEndpoints.inviteLink(id), {
+      ...(input.requireApproval === undefined ? {} : { require_approval: input.requireApproval }),
+      ...(input.expiresInDays ? { expires_in_days: input.expiresInDays } : {}),
+    });
+    return {
+      code: dto.code ?? "",
+      url: dto.url ?? "",
+      expiresAt: dto.expires_at,
+      requireApproval: Boolean(dto.require_approval),
+    };
+  },
+  async deleteInviteLink(id: string) {
+    await apiClient.delete(courseEndpoints.inviteLink(id));
+    return id;
+  },
+  async join(code: string) {
+    const dto = await apiClient.post<CourseJoinResultDto>(courseEndpoints.join, { code });
+    return { courseId: String(dto.course_id), status: dto.status };
+  },
+  async getStudentPresence(id: string, options: RequestOptions = {}) {
+    const rows = await apiClient.get<CourseStudentPresenceDto[]>(courseEndpoints.students(id), {
+      ...options,
+      query: { ...(options.query ?? {}), with_presence: 1 },
+    });
+    return (Array.isArray(rows) ? rows : []).map((row) => ({
+      id: String(row.id),
+      name: row.name ?? "",
+      username: row.username ?? "",
+      avatar: row.avatar ?? null,
+      isOnline: Boolean(row.is_online),
+      lastSeen: row.last_seen ?? null,
+    }));
   },
   async getStudents(id: string, options: RequestOptions = {}) {
     return mapEnrollmentPage(await apiClient.get(courseEndpoints.students(id), options), options.query);

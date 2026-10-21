@@ -14,13 +14,13 @@
     "banAria": "{{name}}ni darsdan chetlashtirish",
     "banTitle": "Darsdan chetlashtirish",
     "empty": "O'quvchi topilmadi.",
-    "note": "O‘quvchilarning onlayn holati backendda hali mavjud emas.",
     "copyLink": "Havolani nusxalash",
     "called": "Chaqirildi",
     "calledJustNow": "Chaqirildi · hozir",
     "sentToAll": "Chaqiruv hammaga yuborildi",
     "linkCopied": "Havola nusxalandi",
-    "linkCopyFailed": "Havolani nusxalab bo‘lmadi"
+    "linkCopyFailed": "Havolani nusxalab bo‘lmadi",
+    "online": "Onlayn"
   },
   "preJoin": {
     "you": "Siz",
@@ -155,7 +155,7 @@
     "raisedHand": "Qo‘l ko‘tardi",
     "muteAll": "Hammasini ovozsiz",
     "invite": "Taklif qilish",
-    "muteAllUnavailable": "Hammani ovozsiz qilish backendda hali mavjud emas."
+    "muteAllDone": "{{count}} ta ishtirokchi ovozsiz qilindi"
   },
   "permissionDialog": {
     "title": "Kamera va mikrofonga ruxsat kerak",

@@ -167,7 +167,10 @@
     "delete": "O'chirish",
     "deleteDialogTitle": "Yozuvni o'chirish",
     "deleteDialogDescription": "Video butunlay o'chadi va qayta tiklab bo'lmaydi.",
-    "cancel": "Bekor"
+    "cancel": "Bekor",
+    "participants": "{{count}} ta ishtirokchi",
+    "attendanceRate": "Davomat: {{value}}%",
+    "boardPages": "Doska: {{count}} sahifa"
   },
   "schedule": {
     "now": "HOZIR",
@@ -197,7 +200,7 @@
     "edit": "Tahrirlash",
     "cancelLesson": "Darsni bekor qilish",
     "cancelTitle": "Darsni bekor qilasizmi?",
-    "cancelDescription": "Dars jadvaldan o‘chiriladi va o‘quvchilarga eslatma bormaydi.",
+    "cancelDescription": "Dars jadvalda “bekor qilingan” bo‘lib qoladi va o‘quvchilarga bildirishnoma boradi.",
     "cancelConfirm": "Bekor qilish",
     "keep": "Yopish",
     "memberCount": "{{count}} o‘quvchi",
@@ -229,6 +232,11 @@
     "online": "Onlayn",
     "restOfWeek": "Haftaning qolgan kunlari",
     "legendHasLesson": "Dars bor",
-    "legendWeekend": "Dam olish kuni"
+    "legendWeekend": "Dam olish kuni",
+    "cancelled": "{{count}} ta dars bekor qilindi",
+    "cancelScope": {
+      "one": "Faqat shu dars",
+      "series": "Shu va keyingi barcha darslar"
+    }
   }
 }

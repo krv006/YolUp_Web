@@ -133,10 +133,7 @@
     "sendToChat": "Chatga yuborish",
     "downloadPdf": "PDF yuklab olish",
     "sentToChat": "Doska guruh chatiga yuborildi",
-    "sendFailed": "Doskani chatga yuborib bo‘lmadi",
-    "pdfFailed": "PDF yuklab bo‘lmadi",
-    "roomNotFound": "Bu guruhning chati topilmadi",
-    "chatMessage": "“{{title}}” darsining doskasi"
+    "pdfFailed": "PDF yuklab bo‘lmadi"
   },
   "permissionDialog": {
     "title": "Doskaga ruxsat",
@@ -145,7 +142,6 @@
     "save": "Saqlash",
     "saved": "{{count}} ta o‘quvchiga ruxsat berildi",
     "pickStudent": "Kamida bitta o‘quvchini tanlang",
-    "revokeUnavailable": "Ruxsatni qaytarib olish backendda hali mavjud emas.",
     "modes": {
       "teacher": {
         "title": "Faqat men",
@@ -159,7 +155,8 @@
         "title": "Hamma",
         "hint": "Barcha ishtirokchilar chiza oladi"
       }
-    }
+    },
+    "revoked": "{{count}} ta o‘quvchidan ruxsat olindi"
   },
   "pages": {
     "title": "Sahifalar",

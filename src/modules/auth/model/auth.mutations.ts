@@ -20,6 +20,48 @@ export function useRegisterMutation() {
   });
 }
 
+export function useEnableTwoFactorMutation() {
+  return useMutation({
+    mutationFn: (password: string) => authApi.enableTwoFactor(password),
+  });
+}
+
+export function useConfirmTwoFactorMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) => authApi.confirmTwoFactor(code),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth", "2fa"] }),
+  });
+}
+
+export function useDisableTwoFactorMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (password: string) => authApi.disableTwoFactor(password),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["auth", "2fa"] }),
+  });
+}
+
+export function usePasswordResetRequestMutation() {
+  return useMutation({
+    mutationFn: (phone: string) => authApi.requestPasswordReset(phone),
+  });
+}
+
+export function usePasswordResetVerifyMutation() {
+  return useMutation({
+    mutationFn: (values: { phone: string; code: string }) =>
+      authApi.verifyPasswordReset(values.phone, values.code),
+  });
+}
+
+export function usePasswordResetConfirmMutation() {
+  return useMutation({
+    mutationFn: (values: { resetToken: string; password: string }) =>
+      authApi.confirmPasswordReset(values.resetToken, values.password),
+  });
+}
+
 export function useSwitchAccountMutation() {
   return useMutation({
     mutationFn: (userId: string): Promise<AuthUser> => useAuthStore.getState().switchAccount(userId),
@@ -97,6 +139,17 @@ export function useUpdateLessonReminderMutation() {
     mutationFn: async (minutes: number): Promise<AuthUser> =>
       mapUserDto(await authApi.updateLessonReminderMinutes(minutes)),
     onSuccess: (user) => useAuthStore.getState().setUser(user),
+  });
+}
+
+export function useUpdateNotificationPrefsMutation() {
+  return useMutation({
+    mutationFn: async (prefs: {
+      notifyMessages?: boolean;
+      notifyEmail?: boolean;
+    }): Promise<AuthUser> => mapUserDto(await authApi.updateNotificationPrefs(prefs)),
+    onSuccess: (user) => useAuthStore.getState().setUser(user),
+    onError: (error: Error) => toast.error(error.message),
   });
 }
 

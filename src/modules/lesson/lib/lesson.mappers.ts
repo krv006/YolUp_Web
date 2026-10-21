@@ -41,6 +41,8 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     createdAt: dto.created_at,
     date: dto.starts_at?.slice(0, 10) ?? "",
     time: dto.starts_at?.slice(11, 16) ?? "",
+    note: dto.note ?? "",
+    recurrenceId: dto.recurrence_id == null ? null : String(dto.recurrence_id),
     avgRating: toAverage(dto.avg_rating),
     ratingCount: Number(dto.rating_count ?? 0),
     quizId: dto.quiz_id ?? null,
@@ -67,6 +69,9 @@ export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording 
     createdAt: dto.created_at ?? null,
     endedAt: dto.ended_at ?? null,
     error: dto.error ?? null,
+    participantsCount: dto.participants_count ?? null,
+    attendanceRate: dto.attendance_rate ?? null,
+    boardPages: dto.board_pages ?? null,
   };
 }
 
@@ -104,5 +109,7 @@ export function mapLessonRequest(form: LessonFormInput): LessonRequestDto {
     starts_at: startsAt,
     duration_min: Number(form.duration ?? form.durationMinutes ?? 45),
     ...(form.quizId === undefined ? {} : { quiz: form.quizId || null }),
+    ...(form.note === undefined ? {} : { note: form.note }),
+    ...(form.recurrence ? { recurrence: form.recurrence } : {}),
   };
 }

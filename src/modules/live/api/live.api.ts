@@ -33,6 +33,20 @@ export const liveApi = {
       await apiClient.post<FocusResponseDto>(liveEndpoints.focus, { lesson_id: lessonId, kind })
     );
   },
+  async muteAll(lessonId: string, except: string[] = []) {
+    const dto = await apiClient.post<{ muted?: number }>(liveEndpoints.muteAll, {
+      lesson_id: lessonId,
+      ...(except.length ? { except } : {}),
+    });
+    return dto.muted ?? 0;
+  },
+  async getPresence(lessonId: string, options?: RequestOptions) {
+    const dto = await apiClient.get<{ count?: number; avatars?: string[] }>(
+      liveEndpoints.presence(lessonId),
+      options
+    );
+    return { count: dto.count ?? 0, avatars: dto.avatars ?? [] };
+  },
   async allowShare(lessonId: string, identity: string) {
     return apiClient.post(liveEndpoints.allowShare, { lesson_id: lessonId, identity });
   },
