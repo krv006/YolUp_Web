@@ -12,6 +12,10 @@ import {
   type TrackReferenceOrPlaceholder,
 } from "@livekit/components-react";
 import { ConnectionState, RoomEvent, Track, type Participant } from "livekit-client";
+
+// Ekran ulashish bitreyti: 15 kadr/s, ~1.5 Mbit/s gacha. Statik slaydlarda real bitreyt ancha past; bu faqat
+// harakatli kontentda server trafigi (har tomoshabinga) cheksiz o'smasligi uchun yuqori chegara.
+const SCREEN_SHARE_ENCODING = { maxBitrate: 1_500_000, maxFramerate: 15 } as const;
 import {
   ArrowLeft,
   CircleStop,
@@ -396,7 +400,12 @@ function TeacherShareControl({ screenStream }: { screenStream: MediaStream }) {
       try {
         const published: MediaStreamTrack[] = [];
         for (const { track, source } of toPublish) {
-          await room.localParticipant.publishTrack(track, { source });
+          await room.localParticipant.publishTrack(
+            track,
+            source === Track.Source.ScreenShare
+              ? { source, screenShareEncoding: SCREEN_SHARE_ENCODING }
+              : { source }
+          );
           published.push(track);
         }
         publishedRef.current = published;

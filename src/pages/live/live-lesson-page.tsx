@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
-import { DisconnectReason } from "livekit-client";
+import { DisconnectReason, type RoomOptions } from "livekit-client";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -16,6 +16,10 @@ import {
 import { RateLessonDialog, useLesson } from "@/modules/lesson";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
+
+// adaptiveStream: tomoshabin faqat ko'rinib turgan o'lchamga mos qatlamni oladi (tarmoq va server CPU'ni 2-3x kamaytiradi).
+// dynacast: hech kim ko'rmayotgan qatlam yuborilmaydi (o'qituvchi yuklashi kamayadi). Modul darajasida — Room qayta yaratilmasin.
+const ROOM_OPTIONS: RoomOptions = { adaptiveStream: true, dynacast: true };
 
 export function LiveLessonPage() {
   const { t } = useTranslation("live");
@@ -172,6 +176,7 @@ export function LiveLessonPage() {
       <LiveKitRoom
         token={token.data.token}
         serverUrl={token.data.serverUrl}
+        options={ROOM_OPTIONS}
         connect
         audio={choices.micOn}
         video={choices.cameraOn}
