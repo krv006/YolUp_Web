@@ -17,11 +17,11 @@ import { ConnectionState, RoomEvent, Track, type Participant } from "livekit-cli
 // harakatli kontentda server trafigi (har tomoshabinga) cheksiz o'smasligi uchun yuqori chegara.
 const SCREEN_SHARE_ENCODING = { maxBitrate: 1_500_000, maxFramerate: 15 } as const;
 import {
-  ArrowLeft,
   CircleStop,
   Hand,
   Info,
-  LayoutDashboard,
+  LogOut,
+  PencilLine,
   Mic,
   MicOff,
   MonitorUp,
@@ -37,7 +37,7 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { AwayStudentsNotice, BoardPanel } from "@/modules/board";
-import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import { i18n } from "@/shared/i18n";
 import {
   FinishLessonDialog,
@@ -67,7 +67,8 @@ import {
   type MicRequest,
 } from "@/modules/live";
 import type { Lesson } from "@/shared/types";
-import { Avatar, Button } from "@/shared/ui/legacy";
+import { Icon } from "@/shared/ui/icon";
+import { Avatar } from "@/shared/ui/legacy";
 
 type SidePanel = "board" | "people" | null;
 
@@ -116,24 +117,23 @@ function firstName(value: string): string {
 function CameraTile({
   track,
   compact = false,
+  label,
 }: {
   track: TrackReferenceOrPlaceholder;
   compact?: boolean;
+  label?: string;
 }) {
   const { t } = useTranslation("live");
   const publication = "publication" in track ? track.publication : undefined;
   const cameraOff = !publication || publication.isMuted;
   const name = track.participant.name || track.participant.identity;
   const speaking = track.participant.isSpeaking;
-  const micOn = track.participant.isMicrophoneEnabled;
 
   return (
     <article
-      className={`live-camera-tile relative isolate overflow-hidden rounded-2xl bg-subtle ${
-        compact ? "is-compact" : ""
-      } ${cameraOff ? "is-camera-off" : ""} ${
-        speaking ? "ring-2 ring-success" : "ring-1 ring-line"
-      }`}
+      className={`live-camera-tile relative isolate overflow-hidden rounded-lg bg-subtle ${
+        compact ? "is-compact aspect-3/2" : "aspect-5/3"
+      } ${cameraOff ? "is-camera-off" : ""} ${speaking ? "ring-2 ring-success" : ""}`}
     >
       <ParticipantTile trackRef={track} disableSpeakingIndicator={cameraOff} />
       {cameraOff ? (
@@ -141,18 +141,42 @@ function CameraTile({
           className="live-camera-placeholder absolute inset-0 grid place-items-center bg-subtle"
           aria-label={t("room.cameraOffAria", { name })}
         >
-          <Avatar name={name} size={compact ? "sm" : "lg"} />
+          <strong className="font-heading text-h1 text-ink">{firstName(name).slice(0, 1)}</strong>
         </div>
       ) : null}
-      <span className="live-camera-name absolute bottom-3 left-3 z-10 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-label-strong text-white backdrop-blur-sm">
-        {micOn ? (
-          <Mic size={15} className="shrink-0" />
-        ) : (
-          <MicOff size={15} className="shrink-0 text-white/70" />
-        )}
-        {track.participant.isLocal ? t("room.youLabel") : firstName(name)}
+      <span className="live-camera-name absolute bottom-2 left-2 z-10 flex max-w-[calc(100%-16px)] items-center rounded-sm bg-canvas/70 px-2 py-1 text-micro text-ink backdrop-blur-sm">
+        <span className="truncate">
+          {label ?? (track.participant.isLocal ? t("room.youLabel") : firstName(name))}
+        </span>
       </span>
     </article>
+  );
+}
+
+function RecordingChip({ startedAt }: { startedAt: Date }) {
+  const { t } = useTranslation("live");
+  const [seconds, setSeconds] = useState(() =>
+    Math.max(0, Math.floor((Date.now() - startedAt.getTime()) / 1000))
+  );
+
+  useEffect(() => {
+    const timer = globalThis.setInterval(() => {
+      setSeconds(Math.max(0, Math.floor((Date.now() - startedAt.getTime()) / 1000)));
+    }, 1000);
+    return () => globalThis.clearInterval(timer);
+  }, [startedAt]);
+
+  const minutes = Math.floor(seconds / 60);
+  const label = `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+
+  return (
+    <span
+      className="flex h-6 shrink-0 items-center gap-1.5 rounded-full bg-danger px-2.5 text-caption-strong text-ink"
+      role="status"
+    >
+      <i className="size-1.5 shrink-0 rounded-full bg-ink not-italic" aria-hidden="true" />
+      {t("room.rec")} {label}
+    </span>
   );
 }
 
@@ -609,14 +633,17 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   }, [screenStream]);
   const videoRecording = useTeacherVideoRecording(lesson.id, screenVideoOnlyStream, isTeacher);
 
+  const localCamera =
+    cameraTracks.find((track) => track.participant.isLocal) ?? cameraTracks[0] ?? null;
+  const remoteCameras = cameraTracks.filter((track) => track !== localCamera);
+  const hostName = room.localParticipant.name ?? "";
+  const studentCount = Math.max(participants.length - 1, 0);
+
   const boardOpen = panel === "board";
   const peopleOpen = panel === "people";
   const [moreOpen, setMoreOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
   const [joinedAt] = useState(() => new Date());
-  const joinedLabel = `${String(joinedAt.getHours()).padStart(2, "0")}:${String(
-    joinedAt.getMinutes()
-  ).padStart(2, "0")}`;
   const connected = connectionState === ConnectionState.Connected;
 
   const recordingChips = isTeacher
@@ -636,91 +663,48 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
       data-lk-theme="default"
       className="live-room-shell dark relative flex h-dvh min-h-0 flex-col overflow-hidden bg-canvas text-ink"
     >
-      <header className="flex shrink-0 flex-col gap-2.5 px-4 pt-3 pb-2.5 lg:px-5 lg:pt-4 lg:pb-3">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-            aria-label={t("room.leaveAria")}
-            onClick={onLeave}
+      <header className="flex h-19.5 shrink-0 items-center gap-3 px-6">
+        <button
+          type="button"
+          className="grid size-9 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle"
+          aria-label={t("room.leaveAria")}
+          onClick={onLeave}
+        >
+          <Icon name="y-logo" size={26} />
+        </button>
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <strong className="truncate font-heading text-title-lg text-ink">
+            {lesson.courseTitle} — {lesson.title}
+          </strong>
+          <small className="truncate text-body-xs text-ink-tertiary">
+            {hostName ? `${hostName} · ` : ""}
+            {t("room.studentsPresent", { count: studentCount })}
+            {connected ? "" : ` · ${connectionLabels[connectionState] ?? connectionState}`}
+          </small>
+        </div>
+
+        {recordingChips.length ? <RecordingChip startedAt={joinedAt} /> : null}
+
+        {recordingChips.map((chip) => (
+          <span
+            key={chip!.id}
+            className="flex h-6 shrink-0 items-center rounded-full bg-subtle px-3 text-caption text-ink-secondary"
+            role="status"
           >
-            <ArrowLeft size={20} />
-          </button>
-
-          <div className="flex min-w-0 flex-1 flex-col">
-            <strong className="flex min-w-0 items-center gap-2 font-heading text-title text-ink">
-              <span
-                className={`size-2 shrink-0 rounded-full ${
-                  connected ? "bg-success" : "bg-saffron-strong"
-                }`}
-                aria-hidden="true"
-              />
-              <span className="truncate">{lesson.title}</span>
-            </strong>
-            <small className="truncate text-caption text-ink-tertiary">
-              {lesson.courseTitle} · {connectionLabels[connectionState] ?? connectionState}
-              {connected ? ` · ${joinedLabel}` : ""}
-            </small>
-          </div>
-
-          <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-label-strong text-ink">
-            <Users size={15} /> {participants.length}
+            {chip!.label}
           </span>
+        ))}
 
-          {isTeacher ? (
-            <button
-              type="button"
-              className="grid size-9 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
-              onClick={() => setInviteOpen(true)}
-              aria-label={t("room.inviteAria")}
-              title={t("room.inviteAria")}
-            >
-              <UserRoundPlus size={18} />
-            </button>
-          ) : null}
-        </div>
-
-        {recordingChips.length ? (
-          <div className="flex flex-wrap items-center gap-2">
-            {recordingChips.map((chip) => (
-              <span
-                key={chip!.id}
-                className="flex h-7 items-center gap-2 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary"
-                role="status"
-              >
-                <i className="size-1.5 shrink-0 rounded-full bg-error-text" aria-hidden="true" />
-                {chip!.label}
-              </span>
-            ))}
-          </div>
-        ) : null}
+        <span className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink lg:hidden">
+          <Users size={15} /> {participants.length}
+        </span>
       </header>
-
-      {boardOpen || peopleOpen ? (
-        <div className="flex shrink-0 items-center gap-1 px-4 pb-2 lg:hidden">
-          {(["video", "board", "people"] as const).map((item) => {
-            const active =
-              item === "video" ? !boardOpen && !peopleOpen : item === "board" ? boardOpen : peopleOpen;
-            return (
-              <button
-                key={item}
-                type="button"
-                className={`h-9 rounded-full px-3.5 text-label-strong transition-colors ${
-                  active ? "bg-subtle text-ink" : "text-ink-tertiary"
-                }`}
-                onClick={() => setPanel(item === "video" ? null : item)}
-              >
-                {t(`room.switch.${item}`)}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
 
       <ReconnectBanner />
 
-      <div className="flex min-h-0 flex-1 gap-4 px-4 pb-24 lg:px-5">
-        <main className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 flex-1 gap-4 px-6">
+        <main className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl">
           {boardOpen ? (
             <BoardPanel
               lessonId={lesson.id}
@@ -728,22 +712,8 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
               currentUserId={room.localParticipant.identity}
             />
           ) : activeShare ? (
-            <div className="flex min-h-0 flex-1 gap-3">
-              <div className="min-w-0 flex-1 overflow-hidden rounded-2xl bg-subtle">
-                <ParticipantTile trackRef={activeShare} />
-              </div>
-              <div
-                className="flex w-[180px] shrink-0 flex-col gap-3 overflow-y-auto"
-                aria-label={t("room.filmstripAria")}
-              >
-                {cameraTracks.map((track) => (
-                  <CameraTile
-                    key={`${track.participant.identity}-${track.source}`}
-                    track={track}
-                    compact
-                  />
-                ))}
-              </div>
+            <div className="min-h-0 flex-1 overflow-hidden rounded-xl bg-subtle">
+              <ParticipantTile trackRef={activeShare} />
             </div>
           ) : cameraTracks.length ? (
             <div className="grid min-h-0 flex-1 auto-rows-min grid-cols-2 content-start gap-4 overflow-y-auto lg:grid-cols-3">
@@ -759,57 +729,75 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           )}
         </main>
 
-        {boardOpen ? (
-          <div
-            className="hidden w-[180px] shrink-0 flex-col gap-3 overflow-y-auto lg:flex"
-            aria-label={t("room.filmstripAria")}
-          >
-            {cameraTracks.map((track) => (
-              <CameraTile
-                key={`${track.participant.identity}-${track.source}`}
-                track={track}
-                compact
-              />
-            ))}
-          </div>
-        ) : peopleOpen ? (
-          <aside
-            className="hidden w-[340px] shrink-0 flex-col gap-3 self-start rounded-2xl bg-surface p-4 lg:flex"
-            aria-label={t("room.sidePanelAria")}
-          >
-            <div className="flex items-center justify-between gap-2">
-              <strong className="font-heading text-h3 text-ink">
-                {t("room.participantsCount", { count: participants.length })}
-              </strong>
-              <button
-                type="button"
-                className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:bg-subtle hover:text-ink"
-                onClick={() => setPanel(null)}
-                aria-label={t("room.closePanelAria")}
-              >
-                <X size={17} />
-              </button>
-            </div>
-
-            <ParticipantsPanel
-              lessonId={lesson.id}
-              isTeacher={isTeacher}
-              micRequests={mic.requests}
-              onGrantMic={mic.grant.mutate}
-              onDenyMic={mic.deny.mutate}
-              micAnswerPending={mic.grant.isPending || mic.deny.isPending}
-              cameraRequests={camera.requests}
-              onGrantCamera={camera.grant.mutate}
-              onDenyCamera={camera.deny.mutate}
-              cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
-              onInvite={() => setInviteOpen(true)}
+        <aside
+          className="hidden w-84 shrink-0 flex-col gap-2.5 overflow-y-auto lg:flex"
+          aria-label={t("room.filmstripAria")}
+        >
+          {localCamera ? (
+            <CameraTile
+              track={localCamera}
+              label={`${t("room.youLabel")}${isTeacher ? ` · ${t("room.teacherRole")}` : ""}`}
             />
-          </aside>
-        ) : null}
+          ) : null}
+
+          {remoteCameras.length ? (
+            <div className="grid grid-cols-2 gap-2.5">
+              {remoteCameras.map((track) => (
+                <CameraTile
+                  key={`${track.participant.identity}-${track.source}`}
+                  track={track}
+                  compact
+                />
+              ))}
+            </div>
+          ) : null}
+
+          {isTeacher && pendingRequestsCount ? (
+            <section className="flex flex-col gap-3 rounded-lg bg-surface p-3.5">
+              <strong className="text-title-sm text-ink">
+                {t("room.wantsToSpeak", { count: pendingRequestsCount })}
+              </strong>
+
+              {mic.requests.slice(0, 2).map((request) => (
+                <span key={request.studentId} className="flex items-center gap-2.5">
+                  <Avatar name={request.name} size="xs" />
+                  <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                    {request.name} · ✋
+                  </small>
+                  <button
+                    type="button"
+                    className="flex h-8 shrink-0 items-center rounded-full bg-brand px-4 text-caption-strong text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
+                    disabled={mic.grant.isPending || mic.deny.isPending}
+                    onClick={() => mic.grant.mutate(request.studentId)}
+                  >
+                    {t("room.allow")}
+                  </button>
+                </span>
+              ))}
+
+              {camera.requests.slice(0, 2).map((request) => (
+                <span key={request.studentId} className="flex items-center gap-2.5">
+                  <Avatar name={request.name} size="xs" />
+                  <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                    {request.name} · 📷
+                  </small>
+                  <button
+                    type="button"
+                    className="flex h-8 shrink-0 items-center rounded-full bg-brand px-4 text-caption-strong text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
+                    disabled={camera.grant.isPending || camera.deny.isPending}
+                    onClick={() => camera.grant.mutate(request.studentId)}
+                  >
+                    {t("room.allow")}
+                  </button>
+                </span>
+              ))}
+            </section>
+          ) : null}
+        </aside>
       </div>
 
-      <footer className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-5">
-        <div className="pointer-events-auto flex items-center gap-3">
+      <footer className="flex h-30.5 shrink-0 items-center justify-center px-6">
+        <div className="flex items-center gap-3">
           {isTeacher ? (
             <TeacherMicControl />
           ) : (
@@ -841,8 +829,32 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
             aria-label={t("room.openBoardAria")}
             aria-pressed={boardOpen}
           >
-            <LayoutDashboard size={19} />
+            <PencilLine size={19} />
           </button>
+
+          <button
+            type="button"
+            className={`live-control ${peopleOpen ? "is-active" : ""}`}
+            onClick={() => setPanel(peopleOpen ? null : "people")}
+            aria-label={t("room.participants")}
+            aria-pressed={peopleOpen}
+          >
+            <Users size={19} />
+            {pendingRequestsCount ? (
+              <span className="live-control-badge">{pendingRequestsCount}</span>
+            ) : null}
+          </button>
+
+          {isTeacher ? (
+            <button
+              type="button"
+              className="live-control"
+              onClick={() => setInviteOpen(true)}
+              aria-label={t("room.inviteAria")}
+            >
+              <UserRoundPlus size={19} />
+            </button>
+          ) : null}
 
           <div className="relative">
             <button
@@ -853,29 +865,10 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
               aria-expanded={moreOpen}
             >
               <MoreHorizontal size={19} />
-              {pendingRequestsCount ? (
-                <span className="live-control-badge">{pendingRequestsCount}</span>
-              ) : null}
             </button>
 
             {moreOpen ? (
               <div className="absolute bottom-[calc(100%+10px)] right-0 z-30 flex w-[230px] flex-col gap-1 rounded-2xl bg-surface p-2 shadow-xl">
-                <button
-                  type="button"
-                  className="flex h-11 items-center gap-2.5 rounded-xl px-3 text-left text-label-strong text-ink transition-colors hover:bg-subtle"
-                  onClick={() => {
-                    setMoreOpen(false);
-                    setPanel(peopleOpen ? null : "people");
-                  }}
-                >
-                  <Users size={17} />
-                  {t("room.participants")}
-                  {pendingRequestsCount ? (
-                    <b className="ml-auto grid size-6 place-items-center rounded-full bg-action text-caption-strong text-on-action">
-                      {pendingRequestsCount}
-                    </b>
-                  ) : null}
-                </button>
                 {isTeacher ? (
                   <button
                     type="button"
@@ -892,9 +885,21 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
             ) : null}
           </div>
 
-          <DisconnectButton className="live-control live-control--leave">
-            <PhoneOff size={19} />
-          </DisconnectButton>
+          {isTeacher ? (
+            <button
+              type="button"
+              className="live-control live-control--leave"
+              onClick={() => setFinishOpen(true)}
+            >
+              <LogOut size={19} />
+              {t("room.finish")}
+            </button>
+          ) : (
+            <DisconnectButton className="live-control live-control--leave">
+              <PhoneOff size={19} />
+              {t("room.leave")}
+            </DisconnectButton>
+          )}
         </div>
       </footer>
 
@@ -918,32 +923,30 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
         />
       ) : null}
 
-      <Drawer
+      <AppDialog
         open={peopleOpen}
-        onOpenChange={(open) => (open ? setPanel("people") : setPanel(null))}
+        onOpenChange={(open) => setPanel(open ? "people" : null)}
+        variant="panel"
+        width="lg:w-100"
+        title={t("room.participantsCount", { count: participants.length })}
       >
-        <DrawerContent className="max-h-[80dvh] px-4 pb-6 lg:hidden">
-          <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
-            {t("room.participantsCount", { count: participants.length })}
-          </DrawerTitle>
-          <ParticipantsPanel
-            lessonId={lesson.id}
-            isTeacher={isTeacher}
-            micRequests={mic.requests}
-            onGrantMic={mic.grant.mutate}
-            onDenyMic={mic.deny.mutate}
-            micAnswerPending={mic.grant.isPending || mic.deny.isPending}
-            cameraRequests={camera.requests}
-            onGrantCamera={camera.grant.mutate}
-            onDenyCamera={camera.deny.mutate}
-            cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
-            onInvite={() => {
-              setPanel(null);
-              setInviteOpen(true);
-            }}
-          />
-        </DrawerContent>
-      </Drawer>
+        <ParticipantsPanel
+          lessonId={lesson.id}
+          isTeacher={isTeacher}
+          micRequests={mic.requests}
+          onGrantMic={mic.grant.mutate}
+          onDenyMic={mic.deny.mutate}
+          micAnswerPending={mic.grant.isPending || mic.deny.isPending}
+          cameraRequests={camera.requests}
+          onGrantCamera={camera.grant.mutate}
+          onDenyCamera={camera.deny.mutate}
+          cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
+          onInvite={() => {
+            setPanel(null);
+            setInviteOpen(true);
+          }}
+        />
+      </AppDialog>
 
       <MediaPermissionDialog open={permissionOpen} onOpenChange={setPermissionOpen} />
       <MediaPermissionWatcher onDenied={() => setPermissionOpen(true)} />
@@ -970,14 +973,12 @@ interface ParticipantsPanelProps {
 
 function RequestRow({
   name,
-  index,
   note,
   pending,
   onGrant,
   onDeny,
 }: {
   name: string;
-  index: number;
   note: string;
   pending: boolean;
   onGrant: () => void;
@@ -986,27 +987,29 @@ function RequestRow({
   const { t } = useTranslation("live");
 
   return (
-    <article className="flex items-center gap-2.5 rounded-xl bg-subtle p-2.5">
-      <span className="grid size-6 shrink-0 place-items-center rounded-full bg-action text-caption-strong text-on-action">
-        {index + 1}
-      </span>
+    <article className="flex items-center gap-3 rounded-lg bg-warning-bg px-3 py-2.5">
       <Avatar name={name} size="sm" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <strong className="truncate text-label-strong text-ink">{name}</strong>
-        <small className="truncate text-caption text-ink-tertiary">{note}</small>
+        <strong className="truncate text-title-sm text-ink">{name}</strong>
+        <small className="truncate text-body-xs text-warning-fg">{note}</small>
       </span>
-      <Button size="sm" disabled={pending} onClick={onGrant}>
-        {t("participantsPanel.grant")}
-      </Button>
       <button
         type="button"
-        className="grid size-8 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
+        className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink transition-opacity hover:opacity-80 disabled:opacity-50"
         aria-label={t("participantsPanel.denyAria", { name })}
         title={t("participantsPanel.denyTitle")}
         disabled={pending}
         onClick={onDeny}
       >
         <X size={16} />
+      </button>
+      <button
+        type="button"
+        className="flex h-9 shrink-0 items-center rounded-full bg-brand px-4 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
+        disabled={pending}
+        onClick={onGrant}
+      >
+        {t("participantsPanel.grant")}
       </button>
     </article>
   );
@@ -1036,58 +1039,34 @@ function ParticipantsPanel({
   ]);
 
   return (
-    <div className="flex min-h-0 flex-col gap-3">
-      {micRequests.length ? (
-        <section
-          className="flex flex-col gap-2"
-          aria-label={t("participantsPanel.micRequestsAria")}
-        >
-          <h4 className="flex items-center gap-1.5 px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
-            <Hand size={13} /> {t("participantsPanel.wantsToSpeak", { count: micRequests.length })}
-          </h4>
-          {micRequests.map((request, index) => (
-            <RequestRow
-              key={request.studentId}
-              name={request.name}
-              index={index}
-              note={t("participantsPanel.micRequesting")}
-              pending={micAnswerPending}
-              onGrant={() => onGrantMic(request.studentId)}
-              onDeny={() => onDenyMic(request.studentId)}
-            />
-          ))}
-        </section>
-      ) : null}
+    <div className="flex min-h-0 flex-col gap-2">
+      {micRequests.map((request) => (
+        <RequestRow
+          key={`mic-${request.studentId}`}
+          name={request.name}
+          note={t("participantsPanel.micRequesting")}
+          pending={micAnswerPending}
+          onGrant={() => onGrantMic(request.studentId)}
+          onDeny={() => onDenyMic(request.studentId)}
+        />
+      ))}
 
-      {cameraRequests.length ? (
-        <section
-          className="flex flex-col gap-2"
-          aria-label={t("participantsPanel.cameraRequestsAria")}
-        >
-          <h4 className="flex items-center gap-1.5 px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
-            <Video size={13} />{" "}
-            {t("participantsPanel.wantsCamera", { count: cameraRequests.length })}
-          </h4>
-          {cameraRequests.map((request, index) => (
-            <RequestRow
-              key={request.studentId}
-              name={request.name}
-              index={index}
-              note={t("participantsPanel.cameraRequesting")}
-              pending={cameraAnswerPending}
-              onGrant={() => onGrantCamera(request.studentId)}
-              onDeny={() => onDenyCamera(request.studentId)}
-            />
-          ))}
-        </section>
-      ) : null}
+      {cameraRequests.map((request) => (
+        <RequestRow
+          key={`camera-${request.studentId}`}
+          name={request.name}
+          note={t("participantsPanel.cameraRequesting")}
+          pending={cameraAnswerPending}
+          onGrant={() => onGrantCamera(request.studentId)}
+          onDeny={() => onDenyCamera(request.studentId)}
+        />
+      ))}
 
-      <div className="-mr-1 flex min-h-0 flex-col gap-0.5 overflow-y-auto pr-1">
+      <div className="-mr-1 flex min-h-0 flex-col overflow-y-auto pr-1">
         {participants.map((participant) => {
           const name = participant.name || participant.identity;
           const speaking = participant.isSpeaking;
           const micOn = participant.isMicrophoneEnabled;
-          const cameraOn = participant.isCameraEnabled;
           const raisedHand = raisedHands.has(name);
           const note = participant.isLocal
             ? isTeacher
@@ -1097,44 +1076,33 @@ function ParticipantsPanel({
               ? t("participantsPanel.speaking")
               : raisedHand
                 ? t("participantsPanel.raisedHand")
-                : t("participantsPanel.participant");
+                : micOn
+                  ? t("participantsPanel.online")
+                  : t("participantsPanel.micOff");
 
           return (
-            <article
-              key={participant.identity}
-              className="group flex items-center gap-2.5 rounded-xl px-1 py-2 transition-colors hover:bg-subtle"
-            >
+            <article key={participant.identity} className="group flex items-center gap-3 py-2.5">
               <Avatar name={name} size="sm" />
               <span className="flex min-w-0 flex-1 flex-col">
-                <strong className="truncate text-label-strong text-ink">{name}</strong>
-                <small
-                  className={`truncate text-caption ${
-                    speaking ? "text-success-text" : "text-ink-tertiary"
-                  }`}
-                >
-                  {note}
-                </small>
+                <strong className="truncate text-title-sm text-ink">
+                  {participant.isLocal
+                    ? `${t("room.youLabel")} · ${
+                        isTeacher ? t("room.teacherRole") : t("participantsPanel.studentRole")
+                      }`
+                    : name}
+                </strong>
+                <small className="truncate text-body-xs text-ink-tertiary">{note}</small>
               </span>
 
               {raisedHand ? (
-                <Hand size={16} className="shrink-0 text-saffron-strong" aria-hidden="true" />
+                <Hand size={16} className="shrink-0 text-warning-fg" aria-hidden="true" />
               ) : null}
-              {micOn ? (
-                <Mic size={16} className="shrink-0 text-ink-secondary" aria-hidden="true" />
-              ) : (
-                <MicOff size={16} className="shrink-0 text-error-text" aria-hidden="true" />
-              )}
-              {cameraOn ? (
-                <Video size={16} className="shrink-0 text-ink-secondary" aria-hidden="true" />
-              ) : (
-                <VideoOff size={16} className="shrink-0 text-error-text" aria-hidden="true" />
-              )}
 
               {isTeacher && !participant.isLocal ? (
                 <span className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
                   <button
                     type="button"
-                    className="grid size-8 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-muted hover:text-ink disabled:opacity-50"
+                    className="grid size-8 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-50"
                     disabled={allowShare.isPending}
                     aria-label={t("participantsPanel.allowShare")}
                     title={t("participantsPanel.allowShare")}
@@ -1144,7 +1112,7 @@ function ParticipantsPanel({
                   </button>
                   <button
                     type="button"
-                    className="grid size-8 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg disabled:opacity-50"
+                    className="grid size-8 place-items-center rounded-full text-danger transition-colors hover:bg-danger-bg disabled:opacity-50"
                     aria-label={t("participantsPanel.banAria", { name })}
                     title={t("participantsPanel.banTitle")}
                     disabled={ban.isPending}
@@ -1154,36 +1122,42 @@ function ParticipantsPanel({
                   </button>
                 </span>
               ) : null}
+
+              {micOn ? (
+                <Mic size={17} className="shrink-0 text-brand" aria-hidden="true" />
+              ) : (
+                <MicOff size={17} className="shrink-0 text-icon-disabled" aria-hidden="true" />
+              )}
             </article>
           );
         })}
+
         {!participants.length ? (
-          <p className="px-1 py-3 text-body-sm text-ink-tertiary">
-            {t("participantsPanel.empty")}
-          </p>
+          <p className="py-3 text-body-sm text-ink-tertiary">{t("participantsPanel.empty")}</p>
         ) : null}
       </div>
 
       {isTeacher ? (
-        <div className="flex items-center gap-2 border-t border-line pt-3">
+        <div className="flex items-center gap-2.5 pt-2">
           <button
             type="button"
-            className="h-11 flex-1 rounded-full border border-line text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-60"
+            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink transition-colors hover:bg-muted disabled:opacity-60"
             disabled={muteAll.isPending}
             onClick={() =>
               muteAll.mutate([], {
-                onSuccess: (count) =>
-                  toast.success(t("participantsPanel.muteAllDone", { count })),
+                onSuccess: (count) => toast.success(t("participantsPanel.muteAllDone", { count })),
               })
             }
           >
+            <MicOff size={17} />
             {t("participantsPanel.muteAll")}
           </button>
           <button
             type="button"
-            className="h-11 flex-1 rounded-full bg-action text-label-strong text-on-action transition-colors hover:bg-action-hover"
+            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-opacity hover:opacity-85"
             onClick={onInvite}
           >
+            <UserRoundPlus size={17} />
             {t("participantsPanel.invite")}
           </button>
         </div>

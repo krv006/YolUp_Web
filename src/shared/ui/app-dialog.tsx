@@ -3,12 +3,12 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
 
-export type AppDialogVariant = "sheet" | "fullscreen" | "confirm";
+export type AppDialogVariant = "sheet" | "fullscreen" | "confirm" | "panel";
 
 export interface AppDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** sheet: bottom sheet on phones · fullscreen: whole screen on phones · confirm: centred card everywhere */
+  /** sheet: bottom sheet on phones · fullscreen: whole screen on phones · confirm: centred card everywhere · panel: right-hand sheet */
   variant?: AppDialogVariant;
   icon?: ReactNode;
   title: ReactNode;
@@ -16,6 +16,8 @@ export interface AppDialogProps {
   children?: ReactNode;
   footer?: ReactNode;
   width?: string;
+  /** stacked: ikonka sarlavha ustida turadi. */
+  layout?: "inline" | "stacked";
 }
 
 const SHELL =
@@ -27,7 +29,9 @@ const PLACEMENT: Record<AppDialogVariant, string> = {
   fullscreen:
     "inset-0 h-dvh w-full rounded-none data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom lg:inset-auto lg:top-1/2 lg:left-1/2 lg:h-auto lg:max-h-[86vh] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:border lg:border-line lg:data-[state=closed]:slide-out-to-bottom-0 lg:data-[state=open]:slide-in-from-bottom-0",
   confirm:
-    "top-1/2 left-1/2 max-h-[86dvh] w-[calc(100%-40px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-2xl data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 lg:max-w-[420px]",
+    "top-1/2 left-1/2 max-h-[86dvh] w-[calc(100%-32px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  panel:
+    "inset-x-0 bottom-0 max-h-[88dvh] w-full rounded-t-2xl data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom lg:inset-x-auto lg:inset-y-0 lg:right-0 lg:max-h-none lg:rounded-t-none lg:rounded-l-2xl lg:data-[state=closed]:slide-out-to-right lg:data-[state=open]:slide-in-from-right",
 };
 
 export function AppDialog({
@@ -39,80 +43,66 @@ export function AppDialog({
   description,
   children,
   footer,
-  width = "lg:w-[560px]",
+  width = "lg:w-130",
+  layout = "inline",
 }: AppDialogProps) {
   const { t } = useTranslation("common");
-  const closeable = variant !== "confirm";
+
+  const titleBlock = (
+    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+      <DialogPrimitive.Title className="font-heading text-h2 text-ink">
+        {title}
+      </DialogPrimitive.Title>
+      {description ? (
+        <DialogPrimitive.Description className="text-body-sm text-ink-secondary">
+          {description}
+        </DialogPrimitive.Description>
+      ) : null}
+    </div>
+  );
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
         <DialogPrimitive.Content
-          className={`${SHELL} ${PLACEMENT[variant]} ${variant === "confirm" ? "" : width}`}
+          className={`${SHELL} ${PLACEMENT[variant]} ${width}`}
         >
-          {variant === "sheet" ? (
-            <span
-              className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-muted lg:hidden"
-              aria-hidden="true"
-            />
-          ) : null}
-
-          {icon ? <div className="shrink-0 px-5 pt-5 lg:px-6">{icon}</div> : null}
+          <span
+            className={`mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-muted ${
+              variant === "panel" ? "lg:hidden" : ""
+            }`}
+            aria-hidden="true"
+          />
 
           <div
-            className={`flex shrink-0 items-start gap-3 px-5 ${icon ? "pt-3" : "pt-5"} ${
-              variant === "fullscreen" ? "lg:px-6" : "lg:px-6"
-            } ${description ? "pb-3" : "pb-4"}`}
+            className={`flex shrink-0 gap-3 px-4 pt-4 ${
+              layout === "stacked" ? "flex-col items-start" : "items-center"
+            }`}
           >
-            {variant === "fullscreen" ? (
+            <div className="flex w-full items-center gap-3">
+              {icon ? <span className="shrink-0">{icon}</span> : null}
+              {layout === "stacked" ? <span className="min-w-0 flex-1" /> : titleBlock}
+
               <button
                 type="button"
-                className="grid size-10 shrink-0 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-subtle lg:hidden"
+                className="grid size-9 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
                 onClick={() => onOpenChange(false)}
                 aria-label={t("actions.close", { defaultValue: "Yopish" })}
               >
-                <Icon name="add" size={18} className="rotate-45" />
+                <Icon name="close" size={18} />
               </button>
-            ) : null}
-
-            <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <DialogPrimitive.Title className="font-heading text-h3 text-ink">
-                {title}
-              </DialogPrimitive.Title>
-              {description ? (
-                <DialogPrimitive.Description className="text-body-sm text-ink-secondary">
-                  {description}
-                </DialogPrimitive.Description>
-              ) : null}
             </div>
 
-            {closeable ? (
-              <button
-                type="button"
-                className={`grid size-10 shrink-0 place-items-center rounded-full border border-line text-ink transition-colors hover:bg-subtle ${
-                  variant === "fullscreen" ? "hidden lg:grid" : "hidden lg:grid"
-                }`}
-                onClick={() => onOpenChange(false)}
-                aria-label={t("actions.close", { defaultValue: "Yopish" })}
-              >
-                <Icon name="add" size={18} className="rotate-45" />
-              </button>
-            ) : null}
+            {layout === "stacked" ? titleBlock : null}
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-5 pb-5 lg:px-6">
+          <div className="-mx-1 flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-5 pt-4.5 pb-1">
             {children}
           </div>
 
           {footer ? (
-            <div
-              className={`flex shrink-0 items-center justify-end gap-3 px-5 py-4 lg:px-6 ${
-                variant === "confirm" ? "pt-0" : "border-t border-line"
-              }`}
-            >
-              {footer}
-            </div>
+            <div className="flex shrink-0 items-center gap-3 px-4 pt-6 pb-4">{footer}</div>
           ) : null}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
@@ -122,9 +112,9 @@ export function AppDialog({
 
 export const dialogButton = {
   primary:
-    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-50 lg:flex-none",
+    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40 disabled:hover:bg-brand",
   secondary:
-    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-line bg-surface px-5 text-label-strong text-ink transition-colors hover:bg-subtle lg:flex-none",
+    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle",
   danger:
-    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-error px-5 text-label-strong text-white transition-opacity hover:opacity-90 disabled:opacity-50 lg:flex-none",
+    "flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-danger-bg px-5 text-button text-danger transition-opacity hover:opacity-85 disabled:opacity-50",
 };

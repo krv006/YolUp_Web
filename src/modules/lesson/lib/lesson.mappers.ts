@@ -72,6 +72,9 @@ export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording 
     participantsCount: dto.participants_count ?? null,
     attendanceRate: dto.attendance_rate ?? null,
     boardPages: dto.board_pages ?? null,
+    chapters: (dto.chapters ?? [])
+      .map((item) => ({ seconds: Number(item.seconds ?? 0), title: item.title ?? "" }))
+      .filter((item) => Boolean(item.title)),
   };
 }
 

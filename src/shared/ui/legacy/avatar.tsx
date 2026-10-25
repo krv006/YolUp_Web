@@ -2,7 +2,7 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn, initials } from "@/shared/lib";
 
 export type AvatarTone = "violet" | "blue" | "emerald" | "amber" | "rose";
-export type AvatarSize = "sm" | "md" | "lg";
+export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 export interface AvatarProps {
   name?: string;

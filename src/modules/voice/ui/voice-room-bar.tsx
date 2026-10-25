@@ -12,7 +12,7 @@ import {
   useRequestVoiceJoin,
 } from "../model/voice.queries";
 import { VoiceRoomCreateDialog } from "./voice-room-create-dialog";
-import { VoiceRoomDialog } from "./voice-room-dialog";
+import { VoiceRoomPanel } from "./voice-room-panel";
 
 export interface VoiceRoomBarProps {
   courseId: string | null;
@@ -57,10 +57,10 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
 
   return (
     <>
-      <div className="flex shrink-0 items-center gap-3 border-b border-line bg-action-subtle/50 px-4 py-3 lg:px-6">
+      <div className="mx-4 mt-2 mb-1 flex shrink-0 items-center gap-3 rounded-lg bg-brand-subtle px-4 py-2.5 lg:mx-7">
         <span
-          className={`grid size-9 shrink-0 place-items-center rounded-full ${
-            active?.status === "live" ? "bg-action text-on-action" : "bg-surface text-action"
+          className={`grid size-8 shrink-0 place-items-center rounded-full ${
+            active?.status === "live" ? "bg-brand text-ink-inverse" : "bg-brand text-ink-inverse"
           }`}
           aria-hidden="true"
         >
@@ -135,8 +135,7 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
       />
 
       {joined ? (
-        <VoiceRoomDialog
-          open
+        <VoiceRoomPanel
           room={joined.room}
           token={joined.token}
           closing={close.isPending}

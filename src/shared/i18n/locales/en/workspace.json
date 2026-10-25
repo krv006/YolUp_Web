@@ -97,5 +97,70 @@
   "searchSubtitle": "Across groups, lessons, tests, students and messages",
   "searchHotkeys": "↑↓ select · Enter open · Esc close",
   "searchAllResults": "All results",
-  "searchBack": "Back"
+  "searchBack": "Back",
+  "searchKeySelect": "select",
+  "searchKeyOpen": "open",
+  "searchKeyClose": "close",
+  "searchEmptyTitle": "Nothing found for “{{query}}”",
+  "searchEmptyHint": "Try another word or change the filters",
+  "home": {
+    "eyebrow": "Teacher workspace",
+    "createTest": "Create a test",
+    "modules": "Modules",
+    "stats": {
+      "tests": "Tests",
+      "testsHint": "{{count}} drafts",
+      "assignments": "Active assignments",
+      "assignmentsHint": "{{count}} to review",
+      "mock": "Mock exams",
+      "mockHint": "{{count}} running",
+      "rating": "Average rating",
+      "ratingHint": "this month"
+    },
+    "moduleCounts": {
+      "tests": "{{count}} tests",
+      "assignments": "{{count}} active",
+      "mock": "{{count}} running",
+      "ai": "{{count}} generating",
+      "analytics": "Rating {{value}}",
+      "materials": "{{count}} files"
+    },
+    "modules_list": {
+      "tests": {
+        "title": "Tests",
+        "description": "8 question types — graded automatically"
+      },
+      "assignments": {
+        "title": "Assignments",
+        "description": "Set homework and review it with AI"
+      },
+      "mock": {
+        "title": "Mock exams",
+        "description": "IELTS, SAT, Milliy sertifikat and your own"
+      },
+      "ai": {
+        "title": "AI assistant",
+        "description": "Build a test from a topic or material"
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Results and activity at a glance"
+      },
+      "materials": {
+        "title": "Materials",
+        "description": "Textbooks, audio and files"
+      }
+    }
+  },
+  "stats": {
+    "eyebrow": "Ratings, courses and lessons at a glance",
+    "ratingHint": "from {{count}} ratings",
+    "cancelledHint": "{{count}} cancelled",
+    "monthHint": "this month",
+    "reliabilityHint": "lessons on time",
+    "chartTitle": "Test results — average score",
+    "chartRange": "Last 8 weeks",
+    "chartEmpty": "The chart appears once the backend returns weekly results.",
+    "quizShort": "test {{value}}%"
+  }
 }

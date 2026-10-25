@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useOnlineStatus } from "@/shared/model";
 import { Avatar } from "@/shared/ui/legacy";
+import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { PinnedMessageBar, useChatUiStore } from "@/modules/message";
 
@@ -12,9 +13,15 @@ import type { Conversation } from "@/shared/types";
 export interface ChatHeaderProps {
   conversation: Conversation;
   backTo?: string;
+  /** When given, the parent owns the info panel and the header only toggles it. */
+  onToggleInfo?: () => void;
 }
 
-export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHeaderProps) {
+export function ChatHeader({
+  conversation,
+  backTo = "/teacher/chats",
+  onToggleInfo,
+}: ChatHeaderProps) {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
@@ -47,13 +54,14 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
 
   return (
     <>
-      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 lg:h-[72px] lg:gap-3 lg:px-6">
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b border-line bg-surface px-3 lg:h-[76px] lg:gap-3 lg:border-b-0 lg:bg-transparent lg:px-7">
         <button
-          className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle lg:hidden"
+          className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle lg:bg-subtle lg:text-icon lg:hover:bg-muted"
           onClick={() => navigate(backTo)}
           aria-label={t("header.backAria")}
         >
-          <Icon name="arrow-back" size={22} />
+          <Icon name="arrow-back" size={22} className="lg:hidden" />
+          <Icon name="chevron-left" size={22} className="hidden lg:block" />
         </button>
 
         {searchOpen ? (
@@ -109,15 +117,19 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
             onClick={() => setInfoOpen(true)}
             aria-label={t("header.openInfoAria", { title: conversation.title })}
           >
-            <Avatar
-              name={conversation.title}
-              tone={conversation.avatarTone}
-              src={conversation.imageUrl}
-              size="md"
-              status={conversation.type === "direct" ? conversation.status : undefined}
-            />
+            {conversation.type === "group" ? (
+              <GroupTile name={conversation.title} tone={conversation.avatarTone} />
+            ) : (
+              <Avatar
+                name={conversation.title}
+                tone={conversation.avatarTone}
+                src={conversation.imageUrl}
+                size="md"
+                status={conversation.status}
+              />
+            )}
             <span className="flex min-w-0 flex-col">
-              <strong className="truncate text-label-strong text-ink lg:text-title">
+              <strong className="truncate text-label-strong text-ink lg:text-title-lg">
                 {conversation.title}
               </strong>
               <span className="truncate text-caption text-ink-tertiary lg:text-body-sm">
@@ -140,7 +152,7 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
 
         {searchOpen ? null : (
           <button
-            className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle lg:size-11"
+            className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle lg:hidden"
             onClick={() => setSearchOpen(true)}
             aria-label={t("header.searchAria")}
           >
@@ -149,8 +161,8 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
         )}
 
         <button
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
-          onClick={() => setInfoOpen(true)}
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle lg:border-0 lg:bg-subtle lg:text-icon lg:hover:bg-muted"
+          onClick={() => (onToggleInfo ? onToggleInfo() : setInfoOpen(true))}
           aria-label={t("header.openInfoAria", { title: conversation.title })}
         >
           <Icon name="more" size={20} />
@@ -166,11 +178,13 @@ export function ChatHeader({ conversation, backTo = "/teacher/chats" }: ChatHead
 
       <PinnedMessageBar roomId={conversation.id} />
 
-      <ConversationInfoPanel
-        conversation={conversation}
-        open={infoOpen}
-        onOpenChange={setInfoOpen}
-      />
+      {onToggleInfo ? null : (
+        <ConversationInfoPanel
+          conversation={conversation}
+          open={infoOpen}
+          onOpenChange={setInfoOpen}
+        />
+      )}
     </>
   );
 }

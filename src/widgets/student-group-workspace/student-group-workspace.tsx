@@ -142,7 +142,7 @@ export function StudentGroupWorkspace({
   }
 
   return (
-    <section className="chat-page group-workspace student-group-workspace">
+    <section className="chat-page group-workspace student-group-workspace relative">
       <ChatHeader conversation={hydrated} backTo="/student/chats" />
       <LiveLessonBar courseId={courseId} />
       <VoiceRoomBar courseId={courseId} />

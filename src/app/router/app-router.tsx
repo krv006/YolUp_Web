@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthLayout } from "@/app/layouts/auth-layout";
+import { TeacherShellLayout } from "@/app/layouts/teacher-shell";
 import { RootLayout } from "@/app/layouts/root-layout";
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
@@ -131,6 +132,19 @@ const AdminTeachersPage = lazy(() => import("@/pages/admin/teachers/admin-teache
 const LiveLessonPage = lazy(() => import("@/pages/live/live-lesson-page").then((module) => ({ default: module.LiveLessonPage })));
 const DesignSystemPage = lazy(() => import("@/pages/design-system/design-system-page").then((module) => ({ default: module.DesignSystemPage })));
 const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) => ({ default: module.BoardPage })));
+const WorkspaceHomePage = lazy(() => import("@/pages/teacher/workspace/workspace-home-page").then((module) => ({ default: module.WorkspaceHomePage })));
+const TeacherSchedulePage = lazy(() => import("@/pages/teacher/schedule/teacher-schedule-page").then((module) => ({ default: module.TeacherSchedulePage })));
+const HomeworkListPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-list-page").then((module) => ({ default: module.HomeworkListPage })));
+const HomeworkDetailPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-detail-page").then((module) => ({ default: module.HomeworkDetailPage })));
+const HomeworkReviewPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-review-page").then((module) => ({ default: module.HomeworkReviewPage })));
+const AiAssistantPage = lazy(() => import("@/pages/teacher/workspace/ai-assistant-page").then((module) => ({ default: module.AiAssistantPage })));
+const WorkspaceAnalyticsPage = lazy(() => import("@/pages/teacher/workspace/analytics-page").then((module) => ({ default: module.WorkspaceAnalyticsPage })));
+const MockExamsPage = lazy(() => import("@/pages/teacher/workspace/mock-exams-page").then((module) => ({ default: module.MockExamsPage })));
+const MockResultsPage = lazy(() => import("@/pages/teacher/workspace/mock-results-page").then((module) => ({ default: module.MockResultsPage })));
+const TestResultsPage = lazy(() => import("@/pages/teacher/workspace/test-results-page").then((module) => ({ default: module.TestResultsPage })));
+const TestEditorPage = lazy(() => import("@/pages/teacher/workspace/test-editor-page").then((module) => ({ default: module.TestEditorPage })));
+const TestsPage = lazy(() => import("@/pages/teacher/workspace/tests-page").then((module) => ({ default: module.TestsPage })));
+const TeacherDashboardPage = lazy(() => import("@/pages/teacher/dashboard/teacher-dashboard-page").then((module) => ({ default: module.TeacherDashboardPage })));
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
 const SchedulePage = lazy(() => import("@/pages/schedule/schedule-page").then((module) => ({ default: module.SchedulePage })));
 const AiPage = lazy(() => import("@/pages/ai/ai-page").then((module) => ({ default: module.AiPage })));
@@ -200,10 +214,26 @@ export function AppRouter() {
                     path={ROUTES.teacher.root}
                     element={<Navigate to={ROUTES.teacher.dashboard} replace />}
                   />
-                  <Route
-                    path={ROUTES.teacher.dashboard}
-                    element={<Navigate to={ROUTES.teacher.chats} replace />}
-                  />
+                  <Route element={<TeacherShellLayout />}>
+                    <Route path={ROUTES.teacher.dashboard} element={<TeacherDashboardPage />} />
+                    <Route path={ROUTES.teacher.schedule} element={<TeacherSchedulePage />} />
+                    <Route
+                      path={ROUTES.teacher.recording(":lessonId")}
+                      element={<RecordingPage />}
+                    />
+                    <Route path={ROUTES.teacher.board(":lessonId")} element={<BoardPage />} />
+                    <Route path={ROUTES.teacher.workspace} element={<WorkspaceHomePage />} />
+                    <Route path={ROUTES.teacher.tests} element={<TestsPage />} />
+                    <Route path="/teacher/workspace/tests/:quizId" element={<TestEditorPage />} />
+                    <Route path="/teacher/workspace/tests/:quizId/results" element={<TestResultsPage />} />
+                    <Route path={ROUTES.teacher.homework} element={<HomeworkListPage />} />
+                    <Route path="/teacher/workspace/homework/:assignmentId" element={<HomeworkDetailPage />} />
+                    <Route path="/teacher/workspace/homework/:assignmentId/review" element={<HomeworkReviewPage />} />
+                    <Route path={ROUTES.teacher.workspaceAi} element={<AiAssistantPage />} />
+                    <Route path={ROUTES.teacher.workspaceAnalytics} element={<WorkspaceAnalyticsPage />} />
+                    <Route path={ROUTES.teacher.mockExams} element={<MockExamsPage />} />
+                    <Route path="/teacher/workspace/mock/:examId" element={<MockResultsPage />} />
+                  </Route>
                   <Route
                     path={ROUTES.teacher.chats}
                     element={<TeacherLayout />}

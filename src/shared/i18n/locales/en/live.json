@@ -48,7 +48,16 @@
     "join": "Join the lesson",
     "mobileTitle": "Join the lesson",
     "minutes": "minutes",
-    "recordingNote": "The lesson is recorded automatically — audio and video"
+    "recordingNote": "The lesson is recorded automatically — audio and video",
+    "minutesValue": "{{count}} min",
+    "waiting": "{{count}} / {{total}} students waiting",
+    "waitingNames_zero": "{{names}} is waiting",
+    "waitingNames": "{{names}} and {{count}} more are waiting",
+    "defaultMic": "Default microphone",
+    "defaultCamera": "Default camera",
+    "cameraOnTitle": "Camera on",
+    "cameraOffTitle": "Camera off",
+    "start": "Start lesson"
   },
   "connection": {
     "connecting": "Connecting…",
@@ -101,7 +110,12 @@
       "video": "Back to video",
       "board": "Board",
       "people": "Participants"
-    }
+    },
+    "rec": "REC",
+    "studentsPresent": "{{count}} students",
+    "teacherRole": "teacher",
+    "wantsToSpeak": "Wants to speak ({{count}})",
+    "allow": "Allow"
   },
   "mic": {
     "label": "Microphone",
@@ -155,7 +169,10 @@
     "raisedHand": "Raised hand",
     "muteAll": "Mute everyone",
     "invite": "Invite",
-    "muteAllDone": "Muted {{count}} participants"
+    "muteAllDone": "Muted {{count}} participants",
+    "online": "Online",
+    "micOff": "Microphone off",
+    "studentRole": "student"
   },
   "permissionDialog": {
     "title": "Camera and microphone access needed",
@@ -173,6 +190,7 @@
     "joinFailedTitle": "Could not join the lesson",
     "joinFailedFinished": "The “{{title}}” lesson ended at {{time}}. The recording goes to the group chat once it is ready.",
     "backToChat": "Back to group chat",
-    "openRecording": "Watch the recording"
+    "openRecording": "Watch the recording",
+    "joinFailedDescription": "The connection dropped — we could not join the lesson. The lesson is still running."
   }
 }

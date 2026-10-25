@@ -1,6 +1,6 @@
 {
   "title": "Bildirishnomalar",
-  "markAllRead": "Hammasini o‘qildi",
+  "markAllRead": "Hammasini o‘qilgan qilish",
   "openAria": "Bildirishnomalar",
   "unreadAria": "Bildirishnomalar ({{count}} ta yangi)",
   "groups": {
@@ -8,8 +8,8 @@
     "yesterday": "Kecha",
     "earlier": "Avvalgi"
   },
-  "emptyTitle": "Hozircha bildirishnomalar yo‘q",
-  "emptyDescription": "Topshiriqlar, darslar va to‘lovlar haqidagi xabarlar shu yerda ko‘rinadi.",
+  "emptyTitle": "Hammasi ko‘rildi",
+  "emptyDescription": "Yangi topshiriq, so‘rov yoki baho kelsa, shu yerda ko‘rinadi.",
   "loadError": "Xabarlarni yuklab bo‘lmadi",
   "retry": "Qayta urinish",
   "loading": "Yuklanmoqda",
@@ -24,5 +24,15 @@
     "default": "Ochish"
   },
   "filterAll": "Hammasi",
-  "filterUnread": "O‘qilmagan · {{count}}"
+  "filterUnread": "O‘qilmagan · {{count}}",
+  "tabs": {
+    "all": "Hammasi",
+    "unread": "O‘qilmagan · {{count}}"
+  },
+  "actions": {
+    "openAssignment": "Topshiriqni ochish",
+    "openQuiz": "Testga o‘tish",
+    "review": "Ko‘rib chiqish",
+    "open": "Ochish"
+  }
 }

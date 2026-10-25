@@ -193,6 +193,11 @@ export type LessonStatus = "scheduled" | "live" | "finished" | "cancelled";
 
 export type LessonRecordingStatus = "recording" | "merging" | "completed" | "failed";
 
+export interface LessonRecordingChapter {
+  seconds: number;
+  title: string;
+}
+
 export interface LessonRecording {
   status: LessonRecordingStatus;
   ready: boolean;
@@ -204,6 +209,7 @@ export interface LessonRecording {
   participantsCount: number | null;
   attendanceRate: number | null;
   boardPages: number | null;
+  chapters: LessonRecordingChapter[];
 }
 
 export interface Lesson {

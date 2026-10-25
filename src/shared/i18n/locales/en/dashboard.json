@@ -1,0 +1,89 @@
+{
+  "header": {
+    "greeting": "Hello, {{name}}!",
+    "lessonCount": "{{count}} lessons today",
+    "searchPlaceholder": "Search a group, student or lesson..."
+  },
+  "banner": {
+    "offline": "No connection. Showing the last saved data",
+    "notApproved": "Your account has not been approved by an administrator yet — creating courses and lessons is closed for now."
+  },
+  "hero": {
+    "startsIn": "in {{count}} min",
+    "startsNow": "Starting now",
+    "live": "Lesson in progress · {{count}} min",
+    "joined": "{{done}} / {{total}} students joined",
+    "students": "{{count}} students",
+    "quizAttached": "quiz attached",
+    "start": "Start the lesson",
+    "join": "Join the lesson",
+    "chat": "Go to the chat",
+    "startsInHours": "in {{count}} h"
+  },
+  "stats": {
+    "lessons": "Lessons today",
+    "lessonsHint": "{{count}} finished",
+    "review": "Waiting for review",
+    "reviewHint": "{{count}} assignments",
+    "students": "Students",
+    "studentsHint": "in {{count}} groups",
+    "attendance": "Average attendance",
+    "attendanceHint": "across all lessons"
+  },
+  "today": {
+    "title": "Lessons today",
+    "students": "{{count}} students",
+    "finished": "{{count}} students · finished",
+    "emptyTitle": "No lessons today",
+    "emptyNext": "Next lesson: {{time}} · {{title}}",
+    "emptyHint": "Add your first lesson to the schedule.",
+    "openSchedule": "Open the schedule",
+    "addLesson": "Add a lesson"
+  },
+  "review": {
+    "title": "Needs review",
+    "submitted": "{{done}} / {{total}} submitted",
+    "empty": "Nothing to review."
+  },
+  "activity": {
+    "title": "Recent activity",
+    "empty": "Nothing has happened yet."
+  },
+  "noGroups": {
+    "title": "Create your first group",
+    "description": "Create a group, invite students with a link and add the lesson schedule.",
+    "action": "Create a group",
+    "stepsTitle": "Start in 3 steps",
+    "steps": {
+      "create": {
+        "title": "Create a group",
+        "hint": "Name, subject and lessons per week"
+      },
+      "invite": {
+        "title": "Share the link",
+        "hint": "Students join in one tap"
+      },
+      "lesson": {
+        "title": "Add a lesson",
+        "hint": "Students get a reminder"
+      }
+    }
+  },
+  "common": {
+    "seeAll": "See all"
+  },
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ]
+}

@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { Atom, Calculator, Check, Eye, FilePlus2, Pencil, UserCheck, X } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourseStudents } from "@/modules/course";
@@ -39,6 +40,11 @@ export interface BoardPanelProps {
   footerActions?: ReactNode;
   /** Berilsa - doska dars o'rniga shu manbadan ishlaydi (uy vazifasi doskasi): realtime va ruxsatlarsiz. */
   source?: BoardSource;
+  /** Sahifa tashqaridan boshqarilsa (arxiv sahifasi). */
+  sheetIndex?: number;
+  onSheetChange?: (index: number) => void;
+  /** Pastdagi sahifa paneli yashiriladi (sahifalar tashqarida ko'rsatilganda). */
+  hideSheetBar?: boolean;
 }
 
 export function BoardPanel({
@@ -48,6 +54,9 @@ export function BoardPanel({
   statusNote,
   footerActions,
   source,
+  sheetIndex,
+  onSheetChange,
+  hideSheetBar = false,
 }: BoardPanelProps) {
   const { t } = useTranslation("board");
   const realtime = useBoardRealtime(lessonId, !source, currentUserId);
@@ -56,10 +65,15 @@ export function BoardPanel({
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
+  const [permissionMode, setPermissionMode] = useState<"teacher" | "selected" | "everyone">(
+    "teacher"
+  );
   const solve = useSolveFormula(lessonId);
   const members = useCourseStudents(board.data?.isTeacher ? courseId : null, { page_size: 100 });
 
-  const [sheet, setSheet] = useState(0);
+  const [localSheet, setLocalSheet] = useState(0);
+  const sheet = sheetIndex ?? localSheet;
+  const setSheet = onSheetChange ?? setLocalSheet;
   const [tool, setTool] = useState<BoardTool>("pen");
   const [color, setColor] = useState<string>(BOARD_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState<number>(BOARD_WIDTHS[1]);
@@ -269,109 +283,12 @@ export function BoardPanel({
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
 
-  const chip =
-    "flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary transition-colors hover:bg-muted hover:text-ink";
 
   return (
-    <div className="board-panel flex min-h-0 flex-1 flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-caption-strong ${
-            canDraw ? "text-success-text" : "text-ink-tertiary"
-          }`}
-          title={canDraw ? t("status.canDrawTitle") : t("status.viewOnlyTitle")}
-        >
-          {canDraw ? <Pencil size={13} /> : <Eye size={13} />}
-          {canDraw ? t("status.canDraw") : t("status.viewOnly")}
-        </span>
-
-        {statusNote ? (
-          <span className="flex h-8 shrink-0 items-center gap-1.5 text-caption-strong text-ink-tertiary">
-            <i className="size-1.5 shrink-0 rounded-full bg-ink-tertiary" aria-hidden="true" />
-            {statusNote}
-          </span>
-        ) : null}
-
-        {source || statusNote ? null : (
-          <span
-            className="flex h-8 shrink-0 items-center gap-1.5 text-caption-strong text-ink-tertiary"
-            title={
-              realtime.connected
-                ? t("status.liveConnectedTitle")
-                : t("status.liveDisconnectedTitle")
-            }
-          >
-            <i
-              className={`size-1.5 shrink-0 rounded-full ${
-                realtime.connected ? "bg-success" : "bg-saffron-strong"
-              }`}
-              aria-hidden="true"
-            />
-            {realtime.connected ? t("status.live") : t("status.slowMode")}
-          </span>
-        )}
-
-        <span className="flex-1" />
-
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            className={`${chip} lg:hidden`}
-            onClick={() => setPagesOpen(true)}
-          >
-            <FilePlus2 size={14} /> #{sheet + 1}
-          </button>
-
-          <span className="hidden items-center gap-1.5 lg:flex">
-          {state.sheets.map((item) => (
-            <button
-              key={item.index}
-              type="button"
-              className={`grid h-8 min-w-8 shrink-0 place-items-center rounded-full px-2.5 text-caption-strong transition-colors ${
-                sheet === item.index
-                  ? "bg-action text-on-action"
-                  : "bg-subtle text-ink-secondary hover:bg-muted hover:text-ink"
-              }`}
-              onClick={() => setSheet(item.index)}
-            >
-              #{item.index + 1}
-            </button>
-          ))}
-
-          {state.isTeacher || source ? (
-            <button
-              type="button"
-              className={chip}
-              onClick={() => (source ? source.addSheet() : addSheet.mutate())}
-            >
-              <FilePlus2 size={14} /> {t("sheet.addSheet")}
-            </button>
-          ) : null}
-          </span>
-
-          {state.mathEnabled ? (
-            <button type="button" className={chip} onClick={() => setFormulaOpen(true)}>
-              <Calculator size={14} /> {t("solver.button")}
-            </button>
-          ) : null}
-
-          {state.chemistryEnabled ? (
-            <button type="button" className={chip} onClick={() => setPeriodicOpen(true)}>
-              <Atom size={14} /> {t("periodic.button")}
-            </button>
-          ) : null}
-
-          {state.isTeacher ? (
-            <button type="button" className={chip} onClick={() => setGrantOpen(true)}>
-              <UserCheck size={14} /> {t("permission.grantButton")}
-            </button>
-          ) : null}
-        </div>
-      </div>
-
+    <div className="board-panel flex min-h-0 flex-1 flex-col">
       <div
         data-theme="light"
-        className="relative min-h-0 flex-1 overflow-hidden rounded-2xl bg-surface"
+        className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-surface"
       >
         <div className="board-canvas-wrap h-full">
           <svg
@@ -444,21 +361,121 @@ export function BoardPanel({
           ) : null}
         </div>
 
-        {canDraw ? (
-          <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 flex justify-center px-4">
-            <div className="pointer-events-auto max-w-full overflow-x-auto rounded-2xl">
-              <BoardToolbar
-                tool={tool}
-                color={color}
-                width={strokeWidth}
-                canDraw={canDraw}
-                onToolChange={setTool}
-                onColorChange={setColor}
-                onWidthChange={setStrokeWidth}
-              />
-            </div>
+        {!source && !realtime.connected ? (
+          <div className="absolute inset-x-0 top-5 z-10 flex justify-center px-4">
+            <p
+              role="status"
+              className="flex max-w-140 items-start gap-2.5 rounded-md bg-warning-bg px-4 py-3.5 text-body-sm text-warning-fg"
+            >
+              <Icon name="warning" size={18} className="mt-0.5 shrink-0" />
+              {t("status.slowSyncNote")}
+            </p>
           </div>
         ) : null}
+
+        {canDraw ? (
+          <div className="absolute top-1/2 left-4.5 z-10 -translate-y-1/2">
+            <BoardToolbar
+              tool={tool}
+              color={color}
+              width={strokeWidth}
+              canDraw={canDraw}
+              chemistryEnabled={state.chemistryEnabled}
+              onToolChange={setTool}
+              onColorChange={setColor}
+              onWidthChange={setStrokeWidth}
+              onPeriodic={() => setPeriodicOpen(true)}
+            />
+          </div>
+        ) : null}
+
+        {hideSheetBar ? null : (
+        <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center px-4">
+          <div className="flex h-9 max-w-full items-center gap-3 overflow-x-auto rounded-full bg-surface px-4 shadow-lg">
+            <button
+              type="button"
+              className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
+              aria-label={t("sheet.prev")}
+              disabled={sheet <= 0}
+              onClick={() => setSheet(sheet - 1)}
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <button
+              type="button"
+              className="shrink-0 text-caption-strong whitespace-nowrap text-ink"
+              onClick={() => setPagesOpen(true)}
+            >
+              {t("sheet.pageOf", { page: sheet + 1, total: state.sheets.length })}
+            </button>
+
+            <button
+              type="button"
+              className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
+              aria-label={t("sheet.next")}
+              disabled={sheet >= state.sheets.length - 1}
+              onClick={() => setSheet(sheet + 1)}
+            >
+              <ChevronRight size={16} />
+            </button>
+
+            {statusNote ? (
+              <>
+                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                  ·
+                </i>
+                <span className="shrink-0 text-caption-strong whitespace-nowrap text-ink-tertiary">
+                  {statusNote}
+                </span>
+              </>
+            ) : null}
+
+            {state.isTeacher || source ? (
+              <>
+                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                  ·
+                </i>
+                <button
+                  type="button"
+                  className="shrink-0 text-caption-strong whitespace-nowrap text-brand transition-opacity hover:opacity-80"
+                  onClick={() => (source ? source.addSheet() : addSheet.mutate())}
+                >
+                  + {t("sheet.addSheet")}
+                </button>
+              </>
+            ) : null}
+
+            {state.isTeacher ? (
+              <>
+                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                  ·
+                </i>
+                <button
+                  type="button"
+                  className="shrink-0 text-caption-strong whitespace-nowrap text-success transition-opacity hover:opacity-80"
+                  onClick={() => setGrantOpen(true)}
+                >
+                  {t(`permission.modes.${permissionMode}`)}
+                </button>
+              </>
+            ) : (
+              <>
+                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                  ·
+                </i>
+                <span
+                  className={`shrink-0 text-caption-strong whitespace-nowrap ${
+                    canDraw ? "text-success" : "text-ink-tertiary"
+                  }`}
+                >
+                  {canDraw ? t("status.canDraw") : t("status.viewOnly")}
+                </span>
+              </>
+            )}
+          </div>
+        </div>
+        )}
 
         {footerActions ? (
           <div className="absolute right-4 bottom-4 z-10 flex flex-wrap items-center justify-end gap-2">
@@ -503,6 +520,9 @@ export function BoardPanel({
         onSubmit={(input) =>
           permissions.mutate(input, {
             onSuccess: (result) => {
+              setPermissionMode(
+                "mode" in input ? (input.mode === "none" ? "teacher" : "everyone") : "selected"
+              );
               toast.success(
                 "mode" in input && input.mode === "none"
                   ? t("permissionDialog.revoked", { count: result.revoked ?? 0 })

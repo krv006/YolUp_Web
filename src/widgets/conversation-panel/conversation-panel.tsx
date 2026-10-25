@@ -341,7 +341,10 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
       </div>
 
 
-      <ConversationActionsSheet conversation={actionsFor} onClose={() => setActionsFor(null)} />
+      <ConversationActionsSheet
+        conversation={actionsFor}
+        onClose={() => setActionsFor(null)}
+      />
 
     </section>
   );

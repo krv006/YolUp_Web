@@ -14,6 +14,7 @@ import {
   type LessonPreJoinChoices,
 } from "@/modules/live";
 import { RateLessonDialog, useLesson } from "@/modules/lesson";
+import { ROUTES } from "@/shared/config";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
 
@@ -125,8 +126,7 @@ export function LiveLessonPage() {
     return (
       <main className="live-page">
         <LiveRoomState
-          lessonTitle={lesson.data.title}
-          subtitle={`${lesson.data.courseTitle} · ${lesson.data.date} · ${lesson.data.time}`}
+          tone="offline"
           title={t("state.joinFailedTitle")}
           description={
             finished
@@ -134,15 +134,14 @@ export function LiveLessonPage() {
                   title: lesson.data.title,
                   time: lesson.data.time,
                 })
-              : token.error?.message
+              : (token.error?.message ?? t("state.joinFailedDescription"))
           }
-          actionLabel={t("state.backToChat")}
-          onAction={handleLeave}
-          secondaryLabel={finished ? t("state.openRecording") : t("state.retry")}
-          onSecondary={
-            finished ? () => navigate(`/recordings/${lesson.data!.id}`) : () => void token.refetch()
+          actionLabel={finished ? t("state.openRecording") : t("state.retry")}
+          onAction={
+            finished ? () => navigate(ROUTES.teacher.recording(lesson.data!.id)) : () => void token.refetch()
           }
-          onBack={handleLeave}
+          secondaryLabel={t("state.backToChat")}
+          onSecondary={handleLeave}
         />
       </main>
     );

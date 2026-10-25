@@ -20,7 +20,7 @@ export interface MessageActionsMenuProps {
   capabilities?: MessageCapabilities;
 }
 
-const QUICK_REACTIONS = ["👍", "❤️", "😂", "😮", "🙏"];
+const QUICK_REACTIONS = ["👍", "❤️", "🔥", "😂", "😮", "🙏"];
 const EDGE_GAP = 12;
 
 export function MessageActionsMenu({
@@ -102,6 +102,77 @@ export function MessageActionsMenu({
     },
   ].filter((item) => !item.hidden);
 
+  const reactions = (
+    <div className="flex items-center gap-1 rounded-full bg-surface p-1.5 shadow-xl">
+      {QUICK_REACTIONS.map((emoji) => (
+        <button
+          key={emoji}
+          type="button"
+          className="grid size-9 place-items-center rounded-full text-xl transition-colors hover:bg-subtle"
+          onClick={() => {
+            if (rights.react !== false) onReact(message, emoji);
+            else toast.info(t("actions.notAvailable"));
+            onClose();
+          }}
+        >
+          {emoji}
+        </button>
+      ))}
+    </div>
+  );
+
+  const list = (
+    <div className="flex flex-col rounded-lg bg-surface p-1.5 shadow-xl">
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          role="menuitem"
+          className="flex h-12 items-center gap-3 rounded-md px-3 text-left text-body text-ink transition-colors hover:bg-subtle"
+          onClick={() => {
+            item.run();
+            onClose();
+          }}
+        >
+          <Icon name={item.icon} size={20} className="shrink-0 text-icon-secondary" />
+          {item.label}
+        </button>
+      ))}
+
+      <span className="my-1.5 h-px shrink-0 bg-line-subtle" />
+
+      {rights.delete === false ? null : (
+        <button
+          type="button"
+          role="menuitem"
+          className="flex h-12 items-center gap-3 rounded-md px-3 text-left text-body text-danger transition-colors hover:bg-danger-bg"
+          onClick={() => {
+            onDelete(message, "me");
+            onClose();
+          }}
+        >
+          <Icon name="logout" size={20} className="shrink-0" />
+          {t("actionsMenu.deleteForMe")}
+        </button>
+      )}
+
+      {rights.deleteEveryone ? (
+        <button
+          type="button"
+          role="menuitem"
+          className="flex h-12 items-center gap-3 rounded-md px-3 text-left text-body text-danger transition-colors hover:bg-danger-bg"
+          onClick={() => {
+            onDelete(message, "everyone");
+            onClose();
+          }}
+        >
+          <Icon name="logout" size={20} className="shrink-0" />
+          {t("actionsMenu.deleteForEveryone")}
+        </button>
+      ) : null}
+    </div>
+  );
+
   const body = (
     <>
       <div className="flex items-center gap-1 border-b border-line px-2 py-2">
@@ -119,9 +190,6 @@ export function MessageActionsMenu({
             {emoji}
           </button>
         ))}
-        <span className="grid size-9 place-items-center rounded-full text-ink-tertiary">
-          <Icon name="emoji" size={18} />
-        </span>
       </div>
 
       <div className="flex flex-col py-1">
@@ -140,18 +208,34 @@ export function MessageActionsMenu({
             {item.label}
           </button>
         ))}
-        <button
-          type="button"
-          role="menuitem"
-          className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-error-text transition-colors hover:bg-error-bg"
-          onClick={() => {
-            onDelete(message, rights.deleteEveryone ? "everyone" : "me");
-            onClose();
-          }}
-        >
-          <Icon name="trash" size={18} className="shrink-0" />
-          {t("actionsMenu.delete")}
-        </button>
+        {rights.delete === false ? null : (
+          <button
+            type="button"
+            role="menuitem"
+            className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-danger transition-colors hover:bg-danger-bg"
+            onClick={() => {
+              onDelete(message, "me");
+              onClose();
+            }}
+          >
+            <Icon name="logout" size={18} className="shrink-0" />
+            {t("actionsMenu.deleteForMe")}
+          </button>
+        )}
+        {rights.deleteEveryone ? (
+          <button
+            type="button"
+            role="menuitem"
+            className="flex items-center gap-3 px-4 py-2.5 text-left text-body text-danger transition-colors hover:bg-danger-bg"
+            onClick={() => {
+              onDelete(message, "everyone");
+              onClose();
+            }}
+          >
+            <Icon name="logout" size={18} className="shrink-0" />
+            {t("actionsMenu.deleteForEveryone")}
+          </button>
+        ) : null}
       </div>
     </>
   );
@@ -189,14 +273,15 @@ export function MessageActionsMenu({
           node.style.left = `${Math.max(EDGE_GAP, left)}px`;
           node.style.top = `${Math.max(EDGE_GAP, top)}px`;
         }}
-        className="fixed z-50 hidden max-h-[calc(100dvh-24px)] w-[240px] flex-col overflow-y-auto rounded-2xl border border-line bg-surface shadow-xl lg:flex"
+        className="fixed z-50 hidden max-h-[calc(100dvh-24px)] w-62.5 flex-col items-start gap-2 lg:flex"
         role="menu"
         style={{ left: position.x, top: position.y }}
         initial={{ opacity: 0, scale: 0.96, y: -5 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.97 }}
       >
-        {body}
+        {reactions}
+        {list}
       </motion.div>
     </AnimatePresence>
   );

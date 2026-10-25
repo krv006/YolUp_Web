@@ -9,13 +9,22 @@
     "liveConnectedTitle": "Подключено в реальном времени",
     "liveDisconnectedTitle": "Синхронизация в медленном режиме",
     "live": "В сети",
-    "slowMode": "Медленный режим"
+    "slowMode": "Медленный режим",
+    "slowSyncNote": "Синхронизация в медленном режиме — ваши записи сохранятся и отправятся после восстановления связи"
   },
   "sheet": {
-    "addSheet": "Страница"
+    "addSheet": "Страница",
+    "pageOf": "Страница {{page}} / {{total}}",
+    "prev": "Предыдущая страница",
+    "next": "Следующая страница"
   },
   "permission": {
-    "grantButton": "Разрешение"
+    "grantButton": "Разрешение",
+    "modes": {
+      "teacher": "Доступ: только вы",
+      "selected": "Доступ: выбранные ученики",
+      "everyone": "Доступ: все"
+    }
   },
   "solver": {
     "button": "Решатель"
@@ -32,7 +41,8 @@
     "math": "Формула",
     "toolbarAria": "Инструменты доски",
     "colorLabel": "Цвет {{value}}",
-    "widthLabel": "Толщина {{value}}"
+    "widthLabel": "Толщина {{value}}",
+    "styleAria": "Цвет и толщина"
   },
   "inline": {
     "formula": "Формула",
@@ -60,7 +70,8 @@
       "offTopic": "Не по теме",
       "cleanup": "Очистка доски",
       "other": "Другое"
-    }
+    },
+    "reasonPlaceholder": "Укажите причину"
   },
   "grantDialog": {
     "title": "Разрешение рисовать на доске",
@@ -133,7 +144,9 @@
     "sendToChat": "Отправить в чат",
     "downloadPdf": "Скачать PDF",
     "sentToChat": "Доска отправлена в чат группы",
-    "pdfFailed": "Не удалось скачать PDF"
+    "pdfFailed": "Не удалось скачать PDF",
+    "sheetCount": "{{count}} страниц",
+    "boardTitle": "{{title}} — доска"
   },
   "permissionDialog": {
     "title": "Доступ к доске",
@@ -156,11 +169,14 @@
         "hint": "Рисовать могут все участники"
       }
     },
-    "revoked": "Доступ отозван у {{count}}"
+    "revoked": "Доступ отозван у {{count}}",
+    "selectedCount": "Выбранные ученики · {{count}}"
   },
   "pages": {
     "title": "Страницы",
     "hint": "Ученики видят открытую вами страницу",
-    "new": "Новая"
+    "new": "Новая страница",
+    "pageLabel": "Страница {{index}}",
+    "emptyPage": "Пустая страница"
   }
 }

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useResolvedPath } from "react-router-dom";
 import logoUrl from "@/shared/assets/y-logo.svg";
 import { Icon } from "@/shared/ui/icon";
+import { ROUTES } from "@/shared/config";
 import type { ConversationRole } from "@/shared/types";
 import { useConversations } from "../model/use-conversations";
 
@@ -57,6 +58,18 @@ export function ConversationRail({
       <span className="mb-6 hidden items-center px-3 lg:flex">
         <img className="size-8" src={logoUrl} alt="YolUp" />
       </span>
+
+      {role === "teacher" ? (
+        <button
+          className={`${ITEM_BASE} ${ITEM_IDLE}`}
+          onClick={() => navigate(ROUTES.teacher.dashboard)}
+        >
+          <span className={PILL_BASE}>
+            <Icon name="home" size={24} />
+          </span>
+          <span className="truncate">{t("titles.home")}</span>
+        </button>
+      ) : null}
 
       {SECTIONS.map((item) => {
         const active = section === item.id;

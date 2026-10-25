@@ -1,7 +1,7 @@
-import { Download, FileSpreadsheet, FileText, Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { Icon } from "@/shared/ui/icon";
 import type { QuizExportMode, QuizExportType } from "../api/quiz.api";
 
 export interface QuizExportDialogProps {
@@ -13,14 +13,14 @@ export interface QuizExportDialogProps {
   onExport: (type: QuizExportType, mode: QuizExportMode) => void;
 }
 
-const OPTIONS: ReadonlyArray<{ mode: QuizExportMode; types: ReadonlyArray<QuizExportType> }> = [
-  { mode: "student", types: ["pdf", "docx"] },
-  { mode: "teacher", types: ["pdf", "docx", "xlsx"] },
+const MODES: QuizExportMode[] = ["student", "teacher"];
+
+const FORMATS: ReadonlyArray<{ type: QuizExportType; icon: string; teacherOnly?: boolean }> = [
+  { type: "pdf", icon: "description" },
+  { type: "docx", icon: "description" },
+  { type: "xlsx", icon: "grid-view", teacherOnly: true },
 ];
 
-const PHONE_TYPES: ReadonlyArray<QuizExportType> = ["pdf", "docx", "xlsx"];
-
-/** Testni qog'ozga/faylga chiqarish: o'quvchiga tarqatish nusxasi (javobsiz) va o'qituvchi nusxasi (javoblar bilan). */
 export function QuizExportDialog({
   open,
   onOpenChange,
@@ -29,73 +29,89 @@ export function QuizExportDialog({
   onExport,
 }: QuizExportDialogProps) {
   const { t } = useTranslation("quiz");
-  const isCompact = useIsCompact();
+  const [mode, setMode] = useState<QuizExportMode>("student");
+  const [type, setType] = useState<QuizExportType>("pdf");
+
+  function pickMode(next: QuizExportMode) {
+    setMode(next);
+    if (next === "student" && type === "xlsx") setType("pdf");
+  }
 
   return (
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
+      variant="confirm"
+      width="lg:w-120"
       title={t("exportDialog.title")}
-      description={isCompact ? t("exportDialog.phoneDescription", { title }) : title}
+      description={t("exportDialog.description", { title })}
       footer={
         <button
           type="button"
-          className={dialogButton.secondary}
-          onClick={() => onOpenChange(false)}
+          className={dialogButton.primary}
+          disabled={Boolean(pending)}
+          onClick={() => onExport(type, mode)}
         >
-          {t("exportDialog.close")}
+          {t("exportDialog.submit")}
         </button>
       }
     >
-      {isCompact ? (
-        <div className="flex flex-col">
-          {PHONE_TYPES.map((type) => (
+      <div className="flex flex-col gap-3">
+        {MODES.map((item) => {
+          const active = mode === item;
+          return (
             <button
-              key={type}
+              key={item}
               type="button"
-              className="flex h-14 items-center gap-3 rounded-xl px-2 text-left text-body text-ink transition-colors hover:bg-subtle disabled:opacity-50"
-              disabled={Boolean(pending)}
-              onClick={() => onExport(type, "teacher")}
+              role="radio"
+              aria-checked={active}
+              className={`flex items-center gap-3.5 rounded-md px-4.5 py-3 text-left transition-colors ${
+                active ? "border border-brand bg-brand-subtle" : "border border-line bg-surface"
+              }`}
+              onClick={() => pickMode(item)}
             >
-              {pending === `teacher:${type}` ? (
-                <Loader2 size={19} className="shrink-0 animate-spin text-ink-secondary" />
-              ) : (
-                <Download size={19} className="shrink-0 text-ink-secondary" />
-              )}
-              {t(`exportDialog.type.${type}`)}
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-title-sm text-ink">
+                  {t(`exportDialog.${item}`)}
+                </strong>
+                <small className="truncate text-body-xs text-ink-tertiary">
+                  {t(`exportDialog.${item}Hint`)}
+                </small>
+              </span>
+              <span
+                className={`grid size-5 shrink-0 place-items-center rounded-full ${
+                  active ? "bg-brand" : "border-2 border-line-strong bg-surface"
+                }`}
+              >
+                {active ? <i className="size-2.5 rounded-full bg-surface not-italic" /> : null}
+              </span>
             </button>
-          ))}
-        </div>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {OPTIONS.map(({ mode, types }) => (
-            <div key={mode} className="flex flex-col gap-2">
-              <strong className="text-label-strong text-ink">{t(`exportDialog.${mode}`)}</strong>
-              <p className="text-caption text-ink-tertiary">{t(`exportDialog.${mode}Hint`)}</p>
-              <div className="flex flex-wrap gap-2">
-                {types.map((type) => (
-                  <button
-                    key={type}
-                    type="button"
-                    className="flex h-11 items-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50"
-                    disabled={Boolean(pending) && pending !== `${mode}:${type}`}
-                    onClick={() => onExport(type, mode)}
-                  >
-                    {pending === `${mode}:${type}` ? (
-                      <Loader2 size={15} className="animate-spin" />
-                    ) : type === "xlsx" ? (
-                      <FileSpreadsheet size={15} />
-                    ) : (
-                      <FileText size={15} />
-                    )}
-                    {t(`exportDialog.type.${type}`)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
+
+      <span className="text-overline text-ink-tertiary uppercase">{t("exportDialog.format")}</span>
+
+      <div className="grid grid-cols-3 gap-3">
+        {FORMATS.map((format) => {
+          const disabled = Boolean(format.teacherOnly) && mode !== "teacher";
+          const active = type === format.type && !disabled;
+          return (
+            <button
+              key={format.type}
+              type="button"
+              className={`flex h-23 flex-col items-center justify-center gap-2 rounded-md border transition-colors disabled:opacity-40 ${
+                active ? "border-brand bg-brand-subtle text-brand" : "border-line bg-surface text-ink"
+              }`}
+              disabled={disabled}
+              onClick={() => setType(format.type)}
+            >
+              <Icon name={format.icon} size={22} className={active ? "" : "text-icon-secondary"} />
+              <small className="text-title-sm">{t(`exportDialog.type.${format.type}`)}</small>
+            </button>
+          );
+        })}
+      </div>
     </AppDialog>
   );
 }

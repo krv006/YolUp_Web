@@ -47,6 +47,7 @@ export interface LessonRecordingDto {
   participants_count?: number | null;
   attendance_rate?: number | null;
   board_pages?: number | null;
+  chapters?: Array<{ seconds?: number | null; title?: string | null }> | null;
 }
 
 export interface LessonRatingDto {

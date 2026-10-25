@@ -43,6 +43,11 @@
     "approve": "Tasdiqlash",
     "deny": "Rad etish",
     "connectFailed": "Ovozli xonaga ulanib bo'lmadi",
-    "connecting": "Ulanmoqda…"
+    "connecting": "Ulanmoqda…",
+    "owner": "Xona egasi",
+    "speaking": "Gapirmoqda",
+    "micOn": "Mikrofon yoqilgan",
+    "micOff": "Mikrofon o'chiq",
+    "requestNote": "Kirish so'rovi"
   }
 }

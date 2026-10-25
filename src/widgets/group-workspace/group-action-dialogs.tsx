@@ -11,14 +11,12 @@ import {
   Link,
   List,
   Paperclip,
-  Repeat,
-  TriangleAlert,
   Underline,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, DurationPicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
-import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { ModalCard, modalButton } from "@/shared/ui/modal-card";
 import { Icon } from "@/shared/ui/icon";
 import {
   buildScheduleDates,
@@ -215,29 +213,20 @@ export function AddLessonDialog({
   const sameDays = (a: readonly number[], b: readonly number[]) =>
     a.length === b.length && a.every((day, index) => day === b[index]);
 
+  const timeBusy = singleConflicts.length > 0 || startsInPast;
+
   return (
-    <AppDialog
+    <ModalCard
       open={open}
       onOpenChange={onOpenChange}
-      variant="fullscreen"
-      width="lg:w-[610px]"
       title={initialValues ? t("dialogs.lesson.editTitle") : t("dialogs.lesson.newTitle")}
-      description={
-        initialValues ? t("dialogs.lesson.editDescription") : t("dialogs.lesson.description")
-      }
+      subtitle={isRepeating ? t("dialogs.lesson.repeatingSubtitle") : undefined}
       footer={
-        <>
-          <button
-            type="button"
-            className={dialogButton.secondary}
-            onClick={() => onOpenChange(false)}
-          >
-            {t("dialogs.lesson.cancel")}
-          </button>
+        <div className="flex flex-col gap-2">
           <button
             type="submit"
             form="lesson-form"
-            className={dialogButton.primary}
+            className={modalButton.primary}
             disabled={
               isRepeating ? !dates.length || invalidRange : !form.topic.trim() || startsInPast
             }
@@ -248,143 +237,146 @@ export function AddLessonDialog({
                 ? t("dialogs.lesson.saveMultiple", { count: dates.length })
                 : t("dialogs.lesson.saveSingle")}
           </button>
-        </>
+          {initialValues && onDelete ? (
+            <button
+              type="button"
+              className="mx-auto flex h-10 items-center gap-2 rounded-full px-4 text-button text-danger transition-colors hover:bg-danger-bg"
+              onClick={() => {
+                onOpenChange(false);
+                onDelete();
+              }}
+            >
+              <Icon name="trash" size={17} /> {t("dialogs.lesson.deleteLesson")}
+            </button>
+          ) : null}
+        </div>
       }
     >
-          <motion.form
-            id="lesson-form"
-            className="group-action-form"
-            onSubmit={submit}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
+      <motion.form
+        id="lesson-form"
+        className="lesson-form flex flex-col gap-4.5"
+        onSubmit={submit}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        {canRepeat ? (
+          <div
+            className="flex w-fit items-center gap-1 rounded-full bg-subtle p-1"
+            role="radiogroup"
+            aria-label={t("dialogs.lesson.typeAria")}
           >
-            {isRepeating ? null : (
-              <label>
-                <span>{t("dialogs.lesson.topicLabel")}</span>
-                <input
-                  autoFocus
-                  value={form.topic}
-                  onChange={(event) => update("topic", event.target.value)}
-                  placeholder={t("dialogs.lesson.topicPlaceholder")}
-                />
-              </label>
-            )}
+            {[false, true].map((mode) => (
+              <button
+                key={String(mode)}
+                type="button"
+                role="radio"
+                aria-checked={repeat === mode}
+                className={`flex h-8 items-center rounded-full px-4 text-button transition-colors ${
+                  repeat === mode ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
+                }`}
+                onClick={() => {
+                  setRepeat(mode);
+                  if (mode) update("topic", "");
+                }}
+              >
+                {mode ? t("dialogs.lesson.repeating") : t("dialogs.lesson.single")}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
-            {canRepeat ? (
-              <div className="schedule-mode" role="radiogroup" aria-label={t("dialogs.lesson.typeAria")}>
+        {isRepeating ? null : (
+          <label className="flex flex-col gap-2">
+            <span className="text-body-xs text-ink-secondary">
+              {t("dialogs.lesson.topicLabel")}
+            </span>
+            <input
+              autoFocus
+              className="h-12.5 w-full rounded-md border border-transparent bg-subtle px-4 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
+              value={form.topic}
+              onChange={(event) => update("topic", event.target.value)}
+              placeholder={t("dialogs.lesson.topicPlaceholder")}
+            />
+          </label>
+        )}
+
+        {isRepeating ? (
+          <>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-3">
+                <span className="min-w-0 flex-1 text-body-xs text-ink-secondary">
+                  {t("dialogs.lesson.weekdaysLabel")}
+                </span>
                 <button
                   type="button"
-                  role="radio"
-                  aria-checked={!repeat}
-                  className={repeat ? "" : "is-active"}
-                  onClick={() => setRepeat(false)}
+                  className={`shrink-0 text-body-xs transition-colors ${
+                    sameDays(weekdays, ODD_WEEKDAYS) ? "text-brand-strong" : "text-brand"
+                  }`}
+                  onClick={() => setWeekdays([...ODD_WEEKDAYS])}
                 >
-                  <CalendarDays size={15} /> {t("dialogs.lesson.single")}
+                  {t("dialogs.lesson.oddDays")}
                 </button>
+                <span className="shrink-0 text-body-xs text-ink-tertiary">·</span>
                 <button
                   type="button"
-                  role="radio"
-                  aria-checked={repeat}
-                  className={repeat ? "is-active" : ""}
-                  onClick={() => {
-                    setRepeat(true);
-                    update("topic", "");
-                  }}
+                  className={`shrink-0 text-body-xs transition-colors ${
+                    sameDays(weekdays, EVEN_WEEKDAYS) ? "text-brand-strong" : "text-brand"
+                  }`}
+                  onClick={() => setWeekdays([...EVEN_WEEKDAYS])}
                 >
-                  <Repeat size={15} /> {t("dialogs.lesson.repeating")}
+                  {t("dialogs.lesson.evenDays")}
                 </button>
               </div>
-            ) : null}
 
-            {isRepeating ? (
-              <>
-                <p className="schedule-topic-note">{t("dialogs.lesson.repeatingTopicNote")}</p>
-                <div className="field-block">
-                  <span className="field-block-label">{t("dialogs.lesson.weekdaysLabel")}</span>
-                  <div className="weekday-presets">
+              <div className="grid grid-cols-7 gap-7.5">
+                {WEEKDAYS.map((day) => {
+                  const active = weekdays.includes(day.value);
+                  return (
                     <button
+                      key={day.value}
                       type="button"
-                      className={sameDays(weekdays, ODD_WEEKDAYS) ? "is-active" : ""}
-                      onClick={() => setWeekdays([...ODD_WEEKDAYS])}
+                      aria-pressed={active}
+                      aria-label={weekdayText.labels[day.value]}
+                      className={`flex h-11 items-center justify-center rounded-md text-button transition-colors ${
+                        active
+                          ? "bg-brand text-ink-inverse"
+                          : "bg-subtle text-ink-secondary hover:bg-muted"
+                      }`}
+                      onClick={() => toggleWeekday(day.value)}
                     >
-                      {t("dialogs.lesson.oddDays")}
+                      {weekdayText.short[day.value]}
                     </button>
-                    <button
-                      type="button"
-                      className={sameDays(weekdays, EVEN_WEEKDAYS) ? "is-active" : ""}
-                      onClick={() => setWeekdays([...EVEN_WEEKDAYS])}
-                    >
-                      {t("dialogs.lesson.evenDays")}
-                    </button>
-                  </div>
-                  <div className="weekday-picker">
-                    {WEEKDAYS.map((day) => (
-                      <button
-                        key={day.value}
-                        type="button"
-                        aria-pressed={weekdays.includes(day.value)}
-                        aria-label={weekdayText.labels[day.value]}
-                        className={weekdays.includes(day.value) ? "is-active" : ""}
-                        onClick={() => toggleWeekday(day.value)}
-                      >
-                        {weekdayText.short[day.value]}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="form-grid-two">
-                  <DatePicker
-                    label={t("dialogs.lesson.startDate")}
-                    value={range.from}
-                    minDate={today}
-                    onChange={(value) =>
-                      setRange((current) => ({
-                        from: value,
-                        to: current.to && current.to < value ? value : current.to,
-                      }))
-                    }
-                  />
-                  <DatePicker
-                    label={t("dialogs.lesson.endDate")}
-                    value={range.to}
-                    minDate={range.from || today}
-                    onChange={(value) => setRange((current) => ({ ...current, to: value }))}
-                  />
-                </div>
-              </>
-            ) : (
-              <div className="form-grid-two">
-                <DatePicker
-                  label={t("dialogs.lesson.dateLabel")}
-                  value={form.date}
-                  minDate={editingPast ? undefined : today}
-                  onChange={(value) => update("date", value)}
-                />
-                <TimePicker
-                  label={t("dialogs.lesson.startTime")}
-                  value={form.time}
-                  onChange={(value) => update("time", value)}
-                />
+                  );
+                })}
               </div>
-            )}
+            </div>
 
-            {isRepeating ? (
-              <div className="form-grid-two">
-                <TimePicker
-                  label={t("dialogs.lesson.startTime")}
-                  value={form.time}
-                  onChange={(value) => update("time", value)}
-                />
-                <DurationPicker
-                  label={t("dialogs.lesson.duration")}
-                  icon={Hourglass}
-                  value={form.duration}
-                  onChange={(value) => update("duration", value)}
-                  options={DURATION_OPTIONS}
-                />
-              </div>
-            ) : (
+            <div className="grid grid-cols-2 items-start gap-3">
+              <DatePicker
+                label={t("dialogs.lesson.startDate")}
+                value={range.from}
+                minDate={today}
+                onChange={(value) =>
+                  setRange((current) => ({
+                    from: value,
+                    to: current.to && current.to < value ? value : current.to,
+                  }))
+                }
+              />
+              <DatePicker
+                label={t("dialogs.lesson.endDate")}
+                value={range.to}
+                minDate={range.from || today}
+                onChange={(value) => setRange((current) => ({ ...current, to: value }))}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 items-start gap-3">
+              <TimePicker
+                label={t("dialogs.lesson.startTime")}
+                value={form.time}
+                onChange={(value) => update("time", value)}
+              />
               <DurationPicker
                 label={t("dialogs.lesson.duration")}
                 icon={Hourglass}
@@ -392,63 +384,81 @@ export function AddLessonDialog({
                 onChange={(value) => update("duration", value)}
                 options={DURATION_OPTIONS}
               />
-            )}
-
-            {isRepeating ? null : (
-              <div className="flex flex-col gap-1.5">
-                <SelectPicker
-                  label={t("dialogs.lesson.quizLabel")}
-                  icon={FileQuestion}
-                  value={form.quizId}
-                  onChange={(value) => update("quizId", value)}
-                  options={[
-                    { value: "", label: t("dialogs.lesson.quizNone") },
-                    ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
-                  ]}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-2 items-start gap-3">
+              <DatePicker
+                label={t("dialogs.lesson.dateLabel")}
+                value={form.date}
+                minDate={editingPast ? undefined : today}
+                onChange={(value) => update("date", value)}
+              />
+              <div className={`flex flex-col gap-1.5 ${timeBusy ? "is-field-error" : ""}`}>
+                <TimePicker
+                  label={t("dialogs.lesson.startTime")}
+                  value={form.time}
+                  onChange={(value) => update("time", value)}
                 />
-                <small className="px-1 text-caption text-ink-tertiary">
-                  {t("dialogs.lesson.quizHint")}
-                </small>
+                {timeBusy ? (
+                  <small className="px-1 text-body-xs text-danger">
+                    {t("dialogs.lesson.timeBusy")}
+                  </small>
+                ) : null}
               </div>
-            )}
+            </div>
 
-            {isRepeating ? (
-              <p className={`schedule-summary ${dates.length ? "" : "is-empty"}`}>
-                {dates.length ? (
-                  t("dialogs.lesson.scheduleSummary", {
-                    count: dates.length,
-                    limitNote: dates.length >= MAX_SCHEDULE_LESSONS ? t("dialogs.lesson.limitNote") : "",
-                    first: DATE_LABEL.format(new Date(dates[0])),
-                    last: DATE_LABEL.format(new Date(dates[dates.length - 1])),
-                  })
-                ) : (
-                  t("dialogs.lesson.noMatchingDays")
-                )}
-              </p>
-            ) : null}
+            <div className="grid grid-cols-2 items-start gap-3">
+              <DurationPicker
+                label={t("dialogs.lesson.duration")}
+                icon={Hourglass}
+                value={form.duration}
+                onChange={(value) => update("duration", value)}
+                options={DURATION_OPTIONS}
+              />
+              <SelectPicker
+                label={t("dialogs.lesson.quizLabel")}
+                icon={FileQuestion}
+                value={form.quizId}
+                onChange={(value) => update("quizId", value)}
+                options={[
+                  { value: "", label: t("dialogs.lesson.quizNone") },
+                  ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
+                ]}
+              />
+            </div>
+          </>
+        )}
 
-            {startsInPast ? (
-              <p className="schedule-past-warning" role="alert">
-                {t("dialogs.lesson.pastTimeError", { time: nowTimeString() })}
-              </p>
-            ) : null}
+        {isRepeating ? (
+          <p
+            className={`flex w-fit items-center gap-2 rounded-md px-3.5 py-2.5 text-body-xs ${
+              dates.length ? "bg-brand-subtle text-brand-strong" : "bg-warning-bg text-warning-fg"
+            }`}
+          >
+            <Icon name={dates.length ? "bolt" : "warning"} size={16} />
+            {dates.length
+              ? t("dialogs.lesson.scheduleFirst", {
+                  count: dates.length,
+                  limitNote:
+                    dates.length >= MAX_SCHEDULE_LESSONS ? t("dialogs.lesson.limitNote") : "",
+                  first: DATE_LABEL.format(new Date(dates[0])).toLowerCase(),
+                  weekday: weekdayText.labels[new Date(dates[0]).getDay() || 7],
+                })
+              : t("dialogs.lesson.noMatchingDays")}
+          </p>
+        ) : null}
 
-            <ConflictNotice single={singleConflicts} schedule={scheduleConflicts} />
+        {startsInPast ? (
+          <p className="text-body-xs text-danger" role="alert">
+            {t("dialogs.lesson.pastTimeError", { time: nowTimeString() })}
+          </p>
+        ) : null}
 
-            {initialValues && onDelete ? (
-              <button
-                type="button"
-                className="mx-auto flex h-11 items-center gap-2 rounded-full px-4 text-label-strong text-error-text transition-colors hover:bg-error-bg"
-                onClick={() => {
-                  onOpenChange(false);
-                  onDelete();
-                }}
-              >
-                <Icon name="trash" size={17} /> {t("dialogs.lesson.deleteLesson")}
-              </button>
-            ) : null}
-          </motion.form>
-    </AppDialog>
+        <ConflictNotice single={singleConflicts} schedule={scheduleConflicts} />
+      </motion.form>
+    </ModalCard>
   );
 }
 
@@ -463,47 +473,44 @@ function ConflictNotice({
   const DATE_LABEL = useDateLabelFormatter();
   if (!single.length && !schedule.length) return null;
 
+  const lines = single.length
+    ? single.map((lesson) => ({
+        key: lesson.id,
+        text: t("dialogs.conflict.lessonLine", {
+          course: lesson.courseTitle,
+          title: lesson.title,
+          time: lesson.time,
+          duration: lesson.durationMinutes,
+        }),
+      }))
+    : [
+        ...schedule.slice(0, 4).map(({ date, conflicts }) => ({
+          key: date,
+          text: t("dialogs.conflict.scheduleLine", {
+            date: DATE_LABEL.format(new Date(date)),
+            course: conflicts[0].courseTitle,
+            time: conflicts[0].time,
+          }),
+        })),
+        ...(schedule.length > 4
+          ? [{ key: "more", text: t("dialogs.conflict.andMore", { count: schedule.length - 4 }) }]
+          : []),
+      ];
+
   return (
-    <div className="schedule-conflict" role="alert">
-      <TriangleAlert size={16} />
-      <div>
-        {single.length ? (
-          <>
-            <strong>{t("dialogs.conflict.singleTitle")}</strong>
-            <ul>
-              {single.map((lesson) => (
-                <li key={lesson.id}>
-                  {t("dialogs.conflict.lessonLine", {
-                    course: lesson.courseTitle,
-                    title: lesson.title,
-                    time: lesson.time,
-                    duration: lesson.durationMinutes,
-                  })}
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <>
-            <strong>{t("dialogs.conflict.scheduleTitle", { count: schedule.length })}</strong>
-            <ul>
-              {schedule.slice(0, 4).map(({ date, conflicts }) => (
-                <li key={date}>
-                  {t("dialogs.conflict.scheduleLine", {
-                    date: DATE_LABEL.format(new Date(date)),
-                    course: conflicts[0].courseTitle,
-                    time: conflicts[0].time,
-                  })}
-                </li>
-              ))}
-              {schedule.length > 4 ? (
-                <li>{t("dialogs.conflict.andMore", { count: schedule.length - 4 })}</li>
-              ) : null}
-            </ul>
-          </>
-        )}
-        <small>{t("dialogs.conflict.note")}</small>
-      </div>
+    <div className="flex flex-col gap-1.5 rounded-md bg-warning-bg px-4 py-3.5" role="alert">
+      <strong className="flex items-center gap-2 text-title-sm text-warning-fg">
+        <Icon name="warning" size={16} className="text-warning" />
+        {single.length
+          ? t("dialogs.conflict.singleTitle")
+          : t("dialogs.conflict.scheduleTitle", { count: schedule.length })}
+      </strong>
+      <p className="text-body-xs text-warning-fg">
+        {lines.map((line) => (
+          <span key={line.key}>{`${line.text}. `}</span>
+        ))}
+        {t("dialogs.conflict.note")}
+      </p>
     </div>
   );
 }

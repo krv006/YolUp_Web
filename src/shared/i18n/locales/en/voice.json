@@ -43,6 +43,11 @@
     "approve": "Approve",
     "deny": "Deny",
     "connectFailed": "Could not connect to the voice room",
-    "connecting": "Connecting…"
+    "connecting": "Connecting…",
+    "owner": "Room owner",
+    "speaking": "Speaking",
+    "micOn": "Microphone on",
+    "micOff": "Microphone off",
+    "requestNote": "Join request"
   }
 }

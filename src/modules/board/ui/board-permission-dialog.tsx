@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Avatar } from "@/shared/ui/legacy";
-import { Switch } from "@/shared/ui/switch";
+import { Icon } from "@/shared/ui/icon";
 
 export type BoardPermissionMode = "teacher" | "selected" | "everyone";
 
@@ -56,6 +56,7 @@ export function BoardPermissionDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
+      width="lg:w-120"
       title={t("permissionDialog.title")}
       description={t("permissionDialog.description")}
       footer={
@@ -85,60 +86,74 @@ export function BoardPermissionDialog({
             type="button"
             role="radio"
             aria-checked={mode === item}
-            className={`flex items-center gap-3 rounded-xl border px-3.5 py-3 text-left transition-colors ${
-              mode === item ? "border-action bg-action-subtle" : "border-line bg-surface"
+            className={`flex items-center gap-3 rounded-md border px-4 py-3 text-left transition-colors ${
+              mode === item ? "border-brand bg-brand-subtle" : "border-line bg-surface"
             }`}
             onClick={() => setMode(item)}
           >
-            <span
-              className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${
-                mode === item ? "border-action" : "border-line"
-              }`}
-            >
-              {mode === item ? <span className="size-2.5 rounded-full bg-action" /> : null}
-            </span>
-            <span className="flex min-w-0 flex-col">
-              <strong className="text-label-strong text-ink">
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-title-sm text-ink">
                 {t(`permissionDialog.modes.${item}.title`)}
               </strong>
-              <small className="text-caption text-ink-tertiary">
+              <small className="truncate text-body-xs text-ink-tertiary">
                 {t(`permissionDialog.modes.${item}.hint`)}
               </small>
+            </span>
+            <span
+              className={`grid size-5 shrink-0 place-items-center rounded-full border-2 ${
+                mode === item ? "border-brand" : "border-line-strong"
+              }`}
+            >
+              {mode === item ? <span className="size-2.5 rounded-full bg-brand" /> : null}
             </span>
           </button>
         ))}
       </div>
 
       {mode === "selected" ? (
-        <div className="-mr-1 flex max-h-72 flex-col gap-1 overflow-y-auto pr-1">
-          {students.map((student) => {
-            const on = allowed.includes(student.id);
-            return (
-              <label key={student.id} className="flex items-center gap-3 rounded-xl px-1 py-2">
-                <Avatar name={student.name} size="sm" />
-                <span className="min-w-0 flex-1 truncate text-label-strong text-ink">
-                  {student.name}
-                </span>
-                <Switch
-                  checked={on}
-                  onCheckedChange={(next) =>
+        <>
+          <span className="text-overline text-ink-tertiary uppercase">
+            {t("permissionDialog.selectedCount", { count: allowed.length })}
+          </span>
+
+          <div className="flex max-h-60 flex-col overflow-y-auto rounded-md border border-line">
+            {students.map((student) => {
+              const on = allowed.includes(student.id);
+              return (
+                <button
+                  key={student.id}
+                  type="button"
+                  role="checkbox"
+                  aria-checked={on}
+                  className="flex items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-subtle"
+                  onClick={() =>
                     setAllowed((current) =>
-                      next
-                        ? [...current, student.id]
-                        : current.filter((id) => id !== student.id)
+                      on ? current.filter((id) => id !== student.id) : [...current, student.id]
                     )
                   }
-                  aria-label={student.name}
-                />
-              </label>
-            );
-          })}
-          {students.length ? null : (
-            <p className="py-3 text-center text-body-sm text-ink-tertiary">
-              {t("grantDialog.noStudents")}
-            </p>
-          )}
-        </div>
+                >
+                  <Avatar name={student.name} size="xs" />
+                  <span className="min-w-0 flex-1 truncate text-title-sm text-ink">
+                    {student.name}
+                  </span>
+                  <span
+                    className={`grid size-6 shrink-0 place-items-center rounded-sm border transition-colors ${
+                      on ? "border-brand bg-brand text-on-action" : "border-line bg-surface"
+                    }`}
+                  >
+                    {on ? <Icon name="check" size={16} /> : null}
+                  </span>
+                </button>
+              );
+            })}
+
+            {students.length ? null : (
+              <p className="py-5 text-center text-body-sm text-ink-tertiary">
+                {t("grantDialog.noStudents")}
+              </p>
+            )}
+          </div>
+        </>
       ) : null}
     </AppDialog>
   );

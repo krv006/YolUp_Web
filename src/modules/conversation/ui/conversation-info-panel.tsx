@@ -38,17 +38,20 @@ export interface ConversationInfoPanelProps {
   conversation: Conversation;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Renders as a fixed right column instead of a sliding sheet. */
+  embedded?: boolean;
 }
 
 const TILE =
   "flex flex-col items-center justify-center gap-1.5 rounded-xl border border-line bg-surface px-2 py-3 text-caption-strong text-ink transition-colors hover:bg-subtle disabled:opacity-50";
 const WIDE_ACTION =
-  "flex h-14 items-center justify-center gap-2 rounded-xl bg-subtle px-4 text-label-strong text-ink transition-colors hover:bg-muted disabled:opacity-50";
+  "flex h-[62px] flex-col items-center justify-center gap-1 rounded-xl bg-subtle px-2 text-caption-strong text-ink transition-colors hover:bg-muted disabled:opacity-50";
 
 export function ConversationInfoPanel({
   conversation,
   open,
   onOpenChange,
+  embedded = false,
 }: ConversationInfoPanelProps) {
   const { t } = useTranslation("chat");
   const directStatusLabel = useDirectStatusLabel();
@@ -159,13 +162,8 @@ export function ConversationInfoPanel({
     (item) => item.courseId === conversation.courseId
   );
 
-  return (
+  const body = (
     <>
-      <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent
-          showCloseButton={false}
-          className="top-0 right-0 left-auto flex h-dvh w-full max-w-full translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 bg-surface p-0 text-ink data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 sm:max-w-full lg:w-[520px] lg:max-w-[520px] lg:border-l lg:border-line"
-        >
           <header className="flex h-16 shrink-0 items-center gap-3 px-4 lg:h-[72px] lg:px-6">
             <button
               className="grid size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:hidden"
@@ -174,10 +172,16 @@ export function ConversationInfoPanel({
             >
               <Icon name="arrow-back" size={22} />
             </button>
-            <DialogTitle className="min-w-0 flex-1 truncate font-heading text-title text-ink lg:text-h3">
-              <span className="lg:hidden">{t("info.panelTitle")}</span>
-              <span className="hidden lg:inline">{conversation.title}</span>
-            </DialogTitle>
+            {embedded ? (
+              <h2 className="min-w-0 flex-1 truncate text-title-lg text-ink">
+                {t("info.panelTitle")}
+              </h2>
+            ) : (
+              <DialogTitle className="min-w-0 flex-1 truncate font-heading text-title text-ink lg:text-h3">
+                <span className="lg:hidden">{t("info.panelTitle")}</span>
+                <span className="hidden lg:inline">{conversation.title}</span>
+              </DialogTitle>
+            )}
             {teacherGroup ? (
               <button
                 className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
@@ -188,16 +192,24 @@ export function ConversationInfoPanel({
               </button>
             ) : null}
             <button
-              className="hidden size-10 shrink-0 place-items-center rounded-full text-ink transition-colors hover:bg-subtle lg:grid"
+              className="hidden size-10 shrink-0 place-items-center rounded-full text-icon-secondary transition-colors hover:bg-subtle hover:text-ink lg:grid"
               onClick={() => onOpenChange(false)}
               aria-label={t("info.closeAria")}
             >
-              <Icon name="add" size={20} className="rotate-45" />
+              <Icon name="close" size={20} />
             </button>
           </header>
 
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 lg:px-6 lg:pb-6">
-           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded-2xl border border-line p-4 lg:p-5">
+          <div
+            className={`flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4 ${
+              embedded ? "lg:px-5 lg:pb-5" : "lg:px-6 lg:pb-6"
+            }`}
+          >
+           <div
+             className={`flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto p-4 ${
+               embedded ? "lg:p-0" : "rounded-2xl border border-line lg:p-5"
+             }`}
+           >
             <section className="flex flex-col items-center gap-1 px-1 pt-2">
               <span className="relative">
                 {conversation.imageUrl ? (
@@ -287,21 +299,31 @@ export function ConversationInfoPanel({
                 ) : null}
               </div>
 
-              <div className="mt-5 hidden w-full gap-3 lg:grid lg:grid-cols-3">
+              <div
+                className={`mt-5 hidden w-full gap-2 lg:grid ${
+                  teacherGroup ? "lg:grid-cols-4" : "lg:grid-cols-3"
+                }`}
+              >
                 <button className={WIDE_ACTION} onClick={toggleMute}>
-                  <Icon name="volume" size={20} />
+                  <Icon name={muted ? "notifications-off" : "volume"} size={20} />
                   {muted ? t("info.muteOn") : t("info.muteOff")}
                 </button>
                 <button
                   className={WIDE_ACTION}
                   onClick={() => {
-                    onOpenChange(false);
+                    if (!embedded) onOpenChange(false);
                     openChatSearch(true);
                   }}
                 >
                   <Icon name="search" size={20} />
                   {t("info.search")}
                 </button>
+                {teacherGroup ? (
+                  <button className={WIDE_ACTION} onClick={() => setInviteOpen(true)}>
+                    <Icon name="person-add" size={20} />
+                    {t("info.invite")}
+                  </button>
+                ) : null}
                 <button
                   className={WIDE_ACTION}
                   onClick={() => {
@@ -322,7 +344,10 @@ export function ConversationInfoPanel({
               </div>
 
               {teacherGroup ? (
-                <section className="mt-4 hidden w-full items-center gap-3 rounded-2xl border border-line bg-surface px-4 py-3.5 lg:flex">
+                <section className="mt-4 hidden w-full items-center gap-3 rounded-lg bg-surface px-4 py-3.5 lg:flex">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-saffron-bg text-accent-saffron-fg">
+                    <Icon name="bolt" size={20} />
+                  </span>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <strong className="text-label-strong text-ink">
                       {t("info.announcementTitle")}
@@ -568,8 +593,26 @@ export function ConversationInfoPanel({
             ) : null}
            </div>
           </div>
-        </DialogContent>
-      </Dialog>
+    </>
+  );
+
+  return (
+    <>
+      {embedded ? (
+        <aside className="hidden h-full w-[340px] shrink-0 flex-col border-l border-line-subtle bg-surface lg:flex">
+          {body}
+        </aside>
+      ) : (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent
+            showCloseButton={false}
+            className="top-0 right-0 left-auto flex h-dvh w-full max-w-full translate-x-0 translate-y-0 flex-col gap-0 rounded-none border-0 bg-surface p-0 text-ink data-[state=closed]:zoom-out-100 data-[state=open]:zoom-in-100 sm:max-w-full lg:w-[520px] lg:max-w-[520px] lg:border-l lg:border-line"
+        >
+            {body}
+          </DialogContent>
+        </Dialog>
+      )}
+
 
       <InviteStudentsDialog
         open={inviteOpen}
@@ -586,7 +629,9 @@ export function ConversationInfoPanel({
       <AppDialog
         open={editOpen}
         onOpenChange={setEditOpen}
+        variant="confirm"
         title={t("info.editCourseTitle")}
+        description={t("info.editCourseDescription")}
         footer={
           <>
             <button
@@ -649,7 +694,6 @@ export function ConversationInfoPanel({
         }}
         variant="confirm"
         title={t("info.deleteCourseConfirmTitle", { title: conversation.title })}
-        description={t("info.deleteCourseDescription", { title: conversation.title })}
         footer={
           <>
             <button
@@ -676,6 +720,10 @@ export function ConversationInfoPanel({
           </>
         }
       >
+        <p className="flex items-start gap-2.5 rounded-md bg-danger-bg px-4 py-3.5 text-body-xs text-danger">
+          <Icon name="error" size={16} className="mt-0.5 shrink-0" />
+          {t("info.deleteCourseWarning")}
+        </p>
         <label className="field-group">
           <span>{t("info.deleteTypeName")}</span>
           <input

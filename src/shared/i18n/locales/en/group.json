@@ -10,13 +10,34 @@
   "lessons": {
     "eyebrow": "LESSON SCHEDULE",
     "title": "Lessons",
-    "subtitle": "Scheduled live sessions.",
+    "subtitle": "Scheduled live lessons",
     "addLesson": "Add lesson",
     "deleteDialogTitle": "Delete lesson",
     "deleteDialogDescription": "The lesson leaves the schedule and students are notified. The attached quiz and attendance records go too.",
     "cancel": "Cancel",
     "delete": "Delete",
-    "deleteConfirmTitle": "Delete the “{{title}}” lesson?"
+    "deleteConfirmTitle": "Delete the “{{title}}” lesson?",
+    "today": "Today, {{date}}",
+    "yesterday": "Yesterday, {{date}}",
+    "countShort": "{{count}}",
+    "minutesShort": "{{count}} min",
+    "noTopic": "No topic yet",
+    "status": {
+      "live": "Live",
+      "scheduled": "Scheduled",
+      "finished": "Finished",
+      "cancelled": "Cancelled"
+    },
+    "joined": "{{joined}} / {{total}} joined",
+    "finishedMeta": "{{count}} participants",
+    "join": "Join the lesson",
+    "recording": "Recording",
+    "ratings": "Ratings",
+    "ratingsWith": "Ratings · {{value}}",
+    "edit": "Edit",
+    "emptyTitle": "No lessons scheduled yet",
+    "emptyHint": "Add the schedule — your students will get a reminder.",
+    "cancelLesson": "Cancel lesson"
   },
   "assignments": {
     "eyebrow": "GROUP ASSIGNMENTS",
@@ -122,7 +143,10 @@
       "quizNone": "No quiz attached",
       "editDescription": "Change the topic, time and attached quiz. Students get a notification.",
       "deleteLesson": "Delete the lesson",
-      "quizHint": "The quiz opens for students automatically once the lesson ends."
+      "quizHint": "The quiz opens for students automatically once the lesson ends.",
+      "repeatingSubtitle": "Recurring schedule",
+      "timeBusy": "This time is taken",
+      "scheduleFirst": "{{count}} lessons will be created{{limitNote}} · first on {{first}}, {{weekday}}"
     },
     "conflict": {
       "singleTitle": "You already have a lesson at this time",
@@ -180,7 +204,7 @@
     "submit": "Add ({{count}})",
     "added": "{{count}} students added",
     "createTitle": "New student account",
-    "createDescription": "If the student is not on the platform, you create the account and they join the group right away.",
+    "createDescription": "You create the account and the student joins the group",
     "firstName": "First name",
     "lastName": "Last name",
     "login": "Login",
@@ -192,17 +216,20 @@
     "createNote": "Send the login and password to the student. They change the password on first sign-in.",
     "createSubmit": "Create the account",
     "requestsTitle": "Join requests · {{count}}",
-    "requestsDescription": "Requests that came through the invite link. Accepted people join the group right away.",
+    "requestsDescription": "Requests that came through the invite link",
     "requestsEmpty": "No new requests.",
     "accept": "Accept",
     "decline": "Decline",
     "acceptAll": "Accept ({{count}})",
     "close": "Close",
-    "parentFor": "Parent · for {{name}}"
+    "parentFor": "Parent · for {{name}}",
+    "createAccountShort": "New student account",
+    "inviteShort": "Invite link",
+    "copy": "Copy"
   },
   "invite": {
     "title": "Invite link",
-    "description": "Send the link to your students — they join the group in one tap.",
+    "description": "Students join the group in one tap",
     "empty": "No link has been created for this group yet.",
     "create": "Create link",
     "created": "Link created",
@@ -221,7 +248,10 @@
     "noExpiry": "No expiry",
     "approvalLabel": "With approval",
     "approvalHint": "You approve everyone who joins through the link",
-    "approvalOn": "with approval"
+    "approvalOn": "with approval",
+    "linkLabel": "Link",
+    "share": "Share the link",
+    "cancelLink": "Revoke"
   },
   "join": {
     "title": "Join the group",
@@ -241,5 +271,13 @@
     "retry": "Try again",
     "openCourse": "Open the group",
     "home": "Go home"
+  },
+  "cancelLesson": {
+    "title": "Cancel this lesson?",
+    "description": "The lesson stays in the schedule marked as cancelled and students get a notification.",
+    "onlyThis": "Only this lesson ({{when}})",
+    "thisAndNext": "This and all following lessons",
+    "close": "Close",
+    "confirm": "Cancel lesson"
   }
 }

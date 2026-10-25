@@ -1,23 +1,17 @@
-import { ArrowLeft, BookOpen, CalendarDays, Clock3 } from "lucide-react";
+import { ArrowLeft, CalendarDays, Clock3 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import {
   LessonRatingForm,
   LessonRecordingPlayer,
-  RatingSummary,
   useLesson,
   useLessonRecording,
 } from "@/modules/lesson";
 import { ROLES } from "@/shared/constants";
 import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { RecordingDesktop } from "./recording-desktop";
 import { Users } from "lucide-react";
-
-const LESSON_DATE = new Intl.DateTimeFormat("uz-UZ", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
 
 export function RecordingPage() {
   const { lessonId } = useParams();
@@ -97,60 +91,13 @@ export function RecordingPage() {
       </div>
     );
 
+  if (recording.isLoading) return <LoadingFallback label="Yozuv yuklanmoqda" />;
+
   return (
-    <div className="portal-page recording-page">
-      <div className="portal-page-heading">
-        <div>
-          <span className="portal-eyebrow">DARS YOZUVI</span>
-          <h1>{data.title}</h1>
-          <div className="page-meta">
-            <span>
-              <BookOpen size={14} /> {data.courseTitle}
-            </span>
-            <span>
-              <CalendarDays size={14} /> {LESSON_DATE.format(new Date(data.startsAt))}
-            </span>
-            <span>
-              <Clock3 size={14} /> {data.time} · {data.durationMinutes} daqiqa
-            </span>
-            <RatingSummary average={data.avgRating} count={data.ratingCount} />
-          </div>
-        </div>
-        <button className="button button--secondary" onClick={() => navigate(-1)}>
-          <ArrowLeft size={17} /> Orqaga
-        </button>
-      </div>
-
-      <section className="portal-card recording-page-card">
-        {recording.isLoading ? (
-          <LoadingFallback label="Yozuv yuklanmoqda" />
-        ) : recording.isError ? (
-          <RouteState
-            title="Yozuvni yuklab bo‘lmadi"
-            description={recording.error?.message}
-            actionLabel="Qayta urinish"
-            onAction={recording.refetch}
-          />
-        ) : (
-          <LessonRecordingPlayer
-            lessonId={data.id}
-            recording={recording.data}
-            canDelete={user?.role === ROLES.TEACHER}
-          />
-        )}
-      </section>
-
-      {isStudent ? (
-        <section className="portal-card recording-page-card">
-          <div className="portal-section-head">
-            <div>
-              <span>FIKR-MULOHAZA</span>
-              <h2>Darsni baholang</h2>
-            </div>
-          </div>
-          <LessonRatingForm lesson={data} currentUserId={user?.id} />
-        </section>
-      ) : null}
-    </div>
+    <RecordingDesktop
+      lesson={data}
+      recording={recording.data}
+      canManage={user?.role === ROLES.TEACHER}
+    />
   );
 }

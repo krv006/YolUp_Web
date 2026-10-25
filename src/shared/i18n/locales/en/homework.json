@@ -116,91 +116,59 @@
     "submit": "Submit homework"
   },
   "form": {
-    "title": "New assignment",
-    "editTitle": "Edit assignment",
-    "subtitle": "The assignment goes to the group chat and the students' app",
+    "title": "Set an assignment",
+    "description": "It goes to the group chat and the students' app",
+    "missing": "{{count}} fields left",
+    "errorBanner": "Pick a group and write a title",
     "group": "Group",
-    "studentCount": "{{count}} students",
+    "students": "{{count}} students",
     "titleLabel": "Title",
     "titlePlaceholder": "For example: Multiplying fractions",
+    "titleRequired": "A title is required",
     "bodyLabel": "Task",
-    "bodyPlaceholder": "Textbook, problems 120–126. Solve in your notebook and upload a photo.",
-    "dueDate": "Due date",
-    "dueTime": "Time",
+    "bodyPlaceholder": "Textbook exercises 120–126. Solve them in your notebook and send photos.",
+    "due": "Due",
+    "time": "Time",
     "grading": "Grading",
-    "gradingFive": "5-point",
-    "gradingHundred": "100-point",
-    "gradingNone": "No grade",
-    "attachments": "Attachments",
-    "addFile": "Add a file or photo",
-    "removeFile": "Remove the file",
+    "gradings": {
+      "five": "5-point",
+      "hundred": "100-point",
+      "none": "No grade"
+    },
+    "aiCheck": "AI pre-check",
+    "aiCheckHint": "AI reviews the answers, you confirm the grade",
+    "announce": "Announce in the group chat",
+    "announceHint": "The assignment card goes to the chat",
     "draft": "Draft",
-    "submit": "Send",
-    "required": "Fill in the group and the title",
-    "toggle": {
-      "ai": "AI pre-check",
-      "aiHint": "AI reviews the answers, you confirm the grade",
-      "announce": "Announce in the group chat",
-      "announceHint": "The assignment card is sent to the chat",
-      "late": "Allow late submissions",
-      "lateHint": "Accepted after the due date too",
-      "pending": "Enabled once the backend is ready"
-    },
-    "editSubtitle": "{{count}} students have already submitted. Extending the deadline notifies them.",
-    "attachFile": "Attach a file",
-    "lessonLabel": "Which lesson",
-    "lessonNone": "Not linked to a lesson",
-    "gradingNote": "Grading note — optional",
-    "gradingNotePlaceholder": "For example: 2 points per problem",
-    "deleteAssignment": "Delete the assignment",
-    "rich": {
-      "bold": "Bold",
-      "italic": "Italic",
-      "underline": "Underline",
-      "list": "List",
-      "link": "Link",
-      "linkPrompt": "Enter the link address"
-    },
-    "nameLabel": "Assignment name",
-    "cancel": "Cancel",
-    "save": "Save",
-    "publish": "Publish",
-    "maxScore": "Maximum score"
+    "submit": "Send"
   },
   "review": {
     "back": "Back",
-    "prev": "Previous student",
-    "next": "Next student",
-    "today": "Today",
-    "late": "submitted late",
+    "submittedCount": "{{submitted}} / {{total}} submitted",
+    "filters": {
+      "review": "To review",
+      "all": "All"
+    },
+    "late": "late",
     "onTime": "on time",
-    "noFile": "No file",
+    "prev": "Previous",
+    "next": "Next",
     "download": "Download",
-    "recheck": "Re-check",
-    "aiTitle": "AI preliminary grade",
-    "aiHint": "A suggestion — the final grade is yours",
-    "correctAnswers": "Correct answers",
-    "issues": "Issues found",
-    "issueFallback": "No analysis",
-    "aiDraft": "Student comment — AI draft",
+    "openHint": "You can download the file to view it.",
+    "noFile": "No file attached.",
+    "aiChecking": "AI is checking",
+    "aiCheckingHint": "Updates as soon as the result is ready · ~1 min",
+    "aiSuggestion": "AI suggests: {{value}}",
+    "aiSuggestionHint": "A suggestion — the final grade is yours",
+    "findings": "What AI found",
     "yourGrade": "Your grade",
-    "aiSuggestion": "AI suggests {{value}} — {{state}}",
-    "matches": "matches yours",
-    "differs": "differs from yours",
-    "comment": "Comment for the student",
-    "shareParent": "Share with the parent",
+    "matchesAi": "Matches AI",
+    "comment": "Comment to the student",
+    "commentPlaceholder": "Nice! Next time reduce the fraction fully.",
+    "shareParent": "Show the parent",
     "shareParentHint": "The grade and comment appear in the parent app",
-    "resubmit": "Ask to resubmit",
-    "confirm": "Confirm",
-    "scoreOf": "Score (0–{{max}})",
-    "gradingNone": "This assignment is ungraded — comment only.",
-    "resubmitTitle": "Ask for a resubmission",
-    "resubmitDescription": "Tell {{name}} what needs to be fixed.",
-    "resubmitComment": "Comment",
-    "resubmitPlaceholder": "For example: send problem 115 again",
-    "resubmitCancel": "Cancel",
-    "resubmitSend": "Send back",
-    "resubmitRequested": "Resubmission requested"
+    "resubmit": "Return",
+    "confirm": "Confirm"
   },
   "workspace": {
     "emptyTitle": "No homework yet",
@@ -264,5 +232,101 @@
   "messageCard": {
     "submitted": "{{done}} / {{total}} submitted",
     "review": "Review submissions"
+  },
+  "list": {
+    "eyebrow": "Workspace / Assignments · {{count}} groups",
+    "title": "Assignments",
+    "create": "Set an assignment",
+    "filters": {
+      "active": "Active",
+      "review": "To review",
+      "draft": "Drafts"
+    },
+    "sections": {
+      "week": "This week",
+      "earlier": "Earlier"
+    },
+    "due": "Due: {{value}}",
+    "daysLeft": "{{count}} days left",
+    "reviewChip": "To review · {{count}}",
+    "submitted": "{{submitted}} / {{total}} submitted",
+    "open": "Open",
+    "empty": "Nothing here yet.",
+    "stats": {
+      "active": "Active",
+      "review": "To review",
+      "submitRate": "Submitted",
+      "average": "Average"
+    },
+    "aiTitle": "AI checked today's work",
+    "aiHint": "Waiting for your confirmation — the final grade is yours."
+  },
+  "detail": {
+    "eyebrow": "Assignments / {{course}} · Due: {{due}}",
+    "remind": "Remind ({{count}})",
+    "due": "{{value}}",
+    "aiCheck": "AI pre-check",
+    "grading": "Grading",
+    "allowLate": "Late submission",
+    "allowed": "Allowed",
+    "notAllowed": "Not allowed",
+    "lesson": "Linked lesson",
+    "edit": "Edit",
+    "delete": "Delete",
+    "aiAdvice": "AI advice for the group",
+    "aiAdviceHint": "AI prepares advice from the mistakes it found.",
+    "stats": {
+      "submitted": "Submitted",
+      "unchecked": "Unchecked",
+      "missing": "Missing",
+      "average": "Average grade"
+    },
+    "searchStudent": "Search a student",
+    "filters": {
+      "all": "All",
+      "review": "To review"
+    },
+    "columns": {
+      "student": "Student",
+      "submitted": "Submitted",
+      "status": "Status",
+      "ai": "AI",
+      "grade": "Grade"
+    },
+    "status": {
+      "done": "Checked",
+      "pending_review": "Unchecked",
+      "checking": "AI checking",
+      "resubmit_requested": "Redo requested",
+      "error": "Error",
+      "missing": "Not submitted",
+      "late": "Late"
+    },
+    "noStudents": "No student found."
+  },
+  "deleteDialog": {
+    "title": "Delete the assignment?",
+    "description": "The work of {{count}} students and their grades go too.",
+    "confirm": "Delete",
+    "cancel": "Cancel"
+  },
+  "remindDialog": {
+    "title": "Send a reminder?",
+    "description": "{{count}} students get a notification in the app",
+    "message": "Message",
+    "defaultMessage": "“{{title}}” is due {{due}}. Please send your work.",
+    "parents": "Parents too",
+    "parentsHint": "Parents of students who haven't submitted get it as well",
+    "rate": "One reminder per assignment every 10 minutes.",
+    "cancel": "Cancel",
+    "submit": "Send"
+  },
+  "resubmitDialog": {
+    "title": "Return for a redo",
+    "description": "Tell {{student}} what to fix",
+    "comment": "Comment",
+    "placeholder": "Send exercise 125 again and reduce the fraction in 122.",
+    "cancel": "Cancel",
+    "submit": "Return"
   }
 }

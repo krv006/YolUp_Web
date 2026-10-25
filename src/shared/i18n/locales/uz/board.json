@@ -9,13 +9,22 @@
     "liveConnectedTitle": "Real-time ulangan",
     "liveDisconnectedTitle": "Sinxronlash sekin rejimda",
     "live": "Jonli",
-    "slowMode": "Sekin rejim"
+    "slowMode": "Sekin rejim",
+    "slowSyncNote": "Sinxronlash sekin rejimda — chizganlaringiz saqlanadi va ulanish tiklanganda yuboriladi"
   },
   "sheet": {
-    "addSheet": "Sahifa"
+    "addSheet": "Sahifa",
+    "pageOf": "Sahifa {{page}} / {{total}}",
+    "prev": "Oldingi sahifa",
+    "next": "Keyingi sahifa"
   },
   "permission": {
-    "grantButton": "Ruxsat"
+    "grantButton": "Ruxsat",
+    "modes": {
+      "teacher": "Ruxsat: Faqat siz",
+      "selected": "Ruxsat: Tanlangan o'quvchilar",
+      "everyone": "Ruxsat: Hamma"
+    }
   },
   "solver": {
     "button": "Yechuvchi"
@@ -32,7 +41,8 @@
     "math": "Formula",
     "toolbarAria": "Doska asboblari",
     "colorLabel": "Rang {{value}}",
-    "widthLabel": "Qalinlik {{value}}"
+    "widthLabel": "Qalinlik {{value}}",
+    "styleAria": "Rang va qalinlik"
   },
   "inline": {
     "formula": "Formula",
@@ -60,7 +70,8 @@
       "offTopic": "Mavzuga aloqasiz",
       "cleanup": "Doskani tozalash",
       "other": "Boshqa"
-    }
+    },
+    "reasonPlaceholder": "Sababni yozing"
   },
   "grantDialog": {
     "title": "Doskada chizish ruxsati",
@@ -133,7 +144,9 @@
     "sendToChat": "Chatga yuborish",
     "downloadPdf": "PDF yuklab olish",
     "sentToChat": "Doska guruh chatiga yuborildi",
-    "pdfFailed": "PDF yuklab bo‘lmadi"
+    "pdfFailed": "PDF yuklab bo‘lmadi",
+    "sheetCount": "{{count}} sahifa",
+    "boardTitle": "{{title}} — doska"
   },
   "permissionDialog": {
     "title": "Doskaga ruxsat",
@@ -156,11 +169,14 @@
         "hint": "Barcha ishtirokchilar chiza oladi"
       }
     },
-    "revoked": "{{count}} ta o‘quvchidan ruxsat olindi"
+    "revoked": "{{count}} ta o‘quvchidan ruxsat olindi",
+    "selectedCount": "Tanlangan o'quvchilar · {{count}}"
   },
   "pages": {
     "title": "Sahifalar",
     "hint": "O‘quvchilar siz ochgan sahifani ko‘radi",
-    "new": "Yangi"
+    "new": "Yangi sahifa",
+    "pageLabel": "{{index}}-sahifa",
+    "emptyPage": "Bo'sh sahifa"
   }
 }

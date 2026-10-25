@@ -97,5 +97,70 @@
   "searchSubtitle": "Guruhlar, darslar, testlar, o‘quvchilar va xabarlar bo‘yicha",
   "searchHotkeys": "↑↓ tanlash · Enter ochish · Esc yopish",
   "searchAllResults": "Barcha natijalar",
-  "searchBack": "Orqaga"
+  "searchBack": "Orqaga",
+  "searchKeySelect": "tanlash",
+  "searchKeyOpen": "ochish",
+  "searchKeyClose": "yopish",
+  "searchEmptyTitle": "“{{query}}” bo‘yicha hech narsa topilmadi",
+  "searchEmptyHint": "Boshqa so‘z bilan urinib ko‘ring yoki filtrlarni o‘zgartiring",
+  "home": {
+    "eyebrow": "O‘qituvchi ish maydoni",
+    "createTest": "Test yaratish",
+    "modules": "Modullar",
+    "stats": {
+      "tests": "Testlar",
+      "testsHint": "{{count}} ta qoralama",
+      "assignments": "Faol vazifalar",
+      "assignmentsHint": "{{count}} ta tekshirish",
+      "mock": "Mock imtihon",
+      "mockHint": "{{count}} tasi ketmoqda",
+      "rating": "O‘rtacha baho",
+      "ratingHint": "bu oy"
+    },
+    "moduleCounts": {
+      "tests": "{{count}} ta test",
+      "assignments": "{{count}} ta faol",
+      "mock": "{{count}} ta ketmoqda",
+      "ai": "{{count}} ta yaratilmoqda",
+      "analytics": "Reyting {{value}}",
+      "materials": "{{count}} ta fayl"
+    },
+    "modules_list": {
+      "tests": {
+        "title": "Testlar",
+        "description": "8 xil savol turi — baholash avtomatik va darhol"
+      },
+      "assignments": {
+        "title": "Vazifalar",
+        "description": "Uy vazifalarini berish va AI yordamida tekshirish"
+      },
+      "mock": {
+        "title": "Mock testlar",
+        "description": "IELTS, SAT, Milliy sertifikat va o‘z mock testingiz"
+      },
+      "ai": {
+        "title": "AI yordamchi",
+        "description": "Mavzu yoki materialdan test tuzish"
+      },
+      "analytics": {
+        "title": "Tahlil",
+        "description": "Natijalar va faollik bo‘yicha ko‘rsatkichlar"
+      },
+      "materials": {
+        "title": "Materiallar",
+        "description": "Darsliklar, audio va fayllar"
+      }
+    }
+  },
+  "stats": {
+    "eyebrow": "Baholar, kurslar va darslar bo‘yicha umumiy ko‘rsatkichlar",
+    "ratingHint": "{{count}} ta bahodan",
+    "cancelledHint": "{{count}} tasi bekor",
+    "monthHint": "bu oy",
+    "reliabilityHint": "darslar o‘z vaqtida",
+    "chartTitle": "Test natijalari — o‘rtacha ball",
+    "chartRange": "Oxirgi 8 hafta",
+    "chartEmpty": "Haftalik test natijalari backenddan kelgach chiziladi.",
+    "quizShort": "test {{value}}%"
+  }
 }
