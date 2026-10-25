@@ -58,3 +58,23 @@ export { AddQuizDialog } from "./ui/quiz-create-dialog";
 export { AiQuizCreator } from "./ui/ai-quiz-creator";
 export { QuizPreview } from "./ui/quiz-preview";
 export { SubjectFilterSheet } from "./ui/subject-filter-sheet";
+export {
+  DEFAULT_POINTS,
+  MAX_OPTIONS,
+  MAX_POINTS,
+  MIN_POINTS,
+  QUESTION_TYPE_ORDER,
+  changeDraftType,
+  createDraft,
+  draftToFormValues,
+  draftToStudentQuestion,
+  hasDraftContent,
+  optionLetter,
+  questionToDraft,
+  validateDraft,
+} from "./lib/question-draft";
+export type { GroupDraft, KeyFactory, QuestionDraft } from "./lib/question-draft";
+export { QuizImportDialog } from "./ui/quiz-import-dialog";
+export { QuizAttemptsDrawer } from "./ui/quiz-attempts-drawer";
+export { useAiQuizJobs, useStartAiQuiz } from "./model/quiz.queries";
+export type { AiQuizJob, AiQuizRequest, AiQuizStandard } from "./api/quiz.dto";

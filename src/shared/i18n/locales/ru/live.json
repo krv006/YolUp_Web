@@ -48,7 +48,16 @@
     "join": "Войти на урок",
     "mobileTitle": "Войти на урок",
     "minutes": "минут",
-    "recordingNote": "Урок записывается автоматически — аудио и видео"
+    "recordingNote": "Урок записывается автоматически — аудио и видео",
+    "minutesValue": "{{count}} мин",
+    "waiting": "{{count}} / {{total}} учеников ждут",
+    "waitingNames_zero": "{{names}} ждёт",
+    "waitingNames": "{{names}} и ещё {{count}} ждут",
+    "defaultMic": "Микрофон по умолчанию",
+    "defaultCamera": "Камера по умолчанию",
+    "cameraOnTitle": "Камера включена",
+    "cameraOffTitle": "Камера выключена",
+    "start": "Начать урок"
   },
   "connection": {
     "connecting": "Подключение…",
@@ -101,7 +110,12 @@
       "video": "К видео",
       "board": "Доска",
       "people": "Участники"
-    }
+    },
+    "rec": "REC",
+    "studentsPresent": "{{count}} учеников",
+    "teacherRole": "учитель",
+    "wantsToSpeak": "Хотят говорить ({{count}})",
+    "allow": "Разрешить"
   },
   "mic": {
     "label": "Микрофон",
@@ -155,7 +169,10 @@
     "raisedHand": "Поднял руку",
     "muteAll": "Выключить звук у всех",
     "invite": "Пригласить",
-    "muteAllDone": "Микрофоны выключены: {{count}}"
+    "muteAllDone": "Микрофоны выключены: {{count}}",
+    "online": "Онлайн",
+    "micOff": "Микрофон выключен",
+    "studentRole": "ученик"
   },
   "permissionDialog": {
     "title": "Нужен доступ к камере и микрофону",
@@ -173,6 +190,7 @@
     "joinFailedTitle": "Не удалось войти на урок",
     "joinFailedFinished": "Урок «{{title}}» закончился в {{time}}. Запись придёт в чат группы, когда будет готова.",
     "backToChat": "Вернуться в чат группы",
-    "openRecording": "Смотреть запись урока"
+    "openRecording": "Смотреть запись урока",
+    "joinFailedDescription": "Соединение прервано — не удалось подключиться к уроку. Урок продолжается."
   }
 }

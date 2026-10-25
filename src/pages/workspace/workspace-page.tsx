@@ -57,8 +57,8 @@ export function WorkspacePage() {
   const groups = courses.data ?? [];
   const studentTotal = groups.reduce((sum, course) => sum + (course.studentCount || 0), 0);
 
+  const [now] = useState(() => Date.now());
   const nextLessonByCourse = useMemo(() => {
-    const now = Date.now();
     const map = new Map<string, string>();
     for (const item of [...(lessons.data ?? [])].sort(
       (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime()
@@ -67,7 +67,7 @@ export function WorkspacePage() {
       if (!map.has(item.courseId)) map.set(item.courseId, item.startsAt);
     }
     return map;
-  }, [lessons.data]);
+  }, [lessons.data, now]);
 
   const monthNames = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
 

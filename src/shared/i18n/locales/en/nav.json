@@ -28,6 +28,12 @@
     "schedule": "Schedule",
     "workspace": "Workspace",
     "profile": "Profile",
-    "assignments": "Assignments"
+    "assignments": "Assignments",
+    "home": "Home"
+  },
+  "sidebar": {
+    "myGroups": "My groups",
+    "createGroup": "Add a group",
+    "subjectTeacher": "{{subject}} teacher"
   }
 }

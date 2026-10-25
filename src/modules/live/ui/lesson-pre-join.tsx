@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePreviewTracks } from "@livekit/components-react";
 import { Track, type LocalVideoTrack } from "livekit-client";
-import { Mic, MicOff, Video, VideoOff, Volume2, X } from "lucide-react";
-import { Trans, useTranslation } from "react-i18next";
+import { Info, Mic, MicOff, Settings, Video, VideoOff, Volume2, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { i18n } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
-import { Avatar, Button } from "@/shared/ui/legacy";
+import { Avatar } from "@/shared/ui/legacy";
+import { Switch } from "@/shared/ui/switch";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 
 export interface LessonPreJoinChoices {
@@ -19,6 +20,10 @@ export interface LessonPreJoinProps {
   userName?: string;
   micAllowed?: boolean;
   isTeacher?: boolean;
+  /** Xonada kutayotganlar (presence) — sarlavha ostida ko'rsatiladi. */
+  waitingCount?: number | null;
+  totalCount?: number | null;
+  waitingNames?: string[];
   onJoin: (choices: LessonPreJoinChoices) => void;
   onCancel: () => void;
 }
@@ -28,13 +33,16 @@ export function LessonPreJoin({
   userName,
   micAllowed = true,
   isTeacher = false,
+  waitingCount = null,
+  totalCount = null,
+  waitingNames = [],
   onJoin,
   onCancel,
 }: LessonPreJoinProps) {
   const { t } = useTranslation("live");
   const isCompact = useIsCompact();
-  const [micOn, setMicOn] = useState(false);
-  const [cameraOn, setCameraOn] = useState(false);
+  const [micOn, setMicOn] = useState(micAllowed);
+  const [cameraOn, setCameraOn] = useState(true);
   const [deviceError, setDeviceError] = useState<string | null>(null);
   const [screenShareError, setScreenShareError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
@@ -50,6 +58,17 @@ export function LessonPreJoin({
   const videoTrack = tracks?.find((track) => track.kind === Track.Kind.Video) as
     | LocalVideoTrack
     | undefined;
+  const audioTrack = tracks?.find((track) => track.kind === Track.Kind.Audio);
+  const micLabel = audioTrack?.mediaStreamTrack?.label || t("preJoin.defaultMic");
+  const timeRange = useMemo(() => {
+    const start = new Date(lesson.startsAt);
+    if (Number.isNaN(start.getTime())) return lesson.time;
+    const end = new Date(start.getTime() + (lesson.durationMinutes || 45) * 60_000);
+    const clock = (date: Date) =>
+      `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+    return `${clock(start)} – ${clock(end)}`;
+  }, [lesson.startsAt, lesson.durationMinutes, lesson.time]);
+  const cameraLabel = videoTrack?.mediaStreamTrack?.label || t("preJoin.defaultCamera");
 
   useEffect(() => {
     const element = videoRef.current;
@@ -152,7 +171,7 @@ export function LessonPreJoin({
             disabled={!micAllowed}
             onClick={toggleMic}
           >
-            {micOn ? <Mic size={20} /> : <MicOff size={20} />}
+            {micOn ? <Mic size={22} /> : <MicOff size={22} />}
           </button>
           <button
             type="button"
@@ -163,7 +182,7 @@ export function LessonPreJoin({
             aria-label={cameraOn ? t("preJoin.muteCameraAria") : t("preJoin.unmuteCameraAria")}
             onClick={toggleCamera}
           >
-            {cameraOn ? <Video size={20} /> : <VideoOff size={20} />}
+            {cameraOn ? <Video size={22} /> : <VideoOff size={22} />}
           </button>
           <span
             className="grid size-12 place-items-center rounded-full bg-subtle text-ink"
@@ -205,87 +224,172 @@ export function LessonPreJoin({
     );
 
   return (
-    <div className="pre-join">
-      <div className="pre-join-card">
-        <div className="pre-join-preview">
+    <main
+      data-theme="dark"
+      className="dark flex h-dvh min-h-0 items-center justify-center bg-canvas px-10 text-ink"
+    >
+      <div className="grid w-full max-w-295 items-center gap-10 lg:grid-cols-[minmax(0,720px)_minmax(0,420px)]">
+        <div className="relative aspect-16/10 min-w-0 overflow-hidden rounded-xl bg-subtle">
           {cameraOn && videoTrack ? (
-            <video ref={videoRef} muted playsInline autoPlay />
+            <video ref={videoRef} className="size-full object-cover" muted playsInline autoPlay />
           ) : (
-            <div className="pre-join-placeholder">
+            <div className="flex size-full flex-col items-center justify-center gap-3">
               <Avatar name={userName || t("preJoin.you")} size="lg" />
-              <p>{t("preJoin.cameraOff")}</p>
+              <p className="text-body-sm text-ink-tertiary">{t("preJoin.cameraOff")}</p>
             </div>
           )}
 
-          <div className="pre-join-toggles">
+          <div className="absolute inset-x-0 bottom-6 flex items-center justify-center gap-3">
             <button
               type="button"
-              className={micOn ? "" : "is-off"}
+              className={`grid size-14 place-items-center rounded-full transition-colors ${
+                micOn ? "bg-surface-inverse text-ink-inverse" : "bg-danger text-ink"
+              }`}
               aria-pressed={micOn}
               aria-label={micOn ? t("preJoin.muteMicAria") : t("preJoin.unmuteMicAria")}
               disabled={!micAllowed}
-              title={micAllowed ? undefined : t("preJoin.micDisabledTitle")}
               onClick={toggleMic}
             >
-              {micOn ? <Mic size={19} /> : <MicOff size={19} />}
+              {micOn ? <Mic size={20} /> : <MicOff size={20} />}
             </button>
             <button
               type="button"
-              className={cameraOn ? "" : "is-off"}
+              className={`grid size-14 place-items-center rounded-full transition-colors ${
+                cameraOn ? "bg-surface-inverse text-ink-inverse" : "bg-danger text-ink"
+              }`}
               aria-pressed={cameraOn}
               aria-label={cameraOn ? t("preJoin.muteCameraAria") : t("preJoin.unmuteCameraAria")}
               onClick={toggleCamera}
             >
-              {cameraOn ? <Video size={19} /> : <VideoOff size={19} />}
+              {cameraOn ? <Video size={20} /> : <VideoOff size={20} />}
             </button>
+            <span
+              className="grid size-14 place-items-center rounded-full bg-canvas/70 text-ink"
+              aria-hidden="true"
+            >
+              <Settings size={22} />
+            </span>
           </div>
         </div>
 
-        <div className="pre-join-info">
-          <span className="portal-eyebrow">{t("preJoin.eyebrow")}</span>
-          <h1>{lesson.title}</h1>
-          <p>{lesson.courseTitle}</p>
+        <div className="flex min-w-0 flex-col gap-4">
+          <span className="text-overline text-ink-tertiary uppercase">{t("preJoin.eyebrow")}</span>
+
+          <h1 className="font-heading text-display text-ink">
+            {lesson.courseTitle} — {lesson.title}
+          </h1>
+
+          <p className="text-body-sm text-ink-secondary">
+            {timeRange}
+            {waitingCount !== null
+              ? ` · ${t("preJoin.waiting", { count: waitingCount, total: totalCount ?? waitingCount })}`
+              : ` · ${t("preJoin.minutesValue", { count: lesson.durationMinutes })}`}
+          </p>
+
+          {waitingNames.length ? (
+            <span className="flex items-center gap-2.5">
+              <span className="flex items-center gap-2.5">
+                {waitingNames.slice(0, 4).map((name) => (
+                  <Avatar key={name} name={name} size="xs" />
+                ))}
+              </span>
+              <small className="min-w-0 flex-1 truncate text-body-xs text-ink-tertiary">
+                {t("preJoin.waitingNames", {
+                  names: waitingNames.slice(0, 2).join(", "),
+                  count: Math.max(waitingNames.length - 2, 0),
+                })}
+              </small>
+            </span>
+          ) : null}
+
+          <div className="flex flex-col gap-4">
+            <DeviceRow
+              icon={<Mic size={20} />}
+              title={micOn ? t("preJoin.micOn") : t("preJoin.micOff")}
+              hint={micLabel}
+              checked={micOn}
+              disabled={!micAllowed}
+              onChange={toggleMic}
+            />
+            <DeviceRow
+              icon={<Video size={20} />}
+              title={cameraOn ? t("preJoin.cameraOnTitle") : t("preJoin.cameraOffTitle")}
+              hint={cameraLabel}
+              checked={cameraOn}
+              onChange={toggleCamera}
+            />
+          </div>
+
+          <p className="flex items-center gap-2 text-body-xs text-ink-tertiary">
+            <Info size={15} className="shrink-0" />
+            {t("preJoin.recordingNote")}
+          </p>
 
           {deviceError ? (
-            <div className="form-alert">{t("preJoin.deviceErrorMessage", { error: deviceError })}</div>
-          ) : null}
-
-          {!micAllowed && isTeacher ? (
-            <div className="form-alert">{t("preJoin.micTokenMissing")}</div>
-          ) : null}
-
-          {screenShareError ? (
-            <div className="form-alert" role="alert">
-              {screenShareError}
-            </div>
-          ) : null}
-
-          {isTeacher ? (
-            <p className="portal-muted">
-              <Trans
-                t={t}
-                i18nKey="preJoin.teacherScreenShareNote"
-                components={[<strong key="0" />, <strong key="1" />, <strong key="2" />, <strong key="3" />]}
-              />
+            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
+              {t("preJoin.deviceErrorMessage", { error: deviceError })}
             </p>
           ) : null}
 
-          <p className="portal-muted">
-            {micOn ? t("preJoin.micOn") : t("preJoin.micOff")} ·{" "}
-            {cameraOn ? t("preJoin.cameraOnSuffix") : t("preJoin.cameraOffSuffix")}.{" "}
-            {micAllowed || isTeacher ? t("preJoin.canChangeLater") : t("preJoin.needPermission")}
-          </p>
+          {!micAllowed && isTeacher ? (
+            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
+              {t("preJoin.micTokenMissing")}
+            </p>
+          ) : null}
 
-          <div className="pre-join-actions">
-            <Button variant="secondary" onClick={onCancel} disabled={joining}>
+          {screenShareError ? (
+            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger" role="alert">
+              {screenShareError}
+            </p>
+          ) : null}
+
+          <div className="flex items-center justify-end gap-11">
+            <button
+              type="button"
+              className="flex h-13 items-center rounded-full px-6 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+              disabled={joining}
+              onClick={onCancel}
+            >
               {t("preJoin.cancel")}
-            </Button>
-            <Button onClick={join} loading={joining}>
-              {t("preJoin.join")}
-            </Button>
+            </button>
+            <button
+              type="button"
+              className="flex h-13 items-center rounded-full bg-brand px-11 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
+              disabled={joining}
+              onClick={join}
+            >
+              {isTeacher ? t("preJoin.start") : t("preJoin.join")}
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </main>
+  );
+}
+
+function DeviceRow({
+  icon,
+  title,
+  hint,
+  checked,
+  disabled = false,
+  onChange,
+}: {
+  icon: ReactNode;
+  title: string;
+  hint: string;
+  checked: boolean;
+  disabled?: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <span className="flex items-center gap-3 rounded-md bg-subtle px-4 py-2.5">
+      <span className="grid size-5 shrink-0 place-items-center text-ink-secondary">{icon}</span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <strong className="truncate text-title-sm leading-5 text-ink">{title}</strong>
+        <small className="truncate text-body-xs leading-4.5 text-ink-tertiary">{hint}</small>
+      </span>
+      <Switch checked={checked} disabled={disabled} onCheckedChange={onChange} aria-label={title} />
+    </span>
   );
 }

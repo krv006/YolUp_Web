@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
@@ -7,7 +8,6 @@ import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
 import { ROLES } from "@/shared/constants";
-import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -22,6 +22,19 @@ interface Hit {
   avatar?: string;
   icon?: string;
   to: string;
+}
+
+function highlight(text: string, query: string): ReactNode {
+  if (!query) return text;
+  const index = text.toLowerCase().indexOf(query);
+  if (index < 0) return text;
+  return (
+    <>
+      {text.slice(0, index)}
+      <b className="font-semibold text-brand">{text.slice(index, index + query.length)}</b>
+      {text.slice(index + query.length)}
+    </>
+  );
 }
 
 export interface GlobalSearchDialogProps {
@@ -297,7 +310,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
     ) : null;
 
   return (
-    <AppDialog
+    <DialogPrimitive.Root
       open={open}
       onOpenChange={(next) => {
         if (!next) {
@@ -306,28 +319,122 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
         }
         onOpenChange(next);
       }}
-      width="lg:w-[640px]"
-      title={t("searchTitle")}
-      description={t("searchSubtitle")}
-      footer={
-        <>
-          <small className="mr-auto hidden text-caption text-ink-tertiary lg:block">
-            {t("searchHotkeys")}
-          </small>
-          <button
-            type="button"
-            className={dialogButton.primary}
-            onClick={() => {
-              onOpenChange(false);
-              navigate(`${basePath}/search`);
-            }}
-          >
-            {t("searchAllResults")}
-          </button>
-        </>
-      }
     >
-        {body}
-    </AppDialog>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Content
+          aria-describedby={undefined}
+          className="fixed top-[110px] left-1/2 z-50 flex max-h-[600px] w-[640px] max-w-[calc(100%-48px)] -translate-x-1/2 flex-col overflow-hidden rounded-xl bg-surface shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95"
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setActive((index) => (visible.length ? (index + 1) % visible.length : 0));
+            }
+            if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setActive((index) =>
+                visible.length ? (index - 1 + visible.length) % visible.length : 0
+              );
+            }
+            if (event.key === "Enter") {
+              event.preventDefault();
+              go(visible[active]);
+            }
+          }}
+        >
+          <DialogPrimitive.Title className="sr-only">{t("searchTitle")}</DialogPrimitive.Title>
+
+          <label className="flex h-15 shrink-0 items-center gap-3 border-b border-line-subtle px-6">
+            <Icon name="search" size={20} className="shrink-0 text-icon-tertiary" />
+            <input
+              ref={inputRef}
+              autoFocus
+              className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+              value={term}
+              onChange={(event) => setTerm(event.target.value)}
+              placeholder={t("searchPlaceholder")}
+              aria-label={t("searchPlaceholder")}
+            />
+            <DialogPrimitive.Close asChild>
+              <kbd className="shrink-0 cursor-pointer rounded-lg bg-subtle px-2.5 py-1 text-caption text-ink-tertiary">
+                esc
+              </kbd>
+            </DialogPrimitive.Close>
+          </label>
+
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto py-2">
+            {!enabled ? (
+              <p className="px-6 py-10 text-center text-body-sm text-ink-tertiary">
+                {t("searchHint")}
+              </p>
+            ) : !visible.length ? (
+              <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
+                <span className="grid size-14 place-items-center rounded-2xl bg-brand-subtle text-brand">
+                  <Icon name="search" size={26} />
+                </span>
+                <strong className="mt-2 text-title-lg text-ink">
+                  {t("searchEmptyTitle", { query: term })}
+                </strong>
+                <p className="text-body-sm text-ink-secondary">{t("searchEmptyHint")}</p>
+              </div>
+            ) : (
+              sections.map((section) => {
+                const rows = visible.filter((hit) => hit.section === section.id);
+                if (!rows.length) return null;
+                return (
+                  <section key={section.id} className="flex flex-col">
+                    <span className="px-6 pt-3 pb-1.5 text-micro tracking-wide text-ink-tertiary uppercase">
+                      {section.label.split(" · ")[0]}
+                    </span>
+                    {rows.map((hit) => {
+                      const index = visible.indexOf(hit);
+                      const isActive = index === active;
+                      return (
+                        <button
+                          key={hit.key}
+                          type="button"
+                          className={`flex h-14 items-center gap-3.5 px-6 text-left transition-colors ${
+                            isActive ? "bg-brand-subtle" : "hover:bg-subtle"
+                          }`}
+                          onMouseEnter={() => setActive(index)}
+                          onClick={() => go(hit)}
+                        >
+                          <span
+                            className={`grid size-9 shrink-0 place-items-center rounded-lg ${
+                              isActive ? "bg-surface text-brand" : "bg-subtle text-icon-secondary"
+                            }`}
+                          >
+                            <Icon name={hit.icon ?? "assign"} size={18} />
+                          </span>
+                          <span className="flex min-w-0 flex-1 flex-col">
+                            <strong className="truncate text-title-sm text-ink">
+                              {highlight(hit.title, query)}
+                            </strong>
+                            <small className="truncate text-caption text-ink-tertiary">
+                              {hit.meta}
+                            </small>
+                          </span>
+                          {isActive ? (
+                            <kbd className="shrink-0 rounded-lg bg-surface px-2 py-1 text-caption text-ink-tertiary">
+                              ↵
+                            </kbd>
+                          ) : null}
+                        </button>
+                      );
+                    })}
+                  </section>
+                );
+              })
+            )}
+          </div>
+
+          <div className="flex h-10 shrink-0 items-center gap-5 bg-subtle px-6 text-caption text-ink-tertiary">
+            <span>↑↓ {t("searchKeySelect")}</span>
+            <span>↵ {t("searchKeyOpen")}</span>
+            <span>⌘K {t("searchKeyClose")}</span>
+          </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

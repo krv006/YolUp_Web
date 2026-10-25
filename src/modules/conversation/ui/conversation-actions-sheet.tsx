@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Icon } from "@/shared/ui/icon";
 import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { Conversation } from "@/shared/types";
 import {
   useLeaveConversation,
@@ -14,14 +16,20 @@ import { messageApi } from "@/modules/message";
 
 export interface ConversationActionsSheetProps {
   conversation: Conversation | null;
+  anchor?: { x: number; y: number } | null;
   onClose: () => void;
 }
 
+const MENU_WIDTH = 250;
+const MENU_HEIGHT = 216;
+
 export function ConversationActionsSheet({
   conversation,
+  anchor = null,
   onClose,
 }: ConversationActionsSheetProps) {
   const { t } = useTranslation("chat");
+  const isCompact = useIsCompact();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const pinRoom = usePinConversation();
   const muteRoom = useMuteConversation();
@@ -52,9 +60,51 @@ export function ConversationActionsSheet({
     },
   ];
 
+  const menu = conversation && !isCompact && anchor
+    ? createPortal(
+        <div className="fixed inset-0 z-50" onClick={onClose} onContextMenu={(event) => event.preventDefault()}>
+          <div
+            className="absolute flex w-62.5 flex-col rounded-lg bg-surface p-1.5 shadow-xl"
+            style={{
+              left: Math.min(anchor.x, window.innerWidth - MENU_WIDTH - 12),
+              top: Math.min(anchor.y, window.innerHeight - MENU_HEIGHT - 12),
+            }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            {actions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                className="flex h-12 items-center gap-3 rounded-md px-3 text-left text-body text-ink transition-colors hover:bg-subtle"
+                onClick={() => {
+                  action.run();
+                  onClose();
+                }}
+              >
+                <Icon name={action.icon} size={20} className="shrink-0 text-icon-secondary" />
+                {action.label}
+              </button>
+            ))}
+            <span className="my-1.5 h-px shrink-0 bg-line-subtle" />
+            <button
+              type="button"
+              className="flex h-12 items-center gap-3 rounded-md px-3 text-left text-body text-danger transition-colors hover:bg-danger-bg"
+              onClick={() => setConfirmDelete(true)}
+            >
+              <Icon name="logout" size={20} className="shrink-0" />
+              {t("actions.delete")}
+            </button>
+          </div>
+        </div>,
+        document.body
+      )
+    : null;
+
   return (
     <>
-      <Drawer open={Boolean(conversation)} onOpenChange={(open) => !open && onClose()}>
+      {menu}
+
+      <Drawer open={Boolean(conversation) && (isCompact || !anchor)} onOpenChange={(open) => !open && onClose()}>
         <DrawerContent className="rounded-t-2xl border-line bg-surface">
           <DrawerTitle className="px-5 pt-2 pb-3 font-heading text-h3 text-ink">
             {conversation?.title}

@@ -15,4 +15,4 @@ export {
 } from "./model/voice.queries";
 export { VoiceRoomBar } from "./ui/voice-room-bar";
 export { VoiceRoomCreateDialog } from "./ui/voice-room-create-dialog";
-export { VoiceRoomDialog } from "./ui/voice-room-dialog";
+export { VoiceRoomPanel } from "./ui/voice-room-panel";

@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import type { BoardSheet } from "../api/board.dto";
 import { BoardStroke } from "./board-stroke";
 
@@ -30,24 +30,38 @@ export function BoardPagesSheet({
   const { t } = useTranslation("board");
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="px-4 pb-6">
-        <DrawerTitle className="px-1 pt-2 font-heading text-h3 text-ink">
-          {t("pages.title")}
-        </DrawerTitle>
-        <p className="px-1 pb-4 text-body-sm text-ink-secondary">{t("pages.hint")}</p>
-
-        <div className="grid grid-cols-3 gap-3 pb-4">
-          {sheets.map((item) => (
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      variant="confirm"
+      width="lg:w-120"
+      title={t("pages.title")}
+      description={t("pages.hint")}
+      footer={
+        canAdd ? (
+          <button
+            type="button"
+            className="flex h-12 flex-1 items-center justify-center rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong"
+            onClick={onAdd}
+          >
+            {t("pages.new")}
+          </button>
+        ) : null
+      }
+    >
+      <div className="grid grid-cols-2 gap-3">
+        {sheets.map((item) => {
+          const current = item.index === active;
+          return (
             <button
               key={item.index}
               type="button"
-              className="flex flex-col items-center gap-1.5"
+              className="flex flex-col gap-2 text-left"
               onClick={() => onSelect(item.index)}
             >
               <span
-                className={`block w-full overflow-hidden rounded-xl border-2 bg-white ${
-                  item.index === active ? "border-action" : "border-line"
+                className={`block w-full overflow-hidden rounded-md border-2 bg-surface ${
+                  current ? "border-brand" : "border-line"
                 }`}
               >
                 <svg
@@ -66,27 +80,48 @@ export function BoardPagesSheet({
                   ))}
                 </svg>
               </span>
-              <small className="text-caption text-ink-secondary">#{item.index + 1}</small>
-            </button>
-          ))}
 
-          {canAdd ? (
-            <button
-              type="button"
-              className="flex flex-col items-center gap-1.5"
-              onClick={onAdd}
-            >
-              <span
-                className="grid w-full place-items-center rounded-xl border border-dashed border-line text-ink-tertiary"
-                style={{ aspectRatio: `${boardWidth} / ${boardHeight}` }}
-              >
-                <Plus size={22} />
+              <span className="flex items-center gap-2">
+                <i
+                  className={`grid size-5 shrink-0 place-items-center rounded-full text-micro not-italic ${
+                    current ? "bg-brand text-on-action" : "bg-subtle text-ink-secondary"
+                  }`}
+                >
+                  {item.index + 1}
+                </i>
+                <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                  {item.strokes.length
+                    ? t("pages.pageLabel", { index: item.index + 1 })
+                    : t("pages.emptyPage")}
+                </small>
               </span>
-              <small className="text-caption text-ink-secondary">{t("pages.new")}</small>
             </button>
-          ) : null}
-        </div>
-      </DrawerContent>
-    </Drawer>
+          );
+        })}
+
+        {canAdd ? (
+          <button
+            type="button"
+            className="flex flex-col gap-2 text-left"
+            onClick={onAdd}
+          >
+            <span
+              className="grid w-full place-items-center rounded-md border border-line bg-surface text-ink-tertiary"
+              style={{ aspectRatio: `${boardWidth} / ${boardHeight}` }}
+            >
+              <Plus size={22} />
+            </span>
+            <span className="flex items-center gap-2">
+              <i className="grid size-5 shrink-0 place-items-center rounded-full bg-subtle text-micro text-ink-secondary not-italic">
+                {sheets.length + 1}
+              </i>
+              <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                {t("pages.emptyPage")}
+              </small>
+            </span>
+          </button>
+        ) : null}
+      </div>
+    </AppDialog>
   );
 }

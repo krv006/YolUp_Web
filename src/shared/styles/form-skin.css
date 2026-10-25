@@ -28,9 +28,9 @@
 .field-group label,
 .field-group > span,
 .form-picker-label {
-  color: var(--text-primary);
-  font-size: var(--fs-label);
-  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: var(--fs-body-xs);
+  font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
 }
@@ -43,7 +43,7 @@
 .form-picker-trigger,
 .field-group textarea,
 .field-group input {
-  min-height: 52px;
+  min-height: 50px;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
   background: var(--bg-subtle);
@@ -180,7 +180,7 @@
 
 .group-action-form input,
 .group-action-form textarea {
-  min-height: 52px;
+  min-height: 50px;
   padding: 0 16px;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
@@ -375,9 +375,11 @@ textarea.quiz-page-question-text:focus {
 .board-panel .board-canvas { background-image: none; }
 .board-panel .board-canvas-wrap { background: transparent; }
 
-.periodic-grid { grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 2px; }
-.periodic-cell { min-height: 40px; }
-.periodic-cell strong { font-size: var(--fs-sm); }
+.periodic-grid { grid-template-columns: repeat(18, minmax(0, 1fr)); gap: 2px; overflow-x: visible; }
+.periodic-cell { min-height: 22px; padding: 0; border-radius: var(--radius-xs); }
+.periodic-cell strong { font-size: 10px; font-weight: 700; }
+.periodic-cell small,
+.periodic-cell span { display: none; }
 
 /* Doska kabi qorong‘i ekran ichidagi oq maydonlar uchun yorug‘ qamrov */
 [data-theme="light"] {
@@ -584,4 +586,42 @@ textarea.quiz-page-question-text:focus {
 @media (max-width: 1023px) {
   .ai-quiz-form > .dialog-actions { display: block; }
   .ai-quiz-form > .dialog-actions > button { width: 100%; justify-content: center; }
+}
+
+.form-picker-field {
+  gap: 8px;
+}
+
+.form-picker-label {
+  color: var(--text-secondary);
+  font-size: var(--fs-body-xs);
+  font-weight: 400;
+}
+
+.form-picker-trigger {
+  min-height: 50px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  grid-template-columns: minmax(0, 1fr) 18px;
+}
+
+.duration-picker {
+  grid-template-columns: minmax(0, 1fr) auto 26px;
+}
+
+.form-picker-trigger-icon {
+  display: none;
+}
+
+.form-picker-trigger-value {
+  font-size: var(--fs-body);
+}
+
+.is-field-error .form-picker-trigger {
+  border-color: var(--border-danger);
+  background: var(--bg-surface);
+}
+
+.is-field-error .form-picker-chevron {
+  color: var(--border-danger);
 }

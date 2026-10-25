@@ -28,18 +28,16 @@ import {
 } from "@/modules/homework";
 import {
   FinishLessonDialog,
-  LessonCalendar,
-  LessonList,
   LessonRatingsDialog,
-  LessonViewSwitch,
   LiveLessonBar,
+  useCancelLesson,
   useCreateLesson,
   useCreateLessonSchedule,
   useDeleteLesson,
   useLessons,
-  useLessonView,
   useUpdateLesson,
 } from "@/modules/lesson";
+import { useLessonPresence } from "@/modules/live";
 import {
   AddQuizDialog,
   AssignQuizDialog,
@@ -56,7 +54,8 @@ import {
   useQuizzes,
   useUpdateQuiz,
 } from "@/modules/quiz";
-import { ChatHeader } from "@/modules/conversation";
+import { ChatHeader, ConversationInfoPanel } from "@/modules/conversation";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { ForwardDialog } from "@/widgets/forward-dialog";
 import { VoiceRoomBar } from "@/modules/voice";
 import { MessageComposer, MessageList } from "@/modules/message";
@@ -74,12 +73,15 @@ import type { ChatController } from "@/modules/message";
 import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { ROUTES } from "@/shared/config";
+import { Icon } from "@/shared/ui/icon";
 import {
   AddAssignmentDialog,
   AddLessonDialog,
   type LessonDraft,
   type LessonScheduleDraft,
 } from "./group-action-dialogs";
+import { CancelLessonDialog } from "./cancel-lesson-dialog";
+import { LessonBoard } from "./lesson-board";
 
 type TabId = "chat" | "lessons" | "assignments" | "attendance";
 
@@ -118,6 +120,8 @@ export function GroupWorkspace({
   const [reply, setReply] = useState<ChatMessage | null>(null);
   const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
   const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const isCompact = useIsCompact();
   const courseId = conversation.courseId;
 
   const tabParam = params.get("tab") as TabId | null;
@@ -162,30 +166,26 @@ export function GroupWorkspace({
   };
 
   return (
-    <section className="chat-page group-workspace">
-      <ChatHeader conversation={hydrated} />
+    <div className="flex h-full min-h-0">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+      <section className="chat-page group-workspace">
+      <ChatHeader conversation={hydrated} onToggleInfo={() => setInfoOpen((open) => !open)} />
       <LiveLessonBar courseId={courseId} />
       <VoiceRoomBar courseId={courseId} />
-      <nav className="flex shrink-0 items-stretch border-b border-line bg-surface px-1 lg:gap-1 lg:px-4">
+      <nav className="grid shrink-0 grid-cols-4 gap-2 px-4 pt-3 pb-1 lg:px-7 lg:pt-4 lg:pb-2">
         {TABS.map((tab) => {
-          const TabIcon = tab.icon;
           const active = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              className={`relative flex flex-1 items-center justify-center gap-2 px-2 py-3.5 text-label-strong whitespace-nowrap transition-colors lg:px-4 ${
-                active ? "text-action" : "text-ink-secondary hover:text-ink"
+              className={`flex h-9 items-center justify-center rounded-full text-label whitespace-nowrap transition-colors ${
+                active
+                  ? "bg-brand text-ink-inverse"
+                  : "bg-surface text-ink-secondary hover:text-ink"
               }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
-              {active ? (
-                <motion.span
-                  layoutId="group-tab-indicator"
-                  className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-action"
-                />
-              ) : null}
-              <TabIcon size={16} className="hidden lg:block" />
-              <span>{tab.label}</span>
+              {tab.label}
             </button>
           );
         })}
@@ -227,7 +227,12 @@ export function GroupWorkspace({
             />
           ) : null}
           {activeTab === "lessons" ? (
-            <LessonsPanel courseId={courseId} lessons={lessons.data} loading={lessons.isLoading} />
+            <LessonsPanel
+              courseId={courseId}
+              lessons={lessons.data}
+              loading={lessons.isLoading}
+              studentCount={hydrated.memberCount ?? 0}
+            />
           ) : null}
           {activeTab === "assignments" ? (
             <AssignmentsPanel
@@ -278,7 +283,24 @@ export function GroupWorkspace({
           )
         }
       />
-    </section>
+      </section>
+      </div>
+
+      {isCompact ? (
+        <ConversationInfoPanel
+          conversation={hydrated}
+          open={infoOpen}
+          onOpenChange={setInfoOpen}
+        />
+      ) : infoOpen ? (
+        <ConversationInfoPanel
+          embedded
+          conversation={hydrated}
+          open
+          onOpenChange={setInfoOpen}
+        />
+      ) : null}
+    </div>
   );
 }
 
@@ -286,13 +308,15 @@ interface LessonsPanelProps {
   courseId: string | null;
   lessons?: Lesson[];
   loading: boolean;
+  studentCount: number;
 }
 
-function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
+function LessonsPanel({ courseId, lessons = [], loading, studentCount }: LessonsPanelProps) {
   const { t } = useTranslation("group");
   const [dialog, setDialog] = useState(false);
   const [editing, setEditing] = useState<Lesson | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Lesson | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Lesson | null>(null);
   const [finishTarget, setFinishTarget] = useState<Lesson | null>(null);
   const [ratingsTarget, setRatingsTarget] = useState<Lesson | null>(null);
   const navigate = useNavigate();
@@ -300,7 +324,10 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
   const createSchedule = useCreateLessonSchedule();
   const update = useUpdateLesson();
   const remove = useDeleteLesson();
-  const { view, setView } = useLessonView();
+  const cancelLesson = useCancelLesson();
+
+  const liveLesson = lessons.find((lesson) => lesson.status === "live") ?? null;
+  const presence = useLessonPresence(liveLesson?.id, Boolean(liveLesson));
 
   const allLessons = useLessons({ page_size: 200 }, dialog);
   const courseQuizzes = useQuizzes(courseId, dialog && Boolean(courseId));
@@ -348,7 +375,7 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
     onFinish: setFinishTarget,
     onRatings: setRatingsTarget,
     onDelete: setDeleteTarget,
-    onRecording: (lesson: Lesson) => navigate(ROUTES.recording(lesson.id)),
+    onRecording: (lesson: Lesson) => navigate(ROUTES.teacher.recording(lesson.id)),
     onEdit: (lesson: Lesson) => {
       setEditing(lesson);
       setDialog(true);
@@ -356,40 +383,46 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
   };
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="text-caption-strong tracking-wide text-action uppercase">
-            {t("lessons.eyebrow")}
-          </span>
-          <h2 className="font-heading text-h2 text-ink">{t("lessons.title")}</h2>
-          <p className="text-body-sm text-ink-secondary">{t("lessons.subtitle")}</p>
+    <div className="flex h-full flex-col gap-2 overflow-y-auto bg-canvas p-4 lg:px-7 lg:pt-5 lg:pb-7">
+      <div className="flex shrink-0 items-center gap-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-overline text-ink-tertiary uppercase">{t("lessons.eyebrow")}</span>
+          <h2 className="font-heading text-h1 text-ink">{t("lessons.title")}</h2>
+          <p className="text-body-xs text-ink-tertiary">{t("lessons.subtitle")}</p>
         </div>
-        <div className="flex items-center justify-between gap-2">
-          <LessonViewSwitch view={view} onChange={setView} />
-          <button
-            type="button"
-            className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-action px-4 text-label-strong whitespace-nowrap text-on-action transition-colors hover:bg-action-hover lg:h-12 lg:gap-2 lg:px-5"
-            onClick={() => {
-              setEditing(null);
-              setDialog(true);
-            }}
-          >
-            <Plus size={17} /> {t("lessons.addLesson")}
-          </button>
-        </div>
+        <button
+          type="button"
+          className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-5 text-button whitespace-nowrap text-ink-inverse transition-colors hover:bg-brand-strong"
+          onClick={() => {
+            setEditing(null);
+            setDialog(true);
+          }}
+        >
+          <Icon name="add" size={18} /> {t("lessons.addLesson")}
+        </button>
       </div>
 
       {loading && !lessons.length ? (
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 3 }, (_, index) => (
-            <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          {Array.from({ length: 4 }, (_, index) => (
+            <div key={index} className="h-37.5 animate-pulse rounded-lg bg-muted" />
           ))}
         </div>
-      ) : view === "calendar" ? (
-        <LessonCalendar lessons={lessons} {...actions} />
       ) : (
-        <LessonList lessons={lessons} {...actions} />
+        <LessonBoard
+          lessons={lessons}
+          studentCount={studentCount}
+          joinedCount={liveLesson ? (presence.data?.count ?? null) : null}
+          onAdd={() => {
+            setEditing(null);
+            setDialog(true);
+          }}
+          onJoin={actions.onJoin}
+          onEdit={actions.onEdit}
+          onCancel={setCancelTarget}
+          onRecording={actions.onRecording}
+          onRatings={actions.onRatings}
+        />
       )}
 
       <AddLessonDialog
@@ -434,6 +467,18 @@ function LessonsPanel({ courseId, lessons = [], loading }: LessonsPanelProps) {
               {t("lessons.delete")}
             </button>
           </>
+        }
+      />
+      <CancelLessonDialog
+        lesson={cancelTarget}
+        pending={cancelLesson.isPending}
+        onOpenChange={(open) => {
+          if (!open) setCancelTarget(null);
+        }}
+        onConfirm={(lesson, scope) =>
+          cancelLesson
+            .mutateAsync({ id: lesson.id, scope: scope === "following" ? "series" : "one" })
+            .then(() => setCancelTarget(null))
         }
       />
       <FinishLessonDialog

@@ -73,13 +73,15 @@ export function AddStudentDialog({
     return () => globalThis.clearTimeout(id);
   }, [term]);
 
-  useEffect(() => {
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (!open) {
       setTerm("");
       setDebounced("");
       setSelected([]);
     }
-  }, [open]);
+  }
 
   const items = results.data ?? [];
   const tooShort = debounced.trim().length < 2;
@@ -102,35 +104,46 @@ export function AddStudentDialog({
     onOpenChange(false);
   }
 
+  const empty = !tooShort && !results.isLoading && !results.isError && !items.length;
+
   return (
     <>
       <AppDialog
         open={open && !createOpen}
         onOpenChange={onOpenChange}
+        variant="confirm"
+        icon={
+          <span className="grid size-11 place-items-center rounded-md bg-brand-subtle text-brand">
+            <Icon name="person-add" size={22} />
+          </span>
+        }
         title={t("addStudent.title")}
         description={t("addStudent.description")}
         footer={
-          <>
-            <button
-              type="button"
-              className={dialogButton.secondary}
-              onClick={() => onOpenChange(false)}
-            >
-              {t("addStudent.cancel")}
-            </button>
-            <button
-              type="button"
-              className={dialogButton.primary}
-              disabled={!selected.length || enroll.isPending}
-              onClick={addSelected}
-            >
-              {t("addStudent.submit", { count: selected.length })}
-            </button>
-          </>
+          empty ? null : (
+            <>
+              <span className="min-w-0 flex-1" />
+              <button
+                type="button"
+                className="flex h-12 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+                onClick={() => onOpenChange(false)}
+              >
+                {t("addStudent.cancel")}
+              </button>
+              <button
+                type="button"
+                className="flex h-12 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
+                disabled={!selected.length || enroll.isPending}
+                onClick={addSelected}
+              >
+                {t("addStudent.submit", { count: selected.length })}
+              </button>
+            </>
+          )
         }
       >
-        <label className="flex h-13 items-center gap-3 rounded-xl bg-subtle px-4">
-          <Icon name="search" size={18} className="shrink-0 text-ink-tertiary" />
+        <label className="flex h-12.5 items-center gap-3 rounded-md border border-transparent bg-subtle px-4 focus-within:border-focus focus-within:bg-surface">
+          <Icon name="search" size={18} className="shrink-0 text-icon-tertiary" />
           <input
             autoFocus
             className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
@@ -139,6 +152,16 @@ export function AddStudentDialog({
             placeholder={t("addStudent.searchPlaceholder")}
             aria-label={t("addStudent.searchPlaceholder")}
           />
+          {term ? (
+            <button
+              type="button"
+              className="grid size-7 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-muted hover:text-ink"
+              onClick={() => setTerm("")}
+              aria-label={t("addStudent.cancel")}
+            >
+              <Icon name="close" size={16} />
+            </button>
+          ) : null}
         </label>
 
         {tooShort ? (
@@ -146,13 +169,13 @@ export function AddStudentDialog({
         ) : results.isLoading ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 3 }, (_, index) => (
-              <div key={index} className="h-16 animate-pulse rounded-xl bg-muted" />
+              <div key={index} className="h-14 animate-pulse rounded-md bg-muted" />
             ))}
           </div>
         ) : results.isError ? (
-          <p className="px-1 text-body-sm text-error-text">{results.error.message}</p>
+          <p className="px-1 text-body-sm text-danger">{results.error.message}</p>
         ) : items.length ? (
-          <ul className="flex flex-col divide-y divide-line overflow-hidden rounded-xl border border-line">
+          <ul className="flex flex-col gap-1">
             {items.map((student) => {
               const member = Boolean(student.enrollStatus) && student.enrollStatus !== "declined";
               const checked = selected.includes(student.id);
@@ -160,50 +183,65 @@ export function AddStudentDialog({
                 <li key={student.id}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-subtle disabled:opacity-60 disabled:hover:bg-transparent"
+                    className={`flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors disabled:opacity-60 ${
+                      checked ? "bg-brand-subtle" : "hover:bg-subtle"
+                    }`}
                     disabled={member}
                     onClick={() => toggle(student.id)}
                   >
                     <Avatar name={student.name} tone={student.avatarTone} size="sm" />
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <strong className="truncate text-label-strong text-ink">
-                        {student.name}
-                      </strong>
-                      <small className="truncate text-caption text-ink-tertiary">
+                      <strong className="truncate text-title-sm text-ink">{student.name}</strong>
+                      <small className="truncate text-body-xs text-ink-tertiary">
                         {member ? t("addStudent.alreadyMember") : `@${student.username}`}
                       </small>
                     </span>
-                    {member ? (
-                      <Icon name="groups" size={20} className="shrink-0 text-ink-tertiary" />
-                    ) : checked ? (
-                      <Icon name="check-circle" size={22} className="shrink-0 text-action" />
-                    ) : (
-                      <span className="size-5 shrink-0 rounded-full border border-line" />
-                    )}
+                    <span
+                      className={`grid size-5.5 shrink-0 place-items-center rounded-xs ${
+                        checked
+                          ? "bg-brand text-ink-inverse"
+                          : "border-2 border-line-strong bg-surface"
+                      }`}
+                    >
+                      {checked ? <Icon name="check" size={14} /> : null}
+                    </span>
                   </button>
                 </li>
               );
             })}
           </ul>
         ) : (
-          <p className="px-1 text-body-sm text-ink-tertiary">{t("addStudent.notFound")}</p>
+          <div className="flex flex-col items-center gap-3 py-2 text-center">
+            <span className="grid size-18 place-items-center rounded-full bg-brand-subtle text-brand">
+              <Icon name="person" size={30} />
+            </span>
+            <p className="text-body-sm text-ink-secondary">{t("addStudent.notFound")}</p>
+          </div>
         )}
 
-        <button
-          type="button"
-          className="flex items-center gap-2 px-1 text-label-strong text-action"
-          onClick={() => setCreateOpen(true)}
-        >
-          <Icon name="add" size={18} /> {t("addStudent.createAccount")}
-        </button>
+        <div className={empty ? "flex flex-col gap-3" : "grid grid-cols-2 gap-3"}>
+          <button
+            type="button"
+            className={
+              empty
+                ? "flex h-12 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+                : "flex h-12 w-full items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-colors hover:bg-tint"
+            }
+            onClick={() => setCreateOpen(true)}
+          >
+            <Icon name="person-add" size={18} />
+            {empty ? t("addStudent.createAccount") : t("addStudent.createAccountShort")}
+          </button>
 
-        <button
-          type="button"
-          className="flex items-center gap-2 px-1 text-label-strong text-action"
-          onClick={() => setInviteOpen(true)}
-        >
-          <Icon name="assign" size={18} /> {t("addStudent.shareInvite")}
-        </button>
+          <button
+            type="button"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
+            onClick={() => setInviteOpen(true)}
+          >
+            <Icon name="send" size={18} />
+            {empty ? t("addStudent.shareInvite") : t("addStudent.inviteShort")}
+          </button>
+        </div>
       </AppDialog>
 
       <InviteLinkDialog courseId={courseId} open={inviteOpen} onOpenChange={setInviteOpen} />
@@ -241,7 +279,9 @@ function CreateStudentDialog({
   const suggested = useMemo(() => buildLogin(firstName, lastName), [firstName, lastName]);
   const username = loginEdited ? login : suggested;
 
-  useEffect(() => {
+  const [wasOpen, setWasOpen] = useState(open);
+  if (wasOpen !== open) {
+    setWasOpen(open);
     if (!open) {
       setFirstName("");
       setLastName("");
@@ -250,7 +290,7 @@ function CreateStudentDialog({
       setPhone("");
       setPassword(randomPassword());
     }
-  }, [open]);
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -275,30 +315,22 @@ function CreateStudentDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
+      variant="confirm"
       title={t("addStudent.createTitle")}
       description={t("addStudent.createDescription")}
       footer={
-        <>
-          <button
-            type="button"
-            className={dialogButton.secondary}
-            onClick={() => onOpenChange(false)}
-          >
-            {t("addStudent.cancel")}
-          </button>
-          <button
-            type="submit"
-            form="create-student-form"
-            className={dialogButton.primary}
-            disabled={!filled || createStudent.isPending}
-          >
-            {t("addStudent.createSubmit")}
-          </button>
-        </>
+        <button
+          type="submit"
+          form="create-student-form"
+          className={dialogButton.primary}
+          disabled={!filled || createStudent.isPending}
+        >
+          {t("addStudent.createSubmit")}
+        </button>
       }
     >
       <form id="create-student-form" className="flex flex-col gap-4" onSubmit={submit}>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 items-start gap-3">
           <label className="field-group">
             <span>{t("addStudent.firstName")}</span>
             <input value={firstName} onChange={(event) => setFirstName(event.target.value)} required />
@@ -311,7 +343,7 @@ function CreateStudentDialog({
 
         <label className="field-group">
           <span>{t("addStudent.login")}</span>
-          <span className="flex h-13 items-center gap-2 rounded-xl bg-subtle px-4">
+          <span className="flex h-12.5 items-center gap-2 rounded-md bg-subtle pr-1.5 pl-4">
             <input
               className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none"
               value={username}
@@ -324,7 +356,7 @@ function CreateStudentDialog({
             />
             <button
               type="button"
-              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:text-ink"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink-secondary transition-colors hover:text-ink"
               onClick={() => {
                 setLoginEdited(false);
                 setLogin("");
@@ -338,7 +370,7 @@ function CreateStudentDialog({
 
         <label className="field-group">
           <span>{t("addStudent.password")}</span>
-          <span className="flex h-13 items-center gap-2 rounded-xl bg-subtle px-4">
+          <span className="flex h-12.5 items-center gap-2 rounded-md bg-subtle pr-4 pl-4">
             <input
               className="h-full min-w-0 flex-1 bg-transparent font-numeric text-body text-ink outline-none"
               value={password}
@@ -349,14 +381,13 @@ function CreateStudentDialog({
             />
             <button
               type="button"
-              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:text-ink"
+              className="shrink-0 text-button text-brand transition-colors hover:text-brand-strong"
               onClick={() => {
                 void navigator.clipboard.writeText(password);
                 toast.success(t("addStudent.passwordCopied"));
               }}
-              aria-label={t("addStudent.copyPassword")}
             >
-              <Icon name="assign" size={18} />
+              {t("addStudent.copy")}
             </button>
           </span>
         </label>
@@ -371,13 +402,13 @@ function CreateStudentDialog({
           />
         </label>
 
-        <p className="flex items-start gap-2 rounded-xl bg-action-subtle px-4 py-3 text-body-sm text-action">
-          <Icon name="error" size={18} className="mt-0.5 shrink-0" />
+        <p className="flex items-start gap-2.5 rounded-md bg-brand-subtle px-4 py-3.5 text-body-xs text-brand-strong">
+          <Icon name="bolt" size={16} className="mt-0.5 shrink-0" />
           {t("addStudent.createNote")}
         </p>
 
         {createStudent.isError ? (
-          <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
+          <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
             {createStudent.error.message}
           </p>
         ) : null}

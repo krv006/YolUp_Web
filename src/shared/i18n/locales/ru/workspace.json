@@ -97,5 +97,70 @@
   "searchSubtitle": "По группам, урокам, тестам, ученикам и сообщениям",
   "searchHotkeys": "↑↓ выбор · Enter открыть · Esc закрыть",
   "searchAllResults": "Все результаты",
-  "searchBack": "Назад"
+  "searchBack": "Назад",
+  "searchKeySelect": "выбрать",
+  "searchKeyOpen": "открыть",
+  "searchKeyClose": "закрыть",
+  "searchEmptyTitle": "По запросу «{{query}}» ничего не найдено",
+  "searchEmptyHint": "Попробуйте другое слово или измените фильтры",
+  "home": {
+    "eyebrow": "Рабочее пространство преподавателя",
+    "createTest": "Создать тест",
+    "modules": "Модули",
+    "stats": {
+      "tests": "Тесты",
+      "testsHint": "черновиков: {{count}}",
+      "assignments": "Активные задания",
+      "assignmentsHint": "на проверке: {{count}}",
+      "mock": "Mock экзамены",
+      "mockHint": "идёт: {{count}}",
+      "rating": "Средняя оценка",
+      "ratingHint": "в этом месяце"
+    },
+    "moduleCounts": {
+      "tests": "{{count}} тестов",
+      "assignments": "{{count}} активных",
+      "mock": "{{count}} идёт",
+      "ai": "{{count}} создаётся",
+      "analytics": "Рейтинг {{value}}",
+      "materials": "{{count}} файлов"
+    },
+    "modules_list": {
+      "tests": {
+        "title": "Тесты",
+        "description": "8 типов вопросов — проверка автоматическая"
+      },
+      "assignments": {
+        "title": "Задания",
+        "description": "Домашние задания и проверка с AI"
+      },
+      "mock": {
+        "title": "Mock экзамены",
+        "description": "IELTS, SAT, Milliy sertifikat и свои экзамены"
+      },
+      "ai": {
+        "title": "AI помощник",
+        "description": "Тест по теме или материалу"
+      },
+      "analytics": {
+        "title": "Аналитика",
+        "description": "Показатели по результатам и активности"
+      },
+      "materials": {
+        "title": "Материалы",
+        "description": "Учебники, аудио и файлы"
+      }
+    }
+  },
+  "stats": {
+    "eyebrow": "Общие показатели по оценкам, курсам и урокам",
+    "ratingHint": "оценок: {{count}}",
+    "cancelledHint": "отменено: {{count}}",
+    "monthHint": "в этом месяце",
+    "reliabilityHint": "уроки вовремя",
+    "chartTitle": "Результаты тестов — средний балл",
+    "chartRange": "Последние 8 недель",
+    "chartEmpty": "График появится, когда бэкенд отдаст недельные результаты.",
+    "quizShort": "тест {{value}}%"
+  }
 }

@@ -28,6 +28,12 @@
     "schedule": "Jadval",
     "workspace": "Workspace",
     "profile": "Profil",
-    "assignments": "Vazifalar"
+    "assignments": "Vazifalar",
+    "home": "Asosiy"
+  },
+  "sidebar": {
+    "myGroups": "Guruhlarim",
+    "createGroup": "Guruh qo‘shish",
+    "subjectTeacher": "{{subject}} o‘qituvchisi"
   }
 }

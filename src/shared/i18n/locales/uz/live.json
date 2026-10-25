@@ -48,7 +48,16 @@
     "join": "Darsga qo‘shilish",
     "mobileTitle": "Darsga qo‘shilish",
     "minutes": "daqiqa",
-    "recordingNote": "Dars avtomatik yoziladi — audio va video"
+    "recordingNote": "Dars avtomatik yoziladi — audio va video",
+    "minutesValue": "{{count}} daqiqa",
+    "waiting": "{{count}} / {{total}} o'quvchi kutmoqda",
+    "waitingNames_zero": "{{names}} kutmoqda",
+    "waitingNames": "{{names}} va yana {{count}} kishi kutmoqda",
+    "defaultMic": "Standart mikrofon",
+    "defaultCamera": "Standart kamera",
+    "cameraOnTitle": "Kamera yoqilgan",
+    "cameraOffTitle": "Kamera o'chiq",
+    "start": "Darsni boshlash"
   },
   "connection": {
     "connecting": "Ulanmoqda…",
@@ -101,7 +110,12 @@
       "video": "Videoga qaytish",
       "board": "Doska",
       "people": "Ishtirokchilar"
-    }
+    },
+    "rec": "REC",
+    "studentsPresent": "{{count}} o'quvchi",
+    "teacherRole": "ustoz",
+    "wantsToSpeak": "Gapirmoqchi ({{count}})",
+    "allow": "Ruxsat"
   },
   "mic": {
     "label": "Mikrofon",
@@ -154,8 +168,11 @@
     "speaking": "Gapirmoqda",
     "raisedHand": "Qo‘l ko‘tardi",
     "muteAll": "Hammasini ovozsiz",
-    "invite": "Taklif qilish",
-    "muteAllDone": "{{count}} ta ishtirokchi ovozsiz qilindi"
+    "invite": "Taklif",
+    "muteAllDone": "{{count}} ta ishtirokchi ovozsiz qilindi",
+    "online": "Onlayn",
+    "micOff": "Mikrofon o'chiq",
+    "studentRole": "o'quvchi"
   },
   "permissionDialog": {
     "title": "Kamera va mikrofonga ruxsat kerak",
@@ -173,6 +190,7 @@
     "joinFailedTitle": "Darsga kirib bo‘lmadi",
     "joinFailedFinished": "“{{title}}” darsi {{time}} da tugagan. Dars yozuvi tayyor bo‘lgach guruh chatiga yuboriladi.",
     "backToChat": "Guruh chatiga qaytish",
-    "openRecording": "Dars yozuvini ko‘rish"
+    "openRecording": "Dars yozuvini ko‘rish",
+    "joinFailedDescription": "Internet uzildi — darsga ulanib bo'lmadi. Dars davom etmoqda."
   }
 }

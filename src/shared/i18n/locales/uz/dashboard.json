@@ -1,0 +1,89 @@
+{
+  "header": {
+    "greeting": "Salom, {{name}}!",
+    "lessonCount": "bugun {{count}} ta dars",
+    "searchPlaceholder": "Guruh, o‘quvchi, dars qidirish..."
+  },
+  "banner": {
+    "offline": "Internet aloqasi yo‘q. Oxirgi saqlangan ma’lumotlar ko‘rsatilmoqda",
+    "notApproved": "Hisobingiz hali administrator tomonidan tasdiqlanmagan — kurs va dars yaratish vaqtincha yopiq."
+  },
+  "hero": {
+    "startsIn": "{{count}} daqiqadan so‘ng",
+    "startsNow": "Hozir boshlanadi",
+    "live": "Dars ketmoqda · {{count}} daqiqa",
+    "joined": "{{done}} / {{total}} o‘quvchi qo‘shildi",
+    "students": "{{count}} o‘quvchi",
+    "quizAttached": "test biriktirilgan",
+    "start": "Darsni boshlash",
+    "join": "Darsga kirish",
+    "chat": "Chatga o‘tish",
+    "startsInHours": "{{count}} soatdan so‘ng"
+  },
+  "stats": {
+    "lessons": "Bugungi darslar",
+    "lessonsHint": "{{count}} tasi tugadi",
+    "review": "Tekshirish kutmoqda",
+    "reviewHint": "{{count}} ta vazifa",
+    "students": "O‘quvchilar",
+    "studentsHint": "{{count}} ta guruhda",
+    "attendance": "O‘rtacha davomat",
+    "attendanceHint": "barcha darslar bo‘yicha"
+  },
+  "today": {
+    "title": "Bugungi darslar",
+    "students": "{{count}} o‘quvchi",
+    "finished": "{{count}} o‘quvchi · tugadi",
+    "emptyTitle": "Bugun dars yo‘q",
+    "emptyNext": "Ertangi birinchi dars: {{time}} · {{title}}",
+    "emptyHint": "Jadvalga birinchi darsni qo‘shing.",
+    "openSchedule": "Jadvalni ochish",
+    "addLesson": "Dars qo‘shish"
+  },
+  "review": {
+    "title": "Tekshirish kerak",
+    "submitted": "{{done}} / {{total}} topshirdi",
+    "empty": "Tekshiriladigan ish yo‘q."
+  },
+  "activity": {
+    "title": "So‘nggi faollik",
+    "empty": "Hozircha faollik yo‘q."
+  },
+  "noGroups": {
+    "title": "Birinchi guruhingizni yarating",
+    "description": "Guruh yarating, o‘quvchilarni havola orqali taklif qiling va dars jadvalini qo‘shing.",
+    "action": "Guruh yaratish",
+    "stepsTitle": "3 qadamda boshlang",
+    "steps": {
+      "create": {
+        "title": "Guruh yarating",
+        "hint": "Nomi, fani va haftalik darslar soni"
+      },
+      "invite": {
+        "title": "Havolani ulashing",
+        "hint": "O‘quvchilar bir bosishda qo‘shiladi"
+      },
+      "lesson": {
+        "title": "Dars qo‘shing",
+        "hint": "O‘quvchilar eslatma oladi"
+      }
+    }
+  },
+  "common": {
+    "seeAll": "Barchasi"
+  },
+  "months": [
+    "yanvar",
+    "fevral",
+    "mart",
+    "aprel",
+    "may",
+    "iyun",
+    "iyul",
+    "avgust",
+    "sentabr",
+    "oktabr",
+    "noyabr",
+    "dekabr"
+  ]
+}

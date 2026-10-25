@@ -116,91 +116,59 @@
     "submit": "Vazifani topshirish"
   },
   "form": {
-    "title": "Yangi vazifa",
-    "editTitle": "Vazifani tahrirlash",
-    "subtitle": "Vazifa guruh chatiga va o‘quvchilar ilovasiga yuboriladi",
+    "title": "Vazifa berish",
+    "description": "Vazifa guruh chatiga va o‘quvchilar ilovasiga yuboriladi",
+    "missing": "{{count}} ta maydonni to‘ldiring",
+    "errorBanner": "Guruh va sarlavhani to‘ldiring",
     "group": "Guruh",
-    "studentCount": "{{count}} o‘quvchi",
+    "students": "{{count}} o‘quvchi",
     "titleLabel": "Sarlavha",
     "titlePlaceholder": "Masalan: Kasrlarni ko‘paytirish",
+    "titleRequired": "Sarlavha majburiy",
     "bodyLabel": "Topshiriq matni",
-    "bodyPlaceholder": "Darslik 120–126-misollar. Har bir misol yechimini daftarga yozing va rasmga olib yuklang.",
-    "dueDate": "Topshirish muddati",
-    "dueTime": "Vaqt",
+    "bodyPlaceholder": "Darslik 120–126-misollar. Har bir misol yechimini daftarga yozib, rasmga olib yuboring.",
+    "due": "Muddat",
+    "time": "Vaqt",
     "grading": "Baholash",
-    "gradingFive": "5 ballik",
-    "gradingHundred": "100 ballik",
-    "gradingNone": "Bahosiz",
-    "attachments": "Ilovalar",
-    "addFile": "Fayl yoki rasm qo‘shish",
-    "removeFile": "Faylni olib tashlash",
+    "gradings": {
+      "five": "5 ballik",
+      "hundred": "100 ballik",
+      "none": "Bahosiz"
+    },
+    "aiCheck": "AI dastlabki tekshiruv",
+    "aiCheckHint": "AI javoblarni tahlil qiladi, bahoni siz tasdiqlaysiz",
+    "announce": "Guruh chatida e’lon qilish",
+    "announceHint": "Vazifa kartasi chatga yuboriladi",
     "draft": "Qoralama",
-    "submit": "Yuborish",
-    "required": "Guruh va sarlavhani to‘ldiring",
-    "toggle": {
-      "ai": "AI dastlabki tekshiruv",
-      "aiHint": "AI javoblarni tahlil qiladi, bahoni siz tasdiqlaysiz",
-      "announce": "Guruh chatida e’lon qilish",
-      "announceHint": "Vazifa kartasi chatga yuboriladi",
-      "late": "Kech topshirishga ruxsat",
-      "lateHint": "Muddatdan keyin ham qabul qilinadi",
-      "pending": "Backend tayyor bo‘lgach yoqiladi"
-    },
-    "editSubtitle": "{{count}} ta o‘quvchi allaqachon topshirgan. Muddatni uzaytirsangiz, ularga bildirishnoma boradi.",
-    "attachFile": "Fayl biriktirish",
-    "lessonLabel": "Qaysi dars uchun",
-    "lessonNone": "Darsga bog‘lanmagan",
-    "gradingNote": "Baholash izohi - ixtiyoriy",
-    "gradingNotePlaceholder": "Masalan: har bir misol 2 balldan",
-    "deleteAssignment": "Vazifani o‘chirish",
-    "rich": {
-      "bold": "Qalin",
-      "italic": "Qiya",
-      "underline": "Tagi chizilgan",
-      "list": "Ro‘yxat",
-      "link": "Havola",
-      "linkPrompt": "Havola manzilini kiriting"
-    },
-    "nameLabel": "Vazifa nomi",
-    "cancel": "Bekor qilish",
-    "save": "Saqlash",
-    "publish": "E’lon qilish",
-    "maxScore": "Eng yuqori ball"
+    "submit": "Yuborish"
   },
   "review": {
     "back": "Orqaga",
-    "prev": "Oldingi o‘quvchi",
-    "next": "Keyingi o‘quvchi",
-    "today": "Bugun",
+    "submittedCount": "{{submitted}} / {{total}} topshirdi",
+    "filters": {
+      "review": "Tekshirish",
+      "all": "Hammasi"
+    },
     "late": "kech topshirdi",
     "onTime": "o‘z vaqtida",
-    "noFile": "Fayl yo‘q",
+    "prev": "Oldingi",
+    "next": "Keyingi",
     "download": "Yuklab olish",
-    "recheck": "Qayta tekshirish",
-    "aiTitle": "AI dastlabki baho",
-    "aiHint": "Tavsiya — yakuniy bahoni siz qo‘yasiz",
-    "correctAnswers": "To‘g‘ri javoblar",
-    "issues": "Topilgan kamchiliklar",
-    "issueFallback": "Tahlil mavjud emas",
-    "aiDraft": "O‘quvchiga izoh — AI qoralama",
+    "openHint": "Faylni yuklab olib ko‘rishingiz mumkin.",
+    "noFile": "Fayl biriktirilmagan.",
+    "aiChecking": "AI tekshirmoqda",
+    "aiCheckingHint": "Natija tayyor bo‘lishi bilan yangilanadi · ~1 daq",
+    "aiSuggestion": "AI tavsiyasi: {{value}}",
+    "aiSuggestionHint": "Tavsiya — yakuniy bahoni siz qo‘yasiz",
+    "findings": "Topilgan kamchiliklar",
     "yourGrade": "Sizning bahoyingiz",
-    "aiSuggestion": "AI tavsiyasi: {{value}} — {{state}}",
-    "matches": "siz bilan mos",
-    "differs": "sizdan farq qiladi",
+    "matchesAi": "AI bilan mos",
     "comment": "O‘quvchiga izoh",
+    "commentPlaceholder": "Yaxshi! Keyingi safar kasrni oxirigacha qisqartiring.",
     "shareParent": "Ota-onaga ham ko‘rsatish",
     "shareParentHint": "Baho va izoh ota-ona ilovasida chiqadi",
     "resubmit": "Qayta topshirish",
-    "confirm": "Tasdiqlash",
-    "scoreOf": "Ball (0–{{max}})",
-    "gradingNone": "Bu vazifa bahosiz — faqat izoh yoziladi.",
-    "resubmitTitle": "Qayta topshirishga qaytarish",
-    "resubmitDescription": "{{name}} ga nimani tuzatish kerakligini yozing.",
-    "resubmitComment": "Izoh",
-    "resubmitPlaceholder": "Masalan: 115-misolni qayta yuboring",
-    "resubmitCancel": "Bekor qilish",
-    "resubmitSend": "Qaytarish",
-    "resubmitRequested": "Qayta topshirish so‘raldi"
+    "confirm": "Tasdiqlash"
   },
   "workspace": {
     "emptyTitle": "Hali vazifa berilmagan",
@@ -264,5 +232,101 @@
   "messageCard": {
     "submitted": "{{done}} / {{total}} topshirdi",
     "review": "Ishlarni ko‘rish"
+  },
+  "list": {
+    "eyebrow": "Workspace / Vazifalar · {{count}} ta guruh",
+    "title": "Vazifalar",
+    "create": "Vazifa berish",
+    "filters": {
+      "active": "Faol",
+      "review": "Tekshirish",
+      "draft": "Qoralama"
+    },
+    "sections": {
+      "week": "Bu hafta",
+      "earlier": "Oldingi"
+    },
+    "due": "Muddat: {{value}}",
+    "daysLeft": "{{count}} kun qoldi",
+    "reviewChip": "Tekshirish · {{count}}",
+    "submitted": "{{submitted}} / {{total}} topshirdi",
+    "open": "Ochish",
+    "empty": "Bu bo‘limda vazifa yo‘q.",
+    "stats": {
+      "active": "Faol",
+      "review": "Tekshirish",
+      "submitRate": "Topshirish",
+      "average": "O‘rtacha"
+    },
+    "aiTitle": "AI bugun ishlarni tekshirdi",
+    "aiHint": "Bahoni tasdiqlash kutilmoqda. Yakuniy bahoni siz qo‘yasiz."
+  },
+  "detail": {
+    "eyebrow": "Vazifalar / {{course}} · Muddat: {{due}}",
+    "remind": "Eslatma yuborish ({{count}})",
+    "due": "{{value}}",
+    "aiCheck": "AI dastlabki tekshiruv",
+    "grading": "Baholash",
+    "allowLate": "Kech topshirish",
+    "allowed": "Ruxsat berilgan",
+    "notAllowed": "Ruxsat berilmagan",
+    "lesson": "Darsga bog‘langan",
+    "edit": "Tahrirlash",
+    "delete": "O‘chirish",
+    "aiAdvice": "AI guruhga tavsiya",
+    "aiAdviceHint": "AI topilgan xatolar bo‘yicha guruh uchun tavsiya tayyorlaydi.",
+    "stats": {
+      "submitted": "Topshirdi",
+      "unchecked": "Tekshirilmagan",
+      "missing": "Topshirmagan",
+      "average": "O‘rtacha baho"
+    },
+    "searchStudent": "O‘quvchini qidirish",
+    "filters": {
+      "all": "Hammasi",
+      "review": "Tekshirish"
+    },
+    "columns": {
+      "student": "O‘quvchi",
+      "submitted": "Topshirdi",
+      "status": "Holat",
+      "ai": "AI",
+      "grade": "Baho"
+    },
+    "status": {
+      "done": "Tekshirilgan",
+      "pending_review": "Tekshirilmagan",
+      "checking": "AI tekshirmoqda",
+      "resubmit_requested": "Qayta topshirish",
+      "error": "Xatolik",
+      "missing": "Topshirmagan",
+      "late": "Kech topshirdi"
+    },
+    "noStudents": "O‘quvchi topilmadi."
+  },
+  "deleteDialog": {
+    "title": "Vazifani o‘chirasizmi?",
+    "description": "{{count}} ta o‘quvchi topshirgan javoblar va baholar ham o‘chiriladi.",
+    "confirm": "O‘chirish",
+    "cancel": "Bekor qilish"
+  },
+  "remindDialog": {
+    "title": "Eslatma yuborilsinmi?",
+    "description": "{{count}} ta o‘quvchiga ilovada bildirishnoma yuboriladi",
+    "message": "Xabar",
+    "defaultMessage": "“{{title}}” muddati {{due}} da tugaydi. Iltimos, javobingizni yuboring.",
+    "parents": "Ota-onalarga ham",
+    "parentsHint": "Topshirmaganlarning ota-onalariga ham boradi",
+    "rate": "Bir vazifaga 10 daqiqada bir marta eslatma yuborish mumkin.",
+    "cancel": "Bekor qilish",
+    "submit": "Yuborish"
+  },
+  "resubmitDialog": {
+    "title": "Qayta topshirishga qaytarish",
+    "description": "{{student}}ga nimani tuzatish kerakligini yozing",
+    "comment": "Izoh",
+    "placeholder": "125-misolni qayta yuboring va 122-misolda kasrni oxirigacha qisqartiring.",
+    "cancel": "Bekor qilish",
+    "submit": "Qaytarish"
   }
 }

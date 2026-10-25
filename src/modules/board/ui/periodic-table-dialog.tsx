@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Atom, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import type { PeriodicElement, StrokeDto, StrokeInput } from "../api/board.dto";
@@ -11,7 +11,6 @@ import {
   elementCardHeight,
 } from "../lib/periodic-board";
 import { useAddStrokes, usePeriodicTable } from "../model/board.queries";
-import { BohrModel } from "./bohr-model";
 
 export interface PeriodicTableDialogProps {
   open: boolean;
@@ -116,7 +115,8 @@ export function PeriodicTableDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      width="lg:w-[760px]"
+      variant="confirm"
+      width="lg:w-120"
       title={t("periodic.title")}
       description={t("periodic.description")}
       footer={
@@ -124,9 +124,16 @@ export function PeriodicTableDialog({
           <button
             type="button"
             className={dialogButton.secondary}
-            onClick={() => onOpenChange(false)}
+            disabled={!selected || !canDraw || !selected.shells.length || addStrokes.isPending}
+            onClick={() =>
+              selected &&
+              place(
+                (origin) => buildBohrStrokes(selected, placement, origin),
+                bohrDiagramSize(selected, placement)
+              )
+            }
           >
-            {t("periodic.close")}
+            {t("periodic.placeBohr")}
           </button>
           <button
             type="button"
@@ -150,7 +157,7 @@ export function PeriodicTableDialog({
 
       {elements.length ? (
         <>
-          <label className="flex h-12 items-center gap-2.5 rounded-xl border border-line bg-surface px-3.5 focus-within:border-focus">
+          <label className="flex h-12 items-center gap-2.5 rounded-md border border-transparent bg-subtle px-4 focus-within:border-focus focus-within:bg-surface">
             <Search size={18} className="shrink-0 text-ink-tertiary" />
             <input
               className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
@@ -195,64 +202,38 @@ export function PeriodicTableDialog({
           </p>
 
           {selected ? (
-            <div className="flex flex-col gap-3 rounded-xl bg-subtle p-3.5">
-              <div className="flex items-center gap-3">
-                <span
-                  className={`periodic-detail-symbol periodic-cell--${selected.category} grid size-14 shrink-0 place-items-center rounded-xl font-heading text-h2`}
-                >
-                  {selected.symbol}
-                </span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <strong className="truncate text-title text-ink">
-                    {selected.name} · {selected.z}
-                  </strong>
-                  <small className="truncate text-caption text-ink-secondary">
-                    {[
-                      selected.appearance,
-                      selected.mass ? t("periodic.mass", { value: selected.mass }) : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </small>
-                  <small className="truncate text-caption text-ink-tertiary">
-                    {[
-                      selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
-                      selected.group ? t("periodic.groupShort", { value: selected.group }) : "",
-                      selected.valence ? t("periodic.valence") + ": " + selected.valence : "",
-                      selected.shells.length ? selected.shells.join(" · ") : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </small>
-                </span>
+            <div className="flex items-center gap-4 rounded-md bg-subtle p-4">
+              <span
+                className={`periodic-detail-symbol periodic-cell--${selected.category} flex size-18 shrink-0 flex-col items-center justify-center rounded-md`}
+              >
+                <small className="text-micro opacity-70">{selected.z}</small>
+                <strong className="font-heading text-h2">{selected.symbol}</strong>
+              </span>
 
-                {canDraw && selected.shells.length ? (
-                  <button
-                    type="button"
-                    className="flex h-9 shrink-0 items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-label-strong text-ink transition-colors hover:bg-muted disabled:opacity-50"
-                    disabled={addStrokes.isPending}
-                    onClick={() =>
-                      place(
-                        (origin) => buildBohrStrokes(selected, placement, origin),
-                        bohrDiagramSize(selected, placement)
-                      )
-                    }
-                  >
-                    <Atom size={15} /> {t("periodic.placeBohr")}
-                  </button>
-                ) : null}
-              </div>
-
-              {selected.shells.length ? (
-                <BohrModel
-                  key={selected.z}
-                  shells={selected.shells}
-                  symbol={selected.symbol}
-                  label={selected.name}
-                />
-              ) : (
-                <p className="text-body-sm text-ink-tertiary">{t("periodic.noShells")}</p>
-              )}
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <strong className="truncate text-title text-ink">
+                  {selected.name}
+                  {selected.appearance ? ` · ${selected.appearance}` : ""}
+                </strong>
+                <small className="truncate text-body-xs text-ink-secondary">
+                  {[
+                    selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
+                    selected.group ? t("periodic.groupShort", { value: selected.group }) : "",
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                </small>
+                <small className="text-body-xs text-ink-secondary">
+                  {[
+                    selected.mass ? t("periodic.mass", { value: selected.mass }) : "",
+                    selected.shells.length
+                      ? `${t("periodic.shells")} ${selected.shells.join(" · ")}`
+                      : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </small>
+              </span>
             </div>
           ) : (
             <p className="text-body-sm text-ink-tertiary">{t("periodic.pickHint")}</p>

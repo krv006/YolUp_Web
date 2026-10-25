@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ArrowLeft, Download, Send } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { boardApi, BoardPanel, useSendBoardToChat } from "@/modules/board";
+import { boardApi, BoardPanel, BoardStroke, useBoard, useSendBoardToChat } from "@/modules/board";
 import { useLesson } from "@/modules/lesson";
 import { LoadingFallback } from "@/shared/ui/legacy";
+import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { LiveRoomState } from "@/widgets/live-room";
 
 export function BoardPage() {
@@ -13,8 +13,10 @@ export function BoardPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const lesson = useLesson(lessonId ?? null);
+  const board = useBoard(lessonId ?? "", { live: false, enabled: Boolean(lessonId) });
   const sendToChat = useSendBoardToChat(lessonId ?? "");
-  const [busy, setBusy] = useState<"pdf" | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [sheet, setSheet] = useState(0);
 
   if (lesson.isLoading || (!lesson.isError && !lesson.data))
     return <LoadingFallback label={t("page.loading")} />;
@@ -26,14 +28,17 @@ export function BoardPage() {
         description={lesson.error?.message}
         actionLabel={t("status.retry")}
         onAction={() => lesson.refetch()}
-        onBack={() => navigate(-1)}
+        secondaryLabel={t("page.back")}
+        onSecondary={() => navigate(-1)}
       />
     );
 
   const data = lesson.data!;
+  const state = board.data ?? null;
+  const sheets = state?.sheets ?? [];
 
   async function downloadPdf() {
-    setBusy("pdf");
+    setBusy(true);
     try {
       const blob = await boardApi.downloadPdf(data.id);
       const url = URL.createObjectURL(blob);
@@ -45,69 +50,85 @@ export function BoardPage() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("page.pdfFailed"));
     } finally {
-      setBusy(null);
+      setBusy(false);
     }
   }
 
-  const action =
-    "flex h-11 items-center gap-2 rounded-full px-5 text-label-strong transition-colors disabled:opacity-60";
-
   return (
-    <div
-      data-theme="dark"
-      className="dark flex h-dvh min-h-0 flex-col overflow-hidden bg-canvas text-ink"
-    >
-      <header className="flex shrink-0 items-center gap-3 px-5 pt-4 pb-3">
+    <WorkspaceShell
+      eyebrow={`${data.courseTitle} · ${data.date}, ${data.time} · ${t("page.sheetCount", {
+        count: sheets.length,
+      })}${state?.canDraw ? "" : ` · ${t("status.viewOnly").toLowerCase()}`}`}
+      title={t("page.boardTitle", { title: data.title })}
+      action={
         <button
           type="button"
-          className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-          aria-label={t("page.back")}
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft size={20} />
-        </button>
-        <div className="flex min-w-0 flex-1 flex-col">
-          <strong className="flex min-w-0 items-center gap-2 font-heading text-title text-ink">
-            <span className="size-2 shrink-0 rounded-full bg-success" aria-hidden="true" />
-            <span className="truncate">{data.title}</span>
-          </strong>
-          <small className="truncate text-caption text-ink-tertiary">
-            {data.courseTitle} · {data.date} · {data.time}
-          </small>
-        </div>
-      </header>
-
-      <div className="flex min-h-0 flex-1 flex-col px-5 pb-5">
-        <BoardPanel
-          lessonId={data.id}
-          courseId={data.courseId}
-          statusNote={data.status === "finished" ? t("page.lessonFinished") : undefined}
-          footerActions={
-            <>
-              <button
-                type="button"
-                className={`${action} border border-line bg-surface text-ink hover:bg-muted`}
-                disabled={busy !== null || sendToChat.isPending}
-                onClick={() =>
-                  sendToChat.mutate(undefined, {
-                    onSuccess: () => toast.success(t("page.sentToChat")),
-                  })
-                }
-              >
-                <Send size={16} /> {t("page.sendToChat")}
-              </button>
-              <button
-                type="button"
-                className={`${action} bg-action text-on-action hover:bg-action-hover`}
-                disabled={busy !== null}
-                onClick={downloadPdf}
-              >
-                <Download size={16} /> {t("page.downloadPdf")}
-              </button>
-            </>
+          className={workspaceAction}
+          disabled={sendToChat.isPending}
+          onClick={() =>
+            sendToChat.mutate(undefined, {
+              onSuccess: () => toast.success(t("page.sentToChat")),
+            })
           }
-        />
+        >
+          {t("page.sendToChat")}
+        </button>
+      }
+    >
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px]">
+        <div className="flex min-h-150 min-w-0 flex-col">
+          <BoardPanel
+            lessonId={data.id}
+            courseId={data.courseId}
+            sheetIndex={sheet}
+            onSheetChange={setSheet}
+            hideSheetBar
+            statusNote={data.status === "finished" ? t("page.lessonFinished") : undefined}
+          />
+        </div>
+
+        <div className="flex min-w-0 flex-col gap-4">
+          {sheets.map((item) => {
+            const current = item.index === sheet;
+            return (
+              <button
+                key={item.index}
+                type="button"
+                className={`flex flex-col gap-2 rounded-lg bg-surface p-3 text-left transition-colors ${
+                  current ? "ring-2 ring-brand" : "hover:bg-subtle"
+                }`}
+                onClick={() => setSheet(item.index)}
+              >
+                <small className="text-body-xs text-ink-tertiary">{item.index + 1}</small>
+                <svg
+                  viewBox={`0 0 ${state?.width ?? 1040} ${state?.height ?? 700}`}
+                  className="block h-full w-full"
+                  style={{ aspectRatio: `${state?.width ?? 1040} / ${state?.height ?? 700}` }}
+                  aria-hidden="true"
+                >
+                  {item.strokes.map((stroke) => (
+                    <BoardStroke
+                      key={stroke.id}
+                      stroke={stroke}
+                      selected={false}
+                      onSelect={() => undefined}
+                    />
+                  ))}
+                </svg>
+              </button>
+            );
+          })}
+
+          <button
+            type="button"
+            className="flex h-12 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-60"
+            disabled={busy}
+            onClick={downloadPdf}
+          >
+            {t("page.downloadPdf")}
+          </button>
+        </div>
       </div>
-    </div>
+    </WorkspaceShell>
   );
 }

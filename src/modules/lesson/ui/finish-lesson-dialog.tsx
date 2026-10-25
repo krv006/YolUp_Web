@@ -1,7 +1,7 @@
 import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Lesson } from "@/shared/types";
-import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import { useFinishLesson } from "../model/lesson.queries";
 
 export interface FinishLessonDialogProps {
@@ -39,18 +39,20 @@ export function FinishLessonDialog({
       open={Boolean(lesson)}
       onOpenChange={onOpenChange}
       variant="confirm"
+      width="lg:w-120"
       icon={
-        <span className="grid size-11 place-items-center rounded-2xl bg-error-bg text-error-text">
-          <LogOut size={20} />
+        <span className="grid size-12 place-items-center rounded-md bg-danger-bg text-danger">
+          <LogOut size={22} />
         </span>
       }
       title={t("finishDialog.title")}
       description={t("finishDialog.description", { title: lesson?.title ?? "" })}
       footer={
         <>
+          <span className="min-w-0 flex-1" />
           <button
             type="button"
-            className={dialogButton.secondary}
+            className="flex h-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
             onClick={() => {
               onOpenChange(false);
               onLeaveOnly?.();
@@ -60,7 +62,7 @@ export function FinishLessonDialog({
           </button>
           <button
             type="button"
-            className={dialogButton.danger}
+            className="flex h-11 shrink-0 items-center justify-center rounded-full bg-danger-bg px-5 text-button text-danger transition-opacity hover:opacity-85 disabled:opacity-50"
             disabled={finish.isPending}
             onClick={submit}
           >

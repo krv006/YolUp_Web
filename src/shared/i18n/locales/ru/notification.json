@@ -1,6 +1,6 @@
 {
   "title": "Уведомления",
-  "markAllRead": "Прочитать все",
+  "markAllRead": "Отметить все прочитанными",
   "openAria": "Уведомления",
   "unreadAria": "Уведомления ({{count}} новых)",
   "groups": {
@@ -8,8 +8,8 @@
     "yesterday": "Вчера",
     "earlier": "Ранее"
   },
-  "emptyTitle": "Уведомлений пока нет",
-  "emptyDescription": "Здесь появятся сообщения о заданиях, занятиях и оплатах.",
+  "emptyTitle": "Всё просмотрено",
+  "emptyDescription": "Новые задания, заявки и оценки появятся здесь.",
   "loadError": "Не удалось загрузить уведомления",
   "retry": "Повторить",
   "loading": "Загрузка",
@@ -24,5 +24,15 @@
     "default": "Открыть"
   },
   "filterAll": "Все",
-  "filterUnread": "Непрочитанные · {{count}}"
+  "filterUnread": "Непрочитанные · {{count}}",
+  "tabs": {
+    "all": "Все",
+    "unread": "Непрочитанные · {{count}}"
+  },
+  "actions": {
+    "openAssignment": "Открыть задание",
+    "openQuiz": "Перейти к тесту",
+    "review": "Посмотреть",
+    "open": "Открыть"
+  }
 }

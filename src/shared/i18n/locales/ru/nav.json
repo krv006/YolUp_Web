@@ -28,6 +28,12 @@
     "schedule": "Расписание",
     "workspace": "Workspace",
     "profile": "Профиль",
-    "assignments": "Задания"
+    "assignments": "Задания",
+    "home": "Главная"
+  },
+  "sidebar": {
+    "myGroups": "Мои группы",
+    "createGroup": "Добавить группу",
+    "subjectTeacher": "Преподаватель: {{subject}}"
   }
 }
