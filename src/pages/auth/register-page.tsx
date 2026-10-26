@@ -70,9 +70,12 @@ export function RegisterPage() {
       title={t("register.title")}
       description={t("register.subtitle")}
       footer={
-        <Link className="text-body-sm text-ink" to="/login">
-          {t("register.haveAccount")}
-        </Link>
+        <>
+          {t("register.haveAccountQuestion")}{" "}
+          <Link className="text-brand transition-opacity hover:opacity-80" to="/login">
+            {t("form.submit")}
+          </Link>
+        </>
       }
     >
       <RegisterForm onSubmit={submit} />
