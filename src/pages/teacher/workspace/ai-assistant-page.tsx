@@ -17,6 +17,8 @@ const EXAM_MODES: Array<{ id: string; standard: AiQuizStandard | null }> = [
 ];
 
 const MAX_FILES = 5;
+const MAX_FILE_MB = 20;
+const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 50;
 
@@ -35,6 +37,7 @@ export function AiAssistantPage() {
   const [mode, setMode] = useState("simple");
   const [files, setFiles] = useState<File[]>([]);
   const [count, setCount] = useState(15);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const standard = EXAM_MODES.find((item) => item.id === mode)?.standard ?? undefined;
 
@@ -132,10 +135,49 @@ export function AiAssistantPage() {
             multiple
             accept=".pdf,.doc,.docx,image/*"
             className="hidden"
-            onChange={(event) =>
-              setFiles(Array.from(event.target.files ?? []).slice(0, MAX_FILES))
-            }
+            onChange={(event) => {
+              const picked = Array.from(event.target.files ?? []);
+              event.target.value = "";
+              const tooBig = picked.find((file) => file.size > MAX_FILE_BYTES);
+              if (tooBig) {
+                setFileError(t("ai.fileTooBig", { name: tooBig.name, size: MAX_FILE_MB }));
+                return;
+              }
+              setFileError(null);
+              setFiles(picked.slice(0, MAX_FILES));
+            }}
           />
+
+          {fileError || start.isError ? (
+            <p className="flex items-start gap-2.5 rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
+              <Icon name="error" size={18} className="mt-0.5 shrink-0" />
+              {fileError ?? start.error?.message}
+            </p>
+          ) : null}
+
+          {files.length ? (
+            <div className="flex flex-col gap-2">
+              {files.map((file) => (
+                <span
+                  key={file.name}
+                  className="flex items-center gap-3 rounded-md bg-subtle px-4 py-2.5"
+                >
+                  <Icon name="description" size={18} className="shrink-0 text-icon-secondary" />
+                  <small className="min-w-0 flex-1 truncate text-body-sm text-ink">
+                    {file.name}
+                  </small>
+                  <button
+                    type="button"
+                    className="grid size-7 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-surface hover:text-danger"
+                    aria-label={t("ai.removeFile")}
+                    onClick={() => setFiles((current) => current.filter((item) => item !== file))}
+                  >
+                    <Icon name="close" size={16} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : null}
 
           <div className="flex items-center gap-3">
             <span className="min-w-0 flex-1 text-body-xs text-ink-secondary">

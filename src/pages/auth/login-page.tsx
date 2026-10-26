@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
@@ -15,7 +13,7 @@ import {
 import type { TwoFactorChallenge } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { LoginCredentials } from "@/shared/types";
-import { Brand } from "@/shared/ui/legacy";
+import { AuthShell } from "@/shared/ui/auth-shell";
 
 interface PendingChallenge {
   credentials: LoginCredentials;
@@ -80,43 +78,27 @@ export function LoginPage() {
   }
 
   return (
-    <main className="login-page">
-      <div className="login-orb login-orb--one" />
-      <div className="login-orb login-orb--two" />
-      <motion.section
-        className="login-card"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <Brand />
-        <div className="login-heading">
-          <span className="eyebrow">
-            <Sparkles size={14} /> {t("tagline")}
-          </span>
-          <h1>{pending ? t("twoFactor.title") : t("title")}</h1>
-          <p>{pending ? describeTwoFactorChallenge(pending.challenge, t) : t("subtitle")}</p>
-        </div>
-        {pending ? (
-          <TwoFactorForm
-            challenge={pending.challenge}
-            onSubmit={handleCode}
-            onResend={handleResend}
-            onCancel={() => setPending(null)}
-          />
-        ) : (
-          <>
-            <LoginForm onSubmit={handleLogin} />
-            <Link className="auth-switch-link" to="/forgot-password">
-              {t("mobile.login.forgotPassword")}
-            </Link>
-            <Link className="auth-switch-link" to="/register">
-              {t("createAccount")}
-            </Link>
-          </>
-        )}
-      </motion.section>
-      <p className="login-footer">{t("footer")}</p>
-    </main>
+    <AuthShell
+      title={pending ? t("twoFactor.title") : t("title")}
+      description={pending ? describeTwoFactorChallenge(pending.challenge, t) : t("subtitle")}
+      footer={
+        pending ? null : (
+          <Link className="text-body-sm text-ink" to="/register">
+            {t("createAccount")}
+          </Link>
+        )
+      }
+    >
+      {pending ? (
+        <TwoFactorForm
+          challenge={pending.challenge}
+          onSubmit={handleCode}
+          onResend={handleResend}
+          onCancel={() => setPending(null)}
+        />
+      ) : (
+        <LoginForm onSubmit={handleLogin} />
+      )}
+    </AuthShell>
   );
 }

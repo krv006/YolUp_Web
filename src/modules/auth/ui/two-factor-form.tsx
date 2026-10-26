@@ -2,7 +2,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import type { AppError } from "@/shared/api";
-import { Button } from "@/shared/ui/legacy";
 import type { TwoFactorChallenge } from "../api/auth.dto";
 import { describeTwoFactorChallenge } from "../lib/describe-two-factor";
 import { AuthButton, AuthFieldError, AuthScreen } from "./auth-screen";
@@ -120,7 +119,7 @@ function TwoFactorFields({ state }: { state: TwoFactorState }) {
       {state.error ? <AuthFieldError>{state.error}</AuthFieldError> : null}
 
       {state.expired ? (
-        <p className="px-1 text-body-sm text-error-text">{t("twoFactor.expired")}</p>
+        <p className="px-1 text-body-sm text-danger">{t("twoFactor.expired")}</p>
       ) : (
         <p className="px-1 text-body-sm text-ink-secondary">
           {t("twoFactor.validFor")}{" "}
@@ -136,7 +135,7 @@ function TwoFactorFields({ state }: { state: TwoFactorState }) {
       ) : (
         <button
           type="button"
-          className="self-start px-1 text-label-strong text-action disabled:opacity-60"
+          className="self-start px-1 text-body-sm text-brand disabled:opacity-60"
           disabled={state.resending}
           onClick={state.resend}
         >
@@ -152,17 +151,18 @@ export function TwoFactorForm({ challenge, onSubmit, onResend, onCancel }: TwoFa
   const state = useTwoFactorChallenge({ challenge, onSubmit, onResend });
 
   return (
-    <form className="login-form" onSubmit={state.submit} noValidate>
-      <div className="field-group">
-        <label>{t("twoFactor.codeLabel")}</label>
-        <TwoFactorFields state={state} />
-      </div>
+    <form className="flex flex-col gap-4" onSubmit={state.submit} noValidate>
+      <TwoFactorFields state={state} />
 
-      <Button className="login-submit" type="submit" loading={state.submitting}>
+      <AuthButton type="submit" loading={state.submitting} loadingLabel={t("twoFactor.submitting")}>
         {t("twoFactor.submit")}
-      </Button>
+      </AuthButton>
 
-      <button type="button" className="auth-switch-link" onClick={onCancel}>
+      <button
+        type="button"
+        className="text-body-sm text-brand transition-opacity hover:opacity-80"
+        onClick={onCancel}
+      >
         {t("twoFactor.cancel")}
       </button>
     </form>
@@ -194,7 +194,7 @@ export function MobileTwoFactorForm({
         </AuthButton>
       }
       footer={
-        <button type="button" className="text-action" onClick={onCancel}>
+        <button type="button" className="text-brand" onClick={onCancel}>
           {t("twoFactor.cancel")}
         </button>
       }

@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
 import { ForwardDialog } from "@/widgets/forward-dialog";
 import { ChatHeader } from "@/modules/conversation";
-import { MessageComposer, MessageList, useChat } from "@/modules/message";
+import { MessageComposer, MessageList, useChat, useChatUiStore } from "@/modules/message";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 import { GroupWorkspace } from "@/widgets/group-workspace";
 
@@ -13,6 +13,7 @@ export function ConversationPage() {
   const { t } = useTranslation("chat");
   const { conversationId } = useParams();
   const { user } = useAuth();
+  const selectionMode = useChatUiStore((state) => state.selected.length > 0);
   const currentUserId = user?.id ?? null;
   const chat = useChat(conversationId, {
     role: "teacher",
@@ -142,6 +143,7 @@ export function ConversationPage() {
         onBulkDelete={(messageIds, scope) => deleteMessages.mutate({ messageIds, scope })}
         onRetryMessage={retryMessage}
       />
+      {selectionMode ? null : (
       <MessageComposer
         key={editingMessage?.id ?? "compose"}
         onSend={handleSend}
@@ -156,6 +158,7 @@ export function ConversationPage() {
         onTyping={sendTyping}
         roomId={conversationId ?? null}
       />
+      )}
 
       <ForwardDialog
         open={forwardTarget.length > 0}

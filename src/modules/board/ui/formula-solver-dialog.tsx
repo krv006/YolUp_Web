@@ -77,10 +77,10 @@ export function FormulaSolverDialog({
     >
       <form id="formula-solver-form" className="flex flex-col gap-3" onSubmit={onSolve}>
         <label className="flex flex-col gap-1.5">
-          <span className="text-label-strong text-ink-secondary">
+          <span className="text-body-xs text-ink-secondary">
             {t("formulaDialog.formulaLabel")}
           </span>
-          <span className="flex h-12 items-center gap-2 rounded-xl bg-subtle px-3.5 focus-within:ring-2 focus-within:ring-focus">
+          <span className="flex h-13 items-center gap-2 rounded-md border border-transparent bg-subtle px-4 focus-within:border-focus focus-within:bg-surface">
             <input
               ref={inputRef}
               autoFocus
@@ -108,8 +108,8 @@ export function FormulaSolverDialog({
       </form>
 
       {solution ? (
-        <div className="flex flex-col gap-2.5 rounded-xl border border-line p-3.5">
-          <span className="text-caption-strong tracking-wide text-ink-tertiary uppercase">
+        <div className="flex flex-col gap-2.5 rounded-md bg-subtle p-4">
+          <span className="text-overline text-ink-tertiary uppercase">
             {t("formulaDialog.solutionSteps", { count: steps.length })}
           </span>
 
@@ -117,7 +117,7 @@ export function FormulaSolverDialog({
             <ol className="flex flex-col gap-2">
               {steps.map((step, index) => (
                 <li key={step} className="flex items-start gap-3">
-                  <span className="w-4 shrink-0 font-numeric text-caption-strong text-action">
+                  <span className="w-4 shrink-0 font-numeric text-caption-strong text-brand">
                     {index + 1}
                   </span>
                   <span className="min-w-0 flex-1 font-numeric text-body-sm text-ink">{step}</span>

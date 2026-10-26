@@ -139,7 +139,7 @@ export function TeacherDashboardPage() {
         searchOpen={searchOpen}
         onSearchOpenChange={setSearchOpen}
       >
-        <DashboardEmptyGroups onCreate={() => navigate(`${ROUTES.teacher.chats}/workspace`)} />
+        <DashboardEmptyGroups onCreate={() => navigate(ROUTES.teacher.workspace)} />
       </DashboardShell>
     );
 
@@ -205,7 +205,7 @@ export function TeacherDashboardPage() {
                 <SectionHeader
                   title={t("today.title")}
                   actionLabel={t("common.seeAll")}
-                  onAction={() => navigate(`${ROUTES.teacher.chats}/schedule`)}
+                  onAction={() => navigate(ROUTES.teacher.schedule)}
                 />
               ) : null}
 
@@ -265,14 +265,14 @@ export function TeacherDashboardPage() {
                     <button
                       type="button"
                       className="flex h-11 items-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
-                      onClick={() => navigate(`${ROUTES.teacher.chats}/schedule`)}
+                      onClick={() => navigate(ROUTES.teacher.schedule)}
                     >
                       {t("today.openSchedule")}
                     </button>
                     <button
                       type="button"
                       className="flex h-11 items-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-                      onClick={() => navigate(`${ROUTES.teacher.chats}/schedule`)}
+                      onClick={() => navigate(ROUTES.teacher.schedule)}
                     >
                       {t("today.addLesson")}
                     </button>
@@ -287,7 +287,7 @@ export function TeacherDashboardPage() {
               <SectionHeader
                 title={t("review.title")}
                 actionLabel={t("common.seeAll")}
-                onAction={() => navigate(`${ROUTES.teacher.chats}/assignments`)}
+                onAction={() => navigate(ROUTES.teacher.homework)}
               />
               <div className="flex flex-col overflow-hidden rounded-lg bg-surface">
                 {toReview.slice(0, 3).map(({ assignment, pending }) => (
@@ -295,7 +295,7 @@ export function TeacherDashboardPage() {
                     key={assignment.id}
                     type="button"
                     className="flex items-center gap-3 border-b border-line px-5 py-4 text-left transition-colors last:border-b-0 hover:bg-subtle"
-                    onClick={() => navigate(`${ROUTES.teacher.chats}/assignments`)}
+                    onClick={() => navigate(ROUTES.teacher.homework)}
                   >
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-blue-bg text-accent-blue-fg">
                       <Icon name="assign" size={20} />

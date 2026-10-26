@@ -126,7 +126,7 @@ export function AppSidebar({ onCreateCourse }: AppSidebarProps) {
                     to={
                       room
                         ? ROUTES.teacher.chat(room.id)
-                        : `${ROUTES.teacher.chats}/workspace`
+                        : ROUTES.teacher.workspace
                     }
                     className={({ isActive }) =>
                       `flex h-10 items-center gap-2.5 rounded-xl px-3 text-body-sm transition-colors ${

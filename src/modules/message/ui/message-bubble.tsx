@@ -163,10 +163,10 @@ export function MessageBubble({
       )}
 
       <div
-        className={`flex max-w-[80%] flex-col gap-1 rounded-2xl px-3.5 py-2.5 text-body-sm lg:max-w-[560px] lg:gap-1.5 lg:px-4 lg:py-3 lg:text-body ${
+        className={`flex max-w-[80%] flex-col gap-1 rounded-lg px-3.5 py-2.5 text-body-sm lg:max-w-[560px] lg:gap-1.5 lg:px-4 lg:py-3 lg:text-body ${
           outgoing
-            ? "rounded-br-md bg-action text-on-action"
-            : "rounded-bl-md border border-line bg-surface text-ink"
+            ? "rounded-br-sm bg-brand text-on-action"
+            : "rounded-bl-sm bg-surface text-ink shadow-xs"
         }`}
       >
         {message.senderName && !outgoing && showName && (

@@ -1,6 +1,8 @@
 import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
 import { ArrowLeft, ChevronDown, Eye, EyeOff, HelpCircle, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { AuthShell } from "@/shared/ui/auth-shell";
 
 export interface AuthScreenProps {
   onBack?: () => void;
@@ -22,6 +24,14 @@ export function AuthScreen({
   footer,
 }: AuthScreenProps) {
   const { t } = useTranslation("auth");
+  const isCompact = useIsCompact();
+
+  if (!isCompact)
+    return (
+      <AuthShell title={title} description={description} action={action} footer={footer} notice={notice}>
+        {children}
+      </AuthShell>
+    );
 
   return (
     <main className="flex min-h-dvh flex-col bg-canvas px-5 pt-4 pb-7">
