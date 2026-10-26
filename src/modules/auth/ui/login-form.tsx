@@ -64,7 +64,10 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         {errors.password ? <AuthFieldError>{errors.password.message}</AuthFieldError> : null}
       </div>
 
-      <Link className="px-2 text-body-sm text-brand transition-opacity hover:opacity-80" to="/forgot-password">
+      <Link
+        className="self-end px-2 text-body-sm text-brand transition-opacity hover:opacity-80"
+        to="/forgot-password"
+      >
         {t("mobile.login.forgotPassword")}
       </Link>
 
@@ -74,9 +77,11 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         </p>
       ) : null}
 
-      <AuthButton type="submit" loading={isSubmitting}>
-        {t("form.submit")}
-      </AuthButton>
+      <div className="pt-3">
+        <AuthButton type="submit" loading={isSubmitting}>
+          {t("form.submit")}
+        </AuthButton>
+      </div>
     </form>
   );
 }
