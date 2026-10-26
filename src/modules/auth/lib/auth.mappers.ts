@@ -61,6 +61,8 @@ export function mapCertificateDto(dto: unknown): Certificate {
     file: parsed.file,
     title: parsed.title || "",
     createdAt: parsed.created_at,
+    issuer: parsed.issuer ?? "",
+    verified: Boolean(parsed.verified),
   };
 }
 

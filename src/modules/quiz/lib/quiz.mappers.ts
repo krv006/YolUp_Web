@@ -4,6 +4,7 @@ import type {
   QuizAttemptAnswer,
   QuizAttemptResult,
   QuizAttemptSummary,
+  QuizQuestionStat,
   QuizDetail,
   QuizEditValues,
   QuizFormValues,
@@ -21,6 +22,7 @@ import type {
   QuizAttemptAnswerDto,
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
+  QuizQuestionStatDto,
   QuizDto,
   QuizGroupDto,
   QuizImportPreviewDto,
@@ -144,6 +146,19 @@ export function mapQuizAttemptSummaryDto(dto: QuizAttemptSummaryDto): QuizAttemp
     score: dto.score,
     maxScore: dto.max_score,
     createdAt: dto.created_at,
+    durationSeconds: dto.duration_seconds ?? null,
+    correctCount: dto.correct_count ?? null,
+    questionCount: dto.question_count ?? null,
+  };
+}
+
+export function mapQuizQuestionStatDto(dto: QuizQuestionStatDto): QuizQuestionStat {
+  return {
+    questionId: String(dto.question_id),
+    order: Number(dto.order ?? 0),
+    label: dto.label ?? "",
+    wrongRate: Number(dto.wrong_rate ?? 0),
+    attemptsCount: Number(dto.attempts_count ?? 0),
   };
 }
 
@@ -299,8 +314,16 @@ export function mapAttemptAnswerRequest({ questionId, answer }: QuizAttemptAnswe
   }
 }
 
-export function mapQuizAttemptRequest(answers: QuizAttemptAnswerInput[]): Record<string, unknown> {
-  return { answers: answers.map(mapAttemptAnswerRequest) };
+export function mapQuizAttemptRequest(
+  answers: QuizAttemptAnswerInput[],
+  durationSeconds?: number | null
+): Record<string, unknown> {
+  return {
+    answers: answers.map(mapAttemptAnswerRequest),
+    ...(durationSeconds != null && Number.isFinite(durationSeconds)
+      ? { duration_seconds: Math.max(0, Math.min(86_400, Math.round(durationSeconds))) }
+      : {}),
+  };
 }
 
 export function quizDisplayTitle(quiz: { title: string; topic: string }): string {

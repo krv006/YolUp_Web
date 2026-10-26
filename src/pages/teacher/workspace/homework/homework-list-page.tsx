@@ -3,7 +3,12 @@ import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useCourses } from "@/modules/course";
-import { homeworkApi, homeworkKeys, useCreateAssignment } from "@/modules/homework";
+import {
+  homeworkApi,
+  homeworkKeys,
+  useCreateAssignment,
+  useHomeworkAiStats,
+} from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
@@ -24,6 +29,7 @@ export function HomeworkListPage() {
   const navigate = useNavigate();
   const courses = useCourses();
   const create = useCreateAssignment();
+  const aiStats = useHomeworkAiStats("today");
   const [filter, setFilter] = useState("active");
   const [createOpen, setCreateOpen] = useState(false);
 
@@ -164,9 +170,15 @@ export function HomeworkListPage() {
           <section className="flex flex-col gap-2 rounded-lg bg-brand-subtle p-5">
             <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
               <Icon name="auto-awesome" size={18} />
-              {t("list.aiTitle")}
+              {aiStats.data?.checked
+                ? t("list.aiCheckedToday", { count: aiStats.data.checked })
+                : t("list.aiTitle")}
             </strong>
-            <p className="text-body-xs text-ink-secondary">{t("list.aiHint")}</p>
+            <p className="text-body-xs text-ink-secondary">
+              {aiStats.data?.pendingConfirm
+                ? t("list.aiPendingConfirm", { count: aiStats.data.pendingConfirm })
+                : t("list.aiHint")}
+            </p>
           </section>
         </div>
       </div>

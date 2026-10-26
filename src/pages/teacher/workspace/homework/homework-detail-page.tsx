@@ -5,6 +5,7 @@ import {
   useAssignment,
   useDeleteAssignment,
   useDownloadAssignmentFile,
+  useAssignmentAiSummary,
   useRemindAssignment,
   useUpdateAssignment,
 } from "@/modules/homework";
@@ -45,6 +46,7 @@ export function HomeworkDetailPage() {
   const assignment = useAssignment(assignmentId);
   const remove = useDeleteAssignment();
   const remind = useRemindAssignment();
+  const aiSummary = useAssignmentAiSummary();
   const download = useDownloadAssignmentFile();
   const update = useUpdateAssignment();
   const [editOpen, setEditOpen] = useState(false);
@@ -58,6 +60,7 @@ export function HomeworkDetailPage() {
 
   const total = item?.stats?.studentsCount ?? submissions.length;
   const submitted = submissions.length;
+  const summary = aiSummary.data ?? item?.aiGroupSummary ?? null;
   const unchecked = submissions.filter((row) => row.status !== "done").length;
   const missing = Math.max(total - submitted, 0);
   const average = item?.stats?.averageScore ?? null;
@@ -156,12 +159,36 @@ export function HomeworkDetailPage() {
             </div>
           </section>
 
-          <section className="flex flex-col gap-2 rounded-lg bg-brand-subtle p-5">
+          <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-5">
             <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
               <Icon name="auto-awesome" size={18} />
               {t("detail.aiAdvice")}
             </strong>
-            <p className="text-body-xs text-ink-secondary">{t("detail.aiAdviceHint")}</p>
+
+            {summary ? (
+              <>
+                <p className="text-body-sm text-ink">{summary.text || summary.summary}</p>
+
+                {summary.recommendations.length ? (
+                  <ul className="flex list-disc flex-col gap-1 pl-4 text-body-xs text-ink-secondary">
+                    {summary.recommendations.slice(0, 3).map((line) => (
+                      <li key={line}>{line}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </>
+            ) : (
+              <p className="text-body-xs text-ink-secondary">{t("detail.aiAdviceHint")}</p>
+            )}
+
+            <button
+              type="button"
+              className="flex h-10 w-full items-center justify-center rounded-full bg-surface text-button text-brand transition-colors hover:bg-tint disabled:opacity-50"
+              disabled={aiSummary.isPending || !submitted}
+              onClick={() => assignmentId && aiSummary.mutate(assignmentId)}
+            >
+              {summary ? t("detail.aiRefresh") : t("detail.aiGenerate")}
+            </button>
           </section>
         </div>
 
@@ -322,9 +349,15 @@ export function HomeworkDetailPage() {
         due={formatDue(item?.dueAt ?? null, months)}
         pending={remind.isPending}
         onOpenChange={setRemindOpen}
-        onConfirm={() => {
+        onConfirm={(input) => {
           if (!assignmentId) return;
-          remind.mutateAsync(assignmentId).then(() => setRemindOpen(false));
+          remind
+            .mutateAsync({
+              assignmentId,
+              message: input.message,
+              notifyParents: input.notifyParents,
+            })
+            .then(() => setRemindOpen(false));
         }}
       />
     </WorkspaceShell>

@@ -14,7 +14,7 @@ export { defaultMaxScore, mapAiResultDto, mapAssignmentDto, mapAssignmentRequest
 export { validateHomeworkFile } from "./lib/homework-validation";
 export { useHomeworkBoardSource } from "./model/use-homework-board";
 export type { HomeworkBoardSaveState } from "./model/use-homework-board";
-export { getHomeworkPollingInterval, homeworkKeys, useAssignmentAiSummary, useRemindAssignment, useRequestResubmit, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment } from "./model/homework.queries";
+export { getHomeworkPollingInterval, homeworkKeys, useAssignmentAiSummary, useHomeworkAiStats, useRemindAssignment, useRequestResubmit, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment } from "./model/homework.queries";
 export { AssignmentDetailDialog } from "./ui/assignment-detail-dialog";
 export { HomeworkChatCard } from "./ui/homework-chat-card";
 export { HomeworkMessageCard } from "./ui/homework-message-card";

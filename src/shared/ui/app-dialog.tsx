@@ -16,8 +16,8 @@ export interface AppDialogProps {
   children?: ReactNode;
   footer?: ReactNode;
   width?: string;
-  /** stacked: ikonka sarlavha ustida turadi. */
-  layout?: "inline" | "stacked";
+  /** stacked: ikonka sarlavha ustida · centered: hammasi markazda, yopish tugmasisiz. */
+  layout?: "inline" | "stacked" | "centered";
 }
 
 const SHELL =
@@ -71,10 +71,23 @@ export function AppDialog({
           <span
             className={`mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-muted ${
               variant === "panel" ? "lg:hidden" : ""
-            }`}
+            } ${layout === "centered" ? "hidden" : ""}`}
             aria-hidden="true"
           />
 
+          {layout === "centered" ? (
+            <div className="flex shrink-0 flex-col items-center gap-3 px-6 pt-6 text-center">
+              {icon ? <span className="shrink-0">{icon}</span> : null}
+              <DialogPrimitive.Title className="font-heading text-h2 text-ink">
+                {title}
+              </DialogPrimitive.Title>
+              {description ? (
+                <DialogPrimitive.Description className="text-body-sm text-ink-secondary">
+                  {description}
+                </DialogPrimitive.Description>
+              ) : null}
+            </div>
+          ) : (
           <div
             className={`flex shrink-0 gap-3 px-4 pt-4 ${
               layout === "stacked" ? "flex-col items-start" : "items-center"
@@ -96,13 +109,22 @@ export function AppDialog({
 
             {layout === "stacked" ? titleBlock : null}
           </div>
+          )}
 
           <div className="-mx-1 flex min-h-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto px-5 pt-4.5 pb-1">
             {children}
           </div>
 
           {footer ? (
-            <div className="flex shrink-0 items-center gap-3 px-4 pt-6 pb-4">{footer}</div>
+            <div
+              className={`flex shrink-0 gap-3 ${
+                layout === "centered"
+                  ? "flex-col px-6 pt-4 pb-6"
+                  : "items-center px-4 pt-6 pb-4"
+              }`}
+            >
+              {footer}
+            </div>
           ) : null}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

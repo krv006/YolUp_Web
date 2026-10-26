@@ -37,7 +37,21 @@ function applyEvent(state: BoardState | undefined, event: BoardSocketEvent): Boa
     case "sheet":
       return state.sheets.some((sheet) => sheet.index === event.index)
         ? state
-        : { ...state, sheets: [...state.sheets, { index: event.index, strokes: [] }] };
+        : {
+            ...state,
+            sheets: [
+              ...state.sheets,
+              { index: event.index, title: event.title ?? "", strokes: [] },
+            ],
+          };
+
+    case "sheet_renamed":
+      return {
+        ...state,
+        sheets: state.sheets.map((sheet) =>
+          sheet.index === event.index ? { ...sheet, title: event.title ?? "" } : sheet
+        ),
+      };
 
     default:
       return state;

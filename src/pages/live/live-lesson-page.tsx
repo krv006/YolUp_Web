@@ -13,7 +13,7 @@ import {
   useLiveToken,
   type LessonPreJoinChoices,
 } from "@/modules/live";
-import { RateLessonDialog, useLesson } from "@/modules/lesson";
+import { RateLessonDialog, useLesson, useLessonWaiting } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
@@ -33,6 +33,7 @@ export function LiveLessonPage() {
   const isTeacher = useRef(false);
   const [ratePrompt, setRatePrompt] = useState(false);
   const [choices, setChoices] = useState<LessonPreJoinChoices | null>(null);
+  const waiting = useLessonWaiting(lessonId ?? null, !choices);
   const [readyToConnect, setReadyToConnect] = useState(false);
 
   useEffect(() => {
@@ -155,6 +156,9 @@ export function LiveLessonPage() {
           userName={user?.name}
           micAllowed={tokenAllowsTrack(token.data.token, MIC_TRACK)}
           isTeacher={token.data.isTeacher}
+          waitingCount={waiting.data?.waitingCount ?? null}
+          totalCount={waiting.data?.totalCount ?? null}
+          waitingNames={(waiting.data?.students ?? []).map((item) => item.name)}
           onJoin={setChoices}
           onCancel={() => navigate(-1)}
         />

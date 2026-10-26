@@ -126,10 +126,27 @@ export function useRequestResubmit() {
 export function useRemindAssignment() {
   const { t } = useTranslation("homework");
   return useMutation({
-    mutationFn: (assignmentId: string) => homeworkApi.remind(assignmentId),
+    mutationFn: ({
+      assignmentId,
+      message,
+      notifyParents,
+    }: {
+      assignmentId: string;
+      message?: string;
+      notifyParents?: boolean;
+    }) => homeworkApi.remind(assignmentId, { message, notifyParents }),
     onSuccess: (result) =>
       toast.success(t("toast.reminderSent", { count: result.notified ?? 0 })),
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useHomeworkAiStats(period: "today" | "week" | "month" = "today", enabled = true) {
+  return useQuery({
+    queryKey: ["homework", "ai-stats", period],
+    queryFn: ({ signal }) => homeworkApi.getAiStats(period, { signal }),
+    enabled,
+    staleTime: 60_000,
   });
 }
 

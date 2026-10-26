@@ -272,7 +272,9 @@
     "newDirect": "New chat",
     "newGroup": "New group",
     "typing": "{{name}} is typing...",
-    "you": "You"
+    "you": "You",
+    "peopleSection": "People",
+    "startChat": "Start chat"
   },
   "pinned": {
     "label": "Pinned message",

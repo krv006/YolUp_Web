@@ -6,6 +6,8 @@ export interface VoiceRoomDto {
   id: string | number;
   course: string | number;
   created_by: string | number;
+  host_id?: string | number | null;
+  host_identity?: string | null;
   created_by_name?: string | null;
   title?: string | null;
   access_mode: VoiceAccessModeDto;

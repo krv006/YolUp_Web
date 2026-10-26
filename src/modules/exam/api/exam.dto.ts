@@ -147,6 +147,9 @@ export interface ExamStudentResultDto {
   total?: ExamTotalResultDto | null;
   pending?: string[];
   integrity?: { away: number; paste: number };
+  answered?: number | null;
+  questions_total?: number | null;
+  progress?: { answered?: number | null; total?: number | null } | null;
 }
 
 export interface ExamResultsDto {

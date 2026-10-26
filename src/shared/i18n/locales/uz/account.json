@@ -214,6 +214,27 @@
     "twoFactorDisabled": "Ikki bosqichli tasdiqlash o‘chirildi",
     "twoFactorSmsUnavailable": "SMS xizmati hozircha ulanmagan, shuning uchun yoqib bo‘lmaydi.",
     "enable": "Yoqish",
-    "confirmCode": "Tasdiqlash"
+    "confirmCode": "Tasdiqlash",
+    "loginSectionTitle": "Kirish ma'lumotlari",
+    "securitySectionTitle": "Xavfsizlik",
+    "dangerSectionTitle": "Xavfli hudud",
+    "loginLabel": "Login",
+    "loginsRowHint": "Qurilma va IP bo'yicha",
+    "resendCode": "Qayta yuborish",
+    "changeNumber": "Raqamni o'zgartirish",
+    "generalSectionTitle": "Umumiy",
+    "notificationsSectionTitle": "Bildirishnomalar",
+    "uploadedTitle": "Yuklangan · {{count}}",
+    "recentCommentsTitle": "So'nggi izohlar",
+    "todayGroup": "Bugun",
+    "yesterdayGroup": "Kecha",
+    "earlierGroup": "Oldinroq",
+    "noRatings": "Hali baho yo'q.",
+    "noLogins": "Kirishlar tarixi hali bo'sh.",
+    "lessonReminder": "Dars eslatmasi",
+    "reminderValue": "{{count}} daq oldin",
+    "pushTitle": "Push bildirishnomalar",
+    "pushOn": "Yoqilgan",
+    "pushOff": "O'chirilgan"
   }
 }

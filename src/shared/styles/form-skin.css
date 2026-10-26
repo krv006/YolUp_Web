@@ -625,3 +625,176 @@ textarea.quiz-page-question-text:focus {
 .is-field-error .form-picker-chevron {
   color: var(--border-danger);
 }
+
+.profile-form .form-picker-trigger {
+  min-height: 52px;
+  background: var(--bg-surface);
+  border-color: transparent;
+}
+.profile-form .form-picker-trigger:focus-visible,
+.profile-form .form-picker-field.is-open .form-picker-trigger {
+  border-color: var(--border-focus);
+}
+.profile-form .form-picker-label {
+  font-size: var(--fs-body-sm);
+}
+
+/* Sana va vaqt modallari (D-109, D-110) */
+.picker-modal .calendar-picker { padding: 0; }
+.picker-modal .calendar-picker-head { height: 44px; grid-template-columns: 32px 1fr 32px; }
+.picker-modal .calendar-picker-head > button {
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--icon-secondary);
+}
+.picker-modal .calendar-picker-head > button:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  transform: none;
+}
+.picker-modal .calendar-picker-head strong {
+  color: var(--text-primary);
+  font-size: var(--fs-title);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.picker-modal .calendar-weekdays { margin: 6px 0 2px; }
+.picker-modal .calendar-weekdays span {
+  height: 26px;
+  color: var(--text-tertiary);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+  text-transform: none;
+}
+.picker-modal .calendar-days { gap: 2px 0; }
+.picker-modal .calendar-days > button {
+  max-height: 44px;
+  border-radius: var(--r-full);
+  color: var(--text-primary);
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+.picker-modal .calendar-days > button.is-outside,
+.picker-modal .calendar-days > button.is-blocked {
+  color: var(--text-disabled);
+  opacity: 1;
+}
+.picker-modal .calendar-days > button.is-today {
+  color: var(--text-accent);
+  box-shadow: none;
+  font-weight: 700;
+}
+.picker-modal .calendar-days > button:nth-child(7n + 6),
+.picker-modal .calendar-days > button:nth-child(7n) {
+  color: var(--status-danger-fg);
+}
+.picker-modal .calendar-days > button.is-outside:nth-child(7n + 6),
+.picker-modal .calendar-days > button.is-outside:nth-child(7n),
+.picker-modal .calendar-days > button.is-blocked:nth-child(7n + 6),
+.picker-modal .calendar-days > button.is-blocked:nth-child(7n) {
+  color: var(--text-disabled);
+}
+.picker-modal .calendar-days > button.is-selected { color: #fff; }
+.picker-modal .calendar-selected-day {
+  inset: 4px;
+  border-radius: var(--r-full);
+  background: var(--surface-brand);
+  box-shadow: none;
+}
+
+.picker-modal .time-control { display: grid; gap: 18px; }
+.picker-modal .time-stepper {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  gap: 16px;
+}
+.picker-modal .time-stepper > div { gap: 6px; }
+.picker-modal .time-stepper > div > button {
+  width: 94px;
+  height: 22px;
+  color: var(--icon-tertiary);
+}
+.picker-modal .time-stepper > div > button:hover { background: transparent; color: var(--text-primary); }
+.picker-modal .time-stepper .time-field {
+  width: 94px;
+  min-width: 94px;
+  height: 72px;
+  border-radius: var(--r-md);
+  border: 2px solid transparent;
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.picker-modal .time-stepper .time-field:focus-visible {
+  outline: none;
+  border-color: var(--surface-brand);
+  background: var(--bg-surface);
+}
+.picker-modal .time-stepper > span {
+  color: var(--text-primary);
+  font-size: 28px;
+  font-weight: 700;
+}
+.picker-modal .time-presets,
+.picker-modal .picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.picker-modal .time-presets button,
+.picker-modal .picker-chips button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--r-full);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--fs-body-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.picker-modal .time-presets button:hover,
+.picker-modal .picker-chips button:hover { color: var(--text-primary); }
+.picker-modal .time-presets button.is-selected,
+.picker-modal .picker-chips button.is-selected {
+  background: var(--surface-brand);
+  color: #fff;
+}
+.picker-chip-section { display: grid; gap: 10px; }
+.picker-chip-title {
+  color: var(--text-tertiary);
+  font-size: var(--fs-overline);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.exam-form .form-picker-trigger { min-height: 52px; }
+.exam-form .form-picker-label { font-size: var(--fs-body-sm); }
+
+/* Toast (D-122, D-127) */
+[data-sonner-toaster] [data-sonner-toast].fokus-toast {
+  width: auto;
+  min-height: 44px;
+  padding: 11px 18px;
+  border: 0 !important;
+  border-radius: var(--r-lg) !important;
+  color: var(--text-inverse) !important;
+  background: var(--surface-inverse) !important;
+  box-shadow: 0 14px 34px rgb(var(--shadow-rgb) / 0.22) !important;
+  font-size: var(--fs-body-sm);
+  font-weight: 500;
+}
+[data-sonner-toaster] [data-sonner-toast].fokus-toast [data-icon] {
+  color: var(--status-success-fg);
+}
+[data-sonner-toaster] [data-sonner-toast].fokus-toast[data-type="error"] [data-icon] {
+  color: var(--status-danger-fg);
+}

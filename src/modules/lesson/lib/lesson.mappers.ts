@@ -46,6 +46,21 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     avgRating: toAverage(dto.avg_rating),
     ratingCount: Number(dto.rating_count ?? 0),
     quizId: dto.quiz_id ?? null,
+    studentCount: dto.students_count ?? null,
+    participantsCount: dto.participants_count ?? null,
+    attendanceRate: dto.attendance_rate ?? null,
+    joinedCount: dto.joined_count ?? null,
+    assignment: dto.assignment
+      ? { id: String(dto.assignment.id), title: dto.assignment.title ?? "" }
+      : null,
+    recurrence: dto.recurrence
+      ? {
+          freq: dto.recurrence.freq ?? "weekly",
+          weeks: Number(dto.recurrence.weeks ?? 0),
+          weekdays: dto.recurrence.weekdays ?? [],
+          endsOn: dto.recurrence.ends_on ?? null,
+        }
+      : null,
   };
 }
 
@@ -75,6 +90,14 @@ export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording 
     chapters: (dto.chapters ?? [])
       .map((item) => ({ seconds: Number(item.seconds ?? 0), title: item.title ?? "" }))
       .filter((item) => Boolean(item.title)),
+    boardPreviews: (dto.board_page_previews ?? [])
+      .map((item) => ({
+        page: Number(item.page ?? 0),
+        title: item.title ?? "",
+        imageUrl: normalizeMediaUrl(item.image_url) ?? "",
+      }))
+      .filter((item) => Boolean(item.imageUrl)),
+    pdfUrl: dto.pdf_url ?? null,
   };
 }
 

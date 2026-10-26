@@ -92,6 +92,18 @@ export function useCreateCourse() {
   });
 }
 
+export function useUpdateCourseAvatar() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, file }: { id: string; file: File | null }) =>
+      courseApi.updateAvatar(id, file),
+    onSuccess: (course) => {
+      client.invalidateQueries({ queryKey: courseKeys.all });
+      client.setQueryData(courseKeys.detail(course.id), course);
+    },
+  });
+}
+
 export function useUpdateCourse() {
   const client = useQueryClient();
   return useMutation({

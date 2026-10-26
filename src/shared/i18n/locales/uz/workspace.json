@@ -48,7 +48,9 @@
     "attendance": "Davomat",
     "noCourses": "Baholar, test natijalari va davomat kiritilgach, kurslar bo‘yicha ko‘rsatkichlar shu yerda chiqadi.",
     "studentCountValue": "{{count}} o‘quvchi",
-    "emptyTitle": "Hali ma’lumot yo‘q"
+    "emptyTitle": "Hali ma’lumot yo‘q",
+    "emptyDescription": "Baholar, test natijalari va davomat kiritilgach, kurslar bo'yicha ko'rsatkichlar shu yerda chiqadi.",
+    "emptyAction": "Test yaratish"
   },
   "createGroup": "Guruh yaratish",
   "statGroups": "Guruh",
@@ -162,5 +164,9 @@
     "chartRange": "Oxirgi 8 hafta",
     "chartEmpty": "Haftalik test natijalari backenddan kelgach chiziladi.",
     "quizShort": "test {{value}}%"
+  },
+  "results": {
+    "hardestEmpty": "Hali urinish yo'q — statistika testdan keyin chiqadi.",
+    "aiStarted": "AI mini-test tayyorlamoqda"
   }
 }

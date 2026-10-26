@@ -38,7 +38,6 @@ const ITEMS: NavItem[] = [
     to: ROUTES.teacher.workspace,
     extra: WORKSPACE_PATHS,
   },
-  { id: "profile", icon: "nav-profile", to: `${ROUTES.teacher.chats}/profile` },
 ];
 
 const LINK_BASE =
@@ -66,7 +65,7 @@ export function AppSidebar({ onCreateCourse }: AppSidebarProps) {
   );
 
   return (
-    <aside className="flex h-full w-(--layout-sidebar) shrink-0 flex-col gap-6 border-r border-line-subtle bg-surface px-4 py-6">
+    <aside className="flex h-full w-(--layout-sidebar) shrink-0 flex-col gap-6 border-r border-line-subtle bg-surface px-4 py-6 font-body text-ink">
       <NavLink to={ROUTES.teacher.dashboard} className="flex items-center gap-2 px-3">
         <img className="size-8" src={logoUrl} alt="" />
         <span className="font-heading text-h3 text-ink">YolUp</span>
@@ -135,7 +134,7 @@ export function AppSidebar({ onCreateCourse }: AppSidebarProps) {
                       }`
                     }
                   >
-                    <GroupTile name={course.title} tone={course.color} size="sm" />
+                    <GroupTile name={course.title} tone={course.color} size="sm" src={course.avatarUrl} />
                     <span className="min-w-0 flex-1 truncate">{course.title}</span>
                     {unread ? (
                       <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-brand px-1.5 text-caption-strong text-ink-inverse">
@@ -149,7 +148,7 @@ export function AppSidebar({ onCreateCourse }: AppSidebarProps) {
       </section>
 
       <NavLink
-        to={`${ROUTES.teacher.chats}/profile`}
+        to={ROUTES.teacher.profile}
         className="flex items-center gap-2.5 rounded-2xl bg-subtle p-2.5 transition-colors hover:bg-muted"
       >
         <Avatar name={user?.name} src={user?.avatarUrl ?? undefined} size="sm" />

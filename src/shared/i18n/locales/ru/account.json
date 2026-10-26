@@ -214,6 +214,27 @@
     "twoFactorDisabled": "Двухэтапное подтверждение отключено",
     "twoFactorSmsUnavailable": "SMS-сервис пока не подключён, поэтому включить нельзя.",
     "enable": "Включить",
-    "confirmCode": "Подтвердить"
+    "confirmCode": "Подтвердить",
+    "loginSectionTitle": "Данные для входа",
+    "securitySectionTitle": "Безопасность",
+    "dangerSectionTitle": "Опасная зона",
+    "loginLabel": "Логин",
+    "loginsRowHint": "По устройству и IP",
+    "resendCode": "Отправить снова",
+    "changeNumber": "Изменить номер",
+    "generalSectionTitle": "Общее",
+    "notificationsSectionTitle": "Уведомления",
+    "uploadedTitle": "Загружено · {{count}}",
+    "recentCommentsTitle": "Последние отзывы",
+    "todayGroup": "Сегодня",
+    "yesterdayGroup": "Вчера",
+    "earlierGroup": "Ранее",
+    "noRatings": "Оценок пока нет.",
+    "noLogins": "История входов пуста.",
+    "lessonReminder": "Напоминание об уроке",
+    "reminderValue": "за {{count}} мин",
+    "pushTitle": "Push-уведомления",
+    "pushOn": "Включены",
+    "pushOff": "Выключены"
   }
 }

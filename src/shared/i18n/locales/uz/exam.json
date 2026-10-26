@@ -114,15 +114,15 @@
     "emptyDescription": "Guruhingiz uchun birinchi mock imtihonni yarating — natijalar shu yerda ko‘rinadi."
   },
   "createDialog": {
-    "title": "Yangi imtihon",
+    "title": "Mock imtihon yaratish",
     "description": "Shablonni tanlang, har bo'limga test biriktiring va vaqtni belgilang.",
-    "courseLabel": "Qaysi guruh uchun",
+    "courseLabel": "Guruh",
     "templateLabel": "Shablon",
     "customTag": "o'z shabloningiz",
     "newTemplate": "+ O'z shabloningizni yaratish",
     "titleLabel": "Imtihon nomi",
     "titlePlaceholder": "Masalan: IELTS mock #3",
-    "startLabel": "Boshlanish vaqti",
+    "startLabel": "Boshlanish",
     "sectionsHead": "BO'LIMLAR",
     "quizLabel": "Test",
     "minutesLabel": "{{title}} uchun daqiqa",
@@ -144,7 +144,14 @@
     },
     "draftsHint": "{{count}} ta test hali qoralama (AI yaratgan testlar ham). Ularni tekshirib e'lon qiling — shunda shu ro'yxatda chiqadi.",
     "createWithAi": "Test yo'qmi? AI bilan yarating →",
-    "startNow": "Hozir boshlash (vaqt kutilmaydi)"
+    "startNow": "Hozir boshlash (vaqt kutilmaydi)",
+    "errorSummary": "{{count}} ta maydonni tekshiring",
+    "sectionCount": "{{count}} bo'lim",
+    "pickQuiz": "Test tanlang",
+    "startNowTitle": "Hozir boshlash",
+    "startNowHint": "Vaqt kutilmaydi",
+    "noQuizzesShort": "E'lon qilingan test yo'qmi?",
+    "createWithAiShort": "AI bilan yarating →"
   },
   "templateDialog": {
     "title": "O'z shabloningiz",
@@ -160,8 +167,8 @@
     "moveUp": "Yuqoriga",
     "moveDown": "Pastga",
     "removeItem": "O'chirish",
-    "addSection": "Bo'lim qo'shish",
-    "addBreak": "Tanaffus qo'shish",
+    "addSection": "Bo'lim",
+    "addBreak": "Tanaffus",
     "totalMinutes": "Jami: {{count}} daqiqa",
     "scaleLabel": "Jami shkala",
     "passLabel": "O'tish foizi · ixtiyoriy",
@@ -182,7 +189,9 @@
       "scaleInvalid": "Shkala 1 dan 1000 gacha bo'lishi kerak",
       "passPercentInvalid": "O'tish foizi 0 dan 100 gacha bo'lishi kerak"
     },
-    "breakDefaultTitle": "Tanaffus"
+    "breakDefaultTitle": "Tanaffus",
+    "orderHead": "Tartib",
+    "totalHours": "jami {{hours}} soat {{count}} daq"
   },
   "writing": {
     "essays": "O'QUVCHI INSHOSI",
@@ -247,7 +256,20 @@
     "awayCount": "Oynadan chiqdi: {{count}}",
     "finished": "Topshirdi",
     "inProgress": "Yechmoqda",
-    "notJoined": "Kirmadi"
+    "notJoined": "Kirmadi",
+    "deleteTitle": "Imtihonni o'chirish",
+    "deleteDescription": "“{{title}}” o'chiriladi. Buni qaytarib bo'lmaydi.",
+    "cancel": "Bekor qilish",
+    "autoScored": "Avtomatik",
+    "enterBand": "Band kiriting",
+    "aiSuggestion": "AI tavsiyasi: {{value}}",
+    "scoreTitle": "{{name}} · baholash",
+    "scoreDescription": "Listening va Reading avtomatik baholandi. Writing va Speaking uchun band kiriting.",
+    "scoreCancel": "Bekor qilish",
+    "scoreSave": "Saqlash",
+    "overallBand": "Umumiy band (taxminiy)",
+    "scorePlaceholder": "—",
+    "answeredCount": "{{answered}} / {{total}} savol"
   },
   "results": {
     "eyebrow": "Mock testlar / Natijalar · {{title}} · {{label}}",

@@ -16,6 +16,8 @@ export interface GroupTileProps {
   tone?: string;
   size?: "sm" | "md";
   className?: string;
+  /** Guruh rasmi (backenddan kelgan `avatar`). */
+  src?: string | null;
 }
 
 function initials(name: string): string {
@@ -25,7 +27,23 @@ function initials(name: string): string {
   return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
 }
 
-export function GroupTile({ name, tone = "blue", size = "md", className = "" }: GroupTileProps) {
+export function GroupTile({
+  name,
+  tone = "blue",
+  size = "md",
+  className = "",
+  src,
+}: GroupTileProps) {
+  if (src)
+    return (
+      <img
+        className={`shrink-0 object-cover ${SIZES[size]} ${className}`}
+        src={src}
+        alt=""
+        loading="lazy"
+      />
+    );
+
   return (
     <span
       className={`grid shrink-0 place-items-center font-heading ${SIZES[size]} ${

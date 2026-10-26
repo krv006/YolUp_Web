@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { ExamStudentResult } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -20,7 +21,6 @@ export function ExamScoreDialog({
 }: ExamScoreDialogProps) {
   const { t } = useTranslation("exam");
   const [scores, setScores] = useState<Record<string, string>>({});
-  const [comment, setComment] = useState("");
   const [syncedId, setSyncedId] = useState<string | null>(null);
 
   if (result && syncedId !== result.studentId) {
@@ -32,13 +32,10 @@ export function ExamScoreDialog({
           .map((section) => [section.key, section.score === null ? "" : String(section.score)])
       )
     );
-    setComment("");
   }
 
   if (!result) return null;
 
-  const autoSections = result.sections.filter((section) => !section.manual);
-  const manualSections = result.sections.filter((section) => section.manual);
 
   const values = result.sections
     .map((section) =>
@@ -53,6 +50,8 @@ export function ExamScoreDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
+      variant="confirm"
+      width="lg:w-120"
       title={t("mock.scoreTitle", { name: result.studentName })}
       description={t("mock.scoreDescription")}
       footer={
@@ -74,7 +73,7 @@ export function ExamScoreDialog({
                 const score = Number(value);
                 if (value.trim() && Number.isFinite(score)) payload[key] = score;
               }
-              onSave(payload, comment);
+              onSave(payload, "");
             }}
           >
             {t("mock.scoreSave")}
@@ -82,45 +81,54 @@ export function ExamScoreDialog({
         </>
       }
     >
-      <div className="flex flex-col gap-4">
-        {autoSections.length ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {autoSections.map((section) => (
-              <label key={section.key} className="field-group">
-                <span>{t("mock.autoLabel", { title: section.title })}</span>
-                <input value={section.score === null ? "—" : String(section.score)} readOnly disabled />
-              </label>
-            ))}
-          </div>
-        ) : null}
+      <div className="flex flex-col gap-2.5">
+        {result.sections.map((section) => {
+          const manual = section.manual;
+          const value = manual ? (scores[section.key] ?? "") : "";
+          return (
+            <label
+              key={section.key}
+              className={`flex items-center gap-3 rounded-md border-2 px-4 py-3 transition-colors ${
+                manual
+                  ? "border-transparent bg-subtle focus-within:border-focus focus-within:bg-surface"
+                  : "border-transparent bg-subtle"
+              }`}
+            >
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-title-sm text-ink">{section.title}</strong>
+                <small className="truncate text-body-xs text-ink-tertiary">
+                  {manual ? t("mock.enterBand") : t("mock.autoScored")}
+                </small>
+              </span>
 
-        {manualSections.length ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {manualSections.map((section) => (
-              <label key={section.key} className="field-group">
-                <span>{section.title}</span>
+              {manual ? (
                 <input
+                  className="w-16 shrink-0 bg-transparent text-right font-heading text-title-lg text-ink outline-none placeholder:text-ink-tertiary"
                   inputMode="decimal"
-                  value={scores[section.key] ?? ""}
-                  placeholder={t("mock.scorePlaceholder")}
+                  value={value}
+                  placeholder="—"
                   onChange={(event) =>
                     setScores((current) => ({ ...current, [section.key]: event.target.value }))
                   }
                 />
-              </label>
-            ))}
-          </div>
-        ) : null}
+              ) : (
+                <span className="flex shrink-0 items-center gap-2 text-ink-tertiary">
+                  <Lock size={15} />
+                  <strong className="font-heading text-title-lg text-ink">
+                    {section.score === null ? "—" : section.score}
+                  </strong>
+                </span>
+              )}
+            </label>
+          );
+        })}
 
-        <span className="flex items-center gap-3 rounded-xl bg-action-subtle px-4 py-3">
-          <small className="flex-1 text-label-strong text-action">{t("mock.overallBand")}</small>
-          <strong className="font-heading text-h3 text-action">{overall}</strong>
+        <span className="flex items-center gap-3 px-1 pt-1">
+          <small className="min-w-0 flex-1 truncate text-body-sm text-ink-secondary">
+            {t("mock.overallBand")}
+          </small>
+          <strong className="shrink-0 font-heading text-h2 text-brand">{overall}</strong>
         </span>
-
-        <label className="field-group">
-          <span>{t("mock.scoreComment")}</span>
-          <textarea rows={2} value={comment} onChange={(event) => setComment(event.target.value)} />
-        </label>
       </div>
     </AppDialog>
   );

@@ -114,15 +114,15 @@
     "emptyDescription": "Create the first mock exam for your group — results will show up here."
   },
   "createDialog": {
-    "title": "New exam",
+    "title": "Create a mock exam",
     "description": "Pick a template, attach a test to each section and set the time.",
-    "courseLabel": "Which group",
+    "courseLabel": "Group",
     "templateLabel": "Template",
     "customTag": "your template",
     "newTemplate": "+ Create your own template",
     "titleLabel": "Exam name",
     "titlePlaceholder": "e.g. IELTS mock #3",
-    "startLabel": "Start time",
+    "startLabel": "Start",
     "sectionsHead": "SECTIONS",
     "quizLabel": "Test",
     "minutesLabel": "Minutes for {{title}}",
@@ -144,7 +144,14 @@
     },
     "draftsHint": "{{count}} test(s) are still drafts (including AI-made ones). Review and publish them and they will appear in this list.",
     "createWithAi": "No test yet? Create one with AI →",
-    "startNow": "Start now (don't wait for a time)"
+    "startNow": "Start now (don't wait for a time)",
+    "errorSummary": "Check {{count}} fields",
+    "sectionCount": "{{count}} sections",
+    "pickQuiz": "Choose a test",
+    "startNowTitle": "Start now",
+    "startNowHint": "No waiting for the time",
+    "noQuizzesShort": "No published test?",
+    "createWithAiShort": "Create with AI →"
   },
   "templateDialog": {
     "title": "Your own template",
@@ -160,8 +167,8 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "removeItem": "Remove",
-    "addSection": "Add a section",
-    "addBreak": "Add a break",
+    "addSection": "Section",
+    "addBreak": "Break",
     "totalMinutes": "Total: {{count}} min",
     "scaleLabel": "Total scale",
     "passLabel": "Pass percent · optional",
@@ -182,7 +189,9 @@
       "scaleInvalid": "The scale must be between 1 and 1000",
       "passPercentInvalid": "The pass percent must be between 0 and 100"
     },
-    "breakDefaultTitle": "Break"
+    "breakDefaultTitle": "Break",
+    "orderHead": "Order",
+    "totalHours": "{{hours}} h {{count}} min total"
   },
   "writing": {
     "essays": "STUDENT ESSAYS",
@@ -247,7 +256,20 @@
     "awayCount": "Left the window: {{count}}",
     "finished": "Submitted",
     "inProgress": "In progress",
-    "notJoined": "Not joined"
+    "notJoined": "Not joined",
+    "deleteTitle": "Delete exam",
+    "deleteDescription": "“{{title}}” will be deleted. This cannot be undone.",
+    "cancel": "Cancel",
+    "autoScored": "Automatic",
+    "enterBand": "Enter band",
+    "aiSuggestion": "AI suggestion: {{value}}",
+    "scoreTitle": "{{name}} · scoring",
+    "scoreDescription": "Listening and Reading were scored automatically. Enter bands for Writing and Speaking.",
+    "scoreCancel": "Cancel",
+    "scoreSave": "Save",
+    "overallBand": "Overall band (estimate)",
+    "scorePlaceholder": "—",
+    "answeredCount": "{{answered}} / {{total}} questions"
   },
   "results": {
     "eyebrow": "Mock exams / Results · {{title}} · {{label}}",

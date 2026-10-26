@@ -37,7 +37,8 @@
     "edit": "Edit",
     "emptyTitle": "No lessons scheduled yet",
     "emptyHint": "Add the schedule — your students will get a reminder.",
-    "cancelLesson": "Cancel lesson"
+    "cancelLesson": "Cancel lesson",
+    "finishedStats": "{{joined}} / {{total}} joined · attendance {{rate}}%"
   },
   "assignments": {
     "eyebrow": "GROUP ASSIGNMENTS",

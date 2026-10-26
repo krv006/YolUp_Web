@@ -36,6 +36,7 @@ export {
   useSubjects,
   useUnenrollStudent,
   useUpdateCourse,
+  useUpdateCourseAvatar,
 } from "./model/course.queries";
 export { AddStudentDialog } from "./ui/add-student-dialog";
 export { InviteLinkDialog } from "./ui/invite-link-dialog";

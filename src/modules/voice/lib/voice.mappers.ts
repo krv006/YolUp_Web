@@ -18,6 +18,8 @@ export function mapVoiceRoomDto(dto: VoiceRoomDto): VoiceRoom {
     id: String(dto.id),
     courseId: String(dto.course),
     createdById: String(dto.created_by),
+    hostId: dto.host_id == null ? null : String(dto.host_id),
+    hostIdentity: dto.host_identity ?? null,
     createdByName: dto.created_by_name || "",
     title: dto.title || "",
     accessMode: dto.access_mode as VoiceAccessMode,

@@ -60,6 +60,15 @@ export function useAddSheet(lessonId: string) {
   });
 }
 
+export function useRenameSheet(lessonId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ index, title }: { index: number; title: string }) =>
+      boardApi.renameSheet(lessonId, index, title),
+    onSuccess: () => client.invalidateQueries({ queryKey: boardKeys.state(lessonId) }),
+  });
+}
+
 export function useEraseStrokes(lessonId: string) {
   const client = useQueryClient();
   return useMutation({

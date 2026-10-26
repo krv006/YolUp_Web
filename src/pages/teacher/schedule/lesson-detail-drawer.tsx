@@ -32,6 +32,7 @@ export function LessonDetailDrawer({
 }: LessonDetailDrawerProps) {
   const { t } = useTranslation("lesson");
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
+  const weekdaysShort = t("list.weekdaysShort", { returnObjects: true }) as string[];
 
   if (!lesson) return null;
 
@@ -87,11 +88,28 @@ export function LessonDetailDrawer({
               label={t("schedule.rows.time")}
               value={`${today ? `${t("schedule.today")}, ` : `${starts.getDate()}-${months[starts.getMonth()]}, `}${clock(starts)} – ${clock(ends)} · ${t("list.durationMinutes", { count: lesson.durationMinutes || 45 })}`}
             />
-            {lesson.recurrenceId ? (
+            {lesson.recurrence || lesson.recurrenceId ? (
               <Row
                 icon="refresh"
                 label={t("schedule.rows.repeat")}
-                value={t("schedule.rows.repeatValue")}
+                value={
+                  lesson.recurrence
+                    ? [
+                        lesson.recurrence.weekdays
+                          .map((day) => weekdaysShort[day] ?? "")
+                          .filter(Boolean)
+                          .join(", "),
+                        t(`schedule.rows.freq.${lesson.recurrence.freq}`, {
+                          defaultValue: t("schedule.rows.repeatValue"),
+                        }),
+                        lesson.recurrence.endsOn
+                          ? t("schedule.rows.until", { date: lesson.recurrence.endsOn })
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")
+                    : t("schedule.rows.repeatValue")
+                }
               />
             ) : null}
             <Row

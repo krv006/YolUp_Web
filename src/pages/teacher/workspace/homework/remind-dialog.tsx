@@ -11,7 +11,7 @@ export interface RemindDialogProps {
   due: string;
   pending?: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => void;
+  onConfirm: (input: { message: string; notifyParents: boolean }) => void;
 }
 
 export function RemindDialog({
@@ -49,7 +49,7 @@ export function RemindDialog({
             type="button"
             className={dialogButton.primary}
             disabled={pending}
-            onClick={onConfirm}
+            onClick={() => onConfirm({ message: text, notifyParents: withParents })}
           >
             {t("remindDialog.submit")}
           </button>

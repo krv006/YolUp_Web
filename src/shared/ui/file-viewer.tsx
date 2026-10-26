@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FileQuestion, Loader2 } from "lucide-react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { File, FileQuestion, FileText, Image, Loader2, Lock, Music, Video, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   blobForViewing,
@@ -8,13 +9,14 @@ import {
   fileNameFor,
   type FileKind,
 } from "@/shared/lib";
-import { Button, Dialog, DialogContent } from "./legacy";
 
 export interface FileViewerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   name: string;
   mimeType?: string;
+  /** Sarlavha ostidagi qo'shimcha izoh (masalan "12 sahifa · Mirkamol Atakhanov"). */
+  meta?: string;
   load: (signal: AbortSignal) => Promise<Blob>;
 }
 
@@ -22,9 +24,32 @@ interface LoadedFile {
   url: string;
   kind: FileKind;
   fileName: string;
+  size: number;
 }
 
-export function FileViewer({ open, onOpenChange, name, mimeType = "", load }: FileViewerProps) {
+const TONE: Record<string, string> = {
+  pdf: "bg-danger-bg text-danger",
+  image: "bg-accent-violet-bg text-accent-violet-fg",
+  video: "bg-brand-subtle text-brand",
+  audio: "bg-accent-green-bg text-success",
+  other: "bg-subtle text-ink-secondary",
+};
+
+function sizeLabel(bytes: number): string {
+  if (!bytes) return "";
+  const mb = bytes / (1024 * 1024);
+  if (mb >= 1) return `${mb.toFixed(1).replace(".", ",")} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+export function FileViewer({
+  open,
+  onOpenChange,
+  name,
+  mimeType = "",
+  meta,
+  load,
+}: FileViewerProps) {
   const { t } = useTranslation();
   const [file, setFile] = useState<LoadedFile | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +65,12 @@ export function FileViewer({ open, onOpenChange, name, mimeType = "", load }: Fi
         const type = blob.type || mimeType;
         const kind = fileKindOf(type, name);
         objectUrl = URL.createObjectURL(blobForViewing(blob, kind));
-        setFile({ url: objectUrl, kind, fileName: fileNameFor(name, type) });
+        setFile({
+          url: objectUrl,
+          kind,
+          fileName: fileNameFor(name, type),
+          size: blob.size,
+        });
       })
       .catch((cause: unknown) => {
         if (controller.signal.aborted) return;
@@ -56,49 +86,112 @@ export function FileViewer({ open, onOpenChange, name, mimeType = "", load }: Fi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, name, mimeType]);
 
+  const subtitle = [file ? sizeLabel(file.size) : "", meta, file ? fileKindLabel(file.kind) : ""]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {open ? (
-        <DialogContent
-          title={file?.fileName ?? name}
-          description={file ? fileKindLabel(file.kind) : t("fileViewer.opening")}
-          className="file-viewer-dialog"
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+
+        <DialogPrimitive.Content
+          className="fixed inset-0 z-50 flex flex-col gap-4 px-10 py-6 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0"
+          onContextMenu={(event) => event.preventDefault()}
         >
-          <div className="file-viewer-body" onContextMenu={(event) => event.preventDefault()}>
+          <header className="flex shrink-0 items-center gap-3">
+            <span
+              className={`grid size-9 shrink-0 place-items-center rounded-md ${
+                TONE[file?.kind ?? "other"] ?? TONE.other
+              }`}
+            >
+              <Icon kind={file?.kind} />
+            </span>
+
+            <span className="flex min-w-0 flex-1 flex-col">
+              <DialogPrimitive.Title className="truncate text-title-sm text-ink-inverse">
+                {file?.fileName ?? name}
+              </DialogPrimitive.Title>
+              <DialogPrimitive.Description className="truncate text-body-xs text-ink-inverse-secondary">
+                {subtitle || t("fileViewer.opening")}
+              </DialogPrimitive.Description>
+            </span>
+
+            <button
+              type="button"
+              className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink transition-opacity hover:opacity-85"
+              aria-label={t("fileViewer.close")}
+              onClick={() => onOpenChange(false)}
+            >
+              <X size={18} />
+            </button>
+          </header>
+
+          <div className="relative mx-auto flex w-full max-w-190 min-h-0 flex-1 items-center justify-center overflow-hidden rounded-lg bg-surface">
             {error ? (
-              <div className="file-viewer-state">
+              <div className="flex flex-col items-center gap-3 p-10 text-center text-ink-secondary">
                 <FileQuestion size={30} />
-                <p>{error}</p>
+                <p className="text-body-sm">{error}</p>
               </div>
             ) : !file ? (
-              <div className="file-viewer-state">
-                <Loader2 size={26} className="spin" />
-                <p>{t("fileViewer.opening")}</p>
+              <div className="flex flex-col items-center gap-3 p-10 text-center text-ink-tertiary">
+                <Loader2 size={26} className="animate-spin" />
+                <p className="text-body-sm">{t("fileViewer.opening")}</p>
               </div>
             ) : file.kind === "pdf" ? (
-              <iframe src={`${file.url}#toolbar=0`} title={file.fileName} />
+              <iframe
+                className="size-full border-0"
+                src={`${file.url}#toolbar=0`}
+                title={file.fileName}
+              />
             ) : file.kind === "image" ? (
-              <img src={file.url} alt={file.fileName} draggable={false} />
+              <img
+                className="max-h-full max-w-full object-contain"
+                src={file.url}
+                alt={file.fileName}
+                draggable={false}
+              />
             ) : file.kind === "video" ? (
-              <video src={file.url} controls playsInline controlsList="nodownload" />
+              <video
+                className="max-h-full max-w-full"
+                src={file.url}
+                controls
+                playsInline
+                controlsList="nodownload"
+              />
             ) : file.kind === "audio" ? (
-              <audio src={file.url} controls controlsList="nodownload" />
+              <audio className="w-full px-10" src={file.url} controls controlsList="nodownload" />
             ) : (
-              <div className="file-viewer-state">
+              <div className="flex flex-col items-center gap-3 p-10 text-center text-ink-tertiary">
                 <FileQuestion size={30} />
-                <p>{t("fileViewer.unsupported")}</p>
+                <p className="text-body-sm">{t("fileViewer.unsupported")}</p>
               </div>
             )}
+
+            {file && (file.kind === "pdf" || file.kind === "image") ? (
+              <span
+                className="pointer-events-none absolute inset-0 grid -rotate-12 select-none place-items-center text-h1 text-brand/10"
+                aria-hidden="true"
+              >
+                {t("fileViewer.watermark")}
+              </span>
+            ) : null}
           </div>
 
-          <div className="dialog-actions">
-            <small className="file-viewer-note">{t("fileViewer.platformOnlyNote")}</small>
-            <Button variant="secondary" onClick={() => onOpenChange(false)}>
-              {t("fileViewer.close")}
-            </Button>
-          </div>
-        </DialogContent>
-      ) : null}
-    </Dialog>
+          <p className="flex shrink-0 items-center justify-center gap-2 text-body-xs text-ink-inverse-secondary">
+            <Lock size={14} />
+            {t("fileViewer.platformOnlyNote")}
+          </p>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
+}
+
+function Icon({ kind }: { kind?: FileKind }) {
+  if (kind === "pdf") return <FileText size={18} />;
+  if (kind === "image") return <Image size={18} />;
+  if (kind === "video") return <Video size={18} />;
+  if (kind === "audio") return <Music size={18} />;
+  return <File size={18} />;
 }

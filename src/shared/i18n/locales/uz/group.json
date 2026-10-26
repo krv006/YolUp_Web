@@ -37,7 +37,8 @@
     "edit": "Tahrirlash",
     "emptyTitle": "Hali dars rejalashtirilmagan",
     "emptyHint": "Dars jadvalini qo‘shing — o‘quvchilaringiz eslatma oladi.",
-    "cancelLesson": "Bekor qilish"
+    "cancelLesson": "Bekor qilish",
+    "finishedStats": "{{joined}} / {{total}} qatnashdi · davomat {{rate}}%"
   },
   "assignments": {
     "eyebrow": "GURUH VAZIFALARI",

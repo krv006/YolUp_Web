@@ -661,7 +661,7 @@ export function HomeworkWorkspace({
               disabled={remind.isPending || sendNotification.isPending || !missing || !selected}
               onClick={() => {
                 if (!selected) return;
-                remind.mutate(selected.id);
+                remind.mutate({ assignmentId: selected.id, notifyParents: remindParents });
                 if (remindParents && missingIds.length)
                   sendNotification.mutate({
                     description: t("workspace.remindMessage", {

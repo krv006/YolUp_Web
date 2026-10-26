@@ -4,11 +4,6 @@ import { useAuth, useDeleteCertificate, useUploadCertificate } from "@/modules/a
 import { Icon } from "@/shared/ui/icon";
 import { ProfileSubPage } from "./profile-shell";
 
-function fileKind(file: string): string {
-  const extension = file.split("?")[0].split(".").pop()?.toUpperCase() ?? "";
-  return extension.length <= 4 ? extension : "";
-}
-
 function formatYear(value: string): string {
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? "" : String(date.getFullYear());
@@ -29,7 +24,7 @@ export function CertificatesPage() {
       footer={
         <button
           type="button"
-          className="flex h-13 w-full items-center justify-center gap-2 rounded-full bg-action text-label-strong text-on-action transition-colors hover:bg-action-hover disabled:opacity-60"
+          className="flex h-11 items-center justify-center rounded-full bg-brand px-6 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
           disabled={upload.isPending}
           onClick={() => fileRef.current?.click()}
         >
@@ -50,39 +45,53 @@ export function CertificatesPage() {
       />
 
       {items.length ? (
-        <section className="flex flex-col gap-2">
-          <span className="px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
-            {t("page.certificatesUploaded", { count: items.length })}
+        <section className="flex flex-col gap-3">
+          <span className="text-title text-ink">
+            {t("page.uploadedTitle", { count: items.length })}
           </span>
-          <div className="flex flex-col divide-y divide-line overflow-hidden rounded-2xl border border-line bg-surface">
+
+          <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-lg bg-surface">
             {items.map((item) => (
-              <div key={item.id} className="flex items-center gap-3 px-4 py-3">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
-                  <Icon name="school" size={18} />
+              <div key={item.id} className="group flex items-center gap-3 px-4 py-3.5">
+                <span className="grid size-9 shrink-0 place-items-center rounded-md bg-warning-bg text-warning-fg">
+                  <Icon name="star" size={18} />
                 </span>
+
                 <span className="flex min-w-0 flex-1 flex-col">
-                  <strong className="truncate text-label-strong text-ink">{item.title || "—"}</strong>
-                  <small className="truncate text-caption text-ink-tertiary">
-                    {[fileKind(item.file), formatYear(item.createdAt)].filter(Boolean).join(" · ")}
+                  <strong className="truncate text-title-sm text-ink">{item.title || "—"}</strong>
+                  <small className="truncate text-body-xs text-ink-tertiary">
+                    {[item.issuer, formatYear(item.createdAt)].filter(Boolean).join(" · ")}
                   </small>
                 </span>
-                <span className="shrink-0 rounded-full bg-saffron-subtle px-2.5 py-1 text-caption-strong text-saffron-strong">
-                  {t("page.certificatePending")}
-                </span>
+
+                {item.verified ? (
+                  <span className="flex h-7 shrink-0 items-center gap-1.5 rounded-full bg-success-bg px-2.5 text-caption-strong text-success">
+                    <Icon name="check-circle" size={14} />
+                    {t("page.verified")}
+                  </span>
+                ) : (
+                  <span className="flex h-7 shrink-0 items-center gap-1.5 rounded-full bg-warning-bg px-2.5 text-caption-strong text-warning-fg">
+                    <Icon name="clock" size={14} />
+                    {t("page.certificatePending")}
+                  </span>
+                )}
+
                 <button
                   type="button"
-                  className="grid size-9 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
+                  className="grid size-9 shrink-0 place-items-center rounded-full text-icon-tertiary opacity-0 transition-opacity group-hover:opacity-100 hover:text-danger focus-visible:opacity-100"
                   onClick={() => remove.mutate(item.id)}
                   aria-label={t("page.delete")}
                 >
-                  <Icon name="trash" size={17} />
+                  <Icon name="delete" size={18} />
                 </button>
               </div>
             ))}
           </div>
         </section>
       ) : (
-        <p className="px-1 text-body-sm text-ink-tertiary">{t("page.noCertificates")}</p>
+        <p className="rounded-lg bg-surface px-5 py-8 text-center text-body-sm text-ink-tertiary">
+          {t("page.noCertificates")}
+        </p>
       )}
     </ProfileSubPage>
   );

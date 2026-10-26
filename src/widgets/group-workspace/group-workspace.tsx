@@ -412,7 +412,7 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         <LessonBoard
           lessons={lessons}
           studentCount={studentCount}
-          joinedCount={liveLesson ? (presence.data?.count ?? null) : null}
+          joinedCount={liveLesson ? (liveLesson.joinedCount ?? presence.data?.count ?? null) : null}
           onAdd={() => {
             setEditing(null);
             setDialog(true);

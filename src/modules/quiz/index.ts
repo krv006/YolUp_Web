@@ -43,6 +43,8 @@ export {
   useImportQuizDocx,
   useQuiz,
   useQuizAttempts,
+  useQuizQuestionStats,
+  useStartAiMiniQuiz,
   useRemoveGroupAudio,
   useUploadGroupAudio,
   useUpdateQuiz,

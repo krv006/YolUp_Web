@@ -197,7 +197,9 @@
     "mergingTitle": "Yozuv tayyorlanmoqda...",
     "preparingTitle": "Yozuv tayyorlanmoqda...",
     "failedTitle": "Yozuvni tayyorlab bo'lmadi",
-    "noneTitle": "Yozuv yo'q"
+    "noneTitle": "Yozuv yo'q",
+    "sharedToChat": "Yozuv guruh chatiga yuborildi",
+    "pdfFailed": "PDF yuklab bo'lmadi"
   },
   "schedule": {
     "now": "HOZIR",
@@ -296,7 +298,13 @@
       "repeatValue": "Takrorlanuvchi jadval",
       "topic": "Mavzu",
       "homework": "Uy vazifasi",
-      "students": "O‘quvchilar"
+      "students": "O‘quvchilar",
+      "until": "{{date}} gacha",
+      "freq": {
+        "weekly": "har hafta",
+        "daily": "har kuni",
+        "monthly": "har oy"
+      }
     },
     "title": "Jadval"
   },

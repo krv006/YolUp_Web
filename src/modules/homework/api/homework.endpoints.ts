@@ -7,6 +7,7 @@ export const homeworkEndpoints = Object.freeze({
   requestResubmit: (id: string) => `/api/v1/homework/submissions/${id}/request-resubmit/`,
   remind: (id: string) => `/api/v1/homework/assignments/${id}/remind/`,
   aiSummary: (id: string) => `/api/v1/homework/assignments/${id}/ai-summary/`,
+  aiStats: "/api/v1/homework/assignments/ai-stats/",
   board: (id: string) => `/api/v1/homework/assignments/${id}/board/`,
   boardSubmit: (id: string) => `/api/v1/homework/assignments/${id}/board/submit/`,
   report: "/api/v1/homework/report/",

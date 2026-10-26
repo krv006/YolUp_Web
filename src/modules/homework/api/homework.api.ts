@@ -93,8 +93,26 @@ export const homeworkApi = {
     await apiClient.post<{ ok?: boolean }>(homeworkEndpoints.requestResubmit(id), { comment });
     return id;
   },
-  async remind(assignmentId: string) {
-    return apiClient.post<{ notified?: number }>(homeworkEndpoints.remind(assignmentId), {});
+  async remind(assignmentId: string, input?: { message?: string; notifyParents?: boolean }) {
+    return apiClient.post<{ notified?: number; parents_notified?: number }>(
+      homeworkEndpoints.remind(assignmentId),
+      {
+        ...(input?.message ? { message: input.message.slice(0, 500) } : {}),
+        ...(input?.notifyParents ? { notify_parents: true } : {}),
+      }
+    );
+  },
+  async getAiStats(period: "today" | "week" | "month", options?: RequestOptions) {
+    const dto = await apiClient.get<{
+      period?: string;
+      checked?: number | null;
+      pending_confirm?: number | null;
+    }>(homeworkEndpoints.aiStats, { ...options, query: { period } });
+    return {
+      period: dto.period ?? period,
+      checked: dto.checked ?? 0,
+      pendingConfirm: dto.pending_confirm ?? 0,
+    };
   },
   async getAiSummary(assignmentId: string) {
     const dto = await apiClient.post<HomeworkAiSummaryDto>(
@@ -106,6 +124,8 @@ export const homeworkApi = {
       topics: dto.topics ?? [],
       recommendations: dto.recommendations ?? [],
       submissionsCount: dto.submissions_count ?? 0,
+      text: (dto as { text?: string | null }).text ?? "",
+      createdAt: (dto as { created_at?: string | null }).created_at ?? null,
     };
   },
   async getReport(studentId?: string | null, options: RequestOptions = {}) {

@@ -108,6 +108,16 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     allowLate: dto.allow_late !== false,
     grading: dto.grading ?? "five",
     maxScore: dto.max_score ?? defaultMaxScore(dto.grading ?? "five"),
+    aiGroupSummary: dto.ai_group_summary
+      ? {
+          text: dto.ai_group_summary.text ?? "",
+          summary: dto.ai_group_summary.summary ?? "",
+          topics: dto.ai_group_summary.topics ?? [],
+          recommendations: dto.ai_group_summary.recommendations ?? [],
+          submissionsCount: Number(dto.ai_group_summary.submissions_count ?? 0),
+          createdAt: dto.ai_group_summary.created_at ?? null,
+        }
+      : null,
   };
 }
 

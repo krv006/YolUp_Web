@@ -82,12 +82,13 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
 
   const state: BoardState = useMemo(
     () => ({
-      sheets: sheets.map((strokes, index) => ({ index, strokes })),
+      sheets: sheets.map((strokes, index) => ({ index, title: "", strokes })),
       canDraw: true,
       isTeacher: false,
       width: init.width,
       height: init.height,
       subject: "",
+      permissionMode: "everyone" as const,
       // Doska fanga bog'lanmagan: hamma fanda bir xil umumiy asboblar (yechuvchi/davriy jadval yo'q)
       mathEnabled: false,
       chemistryEnabled: false,

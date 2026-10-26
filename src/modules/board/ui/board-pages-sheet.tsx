@@ -12,8 +12,11 @@ export interface BoardPagesSheetProps {
   boardWidth: number;
   boardHeight: number;
   canAdd: boolean;
+  /** O'qituvchi sahifa nomini tahrirlashi mumkin. */
+  canRename?: boolean;
   onSelect: (index: number) => void;
   onAdd: () => void;
+  onRename?: (index: number, title: string) => void;
 }
 
 export function BoardPagesSheet({
@@ -24,8 +27,10 @@ export function BoardPagesSheet({
   boardWidth,
   boardHeight,
   canAdd,
+  canRename = false,
   onSelect,
   onAdd,
+  onRename,
 }: BoardPagesSheetProps) {
   const { t } = useTranslation("board");
 
@@ -89,11 +94,33 @@ export function BoardPagesSheet({
                 >
                   {item.index + 1}
                 </i>
-                <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
-                  {item.strokes.length
-                    ? t("pages.pageLabel", { index: item.index + 1 })
-                    : t("pages.emptyPage")}
-                </small>
+                {canRename && onRename ? (
+                  <input
+                    className="min-w-0 flex-1 truncate bg-transparent text-body-xs text-ink outline-none placeholder:text-ink-tertiary"
+                    defaultValue={item.title}
+                    placeholder={
+                      item.strokes.length
+                        ? t("pages.pageLabel", { index: item.index + 1 })
+                        : t("pages.emptyPage")
+                    }
+                    aria-label={t("pages.renameAria", { index: item.index + 1 })}
+                    onClick={(event) => event.stopPropagation()}
+                    onBlur={(event) => {
+                      const next = event.target.value.trim();
+                      if (next !== item.title) onRename(item.index, next);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") event.currentTarget.blur();
+                    }}
+                  />
+                ) : (
+                  <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                    {item.title ||
+                      (item.strokes.length
+                        ? t("pages.pageLabel", { index: item.index + 1 })
+                        : t("pages.emptyPage"))}
+                  </small>
+                )}
               </span>
             </button>
           );

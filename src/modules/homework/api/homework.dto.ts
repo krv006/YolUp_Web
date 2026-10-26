@@ -105,6 +105,14 @@ export interface AssignmentDto {
   status?: AssignmentStatus | "published";
   published?: boolean;
   announce_in_chat?: boolean;
+  ai_group_summary?: {
+    text?: string | null;
+    summary?: string | null;
+    topics?: string[] | null;
+    recommendations?: string[] | null;
+    submissions_count?: number | null;
+    created_at?: string | null;
+  } | null;
   allow_late?: boolean;
   grading?: GradingScale;
   max_score?: number | null;

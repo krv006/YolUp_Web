@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { useAttendance } from "@/modules/attendance";
-import { useConversations } from "@/modules/conversation";
 import { useCourse } from "@/modules/course";
-import { useDeleteRecording } from "@/modules/lesson";
+import { boardApi } from "@/modules/board";
+import { useDeleteRecording, useShareRecording } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import type { AttendanceRow, Lesson, LessonRecording } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -26,6 +27,7 @@ function chapterClock(seconds: number): string {
 }
 
 function focusPercent(row: AttendanceRow, durationMinutes: number): number | null {
+  if (row.focusPercent !== null) return Math.round(row.focusPercent);
   const total = durationMinutes * 60;
   if (!total || !row.minutes) return null;
   const away = row.focus.awaySeconds;
@@ -36,11 +38,29 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
   const { t } = useTranslation("lesson");
   const navigate = useNavigate();
   const course = useCourse(lesson.courseId);
-  const conversations = useConversations("teacher");
   const attendance = useAttendance({ lesson: lesson.id });
   const removeRecording = useDeleteRecording();
+  const share = useShareRecording(lesson.id);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  async function downloadPdf() {
+    setDownloading(true);
+    try {
+      const blob = await boardApi.downloadPdf(lesson.id);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${lesson.title || "doska"}.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("recording.pdfFailed"));
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   const rows = useMemo(() => attendance.data ?? [], [attendance.data]);
   const studentCount = course.data?.studentCount ?? rows.length;
@@ -61,9 +81,9 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
 
   const pending = Boolean(recording) && recording?.status !== "failed" && !recording?.ready;
 
-  const room = (conversations.data ?? []).find((item) => item.courseId === lesson.courseId);
   const visibleRows = rows.slice(0, 3);
-  const boardPages = recording?.boardPages ?? 0;
+  const previews = recording?.boardPreviews ?? [];
+  const boardPages = previews.length || (recording?.boardPages ?? 0);
 
   return (
     <WorkspaceShell
@@ -155,14 +175,33 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
               <button
                 type="button"
                 className="shrink-0 text-button text-brand transition-opacity hover:opacity-80 disabled:opacity-40"
-                disabled={!boardPages}
-                onClick={() => navigate(ROUTES.teacher.board(lesson.id))}
+                disabled={!recording?.pdfUrl || downloading}
+                onClick={downloadPdf}
               >
                 {t("recording.pdf")}
               </button>
             </header>
 
-            {boardPages ? (
+            {previews.length ? (
+              <div className="grid grid-cols-3 gap-2.5">
+                {previews.slice(0, 3).map((preview) => (
+                  <button
+                    key={preview.page}
+                    type="button"
+                    className="h-17.5 overflow-hidden rounded-md bg-surface transition-opacity hover:opacity-85"
+                    title={preview.title}
+                    onClick={() => navigate(ROUTES.teacher.board(lesson.id))}
+                  >
+                    <img
+                      className="size-full object-cover object-top"
+                      src={preview.imageUrl}
+                      alt={preview.title}
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : boardPages ? (
               <div className="grid grid-cols-3 gap-2.5">
                 {Array.from({ length: Math.min(boardPages, 3) }, (_, index) => (
                   <button
@@ -249,8 +288,13 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
               <button
                 type="button"
                 className="flex h-11 items-center justify-center rounded-full bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-40"
-                disabled={!room}
-                onClick={() => room && navigate(ROUTES.teacher.chat(room.id))}
+                disabled={!recording?.ready || share.isPending}
+                onClick={() =>
+                  share.mutate(undefined, {
+                    onSuccess: () => toast.success(t("recording.sharedToChat")),
+                    onError: (error: Error) => toast.error(error.message),
+                  })
+                }
               >
                 {t("recording.sendToChat")}
               </button>

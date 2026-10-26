@@ -114,15 +114,15 @@
     "emptyDescription": "Создайте первый мок-экзамен для группы — результаты появятся здесь."
   },
   "createDialog": {
-    "title": "Новый экзамен",
+    "title": "Создать mock-экзамен",
     "description": "Выберите шаблон, прикрепите тест к каждой секции и задайте время.",
-    "courseLabel": "Для какой группы",
+    "courseLabel": "Группа",
     "templateLabel": "Шаблон",
     "customTag": "ваш шаблон",
     "newTemplate": "+ Создать свой шаблон",
     "titleLabel": "Название экзамена",
     "titlePlaceholder": "Например: IELTS mock #3",
-    "startLabel": "Время начала",
+    "startLabel": "Начало",
     "sectionsHead": "СЕКЦИИ",
     "quizLabel": "Тест",
     "minutesLabel": "Минуты для {{title}}",
@@ -144,7 +144,14 @@
     },
     "draftsHint": "Тестов-черновиков: {{count}} (в том числе созданных ИИ). Проверьте и опубликуйте их — тогда они появятся в этом списке.",
     "createWithAi": "Нет теста? Создайте с помощью ИИ →",
-    "startNow": "Начать сейчас (не ждать времени)"
+    "startNow": "Начать сейчас (не ждать времени)",
+    "errorSummary": "Проверьте {{count}} поля",
+    "sectionCount": "{{count}} раздела",
+    "pickQuiz": "Выберите тест",
+    "startNowTitle": "Начать сейчас",
+    "startNowHint": "Время не ожидается",
+    "noQuizzesShort": "Нет опубликованного теста?",
+    "createWithAiShort": "Создать с AI →"
   },
   "templateDialog": {
     "title": "Свой шаблон",
@@ -160,8 +167,8 @@
     "moveUp": "Вверх",
     "moveDown": "Вниз",
     "removeItem": "Удалить",
-    "addSection": "Добавить секцию",
-    "addBreak": "Добавить перерыв",
+    "addSection": "Раздел",
+    "addBreak": "Перерыв",
     "totalMinutes": "Всего: {{count}} мин.",
     "scaleLabel": "Общая шкала",
     "passLabel": "Проходной процент · необязательно",
@@ -182,7 +189,9 @@
       "scaleInvalid": "Шкала от 1 до 1000",
       "passPercentInvalid": "Проходной процент от 0 до 100"
     },
-    "breakDefaultTitle": "Перерыв"
+    "breakDefaultTitle": "Перерыв",
+    "orderHead": "Порядок",
+    "totalHours": "всего {{hours}} ч {{count}} мин"
   },
   "writing": {
     "essays": "ЭССЕ УЧЕНИКА",
@@ -247,7 +256,20 @@
     "awayCount": "Выходов из окна: {{count}}",
     "finished": "Сдал",
     "inProgress": "Решает",
-    "notJoined": "Не вошёл"
+    "notJoined": "Не вошёл",
+    "deleteTitle": "Удалить экзамен",
+    "deleteDescription": "«{{title}}» будет удалён. Это нельзя отменить.",
+    "cancel": "Отмена",
+    "autoScored": "Автоматически",
+    "enterBand": "Введите балл",
+    "aiSuggestion": "Рекомендация AI: {{value}}",
+    "scoreTitle": "{{name}} · оценка",
+    "scoreDescription": "Listening и Reading оценены автоматически. Введите баллы за Writing и Speaking.",
+    "scoreCancel": "Отмена",
+    "scoreSave": "Сохранить",
+    "overallBand": "Общий балл (примерно)",
+    "scorePlaceholder": "—",
+    "answeredCount": "{{answered}} / {{total}} вопросов"
   },
   "results": {
     "eyebrow": "Mock экзамены / Результаты · {{title}} · {{label}}",

@@ -272,7 +272,9 @@
     "newDirect": "Yangi suhbat",
     "newGroup": "Yangi guruh",
     "typing": "{{name}} yozmoqda...",
-    "you": "Siz"
+    "you": "Siz",
+    "peopleSection": "Odamlar",
+    "startChat": "Suhbat ochish"
   },
   "pinned": {
     "label": "Qadalgan xabar",

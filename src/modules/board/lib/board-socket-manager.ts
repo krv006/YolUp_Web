@@ -6,7 +6,8 @@ export type { SocketState };
 export type BoardSocketEvent =
   | { type: "stroke"; sheet: number; stroke: StrokeDto }
   | { type: "erase"; sheet: number; strokeIds: string[]; by: string; reason: string }
-  | { type: "sheet"; index: number }
+  | { type: "sheet"; index: number; title?: string }
+  | { type: "sheet_renamed"; index: number; title: string }
   | { type: "mic_request"; studentId: string; name: string }
   | { type: "mic_granted"; studentId: string }
   | { type: "mic_denied"; studentId: string }
@@ -25,6 +26,7 @@ interface RawBoardEvent {
   by?: string;
   reason?: string;
   index?: number | string;
+  title?: string | null;
   student_id?: string | number;
   name?: string;
   detail?: string;
@@ -48,7 +50,9 @@ export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
         reason: event.reason ?? "",
       };
     case "sheet":
-      return { type: "sheet", index: Number(event.index ?? 0) };
+      return { type: "sheet", index: Number(event.index ?? 0), title: event.title ?? "" };
+    case "sheet_renamed":
+      return { type: "sheet_renamed", index: Number(event.index ?? 0), title: event.title ?? "" };
     case "mic_request":
       return event.student_id
         ? { type: "mic_request", studentId: String(event.student_id), name: event.name ?? "" }

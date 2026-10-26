@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { NotificationSettings } from "@/widgets/account-menu/notification-settings";
+import { useAuth, useUpdateLessonReminderMutation } from "@/modules/auth";
+import { usePushNotifications } from "@/modules/notification";
+import { ROLES } from "@/shared/constants";
 import { useLanguageStore, useTextSizeStore, type TextSize } from "@/shared/model";
 import { useTheme } from "@/shared/model/theme.store";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
+import { Switch } from "@/shared/ui/switch";
+import { SETTINGS_TONES } from "./settings-tones";
 import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 
 const LANGUAGES = [
@@ -15,144 +19,154 @@ const LANGUAGES = [
 ] as const;
 
 const SIZES: TextSize[] = ["small", "medium", "large"];
+const MINUTE_OPTIONS = [5, 10, 15, 30, 60];
+
+const SEGMENT = "flex h-9 min-w-0 flex-1 items-center justify-center rounded-full text-button transition-colors";
+
+function Segmented<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: ReadonlyArray<{ id: T; label: string }>;
+  onChange: (next: T) => void;
+}) {
+  return (
+    <div className="flex items-center gap-1 rounded-full bg-subtle p-1">
+      {options.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          className={`${SEGMENT} ${
+            value === option.id
+              ? "bg-brand text-on-action"
+              : "text-ink-secondary hover:text-ink"
+          }`}
+          onClick={() => onChange(option.id)}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function SystemSettingsPage() {
   const { t } = useTranslation("account");
+  const { user } = useAuth();
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const { mode, setMode } = useTheme();
   const size = useTextSizeStore((state) => state.size);
   const setSize = useTextSizeStore((state) => state.setSize);
+  const push = usePushNotifications();
+  const reminder = useUpdateLessonReminderMutation();
   const [languageOpen, setLanguageOpen] = useState(false);
+  const [reminderOpen, setReminderOpen] = useState(false);
   const [draftLanguage, setDraftLanguage] = useState(language);
 
-  const themes = [
-    { id: "light" as const, label: t("page.themeLight"), preview: "bg-surface" },
-    { id: "dark" as const, label: t("page.themeDark"), preview: "bg-ink" },
-    { id: "system" as const, label: t("page.themeSystem"), preview: "bg-linear-to-r from-surface to-ink" },
-  ];
+  const minutes =
+    user?.lessonReminderMinutes ?? (user?.role === ROLES.STUDENT ? 15 : 10);
+  const languageLabel = LANGUAGES.find((item) => item.id === language)?.label ?? "";
 
   return (
     <ProfileSubPage title={t("page.systemTitle")}>
-      <SettingsSection label={t("page.generalSection")}>
-        <div className="flex flex-col gap-3 p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
-              <Icon name="more" size={18} />
+      <SettingsSection label={t("page.generalSectionTitle")}>
+        <SettingsRow
+          icon="settings"
+          tone={SETTINGS_TONES.brand}
+          title={t("page.language")}
+          value={languageLabel}
+          onClick={() => {
+            setDraftLanguage(language);
+            setLanguageOpen(true);
+          }}
+        />
+
+        <div className="flex flex-col gap-3 px-4 py-4">
+          <span className="flex items-center gap-3">
+            <span
+              className={`grid size-9 shrink-0 place-items-center rounded-md ${SETTINGS_TONES.violet}`}
+            >
+              <Icon name="star" size={18} />
             </span>
-            <span className="flex min-w-0 flex-1 flex-col">
-              <strong className="text-label-strong text-ink">{t("page.language")}</strong>
-              <small className="text-caption text-ink-tertiary">{t("page.languageHint")}</small>
-            </span>
-          </div>
-          <div className="flex items-center gap-1 rounded-full bg-subtle p-1">
-            {LANGUAGES.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`h-10 flex-1 rounded-full text-label-strong transition-colors ${
-                  language === item.id ? "bg-surface text-ink shadow-xs" : "text-ink-secondary"
-                }`}
-                onClick={() => {
-                  setDraftLanguage(item.id);
-                  setLanguageOpen(true);
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink">
+              {t("page.theme")}
+            </strong>
+          </span>
+
+          <Segmented
+            value={mode}
+            onChange={setMode}
+            options={[
+              { id: "light", label: t("page.themeLight") },
+              { id: "dark", label: t("page.themeDark") },
+              { id: "system", label: t("page.themeSystem") },
+            ]}
+          />
         </div>
 
-        <div className="flex flex-col gap-3 p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-saffron-strong text-white">
-              <Icon name="clock" size={18} />
+        <div className="flex flex-col gap-3 px-4 py-4">
+          <span className="flex items-center gap-3">
+            <span
+              className={`grid size-9 shrink-0 place-items-center rounded-md ${SETTINGS_TONES.warning}`}
+            >
+              <Icon name="edit" size={18} />
             </span>
-            <span className="flex min-w-0 flex-1 flex-col">
-              <strong className="text-label-strong text-ink">{t("page.theme")}</strong>
-              <small className="text-caption text-ink-tertiary">{t("page.themeHint")}</small>
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            {themes.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`flex flex-col items-center gap-2 rounded-xl border p-2 transition-colors ${
-                  mode === item.id ? "border-action bg-action-subtle" : "border-line bg-surface"
-                }`}
-                onClick={() => setMode(item.id)}
-              >
-                <span className={`h-12 w-full rounded-lg border border-line ${item.preview}`} />
-                <span className="flex items-center gap-1.5 text-caption text-ink">
-                  <span
-                    className={`grid size-3.5 place-items-center rounded-full border ${
-                      mode === item.id ? "border-action" : "border-line"
-                    }`}
-                  >
-                    {mode === item.id ? <span className="size-2 rounded-full bg-action" /> : null}
-                  </span>
-                  {item.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
+            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink">
+              {t("page.textSize")}
+            </strong>
+          </span>
 
-        <div className="flex flex-col gap-3 p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
-              <Icon name="assign" size={18} />
-            </span>
-            <strong className="flex-1 text-label-strong text-ink">{t("page.textSize")}</strong>
-            <small className="text-label-strong text-action">{t(`page.text${size === "small" ? "Small" : size === "large" ? "Large" : "Medium"}`)}</small>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-caption text-ink-tertiary">A</span>
-            <input
-              className="h-1.5 flex-1 accent-[var(--action-primary)]"
-              type="range"
-              min={0}
-              max={2}
-              step={1}
-              value={SIZES.indexOf(size)}
-              onChange={(event) => setSize(SIZES[Number(event.target.value)])}
-              aria-label={t("page.textSize")}
-            />
-            <span className="text-h3 text-ink-tertiary">A</span>
-          </div>
+          <Segmented
+            value={size}
+            onChange={setSize}
+            options={[
+              { id: SIZES[0], label: t("page.textSmall") },
+              { id: SIZES[1], label: t("page.textMedium") },
+              { id: SIZES[2], label: t("page.textLarge") },
+            ]}
+          />
         </div>
       </SettingsSection>
 
-      <section className="flex flex-col gap-2">
-        <span className="px-1 text-caption-strong tracking-wide text-ink-tertiary uppercase">
-          {t("page.notificationsSection")}
-        </span>
-        <div className="overflow-hidden rounded-2xl border border-line bg-surface p-4">
-          <NotificationSettings />
-        </div>
-      </section>
-
-      <SettingsSection label={t("page.dataSection")}>
+      <SettingsSection label={t("page.notificationsSectionTitle")}>
         <SettingsRow
-          icon="more"
-          tone="bg-ink-tertiary text-white"
-          title={t("page.clearCache")}
-          onClick={() => {
-            try {
-              localStorage.removeItem("REACT_QUERY_OFFLINE_CACHE");
-            } catch {
-              /* ignore */
-            }
-            toast.success(t("page.cacheCleared"));
-          }}
+          icon="bell"
+          tone={SETTINGS_TONES.brand}
+          title={t("page.pushTitle")}
+          hint={
+            push.supported
+              ? push.enabled
+                ? t("page.pushOn")
+                : t("page.pushOff")
+              : t("settingsDialog.pushUnsupported")
+          }
+          right={
+            <Switch
+              checked={push.enabled}
+              disabled={!push.supported || push.pending || push.blocked}
+              onCheckedChange={(next) => push.toggle(next)}
+              aria-label={t("page.pushTitle")}
+            />
+          }
+        />
+
+        <SettingsRow
+          icon="clock"
+          tone={SETTINGS_TONES.success}
+          title={t("page.lessonReminder")}
+          value={t("page.reminderValue", { count: minutes })}
+          onClick={() => setReminderOpen(true)}
         />
       </SettingsSection>
 
       <AppDialog
         open={languageOpen}
         onOpenChange={setLanguageOpen}
+        variant="confirm"
+        width="lg:w-100"
         title={t("page.language")}
         footer={
           <>
@@ -176,18 +190,50 @@ export function SystemSettingsPage() {
           </>
         }
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-1">
           {LANGUAGES.map((item) => (
             <button
               key={item.id}
               type="button"
-              className={`flex items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-colors ${
-                draftLanguage === item.id ? "bg-action-subtle text-action" : "text-ink hover:bg-subtle"
+              className={`flex items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${
+                draftLanguage === item.id ? "bg-brand-subtle text-brand" : "text-ink hover:bg-subtle"
               }`}
               onClick={() => setDraftLanguage(item.id)}
             >
-              <span className="flex-1 text-body">{item.label}</span>
+              <span className="min-w-0 flex-1 truncate text-body">{item.label}</span>
               {draftLanguage === item.id ? <Icon name="check-circle" size={20} /> : null}
+            </button>
+          ))}
+        </div>
+      </AppDialog>
+
+      <AppDialog
+        open={reminderOpen}
+        onOpenChange={setReminderOpen}
+        variant="confirm"
+        width="lg:w-100"
+        title={t("page.lessonReminder")}
+      >
+        <div className="flex flex-col gap-1">
+          {MINUTE_OPTIONS.map((option) => (
+            <button
+              key={option}
+              type="button"
+              className={`flex items-center gap-3 rounded-md px-4 py-3 text-left transition-colors ${
+                minutes === option ? "bg-brand-subtle text-brand" : "text-ink hover:bg-subtle"
+              }`}
+              disabled={reminder.isPending}
+              onClick={() =>
+                reminder.mutate(option, {
+                  onSuccess: () => setReminderOpen(false),
+                  onError: (error: Error) => toast.error(error.message),
+                })
+              }
+            >
+              <span className="min-w-0 flex-1 truncate text-body">
+                {t("page.reminderValue", { count: option })}
+              </span>
+              {minutes === option ? <Icon name="check-circle" size={20} /> : null}
             </button>
           ))}
         </div>

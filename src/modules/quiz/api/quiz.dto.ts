@@ -180,6 +180,17 @@ export interface QuizAttemptSummaryDto {
   score: number;
   max_score: number;
   created_at: string;
+  duration_seconds?: number | null;
+  correct_count?: number | null;
+  question_count?: number | null;
+}
+
+export interface QuizQuestionStatDto {
+  question_id: string | number;
+  order?: number | null;
+  label?: string | null;
+  wrong_rate?: number | null;
+  attempts_count?: number | null;
 }
 
 export interface QuizAttemptResultDto extends QuizAttemptSummaryDto {

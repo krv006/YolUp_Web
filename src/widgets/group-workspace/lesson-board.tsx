@@ -170,7 +170,13 @@ export function LessonBoard({
                               total: studentCount,
                             })
                           : status === "finished"
-                            ? t("group:lessons.finishedMeta", { count: studentCount })
+                            ? lesson.participantsCount != null
+                              ? t("group:lessons.finishedStats", {
+                                  joined: lesson.participantsCount,
+                                  total: lesson.studentCount ?? studentCount,
+                                  rate: lesson.attendanceRate ?? 0,
+                                })
+                              : t("group:lessons.finishedMeta", { count: studentCount })
                             : `${hhmm(starts)} – ${hhmm(ends)}`}
                       </small>
                     </span>

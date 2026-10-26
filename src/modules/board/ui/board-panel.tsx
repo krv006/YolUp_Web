@@ -11,6 +11,7 @@ import { buildStroke } from "../lib/board.geometry";
 import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
 import {
   useAddSheet,
+  useRenameSheet,
   useAddStroke,
   useBoard,
   useEraseStrokes,
@@ -65,9 +66,7 @@ export function BoardPanel({
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
-  const [permissionMode, setPermissionMode] = useState<"teacher" | "selected" | "everyone">(
-    "teacher"
-  );
+  const renameSheet = useRenameSheet(lessonId);
   const solve = useSolveFormula(lessonId);
   const members = useCourseStudents(board.data?.isTeacher ? courseId : null, { page_size: 100 });
 
@@ -456,7 +455,7 @@ export function BoardPanel({
                   className="shrink-0 text-caption-strong whitespace-nowrap text-success transition-opacity hover:opacity-80"
                   onClick={() => setGrantOpen(true)}
                 >
-                  {t(`permission.modes.${permissionMode}`)}
+                  {t(`permission.modes.${state.permissionMode}`)}
                 </button>
               </>
             ) : (
@@ -506,6 +505,8 @@ export function BoardPanel({
           setPagesOpen(false);
         }}
         onAdd={() => (source ? source.addSheet() : addSheet.mutate())}
+        canRename={state.isTeacher && !source}
+        onRename={(index, title) => renameSheet.mutate({ index, title })}
       />
 
       <BoardPermissionDialog
@@ -520,9 +521,6 @@ export function BoardPanel({
         onSubmit={(input) =>
           permissions.mutate(input, {
             onSuccess: (result) => {
-              setPermissionMode(
-                "mode" in input ? (input.mode === "none" ? "teacher" : "everyone") : "selected"
-              );
               toast.success(
                 "mode" in input && input.mode === "none"
                   ? t("permissionDialog.revoked", { count: result.revoked ?? 0 })

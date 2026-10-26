@@ -39,6 +39,35 @@ export interface DashboardTrendsDto {
   attendance_rate: Array<number | null>;
 }
 
+export interface MyTrendsDto {
+  period: DashboardPeriodDto;
+  labels: string[];
+  quiz_avg_score: Array<number | null>;
+  lessons_completed: number[];
+  attendance_rate: Array<number | null>;
+}
+
+export interface TeacherDashboardDto {
+  lessons_today?: number | null;
+  lessons_today_finished?: number | null;
+  submissions_pending?: number | null;
+  assignments_pending?: number | null;
+  students_total?: number | null;
+  courses_total?: number | null;
+  attendance_rate_week?: number | null;
+}
+
+export interface DashboardActivityDto {
+  id: string | number;
+  category?: string | null;
+  title?: string | null;
+  body?: string | null;
+  link_type?: string | null;
+  link_id?: string | number | null;
+  is_read?: boolean | null;
+  created_at?: string | null;
+}
+
 export interface StudentAttemptDto {
   quiz_id: string;
   quiz_title: string;

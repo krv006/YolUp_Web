@@ -177,6 +177,7 @@
     "hint": "Students see the page you open",
     "new": "New page",
     "pageLabel": "Page {{index}}",
-    "emptyPage": "Empty page"
+    "emptyPage": "Empty page",
+    "renameAria": "Page {{index}} title"
   }
 }

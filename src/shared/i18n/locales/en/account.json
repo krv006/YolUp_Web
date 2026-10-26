@@ -214,6 +214,27 @@
     "twoFactorDisabled": "Two-step verification is off",
     "twoFactorSmsUnavailable": "The SMS service is not connected yet, so this cannot be turned on.",
     "enable": "Turn on",
-    "confirmCode": "Verify"
+    "confirmCode": "Verify",
+    "loginSectionTitle": "Sign-in details",
+    "securitySectionTitle": "Security",
+    "dangerSectionTitle": "Danger zone",
+    "loginLabel": "Login",
+    "loginsRowHint": "By device and IP",
+    "resendCode": "Resend",
+    "changeNumber": "Change number",
+    "generalSectionTitle": "General",
+    "notificationsSectionTitle": "Notifications",
+    "uploadedTitle": "Uploaded · {{count}}",
+    "recentCommentsTitle": "Recent comments",
+    "todayGroup": "Today",
+    "yesterdayGroup": "Yesterday",
+    "earlierGroup": "Earlier",
+    "noRatings": "No ratings yet.",
+    "noLogins": "No sign-ins yet.",
+    "lessonReminder": "Lesson reminder",
+    "reminderValue": "{{count}} min before",
+    "pushTitle": "Push notifications",
+    "pushOn": "On",
+    "pushOff": "Off"
   }
 }

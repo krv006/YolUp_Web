@@ -18,7 +18,10 @@ export const boardApi = {
   },
   addStroke: (lessonId: string, sheet: number, stroke: StrokeInput) =>
     apiClient.post(boardEndpoints.stroke(lessonId), { sheet, stroke }),
-  addSheet: (lessonId: string) => apiClient.post(boardEndpoints.sheet(lessonId), {}),
+  addSheet: (lessonId: string, title?: string) =>
+    apiClient.post(boardEndpoints.sheet(lessonId), title ? { title } : {}),
+  renameSheet: (lessonId: string, index: number, title: string) =>
+    apiClient.patch(boardEndpoints.renameSheet(lessonId, index), { title }),
   erase: (lessonId: string, sheet: number, strokeIds: string[], reason: string) =>
     apiClient.post(boardEndpoints.erase(lessonId), { sheet, stroke_ids: strokeIds, reason }),
   grant: (lessonId: string, studentId: string) =>

@@ -259,7 +259,9 @@
       "average": "O‘rtacha"
     },
     "aiTitle": "AI bugun ishlarni tekshirdi",
-    "aiHint": "Bahoni tasdiqlash kutilmoqda. Yakuniy bahoni siz qo‘yasiz."
+    "aiHint": "Bahoni tasdiqlash kutilmoqda. Yakuniy bahoni siz qo‘yasiz.",
+    "aiCheckedToday": "AI bugun {{count}} ta ishni tekshirdi",
+    "aiPendingConfirm": "{{count}} ta baho tasdiqlashingizni kutmoqda"
   },
   "detail": {
     "eyebrow": "Vazifalar / {{course}} · Muddat: {{due}}",
@@ -302,7 +304,9 @@
       "missing": "Topshirmagan",
       "late": "Kech topshirdi"
     },
-    "noStudents": "O‘quvchi topilmadi."
+    "noStudents": "O‘quvchi topilmadi.",
+    "aiRefresh": "Qayta hisoblash",
+    "aiGenerate": "AI tavsiyasini olish"
   },
   "deleteDialog": {
     "title": "Vazifani o‘chirasizmi?",
