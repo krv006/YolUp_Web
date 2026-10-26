@@ -97,7 +97,7 @@ export function AuthButton({
       form={form}
       disabled={disabled || loading}
       onClick={onClick}
-      className={`flex h-14 w-full items-center justify-center gap-2 rounded-full text-title transition-colors disabled:opacity-60 ${
+      className={`flex h-14.5 w-full items-center justify-center gap-2 rounded-full text-title transition-colors disabled:opacity-60 ${
         variant === "primary"
           ? "bg-action text-on-action hover:bg-action-hover active:bg-action-pressed"
           : "border border-line bg-surface text-ink hover:bg-subtle"
@@ -121,7 +121,7 @@ export const AuthField = forwardRef<HTMLInputElement, AuthFieldProps>(function A
 ) {
   return (
     <span
-      className={`flex h-14 w-full items-center gap-2 rounded-full border px-5 transition-colors ${
+      className={`flex h-14.5 w-full items-center gap-2 rounded-full border px-5 transition-colors ${
         invalid
           ? "border-error-text bg-surface"
           : "border-transparent bg-subtle focus-within:border-focus"

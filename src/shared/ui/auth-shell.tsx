@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import logoUrl from "@/shared/assets/y-logo.svg";
-import { LanguageToggle } from "@/shared/ui/legacy";
 
 export interface AuthShellProps {
   title: ReactNode;
@@ -29,7 +28,7 @@ export function AuthShell({
   return (
     <main className="flex min-h-dvh gap-4 bg-canvas p-4">
       <aside
-        className="relative hidden w-165 shrink-0 flex-col overflow-hidden rounded-3xl px-12 py-11 lg:flex"
+        className="relative hidden w-165 shrink-0 flex-col overflow-hidden rounded-[28px] px-12 py-11 lg:flex"
         style={{ background: "linear-gradient(135deg, #4566f5 0%, #7354d9 100%)" }}
       >
         <span className="flex items-center gap-2.5">
@@ -41,7 +40,7 @@ export function AuthShell({
           {t("shell.headline")}
         </h2>
 
-        <span className="mt-10 flex flex-wrap items-center gap-2">
+        <span className="mt-7 flex flex-wrap items-center gap-2">
           {PILLS.map((pill) => (
             <small
               key={pill}
@@ -62,9 +61,7 @@ export function AuthShell({
         />
       </aside>
 
-      <div className="relative flex min-w-0 flex-1 items-center justify-center px-5">
-        <LanguageToggle className="absolute top-2 right-2" />
-
+      <div className="flex min-w-0 flex-1 items-center justify-center px-5">
         <div className="flex w-full max-w-90 flex-col gap-4">
           {notice}
 

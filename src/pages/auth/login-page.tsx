@@ -83,9 +83,12 @@ export function LoginPage() {
       description={pending ? describeTwoFactorChallenge(pending.challenge, t) : t("subtitle")}
       footer={
         pending ? null : (
-          <Link className="text-body-sm text-ink" to="/register">
-            {t("createAccount")}
-          </Link>
+          <>
+            {t("mobile.login.noAccount")}{" "}
+            <Link className="text-brand transition-opacity hover:opacity-80" to="/register">
+              {t("mobile.login.registerLink")}
+            </Link>
+          </>
         )
       }
     >
