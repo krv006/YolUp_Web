@@ -1,14 +1,13 @@
 import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as Checkbox from "@radix-ui/react-checkbox";
-import { Check, Eye, EyeOff, LockKeyhole, UserRound } from "lucide-react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/shared/ui/legacy";
+import { Link } from "react-router-dom";
 import { applyApiFieldErrors } from "@/shared/api";
 import { createLoginSchema } from "../model/auth.schemas";
 import type { AppError } from "@/shared/api";
 import type { LoginCredentials } from "@/shared/types";
+import { AuthButton, AuthField, AuthFieldError, AuthPasswordField } from "./auth-screen";
 
 export interface LoginFormProps {
   onSubmit: (values: LoginCredentials) => Promise<unknown>;
@@ -22,14 +21,11 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
     register,
     handleSubmit,
     setError,
-    setValue,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<LoginCredentials>({
     resolver: zodResolver(loginSchema),
     defaultValues: { login: "", password: "", remember: true },
   });
-  const remember = useWatch({ control, name: "remember" });
 
   async function submit(values: LoginCredentials) {
     try {
@@ -43,77 +39,44 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
   }
 
   return (
-    <form className="login-form" onSubmit={handleSubmit(submit)} noValidate>
-      <div className="field-group">
-        <label htmlFor="login">{t("form.loginLabel")}</label>
-        <div
-          className={`input-shell ${errors.login ? "input-shell--error" : ""}`}
-        >
-          <UserRound size={18} aria-hidden="true" />
-          <input
-            id="login"
-            autoComplete="username"
-            placeholder={t("form.loginPlaceholder")}
-            {...register("login")}
-          />
-        </div>
-        {errors.login && <p className="field-error">{errors.login.message}</p>}
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(submit)} noValidate>
+      <div className="flex flex-col gap-1.5">
+        <AuthField
+          id="login"
+          autoComplete="username"
+          placeholder={t("form.loginPlaceholder")}
+          invalid={Boolean(errors.login)}
+          {...register("login")}
+        />
+        {errors.login ? <AuthFieldError>{errors.login.message}</AuthFieldError> : null}
       </div>
 
-      <div className="field-group">
-        <label htmlFor="password">{t("form.passwordLabel")}</label>
-        <div
-          className={`input-shell ${
-            errors.password ? "input-shell--error" : ""
-          }`}
-        >
-          <LockKeyhole size={18} aria-hidden="true" />
-          <input
-            id="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            placeholder={t("form.passwordPlaceholder")}
-            {...register("password")}
-          />
-          <button
-            className="password-toggle"
-            type="button"
-            onClick={() => setShowPassword((value) => !value)}
-            aria-label={showPassword ? t("form.hidePassword") : t("form.showPassword")}
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
-        {errors.password && (
-          <p className="field-error">{errors.password.message}</p>
-        )}
+      <div className="flex flex-col gap-1.5">
+        <AuthPasswordField
+          id="password"
+          autoComplete="current-password"
+          placeholder={t("form.passwordPlaceholder")}
+          visible={showPassword}
+          invalid={Boolean(errors.password)}
+          onToggle={() => setShowPassword((value) => !value)}
+          {...register("password")}
+        />
+        {errors.password ? <AuthFieldError>{errors.password.message}</AuthFieldError> : null}
       </div>
 
-      <div className="form-options">
-        <label className="checkbox-label">
-          <Checkbox.Root
-            className="checkbox"
-            checked={remember}
-            onCheckedChange={(checked) =>
-              setValue("remember", checked === true)
-            }
-          >
-            <Checkbox.Indicator>
-              <Check size={13} strokeWidth={3} />
-            </Checkbox.Indicator>
-          </Checkbox.Root>
-          {t("form.rememberMe")}
-        </label>
-      </div>
+      <Link className="px-2 text-body-sm text-brand transition-opacity hover:opacity-80" to="/forgot-password">
+        {t("mobile.login.forgotPassword")}
+      </Link>
 
-      {errors.root && (
-        <div className="form-alert" role="alert">
+      {errors.root ? (
+        <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger" role="alert">
           {errors.root.message}
-        </div>
-      )}
-      <Button className="login-submit" type="submit" loading={isSubmitting}>
+        </p>
+      ) : null}
+
+      <AuthButton type="submit" loading={isSubmitting}>
         {t("form.submit")}
-      </Button>
+      </AuthButton>
     </form>
   );
 }

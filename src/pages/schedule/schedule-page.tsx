@@ -78,7 +78,7 @@ export function SchedulePage() {
 
   function openHomework(lesson: Lesson) {
     setDetail(null);
-    navigate(isStudent ? ROUTES.student.chats : `${ROUTES.teacher.chats}/assignments`, {
+    navigate(isStudent ? ROUTES.student.chats : ROUTES.teacher.homework, {
       state: { courseId: lesson.courseId },
     });
   }
