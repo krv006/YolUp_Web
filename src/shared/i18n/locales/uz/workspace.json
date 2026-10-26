@@ -168,5 +168,9 @@
   "results": {
     "hardestEmpty": "Hali urinish yo'q — statistika testdan keyin chiqadi.",
     "aiStarted": "AI mini-test tayyorlamoqda"
+  },
+  "ai": {
+    "fileTooBig": "“{{name}}” juda katta — har bir fayl {{size}} MB gacha bo'lishi kerak.",
+    "removeFile": "Faylni olib tashlash"
   }
 }
