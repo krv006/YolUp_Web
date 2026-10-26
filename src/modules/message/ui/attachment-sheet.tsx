@@ -1,6 +1,6 @@
 import { useRef, type ComponentType } from "react";
 import { useTranslation } from "react-i18next";
-import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import { Camera, ClipboardList, FolderClosed, Image } from "lucide-react";
 
 const DOCUMENT_TYPES =
@@ -42,13 +42,23 @@ export function AttachmentSheet({
     icon: ComponentType<{ size?: number }>;
     tone: string;
   }> = [
-    { id: "gallery", label: t("attach.gallery"), icon: Image, tone: "bg-action text-on-action" },
-    { id: "camera", label: t("attach.camera"), icon: Camera, tone: "bg-success text-white" },
+    {
+      id: "gallery",
+      label: t("attach.gallery"),
+      icon: Image,
+      tone: "bg-brand-subtle text-brand",
+    },
+    {
+      id: "camera",
+      label: t("attach.camera"),
+      icon: Camera,
+      tone: "bg-accent-green-bg text-success",
+    },
     {
       id: "document",
       label: t("attach.document"),
       icon: FolderClosed,
-      tone: "bg-saffron-strong text-white",
+      tone: "bg-warning-bg text-warning-fg",
     },
     ...(onAssignment
       ? [
@@ -56,7 +66,7 @@ export function AttachmentSheet({
             id: "assignment",
             label: t("attach.assignment"),
             icon: ClipboardList,
-            tone: "bg-error text-white",
+            tone: "bg-accent-violet-bg text-accent-violet-fg",
           },
         ]
       : []),
@@ -68,15 +78,14 @@ export function AttachmentSheet({
   }
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="px-5 pb-7">
-        <DrawerTitle className="px-1 pt-2 font-heading text-h3 text-ink">
-          {t("attach.title")}
-        </DrawerTitle>
-        <p className="px-1 pb-4 text-body-sm text-ink-secondary">
-          {t("attach.sizeHint", { size: maxSizeMb })}
-        </p>
-
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      width="lg:w-120"
+      title={t("attach.title")}
+      description={t("attach.sizeHint", { size: maxSizeMb })}
+    >
+      <div>
         <div className="grid grid-cols-4 gap-3 pb-2">
           {tiles.map((tile) => (
             <button
@@ -85,10 +94,10 @@ export function AttachmentSheet({
               className="flex flex-col items-center gap-2"
               onClick={() => handleTile(tile.id)}
             >
-              <span className={`grid size-14 place-items-center rounded-2xl ${tile.tone}`}>
-                <tile.icon size={24} />
+              <span className={`grid size-12 place-items-center rounded-xl ${tile.tone}`}>
+                <tile.icon size={22} />
               </span>
-              <small className="text-caption text-ink-secondary">{tile.label}</small>
+              <small className="text-body-xs text-ink-secondary">{tile.label}</small>
             </button>
           ))}
         </div>
@@ -126,7 +135,7 @@ export function AttachmentSheet({
             event.target.value = "";
           }}
         />
-      </DrawerContent>
-    </Drawer>
+      </div>
+    </AppDialog>
   );
 }

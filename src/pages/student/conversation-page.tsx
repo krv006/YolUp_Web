@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
 import { ChatHeader } from "@/modules/conversation";
-import { MessageComposer, MessageList, useChat } from "@/modules/message";
+import { MessageComposer, MessageList, useChat, useChatUiStore } from "@/modules/message";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 import { ForwardDialog } from "@/widgets/forward-dialog";
 import { StudentGroupWorkspace } from "@/widgets/student-group-workspace";
@@ -13,6 +13,7 @@ export function StudentConversationPage() {
   const { t } = useTranslation("chat");
   const { conversationId } = useParams();
   const { user } = useAuth();
+  const selectionMode = useChatUiStore((state) => state.selected.length > 0);
   const currentUserId = user?.id ?? null;
   const chat = useChat(conversationId, {
     role: "student",
@@ -133,6 +134,7 @@ export function StudentConversationPage() {
         onForward={(items) => setForwardTarget(items)}
         onBulkDelete={(messageIds, scope) => deleteMessages.mutate({ messageIds, scope })}
       />
+      {selectionMode ? null : (
       <MessageComposer
         key={editingMessage?.id ?? "student-direct-compose"}
         onSend={handleSend}
@@ -147,6 +149,7 @@ export function StudentConversationPage() {
         }}
         roomId={conversationId ?? null}
       />
+      )}
 
       <ForwardDialog
         open={forwardTarget.length > 0}
