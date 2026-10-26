@@ -32,7 +32,8 @@
     "openError": "Faylni ochib bo'lmadi",
     "unsupported": "Bu turdagi faylni brauzerda ko'rib bo'lmaydi.",
     "platformOnlyNote": "Fayl faqat platforma ichida ko'riladi",
-    "close": "Yopish"
+    "close": "Yopish",
+    "watermark": "YolUp · faqat platformada"
   },
   "date": {
     "yesterday": "Kecha",
@@ -58,10 +59,10 @@
     "weekdays": [
       "Du",
       "Se",
-      "Cho",
+      "Ch",
       "Pa",
       "Ju",
-      "Sha",
+      "Sh",
       "Ya"
     ],
     "selectPlaceholder": "Tanlang",
@@ -87,7 +88,14 @@
     "done": "Tayyor",
     "schedule": "Jadval",
     "searchPlaceholder": "Qidirish",
-    "searchEmpty": "Hech narsa topilmadi"
+    "searchEmpty": "Hech narsa topilmadi",
+    "chooseDateTitle": "Sanani tanlang",
+    "chooseTimeTitle": "Vaqtni tanlang",
+    "choose": "Tanlash",
+    "cancel": "Bekor qilish",
+    "durationSection": "Davomiylik",
+    "presetSection": "Tayyor vaqtlar",
+    "minuteShort": "daq"
   },
   "routeState": {
     "errorEyebrow": "Xato",
@@ -99,6 +107,8 @@
     "notFoundAction": "Bosh sahifaga qaytish",
     "forbiddenTitle": "Bu bo‘limga ruxsatingiz yo‘q",
     "forbiddenDescription": "Sahifa boshqa rol uchun. Akkauntni almashtiring yoki guruh egasidan ruxsat so‘rang.",
-    "forbiddenAction": "Akkauntni almashtirish"
+    "forbiddenAction": "Akkauntni almashtirish",
+    "back": "Orqaga",
+    "help": "Yordam"
   }
 }

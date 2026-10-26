@@ -197,7 +197,9 @@
     "mergingTitle": "Preparing the recording...",
     "preparingTitle": "Preparing the recording...",
     "failedTitle": "The recording could not be prepared",
-    "noneTitle": "No recording"
+    "noneTitle": "No recording",
+    "sharedToChat": "The recording was sent to the group chat",
+    "pdfFailed": "The PDF could not be downloaded"
   },
   "schedule": {
     "now": "NOW",
@@ -296,7 +298,13 @@
       "repeatValue": "Recurring schedule",
       "topic": "Topic",
       "homework": "Homework",
-      "students": "Students"
+      "students": "Students",
+      "until": "until {{date}}",
+      "freq": {
+        "weekly": "weekly",
+        "daily": "daily",
+        "monthly": "monthly"
+      }
     },
     "title": "Schedule"
   },

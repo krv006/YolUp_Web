@@ -1,4 +1,9 @@
-import { normalizePagination, type Page, type PaginationOptions } from "@/shared/api";
+import {
+  normalizeMediaUrl,
+  normalizePagination,
+  type Page,
+  type PaginationOptions,
+} from "@/shared/api";
 import type { Course, DomainUser, Enrollment, UserDto } from "@/shared/types";
 import type { CourseDto, CourseFormInput, CourseRequestDto, EnrollmentDto } from "../api/course.dto";
 
@@ -31,6 +36,7 @@ export function mapCourseDto(dto: CourseDto): Course {
     color: toneFor(dto.id),
     lessonsPerWeek: dto.lessons_per_week ?? null,
     monthlyFee: dto.monthly_fee ?? null,
+    avatarUrl: normalizeMediaUrl(dto.avatar),
   };
 }
 

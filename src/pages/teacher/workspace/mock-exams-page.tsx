@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import {
   ExamCreateDialog,
+  ExamTemplateDialog,
   useCreateExam,
+  useCreateExamTemplate,
   useDeleteExam,
   useExamCurrent,
   useExamResults,
@@ -17,6 +18,7 @@ import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ExamSummary } from "@/shared/types";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 
 const STATE_TONE: Record<string, string> = {
@@ -37,11 +39,14 @@ export function MockExamsPage() {
   const exams = useExams(null);
   const remove = useDeleteExam();
   const create = useCreateExam();
+  const createTemplate = useCreateExamTemplate();
   const courses = useCourses();
   const examTemplates = useExamTemplates();
   const quizzes = useQuizzes(null);
   const [filter, setFilter] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const [deleting, setDeleting] = useState<ExamSummary | null>(null);
 
   const items = useMemo(() => exams.data ?? [], [exams.data]);
   const live = items.find((exam) => exam.state === "running") ?? null;
@@ -99,7 +104,7 @@ export function MockExamsPage() {
               key={exam.id}
               exam={exam}
               onOpen={() => navigate(ROUTES.teacher.mockResults(exam.id))}
-              onDelete={() => remove.mutate(exam.id)}
+              onDelete={() => setDeleting(exam)}
             />
           ))}
 
@@ -160,9 +165,14 @@ export function MockExamsPage() {
 
                     <small className="truncate text-body-xs text-ink-tertiary">
                       {row.participated
-                        ? done
-                          ? t("mock.finished")
-                          : t("mock.inProgress")
+                        ? row.answered != null && row.questionsTotal
+                          ? t("mock.answeredCount", {
+                              answered: row.answered,
+                              total: row.questionsTotal,
+                            })
+                          : done
+                            ? t("mock.finished")
+                            : t("mock.inProgress")
                         : t("mock.notJoined")}
                     </small>
 
@@ -171,7 +181,17 @@ export function MockExamsPage() {
                         className={`block h-full rounded-full ${
                           done ? "bg-success" : row.participated ? "bg-brand" : "bg-line"
                         }`}
-                        style={{ width: done ? "100%" : row.participated ? "45%" : "0%" }}
+                        style={{
+                          width: done
+                            ? "100%"
+                            : row.participated
+                              ? `${
+                                  row.answered != null && row.questionsTotal
+                                    ? Math.round((row.answered / row.questionsTotal) * 100)
+                                    : 45
+                                }%`
+                              : "0%",
+                        }}
                       />
                     </span>
                   </span>
@@ -181,6 +201,43 @@ export function MockExamsPage() {
           ) : null}
         </div>
       </div>
+      <AppDialog
+        open={Boolean(deleting)}
+        onOpenChange={(open) => !open && setDeleting(null)}
+        variant="confirm"
+        layout="stacked"
+        width="lg:w-85"
+        icon={
+          <span className="grid size-12 place-items-center rounded-md bg-danger-bg text-danger">
+            <Icon name="delete" size={22} />
+          </span>
+        }
+        title={t("mock.deleteTitle")}
+        description={t("mock.deleteDescription", { title: deleting?.title ?? "" })}
+        footer={
+          <>
+            <button
+              type="button"
+              className="flex h-11 flex-1 items-center justify-center rounded-full border border-line bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle"
+              onClick={() => setDeleting(null)}
+            >
+              {t("mock.cancel")}
+            </button>
+            <button
+              type="button"
+              className="flex h-11 flex-1 items-center justify-center rounded-full bg-danger-bg px-4 text-button text-danger transition-opacity hover:opacity-85 disabled:opacity-50"
+              disabled={remove.isPending}
+              onClick={() => {
+                if (!deleting) return;
+                remove.mutate(deleting.id, { onSuccess: () => setDeleting(null) });
+              }}
+            >
+              {t("mock.delete")}
+            </button>
+          </>
+        }
+      />
+
       <ExamCreateDialog
         open={createOpen}
         pending={create.isPending}
@@ -188,8 +245,15 @@ export function MockExamsPage() {
         templates={examTemplates.data ?? []}
         quizzes={quizzes.data ?? []}
         onOpenChange={setCreateOpen}
-        onCreateTemplate={() => toast.info(t("mock.soon"))}
+        onCreateTemplate={() => setTemplateOpen(true)}
         onCreate={(values) => create.mutateAsync(values).then(() => setCreateOpen(false))}
+      />
+
+      <ExamTemplateDialog
+        open={templateOpen}
+        pending={createTemplate.isPending}
+        onOpenChange={setTemplateOpen}
+        onCreate={(values) => createTemplate.mutateAsync(values).then(() => setTemplateOpen(false))}
       />
     </WorkspaceShell>
   );

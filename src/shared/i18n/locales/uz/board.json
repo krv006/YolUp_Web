@@ -177,6 +177,7 @@
     "hint": "O‘quvchilar siz ochgan sahifani ko‘radi",
     "new": "Yangi sahifa",
     "pageLabel": "{{index}}-sahifa",
-    "emptyPage": "Bo'sh sahifa"
+    "emptyPage": "Bo'sh sahifa",
+    "renameAria": "{{index}}-sahifa nomi"
   }
 }

@@ -172,6 +172,7 @@ export interface Course {
   color: string;
   lessonsPerWeek: number | null;
   monthlyFee: number | null;
+  avatarUrl: string | null;
 }
 
 export type EnrollmentStatus = "pending" | "approved" | "declined";
@@ -198,6 +199,12 @@ export interface LessonRecordingChapter {
   title: string;
 }
 
+export interface BoardPagePreview {
+  page: number;
+  title: string;
+  imageUrl: string;
+}
+
 export interface LessonRecording {
   status: LessonRecordingStatus;
   ready: boolean;
@@ -210,6 +217,8 @@ export interface LessonRecording {
   attendanceRate: number | null;
   boardPages: number | null;
   chapters: LessonRecordingChapter[];
+  boardPreviews: BoardPagePreview[];
+  pdfUrl: string | null;
 }
 
 export interface Lesson {
@@ -231,6 +240,20 @@ export interface Lesson {
   quizId: string | null;
   note: string;
   recurrenceId: string | null;
+  studentCount: number | null;
+  participantsCount: number | null;
+  attendanceRate: number | null;
+  joinedCount: number | null;
+  assignment: { id: string; title: string } | null;
+  recurrence: LessonRecurrence | null;
+}
+
+export interface LessonRecurrence {
+  freq: string;
+  weeks: number;
+  /** 0 = dushanba … 6 = yakshanba. */
+  weekdays: number[];
+  endsOn: string | null;
 }
 
 export interface LessonRating {
@@ -339,6 +362,16 @@ export interface Assignment {
   allowLate: boolean;
   grading: GradingScale;
   maxScore: number;
+  aiGroupSummary: AiGroupSummary | null;
+}
+
+export interface AiGroupSummary {
+  text: string;
+  summary: string;
+  topics: string[];
+  recommendations: string[];
+  submissionsCount: number;
+  createdAt: string | null;
 }
 
 export interface AssignmentFormValues {
@@ -377,6 +410,9 @@ export interface VoiceRoom {
   id: string;
   courseId: string;
   createdById: string;
+  /** LiveKit `participant.identity` bilan solishtiriladi ("user-<id>"). */
+  hostIdentity: string | null;
+  hostId: string | null;
   createdByName: string;
   title: string;
   accessMode: VoiceAccessMode;
@@ -567,6 +603,9 @@ export interface ExamTotalResult {
 }
 
 export interface ExamStudentResult {
+  /** Jonli imtihonda: javob berilgan savollar soni. */
+  answered?: number | null;
+  questionsTotal?: number | null;
   studentId: string;
   studentName: string;
   username: string;
@@ -695,6 +734,17 @@ export interface QuizAttemptSummary {
   score: number;
   maxScore: number;
   createdAt: string;
+  durationSeconds: number | null;
+  correctCount: number | null;
+  questionCount: number | null;
+}
+
+export interface QuizQuestionStat {
+  questionId: string;
+  order: number;
+  label: string;
+  wrongRate: number;
+  attemptsCount: number;
 }
 
 export interface QuizAttemptResult extends QuizAttemptSummary {
@@ -841,6 +891,8 @@ export interface AttendanceRow {
   attentionTotal: number;
   attentionAnswered: number;
   focus: FocusJournal;
+  /** Backend hisoblagan fokus foizi (0…100) — bo'lmasa null. */
+  focusPercent: number | null;
   status: "completed" | "active";
 }
 

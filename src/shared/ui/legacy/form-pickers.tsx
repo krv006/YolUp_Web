@@ -11,6 +11,7 @@ import {
   type TouchEvent as ReactTouchEvent,
   type WheelEvent as ReactWheelEvent,
 } from "react";
+import { AppDialog } from "@/shared/ui/app-dialog";
 import { Drawer, DrawerContent, DrawerTitle } from "@/shared/ui/drawer";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { createPortal } from "react-dom";
@@ -32,7 +33,7 @@ import {
 type IconComponent = ComponentType<{ size?: number | string; className?: string }>;
 type AnchorRef = RefObject<HTMLElement | null>;
 
-const TIME_PRESETS = ["09:00", "14:00", "18:30", "20:00"];
+const TIME_PRESETS = ["09:00", "14:00", "18:00", "19:30"];
 
 function pad(value: number): string {
   return String(value).padStart(2, "0");
@@ -283,6 +284,38 @@ export interface SelectOption {
   value: string;
   label: string;
 }
+
+function PickerModal({
+  open,
+  onOpenChange,
+  title,
+  children,
+  footer,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  children: ReactNode;
+  footer: ReactNode;
+}) {
+  return (
+    <AppDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      variant="confirm"
+      width="lg:w-105"
+      title={title}
+      footer={footer}
+    >
+      <div className="picker-modal flex flex-col gap-4">{children}</div>
+    </AppDialog>
+  );
+}
+
+const PICKER_SECONDARY =
+  "flex h-12 flex-1 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle";
+const PICKER_PRIMARY =
+  "flex h-12 flex-1 items-center justify-center rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong";
 
 export interface SelectPickerProps {
   label: string;
@@ -616,7 +649,9 @@ function TimeControl({ value, onChange, compact = false }: TimeControlProps) {
           </button>
         </div>
       </div>
-      <div className="time-presets" aria-label={t("formPickers.presetTimesAria")}>
+      <div className="picker-chip-section">
+        <span className="picker-chip-title">{t("formPickers.presetSection")}</span>
+        <div className="time-presets" aria-label={t("formPickers.presetTimesAria")}>
         {TIME_PRESETS.map((preset) => (
           <button
             key={preset}
@@ -626,7 +661,8 @@ function TimeControl({ value, onChange, compact = false }: TimeControlProps) {
           >
             {preset}
           </button>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -864,64 +900,44 @@ export function DatePicker({
           </DrawerContent>
         </Drawer>
       ) : (
-      <FloatingPicker
-        open={open}
-        onClose={() => setOpen(false)}
-        anchorRef={anchorRef}
-        labelledBy={labelId}
-        className={includeTime ? "datetime-picker-popover" : "date-picker-popover"}
-      >
-        <CalendarGrid
-          value={value}
-          onChange={selectDate}
-          viewDate={viewDate}
-          onViewDateChange={setViewDate}
-          minDate={minDate}
-          maxDate={maxDate}
-        />
-        {includeTime ? (
-          <div className="datetime-time-section">
-            <div className="picker-section-title">
-              <Clock3 size={15} />
-              <span>{t("formPickers.dueTimeSection")}</span>
-            </div>
-            <TimeControl value={timeValue} onChange={selectTime} compact />
-          </div>
-        ) : null}
-        <div className="picker-footer">
-          {optional ? (
-            <button
-              type="button"
-              className="picker-clear"
-              onClick={() => {
-                onChange("");
-                setOpen(false);
-              }}
-            >
-              {t("formPickers.clear")}
-            </button>
-          ) : (
-            <span />
-          )}
-          <button
-            type="button"
-            className="picker-today"
-            disabled={Boolean(
-              (minDate && toDateValue(new Date()) < minDate) ||
-                (maxDate && toDateValue(new Date()) > maxDate)
-            )}
-            onClick={() => {
-              selectDate(toDateValue(new Date()));
-              setViewDate(new Date());
-            }}
-          >
-            {t("formPickers.today")}
-          </button>
-          <button type="button" className="picker-done" onClick={() => setOpen(false)}>
-            {t("formPickers.done")}
-          </button>
-        </div>
-      </FloatingPicker>
+        <PickerModal
+          open={open}
+          onOpenChange={setOpen}
+          title={includeTime ? t("formPickers.chooseDateTime") : t("formPickers.chooseDateTitle")}
+          footer={
+            <>
+              <button
+                type="button"
+                className={PICKER_SECONDARY}
+                onClick={() => {
+                  if (optional) {
+                    onChange("");
+                    setOpen(false);
+                    return;
+                  }
+                  selectDate(toDateValue(new Date()));
+                  setViewDate(new Date());
+                }}
+              >
+                {optional ? t("formPickers.clear") : t("formPickers.today")}
+              </button>
+              <button type="button" className={PICKER_PRIMARY} onClick={() => setOpen(false)}>
+                {t("formPickers.choose")}
+              </button>
+            </>
+          }
+        >
+          <CalendarGrid
+            value={value}
+            onChange={selectDate}
+            viewDate={viewDate}
+            onViewDateChange={setViewDate}
+            minDate={minDate}
+            maxDate={maxDate}
+          />
+
+          {includeTime ? <TimeControl value={timeValue} onChange={selectTime} compact /> : null}
+        </PickerModal>
       )}
     </FieldShell>
   );
@@ -931,9 +947,15 @@ export interface TimePickerProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
+  /** Vaqt modalida davomiylik tanlash bo'limi (D6.3 dars formasi). */
+  duration?: {
+    value: string;
+    options: readonly number[];
+    onChange: (value: string) => void;
+  };
 }
 
-export function TimePicker({ label, value, onChange }: TimePickerProps) {
+export function TimePicker({ label, value, onChange, duration }: TimePickerProps) {
   const { t } = useTranslation("common");
   const [open, setOpen] = useState(false);
   const anchorRef = useRef<HTMLButtonElement>(null);
@@ -949,15 +971,41 @@ export function TimePicker({ label, value, onChange }: TimePickerProps) {
         placeholder={t("formPickers.chooseTime")}
         labelledBy={labelId}
       />
-      <FloatingPicker open={open} onClose={() => setOpen(false)} anchorRef={anchorRef} labelledBy={labelId} className="time-picker-popover">
-        <div className="picker-mini-heading"><span>{t("formPickers.schedule")}</span><strong>{label}</strong></div>
+      <PickerModal
+        open={open}
+        onOpenChange={setOpen}
+        title={t("formPickers.chooseTimeTitle")}
+        footer={
+          <>
+            <button type="button" className={PICKER_SECONDARY} onClick={() => setOpen(false)}>
+              {t("formPickers.cancel")}
+            </button>
+            <button type="button" className={PICKER_PRIMARY} onClick={() => setOpen(false)}>
+              {t("formPickers.choose")}
+            </button>
+          </>
+        }
+      >
         <TimeControl value={value} onChange={onChange} />
-        <div className="picker-footer picker-footer--end">
-          <button type="button" className="picker-done" onClick={() => setOpen(false)}>
-            {t("formPickers.done")}
-          </button>
-        </div>
-      </FloatingPicker>
+
+        {duration ? (
+          <div className="picker-chip-section">
+            <span className="picker-chip-title">{t("formPickers.durationSection")}</span>
+            <div className="picker-chips">
+              {duration.options.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className={String(option) === duration.value ? "is-selected" : ""}
+                  onClick={() => duration.onChange(String(option))}
+                >
+                  {option} {t("formPickers.minuteShort")}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+      </PickerModal>
     </FieldShell>
   );
 }

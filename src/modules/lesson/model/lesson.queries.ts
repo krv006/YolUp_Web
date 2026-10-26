@@ -209,6 +209,32 @@ export function useLessonRecording(id: string | null) {
   });
 }
 
+export function useLessonWaiting(id: string | null, enabled = true) {
+  return useQuery({
+    queryKey: [...lessonKeys.detail(id ?? ""), "waiting"],
+    queryFn: ({ signal }) => lessonApi.getWaiting(id as string, { signal }),
+    enabled: Boolean(id) && enabled,
+    refetchInterval: 15_000,
+  });
+}
+
+export function useShareRecording(id: string | null) {
+  return useMutation({
+    mutationFn: () => lessonApi.shareRecording(id as string),
+  });
+}
+
+export function useLessonConflicts(
+  params: { start: string; duration: number; exclude?: string } | null
+) {
+  return useQuery({
+    queryKey: ["lessons", "conflicts", params],
+    queryFn: ({ signal }) => lessonApi.getConflicts(params!, { signal }),
+    enabled: Boolean(params?.start && params?.duration),
+    staleTime: 30_000,
+  });
+}
+
 export function useDeleteRecording() {
   const client = useQueryClient();
   return useMutation({

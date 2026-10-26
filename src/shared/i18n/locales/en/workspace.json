@@ -48,7 +48,9 @@
     "attendance": "Attendance",
     "noCourses": "Once grades, test results and attendance come in, course metrics will show up here.",
     "studentCountValue": "{{count}} students",
-    "emptyTitle": "No data yet"
+    "emptyTitle": "No data yet",
+    "emptyDescription": "Once grades, test results and attendance are in, course metrics will appear here.",
+    "emptyAction": "Create a test"
   },
   "createGroup": "Create a group",
   "statGroups": "Groups",
@@ -162,5 +164,9 @@
     "chartRange": "Last 8 weeks",
     "chartEmpty": "The chart appears once the backend returns weekly results.",
     "quizShort": "test {{value}}%"
+  },
+  "results": {
+    "hardestEmpty": "No attempts yet — stats appear after the test.",
+    "aiStarted": "AI is preparing a mini test"
   }
 }

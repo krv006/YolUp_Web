@@ -106,7 +106,8 @@ function VoiceRoomBody({
               const name = participant.name || participant.identity;
               const micOn = participant.isMicrophoneEnabled;
               const speaking = participant.isSpeaking;
-              const owner = participant.identity === room.createdById;
+              const owner =
+                participant.identity === (room.hostIdentity ?? `user-${room.createdById}`);
 
               return (
                 <span key={participant.sid} className="flex w-25 flex-col items-center gap-2">

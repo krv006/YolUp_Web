@@ -14,6 +14,7 @@ export interface CourseDto {
   created_at?: string | null;
   lessons_per_week?: number | null;
   monthly_fee?: number | null;
+  avatar?: string | null;
 }
 
 export interface EnrollmentDto {

@@ -7,6 +7,8 @@ export const quizEndpoints = Object.freeze({
   attempts: (id: string) => `/api/v1/quizzes/${id}/attempts/`,
   attemptsExport: (id: string) => `/api/v1/quizzes/${id}/attempts/export/`,
   notAttempted: (id: string) => `/api/v1/quizzes/${id}/not-attempted/`,
+  stats: (id: string) => `/api/v1/quizzes/${id}/stats/`,
+  aiGenerateMini: "/api/v1/quizzes/ai-generate/mini/",
   import: "/api/v1/quizzes/import/",
   importGoogleDoc: "/api/v1/quizzes/import-google-doc/",
   importGoogleForm: "/api/v1/quizzes/import-google-form/",

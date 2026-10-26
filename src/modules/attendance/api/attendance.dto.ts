@@ -24,6 +24,7 @@ export interface AttendanceDto {
   attention_total: number;
   attention_answered: number;
   focus_exits: number;
+  focus_percent?: number | null;
   focus?: FocusJournalDto | null;
   focus_alert?: boolean | null;
 }

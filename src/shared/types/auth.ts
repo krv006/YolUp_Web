@@ -6,6 +6,8 @@ export interface Certificate {
   file: string;
   title: string;
   createdAt: string;
+  issuer: string;
+  verified: boolean;
 }
 
 export interface LinkedAccount {

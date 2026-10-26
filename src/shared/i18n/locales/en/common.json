@@ -32,7 +32,8 @@
     "openError": "Couldn't open the file",
     "unsupported": "This file type can't be viewed in the browser.",
     "platformOnlyNote": "This file can only be viewed on the platform",
-    "close": "Close"
+    "close": "Close",
+    "watermark": "YolUp · platform only"
   },
   "date": {
     "yesterday": "Yesterday",
@@ -87,7 +88,14 @@
     "done": "Done",
     "schedule": "Schedule",
     "searchPlaceholder": "Search",
-    "searchEmpty": "Nothing found"
+    "searchEmpty": "Nothing found",
+    "chooseDateTitle": "Pick a date",
+    "chooseTimeTitle": "Pick a time",
+    "choose": "Select",
+    "cancel": "Cancel",
+    "durationSection": "Duration",
+    "presetSection": "Preset times",
+    "minuteShort": "min"
   },
   "routeState": {
     "errorEyebrow": "Error",
@@ -99,6 +107,8 @@
     "notFoundAction": "Back to home",
     "forbiddenTitle": "You do not have access here",
     "forbiddenDescription": "This page belongs to another role. Switch account or ask the group owner for access.",
-    "forbiddenAction": "Switch account"
+    "forbiddenAction": "Switch account",
+    "back": "Back",
+    "help": "Help"
   }
 }

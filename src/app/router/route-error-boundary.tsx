@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { env } from "@/shared/config";
 import { i18n } from "@/shared/i18n";
 import { Icon } from "@/shared/ui/icon";
-import { RouteStatus, routeStatusButton } from "@/shared/ui/route-status";
+import { RouteStatus, routeStatusButton, routeStatusGhostButton } from "@/shared/ui/route-status";
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -42,19 +42,26 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return (
       <RouteStatus
         tone="error"
-        eyebrow={i18n.t("common:routeState.errorEyebrow")}
         icon={<Icon name="error" size={28} />}
         title={i18n.t("common:routeState.errorTitle")}
         description={i18n.t("common:routeState.errorDescription")}
         action={
-          <button
-            type="button"
-            className={routeStatusButton}
-            onClick={() => window.location.reload()}
-          >
-            <Icon name="refresh" size={18} />
-            {i18n.t("common:routeState.errorAction")}
-          </button>
+          <>
+            <button
+              type="button"
+              className={routeStatusGhostButton}
+              onClick={() => window.open("https://t.me/yolup_support", "_blank", "noopener")}
+            >
+              {i18n.t("common:routeState.help")}
+            </button>
+            <button
+              type="button"
+              className={routeStatusButton}
+              onClick={() => window.location.reload()}
+            >
+              {i18n.t("common:routeState.errorAction")}
+            </button>
+          </>
         }
       />
     );

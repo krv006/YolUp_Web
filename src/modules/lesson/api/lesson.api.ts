@@ -2,6 +2,7 @@ import { API_ERROR_CODES, apiClient, AppError, type RequestOptions } from "@/sha
 import type { Lesson } from "@/shared/types";
 import { lessonEndpoints } from "./lesson.endpoints";
 import type {
+  LessonConflictsDto,
   LessonDto,
   LessonFormInput,
   LessonRatingDto,
@@ -9,6 +10,7 @@ import type {
   LessonRecordingDto,
   LessonScheduleRequestDto,
   LessonScheduleResponseDto,
+  LessonWaitingDto,
 } from "./lesson.dto";
 import {
   mapLessonDto,
@@ -128,6 +130,42 @@ export const lessonApi = {
       if (error instanceof AppError && error.code === API_ERROR_CODES.NOT_FOUND) return null;
       throw error;
     }
+  },
+  async getWaiting(id: string, options?: RequestOptions) {
+    const dto = await apiClient.get<LessonWaitingDto>(lessonEndpoints.waiting(id), options);
+    return {
+      waitingCount: dto.waiting_count ?? null,
+      totalCount: dto.total_count ?? null,
+      students: (dto.students ?? []).map((item) => ({
+        id: String(item.id),
+        name: item.name ?? "",
+        avatar: item.avatar ?? null,
+      })),
+    };
+  },
+  async shareRecording(id: string) {
+    await apiClient.post(lessonEndpoints.shareRecording(id), {});
+    return id;
+  },
+  async getConflicts(params: { start: string; duration: number; exclude?: string }, options?: RequestOptions) {
+    const dto = await apiClient.get<LessonConflictsDto>(lessonEndpoints.conflicts, {
+      ...options,
+      query: {
+        start: params.start,
+        duration: params.duration,
+        ...(params.exclude ? { exclude: params.exclude } : {}),
+      },
+    });
+    return {
+      hasConflict: Boolean(dto.has_conflict),
+      lessons: (dto.lessons ?? []).map((item) => ({
+        id: String(item.id),
+        title: item.title ?? "",
+        courseTitle: item.course_title ?? "",
+        startsAt: item.starts_at ?? "",
+        durationMinutes: Number(item.duration_min ?? 0),
+      })),
+    };
   },
   async removeRecording(id: string) {
     await apiClient.delete(lessonEndpoints.recording(id));

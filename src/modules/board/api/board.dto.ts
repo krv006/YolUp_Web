@@ -83,8 +83,11 @@ export type StrokeInput = StrokeShapeDto;
 
 export interface BoardSheetDto {
   index: number | string;
+  title?: string | null;
   strokes?: StrokeDto[];
 }
+
+export type BoardPermissionMode = "teacher" | "selected" | "everyone";
 
 export interface BoardStateDto {
   sheets?: BoardSheetDto[];
@@ -97,6 +100,7 @@ export interface BoardStateDto {
   away_students?: Array<{ student_id: string | number; name: string }>;
   pending_mic_requests?: Array<{ student_id: string | number; name: string }>;
   pending_camera_requests?: Array<{ student_id: string | number; name: string }>;
+  permission_mode?: BoardPermissionMode | null;
 }
 
 export interface PeriodicElementDto {
@@ -133,6 +137,7 @@ export interface FormulaSolutionDto {
 
 export interface BoardSheet {
   index: number;
+  title: string;
   strokes: StrokeDto[];
 }
 
@@ -174,6 +179,7 @@ export interface BoardState {
   subject: string;
   mathEnabled: boolean;
   chemistryEnabled: boolean;
+  permissionMode: BoardPermissionMode;
   awayStudents: AwayStudent[];
   pendingMicRequests: PendingMicRequest[];
   pendingCameraRequests: PendingCameraRequest[];

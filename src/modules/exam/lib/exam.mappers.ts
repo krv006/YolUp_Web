@@ -273,6 +273,8 @@ export function mapExamStudentResultDto(dto: ExamStudentResultDto): ExamStudentR
       : null,
     pending: dto.pending ?? [],
     integrity: dto.integrity ? { away: dto.integrity.away, paste: dto.integrity.paste } : null,
+    answered: dto.answered ?? dto.progress?.answered ?? null,
+    questionsTotal: dto.questions_total ?? dto.progress?.total ?? null,
   };
 }
 

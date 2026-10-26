@@ -29,6 +29,33 @@ export function useDashboardTrends(period: DashboardPeriod, enabled = true) {
   });
 }
 
+export function useMyTrends(period: DashboardPeriod, enabled = true) {
+  return useQuery({
+    queryKey: ["analytics", "me", "trends", period],
+    queryFn: ({ signal }) => analyticsApi.getMyTrends(period, { signal }),
+    enabled,
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useTeacherDashboard(enabled = true) {
+  return useQuery({
+    queryKey: ["dashboard", "teacher"],
+    queryFn: ({ signal }) => analyticsApi.getTeacherDashboard({ signal }),
+    enabled,
+    staleTime: 60_000,
+  });
+}
+
+export function useDashboardActivity(limit = 10, enabled = true) {
+  return useQuery({
+    queryKey: ["dashboard", "activity", limit],
+    queryFn: ({ signal }) => analyticsApi.getDashboardActivity(limit, { signal }),
+    enabled,
+    staleTime: 30_000,
+  });
+}
+
 export function useMyAnalytics(enabled = true) {
   return useQuery({
     queryKey: analyticsKeys.me,

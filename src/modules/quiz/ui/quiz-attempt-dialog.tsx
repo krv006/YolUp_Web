@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, CircleDot, Clock3, XCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type {
@@ -31,6 +31,11 @@ export function QuizAttemptDialog({
   const submit = useSubmitQuizAttempt();
   const [answers, setAnswers] = useState<Record<string, QuizAnswerValue>>({});
   const [result, setResult] = useState<QuizAttemptResult | null>(null);
+  const startedAt = useRef<number | null>(null);
+
+  useEffect(() => {
+    startedAt.current = open ? Date.now() : null;
+  }, [open]);
 
   function handleOpenChange(next: boolean) {
     if (!next) {
@@ -46,7 +51,13 @@ export function QuizAttemptDialog({
       answer: answers[question.id] ?? emptyAnswer(question),
     }));
     submit.mutate(
-      { quizId: quizData.id, answers: payload },
+      {
+        quizId: quizData.id,
+        answers: payload,
+        durationSeconds: startedAt.current
+          ? Math.round((Date.now() - startedAt.current) / 1000)
+          : null,
+      },
       { onSuccess: setResult },
     );
   }

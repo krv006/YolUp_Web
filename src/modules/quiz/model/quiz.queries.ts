@@ -230,13 +230,32 @@ export function useSubmitQuizAttempt() {
     mutationFn: ({
       quizId,
       answers,
+      durationSeconds,
     }: {
       quizId: string;
       answers: QuizAttemptAnswerInput[];
-    }) => quizApi.submitAttempt(quizId, answers),
+      durationSeconds?: number | null;
+    }) => quizApi.submitAttempt(quizId, answers, durationSeconds),
     onSuccess: (result) => {
       client.invalidateQueries({ queryKey: quizKeys.attempts(result.quizId) });
     },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useQuizQuestionStats(quizId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: ["quizzes", quizId, "stats"],
+    queryFn: ({ signal }) => quizApi.getQuestionStats(quizId as string, { signal }),
+    enabled: Boolean(quizId) && enabled,
+    staleTime: 60_000,
+  });
+}
+
+export function useStartAiMiniQuiz() {
+  return useMutation({
+    mutationFn: ({ quizId, wrongQuestionIds }: { quizId: string; wrongQuestionIds: string[] }) =>
+      quizApi.startAiMiniQuiz(quizId, wrongQuestionIds),
     onError: (error: Error) => toast.error(error.message),
   });
 }

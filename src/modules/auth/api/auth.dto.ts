@@ -20,6 +20,8 @@ export const certificateDtoSchema = z.object({
   file: z.string(),
   title: z.string().nullable().default(""),
   created_at: z.string(),
+  issuer: z.string().nullable().optional(),
+  verified: z.boolean().nullable().optional(),
 });
 
 export const linkedAccountDtoSchema = z.object({

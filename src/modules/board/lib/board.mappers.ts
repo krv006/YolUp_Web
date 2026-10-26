@@ -9,6 +9,7 @@ export function mapBoardDto(dto: BoardStateDto): BoardState {
   return {
     sheets: (dto.sheets ?? []).map((sheet) => ({
       index: Number(sheet.index),
+      title: sheet.title ?? "",
       strokes: sheet.strokes ?? [],
     })),
     canDraw: Boolean(dto.can_draw),
@@ -18,6 +19,7 @@ export function mapBoardDto(dto: BoardStateDto): BoardState {
     subject: dto.subject || "",
     mathEnabled: Boolean(dto.math_enabled),
     chemistryEnabled: Boolean(dto.chemistry_enabled),
+    permissionMode: dto.permission_mode ?? "teacher",
     awayStudents: (dto.away_students ?? []).map((item) => ({
       id: String(item.student_id),
       name: item.name || "O‘quvchi",

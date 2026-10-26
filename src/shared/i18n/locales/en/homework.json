@@ -259,7 +259,9 @@
       "average": "Average"
     },
     "aiTitle": "AI checked today's work",
-    "aiHint": "Waiting for your confirmation — the final grade is yours."
+    "aiHint": "Waiting for your confirmation — the final grade is yours.",
+    "aiCheckedToday": "AI checked {{count}} submissions today",
+    "aiPendingConfirm": "{{count}} grades are waiting for your confirmation"
   },
   "detail": {
     "eyebrow": "Assignments / {{course}} · Due: {{due}}",
@@ -302,7 +304,9 @@
       "missing": "Not submitted",
       "late": "Late"
     },
-    "noStudents": "No student found."
+    "noStudents": "No student found.",
+    "aiRefresh": "Recalculate",
+    "aiGenerate": "Get AI advice"
   },
   "deleteDialog": {
     "title": "Delete the assignment?",

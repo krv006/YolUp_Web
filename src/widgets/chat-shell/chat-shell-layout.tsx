@@ -38,7 +38,7 @@ export function ChatShellLayout() {
       {section === "chat" ? <ConversationListPanel /> : null}
 
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        {section === "chat" ? null : (
+        {section === "chat" || section === "profile" ? null : (
           <ConversationTopbar
             role="teacher"
             section={section}

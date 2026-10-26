@@ -71,6 +71,10 @@ export const notificationApi = {
       name: [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username,
       username: user.username,
       role: user.role ?? "",
+      avatar: (user as { avatar?: string | null }).avatar ?? null,
+      roomId: (user as { room_id?: string | number | null }).room_id
+        ? String((user as { room_id?: string | number | null }).room_id)
+        : null,
     }));
   },
 };

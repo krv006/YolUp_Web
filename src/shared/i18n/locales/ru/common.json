@@ -32,7 +32,8 @@
     "openError": "Не удалось открыть файл",
     "unsupported": "Этот тип файла нельзя просмотреть в браузере.",
     "platformOnlyNote": "Файл можно просмотреть только на платформе",
-    "close": "Закрыть"
+    "close": "Закрыть",
+    "watermark": "YolUp · только в платформе"
   },
   "date": {
     "yesterday": "Вчера",
@@ -87,7 +88,14 @@
     "done": "Готово",
     "schedule": "Расписание",
     "searchPlaceholder": "Поиск",
-    "searchEmpty": "Ничего не найдено"
+    "searchEmpty": "Ничего не найдено",
+    "chooseDateTitle": "Выберите дату",
+    "chooseTimeTitle": "Выберите время",
+    "choose": "Выбрать",
+    "cancel": "Отмена",
+    "durationSection": "Длительность",
+    "presetSection": "Готовое время",
+    "minuteShort": "мин"
   },
   "routeState": {
     "errorEyebrow": "Ошибка",
@@ -99,6 +107,8 @@
     "notFoundAction": "На главную",
     "forbiddenTitle": "Нет доступа к этому разделу",
     "forbiddenDescription": "Страница для другой роли. Смените аккаунт или попросите доступ у владельца группы.",
-    "forbiddenAction": "Сменить аккаунт"
+    "forbiddenAction": "Сменить аккаунт",
+    "back": "Назад",
+    "help": "Помощь"
   }
 }

@@ -20,6 +20,9 @@ export {
   useMonitoringCurrent,
   useMonitoringHistory,
   useMyAnalytics,
+  useMyTrends,
+  useTeacherDashboard,
+  useDashboardActivity,
   useTeacherVideoStats,
 } from "./model/analytics.queries";
 export { TrendLineChart, type TrendLineSeries } from "./ui/trend-line-chart";

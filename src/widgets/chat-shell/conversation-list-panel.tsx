@@ -9,6 +9,7 @@ import {
   useNewConversationStore,
   type ConversationFilter,
 } from "@/modules/conversation";
+import { useUserSearch } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
 import { formatMessageTime } from "@/shared/lib";
 import { Avatar } from "@/shared/ui/legacy";
@@ -47,6 +48,12 @@ export function ConversationListPanel() {
       return b.updatedAt.localeCompare(a.updatedAt);
     });
   }, [data, filter, query]);
+
+  const people = useUserSearch(query);
+  const peopleRows = useMemo(() => {
+    const known = new Set(data.map((item) => item.id));
+    return (people.data ?? []).filter((person) => !person.roomId || !known.has(person.roomId));
+  }, [people.data, data]);
 
   const unreadTotal = data.reduce((sum, item) => sum + (item.unreadCount > 0 ? 1 : 0), 0);
 
@@ -106,16 +113,16 @@ export function ConversationListPanel() {
 
       {query ? (
         <p className="shrink-0 px-5 pt-5 pb-2 text-title-sm text-ink">
-          {t("panel.resultCount", { count: visible.length })}
+          {t("panel.resultCount", { count: visible.length + peopleRows.length })}
         </p>
       ) : (
-        <div className="flex shrink-0 items-center gap-2 overflow-x-auto px-5 pt-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist">
+        <div className="flex shrink-0 items-center gap-1.5 overflow-x-auto px-5 pt-4 pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist">
           {FILTERS.map((id) => (
             <button
               key={id}
               role="tab"
               aria-selected={filter === id}
-              className={`flex h-9 shrink-0 items-center rounded-full px-4 text-label transition-colors ${
+              className={`flex h-9 shrink-0 items-center justify-center rounded-full px-2 text-caption-strong whitespace-nowrap transition-colors ${
                 filter === id
                   ? "bg-brand text-ink-inverse"
                   : "text-ink-secondary hover:bg-subtle hover:text-ink"
@@ -152,7 +159,7 @@ export function ConversationListPanel() {
           />
         ) : null}
 
-        {!isLoading && !isError && !visible.length ? (
+        {!isLoading && !isError && !visible.length && !peopleRows.length ? (
           <ListState
             icon="search"
             title={t("panel.emptyTitle")}
@@ -241,6 +248,43 @@ export function ConversationListPanel() {
               );
             })
           : null}
+
+        {query && peopleRows.length ? (
+          <>
+            <p className="px-4 pt-4 pb-2 text-overline text-ink-tertiary uppercase">
+              {t("panel.peopleSection")}
+            </p>
+
+            {peopleRows.map((person) => (
+              <button
+                key={person.id}
+                type="button"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-left transition-colors hover:bg-subtle"
+                onClick={() => {
+                  if (person.roomId) {
+                    navigate(ROUTES.teacher.chat(person.roomId));
+                    setSearch("");
+                  }
+                }}
+              >
+                <Avatar name={person.name} src={person.avatar} size="sm" />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-title-sm text-ink">{person.name}</strong>
+                  <small className="truncate text-body-xs text-ink-tertiary">
+                    @{person.username}
+                  </small>
+                </span>
+                {person.roomId ? (
+                  <Icon name="chevron-right" size={18} className="shrink-0 text-icon-tertiary" />
+                ) : (
+                  <small className="shrink-0 text-body-xs text-brand">
+                    {t("panel.startChat")}
+                  </small>
+                )}
+              </button>
+            ))}
+          </>
+        ) : null}
       </div>
 
       <ConversationActionsSheet

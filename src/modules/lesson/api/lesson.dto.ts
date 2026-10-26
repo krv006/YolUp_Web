@@ -15,12 +15,41 @@ export interface LessonDto {
   quiz_id?: string | null;
   note?: string | null;
   recurrence_id?: string | number | null;
+  students_count?: number | null;
+  participants_count?: number | null;
+  attendance_rate?: number | null;
+  joined_count?: number | null;
+  assignment?: { id: string | number; title?: string | null } | null;
+  recurrence?: {
+    freq?: string | null;
+    weeks?: number | null;
+    weekdays?: number[] | null;
+    ends_on?: string | null;
+  } | null;
 }
 
 export interface LessonRecurrenceDto {
   freq: "weekly";
   weeks: number;
   weekdays: number[];
+}
+
+export interface LessonConflictsDto {
+  has_conflict?: boolean | null;
+  lessons?: Array<{
+    id: string | number;
+    title?: string | null;
+    course?: string | number | null;
+    course_title?: string | null;
+    starts_at?: string | null;
+    duration_min?: number | null;
+  }> | null;
+}
+
+export interface LessonWaitingDto {
+  waiting_count?: number | null;
+  total_count?: number | null;
+  students?: Array<{ id: string | number; name?: string | null; avatar?: string | null }> | null;
 }
 
 export interface LessonRequestDto {
@@ -48,6 +77,12 @@ export interface LessonRecordingDto {
   attendance_rate?: number | null;
   board_pages?: number | null;
   chapters?: Array<{ seconds?: number | null; title?: string | null }> | null;
+  board_page_previews?: Array<{
+    page?: number | null;
+    title?: string | null;
+    image_url?: string | null;
+  }> | null;
+  pdf_url?: string | null;
 }
 
 export interface LessonRatingDto {

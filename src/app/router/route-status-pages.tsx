@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
-import { RouteStatus, routeStatusButton } from "@/shared/ui/route-status";
+import { RouteStatus, routeStatusButton, routeStatusGhostButton } from "@/shared/ui/route-status";
 
 export function ForbiddenPage() {
   const { t } = useTranslation("common");
@@ -12,14 +12,18 @@ export function ForbiddenPage() {
   return (
     <RouteStatus
       tone="warning"
-      eyebrow="403"
       icon={<Lock size={28} />}
       title={t("routeState.forbiddenTitle")}
       description={t("routeState.forbiddenDescription")}
       action={
-        <button type="button" className={routeStatusButton} onClick={() => navigate(ROUTES.root)}>
-          <Icon name="person" size={18} /> {t("routeState.forbiddenAction")}
-        </button>
+        <>
+          <button type="button" className={routeStatusGhostButton} onClick={() => navigate(-1)}>
+            {t("routeState.back")}
+          </button>
+          <button type="button" className={routeStatusButton} onClick={() => navigate(ROUTES.root)}>
+            {t("routeState.forbiddenAction")}
+          </button>
+        </>
       }
     />
   );
@@ -37,7 +41,7 @@ export function NotFoundPage() {
       description={t("routeState.notFoundDescription")}
       action={
         <button type="button" className={routeStatusButton} onClick={() => navigate(ROUTES.root)}>
-          <Icon name="arrow-back" size={18} /> {t("routeState.notFoundAction")}
+          {t("routeState.notFoundAction")}
         </button>
       }
     />

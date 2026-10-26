@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useDashboardTrends, useMyAnalytics } from "@/modules/analytics";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/shared/config";
+import { useMyAnalytics, useMyTrends } from "@/modules/analytics";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
@@ -13,8 +15,9 @@ function round(value: number | null): string {
 
 export function WorkspaceAnalyticsPage() {
   const { t } = useTranslation("workspace");
+  const navigate = useNavigate();
   const analytics = useMyAnalytics();
-  const trends = useDashboardTrends("week");
+  const trends = useMyTrends("week");
 
   const stats = analytics.data?.kind === "teacher" ? analytics.data.overall : null;
   const courses = useMemo(
@@ -40,6 +43,33 @@ export function WorkspaceAnalyticsPage() {
   }, [trends.data]);
 
   const maxBar = Math.max(100, ...bars.map((bar) => bar.value ?? 0));
+
+  const empty = !analytics.isLoading && !stats && !courses.length;
+
+  if (empty)
+    return (
+      <WorkspaceShell eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>
+        <div className="flex min-h-120 flex-col items-center justify-center gap-4 text-center">
+          <span className="grid size-22 place-items-center rounded-xl bg-brand-subtle text-brand">
+            <Icon name="bar-chart" size={36} />
+          </span>
+
+          <strong className="font-heading text-h1 text-ink">{t("analytics.emptyTitle")}</strong>
+
+          <p className="max-w-110 text-body-sm text-ink-secondary">
+            {t("analytics.emptyDescription")}
+          </p>
+
+          <button
+            type="button"
+            className="mt-2 flex h-11 items-center rounded-full bg-brand px-6 text-button text-on-action transition-colors hover:bg-brand-strong"
+            onClick={() => navigate(ROUTES.teacher.tests)}
+          >
+            {t("analytics.emptyAction")}
+          </button>
+        </div>
+      </WorkspaceShell>
+    );
 
   return (
     <WorkspaceShell eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>

@@ -7,7 +7,7 @@ export function TeacherShellLayout() {
   const setNewGroupOpen = useNewConversationStore((state) => state.setOpen);
 
   return (
-    <div className="flex h-dvh min-h-0 overflow-hidden bg-canvas">
+    <div className="flex h-dvh min-h-0 overflow-hidden bg-canvas font-body text-ink">
       <AppSidebar />
       <div className="min-w-0 flex-1 overflow-hidden">
         <Outlet />

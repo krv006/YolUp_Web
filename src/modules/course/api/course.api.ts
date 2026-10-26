@@ -57,6 +57,14 @@ export const courseApi = {
       await apiClient.patch<CourseDto>(courseEndpoints.detail(id), mapCourseRequest(form))
     );
   },
+  async updateAvatar(id: string, file: File | null) {
+    const formData = new FormData();
+    if (file) formData.append("avatar", file);
+    else formData.append("avatar", "");
+    return mapCourseDto(
+      await apiClient.patch<CourseDto>(courseEndpoints.detail(id), formData)
+    );
+  },
   async remove(id: string) {
     await apiClient.delete(courseEndpoints.detail(id));
     return id;

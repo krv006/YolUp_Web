@@ -3,13 +3,13 @@ import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
-import { useMyAnalytics } from "@/modules/analytics";
+import { useDashboardActivity, useMyAnalytics, useTeacherDashboard } from "@/modules/analytics";
 import { useConversations } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useLessons } from "@/modules/lesson";
 import { useLessonPresence } from "@/modules/live";
-import { NotificationBell, useNotificationInbox } from "@/modules/notification";
+import { NotificationBell } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
 import { useOnline } from "@/shared/hooks/use-online";
 import { GroupTile } from "@/shared/ui/group-tile";
@@ -52,7 +52,8 @@ export function TeacherDashboardPage() {
   const courses = useCourses();
   const lessons = useLessons({ page_size: LESSON_PAGE_SIZE });
   const stats = useMyAnalytics();
-  const inbox = useNotificationInbox({ page_size: 8 });
+  const dashboard = useTeacherDashboard();
+  const activity = useDashboardActivity(10);
   const conversations = useConversations("teacher");
   const [searchOpen, setSearchOpen] = useState(false);
   const [today] = useState(() => new Date());
@@ -99,17 +100,23 @@ export function TeacherDashboardPage() {
     [assignments]
   );
 
-  const pendingTotal = toReview.reduce((sum, row) => sum + row.pending, 0);
-  const studentTotal = groups.reduce((sum, course) => sum + (course.studentCount || 0), 0);
   const attendanceRates = (stats.data?.kind === "teacher" ? stats.data.courses : [])
     .map((course) => course.attendanceRate)
     .filter((value): value is number => typeof value === "number");
-  const attendance = attendanceRates.length
-    ? Math.round(attendanceRates.reduce((sum, value) => sum + value, 0) / attendanceRates.length)
-    : null;
+
+  const pendingTotal =
+    dashboard.data?.submissionsPending ?? toReview.reduce((sum, row) => sum + row.pending, 0);
+  const studentTotal =
+    dashboard.data?.studentsTotal ?? groups.reduce((sum, course) => sum + (course.studentCount || 0), 0);
+  const attendance =
+    dashboard.data?.attendanceRateWeek ??
+    (attendanceRates.length
+      ? Math.round(attendanceRates.reduce((sum, value) => sum + value, 0) / attendanceRates.length)
+      : null);
 
   const studentsByCourse = new Map(groups.map((course) => [course.id, course.studentCount ?? 0]));
   const toneByCourse = new Map(groups.map((course) => [course.id, course.color]));
+  const avatarByCourse = new Map(groups.map((course) => [course.id, course.avatarUrl]));
 
   const roomByCourse = new Map(
     (conversations.data ?? [])
@@ -217,7 +224,11 @@ export function TeacherDashboardPage() {
                           {endClock(lesson.startsAt, lesson.durationMinutes)}
                         </small>
                       </span>
-                      <GroupTile name={lesson.courseTitle} tone={toneByCourse.get(lesson.courseId)} />
+                      <GroupTile
+                        name={lesson.courseTitle}
+                        tone={toneByCourse.get(lesson.courseId)}
+                        src={avatarByCourse.get(lesson.courseId)}
+                      />
                       <span className="flex min-w-0 flex-1 flex-col">
                         <strong className="truncate text-title-md text-ink">
                           {lesson.courseTitle}
@@ -315,29 +326,24 @@ export function TeacherDashboardPage() {
             <section className="flex flex-col gap-3">
               <SectionHeader title={t("activity.title")} />
               <div className="flex flex-col overflow-hidden rounded-lg bg-surface">
-                {(inbox.data?.items ?? []).slice(0, 4).map((item) => (
+                {(activity.data ?? []).slice(0, 4).map((item) => (
                   <span
                     key={item.id}
                     className="flex items-start gap-3 border-b border-line px-5 py-4 last:border-b-0"
                   >
                     <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-subtle text-icon-secondary">
-                      <Icon name={activityIcon(item.kind)} size={20} />
+                      <Icon name={activityIcon(item.category)} size={20} />
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col">
-                      <strong
-                        className="truncate text-title-sm text-ink"
-                        dangerouslySetInnerHTML={{ __html: item.html }}
-                      />
-                      <small className="text-caption text-ink-tertiary">
-                        {item.sender?.name ?? ""}
-                      </small>
+                      <strong className="truncate text-title-sm text-ink">{item.title}</strong>
+                      <small className="truncate text-caption text-ink-tertiary">{item.body}</small>
                     </span>
                     <small className="shrink-0 text-caption text-ink-tertiary">
                       {clock(item.createdAt)}
                     </small>
                   </span>
                 ))}
-                {!(inbox.data?.items ?? []).length ? (
+                {!(activity.data ?? []).length ? (
                   <p className="px-4 py-8 text-center text-body-sm text-ink-tertiary">
                     {t("activity.empty")}
                   </p>
@@ -365,6 +371,10 @@ function activityIcon(kind: string | null): string {
   if (kind.includes("quiz") || kind.includes("exam")) return "quiz";
   if (kind.includes("homework") || kind.includes("assignment")) return "assign";
   if (kind.includes("lesson")) return "nav-calendar";
+  if (kind.includes("submission")) return "check-circle";
+  if (kind.includes("mention")) return "alternate-email";
+  if (kind.includes("payment")) return "payments";
+  if (kind.includes("announcement")) return "campaign";
   return "bell";
 }
 

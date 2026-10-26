@@ -57,6 +57,7 @@ export type {
   QuizAttemptAnswer,
   QuizAttemptResult,
   QuizAttemptSummary,
+  QuizQuestionStat,
   QuizDetail,
   QuizFormValues,
   QuizImportPreview,

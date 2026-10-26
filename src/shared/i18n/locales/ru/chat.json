@@ -272,7 +272,9 @@
     "newDirect": "Новый чат",
     "newGroup": "Новая группа",
     "typing": "{{name}} печатает...",
-    "you": "Вы"
+    "you": "Вы",
+    "peopleSection": "Люди",
+    "startChat": "Начать чат"
   },
   "pinned": {
     "label": "Закреплённое сообщение",

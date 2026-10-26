@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthLayout } from "@/app/layouts/auth-layout";
 import { TeacherShellLayout } from "@/app/layouts/teacher-shell";
 import { RootLayout } from "@/app/layouts/root-layout";
+import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout";
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
 import { LoadingFallback } from "@/shared/ui/legacy";
@@ -52,9 +53,6 @@ const WorkspaceSearchPage = lazy(() =>
   import("@/pages/workspace/workspace-search-page").then((module) => ({
     default: module.WorkspaceSearchPage,
   }))
-);
-const ProfilePage = lazy(() =>
-  import("@/pages/profile/profile-page").then((module) => ({ default: module.ProfilePage }))
 );
 const PersonalInfoPage = lazy(() =>
   import("@/pages/profile/personal-info-page").then((module) => ({
@@ -233,6 +231,15 @@ export function AppRouter() {
                     <Route path={ROUTES.teacher.workspaceAnalytics} element={<WorkspaceAnalyticsPage />} />
                     <Route path={ROUTES.teacher.mockExams} element={<MockExamsPage />} />
                     <Route path="/teacher/workspace/mock/:examId" element={<MockResultsPage />} />
+                    <Route path={ROUTES.teacher.profile} element={<ProfileLayout />}>
+                      <Route index element={<ProfileIndexRoute />} />
+                      <Route path="personal" element={<PersonalInfoPage />} />
+                      <Route path="account" element={<AccountSettingsPage />} />
+                      <Route path="system" element={<SystemSettingsPage />} />
+                      <Route path="ratings" element={<MyRatingsPage />} />
+                      <Route path="certificates" element={<CertificatesPage />} />
+                      <Route path="logins" element={<LoginHistoryPage />} />
+                    </Route>
                   </Route>
                   <Route
                     path={ROUTES.teacher.chats}
@@ -240,13 +247,10 @@ export function AppRouter() {
                   >
                     <Route index element={<ChatsPage />} />
                     <Route path="schedule" element={<SchedulePage />} />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="profile/personal" element={<PersonalInfoPage />} />
-                    <Route path="profile/account" element={<AccountSettingsPage />} />
-                    <Route path="profile/system" element={<SystemSettingsPage />} />
-                    <Route path="profile/ratings" element={<MyRatingsPage />} />
-                    <Route path="profile/certificates" element={<CertificatesPage />} />
-                    <Route path="profile/logins" element={<LoginHistoryPage />} />
+                    <Route
+                      path="profile/*"
+                      element={<Navigate to={ROUTES.teacher.profile} replace />}
+                    />
                     <Route path="search" element={<WorkspaceSearchPage />} />
                     <Route path="notifications" element={<NotificationsPage />} />
                     <Route path="ai" element={<AiPage />} />
@@ -293,13 +297,15 @@ export function AppRouter() {
                   >
                     <Route index element={<ChatsPage />} />
                     <Route path="schedule" element={<SchedulePage />} />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="profile/personal" element={<PersonalInfoPage />} />
-                    <Route path="profile/account" element={<AccountSettingsPage />} />
-                    <Route path="profile/system" element={<SystemSettingsPage />} />
-                    <Route path="profile/ratings" element={<MyRatingsPage />} />
-                    <Route path="profile/certificates" element={<CertificatesPage />} />
-                    <Route path="profile/logins" element={<LoginHistoryPage />} />
+                    <Route path="profile" element={<ProfileLayout />}>
+                      <Route index element={<ProfileIndexRoute />} />
+                      <Route path="personal" element={<PersonalInfoPage />} />
+                      <Route path="account" element={<AccountSettingsPage />} />
+                      <Route path="system" element={<SystemSettingsPage />} />
+                      <Route path="ratings" element={<MyRatingsPage />} />
+                      <Route path="certificates" element={<CertificatesPage />} />
+                      <Route path="logins" element={<LoginHistoryPage />} />
+                    </Route>
                     <Route path="search" element={<WorkspaceSearchPage />} />
                     <Route path="notifications" element={<NotificationsPage />} />
                     <Route path="workspace" element={<WorkspacePage />} />

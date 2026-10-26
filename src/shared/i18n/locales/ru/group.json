@@ -37,7 +37,8 @@
     "edit": "Редактировать",
     "emptyTitle": "Уроки ещё не запланированы",
     "emptyHint": "Добавьте расписание — ученики получат напоминание.",
-    "cancelLesson": "Отменить"
+    "cancelLesson": "Отменить",
+    "finishedStats": "{{joined}} / {{total}} участвовали · посещаемость {{rate}}%"
   },
   "assignments": {
     "eyebrow": "ЗАДАНИЯ ГРУППЫ",
