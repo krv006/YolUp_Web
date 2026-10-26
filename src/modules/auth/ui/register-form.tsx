@@ -1,12 +1,14 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/shared/ui/legacy";
 import { applyApiFieldErrors } from "@/shared/api";
 import { createRegisterSchema } from "../model/auth.schemas";
 import type { AppError } from "@/shared/api";
 import type { RegisterFormValues } from "../api/auth.dto";
+import { AuthButton, AuthField, AuthFieldError, AuthPasswordField } from "./auth-screen";
+
+const ROLES = ["teacher", "parent", "student"] as const;
 
 export interface RegisterFormProps {
   onSubmit: (values: RegisterFormValues) => Promise<unknown>;
@@ -14,37 +16,124 @@ export interface RegisterFormProps {
 
 export function RegisterForm({ onSubmit }: RegisterFormProps) {
   const { t } = useTranslation("auth");
+  const [showPassword, setShowPassword] = useState(false);
   const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
-  const { register, control, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegisterFormValues>({
+  const {
+    register,
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { username: "", password: "", firstName: "", lastName: "", phone: "", role: "teacher" },
+    defaultValues: {
+      username: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      phone: "",
+      role: "teacher",
+    },
   });
 
   async function submit(values: RegisterFormValues) {
-    try { await onSubmit(values); }
-    catch (error) {
+    try {
+      await onSubmit(values);
+    } catch (error) {
       const appError = error as AppError;
       if (!applyApiFieldErrors(appError, setError, { first_name: "firstName", last_name: "lastName" }))
         setError("root", { message: appError.message });
     }
   }
 
-  return <form className="login-form register-form" onSubmit={handleSubmit(submit)} noValidate>
-    <div className="register-role-toggle" aria-label={t("register.roleLabel")}>
-      <Controller name="role" control={control} render={({ field }) => <>
-        <button type="button" className={field.value === "teacher" ? "is-active" : ""} onClick={() => field.onChange("teacher")}>{t("register.role.teacher")}</button>
-        <button type="button" className={field.value === "parent" ? "is-active" : ""} onClick={() => field.onChange("parent")}>{t("register.role.parent")}</button>
-        <button type="button" className={field.value === "student" ? "is-active" : ""} onClick={() => field.onChange("student")}>{t("register.role.student")}</button>
-      </>} />
-    </div>
-    <div className="register-name-grid">
-      <label className="field-group"><span>{t("register.form.firstName")}</span><div className={`input-shell ${errors.firstName ? "input-shell--error" : ""}`}><input autoComplete="given-name" {...register("firstName")} /></div>{errors.firstName && <p className="field-error">{errors.firstName.message}</p>}</label>
-      <label className="field-group"><span>{t("register.form.lastName")}</span><div className={`input-shell ${errors.lastName ? "input-shell--error" : ""}`}><input autoComplete="family-name" {...register("lastName")} /></div>{errors.lastName && <p className="field-error">{errors.lastName.message}</p>}</label>
-    </div>
-    <label className="field-group"><span>{t("register.form.username")}</span><div className={`input-shell ${errors.username ? "input-shell--error" : ""}`}><input autoComplete="username" {...register("username")} /></div>{errors.username && <p className="field-error">{errors.username.message}</p>}</label>
-    <label className="field-group"><span>{t("register.form.phone")}</span><div className="input-shell"><input type="tel" autoComplete="tel" placeholder="+998" {...register("phone")} /></div></label>
-    <label className="field-group"><span>{t("register.form.password")}</span><div className={`input-shell ${errors.password ? "input-shell--error" : ""}`}><input type="password" autoComplete="new-password" {...register("password")} /></div>{errors.password && <p className="field-error">{errors.password.message}</p>}</label>
-    {errors.root && <div className="form-alert">{errors.root.message}</div>}
-    <Button className="login-submit" type="submit" loading={isSubmitting}>{t("register.form.submit")}</Button>
-  </form>;
+  return (
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(submit)} noValidate>
+      <Controller
+        name="role"
+        control={control}
+        render={({ field }) => (
+          <div
+            className="flex items-center gap-1 rounded-full bg-subtle p-1"
+            aria-label={t("register.roleLabel")}
+          >
+            {ROLES.map((role) => (
+              <button
+                key={role}
+                type="button"
+                className={`flex h-10 min-w-0 flex-1 items-center justify-center rounded-full text-button transition-colors ${
+                  field.value === role
+                    ? "bg-brand text-on-action"
+                    : "text-ink-secondary hover:text-ink"
+                }`}
+                onClick={() => field.onChange(role)}
+              >
+                {t(`register.role.${role}`)}
+              </button>
+            ))}
+          </div>
+        )}
+      />
+
+      <div className="grid grid-cols-2 items-start gap-3">
+        <div className="flex flex-col gap-1.5">
+          <AuthField
+            autoComplete="given-name"
+            placeholder={t("register.form.firstName")}
+            invalid={Boolean(errors.firstName)}
+            {...register("firstName")}
+          />
+          {errors.firstName ? <AuthFieldError>{errors.firstName.message}</AuthFieldError> : null}
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <AuthField
+            autoComplete="family-name"
+            placeholder={t("register.form.lastName")}
+            invalid={Boolean(errors.lastName)}
+            {...register("lastName")}
+          />
+          {errors.lastName ? <AuthFieldError>{errors.lastName.message}</AuthFieldError> : null}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <AuthField
+          autoComplete="username"
+          placeholder={t("register.form.username")}
+          invalid={Boolean(errors.username)}
+          {...register("username")}
+        />
+        {errors.username ? <AuthFieldError>{errors.username.message}</AuthFieldError> : null}
+      </div>
+
+      <AuthField
+        type="tel"
+        autoComplete="tel"
+        placeholder="+998 90 123 45 67"
+        {...register("phone")}
+      />
+
+      <div className="flex flex-col gap-1.5">
+        <AuthPasswordField
+          autoComplete="new-password"
+          placeholder={t("register.form.password")}
+          visible={showPassword}
+          invalid={Boolean(errors.password)}
+          onToggle={() => setShowPassword((value) => !value)}
+          {...register("password")}
+        />
+        {errors.password ? <AuthFieldError>{errors.password.message}</AuthFieldError> : null}
+      </div>
+
+      {errors.root ? (
+        <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger" role="alert">
+          {errors.root.message}
+        </p>
+      ) : null}
+
+      <AuthButton type="submit" loading={isSubmitting}>
+        {t("register.form.submit")}
+      </AuthButton>
+    </form>
+  );
 }

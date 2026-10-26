@@ -1,6 +1,4 @@
 import { useRef } from "react";
-import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -13,7 +11,7 @@ import {
   type RegisterFormValues,
 } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { Brand } from "@/shared/ui/legacy";
+import { AuthShell } from "@/shared/ui/auth-shell";
 
 export function RegisterPage() {
   const register = useRegisterMutation();
@@ -43,27 +41,16 @@ export function RegisterPage() {
     );
 
   return (
-    <main className="login-page">
-      <div className="login-orb login-orb--one" />
-      <div className="login-orb login-orb--two" />
-      <motion.section
-        className="login-card register-card"
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <Brand />
-        <div className="login-heading">
-          <span className="eyebrow">
-            <Sparkles size={14} /> {t("register.tagline")}
-          </span>
-          <h1>{t("register.title")}</h1>
-          <p>{t("register.subtitle")}</p>
-        </div>
-        <RegisterForm onSubmit={submit} />
-        <Link className="auth-switch-link" to="/login">
+    <AuthShell
+      title={t("register.title")}
+      description={t("register.subtitle")}
+      footer={
+        <Link className="text-body-sm text-ink" to="/login">
           {t("register.haveAccount")}
         </Link>
-      </motion.section>
-    </main>
+      }
+    >
+      <RegisterForm onSubmit={submit} />
+    </AuthShell>
   );
 }
