@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Check } from "lucide-react";
+import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import {
   AuthButton,
   AuthFieldError,
@@ -29,6 +30,7 @@ export function NewPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
 
   async function submit() {
     if (!resetToken) return;
@@ -43,8 +45,7 @@ export function NewPasswordPage() {
     setError(null);
     try {
       await confirmReset.mutateAsync({ resetToken, password });
-      toast.success(t("mobile.newPassword.success"));
-      navigate("/login", { replace: true });
+      setDone(true);
     } catch (caught) {
       const message = describeResetError(caught, t);
       setError(message);
@@ -53,6 +54,23 @@ export function NewPasswordPage() {
   }
 
   if (!resetToken) return <Navigate to="/forgot-password" replace />;
+
+  if (done)
+    return (
+      <AuthScreen
+        title={t("mobile.newPassword.doneTitle")}
+        description={t("mobile.newPassword.doneDescription")}
+        action={
+          <AuthButton onClick={() => navigate("/login", { replace: true })}>
+            {t("form.submit")}
+          </AuthButton>
+        }
+      >
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-success-bg text-success">
+          <Check size={30} />
+        </span>
+      </AuthScreen>
+    );
 
   return (
     <AuthScreen

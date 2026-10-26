@@ -400,7 +400,7 @@ export function MessageComposer({
         ) : null}
       </AnimatePresence>
       {recording ? (
-        <div className="mx-auto flex w-full max-w-[920px] items-center gap-3 rounded-3xl border border-line bg-canvas px-4 py-3">
+        <div className="mx-auto flex w-full max-w-[920px] items-center gap-3 rounded-full bg-danger-bg px-4 py-3">
           <button
             type="button"
             className="grid size-10 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
@@ -409,11 +409,11 @@ export function MessageComposer({
           >
             <Icon name="trash" size={19} />
           </button>
-          <span className="flex size-2.5 shrink-0 animate-pulse rounded-full bg-error" />
-          <span className="shrink-0 font-numeric text-label-strong text-ink">
+          <span className="flex size-2.5 shrink-0 animate-pulse rounded-full bg-danger" />
+          <span className="shrink-0 font-numeric text-title-sm text-danger">
             {formatDuration(seconds)}
           </span>
-          <small className="min-w-0 flex-1 truncate text-center text-caption text-ink-tertiary lg:hidden">
+          <small className="min-w-0 flex-1 truncate text-center text-body-xs text-ink-tertiary">
             {t("composer.recordHint")}
           </small>
           <span

@@ -38,7 +38,7 @@ type TimelineEntry = { kind: "message" | "assignment"; message: ChatMessage };
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
 
 const SELECTION_ACTION =
-  "flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-3 text-label-strong transition-colors hover:bg-subtle lg:px-4";
+  "flex h-10 min-w-0 items-center justify-center gap-2 rounded-full px-3 text-button whitespace-nowrap transition-colors hover:bg-subtle";
 
 export function MessageList({
   messages,
@@ -180,50 +180,6 @@ export function MessageList({
 
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
-      {selectionMode ? (
-        <div className="flex shrink-0 items-center gap-2 border-b border-line bg-surface px-3 py-2.5 lg:px-6">
-          <button
-            type="button"
-            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle hover:text-ink"
-            onClick={clearSelection}
-            aria-label={t("actionsMenu.cancelSelection")}
-          >
-            <Icon name="add" size={20} className="rotate-45" />
-          </button>
-          <strong className="flex-1 text-label-strong text-ink">
-            {t("actionsMenu.selectedMessages", { count: selected.length })}
-          </strong>
-          <button
-            type="button"
-            className={`${SELECTION_ACTION} text-ink`}
-            onClick={() => {
-              const picked = (messages ?? []).filter((message) => selected.includes(message.id));
-              if (onForward) onForward(picked);
-              else toast.info(t("actions.notAvailable"));
-            }}
-          >
-            <Icon name="send" size={18} />
-            <span className="hidden lg:inline">{t("actionsMenu.forward")}</span>
-          </button>
-          <button
-            type="button"
-            className={`${SELECTION_ACTION} text-ink`}
-            onClick={copySelection}
-          >
-            <Icon name="assign" size={18} />
-            <span className="hidden lg:inline">{t("actionsMenu.copy")}</span>
-          </button>
-          <button
-            type="button"
-            className={`${SELECTION_ACTION} border-error-bg text-error-text hover:bg-error-bg`}
-            onClick={() => setDeleteOpen(true)}
-          >
-            <Icon name="trash" size={18} />
-            <span className="hidden lg:inline">{t("actionsMenu.delete")}</span>
-          </button>
-        </div>
-      ) : null}
-
       <div
         className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-4 py-5 lg:px-6"
         role="log"
@@ -410,6 +366,62 @@ export function MessageList({
         onForward={onForward ? (message) => onForward([message]) : undefined}
         capabilities={capabilities}
       />
+
+      {selectionMode ? (
+        <div className="flex shrink-0 flex-col gap-2 bg-canvas px-4 pb-4 lg:px-6">
+          <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2.5">
+            <button
+              type="button"
+              className={`${SELECTION_ACTION} flex-1 text-ink`}
+              onClick={() => {
+                const picked = (messages ?? []).filter((message) => selected.includes(message.id));
+                if (onForward) onForward(picked);
+                else toast.info(t("actions.notAvailable"));
+              }}
+            >
+              <Icon name="send" size={18} />
+              {t("actionsMenu.forward")}
+            </button>
+
+            <button type="button" className={`${SELECTION_ACTION} flex-1 text-ink`} onClick={copySelection}>
+              <Icon name="content-copy" size={18} />
+              {t("actionsMenu.copy")}
+            </button>
+
+            <button
+              type="button"
+              className={`${SELECTION_ACTION} flex-1 bg-danger-bg text-danger hover:bg-danger-bg`}
+              onClick={() => setDeleteOpen(true)}
+            >
+              <Icon name="delete" size={18} />
+              {t("actionsMenu.delete")}
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 rounded-lg bg-surface px-4 py-3">
+            <button
+              type="button"
+              className="grid size-7 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink"
+              onClick={clearSelection}
+              aria-label={t("actionsMenu.cancelSelection")}
+            >
+              <Icon name="close" size={18} />
+            </button>
+
+            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink">
+              {t("actionsMenu.selectedMessages", { count: selected.length })}
+            </strong>
+
+            <button
+              type="button"
+              className="shrink-0 text-button text-brand transition-opacity hover:opacity-80"
+              onClick={clearSelection}
+            >
+              {t("actionsMenu.cancel")}
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

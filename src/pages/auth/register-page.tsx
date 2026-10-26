@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import type { AuthUser } from "@/shared/types";
 import {
+  AuthButton,
   MobileRegisterForm,
   RegisterForm,
   resolveHomeRoute,
@@ -19,12 +20,12 @@ export function RegisterPage() {
   const { t } = useTranslation("auth");
   const isCompact = useIsCompact();
   const createdUser = useRef<AuthUser | null>(null);
+  const [done, setDone] = useState(false);
 
   async function submit(values: RegisterFormValues) {
     const user = await register.mutateAsync(values);
     createdUser.current = user;
-    toast.success(t("register.accountCreated"));
-    if (!isCompact) navigate(resolveHomeRoute(user), { replace: true });
+    if (!isCompact) setDone(true);
     return user;
   }
 
@@ -38,6 +39,30 @@ export function RegisterPage() {
           })
         }
       />
+    );
+
+  if (done)
+    return (
+      <AuthShell
+        title={t("register.doneTitle")}
+        description={t("register.doneDescription")}
+        action={
+          <AuthButton
+            onClick={() =>
+              navigate(
+                createdUser.current ? resolveHomeRoute(createdUser.current) : "/login",
+                { replace: true }
+              )
+            }
+          >
+            {t("register.doneAction")}
+          </AuthButton>
+        }
+      >
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-success-bg text-success">
+          <Check size={30} />
+        </span>
+      </AuthShell>
     );
 
   return (
