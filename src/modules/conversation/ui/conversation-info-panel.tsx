@@ -14,6 +14,7 @@ import {
   useDeleteCourse,
   useSubjects,
   useUpdateCourse,
+  useUpdateCourseAvatar,
 } from "@/modules/course";
 import { useChatUiStore, messageApi, messageKeys } from "@/modules/message";
 import {
@@ -77,6 +78,7 @@ export function ConversationInfoPanel({
   const updateCourse = useUpdateCourse();
   const deleteCourse = useDeleteCourse();
   const setRoomImage = useSetRoomImage();
+  const updateCourseAvatar = useUpdateCourseAvatar();
   const openChatSearch = useChatUiStore((state) => state.setSearchOpen);
   const announcement = Boolean(conversation.announcementOnly);
   const announcementMode = useAnnouncementMode();
@@ -233,25 +235,28 @@ export function ConversationInfoPanel({
                       onChange={(event) => {
                         const file = event.target.files?.[0];
                         event.target.value = "";
-                        if (file) {
-                          setRoomImage.mutate(
-                            { roomId: conversation.id, image: file },
-                            {
-                              onSuccess: () => toast.success(t("info.groupImageUpdated")),
-                              onError: (error: Error) => toast.error(error.message),
-                            }
+                        if (!file) return;
+                        const done = {
+                          onSuccess: () => toast.success(t("info.groupImageUpdated")),
+                          onError: (error: Error) => toast.error(error.message),
+                        };
+                        // Guruh rasmi kursda saqlanadi — chat xonasi uni avtomatik oladi.
+                        if (conversation.courseId)
+                          updateCourseAvatar.mutate(
+                            { id: conversation.courseId, file },
+                            done
                           );
-                        }
+                        else setRoomImage.mutate({ roomId: conversation.id, image: file }, done);
                       }}
                     />
                     <button
                       type="button"
                       className="absolute right-1/2 bottom-0 grid size-9 translate-x-1/2 translate-y-1/3 place-items-center rounded-full border border-line bg-surface text-ink shadow-sm disabled:opacity-60"
                       aria-label={t("info.changeGroupImageAria")}
-                      disabled={setRoomImage.isPending}
+                      disabled={setRoomImage.isPending || updateCourseAvatar.isPending}
                       onClick={() => imageRef.current?.click()}
                     >
-                      {setRoomImage.isPending ? (
+                      {setRoomImage.isPending || updateCourseAvatar.isPending ? (
                         <Loader2 size={14} className="animate-spin" />
                       ) : (
                         <Icon name="camera" size={16} />

@@ -352,7 +352,7 @@ export function ExamCreateDialog({
               </small>
               <a
                 className="w-fit text-button text-brand transition-opacity hover:opacity-80"
-                href={`/teacher/chats/ai?exam=${encodeURIComponent(AI_EXAM_FOR_SECTION.listening)}`}
+                href={`/teacher/workspace/ai?exam=${encodeURIComponent(AI_EXAM_FOR_SECTION.listening)}`}
                 target="_blank"
                 rel="noopener"
               >
