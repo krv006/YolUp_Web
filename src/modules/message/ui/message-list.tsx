@@ -2,6 +2,7 @@ import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { messageApi } from "../api/message.api";
@@ -10,7 +11,7 @@ import { useChatUiStore } from "../model/chat-ui.store";
 import { DateSeparator } from "./date-separator";
 import { MessageBubble } from "./message-bubble";
 import { TypingIndicator } from "./typing-indicator";
-import { MessageActionsMenu } from "./message-actions-menu";
+import { MessageActionsMenu, type MessageMenuAnchor } from "./message-actions-menu";
 import { HomeworkMessageCard } from "@/modules/homework";
 import type { ChatMessage, Conversation, MessageCapabilities } from "@/shared/types";
 
@@ -67,15 +68,18 @@ export function MessageList({
     enabled: search.length > 0,
   });
   const matchedIds = new Set((serverSearch.data?.items ?? []).map((item) => item.id));
-  const visible = search
+  const isCompact = useIsCompact();
+  const matches = search
     ? (messages ?? []).filter(
         (message) =>
           matchedIds.has(message.id) ||
           message.text.toLowerCase().includes(search.toLowerCase())
       )
     : (messages ?? []);
+  const visible = search && isCompact ? (messages ?? []) : matches;
   const [actionMessage, setActionMessage] = useState<ChatMessage | null>(null);
   const [menuPosition, setMenuPosition] = useState({ x: 20, y: 20 });
+  const [menuAnchor, setMenuAnchor] = useState<MessageMenuAnchor | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const seenCountRef = useRef(0);
   const atBottomRef = useRef(true);
@@ -93,7 +97,7 @@ export function MessageList({
   const announcement = Boolean(conversation.announcementOnly);
   const searchIndex = useChatUiStore((state) => state.searchIndex);
   const setSearchCount = useChatUiStore((state) => state.setSearchCount);
-  const activeMatchId = search ? (visible[searchIndex]?.id ?? null) : null;
+  const activeMatchId = search ? (matches[searchIndex]?.id ?? null) : null;
   const timeline: TimelineEntry[] = visible.map((message) => ({
     kind: message.type === "assignment" && message.assignment ? ("assignment" as const) : ("message" as const),
     message,
@@ -103,8 +107,8 @@ export function MessageList({
   const serverTotal = serverSearch.data?.total ?? 0;
 
   useEffect(() => {
-    if (search) setSearchCount(Math.max(visible.length, serverTotal));
-  }, [search, visible.length, serverTotal, setSearchCount]);
+    if (search) setSearchCount(Math.max(matches.length, serverTotal));
+  }, [search, matches.length, serverTotal, setSearchCount]);
 
   useEffect(() => {
     if (activeMatchId) matchRef.current?.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -153,7 +157,7 @@ export function MessageList({
 
   if (loading)
     return (
-      <div className="flex flex-1 flex-col gap-3 overflow-hidden bg-canvas px-4 py-5 lg:px-6">
+      <div className="flex flex-1 flex-col gap-3 overflow-hidden bg-canvas px-4 py-5 max-lg:bg-transparent lg:px-6">
         {Array.from({ length: 5 }, (_, index) => (
           <div
             key={index}
@@ -166,7 +170,7 @@ export function MessageList({
     );
   if (error)
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-canvas px-6 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-canvas px-6 text-center max-lg:bg-transparent">
         <strong className="font-heading text-h3 text-ink">{t("list.loadError")}</strong>
         <p className="max-w-[320px] text-body-sm text-ink-secondary">{t("list.loadErrorHint")}</p>
         <button
@@ -181,28 +185,34 @@ export function MessageList({
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <div
-        className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-4 py-5 lg:px-6"
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-4 pt-4 pb-2 max-lg:bg-transparent lg:px-6 lg:py-5"
         role="log"
         aria-live="polite"
         ref={scrollRef}
         onScroll={handleScroll}
       >
-      <div className="mx-auto mt-auto flex w-full max-w-[920px] flex-col gap-3">
+      <div className="mx-auto mt-auto flex w-full max-w-[920px] flex-col gap-[11px] lg:gap-3">
         {search ? null : announcement ? (
           <div className="flex justify-center py-1">
-            <span className="flex items-center gap-2 rounded-full bg-subtle px-3 py-1.5 text-caption text-ink-secondary">
-              <Icon name="bell" size={14} className="shrink-0" />
-              {t("list.announcementOn")}
+            <span className="flex h-6 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption text-ink-secondary lg:h-auto lg:gap-2 lg:py-1.5">
+              <Icon name="person" size={14} className="shrink-0 lg:hidden" />
+              <Icon name="bell" size={14} className="hidden shrink-0 lg:block" />
+              <span className="lg:hidden">{t("list.announcementChip")}</span>
+              <span className="hidden lg:inline">{t("list.announcementOn")}</span>
             </span>
           </div>
         ) : null}
-        {search ? null : <DateSeparator>{t("list.today")}</DateSeparator>}
-        {search && serverTotal > visible.length ? (
-          <p className="py-2 text-center text-caption text-ink-tertiary">
-            {t("list.searchOlder", { count: serverTotal - visible.length })}
+        {search ? null : (
+          <div className={announcement ? "hidden lg:block" : undefined}>
+            <DateSeparator>{t("list.today")}</DateSeparator>
+          </div>
+        )}
+        {search && serverTotal > matches.length ? (
+          <p className="hidden py-2 text-center text-caption text-ink-tertiary lg:block">
+            {t("list.searchOlder", { count: serverTotal - matches.length })}
           </p>
         ) : null}
-        {search && !visible.length && !serverSearch.isLoading ? (
+        {search && !matches.length && !serverSearch.isLoading && !isCompact ? (
           <div className="flex flex-col items-center gap-3 py-16 text-center">
             <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
               <Icon name="search" size={26} />
@@ -252,7 +262,18 @@ export function MessageList({
                   onReply={onReply}
                   onReact={onReact}
                   onRetryMessage={onRetryMessage}
-                  onOpenActions={(target, position) => {
+                  onOpenActions={(target, position, bubble) => {
+                    if (bubble) {
+                      const rect = bubble.getBoundingClientRect();
+                      setMenuAnchor({
+                        top: rect.top,
+                        left: rect.left,
+                        width: rect.width,
+                        height: rect.height,
+                        html: bubble.outerHTML,
+                        outgoing: target.senderId === currentUserId,
+                      });
+                    } else setMenuAnchor(null);
                     const mobile = window.innerWidth <= 768;
                     const menuWidth = mobile ? 226 : 234;
                     const menuHeight = mobile ? 270 : 292;
@@ -276,6 +297,14 @@ export function MessageList({
                   }}
                   highlighted={entry.message.id === activeMatchId}
                 />
+                {entry.message.failed ? (
+                  <p className="mt-1.5 text-right text-caption-strong text-error-text lg:hidden">
+                    {t("offline.failed")} ·{" "}
+                    <button type="button" onClick={() => onRetryMessage?.(entry.message)}>
+                      {t("offline.resend")}
+                    </button>
+                  </p>
+                ) : null}
               </div>
             </Fragment>
           );
@@ -307,27 +336,37 @@ export function MessageList({
         open={deleteOpen}
         onOpenChange={setDeleteOpen}
         variant="confirm"
+        layout={isCompact ? "centered" : "inline"}
+        width={isCompact ? "max-w-82.5" : "lg:w-130"}
+        titleClassName={isCompact ? "text-title-lg" : undefined}
+        footerClassName={isCompact ? "-mt-1.5 flex-col gap-1 px-6 pb-6" : undefined}
         icon={
-          <span className="grid size-11 place-items-center rounded-full bg-error-bg text-error-text">
-            <Icon name="trash" size={20} />
+          <span
+            className={`grid place-items-center rounded-full bg-error-bg text-error-text ${
+              isCompact ? "size-14" : "size-11"
+            }`}
+          >
+            <Icon name="trash" size={isCompact ? 24 : 20} />
           </span>
         }
         title={t("actionsMenu.deleteTitle", { count: selected.length })}
         description={t("actionsMenu.deleteDescription")}
         footer={
           <>
+            {isCompact ? null : (
+              <button
+                type="button"
+                className={dialogButton.secondary}
+                onClick={() => setDeleteOpen(false)}
+              >
+                {t("actionsMenu.cancel")}
+              </button>
+            )}
             <button
               type="button"
-              className={dialogButton.secondary}
-              onClick={() => setDeleteOpen(false)}
-            >
-              {t("actionsMenu.cancel")}
-            </button>
-            <button
-              type="button"
-              className={dialogButton.danger}
+              className={isCompact ? `${dialogButton.danger} h-13 w-full flex-none` : dialogButton.danger}
               onClick={() => {
-                const scope = deleteForEveryone ? "everyone" : "me";
+                const scope = deleteForEveryone || isCompact ? "everyone" : "me";
                 if (onBulkDelete) onBulkDelete(selected, scope);
                 else
                   (messages ?? [])
@@ -339,10 +378,19 @@ export function MessageList({
             >
               {t("actionsMenu.delete")}
             </button>
+            {isCompact ? (
+              <button
+                type="button"
+                className="flex h-12 items-center justify-center text-button text-brand-strong transition-opacity hover:opacity-80"
+                onClick={() => setDeleteOpen(false)}
+              >
+                {t("actionsMenu.cancel")}
+              </button>
+            ) : null}
           </>
         }
       >
-        <label className="flex cursor-pointer items-center gap-3 text-body-sm text-ink">
+        <label className="hidden cursor-pointer items-center gap-3 text-body-sm text-ink lg:flex">
           <input
             type="checkbox"
             className="size-5 accent-[var(--action-primary)]"
@@ -356,6 +404,7 @@ export function MessageList({
       <MessageActionsMenu
         message={actionMessage}
         position={menuPosition}
+        anchor={menuAnchor}
         onClose={() => setActionMessage(null)}
         onReply={onReply}
         onEdit={onEdit}
@@ -368,7 +417,40 @@ export function MessageList({
       />
 
       {selectionMode ? (
-        <div className="flex shrink-0 flex-col gap-2 bg-canvas px-4 pb-4 lg:px-6">
+        <div className="flex shrink-0 gap-2 bg-surface px-4 pt-3 pb-9 lg:hidden">
+          <button
+            type="button"
+            className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full bg-brand-subtle text-button text-brand"
+            onClick={() => {
+              const picked = (messages ?? []).filter((message) => selected.includes(message.id));
+              if (onForward) onForward(picked);
+              else toast.info(t("actions.notAvailable"));
+            }}
+          >
+            <Icon name="send" size={18} />
+            {t("actionsMenu.forward")}
+          </button>
+          <button
+            type="button"
+            className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full border border-line-strong bg-surface text-button text-ink"
+            onClick={copySelection}
+          >
+            <Icon name="assign" size={18} />
+            {t("actionsMenu.copy")}
+          </button>
+          <button
+            type="button"
+            className="flex h-11 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-full bg-danger-bg text-button text-error-text"
+            onClick={() => setDeleteOpen(true)}
+          >
+            <Icon name="logout" size={18} />
+            {t("actionsMenu.delete")}
+          </button>
+        </div>
+      ) : null}
+
+      {selectionMode ? (
+        <div className="hidden shrink-0 flex-col gap-2 bg-canvas px-4 pb-4 lg:flex lg:px-6">
           <div className="flex items-center gap-2 rounded-lg bg-surface px-3 py-2.5">
             <button
               type="button"

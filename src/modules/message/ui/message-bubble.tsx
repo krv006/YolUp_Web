@@ -10,13 +10,18 @@ import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage } from "@/shared/types";
 import { MessageAttachment } from "./message-attachment";
 import { VoiceMessage } from "./voice-message";
+import { useChatUiStore } from "../model/chat-ui.store";
 import { MessageText } from "./message-text";
 
 export interface MessageBubbleProps {
   message: ChatMessage;
   currentUserId?: string | null;
   onReply: (message: ChatMessage) => void;
-  onOpenActions: (message: ChatMessage, position: { x: number; y: number }) => void;
+  onOpenActions: (
+    message: ChatMessage,
+    position: { x: number; y: number },
+    bubble?: HTMLElement | null
+  ) => void;
   onReact: (message: ChatMessage, emoji: string) => void;
   onRetryMessage?: (message: ChatMessage) => void;
   selectionMode?: boolean;
@@ -95,6 +100,7 @@ export function MessageBubble({
 }: MessageBubbleProps) {
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
+  const searchTerm = useChatUiStore((state) => state.search);
   const isTeacherSender = message.senderRole === ROLES.TEACHER;
   const longPressRef = useRef<number | null>(null);
 
@@ -110,10 +116,12 @@ export function MessageBubble({
   return (
     <motion.div
       className={`group relative flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${
-        message.pending ? "opacity-70" : ""
+        message.pending ? "lg:opacity-70" : ""
       } ${selectionMode ? "cursor-pointer select-none" : ""} ${
-        selected ? "rounded-2xl bg-action-subtle/70" : ""
-      } ${highlighted ? "rounded-2xl ring-2 ring-action" : ""}`}
+        selected
+          ? "rounded-xl bg-brand-subtle px-2 py-2 lg:rounded-2xl lg:bg-action-subtle/70 lg:p-0"
+          : ""
+      } ${highlighted ? "lg:rounded-2xl lg:ring-2 lg:ring-action" : ""}`}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
@@ -128,10 +136,11 @@ export function MessageBubble({
       onPointerDown={(event) => {
         if (selectionMode || event.pointerType === "mouse") return;
         const point = { x: event.clientX, y: event.clientY };
+        const bubble = event.currentTarget.querySelector<HTMLElement>("[data-bubble]");
         cancelLongPress();
         longPressRef.current = window.setTimeout(() => {
           longPressRef.current = null;
-          onOpenActions(message, point);
+          onOpenActions(message, point, bubble);
         }, 450);
       }}
       onPointerUp={cancelLongPress}
@@ -142,12 +151,16 @@ export function MessageBubble({
       }}
       onContextMenu={(event) => {
         event.preventDefault();
-        onOpenActions(message, { x: event.clientX, y: event.clientY });
+        onOpenActions(
+          message,
+          { x: event.clientX, y: event.clientY },
+          event.currentTarget.querySelector<HTMLElement>("[data-bubble]")
+        );
       }}
     >
       {selectionMode ? (
         <span
-          className={`mb-2 grid size-5 shrink-0 place-items-center rounded-full border transition-colors ${
+          className={`mb-2 hidden size-5 shrink-0 place-items-center rounded-full border transition-colors lg:grid ${
             selected ? "border-action bg-action text-on-action" : "border-line bg-surface"
           }`}
           aria-hidden="true"
@@ -157,16 +170,21 @@ export function MessageBubble({
       ) : null}
 
       {outgoing ? null : (
-        <span className="mb-1 w-8 shrink-0">
-          {showAvatar ? <Avatar name={message.senderName} size="sm" /> : null}
+        <span className="mb-1 w-7 shrink-0 lg:w-8">
+          {showAvatar ? (
+            <Avatar name={message.senderName} size="sm" className="max-lg:[&_.avatar]:size-7" />
+          ) : null}
         </span>
       )}
 
       <div
-        className={`flex max-w-[80%] flex-col gap-1 rounded-lg px-3.5 py-2.5 text-body-sm lg:max-w-[560px] lg:gap-1.5 lg:px-4 lg:py-3 lg:text-body ${
+        data-bubble=""
+        className={`flex w-66 max-w-[85%] flex-col gap-1 ${
+          highlighted ? "max-lg:ring-[1.5px] max-lg:ring-saffron" : ""
+        } rounded-lg px-3.5 pt-2.5 pb-2 text-[15px]/[22px] lg:w-auto lg:text-body lg:max-w-[560px] lg:gap-1.5 lg:px-4 lg:pt-3 lg:pb-3 ${
           outgoing
-            ? "rounded-br-sm bg-brand text-on-action"
-            : "rounded-bl-sm bg-surface text-ink shadow-xs"
+            ? "rounded-br-[6px] bg-brand text-on-action antialiased lg:rounded-br-sm"
+            : "rounded-bl-[6px] bg-surface text-ink lg:rounded-bl-sm lg:shadow-xs"
         }`}
       >
         {message.senderName && !outgoing && showName && (
@@ -193,9 +211,11 @@ export function MessageBubble({
           </div>
         )}
 
-        {message.text && <MessageText text={message.text} />}
+        {message.text && (
+          <MessageText text={message.text} highlight={highlighted ? searchTerm : undefined} />
+        )}
         {message.attachment ? (
-          message.attachment.mimeType?.startsWith("audio/") ? (
+          message.attachment.kind === "voice" || message.attachment.mimeType?.startsWith("audio/") ? (
             <VoiceMessage attachment={message.attachment} outgoing={outgoing} />
           ) : (
             <MessageAttachment
@@ -213,18 +233,22 @@ export function MessageBubble({
         >
           {message.editedAt && <em className="not-italic">{t("bubble.edited")}</em>}
           <time>{formatMessageTime(message.createdAt)}</time>
-          {outgoing && (
+          {outgoing && message.failed ? (
+            <Icon name="warning" size={15} className="text-accent-red-bg" />
+          ) : outgoing && message.pending ? (
+            <Icon name="schedule" size={14} />
+          ) : outgoing ? (
             <Icon
               name="done-all"
               size={15}
               className={message.status === "read" ? "opacity-100" : "opacity-60"}
               title={message.status}
             />
-          )}
+          ) : null}
         </span>
 
         {message.failed ? (
-          <span className="flex items-center gap-1.5 self-end text-caption-strong text-error-text">
+          <span className="hidden items-center gap-1.5 self-end text-caption-strong text-error-text lg:flex">
             <Icon name="error" size={14} />
             {t("offline.failed")}
             <button

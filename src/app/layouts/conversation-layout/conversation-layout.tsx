@@ -114,13 +114,15 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <ConversationTopbar
-          role={role}
-          section={section}
-          title={
-            pathname.endsWith("/assignments") ? t("titles.assignments") : t(`titles.${section}`)
-          }
-        />
+        <div className={conversationId ? "hidden lg:contents" : "contents"}>
+          <ConversationTopbar
+            role={role}
+            section={section}
+            title={
+              pathname.endsWith("/assignments") ? t("titles.assignments") : t(`titles.${section}`)
+            }
+          />
+        </div>
 
         <div className="flex min-h-0 flex-1">
           {wideSection ? null : <ConversationPanel role={role} hidden={Boolean(conversationId)} />}

@@ -280,5 +280,6 @@
     "thisAndNext": "This and all following lessons",
     "close": "Close",
     "confirm": "Cancel lesson"
-  }
+  },
+  "announcementBanner": "Announcement mode on — only you can write"
 }

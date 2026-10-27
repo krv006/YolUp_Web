@@ -57,8 +57,8 @@ import {
 import { ChatHeader, ConversationInfoPanel } from "@/modules/conversation";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { ForwardDialog } from "@/widgets/forward-dialog";
-import { VoiceRoomBar } from "@/modules/voice";
-import { MessageComposer, MessageList } from "@/modules/message";
+import { VoiceRoomBar, useActiveVoiceRoom, useVoiceUiStore } from "@/modules/voice";
+import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type {
   Assignment,
   AttendanceRow,
@@ -123,6 +123,9 @@ export function GroupWorkspace({
   const [infoOpen, setInfoOpen] = useState(false);
   const isCompact = useIsCompact();
   const courseId = conversation.courseId;
+  const voice = useActiveVoiceRoom(courseId);
+  const openVoiceCreate = useVoiceUiStore((state) => state.setCreateOpen);
+  const selectionMode = useChatUiStore((state) => state.selected.length > 0);
 
   const tabParam = params.get("tab") as TabId | null;
   const activeTab: TabId = TABS.some((item) => item.id === tabParam) ? (tabParam as TabId) : "chat";
@@ -168,20 +171,29 @@ export function GroupWorkspace({
   return (
     <div className="flex h-full min-h-0">
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-      <section className="chat-page group-workspace">
-      <ChatHeader conversation={hydrated} onToggleInfo={() => setInfoOpen((open) => !open)} />
+      <section className="chat-page group-workspace max-lg:bg-auth-gradient">
+      <ChatHeader
+        conversation={hydrated}
+        onToggleInfo={() => setInfoOpen((open) => !open)}
+        onVoice={courseId && !voice.active ? () => openVoiceCreate(true) : undefined}
+        pinnedBelow
+      />
       <LiveLessonBar courseId={courseId} />
-      <VoiceRoomBar courseId={courseId} />
-      <nav className="grid shrink-0 grid-cols-4 gap-2 px-4 pt-3 pb-1 lg:px-7 lg:pt-4 lg:pb-2">
+      <VoiceRoomBar courseId={courseId} hideIdle={isCompact} />
+      <nav
+        className={`grid shrink-0 grid-cols-4 gap-2 px-4 pb-1 lg:px-7 lg:pt-4 lg:pb-2 ${
+          selectionMode ? "pt-1" : "pt-4"
+        }`}
+      >
         {TABS.map((tab) => {
           const active = activeTab === tab.id;
           return (
             <button
               key={tab.id}
-              className={`flex h-9 items-center justify-center rounded-full text-label whitespace-nowrap transition-colors ${
+              className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:text-label lg:font-normal ${
                 active
                   ? "bg-brand text-ink-inverse"
-                  : "bg-surface text-ink-secondary hover:text-ink"
+                  : "bg-surface text-ink hover:text-ink lg:text-ink-secondary"
               }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
@@ -190,6 +202,17 @@ export function GroupWorkspace({
           );
         })}
       </nav>
+
+      {activeTab === "chat" && !selectionMode && conversation.announcementOnly ? (
+        <p className="mx-4 mt-3 flex h-11 shrink-0 items-center gap-2.5 rounded-xl bg-brand-subtle px-4 text-body-sm text-brand lg:hidden">
+          <Icon name="bolt" size={18} className="shrink-0" />
+          <span className="truncate">{t("announcementBanner")}</span>
+        </p>
+      ) : activeTab === "chat" && !selectionMode ? (
+        <div className="contents lg:hidden [&>div]:mt-3">
+          <PinnedMessageBar roomId={conversation.id} />
+        </div>
+      ) : null}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -252,7 +275,7 @@ export function GroupWorkspace({
         </motion.div>
       </AnimatePresence>
 
-      {activeTab === "chat" ? (
+      {activeTab === "chat" && !selectionMode ? (
         <MessageComposer
           key={editingMessageTarget?.id ?? "compose"}
           onSend={send}

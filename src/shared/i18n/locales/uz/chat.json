@@ -20,7 +20,8 @@
     "closeSearchAria": "Qidiruvni yopish",
     "searchPrevAria": "Oldingi natija",
     "searchNextAria": "Keyingi natija",
-    "onlineCount": "{{count}} nafari onlayn"
+    "onlineCount": "{{count}} nafari onlayn",
+    "voiceAria": "Ovozli suhbat"
   },
   "directStatus": {
     "pending": "So'rov kutilmoqda",
@@ -145,7 +146,8 @@
     "searchEmptyHint": "“{{query}}” bo‘yicha xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
     "announcementOn": "E’lon rejimi yoqildi — faqat o‘qituvchilar yozadi",
     "announcementLocked": "Bu guruhda faqat o‘qituvchilar yozishi mumkin",
-    "searchOlder": "Yana {{count}} ta natija eski xabarlarda — yuqoriga suring"
+    "searchOlder": "Yana {{count}} ta natija eski xabarlarda — yuqoriga suring",
+    "announcementChip": "E’lon rejimi yoqildi"
   },
   "composer": {
     "editingLabel": "Xabarni tahrirlash",
@@ -168,7 +170,8 @@
     "recordCancel": "Yozuvni bekor qilish",
     "recordSend": "Ovozli xabarni yuborish",
     "micDenied": "Mikrofonga ruxsat berilmadi",
-    "recordHint": "‹ Bekor qilish uchun suring"
+    "recordHint": "‹ Bekor qilish uchun suring",
+    "recordSwipeCancel": "Bekor qilish uchun suring"
   },
   "actionsMenu": {
     "closeAria": "Xabar menyusini yopish",
@@ -194,7 +197,8 @@
     "scrollDown": "Pastga tushish",
     "mentionAria": "Eslatib o‘tish",
     "voiceAria": "Ovozli xabar",
-    "selectedMessages": "{{count}} ta xabar tanlandi"
+    "selectedMessages": "{{count}} ta xabar tanlandi",
+    "cancelShort": "Bekor"
   },
   "bubble": {
     "edited": "tahrirlangan",
@@ -307,13 +311,16 @@
     "banner": "Internet aloqasi yo‘q. Xabarlar ulanish tiklanganda yuboriladi.",
     "composer": "Internet yo‘q — xabarlar ulanish tiklanganda yuboriladi",
     "failed": "Yuborilmadi",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "resend": "Qayta yuborish",
+    "composerShort": "Internet yo‘q — ulanganda yuboriladi"
   },
   "mention": {
     "title": "Guruh a’zolari",
     "empty": "A’zo topilmadi",
     "teacher": "O‘qituvchi",
-    "parent": "Ota-ona"
+    "parent": "Ota-ona",
+    "online": "onlayn"
   },
   "forward": {
     "title": "Xabarni uzatish",
@@ -335,7 +342,8 @@
     "gallery": "Galereya",
     "camera": "Kamera",
     "document": "Hujjat",
-    "assignment": "Vazifa"
+    "assignment": "Vazifa",
+    "recentFailed": "Rasmni yuklab bo‘lmadi"
   },
   "preview": {
     "title": "{{count}} ta rasm",

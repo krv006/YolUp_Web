@@ -9,14 +9,23 @@ export function DropdownContent({
   children,
   align = "end",
   className = "",
+  sideOffset = 8,
+  alignOffset = 0,
 }: {
   children: ReactNode;
   align?: "start" | "center" | "end";
   className?: string;
+  sideOffset?: number;
+  alignOffset?: number;
 }) {
   return (
     <DropdownMenu.Portal>
-      <DropdownMenu.Content className={`dropdown-content ${className}`} align={align} sideOffset={8}>
+      <DropdownMenu.Content
+        className={`dropdown-content ${className}`}
+        align={align}
+        sideOffset={sideOffset}
+        alignOffset={alignOffset}
+      >
         {children}
       </DropdownMenu.Content>
     </DropdownMenu.Portal>

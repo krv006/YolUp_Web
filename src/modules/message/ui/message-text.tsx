@@ -6,6 +6,33 @@ import { tokenizeMessageText, type MessageToken } from "../lib/linkify";
 
 export interface MessageTextProps {
   text: string;
+  highlight?: string;
+}
+
+function markMatches(value: string, highlight: string | undefined, keyPrefix: string) {
+  const needle = highlight?.trim();
+  if (!needle) return value;
+  const lower = value.toLowerCase();
+  const target = needle.toLowerCase();
+  const parts: Array<string | { match: string }> = [];
+  let cursor = 0;
+  let found = lower.indexOf(target, cursor);
+  while (found !== -1) {
+    if (found > cursor) parts.push(value.slice(cursor, found));
+    parts.push({ match: value.slice(found, found + target.length) });
+    cursor = found + target.length;
+    found = lower.indexOf(target, cursor);
+  }
+  if (cursor < value.length) parts.push(value.slice(cursor));
+  return parts.map((part, index) =>
+    typeof part === "string" ? (
+      part
+    ) : (
+      <mark key={`${keyPrefix}-${index}`} className="bg-transparent font-semibold text-brand">
+        {part.match}
+      </mark>
+    )
+  );
 }
 
 const RECORDING_PATH = /^\/recordings\//;
@@ -14,7 +41,7 @@ function isRecording(token: MessageToken): boolean {
   return token.kind === "internal" && RECORDING_PATH.test(token.href);
 }
 
-export function MessageText({ text }: MessageTextProps) {
+export function MessageText({ text, highlight }: MessageTextProps) {
   const { t } = useTranslation("chat");
   const tokens = useMemo(() => tokenizeMessageText(text), [text]);
 
@@ -25,7 +52,7 @@ export function MessageText({ text }: MessageTextProps) {
   return (
     <>
       {hasCopy ? (
-        <p className="text-body break-words whitespace-pre-wrap">
+        <p className="text-[15px]/[22px] break-words whitespace-pre-wrap lg:text-body">
           {inline.map((token, index) => {
             if (token.kind === "internal") {
               return (
@@ -53,7 +80,7 @@ export function MessageText({ text }: MessageTextProps) {
                 </a>
               );
             }
-            return <span key={index}>{token.value}</span>;
+            return <span key={index}>{markMatches(token.value, highlight, String(index))}</span>;
           })}
         </p>
       ) : null}
