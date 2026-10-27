@@ -35,5 +35,12 @@
     "myGroups": "Мои группы",
     "createGroup": "Добавить группу",
     "subjectTeacher": "Преподаватель: {{subject}}"
+  },
+  "tabs": {
+    "workspace": "Workspace",
+    "schedule": "Расписание",
+    "home": "Главная",
+    "chat": "Чат",
+    "profile": "Профиль"
   }
 }

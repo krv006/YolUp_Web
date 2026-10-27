@@ -35,5 +35,12 @@
     "myGroups": "My groups",
     "createGroup": "Add a group",
     "subjectTeacher": "{{subject}} teacher"
+  },
+  "tabs": {
+    "workspace": "Workspace",
+    "schedule": "Schedule",
+    "home": "Home",
+    "chat": "Chat",
+    "profile": "Profile"
   }
 }

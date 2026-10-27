@@ -85,5 +85,51 @@
     "oktabr",
     "noyabr",
     "dekabr"
-  ]
+  ],
+  "mobile": {
+    "role": "{{subject}} o‘qituvchisi",
+    "roleFallback": "O‘qituvchi",
+    "offline": "Internet yo‘q. Oxirgi saqlangan ma’lumot",
+    "startsIn": "{{count}} daqiqadan so‘ng boshlanadi",
+    "startsInHours": "{{count}} soatdan so‘ng boshlanadi",
+    "startsNow": "Hozir boshlanadi",
+    "live": "Dars ketmoqda · {{count}} daqiqa",
+    "students": "{{count}} o‘quvchi",
+    "joined": "{{done}} / {{total}} o‘quvchi qo‘shildi",
+    "quizAttached": "test biriktirilgan",
+    "start": "Darsni boshlash",
+    "join": "Darsga kirish",
+    "chat": "Chat",
+    "reviewTitle": "Tekshirish kerak",
+    "reviewHint": "{{works}} ta ish · {{tasks}} ta vazifa",
+    "todayTitle": "Bugungi darslar",
+    "seeAll": "Barchasi",
+    "finished": "Tugadi · {{count}} o‘quvchi",
+    "liveRow": "Dars ketmoqda",
+    "enter": "Kirish",
+    "noLessonsTitle": "Bugun dars yo‘q",
+    "noLessonsNext": "Keyingi dars: ertaga, {{time}} · {{title}}",
+    "noLessonsHint": "Jadvalga birinchi darsni qo‘shing",
+    "addLesson": "Dars qo‘shish",
+    "tomorrowTitle": "Ertangi darslar",
+    "schedule": "Jadval",
+    "noGroupsTitle": "Birinchi guruhingizni yarating",
+    "noGroupsHint": "Guruh yarating, o‘quvchilarni havola orqali taklif qiling va dars jadvalini qo‘shing.",
+    "createGroup": "Guruh yaratish",
+    "stepsTitle": "3 qadamda boshlang",
+    "steps": {
+      "group": {
+        "title": "Guruh yarating",
+        "hint": "Nomi, fani va haftalik darslar soni"
+      },
+      "link": {
+        "title": "Havolani ulashing",
+        "hint": "O‘quvchilar bir bosishda qo‘shiladi"
+      },
+      "lesson": {
+        "title": "Dars qo‘shing",
+        "hint": "O‘quvchilar eslatma oladi"
+      }
+    }
+  }
 }

@@ -35,6 +35,12 @@ export {
   useUnreadNotificationCount,
   useUserSearch,
 } from "./model/notification.queries";
+export {
+  notificationActionKey,
+  notificationGroupKey,
+  notificationIcon,
+} from "./lib/notification-display";
+export type { NotificationGroupKey } from "./lib/notification-display";
 export { useNotificationFeed } from "./model/use-notification-feed";
 export { usePushNotifications } from "./model/use-push-notifications";
 export type { PushNotificationsState } from "./model/use-push-notifications";

@@ -208,6 +208,8 @@ export function AppRouter() {
                   />
                   <Route element={<TeacherShellLayout />}>
                     <Route path={ROUTES.teacher.dashboard} element={<TeacherDashboardPage />} />
+                    <Route path={ROUTES.teacher.notifications} element={<NotificationsPage />} />
+                    <Route path={ROUTES.teacher.search} element={<WorkspaceSearchPage />} />
                     <Route path={ROUTES.teacher.schedule} element={<TeacherSchedulePage />} />
                     <Route
                       path={ROUTES.teacher.recording(":lessonId")}

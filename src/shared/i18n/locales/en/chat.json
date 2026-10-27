@@ -128,7 +128,13 @@
     "inviteCopyFailed": "Could not copy the link",
     "inviteExpiry": "Valid for {{count}} days",
     "approvalLabel": "With approval",
-    "approvalHint": "You approve everyone who comes through the link"
+    "approvalHint": "You approve everyone who comes through the link",
+    "mobileSubtitle": "Chat, lessons and tasks in one place",
+    "shortDescriptionLabel": "Short description",
+    "lessonsHint": "You can add the schedule later",
+    "subjectPlaceholder": "Choose",
+    "decrease": "Decrease",
+    "increase": "Increase"
   },
   "list": {
     "today": "Today",
@@ -274,7 +280,9 @@
     "typing": "{{name}} is typing...",
     "you": "You",
     "peopleSection": "People",
-    "startChat": "Start chat"
+    "startChat": "Start chat",
+    "connectionLost": "No connection",
+    "freshStart": "Fresh start"
   },
   "pinned": {
     "label": "Pinned message",
@@ -338,5 +346,17 @@
     "selectAria": "Photo {{number}}",
     "removeAria": "Remove photo {{number}}",
     "quality": "Photos are sent in original quality · {{size}}"
+  },
+  "listTime": {
+    "yesterday": "Yesterday",
+    "weekdays": [
+      "Su",
+      "Mo",
+      "Tu",
+      "We",
+      "Th",
+      "Fr",
+      "Sa"
+    ]
   }
 }

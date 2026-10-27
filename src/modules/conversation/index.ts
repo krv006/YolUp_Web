@@ -28,6 +28,7 @@ export { ChatEmptyState } from "./ui/chat-empty-state";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";
 export { ConversationActionsSheet } from "./ui/conversation-actions-sheet";
+export type { ConversationActionsFocus } from "./ui/conversation-actions-sheet";
 export { ConversationItem } from "./ui/conversation-item";
 export { ConversationRail } from "./ui/conversation-rail";
 export type { ConversationRailProps, ConversationSection } from "./ui/conversation-rail";

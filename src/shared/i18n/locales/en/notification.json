@@ -8,8 +8,8 @@
     "yesterday": "Yesterday",
     "earlier": "Earlier"
   },
-  "emptyTitle": "All caught up",
-  "emptyDescription": "New assignments, requests and grades will show up here.",
+  "emptyTitle": "No notifications yet",
+  "emptyDescription": "Updates about assignments, lessons and join requests will appear here.",
   "loadError": "Could not load notifications",
   "retry": "Try again",
   "loading": "Loading",
@@ -27,12 +27,14 @@
   "filterUnread": "Unread · {{count}}",
   "tabs": {
     "all": "All",
-    "unread": "Unread · {{count}}"
+    "unread": "Unread · {{count}}",
+    "unreadPlain": "Unread"
   },
   "actions": {
     "openAssignment": "Open the assignment",
     "openQuiz": "Go to the quiz",
     "review": "Review",
     "open": "Open"
-  }
+  },
+  "back": "Back"
 }

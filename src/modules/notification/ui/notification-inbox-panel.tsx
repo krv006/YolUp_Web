@@ -8,48 +8,13 @@ import {
   useNotificationInbox,
 } from "../model/notification.queries";
 import type { InboxNotification, NotificationLink } from "../api/notification.dto";
+import {
+  notificationActionKey,
+  notificationGroupKey,
+  notificationIcon,
+  type NotificationGroupKey,
+} from "../lib/notification-display";
 import { NotificationHtml } from "./notification-html";
-
-const LESSON_REMINDER_KIND = "lesson_reminder";
-
-type GroupKey = "today" | "yesterday" | "earlier";
-
-const TONES = {
-  lesson: "bg-accent-saffron-bg text-accent-saffron-fg",
-  people: "bg-accent-green-bg text-accent-green-fg",
-  action: "bg-accent-blue-bg text-accent-blue-fg",
-  neutral: "bg-subtle text-icon-secondary",
-};
-
-function iconFor(item: InboxNotification) {
-  if (item.kind === LESSON_REMINDER_KIND) return { icon: "clock", tone: TONES.lesson };
-  if (item.kind?.includes("rating") || item.kind?.includes("grade"))
-    return { icon: "star", tone: TONES.people };
-  if (item.link?.type === "submission") return { icon: "check-circle", tone: TONES.people };
-  if (item.link?.type === "assignment") return { icon: "assign", tone: TONES.lesson };
-  if (item.link?.type === "quiz") return { icon: "quiz", tone: TONES.action };
-  if (item.targetType === "all") return { icon: "campaign", tone: TONES.action };
-  if (item.kind === "mention") return { icon: "alternate-email", tone: TONES.action };
-  return { icon: "person-add", tone: TONES.neutral };
-}
-
-function actionKey(link: NotificationLink | null): string | null {
-  if (!link) return null;
-  if (link.type === "assignment") return "openAssignment";
-  if (link.type === "quiz" || link.type === "exam") return "openQuiz";
-  if (link.type === "course") return "review";
-  return "open";
-}
-
-function groupKeyOf(value: string): GroupKey {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "earlier";
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-  if (date.getTime() >= start.getTime()) return "today";
-  if (date.getTime() >= start.getTime() - 86_400_000) return "yesterday";
-  return "earlier";
-}
 
 export interface NotificationInboxPanelProps {
   onOpenLink?: (link: NotificationLink) => void;
@@ -78,8 +43,8 @@ export function NotificationInboxPanel({
   const unreadCount = all.filter((item) => !item.isRead).length;
   const items = tab === "unread" ? all.filter((item) => !item.isRead) : all;
 
-  const groups = (["today", "yesterday", "earlier"] as GroupKey[])
-    .map((key) => ({ key, items: items.filter((item) => groupKeyOf(item.createdAt) === key) }))
+  const groups = (["today", "yesterday", "earlier"] as NotificationGroupKey[])
+    .map((key) => ({ key, items: items.filter((item) => notificationGroupKey(item.createdAt) === key) }))
     .filter((group) => group.items.length > 0);
 
   function openItem(item: InboxNotification) {
@@ -176,8 +141,8 @@ export function NotificationInboxPanel({
                 {t(`groups.${group.key}`)}
               </span>
               {group.items.map((item) => {
-                const { icon, tone } = iconFor(item);
-                const action = actionKey(item.link);
+                const { icon, tone } = notificationIcon(item);
+                const action = notificationActionKey(item.link);
                 return (
                   <button
                     key={item.id}

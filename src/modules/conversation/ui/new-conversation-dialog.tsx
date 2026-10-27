@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { conversationApi, conversationKeys } from "@/modules/conversation";
 import { useCreateInviteLink, useInviteLink, useSubjects } from "@/modules/course";
 import type { Conversation } from "@/shared/types";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -22,6 +23,9 @@ interface GroupDraft {
 
 const INVITE_DAYS = 7;
 
+const MOBILE_FIELD =
+  "h-13 w-full rounded-lg border-[1.5px] border-transparent bg-subtle px-4 text-body text-ink outline-none transition-colors placeholder:text-ink-secondary focus:border-focus";
+
 const EMPTY: GroupDraft = { name: "", subject: "", description: "", lessonsPerWeek: "3", fee: "" };
 
 export interface NewConversationDialogProps {
@@ -36,13 +40,14 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
   const navigate = useNavigate();
   const client = useQueryClient();
   const subjects = useSubjects(open);
+  const isCompact = useIsCompact();
   const create = useMutation({
     mutationFn: conversationApi.createGroup.bind(conversationApi),
     onSuccess: (room: Conversation) => {
       client.invalidateQueries({ queryKey: conversationKeys.all });
       setGroup(EMPTY);
       setCreated(room);
-      toast.success(t("newDialog.createdToast"));
+      if (!isCompact) toast.success(t("newDialog.createdToast"));
     },
   });
 
@@ -81,6 +86,126 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
       monthlyFee: Number.isFinite(fee) && fee > 0 ? fee : null,
     });
   }
+
+  const lessons = Number(group.lessonsPerWeek) || 1;
+
+  if (isCompact)
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={(next) => {
+          onOpenChange(next);
+          if (!next) setGroup(EMPTY);
+        }}
+        title={t("newDialog.title")}
+        description={t("newDialog.mobileSubtitle")}
+        titleClassName="text-h2 leading-6 font-semibold"
+        closeClassName="size-11"
+        footerClassName="items-center px-4 pt-6 pb-[max(30px,env(safe-area-inset-bottom))]"
+        footer={
+          <>
+            <button
+              type="button"
+              className={`${dialogButton.secondary} h-13 border-line-strong`}
+              onClick={() => onOpenChange(false)}
+            >
+              {t("newDialog.cancel")}
+            </button>
+            <button
+              type="submit"
+              form="new-group-form"
+              className={`${dialogButton.primary} h-13`}
+              disabled={!group.name.trim() || !group.subject.trim() || create.isPending}
+            >
+              {t("newDialog.create")}
+            </button>
+          </>
+        }
+      >
+        <form id="new-group-form" className="-mt-1 flex flex-col gap-4" onSubmit={submit}>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-body-sm text-ink">{t("newDialog.courseNameLabel")}</span>
+            <input
+              className={MOBILE_FIELD}
+              value={group.name}
+              onChange={(event) => update("name", event.target.value)}
+              placeholder={t("newDialog.courseNamePlaceholder")}
+            />
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-body-sm text-ink">{t("newDialog.subjectLabel")}</span>
+            <span className="relative flex">
+              <select
+                className={`${MOBILE_FIELD} appearance-none pr-11 ${group.subject ? "" : "text-ink-secondary"}`}
+                value={group.subject}
+                onChange={(event) => update("subject", event.target.value)}
+              >
+                <option value="" disabled>
+                  {t("newDialog.subjectPlaceholder")}
+                </option>
+                {(subjects.data ?? []).map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </select>
+              <Icon
+                name="chevron-down"
+                size={20}
+                className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-ink-secondary"
+              />
+            </span>
+          </label>
+
+          <label className="flex flex-col gap-1.5">
+            <span className="text-body-sm text-ink">{t("newDialog.shortDescriptionLabel")}</span>
+            <textarea
+              className={`${MOBILE_FIELD} h-28 resize-none py-3.5`}
+              value={group.description}
+              onChange={(event) => update("description", event.target.value)}
+              placeholder={t("newDialog.descriptionPlaceholder")}
+            />
+          </label>
+
+          <div className="flex items-center gap-3">
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="text-body-sm font-medium text-ink">{t("newDialog.lessonsPerWeekLabel")}</strong>
+              <small className="text-caption text-ink-secondary">{t("newDialog.lessonsHint")}</small>
+            </span>
+            <span className="flex h-13 shrink-0 items-center rounded-full border-4 border-subtle bg-surface">
+              <button
+                type="button"
+                className="grid size-11 place-items-center rounded-full bg-surface text-ink shadow-xs disabled:opacity-40"
+                aria-label={t("newDialog.decrease")}
+                disabled={lessons <= 1}
+                onClick={() => update("lessonsPerWeek", String(Math.max(1, lessons - 1)))}
+              >
+                <Icon name="remove" size={20} />
+              </button>
+              <span className="w-16 text-center text-title-sm text-ink">
+                {t("newDialog.lessonsPerWeekValue", { count: lessons })}
+              </span>
+              <button
+                type="button"
+                className="grid size-11 place-items-center rounded-full bg-surface text-ink shadow-xs disabled:opacity-40"
+                aria-label={t("newDialog.increase")}
+                disabled={lessons >= 7}
+                onClick={() => update("lessonsPerWeek", String(Math.min(7, lessons + 1)))}
+              >
+                <Icon name="add" size={20} />
+              </button>
+            </span>
+          </div>
+
+          {create.isError ? (
+            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
+              {create.error.message}
+            </p>
+          ) : null}
+        </form>
+      </AppDialog>
+    );
 
   return (
     <AppDialog
@@ -201,6 +326,7 @@ function GroupReadyDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const { t } = useTranslation("chat");
+  const isCompact = useIsCompact();
   const courseId = room.courseId ?? null;
   const link = useInviteLink(courseId, open);
   const createLink = useCreateInviteLink();
@@ -263,21 +389,26 @@ function GroupReadyDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      variant="confirm"
+      variant={isCompact ? "sheet" : "confirm"}
       title={t("newDialog.readyTitle")}
       description={room.title}
+      titleClassName={isCompact ? "text-h2 leading-6 font-semibold" : undefined}
+      closeClassName={isCompact ? "size-11" : undefined}
+      footerClassName={
+        isCompact ? "items-center px-4 pt-6 pb-[max(16px,env(safe-area-inset-bottom))]" : undefined
+      }
       footer={
         <>
           <button
             type="button"
-            className={dialogButton.secondary}
+            className={`${dialogButton.secondary} ${isCompact ? "h-13 border-line-strong" : ""}`}
             onClick={() => onOpenChange(false)}
           >
             {t("newDialog.later")}
           </button>
           <button
             type="button"
-            className={dialogButton.primary}
+            className={`${dialogButton.primary} ${isCompact ? "h-13" : ""}`}
             disabled={!current?.url}
             onClick={share}
           >
@@ -286,22 +417,30 @@ function GroupReadyDialog({
         </>
       }
     >
-      <p className="flex items-center gap-2.5 rounded-md bg-accent-green-bg px-4 py-3 text-body-sm text-success-fg">
+      <p
+        className={`flex items-center gap-2.5 bg-accent-green-bg px-4 text-body-sm text-success-fg ${
+          isCompact ? "-mt-1 h-11 rounded-xl" : "rounded-md py-3"
+        }`}
+      >
         <Icon name="check-circle" size={18} className="shrink-0" />
         {t("newDialog.createdToast")}
       </p>
 
-      <strong className="text-title text-ink">{t("newDialog.inviteTitle")}</strong>
+      <strong className={isCompact ? "font-heading text-title-lg font-medium text-ink" : "text-title text-ink"}>
+        {t("newDialog.inviteTitle")}
+      </strong>
 
-      <div className="flex flex-col gap-3 rounded-md bg-subtle p-4">
+      <div className={`flex flex-col gap-3 bg-subtle p-4 ${isCompact ? "rounded-xl" : "rounded-md"}`}>
         <div className="flex items-center gap-3">
           <Icon name="chat" size={18} className="shrink-0 text-brand" />
-          <span className="min-w-0 flex-1 truncate text-body text-ink">
+          <span className={`min-w-0 flex-1 truncate text-ink ${isCompact ? "text-title" : "text-body"}`}>
             {current?.url ?? t("newDialog.invitePending")}
           </span>
           <button
             type="button"
-            className="h-7 shrink-0 rounded-full bg-brand-subtle px-3 text-button-sm text-brand transition-colors hover:bg-tint disabled:opacity-50"
+            className={`shrink-0 rounded-full bg-brand-subtle px-3 text-button-sm text-brand transition-colors hover:bg-tint disabled:opacity-50 ${
+              isCompact ? "h-9 px-4" : "h-7"
+            }`}
             disabled={!current?.url}
             onClick={copy}
           >
@@ -310,7 +449,11 @@ function GroupReadyDialog({
         </div>
 
         <div className="flex items-start gap-3">
-          <span className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-sm bg-surface p-1.5">
+          <span
+            className={`grid shrink-0 place-items-center overflow-hidden bg-surface ${
+              isCompact ? "size-22 rounded-xl p-5" : "size-20 rounded-sm p-1.5"
+            }`}
+          >
             {qr ? (
               <img src={qr} alt="" className="size-full object-contain" />
             ) : (
@@ -318,10 +461,14 @@ function GroupReadyDialog({
             )}
           </span>
           <span className="flex min-w-0 flex-1 flex-col items-start gap-2">
-            <small className="text-body-xs text-ink-secondary">
+            <small className={`text-ink-secondary ${isCompact ? "text-body-sm" : "text-body-xs"}`}>
               {t("newDialog.inviteDescription", { title: room.title })}
             </small>
-            <span className="flex items-center gap-1.5 rounded-full bg-warning-bg px-2.5 py-1 text-caption-strong text-warning-fg">
+            <span
+              className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-caption-strong ${
+                isCompact ? "bg-accent-teal-bg text-accent-teal-fg" : "bg-warning-bg text-warning-fg"
+              }`}
+            >
               <Icon name="schedule" size={14} />
               {t("newDialog.inviteExpiry", { count: INVITE_DAYS })}
             </span>
@@ -329,17 +476,24 @@ function GroupReadyDialog({
         </div>
       </div>
 
-      <span className="flex items-center gap-3">
-        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-accent-green-bg text-accent-green-fg">
-          <Icon name="check-circle" size={18} />
+      <span className={`flex items-center gap-3 ${isCompact ? "mt-3.5 mb-3 px-4" : ""}`}>
+        <span
+          className={`grid shrink-0 place-items-center bg-accent-green-bg text-accent-green-fg ${
+            isCompact ? "size-10 rounded-lg" : "size-9 rounded-md"
+          }`}
+        >
+          <Icon name="check-circle" size={isCompact ? 22 : 18} />
         </span>
         <span className="flex min-w-0 flex-1 flex-col">
-          <strong className="text-title-sm text-ink">{t("newDialog.approvalLabel")}</strong>
-          <small className="truncate text-body-xs text-ink-tertiary">
+          <strong className={`text-ink ${isCompact ? "text-title" : "text-title-sm"}`}>
+            {t("newDialog.approvalLabel")}
+          </strong>
+          <small className={`truncate ${isCompact ? "text-body-sm text-ink-secondary" : "text-body-xs text-ink-tertiary"}`}>
             {t("newDialog.approvalHint")}
           </small>
         </span>
         <Switch
+          size={isCompact ? "lg" : "default"}
           checked={requireApproval}
           onCheckedChange={toggleApproval}
           aria-label={t("newDialog.approvalLabel")}

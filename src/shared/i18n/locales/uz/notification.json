@@ -8,8 +8,8 @@
     "yesterday": "Kecha",
     "earlier": "Avvalgi"
   },
-  "emptyTitle": "Hammasi ko‘rildi",
-  "emptyDescription": "Yangi topshiriq, so‘rov yoki baho kelsa, shu yerda ko‘rinadi.",
+  "emptyTitle": "Hozircha bildirishnomalar yo‘q",
+  "emptyDescription": "Topshiriqlar, darslar va qo‘shilish so‘rovlari haqidagi xabarlar shu yerda chiqadi.",
   "loadError": "Xabarlarni yuklab bo‘lmadi",
   "retry": "Qayta urinish",
   "loading": "Yuklanmoqda",
@@ -27,12 +27,14 @@
   "filterUnread": "O‘qilmagan · {{count}}",
   "tabs": {
     "all": "Hammasi",
-    "unread": "O‘qilmagan · {{count}}"
+    "unread": "O‘qilmagan · {{count}}",
+    "unreadPlain": "O‘qilmagan"
   },
   "actions": {
     "openAssignment": "Topshiriqni ochish",
     "openQuiz": "Testga o‘tish",
     "review": "Ko‘rib chiqish",
     "open": "Ochish"
-  }
+  },
+  "back": "Orqaga"
 }
