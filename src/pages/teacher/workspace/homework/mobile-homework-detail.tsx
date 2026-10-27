@@ -5,6 +5,7 @@ import type { Assignment, Submission } from "@/shared/types";
 type AiGroupSummary = NonNullable<Assignment["aiGroupSummary"]>;
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { MobileEmptyCard, mobileButton } from "@/shared/ui/mobile-page";
 
 type Filter = "all" | "unchecked" | "graded";
 
@@ -30,6 +31,7 @@ export interface MobileHomeworkDetailProps {
   summary: AiGroupSummary | null;
   summaryPending: boolean;
   missing: number;
+  emptyHint: string;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
@@ -44,6 +46,7 @@ export function MobileHomeworkDetail({
   summary,
   summaryPending,
   missing,
+  emptyHint,
   onBack,
   onEdit,
   onDelete,
@@ -97,7 +100,7 @@ export function MobileHomeworkDetail({
           </Dropdown>
         </header>
 
-        <small className="mt-4 truncate text-caption text-ink-secondary">{eyebrow}</small>
+        <small className="mt-3.5 truncate text-caption text-ink-secondary">{eyebrow}</small>
         <h1 className="mt-0.5 text-[22px]/[28px] font-bold text-ink">{item?.title}</h1>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
@@ -109,6 +112,8 @@ export function MobileHomeworkDetail({
           ))}
         </div>
 
+        {submissions.length ? (
+        <>
         <section className="mt-4 flex flex-col gap-3 rounded-xl bg-surface p-4">
           <strong className="flex items-center gap-2 text-title text-ink">
             <Icon name="auto-awesome" size={20} className="text-accent-saffron-fg" />
@@ -184,12 +189,27 @@ export function MobileHomeworkDetail({
             <li className="px-4 py-8 text-center text-body-sm text-ink-secondary">{t("detail.noStudents")}</li>
           ) : null}
         </ul>
+        </>
+        ) : (
+          <div className="mt-4">
+            <MobileEmptyCard
+              icon="assignment"
+              title={t("detail.emptyTitle")}
+              description={emptyHint}
+              descriptionClassName="max-w-[310px]"
+            />
+          </div>
+        )}
       </div>
 
-      <div className="shrink-0 rounded-t-2xl bg-surface px-4 pt-3 pb-8">
+      <div className="shrink-0 rounded-t-2xl bg-surface px-4 pt-3 pb-8.5">
         <button
           type="button"
-          className="flex h-13 w-full items-center justify-center gap-2 rounded-full border border-line-strong text-button text-ink disabled:opacity-50"
+          className={
+            submissions.length
+              ? "flex h-13 w-full items-center justify-center gap-2 rounded-full border border-line-strong text-button text-ink disabled:opacity-50"
+              : `${mobileButton.primary} w-full`
+          }
           disabled={!missing}
           onClick={onRemind}
         >

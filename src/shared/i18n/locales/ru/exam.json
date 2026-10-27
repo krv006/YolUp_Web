@@ -151,7 +151,14 @@
     "startNowTitle": "Начать сейчас",
     "startNowHint": "Время не ожидается",
     "noQuizzesShort": "Нет опубликованного теста?",
-    "createWithAiShort": "Создать с AI →"
+    "createWithAiShort": "Создать с AI →",
+    "mobile": {
+      "students": "{{count}} учеников",
+      "pick": "Выберите",
+      "minutes": "{{count}} мин",
+      "manual": "Оценивается вручную",
+      "pickFor": "Тест для «{{title}}»"
+    }
   },
   "templateDialog": {
     "title": "Свой шаблон",
@@ -191,7 +198,12 @@
     },
     "breakDefaultTitle": "Перерыв",
     "orderHead": "Порядок",
-    "totalHours": "всего {{hours}} ч {{count}} мин"
+    "totalHours": "всего {{hours}} ч {{count}} мин",
+    "mobile": {
+      "save": "Сохранить",
+      "weight": "вес {{value}}%",
+      "passLabel": "Проходной процент"
+    }
   },
   "writing": {
     "essays": "ЭССЕ УЧЕНИКА",
@@ -269,7 +281,43 @@
     "scoreSave": "Сохранить",
     "overallBand": "Общий балл (примерно)",
     "scorePlaceholder": "—",
-    "answeredCount": "{{answered}} / {{total}} вопросов"
+    "answeredCount": "{{answered}} / {{total}} вопросов",
+    "mobile": {
+      "back": "Назад",
+      "hours": "{{hours}} ч {{minutes}} мин",
+      "sections": "{{count}} разделов",
+      "average": "среднее {{value}}",
+      "liveSection": "Раздел {{title}} · {{current}} / {{total}}",
+      "liveEnds": "осталось · экзамен закончится в {{time}}",
+      "joined": "Вошли",
+      "submitted": "Сдали",
+      "warnings": "Предупреждения",
+      "students": "Ученики",
+      "notJoined": "Не зашёл на экзамен",
+      "integrityNote": "Во время экзамена фиксируются переходы в другое окно и попытки вставки.",
+      "essaysTitle": "Writing · эссе",
+      "essayFilters": {
+        "all": "Все · {{count}}",
+        "ungraded": "Без оценки · {{count}}",
+        "ai": "ИИ готов · {{count}}"
+      },
+      "noEssay": "Эссе не сдано",
+      "wordsShort": "{{count}} слов (минимум {{min}})",
+      "byTeacher": "Учитель: {{value}}",
+      "byAi": "ИИ: {{value}}",
+      "ungraded": "Без оценки",
+      "tooShort": "Недостаточно слов",
+      "submissions": "{{count}} работ",
+      "aiTitle": "{{name}} · {{section}}",
+      "band": "band",
+      "aiCriteria": "Анализ ИИ · критерии IELTS",
+      "wordsTask": "{{count}} слов · Task {{task}}",
+      "upgraded": "Улучшенный вариант (≈ +1 band)",
+      "askAgain": "Запросить снова",
+      "shared": "Результаты отправлены в чат группы ({{count}} учеников)",
+      "averageLabel": "Среднее",
+      "bySection": "Средние по разделам"
+    }
   },
   "results": {
     "eyebrow": "Mock экзамены / Результаты · {{title}} · {{label}}",

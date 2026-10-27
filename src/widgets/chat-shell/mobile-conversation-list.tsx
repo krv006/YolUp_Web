@@ -10,7 +10,13 @@ import { ROUTES } from "@/shared/config";
 import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
-import { MobileEmptyCard, MobileSegment } from "@/shared/ui/mobile-page";
+import {
+  MobileEmptyCard,
+  MobileSearchField,
+  MobileSegment,
+  MobileTitleHeader,
+  mobileRoundButton,
+} from "@/shared/ui/mobile-page";
 import { ConversationRowBody } from "./conversation-row";
 import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-list";
 
@@ -74,20 +80,20 @@ export function MobileConversationList() {
       className="h-full overflow-y-auto bg-canvas bg-auth-gradient px-4 pt-5.5 pb-32 font-body text-ink"
       aria-label={t("panel.listAria")}
     >
-      <header className="flex items-start gap-3">
-        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <small className="truncate text-caption text-ink-secondary">{subtitle}</small>
-          <h1 className="truncate font-heading text-h1 leading-[26px] text-ink">{t("panel.title")}</h1>
-        </span>
-        <button
-          type="button"
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
-          aria-label={t("panel.newGroup")}
-          onClick={() => openNewConversation(true)}
-        >
-          <Icon name="add" size={24} />
-        </button>
-      </header>
+      <MobileTitleHeader
+        eyebrow={subtitle}
+        title={t("panel.title")}
+        action={
+          <button
+            type="button"
+            className={mobileRoundButton}
+            aria-label={t("panel.newGroup")}
+            onClick={() => openNewConversation(true)}
+          >
+            <Icon name="add" size={24} />
+          </button>
+        }
+      />
 
       {fresh ? (
         <div className="mt-5.5">
@@ -101,26 +107,14 @@ export function MobileConversationList() {
         </div>
       ) : (
         <>
-          <label className="mt-5.5 flex h-12 items-center gap-3 rounded-full border-[1.5px] border-transparent bg-surface px-4.5 transition-colors focus-within:border-focus">
-            <Icon name="search" size={20} className="shrink-0 text-ink-secondary" />
-            <input
-              className="h-full min-w-0 flex-1 bg-transparent text-body text-ink outline-none placeholder:text-ink-secondary"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder={t("panel.searchPlaceholder")}
-              aria-label={t("panel.searchAria")}
-            />
-            {search ? (
-              <button
-                type="button"
-                className="grid size-6 shrink-0 place-items-center rounded-full bg-subtle text-ink-secondary transition-colors hover:text-ink"
-                onClick={() => setSearch("")}
-                aria-label={t("panel.closeSearchAria")}
-              >
-                <Icon name="close" size={14} />
-              </button>
-            ) : null}
-          </label>
+          <MobileSearchField
+            className="mt-5.5"
+            value={search}
+            onChange={setSearch}
+            placeholder={t("panel.searchPlaceholder")}
+            ariaLabel={t("panel.searchAria")}
+            clearLabel={t("panel.closeSearchAria")}
+          />
 
           {query ? (
             <p className="mt-5 text-body text-ink">

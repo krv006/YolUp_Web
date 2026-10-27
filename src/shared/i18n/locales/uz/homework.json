@@ -261,9 +261,19 @@
     "aiTitle": "AI bugun ishlarni tekshirdi",
     "aiHint": "Bahoni tasdiqlash kutilmoqda. Yakuniy bahoni siz qo‘yasiz.",
     "aiCheckedToday": "AI bugun {{count}} ta ishni tekshirdi",
-    "aiPendingConfirm": "{{count}} ta baho tasdiqlashingizni kutmoqda"
+    "aiPendingConfirm": "{{count}} ta baho tasdiqlashingizni kutmoqda",
+    "mobile": {
+      "back": "Orqaga",
+      "more": "Amallar",
+      "review": "Ishlarni tekshirish",
+      "delete": "O‘chirish"
+    }
   },
   "detail": {
+    "emptyTitle": "Hali hech kim topshirmadi",
+    "emptyHint": "Muddat tugashiga {{count}} kun bor. O‘quvchilarga eslatma yuborishingiz mumkin.",
+    "emptyHintToday": "Muddat bugun tugaydi. O‘quvchilarga eslatma yuborishingiz mumkin.",
+    "emptyHintOverdue": "Muddat tugagan. O‘quvchilarga eslatma yuborishingiz mumkin.",
     "eyebrow": "Vazifalar / {{course}} · Muddat: {{due}}",
     "remind": "Eslatma yuborish ({{count}})",
     "due": "{{value}}",

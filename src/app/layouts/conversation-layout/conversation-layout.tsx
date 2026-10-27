@@ -1,4 +1,5 @@
 import {
+  Suspense,
   useEffect,
   useState,
   type CSSProperties,
@@ -20,6 +21,7 @@ import { ConversationTopbar } from "@/widgets/conversation-topbar";
 import { MobileTabBar } from "@/widgets/mobile-tab-bar";
 import { STORAGE_KEYS } from "@/shared/constants";
 import { storage } from "@/shared/lib";
+import { ChatSkeleton } from "@/shared/ui/page-skeleton";
 import type { ConversationRole } from "@/shared/types";
 
 const WIDTH_KEYS: Record<ConversationRole, string> = {
@@ -157,7 +159,9 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.14, ease: "easeOut" }}
             >
-              <Outlet />
+              <Suspense fallback={<ChatSkeleton />}>
+                <Outlet />
+              </Suspense>
             </motion.div>
           </main>
         </div>

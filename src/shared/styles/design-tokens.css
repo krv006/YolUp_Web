@@ -535,6 +535,7 @@
   --color-surface: var(--bg-surface);
   --color-subtle: var(--bg-subtle);
   --color-muted: var(--bg-muted);
+  --color-skeleton: var(--bg-muted);
   --color-inverse: var(--bg-inverse);
   --color-inverse-subtle: var(--bg-inverse-subtle);
   --color-illustration: var(--bg-illustration);
@@ -619,6 +620,7 @@
   --color-surface: var(--bg-surface);
   --color-subtle: var(--bg-subtle);
   --color-muted: var(--bg-muted);
+  --color-skeleton: var(--bg-muted);
   --color-inverse: var(--bg-inverse);
   --color-inverse-subtle: var(--bg-inverse-subtle);
   --color-illustration: var(--bg-illustration);
@@ -708,6 +710,7 @@
   --color-surface: var(--bg-surface);
   --color-subtle: var(--bg-subtle);
   --color-muted: var(--bg-muted);
+  --color-skeleton: var(--bg-muted);
   --color-inverse: var(--bg-inverse);
   --color-inverse-subtle: var(--bg-inverse-subtle);
   --color-illustration: var(--bg-illustration);

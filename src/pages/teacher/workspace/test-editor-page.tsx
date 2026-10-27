@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   QuestionAnswerInput,
   QuestionPrompt,
@@ -15,12 +15,17 @@ import {
   usePublishQuiz,
   useQuiz,
   useQuizAttempts,
+  useRemoveGroupAudio,
   useUpdateQuiz,
+  useUploadGroupAudio,
+  type GroupDraft,
   type QuestionDraft,
 } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import type { QuizAnswerValue, QuizQuestionType } from "@/shared/types";
+import { MobileTestEditor } from "./mobile-test-editor";
 import { TestQuestionCard } from "./test-question-card";
 import { QuestionTypeDialog } from "./question-type-dialog";
 import { UnsavedChangesDialog } from "./unsaved-changes-dialog";
@@ -32,13 +37,19 @@ export function TestEditorPage() {
   const { t } = useTranslation("quiz");
   const { quizId = null } = useParams();
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [params] = useSearchParams();
+  const wizard = isCompact && params.get("step") === "2";
   const quiz = useQuiz(quizId);
   const attempts = useQuizAttempts(quizId, Boolean(quizId));
   const update = useUpdateQuiz();
   const publish = usePublishQuiz();
   const exportQuiz = useExportQuiz();
+  const uploadAudio = useUploadGroupAudio(quizId ?? "");
+  const removeAudio = useRemoveGroupAudio(quizId ?? "");
 
   const [drafts, setDrafts] = useState<QuestionDraft[]>([]);
+  const [groups, setGroups] = useState<GroupDraft[]>([]);
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [dirty, setDirty] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
@@ -53,6 +64,9 @@ export function TestEditorPage() {
   if (detail && loadedId !== detail.id) {
     setLoadedId(detail.id);
     setDrafts(detail.questions.map((question) => questionToDraft(question, newKey)));
+    setGroups(
+      detail.groups.map((group) => ({ key: group.id, id: group.id, title: group.title, passage: group.passage }))
+    );
     setActiveKey(null);
     setDirty(0);
   }
@@ -74,7 +88,7 @@ export function TestEditorPage() {
     setTypeOpen(false);
   }
 
-  function save(asDraft: boolean) {
+  function save(asDraft: boolean, then?: () => void) {
     if (!quizId) return;
     update.mutate(
       {
@@ -84,13 +98,34 @@ export function TestEditorPage() {
           topic: detail?.topic ?? "",
           dueAt: detail?.dueAt ?? null,
           opensAt: detail?.opensAt ?? null,
-          groups: [],
-          ...(locked ? {} : { questions: drafts.map((draft) => draftToFormValues(draft, null)) }),
+          ...(locked
+            ? {}
+            : {
+                groups: groups.map((group) => ({
+                  ...(group.id ? { id: group.id } : {}),
+                  title: group.title.trim(),
+                  passage: group.passage.trim(),
+                })),
+                questions: drafts.map((draft) => {
+                  const groupIndex = groups.findIndex((group) => group.key === draft.groupKey);
+                  return draftToFormValues(draft, groupIndex >= 0 ? groupIndex : null);
+                }),
+              }),
           ...(asDraft ? { status: "draft" as const } : {}),
         },
       },
-      { onSuccess: () => setDirty(0) }
+      {
+        onSuccess: () => {
+          setDirty(0);
+          then?.();
+        },
+      }
     );
+  }
+
+  function publishTest(after?: () => void) {
+    if (!quizId) return;
+    save(false, () => publish.mutate(quizId, { onSuccess: () => after?.() }));
   }
 
   function leave() {
@@ -100,6 +135,52 @@ export function TestEditorPage() {
     }
     navigate(ROUTES.teacher.tests);
   }
+
+  const sheets = (
+    <>
+      <QuestionTypeDialog open={typeOpen} onOpenChange={setTypeOpen} onPick={addQuestion} />
+      <UnsavedChangesDialog
+        open={leaveOpen}
+        count={dirty}
+        onOpenChange={setLeaveOpen}
+        onLeave={() => navigate(ROUTES.teacher.tests)}
+      />
+    </>
+  );
+
+  if (isCompact)
+    return (
+      <>
+        <MobileTestEditor
+          title={detail ? quizDisplayTitle(detail) : ""}
+          drafts={drafts}
+          groups={groups}
+          savedGroups={detail?.groups ?? []}
+          locked={locked}
+          wizard={wizard}
+          newKey={newKey}
+          saving={update.isPending || publish.isPending}
+          uploadingAudio={uploadAudio.isPending}
+          onPatch={patch}
+          onRemove={(key) => {
+            setDrafts((current) => current.filter((item) => item.key !== key));
+            setDirty((value) => value + 1);
+          }}
+          onAddQuestion={() => setTypeOpen(true)}
+          onRemoveGroup={(key) => {
+            setGroups((current) => current.filter((group) => group.key !== key));
+            setDrafts((current) => current.map((item) => (item.groupKey === key ? { ...item, groupKey: null } : item)));
+            setDirty((value) => value + 1);
+          }}
+          onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
+          onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
+          onClose={leave}
+          onSaveDraft={() => save(true, () => navigate(ROUTES.teacher.tests))}
+          onPublish={() => publishTest(() => navigate(ROUTES.teacher.tests))}
+        />
+        {sheets}
+      </>
+    );
 
   return (
     <div className="flex h-full min-h-0 bg-canvas">
@@ -198,10 +279,7 @@ export function TestEditorPage() {
             type="button"
             className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-50"
             disabled={publish.isPending || !quizId}
-            onClick={() => {
-              save(false);
-              if (quizId) publish.mutate(quizId);
-            }}
+            onClick={() => publishTest()}
           >
             {t("editor.publish")}
           </button>
@@ -261,11 +339,6 @@ export function TestEditorPage() {
         </div>
       </aside>
 
-      <QuestionTypeDialog
-        open={typeOpen}
-        onOpenChange={setTypeOpen}
-        onPick={addQuestion}
-      />
 
       <QuizExportDialog
         open={exportOpen}
@@ -286,12 +359,7 @@ export function TestEditorPage() {
         request={{ topic: detail?.topic ?? "", courseId: detail?.courseId ?? null }}
       />
 
-      <UnsavedChangesDialog
-        open={leaveOpen}
-        count={dirty}
-        onOpenChange={setLeaveOpen}
-        onLeave={() => navigate(ROUTES.teacher.tests)}
-      />
+      {sheets}
     </div>
   );
 }

@@ -156,7 +156,7 @@
     "deleteAccount": "Akkauntni o‘chirish",
     "deleteAccountHint": "Barcha ma’lumotlar butunlay o‘chiriladi",
     "deleteAccountTitle": "Akkauntni o‘chirasizmi?",
-    "deleteAccountDescription": "Barcha guruhlar, darslar va xabarlar butunlay o‘chiriladi. Bu amalni bekor qilib bo‘lmaydi.",
+    "deleteAccountDescription": "Barcha guruhlar, darslar va xabarlar butunlay o‘chiriladi. Bu amalni qaytarib bo‘lmaydi.",
     "delete": "O‘chirish",
     "currentPassword": "Joriy parol",
     "newPassword": "Yangi parol",
@@ -235,6 +235,80 @@
     "reminderValue": "{{count}} daq oldin",
     "pushTitle": "Push bildirishnomalar",
     "pushOn": "Yoqilgan",
-    "pushOff": "O'chirilgan"
+    "pushOff": "O'chirilgan",
+    "back": "Orqaga",
+    "mobile": {
+      "eyebrow": "{{role}} akkaunti",
+      "monthResults": "{{month}} natijalari",
+      "details": "Batafsil",
+      "rating": "Reyting",
+      "ratingCount": "Baho",
+      "attendance": "Davomat",
+      "activity": "Faoliyat",
+      "ratingsHint": "{{value}} · {{count}} ta baho",
+      "certificatesHint": "{{count}} ta yuklangan",
+      "saved": "O‘zgarishlar saqlandi",
+      "saveFailed": "Saqlab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.",
+      "codeSentTo": "{{phone}} raqamiga yuborilgan 5 xonali kod",
+      "resendIn": "Qayta yuborish · {{time}}",
+      "phone": "Telefon",
+      "noRatingsTitle": "Hali baho yo‘q",
+      "noRatingsHint": "Darslaringiz tugagach o‘quvchilar baho va izoh qoldiradi. Ular shu yerda chiqadi.",
+      "today": "bugun",
+      "yesterday": "kecha",
+      "certificatesDescription": "Sertifikatlaringiz profilingizda ko‘rinadi va o‘quvchilar ishonchini oshiradi.",
+      "uploadedCount": "Yuklangan · {{count}}",
+      "uploadHint": "Sertifikatingiz tekshiruvdan so‘ng profilingizda ko‘rinadi.",
+      "upload": "Yuklash",
+      "file": "Fayl",
+      "pickFile": "Faylni tanlang",
+      "pickOrDrop": "Faylni tanlang yoki shu yerga tashlang",
+      "today": "bugun",
+      "fileTypes": "PDF, JPG yoki PNG · {{size}} MB gacha",
+      "fileTooBig": "Fayl {{size}} MB dan katta bo‘lmasligi kerak",
+      "fileMeta": "{{type}} · {{size}} · yuklandi",
+      "removeFile": "Faylni olib tashlash",
+      "certificateName": "Sertifikat nomi",
+      "certificatePlaceholder": "Masalan: IELTS Academic 8.0",
+      "noCertificatesTitle": "Hali sertifikat yo‘q",
+      "noCertificatesHint": "IELTS, CELTA yoki boshqa sertifikatingizni yuklang — o‘quvchilar profilingizda ko‘radi.",
+      "openFile": "Faylni ochish"
+    }
+  },
+  "help": {
+    "search": "Savol yoki mavzu qidirish…",
+    "soon": "Tez orada",
+    "empty": "Hech narsa topilmadi",
+    "sections": {
+      "faq": "Tez-tez so‘raladigan savollar",
+      "videos": "Video qo‘llanmalar",
+      "contact": "Bog‘lanish"
+    },
+    "items": {
+      "startLesson": {
+        "title": "Darsni qanday boshlayman?",
+        "hint": "«Darsni boshlash» — Asosiy ekranda"
+      },
+      "addStudent": {
+        "title": "O‘quvchi qanday qo‘shiladi?",
+        "hint": "Guruh → O‘quvchi qo‘shish"
+      },
+      "checkHomework": {
+        "title": "Vazifa qanday tekshiriladi?",
+        "hint": "AI tavsiya beradi, bahoni siz qo‘yasiz"
+      },
+      "intro": {
+        "title": "YolUp bilan tanishuv",
+        "hint": "2 daqiqa · boshlovchilar uchun"
+      },
+      "support": {
+        "title": "Qo‘llab-quvvatlashga yozish",
+        "hint": "Chat orqali · odatda 10 daqiqada javob"
+      },
+      "tour": {
+        "title": "Yo‘l-yo‘riqni qayta ko‘rish",
+        "hint": "Asosiy ekran bo‘yicha qisqa tanishuv"
+      }
+    }
   }
 }

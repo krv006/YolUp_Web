@@ -2,7 +2,9 @@ import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { MOBILE_INPUT } from "@/shared/ui/mobile-fields";
 import { Icon } from "@/shared/ui/icon";
 import type { QuizImportPreview, QuizSummary } from "@/shared/types";
 import { quizApi } from "../api/quiz.api";
@@ -25,6 +27,7 @@ export function QuizImportDialog({
   onImported,
 }: QuizImportDialogProps) {
   const { t } = useTranslation("quiz");
+  const isCompact = useIsCompact();
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [link, setLink] = useState("");
@@ -80,6 +83,115 @@ export function QuizImportDialog({
     );
   }
 
+  const fileInput = (
+    <input
+      ref={fileRef}
+      type="file"
+      accept={ACCEPT}
+      className="hidden"
+      onChange={(event) => pick(event.target.files?.[0] ?? null)}
+    />
+  );
+
+  if (isCompact)
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={(next) => {
+          if (!next) reset();
+          onOpenChange(next);
+        }}
+        variant="adaptive"
+        title={t("importDialog.title")}
+        description={t("importDialog.description")}
+        footerClassName="px-4 pt-5 pb-8.5"
+        footer={
+          <div className="grid w-full grid-cols-2 gap-3">
+            <button
+              type="button"
+              className={`${dialogButton.secondary} h-13 border-line-strong text-title font-semibold`}
+              onClick={() => onOpenChange(false)}
+            >
+              {t("importDialog.cancel")}
+            </button>
+            <button
+              type="button"
+              className={`${dialogButton.primary} h-13 text-title font-semibold`}
+              disabled={pending || (!file && !link.trim())}
+              onClick={submit}
+            >
+              {t("importDialog.submit")}
+            </button>
+          </div>
+        }
+      >
+        <div className="-mt-0.5 flex flex-col">
+          <button
+            type="button"
+            className="flex h-28 flex-col items-center justify-center rounded-lg border-[1.5px] border-dashed border-brand bg-subtle px-6 text-center transition-colors hover:bg-brand-subtle"
+            onClick={() => fileRef.current?.click()}
+          >
+            <Icon name="upload" size={22} className="text-brand" />
+            <strong className="mt-2 max-w-full truncate text-title text-ink">
+              {file ? file.name : t("importDialog.pickFile")}
+            </strong>
+            <small className="mt-1 text-body-xs text-ink-secondary">{t("importDialog.pickHint")}</small>
+          </button>
+          {fileInput}
+
+          <p className="mt-3 flex flex-wrap items-center gap-2 text-body-xs text-ink-secondary">
+            {t("importDialog.templates")}
+            {[".docx", ".xlsx", ".json"].map((extension) => (
+              <button
+                key={extension}
+                type="button"
+                className="font-medium text-brand transition-colors hover:text-brand-strong"
+                onClick={() => toast.info(t("importDialog.templateSoon"))}
+              >
+                {extension}
+              </button>
+            ))}
+          </p>
+
+          <label className="mt-[11px] flex flex-col gap-3">
+            <span className="text-caption-strong text-ink-secondary uppercase">{t("importDialog.googleLabel")}</span>
+            <input
+              className={`${MOBILE_INPUT} h-14 font-semibold`}
+              value={link}
+              placeholder="docs.google.com/forms/d/1aB…"
+              onChange={(event) => {
+                setLink(event.target.value);
+                setFile(null);
+                setPreview(null);
+              }}
+            />
+          </label>
+
+          <p className="mt-3 text-body-xs text-ink-secondary">{t("importDialog.googleHint")}</p>
+
+          {preview ? (
+            <div className="mt-2 flex flex-col gap-px rounded-lg bg-warning-bg px-3 pt-3 pb-[9px]">
+              <strong className="flex items-center gap-2 text-title text-ink">
+                <Icon name="warning-fill" size={18} className="shrink-0 text-accent-saffron-fg" />
+                {t("importDialog.found", {
+                  count: preview.questions.length,
+                  warnings: preview.warnings.length,
+                })}
+              </strong>
+              {preview.warnings.slice(0, 2).map((warning) => (
+                <small key={warning.questionNumber} className="text-body-sm text-ink-secondary">
+                  {t("importDialog.warningLine", {
+                    number: warning.questionNumber,
+                    reason: warning.reason,
+                  })}
+                </small>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </AppDialog>
+    );
+
   return (
     <AppDialog
       open={open}
@@ -122,13 +234,7 @@ export function QuizImportDialog({
         <small className="text-body-xs text-ink-tertiary">{t("importDialog.pickHint")}</small>
       </button>
 
-      <input
-        ref={fileRef}
-        type="file"
-        accept={ACCEPT}
-        className="hidden"
-        onChange={(event) => pick(event.target.files?.[0] ?? null)}
-      />
+      {fileInput}
 
       <p className="flex flex-wrap items-center gap-2 text-body-xs text-ink-tertiary">
         {t("importDialog.templates")}

@@ -113,6 +113,7 @@
     "finishTitle": "Завершить урок для всех — запись видео сохранится после этого",
     "youLabel": "Вы",
     "reconnecting": "Соединение прервано — переподключение ({{attempt}}/{{total}}). Урок продолжается.",
+    "reconnectingMobile": "Связь потеряна — переподключение... Урок продолжается.",
     "participantsCount": "Участники ({{count}})",
     "moreAria": "Другие действия",
     "switch": {
@@ -127,7 +128,8 @@
     "allow": "Разрешить",
     "mobileShare": "Показать",
     "mobilePeople": "Люди",
-    "mobileParticipantsCount": "Участники · {{count}}"
+    "mobileParticipantsCount": "Участники · {{count}}",
+    "liveLesson": "Онлайн-урок"
   },
   "mic": {
     "label": "Микрофон",

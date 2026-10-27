@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { Icon } from "@/shared/ui/icon";
+import { mobileButton } from "@/shared/ui/mobile-page";
 import type { PeriodicElement, StrokeDto, StrokeInput } from "../api/board.dto";
 import { nextFlowPoint } from "../lib/board-flow";
 import {
@@ -58,6 +61,7 @@ export function PeriodicTableDialog({
   strokes,
 }: PeriodicTableDialogProps) {
   const { t } = useTranslation("board");
+  const isCompact = useIsCompact();
   const table = usePeriodicTable(open);
   const addStrokes = useAddStrokes(lessonId ?? "");
   const [selectedZ, setSelectedZ] = useState<number | null>(null);
@@ -111,6 +115,136 @@ export function PeriodicTableDialog({
       elementCardHeight(selected)
     );
 
+  const placeBohr = () =>
+    selected &&
+    place(
+      (origin) => buildBohrStrokes(selected, placement, origin),
+      bohrDiagramSize(selected, placement)
+    );
+
+  if (isCompact) {
+    const mass = selected?.mass.replace(".", ",") ?? "";
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        titleClassName="text-title-lg font-semibold"
+        footerClassName="px-4 pt-5 pb-5"
+        title={t("periodic.title")}
+        description={t("periodic.description")}
+        footer={
+          <>
+            <button
+              type="button"
+              className={`${mobileButton.secondary} whitespace-nowrap`}
+              disabled={!selected || !canDraw || !selected.shells.length || addStrokes.isPending}
+              onClick={placeBohr}
+            >
+              {t("periodic.placeBohr")}
+            </button>
+            <button
+              type="button"
+              className={`${mobileButton.primary} whitespace-nowrap`}
+              disabled={!selected || !canDraw || addStrokes.isPending}
+              onClick={placeCard}
+            >
+              {t("periodic.placeCard")}
+            </button>
+          </>
+        }
+      >
+        {table.isLoading ? (
+          <p className="py-6 text-center text-body-sm text-ink-tertiary">{t("periodic.loading")}</p>
+        ) : null}
+        {table.isError ? (
+          <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">{t("periodic.loadError")}</p>
+        ) : null}
+
+        {elements.length ? (
+          <>
+            <label className="-mt-[3px] flex h-11 shrink-0 items-center gap-2.5 rounded-xl bg-subtle px-5">
+              <Icon name="search" size={20} className="shrink-0 text-ink-secondary" />
+              <input
+                className="h-full min-w-0 flex-1 bg-transparent text-label-lg font-normal text-ink outline-none placeholder:text-ink-secondary"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t("periodic.searchMobile")}
+                aria-label={t("periodic.searchMobile")}
+              />
+            </label>
+
+            <div className="-mt-1 grid shrink-0 grid-cols-18 gap-px" role="grid" aria-label={t("periodic.title")}>
+              {elements.map((element) => {
+                const position = cellPosition(element);
+                if (!position) return null;
+                const active = element.z === selectedZ;
+                const dimmed = matches ? !matches.has(element.z) : false;
+                return (
+                  <button
+                    key={element.z}
+                    type="button"
+                    role="gridcell"
+                    className={`grid h-[22px] min-w-0 place-items-center rounded-[4px] text-caption-strong transition-opacity ${
+                      active ? "bg-brand text-on-action" : `periodic-chip--${element.category} text-ink`
+                    } ${dimmed ? "opacity-30" : ""}`}
+                    style={{ gridColumn: position.column, gridRow: position.row }}
+                    aria-label={element.name}
+                    aria-pressed={active}
+                    onClick={() => setSelectedZ(element.z)}
+                  >
+                    {element.symbol}
+                  </button>
+                );
+              })}
+            </div>
+
+            <p className="-mt-1 text-body-xs text-ink-secondary">{t("periodic.tableNote", { count: elements.length })}</p>
+
+            {selected ? (
+              <div className="-mt-1.5 flex shrink-0 items-center gap-3 rounded-xl bg-canvas px-4 py-[15px]">
+                <span
+                  className={`periodic-chip--${selected.category} flex size-16 shrink-0 flex-col items-center justify-center rounded-xl text-ink`}
+                >
+                  <small className="text-caption font-normal text-ink-secondary">{selected.z}</small>
+                  <strong className="font-heading text-h1 leading-7 font-bold">{selected.symbol}</strong>
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="text-title text-ink">
+                    {selected.name}
+                    {selected.appearance ? ` · ${selected.appearance}` : ""}
+                  </strong>
+                  <small className="mt-[3px] text-body-sm text-ink-secondary">
+                    {[
+                      t(`periodic.categories.${selected.category}`, { defaultValue: "" }),
+                      [
+                        selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
+                        selected.group ? t("periodic.groupShort", { value: selected.group }) : "",
+                      ]
+                        .filter(Boolean)
+                        .join(", "),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </small>
+                  <small className="mt-[3px] text-caption font-normal text-ink-secondary">
+                    {[
+                      mass ? t("periodic.massMobile", { value: mass }) : "",
+                      selected.shells.length ? `${t("periodic.shells")} ${selected.shells.join(" · ")}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </small>
+                </span>
+              </div>
+            ) : (
+              <p className="text-body-sm text-ink-tertiary">{t("periodic.pickHint")}</p>
+            )}
+          </>
+        ) : null}
+      </AppDialog>
+    );
+  }
+
   return (
     <AppDialog
       open={open}
@@ -125,13 +259,7 @@ export function PeriodicTableDialog({
             type="button"
             className={dialogButton.secondary}
             disabled={!selected || !canDraw || !selected.shells.length || addStrokes.isPending}
-            onClick={() =>
-              selected &&
-              place(
-                (origin) => buildBohrStrokes(selected, placement, origin),
-                bohrDiagramSize(selected, placement)
-              )
-            }
+            onClick={placeBohr}
           >
             {t("periodic.placeBohr")}
           </button>

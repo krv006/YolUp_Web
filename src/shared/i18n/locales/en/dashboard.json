@@ -130,6 +130,20 @@
         "title": "Add a lesson",
         "hint": "Students get a reminder"
       }
+    },
+    "tour": {
+      "step": "{{current}} / {{total}}",
+      "skip": "Skip",
+      "next": "Next",
+      "start": "Get started",
+      "home": {
+        "title": "Home — your day at a glance",
+        "text": "Today's lessons, work waiting for review and starting a live lesson are all here."
+      },
+      "workspace": {
+        "title": "Workspace — your tools",
+        "text": "Tests, homework, mock exams and the AI assistant live here. Open it any time from the bottom menu."
+      }
     }
   }
 }

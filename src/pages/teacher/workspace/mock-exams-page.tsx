@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
+  examApi,
+  examKeys,
   ExamCreateDialog,
   ExamTemplateDialog,
   useCreateExam,
@@ -15,11 +18,14 @@ import {
 import { useCourses } from "@/modules/course";
 import { useQuizzes } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { MobileAlertDialog } from "@/shared/ui/mobile-alert-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ExamSummary } from "@/shared/types";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import { MobileMockList } from "./mobile-mock-list";
 
 const STATE_TONE: Record<string, string> = {
   running: "bg-danger-bg text-danger",
@@ -36,6 +42,8 @@ function clock(seconds: number): string {
 export function MockExamsPage() {
   const { t } = useTranslation("exam");
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [params, setParams] = useSearchParams();
   const exams = useExams(null);
   const remove = useDeleteExam();
   const create = useCreateExam();
@@ -44,7 +52,7 @@ export function MockExamsPage() {
   const examTemplates = useExamTemplates();
   const quizzes = useQuizzes(null);
   const [filter, setFilter] = useState("all");
-  const [createOpen, setCreateOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(() => params.get("new") === "1");
   const [templateOpen, setTemplateOpen] = useState(false);
   const [deleting, setDeleting] = useState<ExamSummary | null>(null);
 
@@ -65,16 +73,107 @@ export function MockExamsPage() {
     ? (new Date(current.data.endsAt).getTime() - new Date(current.data.serverNow).getTime()) / 1000
     : null;
 
+  const finished = useQueries({
+    queries: (isCompact ? items.filter((exam) => exam.state === "finished") : []).map((exam) => ({
+      queryKey: examKeys.results(exam.id),
+      queryFn: ({ signal }: { signal: AbortSignal }) => examApi.getResults(exam.id, { signal }),
+    })),
+  });
+
+  function changeCreateOpen(open: boolean) {
+    setCreateOpen(open);
+    if (!open && params.has("new")) {
+      const next = new URLSearchParams(params);
+      next.delete("new");
+      setParams(next, { replace: true });
+    }
+  }
+
   const liveRows = liveResults.data?.results ?? [];
   const joined = liveRows.filter((row) => row.participated).length;
   const warnings = liveRows.reduce((sum, row) => sum + (row.integrity?.away ?? 0), 0);
+
+  const dialogs = (
+    <>
+      <ExamCreateDialog
+        open={createOpen}
+        pending={create.isPending}
+        courses={(courses.data ?? []).map((course) => ({ id: course.id, title: course.title, studentCount: course.studentCount ?? 0 }))}
+        templates={examTemplates.data ?? []}
+        quizzes={quizzes.data ?? []}
+        onOpenChange={changeCreateOpen}
+        onCreateTemplate={() => setTemplateOpen(true)}
+        onCreate={(values) => create.mutateAsync(values).then(() => changeCreateOpen(false))}
+      />
+
+      <ExamTemplateDialog
+        open={templateOpen}
+        pending={createTemplate.isPending}
+        onOpenChange={setTemplateOpen}
+        onCreate={(values) => createTemplate.mutateAsync(values).then(() => setTemplateOpen(false))}
+      />
+    </>
+  );
+
+  if (isCompact) {
+    const finishedExams = items.filter((exam) => exam.state === "finished");
+    return (
+      <>
+        <MobileMockList
+          exams={visible}
+          loading={exams.isLoading}
+          chips={[
+            { id: "all", label: t("mock.filters.all") },
+            ...templates.map(([key]) => ({ id: key, label: t(`mock.templates.${key}`, { defaultValue: key.toUpperCase() }) })),
+          ]}
+          filter={filter}
+          sectionCount={(exam) => {
+            const template = (examTemplates.data ?? []).find(
+              (item) => item.id === exam.templateKey || item.name.toLowerCase() === exam.templateKey.toLowerCase()
+            );
+            return template ? template.items.filter((item) => item.kind === "section").length : null;
+          }}
+          summary={(exam) => {
+            const data = finished[finishedExams.indexOf(exam)]?.data;
+            if (!data) return null;
+            const done = data.results.filter((row) => row.participated);
+            const totals = done.map((row) => row.total?.score ?? null).filter((value): value is number => value !== null);
+            return {
+              submitted: done.length,
+              total: data.results.length,
+              average: totals.length ? totals.reduce((sum, value) => sum + value, 0) / totals.length : null,
+            };
+          }}
+          onFilterChange={setFilter}
+          onBack={() => navigate(ROUTES.teacher.workspace)}
+          onCreate={() => changeCreateOpen(true)}
+          onOpen={(exam) => navigate(ROUTES.teacher.mockResults(exam.id))}
+          onDelete={setDeleting}
+        />
+        <MobileAlertDialog
+          open={Boolean(deleting)}
+          onOpenChange={(open) => !open && setDeleting(null)}
+          icon="delete"
+          tone="danger"
+          title={t("mock.deleteTitle")}
+          description={t("mock.deleteDescription", { title: deleting?.title ?? "" })}
+          cancelLabel={t("mock.cancel")}
+          confirmLabel={t("mock.delete")}
+          confirmTone="danger"
+          pending={remove.isPending}
+          onConfirm={() => deleting && remove.mutate(deleting.id, { onSuccess: () => setDeleting(null) })}
+        />
+        {dialogs}
+      </>
+    );
+  }
 
   return (
     <WorkspaceShell
       eyebrow={t("mock.eyebrow")}
       title={t("mock.title")}
       action={
-        <button type="button" className={workspaceAction} onClick={() => setCreateOpen(true)}>
+        <button type="button" className={workspaceAction} onClick={() => changeCreateOpen(true)}>
           {t("mock.create")}
         </button>
       }
@@ -238,23 +337,7 @@ export function MockExamsPage() {
         }
       />
 
-      <ExamCreateDialog
-        open={createOpen}
-        pending={create.isPending}
-        courses={(courses.data ?? []).map((course) => ({ id: course.id, title: course.title }))}
-        templates={examTemplates.data ?? []}
-        quizzes={quizzes.data ?? []}
-        onOpenChange={setCreateOpen}
-        onCreateTemplate={() => setTemplateOpen(true)}
-        onCreate={(values) => create.mutateAsync(values).then(() => setCreateOpen(false))}
-      />
-
-      <ExamTemplateDialog
-        open={templateOpen}
-        pending={createTemplate.isPending}
-        onOpenChange={setTemplateOpen}
-        onCreate={(values) => createTemplate.mutateAsync(values).then(() => setTemplateOpen(false))}
-      />
+      {dialogs}
     </WorkspaceShell>
   );
 }

@@ -26,10 +26,11 @@ import { useOnlineStatus } from "@/shared/model";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import type { Lesson } from "@/shared/types";
-import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { LessonDetailDrawer } from "./lesson-detail-drawer";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
+import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
 import { NewLessonDialog, type NewLessonValues } from "./new-lesson-dialog";
 import { ScheduleDay } from "./schedule-day";
 import { ScheduleMonth } from "./schedule-month";
@@ -210,6 +211,9 @@ export function TeacherSchedulePage() {
           anchor={anchor}
           now={now}
           online={online}
+          loading={lessons.isLoading}
+          error={lessons.isError}
+          onRetry={() => void lessons.refetch()}
           lessons={items}
           courseLook={courseLook}
           onView={setMobileView}
@@ -225,14 +229,16 @@ export function TeacherSchedulePage() {
 
   return (
     <WorkspaceShell
-      eyebrow={`${rangeLabel} · ${t("list.dayCount", { count: visible.length })}`}
-      title={t("schedule.title")}
-      action={
-        <button type="button" className={workspaceAction} onClick={() => setCreateOpen(true)}>
-          {t("schedule.create")}
-        </button>
+      eyebrow={
+        lessons.isLoading
+          ? `${rangeLabel} · ${t("scheduleState.loading")}`
+          : lessons.isError
+            ? rangeLabel
+            : `${rangeLabel} · ${t("list.dayCount", { count: visible.length })}`
       }
+      title={t("schedule.title")}
     >
+      <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
           <button
@@ -262,13 +268,13 @@ export function TeacherSchedulePage() {
 
         <span className="min-w-0 flex-1" />
 
-        <div className="flex items-center gap-1 rounded-full bg-surface p-1">
+        <div className="flex h-10 items-center rounded-full border border-line bg-surface p-[3px]">
           {VIEWS.map((item) => (
             <button
               key={item}
               type="button"
-              className={`flex h-9 items-center rounded-full px-4 text-button transition-colors ${
-                view === item ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
+              className={`flex h-8 items-center rounded-full px-[17px] text-body-xs font-semibold transition-colors ${
+                view === item ? "bg-brand text-ink-inverse" : "text-ink hover:text-brand"
               }`}
               onClick={() => setView(item)}
             >
@@ -276,6 +282,18 @@ export function TeacherSchedulePage() {
             </button>
           ))}
         </div>
+
+        <button
+          type="button"
+          className={
+            lessons.isError
+              ? "flex h-[42px] shrink-0 items-center rounded-full bg-brand-subtle px-[15px] text-label-lg font-semibold text-brand-strong"
+              : "flex h-[42px] shrink-0 items-center rounded-full bg-brand px-[15px] text-label-lg font-semibold whitespace-nowrap text-ink-inverse transition-colors hover:bg-brand-strong"
+          }
+          onClick={() => setCreateOpen(true)}
+        >
+          {t("schedule.create")}
+        </button>
       </div>
 
       {!online ? (
@@ -285,7 +303,10 @@ export function TeacherSchedulePage() {
         </p>
       ) : null}
 
-      {view === "day" ? (
+      {lessons.isLoading ? <ScheduleListSkeleton /> : null}
+      {lessons.isError ? <ScheduleError onRetry={() => void lessons.refetch()} /> : null}
+
+      {lessons.isLoading || lessons.isError ? null : view === "day" ? (
         <ScheduleDay
           anchor={anchor}
           lessons={visible}
@@ -297,7 +318,7 @@ export function TeacherSchedulePage() {
         />
       ) : null}
 
-      {view === "week" ? (
+      {!lessons.isLoading && !lessons.isError && view === "week" ? (
         <ScheduleWeek
           anchor={anchor}
           lessons={visible}
@@ -307,7 +328,7 @@ export function TeacherSchedulePage() {
         />
       ) : null}
 
-      {view === "month" ? (
+      {!lessons.isLoading && !lessons.isError && view === "month" ? (
         <ScheduleMonth
           anchor={anchor}
           lessons={visible}
@@ -319,7 +340,7 @@ export function TeacherSchedulePage() {
         />
       ) : null}
 
-      {view === "list" ? (
+      {!lessons.isLoading && !lessons.isError && view === "list" ? (
         <div className="flex flex-col gap-2">
           {visible
             .slice()
@@ -358,6 +379,8 @@ export function TeacherSchedulePage() {
           ) : null}
         </div>
       ) : null}
+
+      </div>
 
       {dialogs}
     </WorkspaceShell>

@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { MobileScreenDialog } from "@/shared/ui/mobile-screen-dialog";
 import type { QuizAttemptSummary } from "@/shared/types";
 
 export interface QuizAttemptsDrawerProps {
@@ -11,6 +13,7 @@ export interface QuizAttemptsDrawerProps {
   title: string;
   subtitle?: string;
   attempts: readonly QuizAttemptSummary[];
+  students?: ReadonlyArray<{ id: string; name: string; avatarUrl?: string | null }>;
   studentCount?: number;
   loading?: boolean;
 }
@@ -18,6 +21,7 @@ export interface QuizAttemptsDrawerProps {
 interface StudentRow {
   id: string;
   name: string;
+  avatarUrl?: string | null;
   attempts: QuizAttemptSummary[];
   best: number | null;
   last: string | null;
@@ -40,10 +44,13 @@ export function QuizAttemptsDrawer({
   title,
   subtitle,
   attempts,
+  students = [],
   studentCount = 0,
   loading = false,
 }: QuizAttemptsDrawerProps) {
   const { t } = useTranslation("quiz");
+  const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
+  const isCompact = useIsCompact();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const rows = useMemo<StudentRow[]>(() => {
@@ -69,6 +76,132 @@ export function QuizAttemptsDrawer({
   const average = rows.length
     ? Math.round(rows.reduce((sum, row) => sum + (row.best ?? 0), 0) / rows.length)
     : null;
+
+  if (isCompact) {
+    const listed = [
+      ...rows.map((row) => ({ ...row, avatarUrl: students.find((item) => item.id === row.id)?.avatarUrl })),
+      ...students
+        .filter((student) => !rows.some((row) => row.id === student.id))
+        .map((student) => ({ id: student.id, name: student.name, avatarUrl: student.avatarUrl, attempts: [], best: null, last: null })),
+    ];
+    const detail = listed.find((row) => row.id === expanded && row.attempts.length) ?? null;
+    const dateLabel = (value: string, withTime: boolean) => {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "";
+      const clock = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+      const day = `${date.getDate()}-${(months[date.getMonth()] ?? "").slice(0, 3).toLowerCase()}`;
+      return withTime ? `${day}, ${clock}` : day;
+    };
+    const lastLabel = (value: string) => {
+      const date = new Date(value);
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      if (date.toDateString() === today.toDateString())
+        return t("attemptsDrawer.lastToday", { time: dateLabel(value, true).split(", ")[1] ?? "" });
+      if (date.toDateString() === yesterday.toDateString()) return t("attemptsDrawer.yesterday");
+      return dateLabel(value, false);
+    };
+
+    return (
+      <MobileScreenDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        title={t("attemptsDrawer.title")}
+        closeLabel={t("attemptsDrawer.close")}
+      >
+        <p className="mt-4.5 text-label-lg font-normal text-ink-secondary">
+          {subtitle ? `“${title}” · ${subtitle}` : `“${title}”`}
+        </p>
+
+        <div className="mt-[11px] grid grid-cols-3 gap-2">
+          {[
+            { id: "attempts", value: String(attempts.length), label: t("attemptsDrawer.attempts") },
+            { id: "average", value: average === null ? "—" : `${average}%`, label: t("attemptsDrawer.average") },
+            {
+              id: "solved",
+              value: `${rows.length}/${Math.max(studentCount, listed.length, rows.length)}`,
+              label: t("attemptsDrawer.solved"),
+            },
+          ].map((stat) => (
+            <div key={stat.id} className="flex h-16.5 min-w-0 flex-col justify-center rounded-lg bg-surface px-3">
+              <strong className="truncate font-heading text-title-lg text-ink">{stat.value}</strong>
+              <small className="truncate text-body-xs text-ink-secondary">{stat.label}</small>
+            </div>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="mt-3 flex flex-col gap-2">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div key={index} className="h-14 animate-pulse rounded-lg bg-surface motion-reduce:animate-none" />
+            ))}
+          </div>
+        ) : listed.length ? (
+          <div className="mt-3 flex flex-col gap-[30px] rounded-xl bg-surface px-4 pt-4 pb-3">
+            {listed.map((row) => (
+              <button
+                key={row.id}
+                type="button"
+                className="flex h-10 items-center gap-3 text-left"
+                aria-expanded={expanded === row.id}
+                onClick={() => setExpanded(expanded === row.id ? null : row.id)}
+              >
+                <Avatar name={row.name} src={row.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-9" />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-title-sm text-ink">{row.name}</strong>
+                  <small className="truncate text-caption font-normal text-ink-secondary">
+                    {row.attempts.length
+                      ? [t("attemptsDrawer.attemptCount", { count: row.attempts.length }), row.last ? lastLabel(row.last) : ""]
+                          .filter(Boolean)
+                          .join(" · ")
+                      : t("attemptsDrawer.noAttempts")}
+                  </small>
+                </span>
+                {row.best === null ? (
+                  <span className="h-0.5 w-3.5 shrink-0 rounded-full bg-ink" aria-hidden="true" />
+                ) : (
+                  <strong className={`shrink-0 text-title ${row.best >= 90 ? "text-success" : row.best >= 70 ? "text-ink" : "text-warning-fg"}`}>
+                    {row.best}%
+                  </strong>
+                )}
+                <Icon
+                  name="chevron-down"
+                  size={20}
+                  className={`shrink-0 text-icon-secondary transition-transform ${expanded === row.id ? "rotate-180" : ""}`}
+                />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 rounded-xl bg-surface px-5 py-10 text-center text-body-sm text-ink-secondary">
+            {t("attemptsDrawer.empty")}
+          </p>
+        )}
+
+        {detail ? (
+          <section className="mt-6 flex flex-col px-3">
+            <strong className="text-title-sm text-ink">{t("attemptsDrawer.detailTitle", { name: detail.name })}</strong>
+            <div className="mt-[3px] flex flex-col">
+              {[...detail.attempts]
+                .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+                .map((attempt, index, list) => (
+                  <span key={attempt.id} className="flex h-5.5 items-center gap-3 text-caption font-normal">
+                    <span className="min-w-0 flex-1 truncate text-ink-secondary">
+                      {t("attemptsDrawer.attemptLine", { number: list.length - index })} ·{" "}
+                      {dateLabel(attempt.createdAt, true)}
+                    </span>
+                    <strong className="shrink-0 font-semibold text-ink">
+                      {percent(attempt) === null ? "—" : `${percent(attempt)}%`}
+                    </strong>
+                  </span>
+                ))}
+            </div>
+          </section>
+        ) : null}
+      </MobileScreenDialog>
+    );
+  }
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>

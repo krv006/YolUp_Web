@@ -28,6 +28,9 @@
     "other": "File"
   },
   "fileViewer": {
+    "pageOf": "{{page}} / {{total}} pages",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
     "opening": "Opening…",
     "openError": "Couldn't open the file",
     "unsupported": "This file type can't be viewed in the browser.",

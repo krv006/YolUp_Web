@@ -141,6 +141,10 @@
     "increase": "Ko‘paytirish"
   },
   "list": {
+    "emptyGroupTitle": "Guruhda hali xabar yo‘q",
+    "emptyGroupHint": "Birinchi bo‘lib salom bering yoki e’lon yozing — barcha a’zolarga boradi.",
+    "emptyTitle": "Hali xabar yo‘q",
+    "emptyHint": "Birinchi bo‘lib salom bering.",
     "today": "Bugun",
     "loadError": "Xabarlar yuklanmadi",
     "loadErrorHint": "Bir ozdan so'ng yana urinib ko'ring.",

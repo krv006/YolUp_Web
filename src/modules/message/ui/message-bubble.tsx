@@ -234,7 +234,10 @@ export function MessageBubble({
           {message.editedAt && <em className="not-italic">{t("bubble.edited")}</em>}
           <time>{formatMessageTime(message.createdAt)}</time>
           {outgoing && message.failed ? (
-            <Icon name="warning" size={15} className="text-accent-red-bg" />
+            <>
+              <Icon name="warning-fill" size={14} className="text-accent-red-bg lg:hidden" />
+              <Icon name="warning" size={15} className="hidden text-accent-red-bg lg:block" />
+            </>
           ) : outgoing && message.pending ? (
             <Icon name="schedule" size={14} />
           ) : outgoing ? (

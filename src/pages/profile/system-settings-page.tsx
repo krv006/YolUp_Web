@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useAuth, useUpdateLessonReminderMutation } from "@/modules/auth";
 import { usePushNotifications } from "@/modules/notification";
 import { ROLES } from "@/shared/constants";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useLanguageStore, useTextSizeStore, type TextSize } from "@/shared/model";
 import { useTheme } from "@/shared/model/theme.store";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -21,7 +22,8 @@ const LANGUAGES = [
 const SIZES: TextSize[] = ["small", "medium", "large"];
 const MINUTE_OPTIONS = [5, 10, 15, 30, 60];
 
-const SEGMENT = "flex h-9 min-w-0 flex-1 items-center justify-center rounded-full text-button transition-colors";
+const SEGMENT =
+  "flex h-9 min-w-0 flex-1 items-center justify-center rounded-full text-button transition-colors max-lg:h-10 max-lg:text-body-sm max-lg:font-medium";
 
 function Segmented<T extends string>({
   value,
@@ -33,7 +35,7 @@ function Segmented<T extends string>({
   onChange: (next: T) => void;
 }) {
   return (
-    <div className="flex items-center gap-1 rounded-full bg-subtle p-1">
+    <div className="flex items-center gap-1 rounded-full bg-subtle p-1 max-lg:p-[5px]">
       {options.map((option) => (
         <button
           key={option.id}
@@ -41,7 +43,7 @@ function Segmented<T extends string>({
           className={`${SEGMENT} ${
             value === option.id
               ? "bg-brand text-on-action"
-              : "text-ink-secondary hover:text-ink"
+              : "text-ink-secondary hover:text-ink max-lg:text-ink"
           }`}
           onClick={() => onChange(option.id)}
         >
@@ -55,6 +57,7 @@ function Segmented<T extends string>({
 export function SystemSettingsPage() {
   const { t } = useTranslation("account");
   const { user } = useAuth();
+  const isCompact = useIsCompact();
   const language = useLanguageStore((state) => state.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
   const { mode, setMode } = useTheme();
@@ -84,14 +87,14 @@ export function SystemSettingsPage() {
           }}
         />
 
-        <div className="flex flex-col gap-3 px-4 py-4">
+        <div className="flex flex-col gap-3 px-4 py-4 max-lg:gap-[11px] max-lg:pt-3 max-lg:pb-3.5">
           <span className="flex items-center gap-3">
             <span
-              className={`grid size-9 shrink-0 place-items-center rounded-md ${SETTINGS_TONES.violet}`}
+              className={`grid size-9 shrink-0 place-items-center rounded-md max-lg:size-10 ${SETTINGS_TONES.violet}`}
             >
-              <Icon name="star" size={18} />
+              <Icon name="star" size={18} className="max-lg:size-5" />
             </span>
-            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink">
+            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink max-lg:text-title">
               {t("page.theme")}
             </strong>
           </span>
@@ -107,14 +110,14 @@ export function SystemSettingsPage() {
           />
         </div>
 
-        <div className="flex flex-col gap-3 px-4 py-4">
+        <div className="flex flex-col gap-3 px-4 py-4 max-lg:gap-[11px] max-lg:pt-3 max-lg:pb-3.5">
           <span className="flex items-center gap-3">
             <span
-              className={`grid size-9 shrink-0 place-items-center rounded-md ${SETTINGS_TONES.warning}`}
+              className={`grid size-9 shrink-0 place-items-center rounded-md max-lg:size-10 ${SETTINGS_TONES.warning}`}
             >
-              <Icon name="edit" size={18} />
+              <Icon name="edit" size={18} className="max-lg:size-5" />
             </span>
-            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink">
+            <strong className="min-w-0 flex-1 truncate text-title-sm text-ink max-lg:text-title">
               {t("page.textSize")}
             </strong>
           </span>
@@ -145,6 +148,7 @@ export function SystemSettingsPage() {
           }
           right={
             <Switch
+              size={isCompact ? "lg" : "default"}
               checked={push.enabled}
               disabled={!push.supported || push.pending || push.blocked}
               onCheckedChange={(next) => push.toggle(next)}

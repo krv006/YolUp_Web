@@ -15,6 +15,7 @@ import type { Lesson } from "@/shared/types";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { MobileTeacherHeader } from "@/widgets/mobile-teacher-header";
+import { MobileScheduleSkeleton, ScheduleError } from "./schedule-states";
 
 export type MobileScheduleView = "day" | "week" | "month";
 
@@ -33,6 +34,9 @@ export interface MobileScheduleProps {
   anchor: Date;
   now: Date;
   online: boolean;
+  loading?: boolean;
+  error?: boolean;
+  onRetry?: () => void;
   lessons: Lesson[];
   courseLook: (courseId: string) => CourseLook;
   onView: (view: MobileScheduleView) => void;
@@ -120,14 +124,16 @@ export function MobileSchedule(props: MobileScheduleProps) {
         </div>
 
         {view === "day" ? <DayView {...props} /> : null}
-        {view === "week" ? <WeekView {...props} /> : null}
-        {view === "month" ? <MonthView {...props} /> : null}
+        {view !== "day" && props.loading ? <MobileScheduleSkeleton /> : null}
+        {view !== "day" && props.error ? <ScheduleError onRetry={() => props.onRetry?.()} /> : null}
+        {view === "week" && !props.loading && !props.error ? <WeekView {...props} /> : null}
+        {view === "month" && !props.loading && !props.error ? <MonthView {...props} /> : null}
       </div>
     </main>
   );
 }
 
-function DayHeading({ day, now, count }: { day: Date; now: Date; count: number }) {
+function DayHeading({ day, now, count, pending = false }: { day: Date; now: Date; count: number; pending?: boolean }) {
   const { t } = useTranslation("lesson");
   const monthsLong = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
@@ -139,9 +145,11 @@ function DayHeading({ day, now, count }: { day: Date; now: Date; count: number }
       <h2 className="min-w-0 flex-1 truncate font-heading text-title text-ink">
         {isSameDay(day, now) ? t("schedule.today") : weekdaysLong[weekday]}, {date}
       </h2>
-      <small className="shrink-0 text-body-sm text-ink-secondary">
-        {count ? t("schedule.lessonCount", { count }) : weekday === 6 ? t("schedule.dayOff") : t("schedule.noLessonsDay")}
-      </small>
+      {pending ? null : (
+        <small className="shrink-0 text-body-sm text-ink-secondary">
+          {count ? t("schedule.lessonCount", { count }) : weekday === 6 ? t("schedule.dayOff") : t("schedule.noLessonsDay")}
+        </small>
+      )}
     </div>
   );
 }
@@ -181,9 +189,13 @@ function DayView(props: MobileScheduleProps) {
         })}
       </div>
 
-      <DayHeading day={anchor} now={now} count={rows.length} />
+      <DayHeading day={anchor} now={now} count={rows.length} pending={props.loading || props.error} />
 
-      {rows.length ? (
+      {props.loading ? (
+        <MobileScheduleSkeleton />
+      ) : props.error ? (
+        <ScheduleError onRetry={() => props.onRetry?.()} />
+      ) : rows.length ? (
         <Timeline {...props} rows={rows} />
       ) : (
         <section className="flex flex-col items-center rounded-xl bg-surface px-6 pt-7 pb-7 text-center">

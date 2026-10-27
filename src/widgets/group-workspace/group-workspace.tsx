@@ -1,22 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  BarChart3,
-  BookOpen,
-  CalendarDays,
-  CheckCircle2,
-  ClipboardList,
-  FileQuestion,
-  Library,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ClipboardList } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
-import { formatDayTime } from "@/shared/lib";
 import { useAttendance, useAttendanceSummary } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
@@ -60,6 +48,8 @@ import { ForwardDialog } from "@/widgets/forward-dialog";
 import { VoiceRoomBar, useActiveVoiceRoom, useVoiceUiStore } from "@/modules/voice";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { MobileEmptyCard } from "@/shared/ui/mobile-page";
+import { RowSkeleton } from "@/shared/ui/row-skeleton";
+import { AddQuizMenu } from "./add-quiz-menu";
 import { MobileAssignmentList } from "./mobile-assignment-list";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type {
@@ -173,19 +163,19 @@ export function GroupWorkspace({
   return (
     <div className="flex h-full min-h-0">
       <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-      <section className="chat-page group-workspace max-lg:bg-auth-gradient">
+      <section className="chat-page group-workspace max-lg:bg-auth-gradient lg:bg-page-gradient">
       <ChatHeader
         conversation={hydrated}
         onToggleInfo={() => setInfoOpen((open) => !open)}
-        onVoice={courseId && !voice.active ? () => openVoiceCreate(true) : undefined}
-        pinnedBelow
+        onVoice={activeTab === "chat" && courseId && !voice.active ? () => openVoiceCreate(true) : undefined}
+        workspace
       />
       <div className="hidden lg:contents">
         <LiveLessonBar courseId={courseId} />
       </div>
-      <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle={isCompact} />
+      <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle />
       <nav
-        className={`grid shrink-0 grid-cols-4 gap-2 px-4 pb-1 lg:px-7 lg:pt-4 lg:pb-2 ${
+        className={`grid shrink-0 grid-cols-4 gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
           selectionMode ? "pt-1" : "pt-4"
         }`}
       >
@@ -194,10 +184,8 @@ export function GroupWorkspace({
           return (
             <button
               key={tab.id}
-              className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:text-label lg:font-normal ${
-                active
-                  ? "bg-brand text-ink-inverse"
-                  : "bg-surface text-ink hover:text-ink lg:text-ink-secondary"
+              className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
+                active ? "bg-brand text-ink-inverse lg:border-brand" : "bg-surface text-ink lg:border-line"
               }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
@@ -212,9 +200,14 @@ export function GroupWorkspace({
           <Icon name="bolt" size={18} className="shrink-0" />
           <span className="truncate">{t("announcementBanner")}</span>
         </p>
-      ) : activeTab === "chat" && !selectionMode ? (
-        <div className="contents lg:hidden [&>div]:mt-3">
-          <PinnedMessageBar roomId={conversation.id} />
+      ) : null}
+      {activeTab === "chat" && !selectionMode ? (
+        <div className={conversation.announcementOnly ? "hidden lg:contents" : "contents"}>
+          <PinnedMessageBar
+            roomId={conversation.id}
+            variant="workspace"
+            onUnpin={(messageId) => chat.pinMessage.mutate({ messageId, pinned: false })}
+          />
         </div>
       ) : null}
 
@@ -251,6 +244,7 @@ export function GroupWorkspace({
               onBulkDelete={(messageIds, scope) =>
                 chat.deleteMessages.mutate({ messageIds, scope })
               }
+              variant="workspace"
             />
           ) : null}
           {activeTab === "lessons" ? (
@@ -295,6 +289,7 @@ export function GroupWorkspace({
           currentUserId={user?.id}
           roomId={conversation.id}
           onAssignment={() => setParams({ tab: "assignments" })}
+          variant="workspace"
         />
       ) : null}
 
@@ -328,6 +323,26 @@ export function GroupWorkspace({
           onOpenChange={setInfoOpen}
         />
       ) : null}
+    </div>
+  );
+}
+
+function PanelHeading({
+  eyebrow,
+  title,
+  subtitle,
+  className = "flex-1",
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`flex min-w-0 flex-col gap-[3px] ${className}`}>
+      <span className="text-caption text-ink-secondary uppercase">{eyebrow}</span>
+      <h2 className="text-[24px]/[26px] font-bold text-ink">{title}</h2>
+      {subtitle ? <p className="truncate text-body-sm text-ink-secondary lg:text-body-xs">{subtitle}</p> : null}
     </div>
   );
 }
@@ -411,35 +426,44 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
   };
 
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto bg-canvas p-4 max-lg:gap-5 max-lg:bg-transparent max-lg:pt-5 max-lg:pb-8 lg:px-7 lg:pt-5 lg:pb-7">
-      <div className="flex shrink-0 items-center gap-4 max-lg:gap-1">
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5 max-lg:gap-[3px]">
-          <span className="text-overline text-ink-tertiary uppercase max-lg:text-caption max-lg:tracking-normal max-lg:text-ink-secondary">
-            {t("lessons.eyebrow")}
-          </span>
-          <h2 className="font-heading text-h1 text-ink max-lg:font-body max-lg:text-[24px]/[28px] max-lg:font-bold max-lg:tracking-normal">{t("lessons.title")}</h2>
-          <p className="text-body-xs text-ink-tertiary max-lg:truncate max-lg:text-[13.5px]/5 max-lg:text-ink-secondary">
-            {t("lessons.subtitle")}
-          </p>
-        </div>
+    <div className="flex h-full flex-col gap-5 overflow-y-auto px-4 pt-5 pb-8 lg:gap-3.5 lg:px-7 lg:pt-3.5 lg:pb-7">
+      <div className="flex shrink-0 items-end gap-1 lg:gap-4">
+        <PanelHeading eyebrow={t("lessons.eyebrow")} title={t("lessons.title")} subtitle={t("lessons.subtitle")} />
         <button
           type="button"
-          className={`h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-5 text-button whitespace-nowrap text-ink-inverse transition-colors hover:bg-brand-strong max-lg:bg-brand-subtle max-lg:px-4 max-lg:text-brand ${
-            lessons.length ? "flex" : "hidden lg:flex"
+          className={`h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand-subtle px-[15px] text-button whitespace-nowrap text-brand transition-colors hover:bg-brand-subtle/70 lg:h-[42px] ${
+            lessons.length || loading ? "flex" : "hidden lg:flex"
           }`}
           onClick={() => {
             setEditing(null);
             setDialog(true);
           }}
         >
-          <Icon name="add" size={18} /> {t("lessons.addLesson")}
+          <Icon name="add" size={16} /> {t("lessons.addLesson")}
         </button>
       </div>
 
       {loading && !lessons.length ? (
-        <div className="grid gap-4 lg:grid-cols-2">
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="h-37.5 animate-pulse rounded-lg bg-muted" />
+        <div className="flex flex-col gap-3" aria-hidden="true">
+          <i className="h-3 w-[90px] rounded-full bg-skeleton lg:hidden" />
+          {Array.from({ length: 3 }, (_, index) => (
+            <span
+              key={index}
+              className="flex flex-col gap-5 rounded-xl bg-surface p-4 lg:h-38 lg:max-w-[636px] lg:flex-row lg:items-center lg:gap-3 lg:py-0"
+            >
+              <span className="flex h-14 items-start gap-3 lg:h-auto">
+                <i className="size-14 shrink-0 rounded-[14px] bg-skeleton" />
+                <span className="flex flex-col gap-2.5">
+                  <i className="h-3.5 w-[90px] rounded-full bg-skeleton" />
+                  <i className="h-4 w-[170px] rounded-full bg-skeleton" />
+                  <i className="h-3 w-30 rounded-full bg-skeleton" />
+                </span>
+              </span>
+              <span className="grid grid-cols-2 gap-2 lg:ml-auto lg:flex">
+                <i className="h-11 rounded-full bg-skeleton lg:w-[130px]" />
+                <i className="h-11 rounded-full bg-skeleton lg:w-[130px]" />
+              </span>
+            </span>
           ))}
         </div>
       ) : (
@@ -539,7 +563,6 @@ function AssignmentsPanel({
   isLanguageSubject,
 }: AssignmentsPanelProps) {
   const { t } = useTranslation("group");
-  const isCompact = useIsCompact();
   const [dialog, setDialog] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Assignment | null>(null);
@@ -747,250 +770,76 @@ function AssignmentsPanel({
     </>
   );
 
-  if (isCompact)
-    return (
-      <div className="flex h-full flex-col gap-5 overflow-y-auto bg-transparent px-4 pt-5 pb-8">
-        <div className="flex shrink-0 items-center gap-1">
-          <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
-            <span className="text-caption text-ink-secondary uppercase">{t("assignments.eyebrow")}</span>
-            <h2 className="text-[24px]/[28px] font-bold text-ink">{t("assignments.title")}</h2>
-            <p className="truncate text-[13.5px]/5 text-ink-secondary">{t("assignments.subtitleShort")}</p>
-          </div>
-          {assignments.length || courseQuizList.length ? (
-            <button
-              type="button"
-              className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-button text-on-action"
-              onClick={() => setDialog(true)}
-            >
-              <Icon name="add" size={18} /> {t("assignments.addAssignment")}
-            </button>
-          ) : null}
-        </div>
-
-        {loading && !assignments.length ? (
-          <div className="flex flex-col gap-3">
-            {Array.from({ length: 3 }, (_, index) => (
-              <div key={index} className="h-32 animate-pulse rounded-xl bg-surface/70" />
-            ))}
-          </div>
-        ) : assignments.length || courseQuizList.length ? (
-          <MobileAssignmentList
-            assignments={assignments}
-            quizzes={courseQuizList}
-            courseTitle={course.data?.title ?? ""}
-            courseImage={course.data?.avatarUrl}
-            courseTone={course.data?.color}
-            onOpenAssignment={(item) => setDetailId(item.id)}
-            onEditAssignment={(item) => {
-              setEditingAssignment(item);
-              setDialog(true);
-            }}
-            onDeleteAssignment={setDeleteTarget}
-            onOpenQuiz={setAttemptsOf}
-            onEditQuiz={setEditQuizTarget}
-          />
-        ) : (
-          <MobileEmptyCard
-            icon="assign"
-            title={t("assignments.emptyTitle")}
-            description={t("assignments.emptyHint")}
-            action={{ label: t("assignments.emptyCreateFirst"), icon: "add", onClick: () => setDialog(true) }}
-          />
-        )}
-
-        {dialogs}
-      </div>
-    );
+  const hasItems = assignments.length > 0 || courseQuizList.length > 0;
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
-      <div className="flex flex-col gap-4">
-        <div className="flex min-w-0 flex-col gap-1">
-          <span className="text-caption-strong tracking-wide text-action uppercase">
-            {t("assignments.eyebrow")}
-          </span>
-          <h2 className="font-heading text-h2 text-ink">{t("assignments.title")}</h2>
-          <p className="text-body-sm text-ink-secondary">{t("assignments.subtitle")}</p>
-        </div>
-        <div className="flex flex-col gap-3 lg:flex-row-reverse lg:justify-start">
-          <button
-            type="button"
-            className="flex h-12 items-center justify-center gap-2 rounded-full bg-action px-5 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-            onClick={() => setDialog(true)}
-          >
-            <Plus size={17} /> {t("assignments.addAssignment")}
-          </button>
-          <div className="grid grid-cols-2 gap-3 lg:flex">
+    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-transparent px-4 pt-5 pb-8 lg:gap-3.5 lg:px-7 lg:pt-3.5">
+      <div className="flex shrink-0 flex-col gap-5 lg:flex-row lg:items-end lg:gap-4">
+        <PanelHeading
+          eyebrow={t("assignments.eyebrow")}
+          title={t("assignments.title")}
+          subtitle={t("assignments.subtitleShort")}
+        />
+        {hasItems || loading ? (
+          <div className="grid shrink-0 grid-cols-2 gap-2.5 lg:mb-0.5 lg:flex lg:flex-row-reverse lg:items-end">
             <button
               type="button"
-              className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
-              onClick={() => setBankDialog(true)}
+              className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-brand px-4 text-button whitespace-nowrap text-on-action transition-colors hover:bg-brand-strong lg:h-[42px] lg:px-[15px]"
+              onClick={() => setDialog(true)}
             >
-              <Library size={17} /> {t("assignments.fromBank")}
+              <Icon name="add" size={16} />
+              {t("assignments.addAssignment")}
             </button>
-            <button
-              type="button"
-              className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface px-4 text-label-strong text-ink transition-colors hover:bg-subtle"
-              onClick={() => setQuizDialog(true)}
-            >
-              <Pencil size={17} /> {t("assignments.addQuiz")}
-            </button>
+            <AddQuizMenu
+              className="px-4 lg:px-[13px]"
+              onFromBank={() => setBankDialog(true)}
+              onCreate={() => setQuizDialog(true)}
+            />
           </div>
-        </div>
+        ) : null}
       </div>
 
-      {courseQuizList.length ? (
-        <div className="flex flex-col gap-3">
-          {courseQuizList.map((quiz) => (
-            <motion.article
-              key={quiz.id}
-              data-quiz-id={quiz.id}
-              className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4"
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="flex items-start gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action text-on-action">
-                  <FileQuestion size={20} />
+      {loading && !hasItems ? (
+        <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:gap-3.5" aria-hidden="true">
+          {Array.from({ length: 4 }, (_, index) => (
+            <span key={index} className="flex flex-col gap-3 rounded-xl bg-surface p-4">
+              <span className="flex items-center gap-3">
+                <i className="size-11 shrink-0 rounded-md bg-skeleton" />
+                <span className="flex flex-col gap-2">
+                  <i className="h-3.5 w-40 rounded-full bg-skeleton" />
+                  <i className="h-3 w-28 rounded-full bg-skeleton" />
                 </span>
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <strong className="flex flex-wrap items-center gap-2 text-title text-ink">
-                    {quizDisplayTitle(quiz)}
-                    <span
-                      className={`inline-flex h-6 items-center rounded-full px-2.5 text-caption-strong ${
-                        quiz.status === "draft"
-                          ? "bg-saffron-subtle text-saffron-strong"
-                          : "bg-success-bg text-success-text"
-                      }`}
-                    >
-                      {quiz.status === "draft"
-                        ? quizT("teacherPage.draftBadge")
-                        : t("assignments.quizBadge")}
-                    </span>
-                  </strong>
-                  <small className="text-body-sm text-ink-tertiary">
-                    {quiz.dueAt
-                      ? t("assignments.dueLabel", { date: formatDayTime(quiz.dueAt) })
-                      : t("assignments.noDue")}{" "}
-                    · {t("assignments.quizQuestions", { count: quiz.questionCount })}
-                  </small>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle"
-                  onClick={() => setAttemptsOf(quiz)}
-                >
-                  <BarChart3 size={17} /> {t("assignments.results")}
-                </button>
-                <button
-                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
-                  aria-label={quizT("editDialog.editAria")}
-                  title={quizT("editDialog.editAria")}
-                  onClick={() => setEditQuizTarget(quiz)}
-                >
-                  <Pencil size={17} />
-                </button>
-              </div>
-            </motion.article>
+              </span>
+              <i className="h-6 w-24 rounded-full bg-skeleton" />
+              <i className="h-1.5 rounded-full bg-skeleton" />
+            </span>
           ))}
         </div>
-      ) : null}
-
-      {loading && !assignments.length ? (
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 3 }, (_, index) => (
-            <div key={index} className="h-32 animate-pulse rounded-2xl bg-muted" />
-          ))}
-        </div>
-      ) : assignments.length ? (
-        <div className="flex flex-col gap-3">
-          {assignments.map((item) => (
-            <motion.article
-              key={item.id}
-              data-assignment-id={item.id}
-              className={`flex flex-col gap-3 rounded-2xl border bg-surface p-4 ${
-                item.id === highlightId ? "border-action" : "border-line"
-              }`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="flex items-start gap-3">
-                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action text-on-action">
-                  <ClipboardList size={20} />
-                </span>
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <strong className="flex flex-wrap items-center gap-2 text-title text-ink">
-                    {item.title}
-                    {item.subject ? (
-                      <span className="inline-flex h-6 items-center rounded-full bg-subtle px-2.5 text-caption-strong text-ink-secondary">
-                        {item.subject}
-                      </span>
-                    ) : null}
-                  </strong>
-                  {item.description ? (
-                    <p className="line-clamp-2 text-body-sm text-ink-secondary">
-                      {item.description}
-                    </p>
-                  ) : null}
-                  <small className="text-body-sm text-ink-tertiary">
-                    {item.dueAt
-                      ? t("assignments.dueLabel", { date: formatDayTime(item.dueAt) })
-                      : t("assignments.noDue")}{" "}
-                    · {t("assignments.submissionsCount", { count: item.submissionsCount ?? 0 })}
-                  </small>
-                  {item.lessonTitle ? (
-                    <span className="flex items-center gap-1.5 text-caption text-ink-tertiary">
-                      <CalendarDays size={13} /> {item.lessonTitle}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-line bg-surface text-label-strong text-ink transition-colors hover:bg-subtle"
-                  onClick={() => setDetailId(item.id)}
-                >
-                  <BarChart3 size={17} /> {t("assignments.results")}
-                </button>
-                <button
-                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-subtle text-ink-secondary transition-colors hover:bg-muted"
-                  onClick={() => {
-                    setEditingAssignment(item);
-                    setDialog(true);
-                  }}
-                  aria-label={t("assignments.editAria")}
-                  title={t("assignments.editTitle")}
-                >
-                  <Pencil size={17} />
-                </button>
-                <button
-                  className="grid size-11 shrink-0 place-items-center rounded-xl bg-error-bg text-error-text transition-opacity hover:opacity-80"
-                  onClick={() => setDeleteTarget(item)}
-                  aria-label={t("assignments.deleteAria")}
-                >
-                  <Trash2 size={17} />
-                </button>
-              </div>
-            </motion.article>
-          ))}
-        </div>
-      ) : courseQuizList.length ? null : (
-        <div className="flex flex-col items-center gap-3 px-6 py-14 text-center">
-          <span className="grid size-16 place-items-center rounded-full bg-action-subtle text-action">
-            <ClipboardList size={28} />
-          </span>
-          <h3 className="font-heading text-h3 text-ink">{t("assignments.emptyTitle")}</h3>
-          <button
-            type="button"
-            className="mt-1 flex h-12 items-center rounded-full bg-action px-5 text-label-strong text-on-action"
-            onClick={() => setDialog(true)}
-          >
-            {t("assignments.emptyCreateFirst")}
-          </button>
-        </div>
+      ) : hasItems ? (
+        <MobileAssignmentList
+          className="flex flex-col gap-3 lg:grid lg:grid-cols-2 lg:items-start lg:gap-3.5"
+          assignments={assignments}
+          quizzes={courseQuizList}
+          courseTitle={course.data?.title ?? ""}
+          courseImage={course.data?.avatarUrl}
+          courseTone={course.data?.color}
+          highlightId={highlightId}
+          onOpenAssignment={(item) => setDetailId(item.id)}
+          onEditAssignment={(item) => {
+            setEditingAssignment(item);
+            setDialog(true);
+          }}
+          onDeleteAssignment={setDeleteTarget}
+          onOpenQuiz={setAttemptsOf}
+          onEditQuiz={setEditQuizTarget}
+        />
+      ) : (
+        <MobileEmptyCard
+          icon="assign"
+          title={t("assignments.emptyTitle")}
+          description={t("assignments.emptyHint")}
+          action={{ label: t("assignments.emptyCreateFirst"), icon: "add", onClick: () => setDialog(true) }}
+        />
       )}
 
       {dialogs}
@@ -1092,214 +941,104 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
       ? Math.round(focusValues.reduce((sum, value) => sum + value, 0) / focusValues.length)
       : 0);
 
-  if (loading)
-    return (
-      <div className="flex h-full flex-col gap-3 bg-canvas p-4 lg:p-6">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index} className="h-24 animate-pulse rounded-2xl bg-muted" />
-        ))}
-      </div>
-    );
-
   const FILTERS = [
     { id: "all" as const, label: isCompact ? t("attendance.filterAllShort") : t("attendance.filterAll") },
     { id: "month" as const, label: isCompact ? t("attendance.filterMonthShort") : t("attendance.filterMonth") },
     { id: "current" as const, label: t("attendance.filterCurrent") },
   ];
 
-  if (isCompact)
-    return (
-      <div className="flex h-full flex-col gap-5 overflow-y-auto px-4 pt-5 pb-8">
-        <div className="flex min-w-0 flex-col gap-[3px]">
-          <span className="text-caption text-ink-secondary uppercase">{t("attendance.eyebrow")}</span>
-          <h2 className="text-[24px]/[28px] font-bold text-ink">{t("attendance.title")}</h2>
-        </div>
-
-        {students.length ? (
-          <>
-            <div className="grid grid-cols-3 gap-2">
-              {FILTERS.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
-                    range === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
-                  }`}
-                  onClick={() => setRange(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-
-            <section className="flex flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
-              <span className="flex h-6 w-fit items-center gap-1.5 rounded-full bg-on-brand-subtle px-2.5 text-caption-strong">
-                <Icon name="bar-chart" size={14} />
-                {t("attendance.mobileBadge", { lessonCount, recordCount: filtered.length })}
-              </span>
-              <div className="grid grid-cols-3 gap-2">
-                {[
-                  { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
-                  { value: `${avgFocus}%`, label: t("attendance.statFocus") },
-                  { value: String(lessonCount), label: t("attendance.statLessons") },
-                ].map((tile) => (
-                  <span key={tile.label} className="flex h-16 flex-col justify-center rounded-xl bg-on-brand-subtle px-3">
-                    <strong className="text-title-lg leading-6">{tile.value}</strong>
-                    <small className="text-caption">{tile.label}</small>
-                  </span>
-                ))}
-              </div>
-            </section>
-
-            <div className="flex items-center gap-3">
-              <strong className="flex-1 text-body text-ink">{t("attendance.studentsTitle")}</strong>
-              <small className="text-body-sm text-brand-strong">{t("attendance.studentsMetaShort")}</small>
-            </div>
-
-            <ul className="-mt-1 flex flex-col overflow-hidden rounded-xl bg-surface">
-              {students.map((student) => (
-                <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
-                  <Avatar
-                    name={student.name}
-                    tone={student.tone}
-                    size="sm"
-                    className="[&_.avatar]:size-11"
-                  />
-                  <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-                    <strong className="truncate text-title text-ink">{student.name}</strong>
-                    <span className="flex items-center gap-2">
-                      <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
-                        <span
-                          className={`block h-full rounded-full ${student.attendance >= 50 ? "bg-brand" : "bg-danger"}`}
-                          style={{ width: `${student.attendance}%` }}
-                        />
-                      </span>
-                      <small className="w-8 shrink-0 text-right font-numeric text-caption text-brand">
-                        {student.attendance}%
-                      </small>
-                    </span>
-                  </span>
-                  <span className="flex w-12 shrink-0 flex-col items-end">
-                    <strong className="font-numeric text-title text-ink">
-                      {student.focus === null ? "—" : `${student.focus}%`}
-                    </strong>
-                    <small className="text-caption text-ink-secondary">{t("attendance.focusSuffix")}</small>
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <MobileEmptyCard
-            icon="check-circle"
-            title={t("attendance.emptyTitle")}
-            description={t("attendance.emptyDescription")}
-          />
-        )}
-      </div>
-    );
-
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
-      <div className="flex min-w-0 flex-col gap-1">
-        <span className="text-caption-strong tracking-wide text-action uppercase">
-          {t("attendance.eyebrow")}
-        </span>
-        <h2 className="font-heading text-h2 text-ink">{t("attendance.title")}</h2>
-        <p className="text-body-sm text-ink-secondary">
-          {t("attendance.summary", { lessonCount, recordCount: filtered.length })}
-        </p>
-      </div>
+    <div className="flex h-full flex-col gap-5 overflow-y-auto px-4 pt-5 pb-8 lg:gap-3.5 lg:px-7 lg:pt-3.5">
+      <PanelHeading eyebrow={t("attendance.eyebrow")} title={t("attendance.title")} className="mb-1 shrink-0" />
 
-      {rows.length ? (
-        <div className="flex flex-wrap items-center gap-2">
-          {FILTERS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`flex h-11 items-center rounded-full px-4 text-label-strong transition-colors ${
-                range === item.id
-                  ? "bg-action text-on-action"
-                  : "bg-subtle text-ink-secondary hover:bg-muted hover:text-ink"
-              }`}
-              onClick={() => setRange(item.id)}
-            >
-              {item.label}
-            </button>
+      {loading ? (
+        <ul className="flex flex-col overflow-hidden rounded-xl bg-surface" aria-hidden="true">
+          {Array.from({ length: 4 }, (_, index) => (
+            <li key={index} className="flex h-[74px] items-center border-b border-line px-4 last:border-b-0">
+              <RowSkeleton />
+            </li>
           ))}
-        </div>
-      ) : null}
-
-      {students.length ? (
+        </ul>
+      ) : students.length ? (
         <>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
-              { value: `${avgFocus}%`, label: t("attendance.statFocus") },
-              { value: String(lessonCount), label: t("attendance.statLessons") },
-            ].map((tile) => (
-              <div
-                key={tile.label}
-                className="flex flex-col gap-1 rounded-2xl border border-line bg-surface px-4 py-3"
+          <div className="grid grid-cols-3 gap-2">
+            {FILTERS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
+                  range === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
+                }`}
+                onClick={() => setRange(item.id)}
               >
-                <strong className="font-heading text-h2 text-ink">{tile.value}</strong>
-                <small className="text-body-sm text-ink-secondary">{tile.label}</small>
-              </div>
+                {item.label}
+              </button>
             ))}
           </div>
 
-          <div className="flex flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
-            <div className="flex items-baseline gap-3">
-              <strong className="flex-1 text-title text-ink">{t("attendance.studentsTitle")}</strong>
-              <small className="text-caption text-ink-tertiary">{t("attendance.studentsMeta")}</small>
+          <section className="flex flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
+            <span className="flex h-6 w-fit items-center gap-1.5 rounded-full bg-on-brand-subtle px-2.5 text-caption-strong">
+              <Icon name="bar-chart" size={14} />
+              {t("attendance.mobileBadge", { lessonCount, recordCount: filtered.length })}
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
+                { value: `${avgFocus}%`, label: t("attendance.statFocus") },
+                { value: String(lessonCount), label: t("attendance.statLessons") },
+              ].map((tile) => (
+                <span key={tile.label} className="flex h-16 flex-col justify-center rounded-xl bg-on-brand-subtle px-3">
+                  <strong className="text-title-lg leading-6">{tile.value}</strong>
+                  <small className="text-caption">{tile.label}</small>
+                </span>
+              ))}
             </div>
-            <ul className="flex flex-col divide-y divide-line">
-              {students.map((student) => (
-                <li key={student.id} className="flex items-center gap-3 py-3">
-                  <Avatar name={student.name} tone={student.tone} size="sm" />
-                  <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-                    <strong className="truncate text-label-strong text-ink">{student.name}</strong>
-                    <span className="flex items-center gap-2">
-                      <span className="h-1.5 w-full max-w-[160px] overflow-hidden rounded-full bg-subtle">
-                        <span
-                          className={`block h-full rounded-full ${
-                            student.attendance >= 70 ? "bg-success" : "bg-error"
-                          }`}
-                          style={{ width: `${student.attendance}%` }}
-                        />
-                      </span>
-                      <small
-                        className={`font-numeric text-caption ${
-                          student.attendance >= 70 ? "text-ink-secondary" : "text-error-text"
-                        }`}
-                      >
-                        {student.attendance}%
-                      </small>
+          </section>
+
+          <div className="flex items-center gap-3">
+            <strong className="flex-1 text-body text-ink">{t("attendance.studentsTitle")}</strong>
+            <small className="text-body-sm text-brand-strong">{t("attendance.studentsMetaShort")}</small>
+          </div>
+
+          <ul className="-mt-1 flex flex-col overflow-hidden rounded-xl bg-surface">
+            {students.map((student) => (
+              <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
+                <Avatar
+                  name={student.name}
+                  tone={student.tone}
+                  size="sm"
+                  className="[&_.avatar]:size-11"
+                />
+                <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <strong className="truncate text-title text-ink">{student.name}</strong>
+                  <span className="flex items-center gap-2">
+                    <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
+                      <span
+                        className={`block h-full rounded-full ${student.attendance >= 50 ? "bg-brand" : "bg-danger"}`}
+                        style={{ width: `${student.attendance}%` }}
+                      />
                     </span>
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end">
-                    <strong className="font-numeric text-title text-ink">
-                      {student.focus === null ? "—" : `${student.focus}%`}
-                    </strong>
-                    <small className="text-caption text-ink-tertiary">
-                      {t("attendance.focusSuffix")}
+                    <small className="w-8 shrink-0 text-right font-numeric text-caption text-brand">
+                      {student.attendance}%
                     </small>
                   </span>
-                </li>
-              ))}
-            </ul>
-          </div>
+                </span>
+                <span className="flex w-12 shrink-0 flex-col items-end">
+                  <strong className="font-numeric text-title text-ink">
+                    {student.focus === null ? "—" : `${student.focus}%`}
+                  </strong>
+                  <small className="text-caption text-ink-secondary">{t("attendance.focusSuffix")}</small>
+                </span>
+              </li>
+            ))}
+          </ul>
         </>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-line px-6 py-12 text-center">
-          <span className="grid size-16 place-items-center rounded-2xl bg-action text-on-action">
-            <CheckCircle2 size={30} />
-          </span>
-          <strong className="font-heading text-h3 text-ink">{t("attendance.emptyTitle")}</strong>
-          <p className="max-w-[380px] text-body-sm text-ink-secondary">
-            {t("attendance.emptyDescription")}
-          </p>
-        </div>
+        <MobileEmptyCard
+          icon="check-circle"
+          title={t("attendance.emptyTitle")}
+          description={t("attendance.emptyDescription")}
+        />
       )}
     </div>
   );

@@ -65,7 +65,18 @@
     "delete": "Delete",
     "fromBank": "From ready tests",
     "subtitleShort": "Assignments and AI results",
-    "emptyHint": "Give the first homework — students will see it in the group chat."
+    "emptyHint": "Give the first homework — students will see it in the group chat.",
+    "addTest": "Add test",
+    "testMenu": {
+      "bank": {
+        "title": "From ready tests",
+        "hint": "Pick a test from the bank"
+      },
+      "create": {
+        "title": "Create a new test",
+        "hint": "From scratch or with AI"
+      }
+    }
   },
   "students": {
     "eyebrow": "PARTICIPANTS",

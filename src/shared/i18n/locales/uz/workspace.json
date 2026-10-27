@@ -50,7 +50,14 @@
     "studentCountValue": "{{count}} o‘quvchi",
     "emptyTitle": "Hali ma’lumot yo‘q",
     "emptyDescription": "Baholar, test natijalari va davomat kiritilgach, kurslar bo'yicha ko'rsatkichlar shu yerda chiqadi.",
-    "emptyAction": "Test yaratish"
+    "emptyAction": "Test yaratish",
+    "mobile": {
+      "eyebrow": "Shaxsiy tahlil",
+      "settings": "Sozlamalar",
+      "ratings": "Baholar",
+      "test": "Test {{value}}",
+      "attendance": "Davomat {{value}}"
+    }
   },
   "createGroup": "Guruh yaratish",
   "statGroups": "Guruh",
@@ -151,6 +158,49 @@
       "materials": {
         "title": "Materiallar",
         "description": "Darsliklar, audio va fayllar"
+      }
+    },
+    "mobile": {
+      "eyebrow": "Ish maydoni",
+      "create": "Yaratish",
+      "overview": "Umumiy holat",
+      "details": "Batafsil",
+      "stats": {
+        "unchecked": "Tekshirilmagan",
+        "tests": "Test",
+        "mock": "Mock imtihon"
+      },
+      "createItems": {
+        "test": "Yangi test",
+        "homework": "Vazifa berish",
+        "mock": "Mock imtihon",
+        "ai": "AI bilan test"
+      },
+      "modules": {
+        "tests": {
+          "title": "Test",
+          "description": "Testlar yaratish va natijalarni ko‘rish"
+        },
+        "analytics": {
+          "title": "Tahlil",
+          "description": "Natijalar va faollik statistikasi"
+        },
+        "ai": {
+          "title": "AI yordamchi",
+          "description": "AI yordamida test tuzish"
+        },
+        "mock": {
+          "title": "Mock test",
+          "description": "IELTS, SAT, Milliy sertifikat"
+        },
+        "assignments": {
+          "title": "Vazifalar",
+          "description": "Uy vazifalarini berish va tekshirish"
+        },
+        "materials": {
+          "title": "Materiallar",
+          "description": "Darsliklar, audio va fayllar"
+        }
       }
     }
   },

@@ -31,7 +31,7 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
         }
       : null,
     directStatus: dto.direct_status ?? null,
-    lastMessage: dto.last_message?.text ?? "Hozircha xabar yo‘q",
+    lastMessage: dto.last_message?.text ?? "Hali xabar yo‘q",
     lastSender: dto.last_message?.sender ?? null,
     updatedAt: dto.last_message?.created_at ?? dto.updated_at,
     unreadCount: Number(dto.unread_count ?? dto.unread ?? 0),

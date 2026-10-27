@@ -1,8 +1,13 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { DatePicker, SelectPicker } from "@/shared/ui/legacy/form-pickers";
+import { MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
+import { mobileButton } from "@/shared/ui/mobile-page";
+import { MobileScreenDialog } from "@/shared/ui/mobile-screen-dialog";
 import { Switch } from "@/shared/ui/switch";
 import type { ExamTemplate, QuizSummary } from "@/shared/types";
 import type { ExamFormValues } from "../api/exam.dto";
@@ -24,7 +29,7 @@ const SECTION_ICON: Record<string, string> = {
 export interface ExamCreateDialogProps {
   open: boolean;
   pending?: boolean;
-  courses: Array<{ id: string; title: string }>;
+  courses: Array<{ id: string; title: string; studentCount?: number }>;
   templates: ExamTemplate[];
   quizzes: QuizSummary[];
   onOpenChange: (open: boolean) => void;
@@ -52,6 +57,8 @@ export function ExamCreateDialog({
   onCreateTemplate,
 }: ExamCreateDialogProps) {
   const { t } = useTranslation("exam");
+  const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
+  const isCompact = useIsCompact();
   const [courseId, setCourseId] = useState(courses[0]?.id ?? "");
   const [templateId, setTemplateId] = useState("");
   const [startsAt, setStartsAt] = useState("");
@@ -116,6 +123,196 @@ export function ExamCreateDialog({
         quizId: sectionQuiz[section.key],
       })),
     });
+  }
+
+  if (isCompact) {
+    const course = courses.find((item) => item.id === (courseId || courses[0]?.id)) ?? null;
+    const start = startsAt ? new Date(startsAt) : null;
+    const startLabel =
+      start && !Number.isNaN(start.getTime())
+        ? `${start.getDate()}-${(months[start.getMonth()] ?? "").toLowerCase()}, ${startsAt.slice(11, 16)}`
+        : null;
+    const courseLabel = (item: { title: string; studentCount?: number }) =>
+      item.studentCount === undefined ? item.title : `${item.title} · ${t("createDialog.mobile.students", { count: item.studentCount })}`;
+
+    return (
+      <MobileScreenDialog
+        open={open}
+        onOpenChange={(next) => (next ? onOpenChange(true) : close())}
+        title={t("createDialog.title")}
+        description={t("createDialog.description")}
+        closeLabel={t("createDialog.cancel")}
+        onClose={close}
+        footer={
+          <button type="button" className={mobileButton.primary} disabled={pending} onClick={submit}>
+            {t("createDialog.submit")}
+          </button>
+        }
+      >
+        {errorCount ? (
+          <p className="mt-4 flex h-11 items-center gap-2.5 rounded-xl bg-danger-bg px-3 text-body-sm font-medium text-error-text">
+            <Icon name="warning-fill" size={20} className="shrink-0 text-danger" />
+            {t("createDialog.errorSummary", { count: errorCount })}
+          </p>
+        ) : (
+          <p className="mt-4 text-body-sm text-ink-secondary">{t("createDialog.description")}</p>
+        )}
+
+        <div className="mt-[11px] grid grid-cols-3 gap-2">
+          {templates.map((item) => {
+            const active = item.id === templateId;
+            const minutes = totalMinutes(item);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                aria-pressed={active}
+                className={`flex h-16 min-w-0 flex-col justify-center rounded-lg px-3 text-left transition-colors ${
+                  active ? "border-[1.5px] border-brand bg-brand-subtle" : "border-[1.5px] border-transparent bg-surface"
+                } ${errors.template ? "border-danger" : ""}`}
+                onClick={() => {
+                  setTemplateId(item.id);
+                  setSectionQuiz({});
+                  setErrors(({ template: _template, ...rest }) => rest);
+                }}
+              >
+                <strong className="truncate text-title text-ink">{item.name}</strong>
+                <small className="truncate text-caption font-normal tracking-tight text-ink-secondary">
+                  {t("createDialog.sectionCount", { count: item.items.filter((part) => part.kind === "section").length })}
+                  {minutes ? ` · ${durationLabel(minutes)}` : ""}
+                </small>
+              </button>
+            );
+          })}
+        </div>
+
+        <button
+          type="button"
+          className="mt-[14px] w-fit text-body-sm font-semibold text-brand transition-opacity hover:opacity-80"
+          onClick={onCreateTemplate}
+        >
+          {t("createDialog.newTemplate")}
+        </button>
+
+        <div className="mt-[11px] flex flex-col gap-[11px]">
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("createDialog.courseLabel")}>
+            <MobilePickerField
+              type="select"
+              surface
+              value={course?.id ?? ""}
+              invalid={Boolean(errors.course)}
+              display={course ? courseLabel(course) : <span className="text-ink-secondary">{t("createDialog.mobile.pick")}</span>}
+              ariaLabel={t("createDialog.courseLabel")}
+              options={courses.map((item) => ({ value: item.id, label: courseLabel(item) }))}
+              onChange={(value) => {
+                setCourseId(value);
+                setErrors(({ course: _course, ...rest }) => rest);
+              }}
+            />
+          </MobileFieldLabel>
+
+          <div className="flex flex-col">
+            <MobileFieldLabel gapClassName="gap-[7px]" label={t("createDialog.startLabel")}>
+              <MobilePickerField
+                type="datetime-local"
+                surface
+                value={startsAt}
+                invalid={Boolean(errors.start)}
+                display={startLabel ?? <span className="text-ink-secondary">{t("createDialog.mobile.pick")}</span>}
+                ariaLabel={t("createDialog.startLabel")}
+                onChange={(value) => {
+                  setStartsAt(value);
+                  setErrors(({ start: _start, ...rest }) => rest);
+                }}
+              />
+            </MobileFieldLabel>
+            {errors.start ? <small className="mt-1.5 text-caption font-normal text-error-text">{errors.start}</small> : null}
+          </div>
+        </div>
+
+        <span className="mt-[13px] text-caption-strong text-ink-secondary uppercase">
+          {t("createDialog.sectionsHead")} · {sections.length}
+        </span>
+
+        {template ? (
+          <div className="mt-[11px] flex flex-col overflow-hidden rounded-xl bg-surface">
+            {sections.map((item) => {
+              const quiz = usableQuizzes.find((row) => row.id === sectionQuiz[item.key]) ?? null;
+              const invalid = Boolean(errors[item.key]);
+              return (
+                <div
+                  key={item.key}
+                  className={`relative flex h-[72px] items-center gap-3 px-4 ${
+                    invalid ? "mx-1 rounded-lg border-[1.5px] border-danger bg-danger-bg px-3" : ""
+                  }`}
+                >
+                  <span className="grid size-9 shrink-0 place-items-center rounded-md bg-brand-subtle text-brand">
+                    <Icon name={SECTION_ICON[item.key] ?? "description"} size={18} />
+                  </span>
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <span className="truncate text-title text-ink">
+                      <strong className="font-semibold">{item.title}</strong>
+                      <span className="text-body-sm text-ink-secondary">
+                        {" · "}
+                        {item.minutes ? t("createDialog.mobile.minutes", { count: item.minutes }) : "—"}
+                      </span>
+                    </span>
+                    <small
+                      className={`truncate text-caption ${
+                        invalid ? "text-error-text" : item.manual ? "font-normal text-ink-secondary" : quiz ? "text-success-fg" : "text-brand"
+                      }`}
+                    >
+                      {invalid
+                        ? errors[item.key]
+                        : item.manual
+                          ? item.key === "speaking"
+                            ? t("createDialog.offlineSection")
+                            : t("createDialog.mobile.manual")
+                          : (quiz?.title ?? quiz?.topic ?? t("createDialog.pickQuiz"))}
+                    </small>
+                  </span>
+                  {item.manual ? null : (
+                    <>
+                      <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
+                      <select
+                        className="absolute inset-0 cursor-pointer opacity-0"
+                        value={sectionQuiz[item.key] ?? ""}
+                        aria-label={t("createDialog.mobile.pickFor", { title: item.title })}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setSectionQuiz((current) => ({ ...current, [item.key]: value }));
+                          setErrors(({ [item.key]: _removed, ...rest }) => rest);
+                        }}
+                      >
+                        <option value="">{t("createDialog.pickQuiz")}</option>
+                        {usableQuizzes.map((row) => (
+                          <option key={row.id} value={row.id}>
+                            {row.title || row.topic} · {row.questionCount}
+                          </option>
+                        ))}
+                      </select>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-[13px] rounded-xl bg-surface px-4 py-6 text-center text-body-sm text-ink-secondary">
+            {t("createDialog.validation.chooseTemplate")}
+          </p>
+        )}
+
+        {template && !usableQuizzes.length ? (
+          <div className="mt-5 flex flex-col gap-1 px-3">
+            <span className="text-body-sm font-medium text-ink">{t("createDialog.noQuizzesShort")}</span>
+            <a className="w-fit text-body-sm font-semibold text-brand" href={ROUTES.teacher.workspaceAi}>
+              {t("createDialog.createWithAiShort")}
+            </a>
+          </div>
+        ) : null}
+      </MobileScreenDialog>
+    );
   }
 
   return (

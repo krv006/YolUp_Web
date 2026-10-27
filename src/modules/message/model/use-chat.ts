@@ -47,7 +47,13 @@ export function useChat(
 
   const messages = useQuery({
     queryKey: messagesKey,
-    queryFn: ({ signal }) => messageApi.getAll(conversationId as string, { signal }, senderId),
+    queryFn: async ({ signal }) => {
+      const items = await messageApi.getAll(conversationId as string, { signal }, senderId);
+      const local = (queryClient.getQueryData<ChatMessage[]>(messagesKey) ?? []).filter(
+        (item) => item.pending || item.failed
+      );
+      return local.reduce((list, item) => upsertMessage(list, item), items);
+    },
     enabled: Boolean(conversationId),
     refetchInterval: socketState === "connected" ? false : REST_FALLBACK_POLL_MS,
   });

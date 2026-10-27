@@ -352,5 +352,11 @@
     "statHours": "Soat",
     "statFinished": "Tugadi",
     "hoursShort": "{{count}} s"
+  },
+  "scheduleState": {
+    "errorTitle": "Jadvalni yuklab bo‘lmadi",
+    "errorHint": "Internet aloqasini tekshirib, qayta urinib ko‘ring. Saqlangan darslaringiz o‘chmaydi.",
+    "retry": "Qayta urinish",
+    "loading": "yuklanmoqda…"
   }
 }

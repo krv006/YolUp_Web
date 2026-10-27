@@ -1,21 +1,25 @@
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses } from "@/modules/course";
 import {
   homeworkApi,
   homeworkKeys,
   useCreateAssignment,
+  useDeleteAssignment,
   useHomeworkAiStats,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import type { Assignment } from "@/shared/types";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { formatDue } from "./format-due";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
+import { DeleteAssignmentDialog } from "./delete-assignment-dialog";
+import { MobileHomeworkList, type HomeworkFilter } from "./mobile-homework-list";
 
 function dueInDays(value: string | null): number | null {
   if (!value) return null;
@@ -27,11 +31,15 @@ function dueInDays(value: string | null): number | null {
 export function HomeworkListPage() {
   const { t } = useTranslation("homework");
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [params, setParams] = useSearchParams();
   const courses = useCourses();
   const create = useCreateAssignment();
-  const aiStats = useHomeworkAiStats("today");
-  const [filter, setFilter] = useState("active");
-  const [createOpen, setCreateOpen] = useState(false);
+  const remove = useDeleteAssignment();
+  const aiStats = useHomeworkAiStats("today", !isCompact);
+  const [filter, setFilter] = useState<HomeworkFilter>("active");
+  const [createOpen, setCreateOpen] = useState(() => params.get("new") === "1");
+  const [deleting, setDeleting] = useState<Assignment | null>(null);
 
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
 
@@ -78,6 +86,59 @@ export function HomeworkListPage() {
   const averageScore = scores.length
     ? scores.reduce((sum, value) => sum + value, 0) / scores.length
     : null;
+
+  function changeCreateOpen(open: boolean) {
+    setCreateOpen(open);
+    if (!open && params.has("new")) {
+      const next = new URLSearchParams(params);
+      next.delete("new");
+      setParams(next, { replace: true });
+    }
+  }
+
+  const formDialog = (
+    <AssignmentFormDialog
+      open={createOpen}
+      onOpenChange={changeCreateOpen}
+      courses={groups.map((course) => ({
+        id: course.id,
+        title: course.title,
+        studentCount: course.studentCount ?? 0,
+      }))}
+      pending={create.isPending}
+      onSubmit={(values) => create.mutateAsync(values).then(() => changeCreateOpen(false))}
+    />
+  );
+
+  if (isCompact)
+    return (
+      <>
+        <MobileHomeworkList
+          filter={filter}
+          counts={{ active: active.length, review: active.filter(needsReview).length, draft: drafts.length }}
+          sections={[
+            { id: "week", rows: thisWeek },
+            { id: "earlier", rows: earlier },
+          ]}
+          courses={new Map(groups.map((course) => [course.id, course]))}
+          loading={loading}
+          onFilterChange={setFilter}
+          onBack={() => navigate(ROUTES.teacher.workspace)}
+          onCreate={() => changeCreateOpen(true)}
+          onOpen={(item) => navigate(ROUTES.teacher.homeworkItem(item.id))}
+          onReview={(item) => navigate(ROUTES.teacher.homeworkReview(item.id))}
+          onDelete={setDeleting}
+        />
+        {formDialog}
+        <DeleteAssignmentDialog
+          open={Boolean(deleting)}
+          count={deleting?.stats?.submittedCount ?? deleting?.submissions.length ?? 0}
+          pending={remove.isPending}
+          onOpenChange={(open) => !open && setDeleting(null)}
+          onConfirm={() => deleting && remove.mutate(deleting.id, { onSuccess: () => setDeleting(null) })}
+        />
+      </>
+    );
 
   return (
     <WorkspaceShell
@@ -183,19 +244,7 @@ export function HomeworkListPage() {
         </div>
       </div>
 
-      <AssignmentFormDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        courses={groups.map((course) => ({
-          id: course.id,
-          title: course.title,
-          studentCount: course.studentCount ?? 0,
-        }))}
-        pending={create.isPending}
-        onSubmit={(values) =>
-          create.mutateAsync(values).then(() => setCreateOpen(false))
-        }
-      />
+      {formDialog}
     </WorkspaceShell>
   );
 }

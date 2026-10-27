@@ -143,7 +143,9 @@ export function TeacherDashboardPage() {
 
     return (
       <MobileDashboard
+        userId={user?.id ?? null}
         online={online}
+        approved={user?.isApproved !== false}
         loading={loading}
         hasGroups={groups.length > 0}
         heroLesson={heroLesson}

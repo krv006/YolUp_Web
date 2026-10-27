@@ -9,8 +9,10 @@ import { useExams } from "@/modules/exam";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useQuizzes } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import { MobileWorkspaceHome } from "./mobile-workspace-home";
 
 interface ModuleCard {
   id: string;
@@ -51,6 +53,7 @@ const MODULES: ModuleCard[] = [
 export function WorkspaceHomePage() {
   const { t } = useTranslation("workspace");
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
   const courses = useCourses();
   const quizzes = useQuizzes(null);
   const exams = useExams(null);
@@ -83,6 +86,14 @@ export function WorkspaceHomePage() {
   }, 0);
   const stats = analytics.data?.kind === "teacher" ? analytics.data.overall : null;
   const rating = stats?.avgRating ?? null;
+
+  if (isCompact) {
+    const unchecked = assignments.reduce(
+      (sum, item) => sum + item.submissions.filter((entry) => !entry.grade).length,
+      0
+    );
+    return <MobileWorkspaceHome unchecked={unchecked} tests={quizItems.length} exams={examItems.length} />;
+  }
 
   const counts: Record<string, string> = {
     tests: t("home.moduleCounts.tests", { count: quizItems.length }),

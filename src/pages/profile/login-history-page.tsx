@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useLoginHistory, useLogoutOtherSessionsMutation } from "@/modules/auth";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { SETTINGS_TONES } from "./settings-tones";
-import { ProfileSubPage } from "./profile-shell";
+import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 
 type GroupKey = "todayGroup" | "yesterdayGroup" | "earlierGroup";
 
@@ -25,14 +27,101 @@ function clock(value: string): string {
   return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
+function isPhone(device: string): boolean {
+  return /iphone|android|ios|mobile|yolup/i.test(device);
+}
+
 export function LoginHistoryPage() {
   const { t } = useTranslation("account");
+  const isCompact = useIsCompact();
   const logins = useLoginHistory(null, true);
   const logoutOthers = useLogoutOtherSessionsMutation();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const rows = logins.data ?? [];
   const groups: GroupKey[] = ["todayGroup", "yesterdayGroup", "earlierGroup"];
+
+  function closeOthers() {
+    logoutOthers.mutate(undefined, {
+      onSuccess: (count) => {
+        toast.success(t("page.otherSessionsClosed", { count }));
+        setConfirmOpen(false);
+      },
+      onError: (error: Error) => toast.error(error.message),
+    });
+  }
+
+  if (isCompact)
+    return (
+      <ProfileSubPage title={t("page.loginsTitle")}>
+        {logins.isLoading ? (
+          <div className="flex flex-col gap-2">
+            {Array.from({ length: 4 }, (_, index) => (
+              <div key={index} className="h-17.5 animate-pulse rounded-xl bg-surface motion-reduce:animate-none" />
+            ))}
+          </div>
+        ) : null}
+
+        {groups.map((group) => {
+          const items = rows.filter((row) => groupOf(row.at) === group);
+          if (!items.length) return null;
+          return (
+            <SettingsSection key={group} label={t(`page.${group}`)}>
+              {items.map((row, index) => {
+                const current = group === "todayGroup" && index === 0;
+                return (
+                  <SettingsRow
+                    key={row.id}
+                    icon={isPhone(row.device) ? "person" : "settings"}
+                    tone={
+                      current
+                        ? "bg-success-bg text-ink"
+                        : isPhone(row.device)
+                          ? "bg-brand-subtle text-ink"
+                          : SETTINGS_TONES.brand
+                    }
+                    title={row.device || "—"}
+                    hint={row.ip}
+                    right={
+                      current ? (
+                        <small className="shrink-0 text-caption-strong text-success-fg">{t("page.thisDevice")}</small>
+                      ) : (
+                        <small className="shrink-0 text-caption-strong text-ink">{clock(row.at)}</small>
+                      )
+                    }
+                  />
+                );
+              })}
+            </SettingsSection>
+          );
+        })}
+
+        {!logins.isLoading && !rows.length ? (
+          <p className="rounded-xl bg-surface px-5 py-8 text-center text-body-sm text-ink-secondary">{t("page.noLogins")}</p>
+        ) : null}
+
+        <button
+          type="button"
+          className="flex h-[50px] items-center justify-center gap-2 rounded-full border border-line-strong bg-surface px-5 text-title font-semibold text-ink transition-colors hover:bg-subtle"
+          onClick={() => setConfirmOpen(true)}
+        >
+          <Icon name="logout" size={20} />
+          {t("page.logoutOthers")}
+        </button>
+
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          icon="devices"
+          title={t("page.logoutOthersTitle")}
+          description={t("page.logoutOthersDescription")}
+          confirmLabel={t("page.logout")}
+          cancelLabel={t("page.cancel")}
+          pending={logoutOthers.isPending}
+          onConfirm={closeOthers}
+        />
+      </ProfileSubPage>
+    );
 
   return (
     <ProfileSubPage title={t("page.loginsTitle")}>
@@ -124,15 +213,7 @@ export function LoginHistoryPage() {
               type="button"
               className={dialogButton.danger}
               disabled={logoutOthers.isPending}
-              onClick={() =>
-                logoutOthers.mutate(undefined, {
-                  onSuccess: (count) => {
-                    toast.success(t("page.otherSessionsClosed", { count }));
-                    setConfirmOpen(false);
-                  },
-                  onError: (error: Error) => toast.error(error.message),
-                })
-              }
+              onClick={closeOthers}
             >
               {t("page.logout")}
             </button>

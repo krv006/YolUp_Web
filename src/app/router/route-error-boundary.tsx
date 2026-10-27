@@ -43,6 +43,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
       <RouteStatus
         tone="error"
         icon={<Icon name="error" size={28} />}
+        mobileIcon={<Icon name="warning-fill" size={48} />}
         title={i18n.t("common:routeState.errorTitle")}
         description={i18n.t("common:routeState.errorDescription")}
         action={

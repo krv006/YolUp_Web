@@ -45,6 +45,8 @@
     "styleAria": "Colour and width"
   },
   "inline": {
+    "cancel": "Cancel",
+    "add": "Add to board",
     "formula": "Formula",
     "text": "Text",
     "placeholder": "Type text…",
@@ -95,6 +97,20 @@
     "title": "Left the lesson"
   },
   "periodic": {
+    "searchMobile": "Element name or symbol",
+    "massMobile": "Atomic mass {{value}}",
+    "categories": {
+      "alkali": "Alkali metal",
+      "alkaline_earth": "Alkaline earth metal",
+      "transition": "Transition metal",
+      "post_transition": "Post-transition metal",
+      "metalloid": "Metalloid",
+      "nonmetal": "Nonmetal",
+      "halogen": "Halogen",
+      "noble_gas": "Noble gas",
+      "lanthanide": "Lanthanide",
+      "actinide": "Actinide"
+    },
     "button": "Periodic table",
     "title": "Periodic table",
     "description": "Pick an element — its symbol and data are added to the board.",
@@ -155,6 +171,7 @@
     "save": "Save",
     "saved": "Access granted to {{count}} students",
     "pickStudent": "Pick at least one student",
+    "teacherOnly": "Teacher only",
     "modes": {
       "teacher": {
         "title": "Only me",
@@ -183,5 +200,18 @@
   "preview": {
     "label": "Board · page {{page}}",
     "empty": "The board is empty for now"
+  },
+  "mobile": {
+    "title": "Board · {{page}} / {{total}}",
+    "undo": "Undo",
+    "redo": "Redo",
+    "undoReason": "Step undone",
+    "modes": {
+      "teacher": "Only you",
+      "selected": "Selected",
+      "everyone": "Everyone"
+    },
+    "liveLesson": "Live lesson",
+    "menu": "Actions"
   }
 }

@@ -65,7 +65,18 @@
     "delete": "O'chirish",
     "fromBank": "Tayyor testdan",
     "subtitleShort": "Topshiriqlar va AI natijalari",
-    "emptyHint": "Birinchi uy vazifasini bering — o‘quvchilar uni guruh chatida ko‘radi."
+    "emptyHint": "Birinchi uy vazifasini bering — o‘quvchilar uni guruh chatida ko‘radi.",
+    "addTest": "Test qo‘shish",
+    "testMenu": {
+      "bank": {
+        "title": "Tayyor testdan",
+        "hint": "Bankdagi testni tanlang"
+      },
+      "create": {
+        "title": "Yangi test yaratish",
+        "hint": "Noldan yoki AI yordamida"
+      }
+    }
   },
   "students": {
     "eyebrow": "ISHTIROKCHILAR",
