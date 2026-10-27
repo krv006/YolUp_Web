@@ -85,5 +85,51 @@
     "October",
     "November",
     "December"
-  ]
+  ],
+  "mobile": {
+    "role": "{{subject}} teacher",
+    "roleFallback": "Teacher",
+    "offline": "No internet. Showing last saved data",
+    "startsIn": "Starts in {{count}} min",
+    "startsInHours": "Starts in {{count}} h",
+    "startsNow": "Starting now",
+    "live": "Live · {{count}} min",
+    "students": "{{count}} students",
+    "joined": "{{done}} / {{total}} students joined",
+    "quizAttached": "quiz attached",
+    "start": "Start lesson",
+    "join": "Join lesson",
+    "chat": "Chat",
+    "reviewTitle": "Needs review",
+    "reviewHint": "{{works}} works · {{tasks}} tasks",
+    "todayTitle": "Today's lessons",
+    "seeAll": "See all",
+    "finished": "Finished · {{count}} students",
+    "liveRow": "Live now",
+    "enter": "Join",
+    "noLessonsTitle": "No lessons today",
+    "noLessonsNext": "Next lesson: tomorrow, {{time}} · {{title}}",
+    "noLessonsHint": "Add your first lesson to the schedule",
+    "addLesson": "Add lesson",
+    "tomorrowTitle": "Tomorrow's lessons",
+    "schedule": "Schedule",
+    "noGroupsTitle": "Create your first group",
+    "noGroupsHint": "Create a group, invite students with a link and add a lesson schedule.",
+    "createGroup": "Create group",
+    "stepsTitle": "Get started in 3 steps",
+    "steps": {
+      "group": {
+        "title": "Create a group",
+        "hint": "Name, subject and weekly lessons"
+      },
+      "link": {
+        "title": "Share the link",
+        "hint": "Students join in one tap"
+      },
+      "lesson": {
+        "title": "Add a lesson",
+        "hint": "Students get a reminder"
+      }
+    }
+  }
 }

@@ -37,6 +37,8 @@ export const ROUTES = Object.freeze({
     board: (lessonId: string) => `/teacher/boards/${segment(lessonId)}`,
     profile: "/teacher/profile",
     settings: "/teacher/settings",
+    notifications: "/teacher/notifications",
+    search: "/teacher/search",
   }),
   student: Object.freeze({
     root: "/student",

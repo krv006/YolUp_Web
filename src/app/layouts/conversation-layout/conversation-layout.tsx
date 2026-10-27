@@ -17,6 +17,7 @@ import {
 import { StudentEnrollmentDialog } from "@/modules/student";
 import { ConversationPanel } from "@/widgets/conversation-panel";
 import { ConversationTopbar } from "@/widgets/conversation-topbar";
+import { MobileTabBar } from "@/widgets/mobile-tab-bar";
 import { STORAGE_KEYS } from "@/shared/constants";
 import { storage } from "@/shared/lib";
 import type { ConversationRole } from "@/shared/types";
@@ -109,7 +110,7 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
       <ConversationRail
         role={role}
         section={section}
-        hiddenOnMobile={Boolean(conversationId)}
+        hiddenOnMobile={role === "teacher" || Boolean(conversationId)}
       />
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -159,6 +160,8 @@ export function ConversationLayout({ role = "teacher" }: { role?: ConversationRo
           </main>
         </div>
       </div>
+
+      {role === "teacher" && !conversationId && section === "chat" ? <MobileTabBar /> : null}
 
       {role === "teacher" ? (
         <NewConversationDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />

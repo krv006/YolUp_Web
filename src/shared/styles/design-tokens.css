@@ -173,6 +173,8 @@
   --accent-saffron-bg: var(--saffron-50);
   --accent-saffron-fg: var(--saffron-500);
   --accent-violet-bg: var(--violet-50);
+  --accent-teal-bg: #e2f5f7;
+  --accent-teal-fg: #0e8f9e;
   --accent-violet-fg: var(--violet-500);
   --accent-red-bg: var(--red-50);
   --accent-red-fg: var(--red-500);
@@ -368,6 +370,8 @@
   --accent-saffron-bg: rgb(224 158 31 / 0.22);
   --accent-saffron-fg: var(--saffron-300);
   --accent-violet-bg: rgb(124 85 234 / 0.22);
+  --accent-teal-bg: rgb(14 143 158 / 0.22);
+  --accent-teal-fg: #5cc8d3;
   --accent-violet-fg: var(--violet-300);
   --accent-red-bg: rgb(229 72 77 / 0.24);
   --accent-red-fg: var(--red-300);
@@ -494,6 +498,8 @@
   --accent-saffron-bg: var(--saffron-50);
   --accent-saffron-fg: var(--saffron-500);
   --accent-violet-bg: var(--violet-50);
+  --accent-teal-bg: #e2f5f7;
+  --accent-teal-fg: #0e8f9e;
   --accent-violet-fg: var(--violet-500);
   --accent-red-bg: var(--red-50);
   --accent-red-fg: var(--red-500);
@@ -601,6 +607,8 @@
   --color-accent-saffron-bg: var(--accent-saffron-bg);
   --color-accent-saffron-fg: var(--accent-saffron-fg);
   --color-accent-violet-bg: var(--accent-violet-bg);
+  --color-accent-teal-bg: var(--accent-teal-bg);
+  --color-accent-teal-fg: var(--accent-teal-fg);
   --color-accent-violet-fg: var(--accent-violet-fg);
   --color-accent-red-bg: var(--accent-red-bg);
   --color-accent-red-fg: var(--accent-red-fg);
@@ -683,6 +691,8 @@
   --color-accent-saffron-bg: var(--accent-saffron-bg);
   --color-accent-saffron-fg: var(--accent-saffron-fg);
   --color-accent-violet-bg: var(--accent-violet-bg);
+  --color-accent-teal-bg: var(--accent-teal-bg);
+  --color-accent-teal-fg: var(--accent-teal-fg);
   --color-accent-violet-fg: var(--accent-violet-fg);
   --color-accent-red-bg: var(--accent-red-bg);
   --color-accent-red-fg: var(--accent-red-fg);
@@ -770,6 +780,8 @@
   --color-accent-saffron-bg: var(--accent-saffron-bg);
   --color-accent-saffron-fg: var(--accent-saffron-fg);
   --color-accent-violet-bg: var(--accent-violet-bg);
+  --color-accent-teal-bg: var(--accent-teal-bg);
+  --color-accent-teal-fg: var(--accent-teal-fg);
   --color-accent-violet-fg: var(--accent-violet-fg);
   --color-accent-red-bg: var(--accent-red-bg);
   --color-accent-red-fg: var(--accent-red-fg);

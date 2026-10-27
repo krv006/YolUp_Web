@@ -128,7 +128,13 @@
     "inviteCopyFailed": "Не удалось скопировать ссылку",
     "inviteExpiry": "Действует {{count}} дней",
     "approvalLabel": "С подтверждением",
-    "approvalHint": "Вы подтверждаете пришедших по ссылке"
+    "approvalHint": "Вы подтверждаете пришедших по ссылке",
+    "mobileSubtitle": "Чат, уроки и задания в одном месте",
+    "shortDescriptionLabel": "Краткое описание",
+    "lessonsHint": "Расписание добавите позже",
+    "subjectPlaceholder": "Выберите",
+    "decrease": "Уменьшить",
+    "increase": "Увеличить"
   },
   "list": {
     "today": "Сегодня",
@@ -274,7 +280,9 @@
     "typing": "{{name}} печатает...",
     "you": "Вы",
     "peopleSection": "Люди",
-    "startChat": "Начать чат"
+    "startChat": "Начать чат",
+    "connectionLost": "Нет соединения",
+    "freshStart": "Новое начало"
   },
   "pinned": {
     "label": "Закреплённое сообщение",
@@ -338,5 +346,17 @@
     "selectAria": "Фото {{number}}",
     "removeAria": "Убрать фото {{number}}",
     "quality": "Фото отправятся в исходном качестве · {{size}}"
+  },
+  "listTime": {
+    "yesterday": "Вчера",
+    "weekdays": [
+      "Вс",
+      "Пн",
+      "Вт",
+      "Ср",
+      "Чт",
+      "Пт",
+      "Сб"
+    ]
   }
 }

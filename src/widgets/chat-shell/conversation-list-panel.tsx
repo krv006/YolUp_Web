@@ -1,61 +1,35 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  ConversationActionsSheet,
-  matchesConversationFilter,
-  useConversationFilter,
-  useConversations,
-  useNewConversationStore,
-  type ConversationFilter,
-} from "@/modules/conversation";
-import { useUserSearch } from "@/modules/notification";
+import { ConversationActionsSheet, useNewConversationStore } from "@/modules/conversation";
 import { ROUTES } from "@/shared/config";
-import { formatMessageTime } from "@/shared/lib";
 import { Avatar } from "@/shared/ui/legacy";
-import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import type { Conversation } from "@/shared/types";
+import { ConversationRowBody } from "./conversation-row";
+import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-list";
 
-const FILTERS: ConversationFilter[] = ["all", "group", "direct", "unread"];
-
-function preview(conversation: Conversation, youLabel: string): string {
-  if (!conversation.lastMessage) return "";
-  const sender = conversation.lastSender;
-  if (!sender) return conversation.lastMessage;
-  return `${sender === "me" ? youLabel : sender}: ${conversation.lastMessage}`;
-}
 
 export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const { conversationId } = useParams();
-  const { filter, setFilter } = useConversationFilter();
-  const [search, setSearch] = useState("");
+  const {
+    isLoading,
+    isError,
+    refetch,
+    filter,
+    setFilter,
+    search,
+    setSearch,
+    query,
+    visible,
+    peopleRows,
+    unreadTotal,
+  } = useConversationList();
   const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
   const [actionsAt, setActionsAt] = useState<{ x: number; y: number } | null>(null);
   const openNewConversation = useNewConversationStore((state) => state.setOpen);
-  const { data = [], isLoading, isError, refetch } = useConversations("teacher");
-
-  const query = search.trim().toLowerCase();
-
-  const visible = useMemo(() => {
-    const rows = data
-      .filter((item) => matchesConversationFilter(item, filter))
-      .filter((item) => (query ? item.title.toLowerCase().includes(query) : true));
-    return [...rows].sort((a, b) => {
-      if (Boolean(a.isPinned) !== Boolean(b.isPinned)) return a.isPinned ? -1 : 1;
-      return b.updatedAt.localeCompare(a.updatedAt);
-    });
-  }, [data, filter, query]);
-
-  const people = useUserSearch(query);
-  const peopleRows = useMemo(() => {
-    const known = new Set(data.map((item) => item.id));
-    return (people.data ?? []).filter((person) => !person.roomId || !known.has(person.roomId));
-  }, [people.data, data]);
-
-  const unreadTotal = data.reduce((sum, item) => sum + (item.unreadCount > 0 ? 1 : 0), 0);
 
   return (
     <section
@@ -117,7 +91,7 @@ export function ConversationListPanel() {
         </p>
       ) : (
         <div className="flex shrink-0 items-center gap-2 overflow-x-auto px-5 pt-4.5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist">
-          {FILTERS.map((id) => (
+          {CONVERSATION_FILTERS.map((id) => (
             <button
               key={id}
               role="tab"
@@ -193,62 +167,7 @@ export function ConversationListPanel() {
                       setActionsFor(conversation);
                     }}
                   >
-                    {conversation.type === "group" ? (
-                      <GroupTile
-                        name={conversation.title}
-                        tone={conversation.avatarTone}
-                        className="size-12 rounded-xl text-title-sm"
-                      />
-                    ) : (
-                      <Avatar
-                        name={conversation.title}
-                        tone={conversation.avatarTone}
-                        src={conversation.imageUrl ?? undefined}
-                        size="lg"
-                        status={conversation.status === "online" ? "online" : undefined}
-                        className="[&_.avatar]:size-12"
-                      />
-                    )}
-
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <strong className="truncate text-title-sm text-ink">
-                        {conversation.title}
-                      </strong>
-                      {conversation.typing ? (
-                        <small className="truncate text-body-sm text-brand">
-                          {t("panel.typing", { name: conversation.typingName ?? "" })}
-                        </small>
-                      ) : (
-                        <small className="flex min-w-0 items-center gap-1 text-body-sm text-ink-secondary">
-                          {conversation.lastSender === "me" ? (
-                            <Icon name="done-all" size={16} className="shrink-0 text-brand" />
-                          ) : null}
-                          <span className="truncate">{preview(conversation, t("panel.you"))}</span>
-                        </small>
-                      )}
-                    </span>
-
-                    <span className="flex shrink-0 flex-col items-end gap-1">
-                      <span className="flex items-center gap-1">
-                        {conversation.isPinned ? (
-                          <Icon name="pin" size={14} className="text-icon-secondary" />
-                        ) : null}
-                        <small
-                          className={`text-caption ${
-                            conversation.unreadCount ? "text-brand" : "text-ink-secondary"
-                          }`}
-                        >
-                          {conversation.updatedAt ? formatMessageTime(conversation.updatedAt) : ""}
-                        </small>
-                      </span>
-                      {conversation.unreadCount ? (
-                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1.5 text-caption-strong text-ink-inverse">
-                          {conversation.unreadCount}
-                        </span>
-                      ) : conversation.isMuted ? (
-                        <Icon name="notifications-off" size={16} className="text-icon-tertiary" />
-                      ) : null}
-                    </span>
+                    <ConversationRowBody conversation={conversation} />
                   </button>
                 </Fragment>
               );

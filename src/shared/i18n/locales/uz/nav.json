@@ -35,5 +35,12 @@
     "myGroups": "Guruhlarim",
     "createGroup": "Guruh qo‘shish",
     "subjectTeacher": "{{subject}} o‘qituvchisi"
+  },
+  "tabs": {
+    "workspace": "Workspace",
+    "schedule": "Jadval",
+    "home": "Asosiy",
+    "chat": "Chat",
+    "profile": "Profil"
   }
 }

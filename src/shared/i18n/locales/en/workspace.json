@@ -172,5 +172,16 @@
   "ai": {
     "fileTooBig": "“{{name}}” is too large — up to {{size}} MB per file.",
     "removeFile": "Remove file"
+  },
+  "mobileSearch": {
+    "groups": "Groups · {{count}}",
+    "lessons": "Lessons · {{count}}",
+    "quizzes": "Quizzes · {{count}}",
+    "messages": "Messages · {{count}}",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "emptyTitle": "Nothing found",
+    "emptyHint": "No groups, lessons, quizzes or messages match “{{query}}”. Try another word.",
+    "clear": "Clear"
   }
 }

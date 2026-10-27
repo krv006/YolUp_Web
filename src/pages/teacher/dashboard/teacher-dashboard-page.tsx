@@ -4,13 +4,14 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { useDashboardActivity, useMyAnalytics, useTeacherDashboard } from "@/modules/analytics";
-import { useConversations } from "@/modules/conversation";
+import { useConversations, useNewConversationStore } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useLessons } from "@/modules/lesson";
 import { useLessonPresence } from "@/modules/live";
 import { NotificationBell } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useOnline } from "@/shared/hooks/use-online";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
@@ -18,6 +19,7 @@ import { GlobalSearchDialog } from "@/widgets/global-search";
 import { DashboardHero } from "./dashboard-hero";
 import { DashboardEmptyGroups } from "./dashboard-empty-groups";
 import { DashboardSkeleton } from "./dashboard-skeleton";
+import { MobileDashboard } from "./mobile-dashboard";
 
 const LESSON_PAGE_SIZE = 60;
 
@@ -49,6 +51,8 @@ export function TeacherDashboardPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const online = useOnline();
+  const isCompact = useIsCompact();
+  const openNewGroup = useNewConversationStore((state) => state.setOpen);
   const courses = useCourses();
   const lessons = useLessons({ page_size: LESSON_PAGE_SIZE });
   const stats = useMyAnalytics();
@@ -125,6 +129,50 @@ export function TeacherDashboardPage() {
   );
 
   const loading = courses.isLoading || lessons.isLoading;
+
+  if (isCompact) {
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowLessons = (lessons.data ?? [])
+      .filter(
+        (lesson) =>
+          new Date(lesson.startsAt).toDateString() === tomorrow.toDateString() &&
+          lesson.status !== "cancelled"
+      )
+      .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+
+    return (
+      <MobileDashboard
+        userName={user?.name ?? ""}
+        userSubject={user?.subject ?? null}
+        userAvatar={user?.avatarUrl ?? null}
+        online={online}
+        loading={loading}
+        hasGroups={groups.length > 0}
+        heroLesson={heroLesson}
+        live={Boolean(liveLesson)}
+        heroStudents={heroLesson ? (studentsByCourse.get(heroLesson.courseId) ?? 0) : 0}
+        joinedCount={liveLesson ? (presence.data?.count ?? null) : null}
+        pendingWorks={pendingTotal}
+        pendingTasks={toReview.length}
+        todayLessons={todayLessons}
+        tomorrowLessons={tomorrowLessons}
+        nextLesson={upcoming(lessons.data) ?? null}
+        studentsByCourse={studentsByCourse}
+        toneByCourse={toneByCourse}
+        avatarByCourse={avatarByCourse}
+        notificationsHref={ROUTES.teacher.notifications}
+        onOpenLesson={(lesson) => navigate(ROUTES.live(lesson.id))}
+        onChat={(lesson) => {
+          const room = roomByCourse.get(lesson.courseId);
+          navigate(room ? ROUTES.teacher.chat(room) : ROUTES.teacher.chats);
+        }}
+        onReview={() => navigate(ROUTES.teacher.homework)}
+        onSchedule={() => navigate(ROUTES.teacher.schedule)}
+        onCreateGroup={() => openNewGroup(true)}
+      />
+    );
+  }
 
   if (!loading && !groups.length)
     return (

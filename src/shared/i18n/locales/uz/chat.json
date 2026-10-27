@@ -128,7 +128,13 @@
     "inviteCopyFailed": "Havolani nusxalab bo‘lmadi",
     "inviteExpiry": "{{count}} kun amal qiladi",
     "approvalLabel": "Tasdiqlash bilan",
-    "approvalHint": "Havola orqali kelganlarni siz tasdiqlaysiz"
+    "approvalHint": "Havola orqali kelganlarni siz tasdiqlaysiz",
+    "mobileSubtitle": "Chat, darslar va vazifalar bitta joyda",
+    "shortDescriptionLabel": "Qisqa tavsif",
+    "lessonsHint": "Jadvalni keyin qo‘shasiz",
+    "subjectPlaceholder": "Tanlang",
+    "decrease": "Kamaytirish",
+    "increase": "Ko‘paytirish"
   },
   "list": {
     "today": "Bugun",
@@ -244,7 +250,7 @@
     "retry": "Qayta urinish",
     "peopleLabel": "ODAMLAR",
     "emptyTitle": "Suhbat topilmadi",
-    "emptyHint": "Qidiruv so‘zi yoki filtrlarni o‘zgartirib ko‘ring",
+    "emptyHint": "Qidiruv so‘zi yoki filtrlarni o‘zgartirib ko‘ring.",
     "clearFilters": "Filtrni tozalash",
     "newGroupAria": "Yangi guruh yoki suhbat yaratish",
     "findTeacherAria": "O'qituvchi yoki kurs topish",
@@ -274,7 +280,9 @@
     "typing": "{{name}} yozmoqda...",
     "you": "Siz",
     "peopleSection": "Odamlar",
-    "startChat": "Suhbat ochish"
+    "startChat": "Suhbat ochish",
+    "connectionLost": "Ulanish yo‘q",
+    "freshStart": "Yangi boshlanish"
   },
   "pinned": {
     "label": "Qadalgan xabar",
@@ -338,5 +346,17 @@
     "selectAria": "{{number}}-rasm",
     "removeAria": "{{number}}-rasmni olib tashlash",
     "quality": "Rasmlar asl sifatda yuboriladi · {{size}}"
+  },
+  "listTime": {
+    "yesterday": "Kecha",
+    "weekdays": [
+      "Ya",
+      "Du",
+      "Se",
+      "Ch",
+      "Pa",
+      "Ju",
+      "Sh"
+    ]
   }
 }

@@ -18,6 +18,9 @@ export interface AppDialogProps {
   width?: string;
   /** stacked: ikonka sarlavha ustida · centered: hammasi markazda, yopish tugmasisiz. */
   layout?: "inline" | "stacked" | "centered";
+  titleClassName?: string;
+  footerClassName?: string;
+  closeClassName?: string;
 }
 
 const SHELL =
@@ -45,12 +48,15 @@ export function AppDialog({
   footer,
   width = "lg:w-130",
   layout = "inline",
+  titleClassName = "font-heading text-h2",
+  footerClassName,
+  closeClassName = "size-9",
 }: AppDialogProps) {
   const { t } = useTranslation("common");
 
   const titleBlock = (
     <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-      <DialogPrimitive.Title className="font-heading text-h2 text-ink">
+      <DialogPrimitive.Title className={`${titleClassName} text-ink`}>
         {title}
       </DialogPrimitive.Title>
       {description ? (
@@ -78,7 +84,7 @@ export function AppDialog({
           {layout === "centered" ? (
             <div className="flex shrink-0 flex-col items-center gap-3 px-6 pt-6 text-center">
               {icon ? <span className="shrink-0">{icon}</span> : null}
-              <DialogPrimitive.Title className="font-heading text-h2 text-ink">
+              <DialogPrimitive.Title className={`${titleClassName} text-ink`}>
                 {title}
               </DialogPrimitive.Title>
               {description ? (
@@ -99,7 +105,7 @@ export function AppDialog({
 
               <button
                 type="button"
-                className="grid size-9 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted"
+                className={`grid ${closeClassName} shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted`}
                 onClick={() => onOpenChange(false)}
                 aria-label={t("actions.close", { defaultValue: "Yopish" })}
               >
@@ -118,9 +124,8 @@ export function AppDialog({
           {footer ? (
             <div
               className={`flex shrink-0 gap-3 ${
-                layout === "centered"
-                  ? "flex-col px-6 pt-4 pb-6"
-                  : "items-center px-4 pt-6 pb-4"
+                footerClassName ??
+                (layout === "centered" ? "flex-col px-6 pt-4 pb-6" : "items-center px-4 pt-6 pb-4")
               }`}
             >
               {footer}

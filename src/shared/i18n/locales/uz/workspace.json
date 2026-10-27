@@ -172,5 +172,16 @@
   "ai": {
     "fileTooBig": "“{{name}}” juda katta — har bir fayl {{size}} MB gacha bo'lishi kerak.",
     "removeFile": "Faylni olib tashlash"
+  },
+  "mobileSearch": {
+    "groups": "Guruhlar · {{count}}",
+    "lessons": "Darslar · {{count}}",
+    "quizzes": "Testlar · {{count}}",
+    "messages": "Xabarlar · {{count}}",
+    "today": "Bugun",
+    "tomorrow": "Ertaga",
+    "emptyTitle": "Hech narsa topilmadi",
+    "emptyHint": "“{{query}}” bo‘yicha guruh, dars, test yoki xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
+    "clear": "Tozalash"
   }
 }
