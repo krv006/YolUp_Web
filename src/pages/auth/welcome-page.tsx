@@ -22,18 +22,18 @@ export function WelcomePage() {
   if (user) return <Navigate to={resolveHomeRoute(user)} replace />;
 
   return (
-    <main className="flex min-h-dvh flex-col bg-canvas px-5 pt-4 pb-7">
-      <div className="relative flex shrink-0 justify-end">
+    <main className="relative flex min-h-dvh flex-col bg-canvas bg-auth-gradient px-4 pt-2 pb-6 font-body text-ink">
+      <div className="relative z-10 flex shrink-0 justify-end pt-6">
         <button
           type="button"
-          className="flex h-10 items-center gap-1.5 rounded-full bg-subtle px-3 text-label-strong text-ink"
+          className="flex h-9 items-center gap-1 rounded-full bg-surface px-2.5 text-label-sm text-ink shadow-xs"
           aria-haspopup="listbox"
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
         >
           <span aria-hidden="true">{FLAGS[language]}</span>
           {CODES[language]}
-          <ChevronDown size={16} className="text-ink-secondary" />
+          <ChevronDown size={14} className="text-ink-secondary" />
         </button>
 
         {open ? (
@@ -64,11 +64,11 @@ export function WelcomePage() {
         ) : null}
       </div>
 
-      <div className="flex flex-1 items-center justify-center py-10">
-        <img className="size-32 select-none" src={logoUrl} alt="YolUp" draggable={false} />
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <img className="size-34 select-none" src={logoUrl} alt="YolUp" draggable={false} />
       </div>
 
-      <div className="mx-auto flex w-full max-w-[420px] shrink-0 flex-col gap-3">
+      <div className="relative z-10 mx-auto mt-auto flex w-full max-w-[420px] shrink-0 flex-col gap-3 pb-10">
         <AuthButton onClick={() => navigate("/login")}>{t("form.submit")}</AuthButton>
         <AuthButton variant="secondary" onClick={() => navigate("/register")}>
           {t("mobile.login.registerLink")}

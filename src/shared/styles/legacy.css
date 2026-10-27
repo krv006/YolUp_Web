@@ -2723,7 +2723,7 @@ button:disabled {
   font-size: var(--fs-md);
 }
 
-[data-sonner-toaster] [data-sonner-toast].fokus-toast {
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"].fokus-toast {
   border: 1px solid #26313d !important;
   color: var(--sidebar-foreground) !important;
   background: #161c23 !important;

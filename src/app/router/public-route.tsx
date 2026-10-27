@@ -1,11 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
-import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { RouteState } from "@/shared/ui/legacy";
+import { SplashScreen } from "@/shared/ui/splash-screen";
 import { resolveHomeRoute } from "./resolve-home-route";
 
 export function PublicRoute() {
   const { user, isInitializing, initializationError, retrySession } = useAuth();
-  if (isInitializing) return <LoadingFallback />;
+  if (isInitializing) return <SplashScreen />;
   if (initializationError) {
     return (
       <RouteState

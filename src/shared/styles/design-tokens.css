@@ -201,6 +201,7 @@
   --status-info-text: var(--status-info-fg);
 
   --gradient-page: linear-gradient(180deg, #dee3f9 0, var(--bg-canvas) 380px);
+  --gradient-auth: linear-gradient(180deg, #d4dcf9 0, var(--bg-canvas) 444px);
   --gradient-brand: linear-gradient(90deg, var(--blue-500) 0%, #6b5af2 100%);
 
   --overlay-scrim: var(--surface-scrim);
@@ -333,6 +334,7 @@
 .dark,
 [data-theme="dark"] {
   --bg-tint: var(--ink-800);
+  --gradient-auth: linear-gradient(180deg, var(--ink-900) 0, var(--bg-canvas) 488px);
 
   --surface-primary: var(--ink-900);
   --surface-secondary: var(--ink-800);
@@ -885,6 +887,30 @@
   background-image: var(--gradient-page);
 }
 
+@utility bg-auth-gradient {
+  background-image: var(--gradient-auth);
+}
+
 @utility bg-brand-gradient {
   background-image: var(--gradient-brand);
+}
+
+@keyframes app-toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes splash-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
 }

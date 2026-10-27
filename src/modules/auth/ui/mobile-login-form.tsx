@@ -4,9 +4,9 @@ import { CloudOff } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { applyApiFieldErrors, type AppError } from "@/shared/api";
 import { useOnline } from "@/shared/hooks/use-online";
+import { showErrorToast } from "@/shared/ui/app-toast";
 import type { LoginCredentials } from "@/shared/types";
 import { createLoginSchema } from "../model/auth.schemas";
 import {
@@ -47,7 +47,8 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
       if (!applyApiFieldErrors(appError, setError, { username: "login" })) {
         setError("root", { type: "server", message: t("mobile.login.failed") });
       }
-      toast.error(t("mobile.login.errorToastTitle"), {
+      showErrorToast({
+        title: t("mobile.login.errorToastTitle"),
         description: t("mobile.login.errorToastDescription"),
       });
     }
@@ -55,6 +56,7 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
 
   return (
     <AuthScreen
+      layout="spaced"
       onBack={() => navigate(-1)}
       title={t("mobile.login.title")}
       description={t("mobile.login.subtitle")}
@@ -80,7 +82,7 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
       footer={
         <>
           {t("mobile.login.noAccount")}{" "}
-          <Link className="text-action" to="/register">
+          <Link className="text-brand-strong" to="/register">
             {t("mobile.login.registerLink")}
           </Link>
         </>
@@ -88,32 +90,39 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
     >
       <form
         id="mobile-login-form"
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-4"
         onSubmit={handleSubmit(submit)}
         noValidate
       >
-        <AuthField
-          autoComplete="username"
-          placeholder={t("form.loginPlaceholder")}
-          aria-label={t("form.loginLabel")}
-          invalid={Boolean(errors.login) || failed}
-          {...register("login")}
-        />
-        {errors.login ? <AuthFieldError>{errors.login.message}</AuthFieldError> : null}
+        <div className="flex flex-col gap-1">
+          <AuthField
+            autoComplete="username"
+            label={t("form.loginLabel")}
+            placeholder={t("form.loginPlaceholder")}
+            invalid={Boolean(errors.login) || failed}
+            {...register("login")}
+          />
+          {errors.login ? <AuthFieldError>{errors.login.message}</AuthFieldError> : null}
+        </div>
 
-        <AuthPasswordField
-          autoComplete="current-password"
-          placeholder={t("form.passwordPlaceholder")}
-          aria-label={t("form.passwordLabel")}
-          invalid={Boolean(errors.password) || failed}
-          visible={showPassword}
-          onToggle={() => setShowPassword((value) => !value)}
-          {...register("password")}
-        />
-        {errors.password ? <AuthFieldError>{errors.password.message}</AuthFieldError> : null}
-        {failed ? <AuthFieldError>{errors.root?.message}</AuthFieldError> : null}
+        <div className="flex flex-col gap-1">
+          <AuthPasswordField
+            autoComplete="current-password"
+            label={t("form.passwordLabel")}
+            placeholder={t("form.passwordPlaceholder")}
+            invalid={Boolean(errors.password) || failed}
+            visible={showPassword}
+            onToggle={() => setShowPassword((value) => !value)}
+            {...register("password")}
+          />
+          {errors.password ? <AuthFieldError>{errors.password.message}</AuthFieldError> : null}
+          {failed ? <AuthFieldError>{errors.root?.message}</AuthFieldError> : null}
+        </div>
 
-        <Link className="self-end px-2 text-label-strong text-action" to="/forgot-password">
+        <Link
+          className="self-end text-body-sm text-brand-strong transition-opacity hover:opacity-80"
+          to="/forgot-password"
+        >
           {t("mobile.login.forgotPassword")}
         </Link>
       </form>

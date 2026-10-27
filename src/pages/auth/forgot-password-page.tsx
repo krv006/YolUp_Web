@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AuthButton,
-  AuthFieldError,
-  AuthPhoneField,
+  AuthPhoneInput,
   AuthScreen,
+  UZ_PHONE_LENGTH,
   describeResetError,
   usePasswordResetRequestMutation,
 } from "@/modules/auth";
+import { showErrorToast } from "@/shared/ui/app-toast";
 
 const DEFAULT_EXPIRES_IN = 120;
 const DEFAULT_RETRY_AFTER = 45;
@@ -17,27 +17,28 @@ const DEFAULT_RETRY_AFTER = 45;
 export function ForgotPasswordPage() {
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
+  const location = useLocation();
   const requestCode = usePasswordResetRequestMutation();
-  const [phone, setPhone] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const initial = (location.state as { digits?: string } | null)?.digits ?? "";
+  const [digits, setDigits] = useState(initial);
 
   async function sendCode() {
-    const value = phone.trim();
-    setError(null);
+    const phone = `+998${digits}`;
     try {
-      const response = await requestCode.mutateAsync(value);
-      toast.success(t("mobile.reset.sent"));
+      const response = await requestCode.mutateAsync(phone);
       navigate("/verify-code", {
         state: {
-          phone: value,
+          phone,
+          digits,
           expiresIn: response.expires_in ?? DEFAULT_EXPIRES_IN,
           retryAfter: response.retry_after ?? DEFAULT_RETRY_AFTER,
         },
       });
     } catch (caught) {
-      const message = describeResetError(caught, t);
-      setError(message);
-      toast.error(message);
+      showErrorToast({
+        title: t("mobile.login.errorToastTitle"),
+        description: describeResetError(caught, t),
+      });
     }
   }
 
@@ -51,7 +52,7 @@ export function ForgotPasswordPage() {
           onClick={sendCode}
           loading={requestCode.isPending}
           loadingLabel={t("mobile.reset.sending")}
-          disabled={phone.trim().length < 9}
+          disabled={digits.length < UZ_PHONE_LENGTH}
         >
           {t("mobile.reset.sendCode")}
         </AuthButton>
@@ -59,26 +60,19 @@ export function ForgotPasswordPage() {
       footer={
         <>
           {t("mobile.reset.remembered")}{" "}
-          <Link className="text-action" to="/login">
+          <Link className="font-semibold text-brand-strong" to="/login">
             {t("form.submit")}
           </Link>
         </>
       }
     >
-      <AuthPhoneField
-        autoFocus
-        value={phone}
-        invalid={Boolean(error)}
-        placeholder={t("mobile.reset.phonePlaceholder")}
-        aria-label={t("register.form.phone")}
+      <AuthPhoneInput
+        label={t("mobile.reset.phoneLabel")}
         hint={t("mobile.reset.phoneHint")}
-        onChange={(event) => {
-          setError(null);
-          setPhone(event.target.value);
-        }}
+        placeholder={t("mobile.reset.phoneNationalPlaceholder")}
+        value={digits}
+        onChange={setDigits}
       />
-
-      {error ? <AuthFieldError>{error}</AuthFieldError> : null}
     </AuthScreen>
   );
 }

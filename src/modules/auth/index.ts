@@ -72,8 +72,10 @@ export {
   AuthFieldError,
   AuthPasswordField,
   AuthPhoneField,
+  AuthPhoneInput,
   AuthScreen,
 } from "./ui/auth-screen";
+export { UZ_PHONE_LENGTH, formatUzPhone } from "./lib/uz-phone";
 export { MobileLoginForm } from "./ui/mobile-login-form";
 export { MobileRegisterForm } from "./ui/mobile-register-form";
 export { OtpInput } from "./ui/otp-input";
