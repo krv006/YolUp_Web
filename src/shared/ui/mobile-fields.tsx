@@ -1,5 +1,6 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { Icon } from "@/shared/ui/icon";
+import { MobileDateSheet, MobileTimeSheet, type MobileTimeSheetProps } from "@/shared/ui/mobile-pickers";
 
 const INPUT_BASE =
   "h-13 w-full rounded-lg border-[1.5px] px-4 text-body text-ink outline-none transition-colors placeholder:text-ink-secondary focus:border-focus";
@@ -11,14 +12,16 @@ export const MOBILE_INPUT_SURFACE = `${INPUT_BASE} border-transparent bg-surface
 export function MobileFieldLabel({
   label,
   aside,
+  gapClassName = "gap-2",
   children,
 }: {
   label: ReactNode;
   aside?: ReactNode;
+  gapClassName?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <div className={`flex min-w-0 flex-col ${gapClassName}`}>
       <span className="flex items-center gap-3">
         <span className="min-w-0 flex-1 truncate text-body-sm text-ink">{label}</span>
         {aside}
@@ -37,6 +40,7 @@ export interface MobilePickerFieldProps {
   min?: string;
   options?: Array<{ value: string; label: string }>;
   ariaLabel: string;
+  duration?: MobileTimeSheetProps["duration"];
   onChange: (value: string) => void;
 }
 
@@ -49,8 +53,10 @@ export function MobilePickerField({
   min,
   options = [],
   ariaLabel,
+  duration,
   onChange,
 }: MobilePickerFieldProps) {
+  const [sheetOpen, setSheetOpen] = useState(false);
   return (
     <span
       className={`relative flex h-13 w-full items-center gap-2 rounded-lg border-[1.5px] px-4 transition-colors focus-within:border-focus ${
@@ -63,7 +69,25 @@ export function MobilePickerField({
         size={20}
         className={`shrink-0 ${invalid ? "text-error-text" : "text-ink-secondary"}`}
       />
-      {type === "select" ? (
+      {type === "date" || type === "time" ? (
+        <button
+          type="button"
+          className="absolute inset-0 cursor-pointer rounded-lg"
+          aria-label={ariaLabel}
+          onClick={() => setSheetOpen(true)}
+        />
+      ) : null}
+      {type === "date" ? (
+        <MobileDateSheet open={sheetOpen} onOpenChange={setSheetOpen} value={value} min={min} onChange={onChange} />
+      ) : type === "time" ? (
+        <MobileTimeSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          value={value}
+          duration={duration}
+          onChange={onChange}
+        />
+      ) : type === "select" ? (
         <select
           className="absolute inset-0 cursor-pointer opacity-0"
           value={value}
@@ -148,5 +172,16 @@ export function MobileToggle<T extends string>({
         </button>
       ))}
     </div>
+  );
+}
+
+export function MobileRadio({ checked }: { checked: boolean }) {
+  return (
+    <span
+      className={`size-[22px] shrink-0 rounded-full bg-surface ${
+        checked ? "border-[6px] border-brand" : "border-[1.5px] border-line-strong"
+      }`}
+      aria-hidden="true"
+    />
   );
 }

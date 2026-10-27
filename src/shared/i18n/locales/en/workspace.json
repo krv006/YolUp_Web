@@ -50,7 +50,14 @@
     "studentCountValue": "{{count}} students",
     "emptyTitle": "No data yet",
     "emptyDescription": "Once grades, test results and attendance are in, course metrics will appear here.",
-    "emptyAction": "Create a test"
+    "emptyAction": "Create a test",
+    "mobile": {
+      "eyebrow": "Personal analytics",
+      "settings": "Settings",
+      "ratings": "Ratings",
+      "test": "Test {{value}}",
+      "attendance": "Attendance {{value}}"
+    }
   },
   "createGroup": "Create a group",
   "statGroups": "Groups",
@@ -151,6 +158,49 @@
       "materials": {
         "title": "Materials",
         "description": "Textbooks, audio and files"
+      }
+    },
+    "mobile": {
+      "eyebrow": "Workspace",
+      "create": "Create",
+      "overview": "Overview",
+      "details": "Details",
+      "stats": {
+        "unchecked": "Unchecked",
+        "tests": "Tests",
+        "mock": "Mock exams"
+      },
+      "createItems": {
+        "test": "New test",
+        "homework": "Assign homework",
+        "mock": "Mock exam",
+        "ai": "Test with AI"
+      },
+      "modules": {
+        "tests": {
+          "title": "Tests",
+          "description": "Create tests and review results"
+        },
+        "analytics": {
+          "title": "Analytics",
+          "description": "Results and activity statistics"
+        },
+        "ai": {
+          "title": "AI assistant",
+          "description": "Build tests with AI"
+        },
+        "mock": {
+          "title": "Mock tests",
+          "description": "IELTS, SAT, National certificate"
+        },
+        "assignments": {
+          "title": "Homework",
+          "description": "Assign and check homework"
+        },
+        "materials": {
+          "title": "Materials",
+          "description": "Textbooks, audio and files"
+        }
       }
     }
   },

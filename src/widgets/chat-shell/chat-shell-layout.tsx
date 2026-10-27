@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { NewConversationDialog, useNewConversationStore } from "@/modules/conversation";
+import { ChatSkeleton } from "@/shared/ui/page-skeleton";
 import { ConversationTopbar } from "@/widgets/conversation-topbar";
 import { AppSidebar } from "@/widgets/app-sidebar";
 import { ConversationListPanel } from "./conversation-list-panel";
@@ -48,7 +50,9 @@ export function ChatShellLayout() {
           />
         )}
         <main className="min-h-0 flex-1 overflow-hidden bg-canvas">
-          <Outlet key={conversationId ?? section} />
+          <Suspense fallback={<ChatSkeleton />}>
+            <Outlet key={conversationId ?? section} />
+          </Suspense>
         </main>
       </div>
 

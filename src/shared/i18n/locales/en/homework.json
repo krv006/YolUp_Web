@@ -261,9 +261,19 @@
     "aiTitle": "AI checked today's work",
     "aiHint": "Waiting for your confirmation — the final grade is yours.",
     "aiCheckedToday": "AI checked {{count}} submissions today",
-    "aiPendingConfirm": "{{count}} grades are waiting for your confirmation"
+    "aiPendingConfirm": "{{count}} grades are waiting for your confirmation",
+    "mobile": {
+      "back": "Back",
+      "more": "Actions",
+      "review": "Review work",
+      "delete": "Delete"
+    }
   },
   "detail": {
+    "emptyTitle": "No one has submitted yet",
+    "emptyHint": "{{count}} days left until the deadline. You can send students a reminder.",
+    "emptyHintToday": "The deadline is today. You can send students a reminder.",
+    "emptyHintOverdue": "The deadline has passed. You can send students a reminder.",
     "eyebrow": "Assignments / {{course}} · Due: {{due}}",
     "remind": "Remind ({{count}})",
     "due": "{{value}}",

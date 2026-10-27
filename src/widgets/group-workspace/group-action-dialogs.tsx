@@ -149,6 +149,11 @@ export function AddLessonDialog({
   const canRepeat = Boolean(onCreateSchedule) && !initialValues;
   const isRepeating = canRepeat && repeat;
   const duration = Number(form.duration) || 45;
+  const durationPicker = {
+    value: duration,
+    options: MOBILE_DURATIONS,
+    onChange: (value: number) => update("duration", String(value)),
+  };
   const today = todayString();
   const editingPast = Boolean(initialValues) && form.date < today;
   const startsInPast =
@@ -378,6 +383,7 @@ export function AddLessonDialog({
                     value={form.time}
                     display={form.time}
                     ariaLabel={t("dialogs.lesson.startTime")}
+                    duration={durationPicker}
                     onChange={(value) => update("time", value)}
                   />
                 </MobileFieldLabel>
@@ -433,6 +439,7 @@ export function AddLessonDialog({
                       display={form.time}
                       invalid={timeBusy}
                       ariaLabel={t("dialogs.lesson.startTime")}
+                      duration={durationPicker}
                       onChange={(value) => update("time", value)}
                     />
                   </MobileFieldLabel>

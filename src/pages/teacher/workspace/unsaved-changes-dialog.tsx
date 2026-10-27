@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
+import { MobileAlertDialog } from "@/shared/ui/mobile-alert-dialog";
 
 export interface UnsavedChangesDialogProps {
   open: boolean;
@@ -16,6 +18,25 @@ export function UnsavedChangesDialog({
   onLeave,
 }: UnsavedChangesDialogProps) {
   const { t } = useTranslation("quiz");
+  const isCompact = useIsCompact();
+
+  if (isCompact)
+    return (
+      <MobileAlertDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        icon="edit-note"
+        title={t("unsaved.title")}
+        description={t("unsaved.description", { count })}
+        cancelLabel={t("unsaved.leave")}
+        confirmLabel={t("unsaved.stay")}
+        onCancel={() => {
+          onOpenChange(false);
+          onLeave();
+        }}
+        onConfirm={() => onOpenChange(false)}
+      />
+    );
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>

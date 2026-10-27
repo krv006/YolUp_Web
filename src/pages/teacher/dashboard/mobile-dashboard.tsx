@@ -3,7 +3,9 @@ import { useTranslation } from "react-i18next";
 import type { Lesson } from "@/shared/types";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
+import { MobileListCard, MobileListRow, MobileSectionTitle, MobileWarningNote } from "@/shared/ui/mobile-page";
 import { MobileTeacherHeader } from "@/widgets/mobile-teacher-header";
+import { MobileOnboarding } from "./mobile-onboarding";
 
 const TICK_MS = 30_000;
 
@@ -18,7 +20,9 @@ function endOf(lesson: Lesson): Date {
 }
 
 export interface MobileDashboardProps {
+  userId: string | null;
   online: boolean;
+  approved: boolean;
   loading: boolean;
   hasGroups: boolean;
   heroLesson: Lesson | null;
@@ -43,7 +47,9 @@ export interface MobileDashboardProps {
 export function MobileDashboard(props: MobileDashboardProps) {
   const { t } = useTranslation("dashboard");
   const {
+    userId,
     online,
+    approved,
     loading,
     hasGroups,
     heroLesson,
@@ -68,10 +74,12 @@ export function MobileDashboard(props: MobileDashboardProps) {
           </p>
         ) : null}
 
+        {!approved ? <MobileWarningNote>{t("banner.notApproved")}</MobileWarningNote> : null}
+
         {loading ? (
           <DashboardSkeleton title={t("mobile.todayTitle")} />
         ) : !hasGroups ? (
-          <NoGroups onCreate={onCreateGroup} />
+          <NoGroups onCreate={onCreateGroup} disabled={!approved} />
         ) : (
           <>
             {heroLesson ? (
@@ -122,6 +130,8 @@ export function MobileDashboard(props: MobileDashboardProps) {
           </>
         )}
       </div>
+
+      {userId && !loading ? <MobileOnboarding userId={userId} /> : null}
     </main>
   );
 }
@@ -324,7 +334,7 @@ const STEPS = [
   { id: "lesson", icon: "clock", tone: "bg-accent-teal-bg text-accent-teal-fg" },
 ] as const;
 
-function NoGroups({ onCreate }: { onCreate: () => void }) {
+function NoGroups({ onCreate, disabled }: { onCreate: () => void; disabled: boolean }) {
   const { t } = useTranslation("dashboard");
   return (
     <>
@@ -336,7 +346,8 @@ function NoGroups({ onCreate }: { onCreate: () => void }) {
         <p className="mt-3 text-body-sm text-ink-secondary">{t("mobile.noGroupsHint")}</p>
         <button
           type="button"
-          className="mt-3 flex h-11 items-center gap-1.5 rounded-full bg-brand px-4 text-button text-on-action"
+          className="mt-3 flex h-11 items-center gap-1.5 rounded-full bg-brand px-4 text-button text-on-action disabled:opacity-40"
+          disabled={disabled}
           onClick={onCreate}
         >
           <Icon name="add" size={18} />
@@ -344,29 +355,20 @@ function NoGroups({ onCreate }: { onCreate: () => void }) {
         </button>
       </section>
 
-      <section className="flex flex-col gap-3">
-        <h2 className="text-title text-ink">{t("mobile.stepsTitle")}</h2>
-        <div className="flex flex-col overflow-hidden rounded-xl bg-surface">
+      <section className="flex flex-col gap-3 pt-0.5">
+        <MobileSectionTitle>{t("mobile.stepsTitle")}</MobileSectionTitle>
+        <MobileListCard>
           {STEPS.map((step) => (
-            <button
+            <MobileListRow
               key={step.id}
-              type="button"
-              className="flex items-center gap-3 border-b border-line px-4 py-3.5 text-left last:border-b-0"
+              icon={step.icon}
+              tone={step.tone}
+              title={t(`mobile.steps.${step.id}.title`)}
+              subtitle={t(`mobile.steps.${step.id}.hint`)}
               onClick={onCreate}
-            >
-              <span className={`grid size-10 shrink-0 place-items-center rounded-lg ${step.tone}`}>
-                <Icon name={step.icon} size={20} />
-              </span>
-              <span className="flex min-w-0 flex-1 flex-col">
-                <strong className="truncate text-title text-ink">{t(`mobile.steps.${step.id}.title`)}</strong>
-                <small className="truncate text-body-sm text-ink-secondary">
-                  {t(`mobile.steps.${step.id}.hint`)}
-                </small>
-              </span>
-              <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
-            </button>
+            />
           ))}
-        </div>
+        </MobileListCard>
       </section>
     </>
   );

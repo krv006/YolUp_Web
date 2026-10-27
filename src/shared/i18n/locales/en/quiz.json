@@ -238,7 +238,46 @@
     "lockedNotice": "This test already has attempts — questions stay locked. Only the topic, name and due date are saved.",
     "previewTitle": "Student view",
     "previewCounter": "{{current}} / {{total}}",
-    "previewEmpty": "Add a question to see the student view here."
+    "previewEmpty": "Add a question to see the student view here.",
+    "mobile": {
+      "band": "band",
+      "typeAria": "Question type",
+      "pointsAria": "Points",
+      "markCorrect": "Mark option {{letter}} as correct",
+      "yes": "Yes",
+      "no": "No",
+      "numericHint": "Comma or dot both work. With tolerance 0 only the exact number is accepted.",
+      "minWords": "Minimum words",
+      "dragItem": "Reorder",
+      "blankInstruction": "Mark each blank in the text as [answer]",
+      "blankAnswer": "answer",
+      "blankPlaceholder": "Type the text and wrap answers in [ ]",
+      "addBlank": "Add blank",
+      "blankHint": "Separate several correct answers with |. For example: Tashkent|Toshkent",
+      "wizardTitle": "Questions · 2/2",
+      "counter": "Questions · {{current}}/{{total}}",
+      "tabs": {
+        "edit": "Edit",
+        "preview": "Student view"
+      },
+      "previewHint": "Answer the questions — there is no time limit.",
+      "previous": "Previous",
+      "next": "Next",
+      "group": "Question group · {{title}}",
+      "noTranscript": "There is no script for this audio.",
+      "audioHint": "mp3, m4a, aac, ogg, wav · up to 20 MB",
+      "types": {
+        "single": "Single answer",
+        "multiple": "Multiple answers",
+        "true_false": "Yes / No",
+        "numeric": "Number",
+        "text": "Short answer",
+        "matching": "Matching",
+        "ordering": "Ordering",
+        "fill_blank": "Fill in the blank",
+        "essay": "Essay (Writing)"
+      }
+    }
   },
   "answer": {
     "true": "True",
@@ -391,7 +430,9 @@
     "noQuizzes": "There are no ready group-less tests. Create a new one on the AI page.",
     "draftHint": "The test is published as soon as it is given to the group and students can see it (if every question has a correct answer marked).",
     "dueLabel": "Due",
-    "timeLabel": "Time"
+    "timeLabel": "Time",
+    "pick": "Select",
+    "students": "{{count}} students"
   },
   "exportDialog": {
     "title": "Download the test",
@@ -412,6 +453,7 @@
   },
   "tests": {
     "eyebrow": "Workspace / Tests · {{count}}",
+    "eyebrowLoading": "Workspace / Tests · loading…",
     "title": "Tests",
     "create": "Create a test",
     "attempts": "Attempts",
@@ -430,7 +472,20 @@
     "emptyTitle": "No tests yet",
     "emptyHint": "Create your first test — grading happens automatically.",
     "soon": "Coming soon",
-    "importedTopic": "Imported test"
+    "importedTopic": "Imported test",
+    "mobile": {
+      "back": "Back",
+      "searchPlaceholder": "Subject or test name",
+      "clearSearch": "Clear search",
+      "drafts": "Drafts · {{count}}",
+      "published": "Published · {{count}}",
+      "download": "Download",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "deleteTitle": "Delete the test?",
+      "deleteDescription": "“{{title}}” and its results will be deleted permanently.",
+      "emptySearch": "Nothing found"
+    }
   },
   "typeDialog": {
     "title": "Add a question",
@@ -474,7 +529,12 @@
     "hardestSoon": "Per-question mistake stats appear once the backend provides them.",
     "aiTitle": "AI suggestion",
     "aiHint": "Build a short mini-test on the topics with the most mistakes.",
-    "aiAction": "Create a mini-test"
+    "aiAction": "Create a mini-test",
+    "mobile": {
+      "attempt": "attempt {{count}}",
+      "minutes": "{{count}} min",
+      "notSolved": "Not solved"
+    }
   },
   "newTest": {
     "title": "New test",
@@ -491,7 +551,8 @@
       "google": "Google Forms"
     },
     "cancel": "Cancel",
-    "continue": "Continue"
+    "continue": "Continue",
+    "mobileTitle": "New test · 1/2"
   },
   "importDialog": {
     "title": "Import questions",
@@ -516,7 +577,11 @@
     "unlimited": "unlimited retries",
     "attemptCount": "{{count}} attempts",
     "attemptLine": "Attempt {{number}}",
-    "empty": "No attempts yet."
+    "empty": "No attempts yet.",
+    "lastToday": "last today {{time}}",
+    "yesterday": "yesterday",
+    "noAttempts": "No attempts yet",
+    "detailTitle": "{{name}} · attempts"
   },
   "ai": {
     "eyebrow": "Workspace / AI · test builder",
@@ -550,6 +615,41 @@
     "jobDone": "Ready · {{count}} questions · draft",
     "openTest": "Open the test",
     "jobsEmpty": "No AI tests yet.",
-    "jobsHint": "This can take a few minutes. You can close the page — a notification arrives when it is done."
+    "jobsHint": "This can take a few minutes. You can close the page — a notification arrives when it is done.",
+    "mobile": {
+      "back": "Back",
+      "history": "My AI tests",
+      "tabs": {
+        "simple": "Simple",
+        "rules": "With rules",
+        "bank": "From bank"
+      },
+      "bankTitle": "Question bank is coming soon",
+      "bankHint": "We are working on building new tests from questions in your previous tests.",
+      "pickFiles": "Upload material (PDF, DOCX, image)",
+      "filesHint": "Up to 5 files · 20 MB total",
+      "filesTooBig": "Files must not exceed {{size}} MB in total",
+      "countRange": "from {{min}} to {{max}}",
+      "count": "{{count}}",
+      "submit": "Create test with AI",
+      "jobsTitle": "My AI tests",
+      "started": "Test generation started — we will let you know when it is ready",
+      "jobTitle": "{{title}} · {{count}} questions",
+      "ready": "Ready · {{date}}",
+      "running": "Preparing… ~1 minute",
+      "queued": "Queued",
+      "open": "Open",
+      "retry": "Retry"
+    }
+  },
+  "details": {
+    "title": "Edit test",
+    "close": "Close",
+    "save": "Save",
+    "lockedNotice": "This test already has attempts — questions can’t be changed. Only the topic, name and deadline are saved.",
+    "topic": "Topic",
+    "noDue": "No deadline",
+    "questions": "Questions",
+    "questionsLocked": "Questions — can’t be changed"
   }
 }

@@ -3,9 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/config";
 import { useMyAnalytics, useMyTrends } from "@/modules/analytics";
+import { useConversations } from "@/modules/conversation";
+import { useCourses } from "@/modules/course";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
+import { MobileAnalytics } from "./mobile-analytics";
 
 const BAR_COUNT = 8;
 
@@ -16,8 +20,11 @@ function round(value: number | null): string {
 export function WorkspaceAnalyticsPage() {
   const { t } = useTranslation("workspace");
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
   const analytics = useMyAnalytics();
   const trends = useMyTrends("week");
+  const groups = useCourses();
+  const conversations = useConversations("teacher");
 
   const stats = analytics.data?.kind === "teacher" ? analytics.data.overall : null;
   const courses = useMemo(
@@ -45,6 +52,29 @@ export function WorkspaceAnalyticsPage() {
   const maxBar = Math.max(100, ...bars.map((bar) => bar.value ?? 0));
 
   const empty = !analytics.isLoading && !stats && !courses.length;
+
+  if (isCompact) {
+    const rooms = new Map(
+      (conversations.data ?? []).filter((item) => item.courseId).map((item) => [item.courseId as string, item.id])
+    );
+    return (
+      <MobileAnalytics
+        loading={analytics.isLoading}
+        empty={empty || (!courses.length && !stats?.ratingCount)}
+        avgRating={stats?.avgRating ?? null}
+        ratingCount={stats?.ratingCount ?? 0}
+        reliability={stats?.reliability ?? null}
+        courses={courses}
+        avatars={new Map((groups.data ?? []).map((course) => [course.id, { src: course.avatarUrl, tone: course.color }]))}
+        onSettings={() => navigate(`${ROUTES.teacher.profile}/system`)}
+        onDetails={() => navigate(`${ROUTES.teacher.profile}/ratings`)}
+        onOpenCourse={(courseId) => {
+          const room = rooms.get(courseId);
+          navigate(room ? ROUTES.teacher.chat(room) : ROUTES.teacher.chats);
+        }}
+      />
+    );
+  }
 
   if (empty)
     return (

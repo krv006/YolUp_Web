@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { differenceInCalendarDays } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -10,9 +11,9 @@ import {
   useUpdateAssignment,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
-import { formatFileSize } from "@/shared/lib";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { formatDue } from "./format-due";
 import type { Submission, SubmissionStatus } from "@/shared/types";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
@@ -67,6 +68,13 @@ export function HomeworkDetailPage() {
   const unchecked = submissions.filter((row) => row.status !== "done").length;
   const missing = Math.max(total - submitted, 0);
   const average = item?.stats?.averageScore ?? null;
+  const days = item?.dueAt ? differenceInCalendarDays(new Date(item.dueAt), new Date()) : null;
+  const emptyHint =
+    days === null || days < 0
+      ? t("detail.emptyHintOverdue")
+      : days === 0
+        ? t("detail.emptyHintToday")
+        : t("detail.emptyHint", { count: days });
 
   const rows = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -150,6 +158,7 @@ export function HomeworkDetailPage() {
           summary={summary}
           summaryPending={aiSummary.isPending}
           missing={missing}
+          emptyHint={emptyHint}
           onBack={() => navigate(-1)}
           onEdit={() => setEditOpen(true)}
           onDelete={() => setDeleteOpen(true)}
@@ -183,43 +192,41 @@ export function HomeworkDetailPage() {
     >
       <div className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-4">
-          <section className="flex flex-col gap-4 rounded-lg bg-surface p-5">
+          <section className="flex flex-col rounded-lg bg-surface p-5">
             <span className="flex flex-wrap items-center gap-2">
-              <span className="flex h-6.5 items-center gap-1.5 rounded-full bg-warning-bg px-2.5 text-caption-strong text-warning-fg">
-                <Icon name="schedule" size={13} />
-                {t("detail.due", { value: formatDue(item?.dueAt ?? null, months) })}
+              <span className="flex h-[22px] items-center gap-1 rounded-full bg-warning-bg px-2 text-caption-strong text-ink">
+                <Icon name="timer" size={13} />
+                {days !== null && days >= 0
+                  ? t("list.daysLeft", { count: days })
+                  : t("detail.due", { value: formatDue(item?.dueAt ?? null, months) })}
               </span>
-              <span className="flex h-6.5 items-center gap-1.5 rounded-full bg-brand-subtle px-2.5 text-caption-strong text-brand">
-                <Icon name="auto-awesome" size={13} />
+              <span className="flex h-[22px] items-center rounded-full bg-accent-violet-bg px-2 text-caption-strong text-accent-violet-fg">
                 {t("detail.aiCheck")}
               </span>
             </span>
 
-            <p className="text-body-sm text-ink">{item?.body || item?.description}</p>
+            <p className="mt-3 text-body-sm text-ink">{item?.body || item?.description}</p>
 
             {item?.hasAttachment ? (
               <button
                 type="button"
-                className="flex items-center gap-3 rounded-md bg-subtle px-4 py-3 text-left transition-colors hover:bg-muted"
+                className="mt-3 flex h-[52px] items-center gap-3 rounded-xl bg-subtle px-3 text-left transition-colors hover:bg-muted"
                 onClick={() =>
                   assignmentId &&
                   download.mutate({ id: assignmentId, fileName: item.attachmentName })
                 }
               >
-                <span className="grid size-9 shrink-0 place-items-center rounded-md bg-surface text-danger">
-                  <Icon name="description" size={18} />
+                <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface text-danger">
+                  <Icon name="description-fill" size={18} />
                 </span>
-                <span className="flex min-w-0 flex-1 flex-col">
-                  <strong className="truncate text-title-sm text-ink">{item.attachmentName}</strong>
-                  <small className="truncate text-body-xs text-ink-tertiary">
-                    {formatFileSize(0)}
-                  </small>
-                </span>
+                <strong className="min-w-0 flex-1 truncate text-body-sm font-semibold text-ink">
+                  {item.attachmentName}
+                </strong>
                 <Icon name="download" size={18} className="shrink-0 text-icon-tertiary" />
               </button>
             ) : null}
 
-            <dl className="flex flex-col gap-2.5">
+            <dl className="mt-[15px] flex flex-col gap-3">
               <Meta label={t("detail.grading")} value={t(`form.gradings.${item?.grading ?? "five"}`)} />
               <Meta
                 label={t("detail.allowLate")}
@@ -230,17 +237,17 @@ export function HomeworkDetailPage() {
               ) : null}
             </dl>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="mt-3.5 grid grid-cols-2 gap-2">
               <button
                 type="button"
-                className="flex h-11 items-center justify-center rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
+                className="flex h-10 items-center justify-center rounded-full border border-line-strong bg-surface text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
                 onClick={() => setEditOpen(true)}
               >
                 {t("detail.edit")}
               </button>
               <button
                 type="button"
-                className="flex h-11 items-center justify-center rounded-full bg-danger-bg text-button text-danger transition-opacity hover:opacity-85"
+                className="flex h-10 items-center justify-center rounded-full bg-danger-bg text-body-sm font-semibold text-danger transition-opacity hover:opacity-85"
                 onClick={() => setDeleteOpen(true)}
               >
                 {t("detail.delete")}
@@ -248,6 +255,7 @@ export function HomeworkDetailPage() {
             </div>
           </section>
 
+          {submitted ? (
           <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-5">
             <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
               <Icon name="auto-awesome" size={18} />
@@ -279,6 +287,7 @@ export function HomeworkDetailPage() {
               {summary ? t("detail.aiRefresh") : t("detail.aiGenerate")}
             </button>
           </section>
+          ) : null}
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
@@ -301,6 +310,7 @@ export function HomeworkDetailPage() {
             />
           </div>
 
+          {submitted ? (
           <section className="flex min-w-0 flex-col gap-4 rounded-lg bg-surface p-5">
             <div className="flex flex-wrap items-center gap-3">
               <label className="flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-md bg-subtle px-4">
@@ -390,6 +400,14 @@ export function HomeworkDetailPage() {
               ) : null}
             </div>
           </section>
+          ) : (
+            <MobileEmptyCard
+              icon="assignment"
+              title={t("detail.emptyTitle")}
+              description={emptyHint}
+              descriptionClassName="max-w-[310px]"
+            />
+          )}
         </div>
       </div>
 
@@ -400,9 +418,9 @@ export function HomeworkDetailPage() {
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
-    <span className="flex items-center gap-3">
-      <dt className="min-w-0 flex-1 truncate text-body-sm text-ink-secondary">{label}</dt>
-      <dd className="shrink-0 text-title-sm text-ink">{value}</dd>
+    <span className="flex h-[18px] items-center gap-3">
+      <dt className="min-w-0 flex-1 truncate text-body-xs text-ink-secondary">{label}</dt>
+      <dd className="shrink-0 text-body-xs font-semibold text-ink">{value}</dd>
     </span>
   );
 }

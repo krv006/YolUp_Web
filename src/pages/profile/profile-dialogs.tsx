@@ -2,7 +2,9 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth, useSwitchAccountMutation } from "@/modules/auth";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 
@@ -18,7 +20,71 @@ export function SwitchAccountDialog({
   const navigate = useNavigate();
   const { user } = useAuth();
   const switchAccount = useSwitchAccountMutation();
+  const isCompact = useIsCompact();
   const linkedAccounts = user?.linkedAccounts ?? [];
+
+  if (isCompact)
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        variant="adaptive"
+        title={t("page.switchAccount")}
+        description={t("page.switchAccountHint")}
+        footer={<span aria-hidden="true" />}
+        footerClassName="pb-[43px]"
+      >
+        <div className="-mt-0.5 flex flex-col gap-[11px]">
+          <span className="flex h-[70px] items-center gap-3 rounded-lg border-[1.5px] border-brand bg-brand-subtle px-3.5">
+            <Avatar name={user?.name} size="sm" src={user?.avatarUrl} className="[&_.avatar]:size-11" />
+            <span className="flex min-w-0 flex-1 flex-col">
+              <strong className="truncate text-title text-ink">{user?.name}</strong>
+              <small className="truncate text-body-sm text-ink-secondary">
+                {tn(`roles.${user?.role?.toLowerCase() ?? "teacher"}`, { defaultValue: user?.role ?? "" })}
+              </small>
+            </span>
+            <span className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-success-bg px-2 text-caption-strong text-success-fg">
+              <Icon name="check-circle" size={14} className="text-success" /> {t("page.accountActive")}
+            </span>
+          </span>
+
+          {linkedAccounts.map((account) => (
+            <button
+              key={account.id}
+              type="button"
+              className="flex h-[68px] items-center gap-3 rounded-lg bg-subtle px-3.5 text-left transition-colors hover:bg-muted disabled:opacity-60"
+              disabled={switchAccount.isPending}
+              onClick={() =>
+                switchAccount.mutate(account.id, {
+                  onSuccess: () => onOpenChange(false),
+                  onError: (error: Error) => toast.error(error.message),
+                })
+              }
+            >
+              <Avatar name={account.name || account.username} size="sm" className="[&_.avatar]:size-11" />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-title text-ink">{account.name || account.username}</strong>
+                <small className="truncate text-body-sm text-ink-secondary">
+                  {tn(`roles.${account.role?.toLowerCase() ?? "student"}`, { defaultValue: account.role })}
+                </small>
+              </span>
+              <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
+            </button>
+          ))}
+
+          <button
+            type="button"
+            className="mt-[15px] flex h-6 items-center justify-center gap-2 text-title text-brand"
+            onClick={() => {
+              onOpenChange(false);
+              navigate("account");
+            }}
+          >
+            <Icon name="add" size={20} /> {t("page.addAccount")}
+          </button>
+        </div>
+      </AppDialog>
+    );
 
   return (
     <AppDialog
@@ -97,6 +163,25 @@ export function LogoutDialog({
 }) {
   const { t } = useTranslation("account");
   const { logout } = useAuth();
+  const isCompact = useIsCompact();
+
+  if (isCompact)
+    return (
+      <ConfirmDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        tone="brand"
+        icon="logout"
+        title={t("page.logoutTitle")}
+        description={t("page.logoutDescription")}
+        confirmLabel={t("page.logout")}
+        cancelLabel={t("page.cancel")}
+        onConfirm={() => {
+          onOpenChange(false);
+          void logout();
+        }}
+      />
+    );
 
   return (
     <AppDialog
@@ -149,6 +234,22 @@ export function DeleteAccountDialog({
   onConfirm: () => void;
 }) {
   const { t } = useTranslation("account");
+  const isCompact = useIsCompact();
+
+  if (isCompact)
+    return (
+      <ConfirmDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        icon="logout"
+        title={t("page.deleteAccountTitle")}
+        description={t("page.deleteAccountDescription")}
+        confirmLabel={t("page.delete")}
+        cancelLabel={t("page.cancel")}
+        pending={pending}
+        onConfirm={onConfirm}
+      />
+    );
 
   return (
     <AppDialog

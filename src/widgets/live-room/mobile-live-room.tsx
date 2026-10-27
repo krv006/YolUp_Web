@@ -414,24 +414,18 @@ export function MobileLiveRoom({
       />
 
       {boardOpen ? (
-        <div className="fixed inset-0 z-40 flex flex-col bg-canvas px-4 pt-5 pb-6">
-          <header className="flex h-11 shrink-0 items-center gap-3">
-            <button
-              type="button"
-              className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-inverse text-ink-inverse"
-              aria-label={t("room.backToVideo")}
-              onClick={() => onBoard(false)}
-            >
-              <Icon name="chevron-left" size={22} />
-            </button>
-            <strong className="min-w-0 flex-1 truncate text-center text-title font-semibold">
-              {t("room.board")}
-            </strong>
-            <span className="size-11 shrink-0" aria-hidden="true" />
-          </header>
-          <div className="mt-4 flex min-h-0 flex-1 flex-col">
-            <BoardPanel lessonId={lesson.id} courseId={lesson.courseId} currentUserId={currentUserId} />
-          </div>
+        <div data-theme="light" className="fixed inset-0 z-40 flex flex-col bg-subtle px-3 pt-5 pb-[26px] font-body text-ink">
+          <BoardPanel
+            lessonId={lesson.id}
+            courseId={lesson.courseId}
+            currentUserId={currentUserId}
+            mobile={{
+              subtitle: `${lesson.courseTitle} · ${t("room.liveLesson")}`,
+              live: true,
+              backLabel: t("room.backToVideo"),
+              onBack: () => onBoard(false),
+            }}
+          />
         </div>
       ) : null}
     </>

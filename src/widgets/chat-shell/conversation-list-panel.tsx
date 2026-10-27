@@ -5,6 +5,7 @@ import { ConversationActionsSheet, useNewConversationStore } from "@/modules/con
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
+import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import type { Conversation } from "@/shared/types";
 import { ConversationRowBody } from "./conversation-row";
 import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-list";
@@ -36,27 +37,19 @@ export function ConversationListPanel() {
       className="flex h-full w-[360px] shrink-0 flex-col border-r border-line-subtle bg-surface"
       aria-label={t("panel.listAria")}
     >
-      <header className="flex shrink-0 items-start gap-3 px-5 pt-7 pb-4">
+      <header className="flex shrink-0 items-start gap-3 px-5 pt-7 pb-4.5">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <small className="truncate text-caption text-ink-secondary">
             {unreadTotal
               ? t("panel.unreadCount", { count: unreadTotal })
               : t("panel.allRead")}
           </small>
-          <h1 className="truncate font-heading text-h1 text-ink">{t("panel.title")}</h1>
+          <h1 className="truncate text-[24px]/[28px] font-bold text-ink">{t("panel.title")}</h1>
         </span>
 
         <button
           type="button"
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
-          aria-label={t("panel.newDirect")}
-          onClick={() => openNewConversation(true)}
-        >
-          <Icon name="edit" size={20} />
-        </button>
-        <button
-          type="button"
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
+          className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
           aria-label={t("panel.newGroup")}
           onClick={() => openNewConversation(true)}
         >
@@ -64,7 +57,7 @@ export function ConversationListPanel() {
         </button>
       </header>
 
-      <label className="mx-5 flex h-11 shrink-0 items-center gap-2.5 px-[18px]">
+      <label className="mx-5 mt-0.5 flex h-11 shrink-0 items-center gap-2.5 px-4">
         <Icon name="search" size={20} className="shrink-0 text-icon-secondary" />
         <input
           className="h-full min-w-0 flex-1 bg-transparent text-body-sm text-ink outline-none placeholder:text-ink-secondary"
@@ -96,10 +89,10 @@ export function ConversationListPanel() {
               key={id}
               role="tab"
               aria-selected={filter === id}
-              className={`flex h-9 min-w-[101px] shrink-0 items-center justify-center rounded-full px-5 text-button whitespace-nowrap transition-colors ${
+              className={`flex h-9 min-w-[101px] shrink-0 items-center justify-center rounded-full border px-5 text-body-sm font-medium whitespace-nowrap transition-colors ${
                 filter === id
-                  ? "bg-brand text-ink-inverse"
-                  : "text-ink hover:bg-subtle"
+                  ? "border-brand bg-brand text-ink-inverse"
+                  : "border-line bg-surface text-ink hover:bg-subtle"
               }`}
               onClick={() => setFilter(id)}
             >
@@ -112,12 +105,8 @@ export function ConversationListPanel() {
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto pb-5">
         {isLoading
           ? Array.from({ length: 6 }, (_, index) => (
-              <span key={index} className="mx-5 flex items-center gap-3 px-4 py-3">
-                <span className="size-12 shrink-0 animate-pulse rounded-xl bg-muted" />
-                <span className="flex min-w-0 flex-1 flex-col gap-2">
-                  <i className="h-3 w-2/5 animate-pulse rounded-full bg-muted" />
-                  <i className="h-2.5 w-4/5 animate-pulse rounded-full bg-muted" />
-                </span>
+              <span key={index} className="mx-5 flex h-[72px] shrink-0 items-center px-4">
+                <RowSkeleton />
               </span>
             ))
           : null}

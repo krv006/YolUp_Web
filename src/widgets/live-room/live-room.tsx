@@ -172,7 +172,7 @@ function RecordingChip({ startedAt }: { startedAt: Date }) {
   );
 }
 
-function ReconnectBanner() {
+function ReconnectBanner({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation("live");
   const room = useRoomContext();
   const connectionState = useConnectionState();
@@ -194,6 +194,17 @@ function ReconnectBanner() {
   }, [room]);
 
   if (connectionState !== ConnectionState.Reconnecting) return null;
+
+  if (compact)
+    return (
+      <p
+        role="status"
+        className="pointer-events-none absolute inset-x-4 top-[72px] z-30 flex min-h-15 items-center gap-3 rounded-xl bg-surface px-4 py-2.5 text-body-sm font-medium text-ink shadow-lg"
+      >
+        <Icon name="wifi" size={22} className="shrink-0" />
+        {t("room.reconnectingMobile")}
+      </p>
+    );
 
   return (
     <div
@@ -737,7 +748,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
         data-lk-theme="default"
         className="live-room-shell dark relative h-dvh min-h-0 overflow-hidden bg-canvas text-ink"
       >
-        <ReconnectBanner />
+        <ReconnectBanner compact />
         <MobileLiveRoom
           lesson={lesson}
           isTeacher={isTeacher}

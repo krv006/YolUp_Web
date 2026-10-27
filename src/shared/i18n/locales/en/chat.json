@@ -141,6 +141,10 @@
     "increase": "Increase"
   },
   "list": {
+    "emptyGroupTitle": "No messages in the group yet",
+    "emptyGroupHint": "Be the first to say hi or post an announcement — every member will get it.",
+    "emptyTitle": "No messages yet",
+    "emptyHint": "Be the first to say hi.",
     "today": "Today",
     "loadError": "Couldn't load messages",
     "loadErrorHint": "Please try again shortly.",

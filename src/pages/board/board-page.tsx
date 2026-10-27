@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { boardApi, BoardPanel, BoardStroke, useBoard, useSendBoardToChat } from "@/modules/board";
+import { boardApi, BoardPanel, BoardStroke, MobileBoardPageNav, useBoard, useSendBoardToChat } from "@/modules/board";
 import { useLesson } from "@/modules/lesson";
-import { LoadingFallback } from "@/shared/ui/legacy";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { Icon } from "@/shared/ui/icon";
+import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger, LoadingFallback } from "@/shared/ui/legacy";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { LiveRoomState } from "@/widgets/live-room";
 
@@ -12,6 +14,8 @@ export function BoardPage() {
   const { t } = useTranslation("board");
   const { lessonId } = useParams();
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
   const lesson = useLesson(lessonId ?? null);
   const board = useBoard(lessonId ?? "", { live: false, enabled: Boolean(lessonId) });
   const sendToChat = useSendBoardToChat(lessonId ?? "");
@@ -54,6 +58,91 @@ export function BoardPage() {
     }
   }
 
+  function share() {
+    sendToChat.mutate(undefined, { onSuccess: () => toast.success(t("page.sentToChat")) });
+  }
+
+  if (isCompact) {
+    const editable = Boolean(state?.canDraw);
+    const day = new Date(`${data.date}T00:00`);
+    const dateLabel = Number.isNaN(day.getTime())
+      ? data.date
+      : `${day.getDate()}-${(months[day.getMonth()] ?? "").toLowerCase()}`;
+    return (
+      <div
+        data-theme="light"
+        className={`flex h-full min-h-0 flex-col bg-subtle px-3 pt-5 font-body text-ink ${editable ? "pb-[26px]" : "pb-[49px]"}`}
+      >
+        <BoardPanel
+          lessonId={data.id}
+          courseId={data.courseId}
+          sheetIndex={sheet}
+          onSheetChange={setSheet}
+          mobile={{
+            title: editable ? undefined : data.title,
+            subtitle: editable
+              ? `${data.courseTitle} · ${t("mobile.liveLesson")}`
+              : [data.courseTitle, `${dateLabel}, ${data.time}`, t("page.sheetCount", { count: sheets.length })].join(" · "),
+            live: editable && data.status === "live",
+            backLabel: t("page.back"),
+            onBack: () => navigate(-1),
+            action: editable ? undefined : (
+              <Dropdown>
+                <DropdownTrigger asChild>
+                  <button
+                    type="button"
+                    className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-ink"
+                    aria-label={t("mobile.menu")}
+                  >
+                    <Icon name="more" size={20} />
+                  </button>
+                </DropdownTrigger>
+                <DropdownContent align="end">
+                  <DropdownItem disabled={busy} onSelect={() => void downloadPdf()}>
+                    {t("page.downloadPdf")}
+                  </DropdownItem>
+                  <DropdownItem disabled={sendToChat.isPending} onSelect={share}>
+                    {t("page.sendToChat")}
+                  </DropdownItem>
+                </DropdownContent>
+              </Dropdown>
+            ),
+            footer: editable ? undefined : (
+              <div className="flex flex-col items-center pt-3">
+                <MobileBoardPageNav
+                  className="h-[60px]"
+                  page={sheet + 1}
+                  total={Math.max(1, sheets.length)}
+                  onPrev={() => setSheet(Math.max(0, sheet - 1))}
+                  onNext={() => setSheet(Math.min(sheets.length - 1, sheet + 1))}
+                  onPages={() => undefined}
+                />
+                <div className="-mt-px grid w-full grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    className="flex h-13 items-center justify-center rounded-full border border-line-strong bg-surface text-title font-semibold text-ink disabled:opacity-50"
+                    disabled={busy}
+                    onClick={() => void downloadPdf()}
+                  >
+                    {t("page.downloadPdf")}
+                  </button>
+                  <button
+                    type="button"
+                    className="flex h-13 items-center justify-center rounded-full bg-brand text-title font-semibold text-on-action disabled:opacity-50"
+                    disabled={sendToChat.isPending}
+                    onClick={share}
+                  >
+                    {t("page.sendToChat")}
+                  </button>
+                </div>
+              </div>
+            ),
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <WorkspaceShell
       eyebrow={`${data.courseTitle} · ${data.date}, ${data.time} · ${t("page.sheetCount", {
@@ -65,11 +154,7 @@ export function BoardPage() {
           type="button"
           className={workspaceAction}
           disabled={sendToChat.isPending}
-          onClick={() =>
-            sendToChat.mutate(undefined, {
-              onSuccess: () => toast.success(t("page.sentToChat")),
-            })
-          }
+          onClick={share}
         >
           {t("page.sendToChat")}
         </button>

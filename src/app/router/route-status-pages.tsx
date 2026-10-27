@@ -13,6 +13,7 @@ export function ForbiddenPage() {
     <RouteStatus
       tone="warning"
       icon={<Lock size={28} />}
+      mobileIcon={<Icon name="lock-fill" size={52} />}
       title={t("routeState.forbiddenTitle")}
       description={t("routeState.forbiddenDescription")}
       action={

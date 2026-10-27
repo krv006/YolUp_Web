@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
+import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { messageApi } from "../api/message.api";
 import { messageKeys } from "../model/message.keys";
 import { useChatUiStore } from "../model/chat-ui.store";
@@ -32,6 +33,7 @@ export interface MessageListProps {
   onPin?: (message: ChatMessage, pinned: boolean) => void;
   onForward?: (messages: ChatMessage[]) => void;
   onBulkDelete?: (messageIds: string[], scope: "me" | "everyone") => void;
+  variant?: "default" | "workspace";
 }
 
 type TimelineEntry = { kind: "message" | "assignment"; message: ChatMessage };
@@ -58,7 +60,9 @@ export function MessageList({
   onPin,
   onForward,
   onBulkDelete,
+  variant = "default",
 }: MessageListProps) {
+  const workspace = variant === "workspace";
   const { t } = useTranslation("chat");
   const bottomRef = useRef<HTMLDivElement>(null);
   const search = useChatUiStore((state) => state.search).trim();
@@ -102,6 +106,8 @@ export function MessageList({
     kind: message.type === "assignment" && message.assignment ? ("assignment" as const) : ("message" as const),
     message,
   }));
+  const emptyCompact = (isCompact || workspace) && !search && !timeline.length && !conversation.typing;
+  const canvas = workspace ? "" : "bg-canvas max-lg:bg-transparent";
   const matchRef = useRef<HTMLDivElement>(null);
 
   const serverTotal = serverSearch.data?.total ?? 0;
@@ -155,9 +161,17 @@ export function MessageList({
     clearSelection();
   }
 
+  if (loading && workspace && !isCompact)
+    return (
+      <div className="flex flex-1 flex-col justify-end gap-[38px] overflow-hidden px-11 pb-7">
+        {Array.from({ length: 4 }, (_, index) => (
+          <RowSkeleton key={index} />
+        ))}
+      </div>
+    );
   if (loading)
     return (
-      <div className="flex flex-1 flex-col gap-3 overflow-hidden bg-canvas px-4 py-5 max-lg:bg-transparent lg:px-6">
+      <div className={`flex flex-1 flex-col gap-3 overflow-hidden px-4 py-5 lg:px-6 ${canvas}`}>
         {Array.from({ length: 5 }, (_, index) => (
           <div
             key={index}
@@ -170,7 +184,7 @@ export function MessageList({
     );
   if (error)
     return (
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-canvas px-6 text-center max-lg:bg-transparent">
+      <div className={`flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center ${canvas}`}>
         <strong className="font-heading text-h3 text-ink">{t("list.loadError")}</strong>
         <p className="max-w-[320px] text-body-sm text-ink-secondary">{t("list.loadErrorHint")}</p>
         <button
@@ -185,13 +199,26 @@ export function MessageList({
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <div
-        className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-canvas px-4 pt-4 pb-2 max-lg:bg-transparent lg:px-6 lg:py-5"
+        className={`flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-4 pb-2 lg:py-5 ${workspace ? "lg:px-7" : "lg:px-6"} ${canvas}`}
         role="log"
         aria-live="polite"
         ref={scrollRef}
         onScroll={handleScroll}
       >
-      <div className="mx-auto mt-auto flex w-full max-w-[920px] flex-col gap-[11px] lg:gap-3">
+      {emptyCompact ? (
+        <div className="my-auto flex -translate-y-[41px] flex-col items-center rounded-2xl bg-surface px-6 pt-7 pb-[26px] text-center lg:mx-auto lg:w-full lg:max-w-[436px] lg:translate-y-0 lg:pb-7">
+          <span className="grid size-18 place-items-center rounded-full bg-brand-subtle text-brand">
+            <Icon name="forum" size={32} />
+          </span>
+          <strong className="mt-3 font-heading text-title font-bold tracking-tight text-ink">
+            {conversation.kind === "course" ? t("list.emptyGroupTitle") : t("list.emptyTitle")}
+          </strong>
+          <p className="mt-3 max-w-[260px] text-body-sm text-ink-secondary">
+            {conversation.kind === "course" ? t("list.emptyGroupHint") : t("list.emptyHint")}
+          </p>
+        </div>
+      ) : null}
+      <div className={`mx-auto mt-auto w-full max-w-[920px] flex-col gap-[11px] lg:gap-3 ${emptyCompact ? "hidden" : "flex"}`}>
         {search ? null : announcement ? (
           <div className="flex justify-center py-1">
             <span className="flex h-6 items-center gap-1.5 rounded-full bg-subtle px-3 text-caption text-ink-secondary lg:h-auto lg:gap-2 lg:py-1.5">
@@ -202,7 +229,7 @@ export function MessageList({
             </span>
           </div>
         ) : null}
-        {search ? null : (
+        {search || emptyCompact ? null : (
           <div className={announcement ? "hidden lg:block" : undefined}>
             <DateSeparator>{t("list.today")}</DateSeparator>
           </div>
@@ -298,11 +325,14 @@ export function MessageList({
                   highlighted={entry.message.id === activeMatchId}
                 />
                 {entry.message.failed ? (
-                  <p className="mt-1.5 text-right text-caption-strong text-error-text lg:hidden">
-                    {t("offline.failed")} ·{" "}
-                    <button type="button" onClick={() => onRetryMessage?.(entry.message)}>
-                      {t("offline.resend")}
-                    </button>
+                  <p className="mt-1.5 flex items-center justify-end gap-1 text-caption text-error-text lg:hidden">
+                    <Icon name="refresh" size={15} />
+                    <span>
+                      {t("offline.failed")} ·{" "}
+                      <button type="button" onClick={() => onRetryMessage?.(entry.message)}>
+                        {t("offline.resend")}
+                      </button>
+                    </span>
                   </p>
                 ) : null}
               </div>

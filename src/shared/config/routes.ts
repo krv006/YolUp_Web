@@ -24,6 +24,7 @@ export const ROUTES = Object.freeze({
     tests: "/teacher/workspace/tests",
     test: (quizId: string) => `/teacher/workspace/tests/${segment(quizId)}`,
     testResults: (quizId: string) => `/teacher/workspace/tests/${segment(quizId)}/results`,
+    testEdit: (quizId: string) => `/teacher/workspace/tests/${segment(quizId)}/edit`,
     workspaceAi: "/teacher/workspace/ai",
     workspaceAnalytics: "/teacher/workspace/analytics",
     mockExams: "/teacher/workspace/mock",

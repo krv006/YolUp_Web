@@ -77,7 +77,7 @@ export function AppDialog({
           className={`${SHELL} ${PLACEMENT[variant]} ${width}`}
         >
           <span
-            className={`mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-muted ${
+            className={`mx-auto mt-2 mb-px h-[5px] w-10 shrink-0 rounded-full bg-line ${
               variant === "panel" ? "lg:hidden" : ""
             } ${layout === "centered" ? "hidden" : ""}`}
             aria-hidden="true"

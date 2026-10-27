@@ -113,6 +113,7 @@
     "finishTitle": "Finish the lesson for everyone — the video recording is saved afterward",
     "youLabel": "You",
     "reconnecting": "Connection lost — reconnecting ({{attempt}}/{{total}}). The lesson continues.",
+    "reconnectingMobile": "Connection lost — reconnecting... The lesson continues.",
     "participantsCount": "Participants ({{count}})",
     "moreAria": "More actions",
     "switch": {
@@ -127,7 +128,8 @@
     "allow": "Allow",
     "mobileShare": "Share",
     "mobilePeople": "People",
-    "mobileParticipantsCount": "Participants · {{count}}"
+    "mobileParticipantsCount": "Participants · {{count}}",
+    "liveLesson": "Live lesson"
   },
   "mic": {
     "label": "Microphone",

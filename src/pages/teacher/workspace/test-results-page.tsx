@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useCourseStudents } from "@/modules/course";
+import { useCourseStudents, useCourses } from "@/modules/course";
 import {
+  QuizAttemptsDrawer,
   quizDisplayTitle,
   useQuiz,
   useQuizAttempts,
@@ -11,13 +12,16 @@ import {
   useStartAiMiniQuiz,
 } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import { MobileTestResults } from "./mobile-test-results";
 
 interface Row {
   id: string;
   name: string;
+  avatarUrl: string | null;
   attempts: number;
   score: number | null;
   maxScore: number;
@@ -38,7 +42,10 @@ export function TestResultsPage() {
   const { t } = useTranslation("quiz");
   const { quizId = null } = useParams();
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [attemptsOpen, setAttemptsOpen] = useState(false);
   const quiz = useQuiz(quizId);
+  const courses = useCourses();
   const attempts = useQuizAttempts(quizId, Boolean(quizId));
   const questionStats = useQuizQuestionStats(quizId, Boolean(quizId));
   const miniQuiz = useStartAiMiniQuiz();
@@ -51,6 +58,7 @@ export function TestResultsPage() {
       byStudent.set(item.student.id, {
         id: item.student.id,
         name: item.student.name,
+        avatarUrl: null,
         attempts: 0,
         score: null,
         maxScore: 0,
@@ -65,6 +73,7 @@ export function TestResultsPage() {
       const current = byStudent.get(attempt.studentId) ?? {
         id: attempt.studentId,
         name: attempt.studentName,
+        avatarUrl: null,
         attempts: 0,
         score: null,
         maxScore: attempt.maxScore,
@@ -106,6 +115,43 @@ export function TestResultsPage() {
   const averageTime = durations.length
     ? Math.round(durations.reduce((sum, value) => sum + value, 0) / durations.length)
     : null;
+
+  if (isCompact) {
+    const courseTitle = (courses.data ?? []).find((course) => course.id === quiz.data?.courseId)?.title ?? "";
+    return (
+      <>
+        <MobileTestResults
+          eyebrow={[courseTitle, t("tests.questionCount", { count: quiz.data?.questionCount ?? 0 })]
+            .filter(Boolean)
+            .join(" · ")}
+          title={quiz.data ? quizDisplayTitle(quiz.data) : ""}
+          stats={[
+            { id: "solved", value: `${solved.length}/${rows.length}`, label: t("results.solved"), tone: "text-ink" },
+            {
+              id: "average",
+              value: average === null ? "—" : `${average}%`,
+              label: t("results.average"),
+              tone: "text-brand-strong",
+            },
+            { id: "best", value: best === null ? "—" : `${best}%`, label: t("results.best"), tone: "text-success" },
+          ]}
+          rows={rows}
+          loading={attempts.isLoading || students.isLoading}
+          onBack={() => navigate(ROUTES.teacher.tests)}
+          onAttempts={() => setAttemptsOpen(true)}
+        />
+        <QuizAttemptsDrawer
+          open={attemptsOpen}
+          onOpenChange={setAttemptsOpen}
+          title={quiz.data ? quizDisplayTitle(quiz.data) : ""}
+          subtitle={t("attemptsDrawer.unlimited")}
+          attempts={attempts.data ?? []}
+          students={rows.map((row) => ({ id: row.id, name: row.name, avatarUrl: row.avatarUrl }))}
+          loading={attempts.isLoading}
+        />
+      </>
+    );
+  }
 
   return (
     <WorkspaceShell

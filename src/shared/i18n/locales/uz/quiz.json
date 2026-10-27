@@ -238,7 +238,46 @@
     "lockedNotice": "Bu testda urinishlar bor — savollar o‘zgartirilmaydi. Faqat mavzu, nom va muddat saqlanadi.",
     "previewTitle": "O‘quvchi ko‘radi",
     "previewCounter": "{{current}} / {{total}}",
-    "previewEmpty": "Savol qo‘shilgach, bu yerda o‘quvchi ko‘rinishi chiqadi."
+    "previewEmpty": "Savol qo‘shilgach, bu yerda o‘quvchi ko‘rinishi chiqadi.",
+    "mobile": {
+      "band": "band",
+      "typeAria": "Savol turi",
+      "pointsAria": "Ball",
+      "markCorrect": "{{letter}} variantini to‘g‘ri deb belgilash",
+      "yes": "Ha",
+      "no": "Yo‘q",
+      "numericHint": "Vergul yoki nuqta bilan yozish mumkin. Xatolik 0 bo‘lsa, faqat aniq son qabul qilinadi.",
+      "minWords": "Kamida so‘z soni",
+      "dragItem": "Tartibni o‘zgartirish",
+      "blankInstruction": "Matnda bo‘sh joyni [javob] shaklida belgilang",
+      "blankAnswer": "javob",
+      "blankPlaceholder": "Matnni yozing va javoblarni [ ] ichiga oling",
+      "addBlank": "Bo‘sh joy qo‘shish",
+      "blankHint": "Bir nechta to‘g‘ri javobni | bilan ajrating. Masalan: Toshkent|Tashkent",
+      "wizardTitle": "Savollar · 2/2",
+      "counter": "Savollar · {{current}}/{{total}}",
+      "tabs": {
+        "edit": "Tahrirlash",
+        "preview": "O‘quvchi ko‘radi"
+      },
+      "previewHint": "Savollarga javob bering — vaqt chegarasi yo‘q.",
+      "previous": "Oldingi",
+      "next": "Keyingi",
+      "group": "Savollar guruhi · {{title}}",
+      "noTranscript": "Bu audio uchun skript yo‘q.",
+      "audioHint": "mp3, m4a, aac, ogg, wav · 20 MB gacha",
+      "types": {
+        "single": "Bitta javob",
+        "multiple": "Bir nechta javob",
+        "true_false": "Ha / Yo‘q",
+        "numeric": "Son kiritish",
+        "text": "Qisqa javob",
+        "matching": "Moslashtirish",
+        "ordering": "Tartibga solish",
+        "fill_blank": "Bo‘sh joy",
+        "essay": "Insho (Writing)"
+      }
+    }
   },
   "answer": {
     "true": "To'g'ri",
@@ -391,12 +430,14 @@
     "noQuizzes": "Guruhsiz tayyor testlar yo'q. AI sahifasida yangi test yarating.",
     "draftHint": "Test guruhga berilishi bilan e'lon qilinadi va o'quvchilarga ko'rinadi (savollarda to'g'ri javob belgilangan bo'lsa).",
     "dueLabel": "Muddat",
-    "timeLabel": "Vaqt"
+    "timeLabel": "Vaqt",
+    "pick": "Tanlang",
+    "students": "{{count}} o‘quvchi"
   },
   "exportDialog": {
     "title": "Testni yuklab olish",
     "student": "O‘quvchi nusxasi",
-    "studentHint": "Javobsiz — chop etib tarqatish uchun",
+    "studentHint": "Javoblarsiz — chop etib tarqatish uchun",
     "teacher": "O‘qituvchi nusxasi",
     "teacherHint": "To‘g‘ri javoblar belgilangan",
     "type": {
@@ -412,6 +453,7 @@
   },
   "tests": {
     "eyebrow": "Workspace / Testlar · {{count}} ta",
+    "eyebrowLoading": "Workspace / Testlar · yuklanmoqda…",
     "title": "Testlar",
     "create": "Test yaratish",
     "attempts": "Urinishlar",
@@ -430,7 +472,20 @@
     "emptyTitle": "Hali test yaratilmagan",
     "emptyHint": "Birinchi testni yarating — baholash avtomatik bo‘ladi.",
     "soon": "Tez orada",
-    "importedTopic": "Import qilingan test"
+    "importedTopic": "Import qilingan test",
+    "mobile": {
+      "back": "Orqaga",
+      "searchPlaceholder": "Fan yoki test nomi",
+      "clearSearch": "Qidiruvni tozalash",
+      "drafts": "Qoralamalar · {{count}}",
+      "published": "E’lon qilingan · {{count}}",
+      "download": "Yuklab olish",
+      "delete": "O‘chirish",
+      "cancel": "Bekor qilish",
+      "deleteTitle": "Testni o‘chirasizmi?",
+      "deleteDescription": "“{{title}}” testi va uning natijalari butunlay o‘chiriladi.",
+      "emptySearch": "Hech narsa topilmadi"
+    }
   },
   "typeDialog": {
     "title": "Savol qo‘shish",
@@ -474,7 +529,12 @@
     "hardestSoon": "Savol bo‘yicha xatolar statistikasi backendda tayyor bo‘lgach chiqadi.",
     "aiTitle": "AI tavsiya",
     "aiHint": "Eng ko‘p xato qilingan mavzular bo‘yicha qisqa mini-test tuzib bering.",
-    "aiAction": "Mini-test yaratish"
+    "aiAction": "Mini-test yaratish",
+    "mobile": {
+      "attempt": "{{count}}-urinish",
+      "minutes": "{{count}} daq",
+      "notSolved": "Yechilmagan"
+    }
   },
   "newTest": {
     "title": "Yangi test",
@@ -491,7 +551,8 @@
       "google": "Google Forms"
     },
     "cancel": "Bekor qilish",
-    "continue": "Davom etish"
+    "continue": "Davom etish",
+    "mobileTitle": "Yangi test · 1/2"
   },
   "importDialog": {
     "title": "Savollarni import qilish",
@@ -516,7 +577,11 @@
     "unlimited": "cheklanmagan qayta urinish",
     "attemptCount": "{{count}} ta urinish",
     "attemptLine": "{{number}}-urinish",
-    "empty": "Hali urinish yo‘q."
+    "empty": "Hali urinish yo‘q.",
+    "lastToday": "oxirgisi bugun {{time}}",
+    "yesterday": "kecha",
+    "noAttempts": "Hali urinish yo‘q",
+    "detailTitle": "{{name}} · urinishlar"
   },
   "ai": {
     "eyebrow": "Workspace / AI · test tuzish",
@@ -550,6 +615,41 @@
     "jobDone": "Tayyor · {{count}} ta savol · qoralama",
     "openTest": "Testni ochish",
     "jobsEmpty": "Hali AI test yaratilmagan.",
-    "jobsHint": "Bu bir necha daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi — tayyor bo‘lganda bildirishnoma keladi."
+    "jobsHint": "Bu bir necha daqiqa olishi mumkin. Sahifani yopsangiz ham ish davom etadi — tayyor bo‘lganda bildirishnoma keladi.",
+    "mobile": {
+      "back": "Orqaga",
+      "history": "Mening AI testlarim",
+      "tabs": {
+        "simple": "Oddiy",
+        "rules": "Qoidalar bilan",
+        "bank": "Bankdan"
+      },
+      "bankTitle": "Savollar banki tez orada",
+      "bankHint": "Oldingi testlaringizdagi savollardan yangi test tuzish imkoniyati ustida ishlayapmiz.",
+      "pickFiles": "Material yuklang (PDF, DOCX, rasm)",
+      "filesHint": "5 tagacha fayl · jami 20 MB",
+      "filesTooBig": "Fayllar jami {{size}} MB dan oshmasligi kerak",
+      "countRange": "{{min}} dan {{max}} gacha",
+      "count": "{{count}} ta",
+      "submit": "AI bilan test yaratish",
+      "jobsTitle": "Mening AI testlarim",
+      "started": "Test tuzish boshlandi — tayyor bo‘lgach xabar beramiz",
+      "jobTitle": "{{title}} · {{count}} savol",
+      "ready": "Tayyor · {{date}}",
+      "running": "Tayyorlanmoqda… ~1 daqiqa",
+      "queued": "Navbatda",
+      "open": "Ochish",
+      "retry": "Qayta"
+    }
+  },
+  "details": {
+    "title": "Testni tahrirlash",
+    "close": "Yopish",
+    "save": "Saqlash",
+    "lockedNotice": "Bu testda urinishlar bor — savollar o‘zgartirilmaydi. Faqat mavzu, nom va muddat saqlanadi.",
+    "topic": "Mavzu",
+    "noDue": "Muddatsiz",
+    "questions": "Savollar",
+    "questionsLocked": "Savollar — o‘zgartirib bo‘lmaydi"
   }
 }

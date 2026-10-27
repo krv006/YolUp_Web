@@ -6,6 +6,7 @@ import { RootLayout } from "@/app/layouts/root-layout";
 import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout";
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
+import { PageSkeleton } from "@/shared/ui/page-skeleton";
 import { SplashScreen } from "@/shared/ui/splash-screen";
 import { ProtectedRoute } from "./protected-route";
 import { PublicRoute } from "./public-route";
@@ -79,6 +80,11 @@ const LoginHistoryPage = lazy(() =>
     default: module.LoginHistoryPage,
   }))
 );
+const HelpCenterPage = lazy(() =>
+  import("@/pages/profile/help-center-page").then((module) => ({
+    default: module.HelpCenterPage,
+  }))
+);
 const NotificationsPage = lazy(() =>
   import("@/pages/notifications/notifications-page").then((module) => ({
     default: module.NotificationsPage,
@@ -138,6 +144,7 @@ const MockExamsPage = lazy(() => import("@/pages/teacher/workspace/mock-exams-pa
 const MockResultsPage = lazy(() => import("@/pages/teacher/workspace/mock-results-page").then((module) => ({ default: module.MockResultsPage })));
 const TestResultsPage = lazy(() => import("@/pages/teacher/workspace/test-results-page").then((module) => ({ default: module.TestResultsPage })));
 const TestEditorPage = lazy(() => import("@/pages/teacher/workspace/test-editor-page").then((module) => ({ default: module.TestEditorPage })));
+const TestDetailsPage = lazy(() => import("@/pages/teacher/workspace/test-details-page").then((module) => ({ default: module.TestDetailsPage })));
 const TestsPage = lazy(() => import("@/pages/teacher/workspace/tests-page").then((module) => ({ default: module.TestsPage })));
 const TeacherDashboardPage = lazy(() => import("@/pages/teacher/dashboard/teacher-dashboard-page").then((module) => ({ default: module.TeacherDashboardPage })));
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
@@ -217,6 +224,7 @@ export function AppRouter() {
                     <Route path={ROUTES.teacher.tests} element={<TestsPage />} />
                     <Route path="/teacher/workspace/tests/:quizId" element={<TestEditorPage />} />
                     <Route path="/teacher/workspace/tests/:quizId/results" element={<TestResultsPage />} />
+                    <Route path="/teacher/workspace/tests/:quizId/edit" element={<TestDetailsPage />} />
                     <Route path={ROUTES.teacher.homework} element={<HomeworkListPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId" element={<HomeworkDetailPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId/review" element={<HomeworkReviewPage />} />
@@ -232,11 +240,16 @@ export function AppRouter() {
                       <Route path="ratings" element={<MyRatingsPage />} />
                       <Route path="certificates" element={<CertificatesPage />} />
                       <Route path="logins" element={<LoginHistoryPage />} />
+                      <Route path="help" element={<HelpCenterPage />} />
                     </Route>
                   </Route>
                   <Route
                     path={ROUTES.teacher.chats}
-                    element={<TeacherLayout />}
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <TeacherLayout />
+                      </Suspense>
+                    }
                   >
                     <Route index element={<ChatsPage />} />
                     <Route

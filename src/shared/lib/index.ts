@@ -10,6 +10,8 @@ export {
   formatFileSize,
 } from "./file-kind";
 export type { FileKind } from "./file-kind";
+export { openPdfDocument } from "./pdf";
+export type { PDFDocumentProxy } from "./pdf";
 export {
   formatConversationTime,
   formatDateTime,

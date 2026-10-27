@@ -1,13 +1,15 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
 import { useAiQuizJobs, useStartAiQuiz } from "@/modules/quiz";
 import type { AiQuizStandard } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
+import { MobileAiForm, MobileAiJobs } from "./mobile-ai-assistant";
 
 const EXAM_MODES: Array<{ id: string; standard: AiQuizStandard | null }> = [
   { id: "simple", standard: null },
@@ -25,6 +27,8 @@ const MAX_QUESTIONS = 50;
 export function AiAssistantPage() {
   const { t } = useTranslation("quiz");
   const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [params, setParams] = useSearchParams();
   const courses = useCourses();
   const subjectOptions = useSubjects();
   const jobs = useAiQuizJobs();
@@ -40,6 +44,54 @@ export function AiAssistantPage() {
   const [fileError, setFileError] = useState<string | null>(null);
 
   const standard = EXAM_MODES.find((item) => item.id === mode)?.standard ?? undefined;
+
+  if (isCompact) {
+    const view = params.get("view");
+    if (view === "jobs")
+      return (
+        <MobileAiJobs
+          jobs={jobs.data ?? []}
+          loading={jobs.isLoading}
+          started={params.get("started") === "1"}
+          retrying={start.isPending}
+          onBack={() => setParams({}, { replace: true })}
+          onOpen={(job) => job.quizId && navigate(ROUTES.teacher.test(job.quizId))}
+          onRetry={(job) =>
+            start.mutate({
+              files: [],
+              request: {
+                topic: job.topic || job.title,
+                questionCount: job.questionCount || 10,
+                ...(job.standard ? { standard: job.standard } : {}),
+              },
+            })
+          }
+        />
+      );
+    return (
+      <MobileAiForm
+        subjects={(subjectOptions.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
+        pending={start.isPending}
+        error={start.isError ? (start.error?.message ?? null) : null}
+        onBack={() => navigate(ROUTES.teacher.workspace)}
+        onHistory={() => setParams({ view: "jobs" })}
+        onSubmit={(value) =>
+          start.mutate(
+            {
+              files: value.files,
+              request: {
+                topic: value.topic,
+                subject: value.subject || undefined,
+                questionCount: value.count,
+                ...(value.standard ? { standard: value.standard } : {}),
+              },
+            },
+            { onSuccess: () => setParams({ view: "jobs", started: "1" }) }
+          )
+        }
+      />
+    );
+  }
 
   function submit() {
     if (!topic.trim()) return;

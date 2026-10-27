@@ -50,7 +50,14 @@
     "studentCountValue": "{{count}} учеников",
     "emptyTitle": "Пока нет данных",
     "emptyDescription": "Когда появятся оценки, результаты тестов и посещаемость, здесь будут показатели по курсам.",
-    "emptyAction": "Создать тест"
+    "emptyAction": "Создать тест",
+    "mobile": {
+      "eyebrow": "Личная аналитика",
+      "settings": "Настройки",
+      "ratings": "Оценки",
+      "test": "Тест {{value}}",
+      "attendance": "Посещаемость {{value}}"
+    }
   },
   "createGroup": "Создать группу",
   "statGroups": "Группы",
@@ -151,6 +158,49 @@
       "materials": {
         "title": "Материалы",
         "description": "Учебники, аудио и файлы"
+      }
+    },
+    "mobile": {
+      "eyebrow": "Рабочее место",
+      "create": "Создать",
+      "overview": "Общая сводка",
+      "details": "Подробнее",
+      "stats": {
+        "unchecked": "Не проверено",
+        "tests": "Тесты",
+        "mock": "Пробные экзамены"
+      },
+      "createItems": {
+        "test": "Новый тест",
+        "homework": "Задать задание",
+        "mock": "Пробный экзамен",
+        "ai": "Тест с ИИ"
+      },
+      "modules": {
+        "tests": {
+          "title": "Тесты",
+          "description": "Создание тестов и результаты"
+        },
+        "analytics": {
+          "title": "Аналитика",
+          "description": "Результаты и статистика активности"
+        },
+        "ai": {
+          "title": "ИИ-помощник",
+          "description": "Составление тестов с ИИ"
+        },
+        "mock": {
+          "title": "Пробные тесты",
+          "description": "IELTS, SAT, Национальный сертификат"
+        },
+        "assignments": {
+          "title": "Задания",
+          "description": "Выдача и проверка домашних заданий"
+        },
+        "materials": {
+          "title": "Материалы",
+          "description": "Учебники, аудио и файлы"
+        }
       }
     }
   },

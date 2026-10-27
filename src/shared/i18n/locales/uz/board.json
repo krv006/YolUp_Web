@@ -45,6 +45,8 @@
     "styleAria": "Rang va qalinlik"
   },
   "inline": {
+    "cancel": "Bekor qilish",
+    "add": "Doskaga qo‘shish",
     "formula": "Formula",
     "text": "Matn",
     "placeholder": "Matn yozing…",
@@ -95,6 +97,20 @@
     "title": "Darsdan chiqqan"
   },
   "periodic": {
+    "searchMobile": "Element nomi yoki belgisi",
+    "massMobile": "Atom massasi {{value}}",
+    "categories": {
+      "alkali": "Ishqoriy metall",
+      "alkaline_earth": "Ishqoriy-yer metali",
+      "transition": "O‘tish metali",
+      "post_transition": "O‘tishdan keyingi metall",
+      "metalloid": "Metalloid",
+      "nonmetal": "Nometall",
+      "halogen": "Galogen",
+      "noble_gas": "Inert gaz",
+      "lanthanide": "Lantanoid",
+      "actinide": "Aktinoid"
+    },
     "button": "Davriy jadval",
     "title": "Davriy jadval",
     "description": "Elementni tanlang — belgisi va ma’lumoti doskaga qo‘yiladi.",
@@ -116,7 +132,7 @@
     "close": "Yopish",
     "tableNote": "1–4-davrlar ko‘rsatilgan · {{count}} ta element",
     "periodShort": "{{value}}-davr",
-    "groupShort": "{{value}} guruh"
+    "groupShort": "{{value}}-guruh"
   },
   "palette": {
     "aria": "Formula konstruktori",
@@ -155,6 +171,7 @@
     "save": "Saqlash",
     "saved": "{{count}} ta o‘quvchiga ruxsat berildi",
     "pickStudent": "Kamida bitta o‘quvchini tanlang",
+    "teacherOnly": "Faqat o‘qituvchi",
     "modes": {
       "teacher": {
         "title": "Faqat men",
@@ -170,7 +187,7 @@
       }
     },
     "revoked": "{{count}} ta o‘quvchidan ruxsat olindi",
-    "selectedCount": "Tanlangan o'quvchilar · {{count}}"
+    "selectedCount": "Tanlangan o‘quvchilar · {{count}}"
   },
   "pages": {
     "title": "Sahifalar",
@@ -183,5 +200,18 @@
   "preview": {
     "label": "Doska · {{page}}-sahifa",
     "empty": "Doska hozircha bo‘sh"
+  },
+  "mobile": {
+    "title": "Doska · {{page}} / {{total}}",
+    "undo": "Bekor qilish",
+    "redo": "Qaytarish",
+    "undoReason": "Qadam bekor qilindi",
+    "modes": {
+      "teacher": "Faqat siz",
+      "selected": "Tanlanganlar",
+      "everyone": "Hamma"
+    },
+    "liveLesson": "Jonli dars",
+    "menu": "Amallar"
   }
 }

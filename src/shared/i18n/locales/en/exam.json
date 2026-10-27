@@ -151,7 +151,14 @@
     "startNowTitle": "Start now",
     "startNowHint": "No waiting for the time",
     "noQuizzesShort": "No published test?",
-    "createWithAiShort": "Create with AI →"
+    "createWithAiShort": "Create with AI →",
+    "mobile": {
+      "students": "{{count}} students",
+      "pick": "Select",
+      "minutes": "{{count}} min",
+      "manual": "Graded manually",
+      "pickFor": "Test for {{title}}"
+    }
   },
   "templateDialog": {
     "title": "Your own template",
@@ -191,7 +198,12 @@
     },
     "breakDefaultTitle": "Break",
     "orderHead": "Order",
-    "totalHours": "{{hours}} h {{count}} min total"
+    "totalHours": "{{hours}} h {{count}} min total",
+    "mobile": {
+      "save": "Save",
+      "weight": "weight {{value}}%",
+      "passLabel": "Pass mark"
+    }
   },
   "writing": {
     "essays": "STUDENT ESSAYS",
@@ -269,7 +281,43 @@
     "scoreSave": "Save",
     "overallBand": "Overall band (estimate)",
     "scorePlaceholder": "—",
-    "answeredCount": "{{answered}} / {{total}} questions"
+    "answeredCount": "{{answered}} / {{total}} questions",
+    "mobile": {
+      "back": "Back",
+      "hours": "{{hours}} h {{minutes}} min",
+      "sections": "{{count}} sections",
+      "average": "average {{value}}",
+      "liveSection": "{{title}} section · {{current}} / {{total}}",
+      "liveEnds": "left · the exam ends at {{time}}",
+      "joined": "Joined",
+      "submitted": "Submitted",
+      "warnings": "Warnings",
+      "students": "Students",
+      "notJoined": "Did not join the exam",
+      "integrityNote": "Switching to another window and paste attempts are recorded during the exam.",
+      "essaysTitle": "Writing · essays",
+      "essayFilters": {
+        "all": "All · {{count}}",
+        "ungraded": "Ungraded · {{count}}",
+        "ai": "AI ready · {{count}}"
+      },
+      "noEssay": "No essay submitted",
+      "wordsShort": "{{count}} words (min {{min}})",
+      "byTeacher": "Teacher: {{value}}",
+      "byAi": "AI: {{value}}",
+      "ungraded": "Ungraded",
+      "tooShort": "Not enough words",
+      "submissions": "{{count}} submissions",
+      "aiTitle": "{{name}} · {{section}}",
+      "band": "band",
+      "aiCriteria": "AI analysis · IELTS criteria",
+      "wordsTask": "{{count}} words · Task {{task}}",
+      "upgraded": "Improved version (≈ +1 band)",
+      "askAgain": "Ask again",
+      "shared": "Results were sent to the group chat ({{count}} students)",
+      "averageLabel": "Average",
+      "bySection": "Section averages"
+    }
   },
   "results": {
     "eyebrow": "Mock exams / Results · {{title}} · {{label}}",

@@ -380,6 +380,17 @@ textarea.quiz-page-question-text:focus {
 .periodic-cell strong { font-size: 10px; font-weight: 700; }
 .periodic-cell small,
 .periodic-cell span { display: none; }
+.periodic-chip--alkali { background: #ffe5e0; }
+.periodic-chip--alkaline_earth { background: var(--saffron-100); }
+.periodic-chip--transition { background: var(--red-50); }
+.periodic-chip--post_transition { background: var(--neutral-100); }
+.periodic-chip--metalloid { background: var(--accent-teal-bg); }
+.periodic-chip--nonmetal { background: #dbf2e0; }
+.periodic-chip--halogen { background: var(--blue-50); }
+.periodic-chip--noble_gas { background: var(--violet-100); }
+.periodic-chip--lanthanide { background: #ffe6f6; }
+.periodic-chip--actinide { background: #ffe3e0; }
+.periodic-chip--unknown { background: var(--bg-subtle); }
 
 /* Doska kabi qorong‘i ekran ichidagi oq maydonlar uchun yorug‘ qamrov */
 [data-theme="light"] {
@@ -637,6 +648,10 @@ textarea.quiz-page-question-text:focus {
 }
 .profile-form .form-picker-label {
   font-size: var(--fs-body-sm);
+  color: var(--text-primary);
+}
+.profile-form .form-picker-trigger-value {
+  font-weight: 400;
 }
 
 /* Sana va vaqt modallari (D-109, D-110) */

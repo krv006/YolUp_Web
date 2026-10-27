@@ -235,6 +235,80 @@
     "reminderValue": "за {{count}} мин",
     "pushTitle": "Push-уведомления",
     "pushOn": "Включены",
-    "pushOff": "Выключены"
+    "pushOff": "Выключены",
+    "back": "Назад",
+    "mobile": {
+      "eyebrow": "Аккаунт: {{role}}",
+      "monthResults": "Итоги: {{month}}",
+      "details": "Подробнее",
+      "rating": "Рейтинг",
+      "ratingCount": "Оценки",
+      "attendance": "Посещаемость",
+      "activity": "Активность",
+      "ratingsHint": "{{value}} · {{count}} оценок",
+      "certificatesHint": "{{count}} загружено",
+      "saved": "Изменения сохранены",
+      "saveFailed": "Не удалось сохранить. Проверьте интернет и попробуйте снова.",
+      "codeSentTo": "5-значный код, отправленный на {{phone}}",
+      "resendIn": "Отправить снова · {{time}}",
+      "phone": "Телефон",
+      "noRatingsTitle": "Оценок пока нет",
+      "noRatingsHint": "После уроков ученики оставляют оценки и отзывы. Они появятся здесь.",
+      "today": "сегодня",
+      "yesterday": "вчера",
+      "certificatesDescription": "Сертификаты видны в вашем профиле и повышают доверие учеников.",
+      "uploadedCount": "Загружено · {{count}}",
+      "uploadHint": "Сертификат появится в профиле после проверки.",
+      "upload": "Загрузить",
+      "file": "Файл",
+      "pickFile": "Выберите файл",
+      "pickOrDrop": "Выберите файл или перетащите сюда",
+      "today": "сегодня",
+      "fileTypes": "PDF, JPG или PNG · до {{size}} МБ",
+      "fileTooBig": "Файл должен быть меньше {{size}} МБ",
+      "fileMeta": "{{type}} · {{size}} · загружено",
+      "removeFile": "Убрать файл",
+      "certificateName": "Название сертификата",
+      "certificatePlaceholder": "Например: IELTS Academic 8.0",
+      "noCertificatesTitle": "Сертификатов пока нет",
+      "noCertificatesHint": "Загрузите IELTS, CELTA или другой сертификат — ученики увидят его в профиле.",
+      "openFile": "Открыть файл"
+    }
+  },
+  "help": {
+    "search": "Поиск вопроса или темы…",
+    "soon": "Скоро",
+    "empty": "Ничего не найдено",
+    "sections": {
+      "faq": "Частые вопросы",
+      "videos": "Видеоинструкции",
+      "contact": "Связь"
+    },
+    "items": {
+      "startLesson": {
+        "title": "Как начать урок?",
+        "hint": "«Начать урок» — на главном экране"
+      },
+      "addStudent": {
+        "title": "Как добавить ученика?",
+        "hint": "Группа → Добавить ученика"
+      },
+      "checkHomework": {
+        "title": "Как проверяется задание?",
+        "hint": "ИИ подсказывает, оценку ставите вы"
+      },
+      "intro": {
+        "title": "Знакомство с YolUp",
+        "hint": "2 минуты · для новичков"
+      },
+      "support": {
+        "title": "Написать в поддержку",
+        "hint": "В чате · обычно отвечаем за 10 минут"
+      },
+      "tour": {
+        "title": "Пройти обзор заново",
+        "hint": "Короткий тур по главному экрану"
+      }
+    }
   }
 }

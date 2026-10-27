@@ -113,6 +113,7 @@
     "finishTitle": "Darsni hamma uchun yakunlash — video yozuv shundan keyin saqlanadi",
     "youLabel": "Siz",
     "reconnecting": "Internet uzildi — qayta ulanmoqda ({{attempt}}/{{total}}). Dars davom etmoqda.",
+    "reconnectingMobile": "Aloqa uzildi — qayta ulanmoqda... Dars davom etmoqda.",
     "participantsCount": "Ishtirokchilar ({{count}})",
     "moreAria": "Boshqa amallar",
     "switch": {
@@ -127,7 +128,8 @@
     "allow": "Ruxsat",
     "mobileShare": "Ulashish",
     "mobilePeople": "Odamlar",
-    "mobileParticipantsCount": "Ishtirokchilar · {{count}}"
+    "mobileParticipantsCount": "Ishtirokchilar · {{count}}",
+    "liveLesson": "Jonli dars"
   },
   "mic": {
     "label": "Mikrofon",

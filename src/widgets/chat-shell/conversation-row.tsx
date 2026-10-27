@@ -34,7 +34,8 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
       <GroupTile
         name={conversation.title}
         tone={conversation.avatarTone}
-        className="size-12 rounded-xl text-title-sm"
+        src={conversation.imageUrl}
+        className="size-12 rounded-lg text-title-sm"
       />
     ) : (
       <Avatar
@@ -48,7 +49,7 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
     )}
 
     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-      <strong className="truncate text-title text-ink lg:text-title-sm">
+      <strong className="truncate text-title text-ink">
         {conversation.title}
       </strong>
       {conversation.typing ? (
@@ -56,7 +57,11 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
           {t("panel.typing", { name: conversation.typingName ?? "" })}
         </small>
       ) : (
-        <small className="flex min-w-0 items-center gap-1 text-body-sm text-ink-secondary">
+        <small
+          className={`flex min-w-0 items-center gap-1 text-body-sm ${
+            conversation.unreadCount ? "text-ink" : "text-ink-secondary"
+          }`}
+        >
           {conversation.lastSender === "me" ? (
             <Icon name="done-all" size={16} className="shrink-0 text-brand" />
           ) : null}

@@ -235,6 +235,80 @@
     "reminderValue": "{{count}} min before",
     "pushTitle": "Push notifications",
     "pushOn": "On",
-    "pushOff": "Off"
+    "pushOff": "Off",
+    "back": "Back",
+    "mobile": {
+      "eyebrow": "{{role}} account",
+      "monthResults": "{{month}} results",
+      "details": "Details",
+      "rating": "Rating",
+      "ratingCount": "Ratings",
+      "attendance": "Attendance",
+      "activity": "Activity",
+      "ratingsHint": "{{value}} · {{count}} ratings",
+      "certificatesHint": "{{count}} uploaded",
+      "saved": "Changes saved",
+      "saveFailed": "Could not save. Check your connection and try again.",
+      "codeSentTo": "The 5-digit code sent to {{phone}}",
+      "resendIn": "Resend · {{time}}",
+      "phone": "Phone",
+      "noRatingsTitle": "No ratings yet",
+      "noRatingsHint": "Students rate and comment after your lessons. They will appear here.",
+      "today": "today",
+      "yesterday": "yesterday",
+      "certificatesDescription": "Certificates appear on your profile and build students’ trust.",
+      "uploadedCount": "Uploaded · {{count}}",
+      "uploadHint": "Your certificate appears on your profile after review.",
+      "upload": "Upload",
+      "file": "File",
+      "pickFile": "Choose a file",
+      "pickOrDrop": "Choose a file or drop it here",
+      "today": "today",
+      "fileTypes": "PDF, JPG or PNG · up to {{size}} MB",
+      "fileTooBig": "The file must be smaller than {{size}} MB",
+      "fileMeta": "{{type}} · {{size}} · uploaded",
+      "removeFile": "Remove file",
+      "certificateName": "Certificate name",
+      "certificatePlaceholder": "For example: IELTS Academic 8.0",
+      "noCertificatesTitle": "No certificates yet",
+      "noCertificatesHint": "Upload IELTS, CELTA or another certificate — students will see it on your profile.",
+      "openFile": "Open file"
+    }
+  },
+  "help": {
+    "search": "Search a question or topic…",
+    "soon": "Coming soon",
+    "empty": "Nothing found",
+    "sections": {
+      "faq": "Frequently asked questions",
+      "videos": "Video guides",
+      "contact": "Contact"
+    },
+    "items": {
+      "startLesson": {
+        "title": "How do I start a lesson?",
+        "hint": "“Start lesson” — on the Home screen"
+      },
+      "addStudent": {
+        "title": "How do students join?",
+        "hint": "Group → Add student"
+      },
+      "checkHomework": {
+        "title": "How is homework checked?",
+        "hint": "AI suggests, you set the grade"
+      },
+      "intro": {
+        "title": "Getting to know YolUp",
+        "hint": "2 minutes · for beginners"
+      },
+      "support": {
+        "title": "Write to support",
+        "hint": "Via chat · usually replies in 10 minutes"
+      },
+      "tour": {
+        "title": "Replay the walkthrough",
+        "hint": "A short tour of the Home screen"
+      }
+    }
   }
 }

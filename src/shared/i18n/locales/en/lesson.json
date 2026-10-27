@@ -352,5 +352,11 @@
     "statHours": "Hours",
     "statFinished": "Finished",
     "hoursShort": "{{count}} h"
+  },
+  "scheduleState": {
+    "errorTitle": "Couldn’t load the schedule",
+    "errorHint": "Check your internet connection and try again. Your saved lessons are safe.",
+    "retry": "Try again",
+    "loading": "loading…"
   }
 }

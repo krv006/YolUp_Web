@@ -26,6 +26,7 @@ export interface MessageComposerProps {
   roomId?: string | null;
   /** Mobil biriktirish panelidagi "Vazifa" tugmasi (faqat o'qituvchi guruhida). */
   onAssignment?: () => void;
+  variant?: "default" | "workspace";
 }
 
 const emojis = ["🔥", "💎", "🚀", "👑", "⚡", "🎯"];
@@ -43,7 +44,9 @@ export function MessageComposer({
   allowAttachments = true,
   roomId = null,
   onAssignment,
+  variant = "default",
 }: MessageComposerProps) {
+  const workspace = variant === "workspace";
   const { t } = useTranslation("chat");
   const [draft, setDraft] = useState(() => editingMessage?.text ?? "");
   const [files, setFiles] = useState<File[]>([]);
@@ -253,9 +256,9 @@ export function MessageComposer({
 
   return (
     <div
-      className={`relative shrink-0 bg-surface px-4 pt-2.5 lg:border-t lg:border-line lg:px-6 lg:py-4 ${
-        context ? "pb-3.5" : "pb-6"
-      }`}
+      className={`relative shrink-0 bg-surface px-4 pt-2.5 ${
+        workspace ? "lg:mx-7 lg:mb-3 lg:rounded-2xl lg:py-2.5" : "lg:border-t lg:border-line lg:px-6 lg:py-4"
+      } ${context ? "pb-3.5" : "pb-6"}`}
     >
       {online ? null : (
         <div className="mb-2 flex items-center gap-1.5 text-saffron-strong lg:mb-3 lg:gap-2.5 lg:rounded-xl lg:bg-saffron-subtle lg:px-3 lg:py-2">
@@ -493,7 +496,7 @@ export function MessageComposer({
           </button>
         </div>
       ) : (
-      <div className="mx-auto flex w-full max-w-[920px] items-end gap-2.25 lg:gap-3">
+      <div className={`mx-auto flex w-full max-w-[920px] items-end gap-2.25 ${workspace ? "lg:gap-2" : "lg:gap-3"}`}>
         <input
           ref={fileRef}
           type="file"
@@ -505,7 +508,7 @@ export function MessageComposer({
           }}
         />
         <button
-          className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 lg:size-12"
+          className={`grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 ${workspace ? "" : "lg:size-12"}`}
           onClick={() => (isCompact ? setAttachOpen(true) : fileRef.current?.click())}
           disabled={!allowAttachments || Boolean(editingMessage)}
           title={allowAttachments ? undefined : t("composer.attachUnavailable")}
@@ -513,9 +516,15 @@ export function MessageComposer({
         >
           <Icon name="add" size={22} />
         </button>
-        <div className="flex min-h-11 min-w-0 flex-1 items-end gap-2 rounded-[22px] bg-subtle py-2.5 pr-3 pl-4.5 lg:rounded-3xl lg:border lg:border-line lg:bg-canvas lg:px-5 lg:py-3">
+        <div
+          className={`flex min-h-11 min-w-0 flex-1 items-end gap-2 rounded-[22px] bg-subtle py-2.5 pr-3 pl-4.5 ${
+            workspace ? "lg:py-3 lg:pl-4" : "lg:rounded-3xl lg:border lg:border-line lg:bg-canvas lg:px-5 lg:py-3"
+          }`}
+        >
           <textarea
-            className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-secondary lg:placeholder:text-ink-tertiary"
+            className={`max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-secondary ${
+              workspace ? "lg:text-body-sm" : "lg:placeholder:text-ink-tertiary"
+            }`}
             ref={textareaRef}
             rows={1}
             value={draft}
@@ -535,7 +544,7 @@ export function MessageComposer({
           />
           <button
             type="button"
-            className="mb-0.5 hidden size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink lg:grid"
+            className={`mb-0.5 hidden size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink ${workspace ? "" : "lg:grid"}`}
             onClick={() => {
               const next = draft.endsWith("@") ? draft : `${draft}${draft && !draft.endsWith(" ") ? " " : ""}@`;
               setDraft(next);
@@ -549,7 +558,9 @@ export function MessageComposer({
           <Dropdown>
             <DropdownTrigger asChild>
               <button
-                className="grid size-6 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:text-ink lg:mb-0.5 lg:size-7 lg:text-ink-tertiary"
+                className={`grid size-6 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:text-ink ${
+                  workspace ? "" : "lg:mb-0.5 lg:size-7 lg:text-ink-tertiary"
+                }`}
                 aria-label={t("composer.emojiAria")}
               >
                 <Icon name="emoji" size={20} />
@@ -570,7 +581,7 @@ export function MessageComposer({
         </div>
         {hasContent || editingMessage ? (
           <button
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40 lg:size-12"
+            className={`grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40 ${workspace ? "" : "lg:size-12"}`}
             onClick={submit}
             disabled={(!draft.trim() && !files.length) || sending}
             aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
@@ -589,12 +600,12 @@ export function MessageComposer({
         ) : (
           <button
             type="button"
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted lg:size-12 lg:bg-action lg:text-on-action lg:hover:bg-action-hover"
+            className={`grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted lg:bg-action lg:text-on-action lg:hover:bg-action-hover ${workspace ? "" : "lg:size-12"}`}
             onClick={startRecording}
             aria-label={t("actionsMenu.voiceAria")}
           >
-            <Icon name="mic" size={22} className="lg:hidden" />
-            <Mic size={20} className="hidden lg:block" />
+            <Icon name="mic" size={22} className={workspace ? undefined : "lg:hidden"} />
+            {workspace ? null : <Mic size={20} className="hidden lg:block" />}
         </button>
         )}
       </div>

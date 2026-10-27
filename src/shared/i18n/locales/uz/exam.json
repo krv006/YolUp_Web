@@ -151,7 +151,14 @@
     "startNowTitle": "Hozir boshlash",
     "startNowHint": "Vaqt kutilmaydi",
     "noQuizzesShort": "E'lon qilingan test yo'qmi?",
-    "createWithAiShort": "AI bilan yarating →"
+    "createWithAiShort": "AI bilan yarating →",
+    "mobile": {
+      "students": "{{count}} o‘quvchi",
+      "pick": "Tanlang",
+      "minutes": "{{count}} daq",
+      "manual": "Qo‘lda baholanadi",
+      "pickFor": "{{title}} uchun test"
+    }
   },
   "templateDialog": {
     "title": "O'z shabloningiz",
@@ -191,7 +198,12 @@
     },
     "breakDefaultTitle": "Tanaffus",
     "orderHead": "Tartib",
-    "totalHours": "jami {{hours}} soat {{count}} daq"
+    "totalHours": "jami {{hours}} soat {{count}} daq",
+    "mobile": {
+      "save": "Saqlash",
+      "weight": "og‘irlik {{value}}%",
+      "passLabel": "O‘tish foizi"
+    }
   },
   "writing": {
     "essays": "O'QUVCHI INSHOSI",
@@ -269,7 +281,43 @@
     "scoreSave": "Saqlash",
     "overallBand": "Umumiy band (taxminiy)",
     "scorePlaceholder": "—",
-    "answeredCount": "{{answered}} / {{total}} savol"
+    "answeredCount": "{{answered}} / {{total}} savol",
+    "mobile": {
+      "back": "Orqaga",
+      "hours": "{{hours}} soat {{minutes}} daq",
+      "sections": "{{count}} bo‘lim",
+      "average": "o‘rtacha {{value}}",
+      "liveSection": "{{title}} bo‘limi · {{current}} / {{total}}",
+      "liveEnds": "qoldi · imtihon {{time}} da tugaydi",
+      "joined": "Kirdi",
+      "submitted": "Topshirdi",
+      "warnings": "Ogohlantirish",
+      "students": "O‘quvchilar",
+      "notJoined": "Imtihonga kirmadi",
+      "integrityNote": "Imtihon davomida boshqa oynaga o‘tish va nusxa qo‘yishga urinishlar qayd etiladi.",
+      "essaysTitle": "Writing · insholar",
+      "essayFilters": {
+        "all": "Hammasi · {{count}}",
+        "ungraded": "Baholanmagan · {{count}}",
+        "ai": "AI tayyor · {{count}}"
+      },
+      "noEssay": "Insho topshirilmagan",
+      "wordsShort": "{{count}} so‘z (kamida {{min}})",
+      "byTeacher": "O‘qituvchi: {{value}}",
+      "byAi": "AI: {{value}}",
+      "ungraded": "Baholanmagan",
+      "tooShort": "So‘z soni yetarli emas",
+      "submissions": "{{count}} ta topshiriq",
+      "aiTitle": "{{name}} · {{section}}",
+      "band": "band",
+      "aiCriteria": "AI tahlili · IELTS mezonlari",
+      "wordsTask": "{{count}} so‘z · Task {{task}}",
+      "upgraded": "Yaxshilangan variant (≈ +1 band)",
+      "askAgain": "Qayta so‘rash",
+      "shared": "Natijalar guruh chatiga yuborildi ({{count}} ta o‘quvchi)",
+      "averageLabel": "O‘rtacha",
+      "bySection": "Bo‘limlar o‘rtachasi"
+    }
   },
   "results": {
     "eyebrow": "Mock testlar / Natijalar · {{title}} · {{label}}",

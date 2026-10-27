@@ -1,9 +1,21 @@
 import { Check, Type } from "lucide-react";
 import { useRef, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { mobileButton } from "@/shared/ui/mobile-page";
 import type { FormulaSolutionDto } from "../api/board.dto";
 import { FormulaPalette } from "./formula-palette";
+
+const QUICK_KEYS = [
+  { label: "x²", insert: "x²" },
+  { label: "√", insert: "√" },
+  { label: "π", insert: "π" },
+  { label: "÷", insert: "÷" },
+  { label: "×", insert: "×" },
+  { label: "( )", insert: "()", caret: 1 },
+  { label: "=", insert: "=" },
+];
 
 export interface FormulaSolverDialogProps {
   open: boolean;
@@ -33,8 +45,95 @@ export function FormulaSolverDialog({
   onPlaceResultOnly,
 }: FormulaSolverDialogProps) {
   const { t } = useTranslation("board");
+  const isCompact = useIsCompact();
   const inputRef = useRef<HTMLInputElement>(null);
   const steps = solution?.steps ?? [];
+
+  function insertAtCaret(text: string, caret = text.length) {
+    const input = inputRef.current;
+    const start = input?.selectionStart ?? formula.length;
+    const end = input?.selectionEnd ?? formula.length;
+    onFormulaChange(`${formula.slice(0, start)}${text}${formula.slice(end)}`);
+    requestAnimationFrame(() => {
+      input?.focus();
+      input?.setSelectionRange(start + caret, start + caret);
+    });
+  }
+
+  if (isCompact)
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        titleClassName="text-title-lg font-semibold"
+        footerClassName="px-4 pt-5 pb-6"
+        title={t("formulaDialog.title")}
+        description={t("formulaDialog.description")}
+        footer={
+          <>
+            <button
+              type="submit"
+              form="formula-solver-form"
+              className={mobileButton.secondary}
+              disabled={solving || !formula.trim()}
+            >
+              {t("formulaDialog.solve")}
+            </button>
+            <button
+              type="button"
+              className={`${mobileButton.primary} whitespace-nowrap`}
+              disabled={!solution || placing || !canPlace}
+              onClick={onPlace}
+            >
+              {t("formulaDialog.place")}
+            </button>
+          </>
+        }
+      >
+        <form id="formula-solver-form" className="-mt-[3px] flex flex-col gap-3" onSubmit={onSolve}>
+          <input
+            ref={inputRef}
+            autoFocus
+            className="h-14 w-full rounded-lg border-[1.5px] border-transparent bg-subtle px-5 font-numeric text-title font-semibold text-ink outline-none placeholder:font-normal placeholder:text-ink-tertiary focus:border-brand"
+            value={formula}
+            placeholder={t("formulaDialog.placeholder")}
+            aria-label={t("formulaDialog.formulaLabel")}
+            onChange={(event) => onFormulaChange(event.target.value)}
+            required
+          />
+          <div className="grid grid-cols-7 gap-1.5" onPointerDown={(event) => event.preventDefault()}>
+            {QUICK_KEYS.map((key) => (
+              <button
+                key={key.label}
+                type="button"
+                className="h-9 rounded-[10px] bg-subtle text-body-sm font-semibold text-ink transition-colors hover:bg-muted"
+                onClick={() => insertAtCaret(key.insert, key.caret)}
+              >
+                {key.label}
+              </button>
+            ))}
+          </div>
+        </form>
+
+        {solution ? (
+          <div className="-mt-1 flex flex-col gap-2.5 rounded-lg border border-brand bg-canvas p-4 pb-[11px]">
+            <span className="text-caption-strong text-brand uppercase">
+              {t("formulaDialog.solutionSteps", { count: steps.length })}
+            </span>
+            <ol className="flex flex-col gap-2.5">
+              {(steps.length ? steps : [solution.pretty]).map((step, index) => (
+                <li key={step} className="flex items-start gap-2.5">
+                  <span className="grid size-[22px] shrink-0 place-items-center rounded-full bg-brand font-numeric text-caption-strong text-on-action">
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1 text-body-sm whitespace-pre-wrap text-ink">{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ) : null}
+      </AppDialog>
+    );
 
   return (
     <AppDialog

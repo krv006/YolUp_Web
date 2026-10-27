@@ -27,11 +27,13 @@ const BAR: Record<Tone, string> = {
 
 interface Row {
   id: string;
+  assignmentId?: string;
+  quizId?: string;
   title: string;
   meta: string;
   pill: { tone: Tone; icon: string; label: string };
   aside: string;
-  progress: number;
+  progress: number | null;
   onOpen: () => void;
   menu: Array<{ id: string; label: string; danger?: boolean; run: () => void }>;
 }
@@ -47,6 +49,8 @@ export interface MobileAssignmentListProps {
   onDeleteAssignment: (assignment: Assignment) => void;
   onOpenQuiz: (quiz: QuizSummary) => void;
   onEditQuiz: (quiz: QuizSummary) => void;
+  highlightId?: string | null;
+  className?: string;
 }
 
 function shortDate(value: string, months: string[]): string {
@@ -71,6 +75,8 @@ export function MobileAssignmentList({
   onDeleteAssignment,
   onOpenQuiz,
   onEditQuiz,
+  highlightId = null,
+  className = "flex flex-col gap-3",
 }: MobileAssignmentListProps) {
   const { t } = useTranslation("group");
   const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
@@ -105,6 +111,7 @@ export function MobileAssignmentList({
 
     return {
       id: item.id,
+      assignmentId: item.id,
       title: item.title,
       meta: draft
         ? t("mobileAssignments.draftMeta")
@@ -124,8 +131,9 @@ export function MobileAssignmentList({
         : pill.tone === "success" && item.stats?.averageScore != null
           ? t("mobileAssignments.average", { value: item.stats.averageScore.toFixed(1).replace(".", ",") })
           : t("mobileAssignments.submitted", { done: submitted, total }),
-      progress:
-        draft || !total
+      progress: draft
+        ? null
+        : !total
           ? 0
           : pill.tone === "brand"
             ? Math.round(((submitted - pending) / total) * 100)
@@ -145,6 +153,7 @@ export function MobileAssignmentList({
     const closed = left !== null && left < 0;
     return {
       id: `quiz-${quiz.id}`,
+      quizId: quiz.id,
       title: quiz.title,
       meta: t("mobileAssignments.quizMeta", { count: quiz.questionCount }),
       pill: draft
@@ -153,7 +162,7 @@ export function MobileAssignmentList({
           ? { tone: "success", icon: "check-circle", label: t("mobileAssignments.finished") }
           : { tone: "teal", icon: "clock", label: left === null ? t("mobileAssignments.noDue") : t("mobileAssignments.daysLeft", { count: Math.max(left, 0) }) },
       aside: draft ? t("mobileAssignments.notSent") : "",
-      progress: draft ? 0 : closed ? 100 : 0,
+      progress: draft ? null : closed ? 100 : 0,
       onOpen: () => onOpenQuiz(quiz),
       menu: [
         { id: "open", label: t("mobileAssignments.results"), run: () => onOpenQuiz(quiz) },
@@ -163,13 +172,17 @@ export function MobileAssignmentList({
   });
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className={className}>
       {[...assignmentRows, ...quizRows].map((row) => (
         <article
           key={row.id}
+          data-assignment-id={row.assignmentId}
+          data-quiz-id={row.quizId}
           role="button"
           tabIndex={0}
-          className="flex flex-col gap-3 rounded-xl bg-surface px-4 pt-4 pb-3"
+          className={`flex flex-col gap-3 rounded-xl bg-surface p-4 ${
+            row.assignmentId && row.assignmentId === highlightId ? "ring-2 ring-brand" : ""
+          }`}
           onClick={row.onOpen}
           onKeyDown={(event) => {
             if (event.key === "Enter") row.onOpen();
@@ -214,7 +227,7 @@ export function MobileAssignmentList({
 
           <div className="flex items-center gap-3">
             <span
-              className={`flex h-7 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-caption-strong ${PILL[row.pill.tone]}`}
+              className={`flex h-6 shrink-0 items-center gap-1.5 rounded-full pr-2.5 pl-2 text-caption-strong ${PILL[row.pill.tone]}`}
             >
               <Icon name={row.pill.icon} size={14} />
               {row.pill.label}
@@ -224,12 +237,14 @@ export function MobileAssignmentList({
             ) : null}
           </div>
 
-          <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
-            <span
-              className={`block h-full rounded-full ${BAR[row.pill.tone]}`}
-              style={{ width: `${row.progress}%` }}
-            />
-          </span>
+          {row.progress === null ? null : (
+            <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
+              <span
+                className={`block h-full rounded-full ${BAR[row.pill.tone]}`}
+                style={{ width: `${row.progress}%` }}
+              />
+            </span>
+          )}
         </article>
       ))}
     </div>

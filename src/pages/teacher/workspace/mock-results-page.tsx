@@ -1,12 +1,33 @@
 import { useMemo, useState } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useExam, useExamResults, useExamStudentResult } from "@/modules/exam";
+import {
+  ExamScoreDialog,
+  examApi,
+  examKeys,
+  useExam,
+  useExamCurrent,
+  useExamResults,
+  useExamStudentResult,
+  useRequestWritingAi,
+  useSaveManualScores,
+  useShareExamResults,
+} from "@/modules/exam";
+import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import type { ExamManualAnswer, ExamStudentResult } from "@/shared/types";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import {
+  MobileMockLive,
+  MobileMockResults,
+  MobileWritingAi,
+  MobileWritingList,
+  type WritingEntry,
+} from "./mobile-mock-results";
 
 function score(value: number | null): string {
   return value === null ? "—" : value.toFixed(1);
@@ -14,10 +35,20 @@ function score(value: number | null): string {
 
 export function MockResultsPage() {
   const { t } = useTranslation("exam");
+  const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
   const { examId = null } = useParams();
+  const navigate = useNavigate();
+  const isCompact = useIsCompact();
+  const [params, setParams] = useSearchParams();
   const exam = useExam(examId);
   const results = useExamResults(examId, Boolean(examId));
+  const running = exam.data?.state === "running";
+  const current = useExamCurrent(isCompact && running ? examId : null, 15_000);
+  const share = useShareExamResults();
+  const saveScores = useSaveManualScores(examId ?? "");
+  const requestAi = useRequestWritingAi(examId ?? "");
   const [picked, setPicked] = useState<string | null>(null);
+  const [scoring, setScoring] = useState<{ studentId: string; prefill?: Record<string, number> } | null>(null);
 
   const rows = useMemo(() => results.data?.results ?? [], [results.data]);
   const sectionKeys = useMemo(() => {
@@ -52,6 +83,127 @@ export function MockResultsPage() {
   const detail = useExamStudentResult(examId, activeRow?.studentId ?? null);
 
   const writing = activeRow?.sections.find((section) => section.manual) ?? null;
+
+  const view = params.get("view");
+  const writingKey = params.get("section") ?? "writing";
+  const essayStudent = params.get("student");
+  const participantIds = isCompact && view === "writing" ? rows.filter((row) => row.participated).map((row) => row.studentId) : [];
+  const essays = useQueries({
+    queries: participantIds.map((studentId) => ({
+      queryKey: examKeys.studentResult(examId ?? "", studentId),
+      queryFn: ({ signal }: { signal: AbortSignal }) => examApi.getStudentResult(examId as string, studentId, { signal }),
+    })),
+  });
+  const essayDetail = useExamStudentResult(isCompact ? examId : null, isCompact ? essayStudent : null);
+  const scoringResult = useExamStudentResult(isCompact ? examId : null, isCompact ? (scoring?.studentId ?? null) : null);
+
+  if (isCompact) {
+    const scoringRow = rows.find((row) => row.studentId === scoring?.studentId) ?? null;
+    const scoringDetail = scoringResult.data;
+    const scoreSheet = (
+      <ExamScoreDialog
+        open={Boolean(scoringRow)}
+        onOpenChange={(open) => !open && setScoring(null)}
+        result={scoringRow}
+        prefill={scoring?.prefill}
+        suggested={
+          scoringDetail?.writingAi?.suggestedBand != null ? { [writingKey]: scoringDetail.writingAi.suggestedBand } : {}
+        }
+        pending={saveScores.isPending}
+        onSave={(scores) =>
+          scoringRow &&
+          saveScores.mutate({ studentId: scoringRow.studentId, scores }, { onSuccess: () => setScoring(null) })
+        }
+      />
+    );
+    const finishedDate = exam.data?.endsAt ? new Date(exam.data.endsAt) : null;
+    const dateLabel =
+      finishedDate && !Number.isNaN(finishedDate.getTime())
+        ? `${finishedDate.getDate()}-${(months[finishedDate.getMonth()] ?? "").toLowerCase()}`
+        : "";
+
+    if (view === "writing" && essayStudent) {
+      const row = rows.find((item) => item.studentId === essayStudent);
+      return (
+        <>
+          <MobileWritingAi
+            title={t("mock.mobile.aiTitle", {
+              name: row?.studentName ?? "",
+              section: row?.sections.find((section) => section.key === writingKey)?.title ?? "Writing",
+            })}
+            detail={essayDetail.data}
+            requesting={requestAi.isPending}
+            onBack={() => setParams({ view: "writing", section: writingKey })}
+            onRequest={() => requestAi.mutate(essayStudent)}
+            onApply={(value) => setScoring({ studentId: essayStudent, prefill: { [writingKey]: value } })}
+          />
+          {scoreSheet}
+        </>
+      );
+    }
+
+    if (view === "writing") {
+      const entries: WritingEntry[] = rows
+        .filter((row) => row.participated)
+        .map((row) => ({
+          row,
+          detail: essays.find((query) => query.data?.studentId === row.studentId)?.data,
+          sectionKey: writingKey,
+        }));
+      return (
+        <MobileWritingList
+          eyebrow={[exam.data?.title, dateLabel, t("mock.mobile.submissions", { count: entries.length })].filter(Boolean).join(" · ")}
+          entries={entries}
+          loading={essays.some((query) => query.isLoading)}
+          onBack={() => setParams({})}
+          onOpen={(entry) => setParams({ view: "writing", section: writingKey, student: entry.row.studentId })}
+        />
+      );
+    }
+
+    if (running) {
+      const sectionList = (exam.data?.sections ?? []).filter((section) => section.kind === "section");
+      const currentKey = current.data?.item?.key ?? null;
+      const index = sectionList.findIndex((section) => section.key === currentKey);
+      return (
+        <MobileMockLive
+          title={exam.data?.title ?? ""}
+          sectionTitle={current.data?.item?.title ?? null}
+          sectionIndex={index + 1}
+          sectionCount={sectionList.length}
+          endsAt={current.data?.endsAt ?? exam.data?.endsAt ?? null}
+          rows={rows}
+          onBack={() => navigate(ROUTES.teacher.mockExams)}
+        />
+      );
+    }
+
+    return (
+      <>
+        <MobileMockResults
+          eyebrow={exam.data?.courseTitle ?? ""}
+          title={exam.data?.title ?? ""}
+          rows={rows}
+          sections={sectionAverages.map((section) => ({
+            ...section,
+            manual: rows.some((row) => row.sections.some((item) => item.key === section.key && item.manual)),
+          }))}
+          loading={results.isLoading}
+          sharing={share.isPending}
+          onBack={() => navigate(ROUTES.teacher.mockExams)}
+          onShare={() =>
+            examId &&
+            share.mutate(examId, {
+              onSuccess: (data) => toast.success(t("mock.mobile.shared", { count: data.students || participated.length })),
+            })
+          }
+          onSection={(key) => setParams({ view: "writing", section: key })}
+          onStudent={(row) => setScoring({ studentId: row.studentId })}
+        />
+        {scoreSheet}
+      </>
+    );
+  }
 
   return (
     <WorkspaceShell

@@ -28,10 +28,13 @@
     "other": "Fayl"
   },
   "fileViewer": {
+    "pageOf": "{{page}} / {{total}} sahifa",
+    "prevPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa",
     "opening": "Ochilmoqda…",
     "openError": "Faylni ochib bo'lmadi",
     "unsupported": "Bu turdagi faylni brauzerda ko'rib bo'lmaydi.",
-    "platformOnlyNote": "Fayl faqat platforma ichida ko'riladi",
+    "platformOnlyNote": "Fayl faqat platforma ichida ko‘riladi",
     "close": "Yopish",
     "watermark": "YolUp · faqat platformada"
   },

@@ -187,10 +187,11 @@ export function ConversationInfoPanel({
       .then((items) => queryClient.setQueryData(messageKeys.pinned(conversation.id), items));
   }
 
-  const mobileGroup = isCompact && isGroup && !embedded;
+  const groupInfo = isGroup && (embedded || isCompact);
 
-  const body = mobileGroup ? (
+  const body = groupInfo ? (
     <MobileGroupInfo
+      variant={embedded ? "panel" : "screen"}
       conversation={conversation}
       subjectLabel={course.data?.subjectLabel}
       muted={muted}

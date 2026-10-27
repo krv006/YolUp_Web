@@ -130,6 +130,20 @@
         "title": "Dars qo‘shing",
         "hint": "O‘quvchilar eslatma oladi"
       }
+    },
+    "tour": {
+      "step": "{{current}} / {{total}}",
+      "skip": "O‘tkazib yuborish",
+      "next": "Keyingi",
+      "start": "Boshlash",
+      "home": {
+        "title": "Asosiy — kuningiz bir qarashda",
+        "text": "Bugungi darslar, tekshirilishi kerak bo‘lgan ishlar va jonli darsni boshlash shu sahifada."
+      },
+      "workspace": {
+        "title": "Workspace — ish maydoningiz",
+        "text": "Testlar, uy vazifalari, mock imtihonlar va AI yordamchi shu bo‘limda. Pastki menyudan istalgan vaqtda oching."
+      }
     }
   }
 }
