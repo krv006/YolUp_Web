@@ -20,7 +20,8 @@
     "closeSearchAria": "Close search",
     "searchPrevAria": "Previous match",
     "searchNextAria": "Next match",
-    "onlineCount": "{{count}} online"
+    "onlineCount": "{{count}} online",
+    "voiceAria": "Voice room"
   },
   "directStatus": {
     "pending": "Request pending",
@@ -145,7 +146,8 @@
     "searchEmptyHint": "Nothing found for “{{query}}”. Try another word.",
     "announcementOn": "Announcement mode is on — only teachers can post",
     "announcementLocked": "Only teachers can write in this group",
-    "searchOlder": "{{count}} more matches in older messages — scroll up"
+    "searchOlder": "{{count}} more matches in older messages — scroll up",
+    "announcementChip": "Announcement mode on"
   },
   "composer": {
     "editingLabel": "Editing message",
@@ -168,7 +170,8 @@
     "recordCancel": "Cancel recording",
     "recordSend": "Send voice message",
     "micDenied": "Microphone access was denied",
-    "recordHint": "‹ Swipe to cancel"
+    "recordHint": "‹ Swipe to cancel",
+    "recordSwipeCancel": "Swipe to cancel"
   },
   "actionsMenu": {
     "closeAria": "Close message menu",
@@ -194,7 +197,8 @@
     "scrollDown": "Scroll down",
     "mentionAria": "Mention",
     "voiceAria": "Voice message",
-    "selectedMessages": "{{count}} messages selected"
+    "selectedMessages": "{{count}} messages selected",
+    "cancelShort": "Cancel"
   },
   "bubble": {
     "edited": "edited",
@@ -307,13 +311,16 @@
     "banner": "No internet connection. Messages will be sent once you are back online.",
     "composer": "You are offline — messages will be sent once the connection is back",
     "failed": "Not sent",
-    "retry": "Try again"
+    "retry": "Try again",
+    "resend": "Resend",
+    "composerShort": "No internet — will send when online"
   },
   "mention": {
     "title": "Group members",
     "empty": "No members found",
     "teacher": "Teacher",
-    "parent": "Parent"
+    "parent": "Parent",
+    "online": "online"
   },
   "forward": {
     "title": "Forward message",
@@ -335,7 +342,8 @@
     "gallery": "Gallery",
     "camera": "Camera",
     "document": "Document",
-    "assignment": "Assignment"
+    "assignment": "Assignment",
+    "recentFailed": "Could not load the image"
   },
   "preview": {
     "title": "{{count}} photos",

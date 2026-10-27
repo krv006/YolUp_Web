@@ -13,6 +13,7 @@ export {
   useVoiceRooms,
   voiceKeys,
 } from "./model/voice.queries";
+export { useVoiceUiStore } from "./model/voice-ui.store";
 export { VoiceRoomBar } from "./ui/voice-room-bar";
 export { VoiceRoomCreateDialog } from "./ui/voice-room-create-dialog";
 export { VoiceRoomPanel } from "./ui/voice-room-panel";

@@ -23,7 +23,23 @@ export function PinnedMessageBar({ roomId, canUnpin = true, onUnpin }: PinnedMes
   if (!current) return null;
 
   return (
-    <div className="flex shrink-0 items-start gap-3 border-b border-line bg-saffron-subtle px-4 py-2.5 lg:px-6">
+    <>
+    <div className="mx-4 mt-4 flex h-12 shrink-0 items-center gap-3 rounded-xl bg-surface pr-2 pl-4 lg:hidden">
+      <Icon name="pin" size={18} className="shrink-0 text-brand" />
+      <span className="min-w-0 flex-1 truncate text-body-sm text-ink">
+        {current.text || t("pinned.attachment")}
+      </span>
+      {canUnpin ? (
+        <button
+          className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle"
+          onClick={() => onUnpin?.(current.messageId)}
+          aria-label={t("pinned.removeAria")}
+        >
+          <Icon name="close" size={18} />
+        </button>
+      ) : null}
+    </div>
+    <div className="hidden shrink-0 items-start gap-3 border-b border-line bg-saffron-subtle px-4 py-2.5 lg:flex lg:px-6">
       <span className="mt-0.5 h-9 w-0.5 shrink-0 rounded-full bg-saffron-strong" />
       <span className="mt-1.5 shrink-0 text-saffron-strong">
         <Icon name="pin" size={16} />
@@ -48,5 +64,6 @@ export function PinnedMessageBar({ roomId, canUnpin = true, onUnpin }: PinnedMes
         </button>
       ) : null}
     </div>
+    </>
   );
 }

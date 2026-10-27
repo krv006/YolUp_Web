@@ -11,14 +11,16 @@ import {
   useLeaveVoiceRoom,
   useRequestVoiceJoin,
 } from "../model/voice.queries";
+import { useVoiceUiStore } from "../model/voice-ui.store";
 import { VoiceRoomCreateDialog } from "./voice-room-create-dialog";
 import { VoiceRoomPanel } from "./voice-room-panel";
 
 export interface VoiceRoomBarProps {
   courseId: string | null;
+  hideIdle?: boolean;
 }
 
-export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
+export function VoiceRoomBar({ courseId, hideIdle = false }: VoiceRoomBarProps) {
   const { t } = useTranslation("voice");
   const { active } = useActiveVoiceRoom(courseId);
   const create = useCreateVoiceRoom();
@@ -26,7 +28,8 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
   const leave = useLeaveVoiceRoom();
   const close = useCloseVoiceRoom();
   const requestJoin = useRequestVoiceJoin();
-  const [createOpen, setCreateOpen] = useState(false);
+  const createOpen = useVoiceUiStore((state) => state.createOpen);
+  const setCreateOpen = useVoiceUiStore((state) => state.setCreateOpen);
   const [joined, setJoined] = useState<{ room: VoiceRoom; token: VoiceToken } | null>(null);
   const leavingRef = useRef(false);
 
@@ -57,7 +60,11 @@ export function VoiceRoomBar({ courseId }: VoiceRoomBarProps) {
 
   return (
     <>
-      <div className="mx-4 mt-2 mb-1 flex shrink-0 items-center gap-3 rounded-lg bg-brand-subtle px-4 py-2.5 lg:mx-7">
+      <div
+        className={`mx-4 mt-2 mb-1 shrink-0 items-center gap-3 rounded-lg bg-brand-subtle px-4 py-2.5 lg:mx-7 ${
+          hideIdle && !active ? "hidden" : "flex"
+        }`}
+      >
         <span
           className={`grid size-8 shrink-0 place-items-center rounded-full ${
             active?.status === "live" ? "bg-brand text-ink-inverse" : "bg-brand text-ink-inverse"

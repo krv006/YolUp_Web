@@ -24,9 +24,58 @@ export function HomeworkMessageCard({ assignment, canReview = false }: HomeworkM
         ).padStart(2, "0")}:${String(due.getMinutes()).padStart(2, "0")}`
       : "—";
 
+  const progress = assignment.totalCount
+    ? Math.min(100, Math.round((assignment.submittedCount / assignment.totalCount) * 100))
+    : 0;
+
   return (
     <>
-      <article className="flex w-full max-w-[520px] flex-col gap-3 rounded-2xl border border-line bg-surface p-4">
+      <article className="mx-auto flex w-full max-w-75 flex-col gap-3 rounded-xl bg-surface p-4 lg:hidden">
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-accent-saffron-bg text-accent-saffron-fg">
+            <Icon name="assign" size={22} />
+          </span>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <small className="text-caption text-ink-secondary uppercase">{t("chatCard.label")}</small>
+            <strong className="truncate text-title text-ink">{assignment.title}</strong>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          {left !== null ? (
+            <span
+              className={`flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2.5 text-caption-strong ${
+                left < 0 ? "bg-error-bg text-error-text" : "bg-accent-teal-bg text-accent-teal-fg"
+              }`}
+            >
+              <Icon name="clock" size={14} />
+              {left < 0 ? t("chatCard.overdue") : t("chatCard.daysLeft", { count: left })}
+            </span>
+          ) : null}
+          {assignment.totalCount ? (
+            <small className="ml-auto shrink-0 text-body-xs text-ink-secondary">
+              {t("messageCard.submitted", {
+                done: assignment.submittedCount,
+                total: assignment.totalCount,
+              })}
+            </small>
+          ) : null}
+        </div>
+
+        <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
+          <span className="block h-full rounded-full bg-brand" style={{ width: `${progress}%` }} />
+        </span>
+
+        <button
+          type="button"
+          className="flex h-11 items-center justify-center rounded-full bg-brand-subtle px-4 text-button text-brand transition-colors hover:bg-tint"
+          onClick={() => setOpen(true)}
+        >
+          {canReview ? t("messageCard.review") : t("chatCard.submit")}
+        </button>
+      </article>
+
+      <article className="hidden w-full max-w-[520px] flex-col gap-3 rounded-2xl border border-line bg-surface p-4 lg:flex">
         <div className="flex items-start gap-3">
           <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-action-subtle text-action">
             <Icon name="assign" size={20} />

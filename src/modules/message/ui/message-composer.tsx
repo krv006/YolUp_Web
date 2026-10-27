@@ -252,23 +252,29 @@ export function MessageComposer({
   const hasContent = Boolean(draft.trim() || files.length);
 
   return (
-    <div className="relative shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
+    <div
+      className={`relative shrink-0 bg-surface px-4 pt-2.5 lg:border-t lg:border-line lg:px-6 lg:py-4 ${
+        context ? "pb-3.5" : "pb-6"
+      }`}
+    >
       {online ? null : (
-        <div className="mb-3 flex items-center gap-2.5 rounded-xl bg-saffron-subtle px-3 py-2 text-saffron-strong">
-          <Icon name="error" size={16} className="shrink-0" />
-          <span className="text-caption">{t("offline.composer")}</span>
+        <div className="mb-2 flex items-center gap-1.5 text-saffron-strong lg:mb-3 lg:gap-2.5 lg:rounded-xl lg:bg-saffron-subtle lg:px-3 lg:py-2">
+          <Icon name="wifi" size={16} className="shrink-0 lg:hidden" />
+          <Icon name="error" size={16} className="hidden shrink-0 lg:block" />
+          <span className="text-caption lg:hidden">{t("offline.composerShort")}</span>
+          <span className="hidden text-caption lg:inline">{t("offline.composer")}</span>
         </div>
       )}
 
       <AnimatePresence>
         {mention ? (
           <motion.div
-            className="absolute bottom-full left-4 z-30 mb-2 flex w-[280px] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-xl lg:left-6"
+            className="absolute right-4 bottom-full left-4 z-30 -mb-[5px] flex flex-col overflow-hidden rounded-xl bg-surface px-2 pt-6.5 pb-2 shadow-xl lg:right-auto lg:left-6 lg:mb-2 lg:w-[280px] lg:rounded-2xl lg:border lg:border-line lg:p-0"
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
           >
-            <span className="px-4 pt-3 pb-2 text-caption-strong text-ink-tertiary">
+            <span className="px-2.5 pb-0.75 text-caption text-ink-secondary uppercase lg:px-4 lg:pt-3 lg:pb-2 lg:text-caption-strong lg:text-ink-tertiary lg:normal-case">
               {t("mention.title")}
             </span>
             {suggestions.length ? (
@@ -276,17 +282,31 @@ export function MessageComposer({
                 <button
                   key={student.id}
                   type="button"
-                  className={`flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${
-                    index === activeMention ? "bg-subtle" : "hover:bg-subtle"
+                  className={`flex items-center gap-3 rounded-lg px-4 py-3.5 text-left transition-colors lg:rounded-none lg:py-2.5 ${
+                    index === activeMention ? "bg-brand-subtle lg:bg-subtle" : "hover:bg-subtle"
                   }`}
                   onMouseEnter={() => setActiveMention(index)}
                   onClick={() => applyMention(student.username, student.id)}
                 >
-                  <Avatar name={student.name} src={student.avatarUrl ?? undefined} size="sm" />
+                  <Avatar
+                    name={student.name}
+                    src={student.avatarUrl ?? undefined}
+                    size="sm"
+                    className="max-lg:[&_.avatar]:size-10"
+                  />
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <strong className="truncate text-label-strong text-ink">{student.name}</strong>
-                    <small className="truncate text-caption text-ink-tertiary">
-                      @{student.username}
+                    <strong className="truncate text-title leading-5 text-ink lg:text-label-strong">{student.name}</strong>
+                    <small
+                      className={`truncate text-body-sm lg:text-caption lg:text-ink-tertiary ${
+                        student.role === "teacher" ? "text-brand" : "text-ink-secondary"
+                      }`}
+                    >
+                      <span className="lg:hidden">
+                        {student.role === "teacher"
+                          ? t("mention.teacher")
+                          : `@${student.username}${student.isOnline ? ` · ${t("mention.online")}` : ""}`}
+                      </span>
+                      <span className="hidden lg:inline">@{student.username}</span>
                     </small>
                   </span>
                 </button>
@@ -303,16 +323,17 @@ export function MessageComposer({
       <AnimatePresence initial={false}>
         {context && (
           <motion.div
-            className="mb-3 flex items-center gap-3 rounded-xl border border-line bg-canvas px-3 py-2"
+            className="mt-2.5 mb-4 flex items-center gap-2.5 pl-1 lg:mt-0 lg:mb-3 lg:gap-3 lg:rounded-xl lg:border lg:border-line lg:bg-canvas lg:px-3 lg:py-2"
             initial={{ opacity: 0, y: 8, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: 5, height: 0 }}
           >
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action">
+            <i className="w-[3px] shrink-0 self-stretch rounded-full bg-brand not-italic lg:hidden" />
+            <span className="hidden size-8 shrink-0 place-items-center rounded-full bg-action-subtle text-action lg:grid">
               {editingMessage ? <Icon name="edit" size={16} /> : <Icon name="arrow-back" size={17} />}
             </span>
             <span className="flex min-w-0 flex-1 flex-col">
-              <strong className="truncate text-caption-strong text-ink">
+              <strong className="truncate text-caption-strong text-brand lg:text-ink">
                 {editingMessage
                   ? t("composer.editingLabel")
                   : `${
@@ -322,10 +343,12 @@ export function MessageComposer({
                         : t("composer.replyFallback"))
                     }`}
               </strong>
-              <small className="truncate text-caption text-ink-tertiary">{context.text}</small>
+              <small className="truncate text-body-sm leading-4 text-ink-secondary lg:text-caption lg:text-ink-tertiary">
+                {context.text}
+              </small>
             </span>
             <button
-              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-tertiary hover:bg-subtle hover:text-ink"
+              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-secondary hover:bg-subtle hover:text-ink lg:text-ink-tertiary"
               onClick={() => {
                 onCancelContext();
                 if (editingMessage) setDraft("");
@@ -400,7 +423,32 @@ export function MessageComposer({
         ) : null}
       </AnimatePresence>
       {recording ? (
-        <div className="mx-auto flex w-full max-w-[920px] items-center gap-3 rounded-full bg-danger-bg px-4 py-3">
+        <div className="flex items-center gap-2.25 lg:hidden">
+          <div className="flex h-11 min-w-0 flex-1 items-center gap-3 rounded-full bg-danger-bg px-4">
+            <span className="size-2.5 shrink-0 animate-pulse rounded-full bg-danger" />
+            <span className="shrink-0 font-numeric text-title-sm text-error-text">
+              {formatDuration(seconds)}
+            </span>
+            <button
+              type="button"
+              className="min-w-0 flex-1 truncate text-left text-body-sm text-ink-secondary"
+              onClick={() => stopRecording(true)}
+            >
+              ‹ {t("composer.recordSwipeCancel")}
+            </button>
+          </div>
+          <button
+            type="button"
+            className="grid size-13 shrink-0 place-items-center rounded-full bg-danger text-on-action"
+            onClick={() => stopRecording(false)}
+            aria-label={t("composer.recordSend")}
+          >
+            <Icon name="mic" size={24} />
+          </button>
+        </div>
+      ) : null}
+      {recording ? (
+        <div className="mx-auto hidden w-full max-w-[920px] items-center gap-3 rounded-full bg-danger-bg px-4 py-3 lg:flex">
           <button
             type="button"
             className="grid size-10 shrink-0 place-items-center rounded-full text-error-text transition-colors hover:bg-error-bg"
@@ -445,7 +493,7 @@ export function MessageComposer({
           </button>
         </div>
       ) : (
-      <div className="mx-auto flex w-full max-w-[920px] items-end gap-3">
+      <div className="mx-auto flex w-full max-w-[920px] items-end gap-2.25 lg:gap-3">
         <input
           ref={fileRef}
           type="file"
@@ -457,7 +505,7 @@ export function MessageComposer({
           }}
         />
         <button
-          className="grid size-12 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40"
+          className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40 lg:size-12"
           onClick={() => (isCompact ? setAttachOpen(true) : fileRef.current?.click())}
           disabled={!allowAttachments || Boolean(editingMessage)}
           title={allowAttachments ? undefined : t("composer.attachUnavailable")}
@@ -465,9 +513,9 @@ export function MessageComposer({
         >
           <Icon name="add" size={22} />
         </button>
-        <div className="flex min-w-0 flex-1 items-end gap-2 rounded-3xl border border-line bg-canvas px-5 py-3">
+        <div className="flex min-h-11 min-w-0 flex-1 items-end gap-2 rounded-[22px] bg-subtle py-2.5 pr-3 pl-4.5 lg:rounded-3xl lg:border lg:border-line lg:bg-canvas lg:px-5 lg:py-3">
           <textarea
-            className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-tertiary"
+            className="max-h-[120px] min-w-0 flex-1 resize-none bg-transparent text-body text-ink outline-none placeholder:text-ink-secondary lg:placeholder:text-ink-tertiary"
             ref={textareaRef}
             rows={1}
             value={draft}
@@ -487,7 +535,7 @@ export function MessageComposer({
           />
           <button
             type="button"
-            className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+            className="mb-0.5 hidden size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink lg:grid"
             onClick={() => {
               const next = draft.endsWith("@") ? draft : `${draft}${draft && !draft.endsWith(" ") ? " " : ""}@`;
               setDraft(next);
@@ -501,13 +549,17 @@ export function MessageComposer({
           <Dropdown>
             <DropdownTrigger asChild>
               <button
-                className="mb-0.5 grid size-7 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:text-ink"
+                className="grid size-6 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:text-ink lg:mb-0.5 lg:size-7 lg:text-ink-tertiary"
                 aria-label={t("composer.emojiAria")}
               >
                 <Icon name="emoji" size={20} />
               </button>
             </DropdownTrigger>
-            <DropdownContent className="emoji-picker">
+            <DropdownContent
+              className="emoji-picker max-lg:!flex max-lg:h-12.5 max-lg:w-66.5 max-lg:!min-w-0 max-lg:items-center max-lg:justify-between max-lg:!rounded-full max-lg:!border-0 max-lg:!px-3 max-lg:!py-0 max-lg:!shadow-xl max-lg:[&_.dropdown-item]:!size-9 max-lg:[&_.dropdown-item]:!text-[22px]"
+              sideOffset={isCompact ? 46 : 8}
+              alignOffset={isCompact ? -11 : 0}
+            >
               {emojis.map((emoji) => (
                 <DropdownItem key={emoji} onSelect={() => setDraft((value) => value + emoji)}>
                   {emoji}
@@ -518,7 +570,7 @@ export function MessageComposer({
         </div>
         {hasContent || editingMessage ? (
           <button
-            className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover disabled:opacity-40 lg:size-12"
             onClick={submit}
             disabled={(!draft.trim() && !files.length) || sending}
             aria-label={editingMessage ? t("composer.saveEditAria") : t("composer.sendAria")}
@@ -526,7 +578,10 @@ export function MessageComposer({
             {sending ? (
               <LoaderCircle className="animate-spin" size={19} />
             ) : editingMessage ? (
-              <Icon name="edit" size={18} />
+              <>
+                <Icon name="check" size={22} className="lg:hidden" />
+                <Icon name="edit" size={18} className="hidden lg:block" />
+              </>
             ) : (
               <Icon name="send" size={20} />
             )}
@@ -534,11 +589,12 @@ export function MessageComposer({
         ) : (
           <button
             type="button"
-            className="grid size-12 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted lg:size-12 lg:bg-action lg:text-on-action lg:hover:bg-action-hover"
             onClick={startRecording}
             aria-label={t("actionsMenu.voiceAria")}
           >
-            <Mic size={20} />
+            <Icon name="mic" size={22} className="lg:hidden" />
+            <Mic size={20} className="hidden lg:block" />
         </button>
         )}
       </div>
@@ -547,6 +603,7 @@ export function MessageComposer({
       <AttachmentSheet
         open={attachOpen}
         onOpenChange={setAttachOpen}
+        roomId={roomId ?? undefined}
         onPick={addFiles}
         onAssignment={onAssignment}
         maxSizeMb={MAX_FILE_MB}

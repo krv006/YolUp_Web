@@ -6,9 +6,19 @@ import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage, MessageCapabilities } from "@/shared/types";
 import { useChatUiStore } from "../model/chat-ui.store";
 
+export interface MessageMenuAnchor {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  html: string;
+  outgoing: boolean;
+}
+
 export interface MessageActionsMenuProps {
   message: ChatMessage | null;
   position: { x: number; y: number };
+  anchor?: MessageMenuAnchor | null;
   onClose: () => void;
   onReply: (message: ChatMessage) => void;
   onEdit: (message: ChatMessage) => void;
@@ -22,10 +32,17 @@ export interface MessageActionsMenuProps {
 
 const QUICK_REACTIONS = ["👍", "❤️", "🔥", "😂", "😮", "🙏"];
 const EDGE_GAP = 12;
+const PILL_HEIGHT = 50;
+const PILL_GAP = 15;
+const MENU_GAP = 23;
+const MENU_ITEM = 48;
+const MENU_WIDTH = 250;
+const BOTTOM_GAP = 27;
 
 export function MessageActionsMenu({
   message,
   position,
+  anchor = null,
   onClose,
   onReply,
   onEdit,
@@ -58,6 +75,7 @@ export function MessageActionsMenu({
     {
       id: "reply",
       icon: "arrow-back",
+      mobileIcon: "chat",
       label: t("actionsMenu.reply"),
       run: () => onReply(message),
       hidden: rights.reply === false,
@@ -100,7 +118,34 @@ export function MessageActionsMenu({
       run: () => startSelection(message.id),
       hidden: false,
     },
-  ].filter((item) => !item.hidden);
+  ].filter((item) => !item.hidden) as Array<{
+    id: string;
+    icon: string;
+    mobileIcon?: string;
+    label: string;
+    run: () => void;
+    hidden: boolean;
+  }>;
+
+  const deleteCount = (rights.delete === false ? 0 : 1) + (rights.deleteEveryone ? 1 : 0);
+  const menuHeight = (items.length + deleteCount) * MENU_ITEM + (deleteCount ? 1 : 0) + 12;
+  const focus = anchor
+    ? (() => {
+        const total = PILL_HEIGHT + PILL_GAP + anchor.height + MENU_GAP + menuHeight;
+        const maxTop = window.innerHeight - BOTTOM_GAP - total;
+        const pillTop = Math.max(EDGE_GAP, Math.min(anchor.top - PILL_GAP - PILL_HEIGHT, maxTop));
+        const bubbleTop = pillTop + PILL_HEIGHT + PILL_GAP;
+        const right = anchor.left + anchor.width;
+        return {
+          pillTop,
+          pillLeft: anchor.left,
+          pillWidth: anchor.width,
+          bubbleTop,
+          menuTop: bubbleTop + anchor.height + MENU_GAP,
+          menuLeft: anchor.outgoing ? right - MENU_WIDTH : anchor.left,
+        };
+      })()
+    : null;
 
   const reactions = (
     <div className="flex items-center gap-1 rounded-full bg-surface p-1.5 shadow-xl">
@@ -252,9 +297,100 @@ export function MessageActionsMenu({
         exit={{ opacity: 0 }}
       />
 
+      {focus ? (
+        <motion.div
+          key="focus"
+          className="pointer-events-none fixed inset-0 z-50 font-body lg:hidden"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <div
+            className="pointer-events-auto absolute flex items-center justify-between rounded-full bg-surface px-3 shadow-xl"
+            style={{ top: focus.pillTop, left: focus.pillLeft, width: focus.pillWidth, height: PILL_HEIGHT }}
+          >
+            {QUICK_REACTIONS.map((emoji) => (
+              <button
+                key={emoji}
+                type="button"
+                className="grid size-9 place-items-center rounded-full text-[22px] transition-colors hover:bg-subtle"
+                onClick={() => {
+                  if (rights.react !== false) onReact(message, emoji);
+                  else toast.info(t("actions.notAvailable"));
+                  onClose();
+                }}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+
+          <div
+            className="absolute [&>[data-bubble]]:w-full [&>[data-bubble]]:max-w-none"
+            style={{ top: focus.bubbleTop, left: anchor?.left, width: anchor?.width }}
+            dangerouslySetInnerHTML={{ __html: anchor?.html ?? "" }}
+          />
+
+          <div
+            className="pointer-events-auto absolute flex flex-col overflow-hidden rounded-xl bg-surface py-1.5 shadow-xl"
+            role="menu"
+            style={{ top: focus.menuTop, left: focus.menuLeft, width: MENU_WIDTH }}
+          >
+            {items.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="menuitem"
+                className="flex h-12 items-center gap-3 px-4 text-left text-body text-ink transition-colors hover:bg-subtle"
+                onClick={() => {
+                  item.run();
+                  onClose();
+                }}
+              >
+                <Icon name={item.mobileIcon ?? item.icon} size={22} className="shrink-0 text-ink" />
+                {item.label}
+              </button>
+            ))}
+            {rights.delete === false && !rights.deleteEveryone ? null : (
+              <span className="h-px shrink-0 bg-line" />
+            )}
+            {rights.delete === false ? null : (
+              <button
+                type="button"
+                role="menuitem"
+                className="flex h-12 items-center gap-3 px-4 text-left text-body text-error-text transition-colors hover:bg-danger-bg"
+                onClick={() => {
+                  onDelete(message, "me");
+                  onClose();
+                }}
+              >
+                <Icon name="logout" size={22} className="shrink-0" />
+                {t("actionsMenu.deleteForMe")}
+              </button>
+            )}
+            {rights.deleteEveryone ? (
+              <button
+                type="button"
+                role="menuitem"
+                className="flex h-12 items-center gap-3 px-4 text-left text-body text-error-text transition-colors hover:bg-danger-bg"
+                onClick={() => {
+                  onDelete(message, "everyone");
+                  onClose();
+                }}
+              >
+                <Icon name="logout" size={22} className="shrink-0" />
+                {t("actionsMenu.deleteForEveryone")}
+              </button>
+            ) : null}
+          </div>
+        </motion.div>
+      ) : null}
+
       <motion.div
         key="sheet"
-        className="fixed inset-x-0 bottom-0 z-50 flex flex-col overflow-hidden rounded-t-2xl bg-surface shadow-2xl lg:hidden"
+        className={`fixed inset-x-0 bottom-0 z-50 flex-col overflow-hidden rounded-t-2xl bg-surface shadow-2xl lg:hidden ${
+          focus ? "hidden" : "flex"
+        }`}
         role="menu"
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
