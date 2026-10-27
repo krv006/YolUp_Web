@@ -72,7 +72,7 @@
     "aboutGroupPlain": "Guruh haqida",
     "allMembers": "Hammasi",
     "membersTitle": "A’zolar",
-    "deleteCourseConfirmTitle": "“{{title}}” guruhini o‘chirasizmi?",
+    "deleteCourseConfirmTitle": "“{{title}}”ni o‘chirasizmi?",
     "deleteTypeName": "Tasdiqlash uchun guruh nomini yozing",
     "deleteConfirm": "O‘chirish",
     "descriptionOptional": "Tavsif",
@@ -89,7 +89,10 @@
     "online": "onlayn",
     "onlineCount": "{{count}} nafari onlayn",
     "teacherBadge": "O‘qituvchi",
-    "deleteCourseWarning": "Guruh chati, darslar, vazifalar va video yozuvlar butunlay o‘chiriladi."
+    "deleteCourseWarning": "Guruh chati, darslar, vazifalar va video yozuvlar butunlay o‘chiriladi.",
+    "filesEmptyHint": "Guruhda yuborilgan fayllar shu yerda to‘planadi.",
+    "mediaEmptyHint": "Guruhda yuborilgan rasm va videolar shu yerda to‘planadi.",
+    "descriptionShort": "Tavsif"
   },
   "item": {
     "liveNow": "Dars ketmoqda",

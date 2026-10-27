@@ -3,7 +3,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
 
-export type AppDialogVariant = "sheet" | "fullscreen" | "confirm" | "panel";
+export type AppDialogVariant = "sheet" | "fullscreen" | "confirm" | "panel" | "adaptive";
 
 export interface AppDialogProps {
   open: boolean;
@@ -33,6 +33,8 @@ const PLACEMENT: Record<AppDialogVariant, string> = {
     "inset-0 h-dvh w-full rounded-none data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom lg:inset-auto lg:top-1/2 lg:left-1/2 lg:h-auto lg:max-h-[86vh] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:border lg:border-line lg:data-[state=closed]:slide-out-to-bottom-0 lg:data-[state=open]:slide-in-from-bottom-0",
   confirm:
     "top-1/2 left-1/2 max-h-[86dvh] w-[calc(100%-32px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+  adaptive:
+    "inset-x-0 bottom-0 max-h-[92dvh] w-full rounded-t-2xl data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom lg:inset-x-auto lg:top-1/2 lg:bottom-auto lg:left-1/2 lg:max-h-[86dvh] lg:w-[calc(100%-32px)] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:rounded-2xl lg:data-[state=closed]:slide-out-to-bottom-0 lg:data-[state=open]:slide-in-from-bottom-0 lg:data-[state=closed]:zoom-out-95 lg:data-[state=open]:zoom-in-95",
   panel:
     "inset-x-0 bottom-0 max-h-[88dvh] w-full rounded-t-2xl data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom lg:inset-x-auto lg:inset-y-0 lg:right-0 lg:max-h-none lg:rounded-t-none lg:rounded-l-2xl lg:data-[state=closed]:slide-out-to-right lg:data-[state=open]:slide-in-from-right",
 };
@@ -48,9 +50,9 @@ export function AppDialog({
   footer,
   width = "lg:w-130",
   layout = "inline",
-  titleClassName = "font-heading text-h2",
+  titleClassName = "text-h2 leading-6 font-semibold lg:font-heading lg:font-medium",
   footerClassName,
-  closeClassName = "size-9",
+  closeClassName = "size-11 lg:size-9",
 }: AppDialogProps) {
   const { t } = useTranslation("common");
 

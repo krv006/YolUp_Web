@@ -19,6 +19,8 @@ import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
 import { DeleteAssignmentDialog } from "./delete-assignment-dialog";
 import { RemindDialog } from "./remind-dialog";
+import { MobileHomeworkDetail } from "./mobile-homework-detail";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 
 const STATUS_TONE: Record<string, string> = {
   done: "bg-accent-green-bg text-success-fg",
@@ -54,6 +56,7 @@ export function HomeworkDetailPage() {
   const [remindOpen, setRemindOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const isCompact = useIsCompact();
 
   const item = assignment.data ?? null;
   const submissions = useMemo(() => item?.submissions ?? [], [item]);
@@ -73,6 +76,92 @@ export function HomeworkDetailPage() {
       return true;
     });
   }, [submissions, search, filter]);
+
+  const dialogs = (
+    <>
+        {item ? (
+          <AssignmentFormDialog
+            key={item.id}
+            open={editOpen}
+            onOpenChange={setEditOpen}
+            courses={[
+              {
+                id: item.courseId,
+                title: item.courseTitle,
+                studentCount: item.stats?.studentsCount ?? 0,
+              },
+            ]}
+            pending={update.isPending}
+            initial={{
+              courseId: item.courseId,
+              title: item.title,
+              body: item.body || item.description,
+              dueAt: item.dueAt,
+              grading: item.grading,
+              announceInChat: item.announceInChat,
+            }}
+            onSubmit={(values) =>
+              update.mutateAsync({ id: item.id, form: values }).then(() => setEditOpen(false))
+            }
+          />
+        ) : null}
+
+        <DeleteAssignmentDialog
+          open={deleteOpen}
+          count={submitted}
+          pending={remove.isPending}
+          onOpenChange={setDeleteOpen}
+          onConfirm={() => {
+            if (!assignmentId) return;
+            remove.mutateAsync(assignmentId).then(() => navigate(ROUTES.teacher.homework));
+          }}
+        />
+
+        <RemindDialog
+          open={remindOpen}
+          count={missing}
+          title={item?.title ?? ""}
+          due={formatDue(item?.dueAt ?? null, months)}
+          pending={remind.isPending}
+          onOpenChange={setRemindOpen}
+          onConfirm={(input) => {
+            if (!assignmentId) return;
+            remind
+              .mutateAsync({
+                assignmentId,
+                message: input.message,
+                notifyParents: input.notifyParents,
+              })
+              .then(() => setRemindOpen(false));
+          }}
+        />
+    </>
+  );
+
+  if (isCompact)
+    return (
+      <>
+        <MobileHomeworkDetail
+          item={item}
+          eyebrow={t("mobileDetail.eyebrow", {
+            course: item?.courseTitle ?? "",
+            due: formatDue(item?.dueAt ?? null, months),
+          })}
+          summary={summary}
+          summaryPending={aiSummary.isPending}
+          missing={missing}
+          onBack={() => navigate(-1)}
+          onEdit={() => setEditOpen(true)}
+          onDelete={() => setDeleteOpen(true)}
+          onRemind={() => setRemindOpen(true)}
+          onSummary={() => assignmentId && aiSummary.mutate(assignmentId)}
+          onOpenSubmission={(row) =>
+            assignmentId && navigate(`${ROUTES.teacher.homeworkReview(assignmentId)}?s=${row.id}`)
+          }
+        />
+        {dialogs}
+      </>
+    );
 
   return (
     <WorkspaceShell
@@ -304,62 +393,7 @@ export function HomeworkDetailPage() {
         </div>
       </div>
 
-      {item ? (
-        <AssignmentFormDialog
-          key={item.id}
-          open={editOpen}
-          onOpenChange={setEditOpen}
-          courses={[
-            {
-              id: item.courseId,
-              title: item.courseTitle,
-              studentCount: item.stats?.studentsCount ?? 0,
-            },
-          ]}
-          pending={update.isPending}
-          initial={{
-            courseId: item.courseId,
-            title: item.title,
-            body: item.body || item.description,
-            dueAt: item.dueAt,
-            grading: item.grading,
-            announceInChat: item.announceInChat,
-          }}
-          onSubmit={(values) =>
-            update.mutateAsync({ id: item.id, form: values }).then(() => setEditOpen(false))
-          }
-        />
-      ) : null}
-
-      <DeleteAssignmentDialog
-        open={deleteOpen}
-        count={submitted}
-        pending={remove.isPending}
-        onOpenChange={setDeleteOpen}
-        onConfirm={() => {
-          if (!assignmentId) return;
-          remove.mutateAsync(assignmentId).then(() => navigate(ROUTES.teacher.homework));
-        }}
-      />
-
-      <RemindDialog
-        open={remindOpen}
-        count={missing}
-        title={item?.title ?? ""}
-        due={formatDue(item?.dueAt ?? null, months)}
-        pending={remind.isPending}
-        onOpenChange={setRemindOpen}
-        onConfirm={(input) => {
-          if (!assignmentId) return;
-          remind
-            .mutateAsync({
-              assignmentId,
-              message: input.message,
-              notifyParents: input.notifyParents,
-            })
-            .then(() => setRemindOpen(false));
-        }}
-      />
+      {dialogs}
     </WorkspaceShell>
   );
 }

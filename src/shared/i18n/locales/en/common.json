@@ -110,5 +110,11 @@
     "forbiddenAction": "Switch account",
     "back": "Back",
     "help": "Help"
+  },
+  "relative": {
+    "now": "just now",
+    "minutes": "{{count}} min ago",
+    "hours": "{{count}} h ago",
+    "yesterday": "Yesterday"
   }
 }

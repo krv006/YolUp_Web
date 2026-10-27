@@ -211,11 +211,8 @@ export function AppRouter() {
                     <Route path={ROUTES.teacher.notifications} element={<NotificationsPage />} />
                     <Route path={ROUTES.teacher.search} element={<WorkspaceSearchPage />} />
                     <Route path={ROUTES.teacher.schedule} element={<TeacherSchedulePage />} />
-                    <Route
-                      path={ROUTES.teacher.recording(":lessonId")}
-                      element={<RecordingPage />}
-                    />
-                    <Route path={ROUTES.teacher.board(":lessonId")} element={<BoardPage />} />
+                    <Route path="/teacher/recordings/:lessonId" element={<RecordingPage />} />
+                    <Route path="/teacher/boards/:lessonId" element={<BoardPage />} />
                     <Route path={ROUTES.teacher.workspace} element={<WorkspaceHomePage />} />
                     <Route path={ROUTES.teacher.tests} element={<TestsPage />} />
                     <Route path="/teacher/workspace/tests/:quizId" element={<TestEditorPage />} />

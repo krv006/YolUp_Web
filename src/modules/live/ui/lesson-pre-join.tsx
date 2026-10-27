@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { usePreviewTracks } from "@livekit/components-react";
 import { Track, type LocalVideoTrack } from "livekit-client";
-import { Info, Mic, MicOff, Settings, Video, VideoOff, Volume2, X } from "lucide-react";
+import { Info, Mic, MicOff, Settings, Video, VideoOff } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { i18n } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
+import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { Switch } from "@/shared/ui/switch";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { MediaPermissionDialog } from "./media-permission-dialog";
 
 export interface LessonPreJoinChoices {
   micOn: boolean;
@@ -43,15 +45,26 @@ export function LessonPreJoin({
   const isCompact = useIsCompact();
   const [micOn, setMicOn] = useState(micAllowed);
   const [cameraOn, setCameraOn] = useState(true);
-  const [deviceError, setDeviceError] = useState<string | null>(null);
+  const [attempt, setAttempt] = useState(0);
+  const [failure, setFailure] = useState<{ attempt: number; denied: boolean; message: string } | null>(
+    null
+  );
   const [screenShareError, setScreenShareError] = useState<string | null>(null);
   const [joining, setJoining] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleDeviceError = useCallback(
-    (error: Error) => setDeviceError(error.message || i18n.t("live:preJoin.deviceErrorFallback")),
-    []
+    (error: Error) =>
+      setFailure({
+        attempt,
+        denied: error.name === "NotAllowedError" || error.name === "SecurityError",
+        message: error.message || i18n.t("live:preJoin.deviceErrorFallback"),
+      }),
+    [attempt]
   );
+  const current = failure?.attempt === attempt ? failure : null;
+  const deviceError = current?.message ?? null;
+  const permissionDenied = Boolean(current?.denied);
   const trackOptions = useMemo(() => ({ audio: micOn, video: cameraOn }), [micOn, cameraOn]);
   const tracks = usePreviewTracks(trackOptions, handleDeviceError);
 
@@ -117,111 +130,142 @@ export function LessonPreJoin({
     }
   }
 
+  function retryDevices() {
+    setFailure(null);
+    setAttempt((value) => value + 1);
+  }
+
   function toggleMic() {
-    setDeviceError(null);
+    setFailure(null);
     setMicOn((value) => !value);
   }
 
   function toggleCamera() {
-    setDeviceError(null);
+    setFailure(null);
     setCameraOn((value) => !value);
   }
 
-  if (isCompact)
+  if (isCompact) {
+    const startClock = timeRange.split(" – ")[0] ?? lesson.time;
+    const devices = micOn
+      ? cameraOn
+        ? t("preJoin.mobileBothOn")
+        : t("preJoin.mobileMicOnly")
+      : cameraOn
+        ? t("preJoin.mobileCameraOnly")
+        : t("preJoin.mobileBothOff");
+
     return (
       <main
         data-theme="dark"
-        className="dark flex h-dvh min-h-0 flex-col bg-canvas px-4 pt-3 pb-6 text-ink"
+        className="dark flex h-dvh min-h-0 flex-col overflow-y-auto bg-canvas px-4 pt-5 pb-9 font-body text-ink [&>*]:shrink-0"
       >
-        <div className="flex h-11 shrink-0 items-center gap-2">
+        <header className="flex h-11 items-center gap-3">
           <button
             type="button"
-            className="-ml-2 grid size-10 place-items-center rounded-full text-ink transition-colors hover:bg-subtle"
+            className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-inverse text-ink-inverse"
             aria-label={t("preJoin.cancel")}
             onClick={onCancel}
           >
-            <X size={22} />
+            <Icon name="close" size={22} />
           </button>
-          <strong className="text-title text-ink">{t("preJoin.mobileTitle")}</strong>
-        </div>
+          <strong className="min-w-0 flex-1 truncate text-center text-title font-semibold">
+            {lesson.courseTitle} · {startClock}
+          </strong>
+          <span className="size-11 shrink-0" aria-hidden="true" />
+        </header>
 
-        <div className="relative mt-2 min-h-0 flex-1 overflow-hidden rounded-2xl bg-subtle">
+        <div className="relative mt-4 aspect-[358/421] w-full overflow-hidden rounded-2xl bg-subtle">
           {cameraOn && videoTrack ? (
             <video ref={videoRef} className="size-full object-cover" muted playsInline autoPlay />
           ) : (
             <div className="flex size-full flex-col items-center justify-center gap-3">
               <Avatar name={userName || t("preJoin.you")} size="lg" />
-              <p className="text-body-sm text-ink-tertiary">{t("preJoin.cameraOff")}</p>
+              <p className="text-body-sm text-ink-secondary">{t("preJoin.cameraOff")}</p>
             </div>
           )}
-          <span className="absolute bottom-3 left-3 flex items-center gap-2 rounded-full bg-black/55 px-3 py-1.5 text-label-strong text-white">
-            {micOn ? <Mic size={15} /> : <MicOff size={15} />}
-            {t("preJoin.you")}
-          </span>
-        </div>
-
-        <div className="flex shrink-0 justify-center gap-4 py-4">
-          <button
-            type="button"
-            className={`grid size-12 place-items-center rounded-full transition-colors ${
-              micOn ? "bg-subtle text-ink" : "bg-[#d93a3a] text-white"
-            }`}
-            aria-pressed={micOn}
-            aria-label={micOn ? t("preJoin.muteMicAria") : t("preJoin.unmuteMicAria")}
-            disabled={!micAllowed}
-            onClick={toggleMic}
-          >
-            {micOn ? <Mic size={22} /> : <MicOff size={22} />}
-          </button>
-          <button
-            type="button"
-            className={`grid size-12 place-items-center rounded-full transition-colors ${
-              cameraOn ? "bg-subtle text-ink" : "bg-[#d93a3a] text-white"
-            }`}
-            aria-pressed={cameraOn}
-            aria-label={cameraOn ? t("preJoin.muteCameraAria") : t("preJoin.unmuteCameraAria")}
-            onClick={toggleCamera}
-          >
-            {cameraOn ? <Video size={22} /> : <VideoOff size={22} />}
-          </button>
-          <span
-            className="grid size-12 place-items-center rounded-full bg-subtle text-ink"
-            aria-hidden="true"
-          >
-            <Volume2 size={20} />
-          </span>
-        </div>
-
-        <div className="flex shrink-0 flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <h1 className="font-heading text-h2 text-ink">{lesson.title}</h1>
-            <p className="text-body-sm text-ink-tertiary">
-              {lesson.courseTitle} · {lesson.date} · {lesson.time} · {lesson.durationMinutes}{" "}
-              {t("preJoin.minutes")}
-            </p>
+          <div className="absolute inset-x-0 bottom-3.5 flex justify-center gap-3.5">
+            <button
+              type="button"
+              className={`grid size-13 place-items-center rounded-full transition-colors disabled:opacity-60 ${
+                micOn ? "bg-subtle text-ink" : "bg-danger text-on-action"
+              }`}
+              aria-pressed={micOn}
+              aria-label={micOn ? t("preJoin.muteMicAria") : t("preJoin.unmuteMicAria")}
+              disabled={!micAllowed}
+              onClick={toggleMic}
+            >
+              <Icon name="mic" size={22} />
+            </button>
+            <button
+              type="button"
+              className={`grid size-13 place-items-center rounded-full transition-colors ${
+                cameraOn ? "bg-subtle text-ink" : "bg-danger text-on-action"
+              }`}
+              aria-pressed={cameraOn}
+              aria-label={cameraOn ? t("preJoin.muteCameraAria") : t("preJoin.unmuteCameraAria")}
+              onClick={toggleCamera}
+            >
+              <Icon name="videocam-fill" size={22} />
+            </button>
+            <span className="grid size-13 place-items-center rounded-full bg-subtle text-ink" aria-hidden="true">
+              <Icon name="settings" size={22} />
+            </span>
           </div>
+        </div>
 
-          {deviceError ? (
-            <p className="rounded-xl bg-error-bg px-4 py-3 text-body-sm text-error-text">
-              {t("preJoin.deviceErrorMessage", { error: deviceError })}
-            </p>
-          ) : null}
+        <h1 className="mt-3.5 text-center font-heading text-title-lg text-ink">{lesson.title || lesson.courseTitle}</h1>
+        <p className="mt-1.5 px-4 text-center text-body-sm text-ink-secondary">
+          {devices} · {t("preJoin.mobileChangeLater")}
+        </p>
 
+        {deviceError && !permissionDenied ? (
+          <p className="mt-4 rounded-xl bg-danger-bg px-4 py-3 text-body-sm text-error-text">
+            {t("preJoin.deviceErrorMessage", { error: deviceError })}
+          </p>
+        ) : null}
+
+        <p className="mt-5 flex items-center gap-3 rounded-xl bg-subtle/40 px-3.5 py-[7px] text-body-sm leading-4.5 text-ink">
+          <i className="size-2.5 shrink-0 rounded-full bg-danger not-italic" aria-hidden="true" />
+          {t("preJoin.mobileRecordingNote")}
+        </p>
+
+        <span className="min-h-6 flex-1" />
+
+        <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
-            className="flex h-14 w-full items-center justify-center rounded-full bg-action text-title text-on-action transition-colors hover:bg-action-hover disabled:opacity-60"
+            className="flex h-13 items-center justify-center rounded-full bg-surface-inverse text-title font-semibold text-ink-inverse disabled:opacity-60"
+            disabled={joining}
+            onClick={onCancel}
+          >
+            {t("preJoin.mobileCancel")}
+          </button>
+          <button
+            type="button"
+            className="flex h-13 items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action disabled:opacity-60"
             disabled={joining}
             onClick={join}
           >
-            {t("preJoin.join")}
+            <Icon name="videocam-fill" size={20} />
+            {t("preJoin.mobileJoin")}
           </button>
-
-          <small className="text-center text-caption text-ink-tertiary">
-            {t("preJoin.recordingNote")}
-          </small>
         </div>
+
+        <MediaPermissionDialog
+          open={permissionDenied}
+          onOpenChange={(open) => {
+            if (!open) setFailure(null);
+          }}
+          onRecheck={retryDevices}
+          onJoinWithout={() => {
+            tracks?.forEach((track) => track.stop());
+            onJoin({ micOn: false, cameraOn: false });
+          }}
+        />
       </main>
     );
+  }
 
   return (
     <main

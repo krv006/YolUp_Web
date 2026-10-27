@@ -17,6 +17,14 @@ import { useTranslation } from "react-i18next";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, DurationPicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { ModalCard, modalButton } from "@/shared/ui/modal-card";
+import {
+  MOBILE_INPUT,
+  MobileChoiceChips,
+  MobileFieldLabel,
+  MobilePickerField,
+  MobileToggle,
+} from "@/shared/ui/mobile-fields";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import {
   buildScheduleDates,
@@ -61,6 +69,7 @@ export interface AddAssignmentDialogProps {
 }
 
 const DURATION_OPTIONS = [30, 45, 60, 90];
+const MOBILE_DURATIONS = [45, 60, 90, 120] as const;
 
 function useSkillOptions(): Array<{ value: string; label: string }> {
   const { t } = useTranslation("group");
@@ -108,7 +117,7 @@ function useDateLabelFormatter(): { format: (date: Date) => string } {
   const { t } = useTranslation("lesson");
   const months = t("list.months", { returnObjects: true }) as string[];
   return {
-    format: (date: Date) => `${date.getDate()}-${months[date.getMonth()] ?? ""}`,
+    format: (date: Date) => `${date.getDate()}-${(months[date.getMonth()] ?? "").toLowerCase()}`,
   };
 }
 
@@ -125,6 +134,7 @@ export function AddLessonDialog({
   const { t } = useTranslation("group");
   const DATE_LABEL = useDateLabelFormatter();
   const weekdayText = useWeekdayTranslations();
+  const isCompact = useIsCompact();
   const [form, setForm] = useState<LessonDraft>(() => ({
     topic: initialValues?.topic ?? "",
     date: initialValues?.date ?? todayString(),
@@ -214,6 +224,259 @@ export function AddLessonDialog({
     a.length === b.length && a.every((day, index) => day === b[index]);
 
   const timeBusy = singleConflicts.length > 0 || startsInPast;
+
+  const dateDisplay = (value: string) => {
+    if (!value) return "—";
+    const date = new Date(`${value}T00:00:00`);
+    const label = DATE_LABEL.format(date);
+    if (value === today) return t("dialogs.lesson.todayDate", { date: label });
+    return `${weekdayText.short[date.getDay() || 7]}, ${label}`;
+  };
+  const quizSelectOptions = [
+    { value: "", label: t("dialogs.lesson.quizNone") },
+    ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
+  ];
+  const quizLabel = quizSelectOptions.find((option) => option.value === form.quizId)?.label;
+  const submitDisabled = isRepeating
+    ? !dates.length || invalidRange || scheduleConflicts.length > 0
+    : !form.topic.trim() || startsInPast || singleConflicts.length > 0;
+
+  if (isCompact)
+    return (
+      <ModalCard
+        open={open}
+        onOpenChange={onOpenChange}
+        title={initialValues ? t("dialogs.lesson.editTitle") : t("dialogs.lesson.newTitle")}
+        subtitle={
+          initialValues
+            ? t("dialogs.lesson.editDescription")
+            : timeBusy
+              ? undefined
+              : isRepeating
+                ? t("dialogs.lesson.repeatingSubtitle")
+                : t("dialogs.lesson.mobileSubtitle")
+        }
+        footer={
+          <div className="flex flex-col gap-4">
+            <button type="submit" form="lesson-form" className={modalButton.primary} disabled={submitDisabled}>
+              {initialValues
+                ? t("dialogs.lesson.saveChanges")
+                : isRepeating
+                  ? t("dialogs.lesson.saveMultiple", { count: dates.length })
+                  : t("dialogs.lesson.saveSingle")}
+            </button>
+            {initialValues && onDelete ? (
+              <button
+                type="button"
+                className="flex h-6 items-center gap-2 self-start pl-4 text-body font-medium text-error-text"
+                onClick={() => {
+                  onOpenChange(false);
+                  onDelete();
+                }}
+              >
+                <Icon name="trash" size={20} /> {t("dialogs.lesson.deleteLesson")}
+              </button>
+            ) : null}
+          </div>
+        }
+      >
+        <form id="lesson-form" className="flex flex-col gap-4" onSubmit={submit}>
+          {isRepeating ? null : (
+            <MobileFieldLabel label={t("dialogs.lesson.topicLabel")}>
+              <input
+                className={MOBILE_INPUT}
+                value={form.topic}
+                onChange={(event) => update("topic", event.target.value)}
+                placeholder={t("dialogs.lesson.topicPlaceholder")}
+              />
+            </MobileFieldLabel>
+          )}
+
+          {canRepeat && !timeBusy ? (
+            <MobileToggle
+              items={[
+                { id: "single", label: t("dialogs.lesson.single") },
+                { id: "repeat", label: t("dialogs.lesson.repeating") },
+              ]}
+              value={repeat ? "repeat" : "single"}
+              onChange={(mode) => {
+                setRepeat(mode === "repeat");
+                if (mode === "repeat") update("topic", "");
+              }}
+            />
+          ) : null}
+
+          {isRepeating ? (
+            <>
+              <MobileFieldLabel
+                label={t("dialogs.lesson.weekdaysLabel")}
+                aside={
+                  <span className="shrink-0 text-body-sm text-brand-strong">
+                    <button type="button" onClick={() => setWeekdays([...ODD_WEEKDAYS])}>
+                      {t("dialogs.lesson.oddDays")}
+                    </button>
+                    {" · "}
+                    <button type="button" onClick={() => setWeekdays([...EVEN_WEEKDAYS])}>
+                      {t("dialogs.lesson.evenDays")}
+                    </button>
+                  </span>
+                }
+              >
+                <div className="flex justify-between">
+                  {WEEKDAYS.map((day) => {
+                    const active = weekdays.includes(day.value);
+                    return (
+                      <button
+                        key={day.value}
+                        type="button"
+                        aria-pressed={active}
+                        aria-label={weekdayText.labels[day.value]}
+                        className={`grid size-11 place-items-center rounded-full text-body-sm font-medium transition-colors ${
+                          active ? "bg-brand text-on-action" : "bg-subtle text-ink"
+                        }`}
+                        onClick={() => toggleWeekday(day.value)}
+                      >
+                        {weekdayText.short[day.value]}
+                      </button>
+                    );
+                  })}
+                </div>
+              </MobileFieldLabel>
+
+              <div className="grid grid-cols-2 gap-3">
+                <MobileFieldLabel label={t("dialogs.lesson.startDate")}>
+                  <MobilePickerField
+                    type="date"
+                    value={range.from}
+                    min={today}
+                    display={DATE_LABEL.format(new Date(`${range.from}T00:00:00`))}
+                    ariaLabel={t("dialogs.lesson.startDate")}
+                    onChange={(value) =>
+                      setRange((current) => ({
+                        from: value,
+                        to: current.to && current.to < value ? value : current.to,
+                      }))
+                    }
+                  />
+                </MobileFieldLabel>
+                <MobileFieldLabel label={t("dialogs.lesson.endDate")}>
+                  <MobilePickerField
+                    type="date"
+                    value={range.to}
+                    min={range.from || today}
+                    display={DATE_LABEL.format(new Date(`${range.to}T00:00:00`))}
+                    ariaLabel={t("dialogs.lesson.endDate")}
+                    onChange={(value) => setRange((current) => ({ ...current, to: value }))}
+                  />
+                </MobileFieldLabel>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <MobileFieldLabel label={t("dialogs.lesson.timeShort")}>
+                  <MobilePickerField
+                    type="time"
+                    value={form.time}
+                    display={form.time}
+                    ariaLabel={t("dialogs.lesson.startTime")}
+                    onChange={(value) => update("time", value)}
+                  />
+                </MobileFieldLabel>
+                <MobileFieldLabel label={t("dialogs.lesson.duration")}>
+                  <MobilePickerField
+                    type="select"
+                    value={String(duration)}
+                    display={t("dialogs.lesson.minutesValue", { count: duration })}
+                    options={MOBILE_DURATIONS.map((value) => ({
+                      value: String(value),
+                      label: t("dialogs.lesson.minutesValue", { count: value }),
+                    }))}
+                    ariaLabel={t("dialogs.lesson.duration")}
+                    onChange={(value) => update("duration", value)}
+                  />
+                </MobileFieldLabel>
+              </div>
+
+              <p
+                className={`flex min-h-15 items-center gap-3 rounded-xl px-4 py-2.5 text-body-sm ${
+                  dates.length ? "bg-brand-subtle text-brand" : "bg-warning-bg text-warning-fg"
+                }`}
+              >
+                <Icon name={dates.length ? "bolt" : "warning"} size={20} className="shrink-0" />
+                {dates.length
+                  ? t("dialogs.lesson.scheduleFirst", {
+                      count: dates.length,
+                      limitNote: dates.length >= MAX_SCHEDULE_LESSONS ? t("dialogs.lesson.limitNote") : "",
+                      first: DATE_LABEL.format(new Date(dates[0])).toLowerCase(),
+                      weekday: weekdayText.labels[new Date(dates[0]).getDay() || 7],
+                    })
+                  : t("dialogs.lesson.noMatchingDays")}
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3">
+                <MobileFieldLabel label={t("dialogs.lesson.dateLabel")}>
+                  <MobilePickerField
+                    type="date"
+                    value={form.date}
+                    min={editingPast ? undefined : today}
+                    display={dateDisplay(form.date)}
+                    ariaLabel={t("dialogs.lesson.dateLabel")}
+                    onChange={(value) => update("date", value)}
+                  />
+                </MobileFieldLabel>
+                <div className="flex flex-col gap-1.5">
+                  <MobileFieldLabel label={t("dialogs.lesson.startShort")}>
+                    <MobilePickerField
+                      type="time"
+                      value={form.time}
+                      display={form.time}
+                      invalid={timeBusy}
+                      ariaLabel={t("dialogs.lesson.startTime")}
+                      onChange={(value) => update("time", value)}
+                    />
+                  </MobileFieldLabel>
+                  {timeBusy ? (
+                    <small className="text-caption text-error-text">{t("dialogs.lesson.timeBusy")}</small>
+                  ) : null}
+                </div>
+              </div>
+
+              {timeBusy ? null : (
+                <>
+                  <MobileFieldLabel label={t("dialogs.lesson.durationMinutes")}>
+                    <MobileChoiceChips
+                      items={MOBILE_DURATIONS}
+                      value={duration}
+                      onChange={(value) => update("duration", String(value))}
+                    />
+                  </MobileFieldLabel>
+
+                  <MobileFieldLabel label={t("dialogs.lesson.quizLabel")}>
+                    <MobilePickerField
+                      type="select"
+                      value={form.quizId}
+                      display={quizLabel}
+                      options={quizSelectOptions}
+                      ariaLabel={t("dialogs.lesson.quizLabel")}
+                      onChange={(value) => update("quizId", value)}
+                    />
+                  </MobileFieldLabel>
+                </>
+              )}
+            </>
+          )}
+
+          {startsInPast && !singleConflicts.length ? (
+            <p className="text-body-sm text-error-text" role="alert">
+              {t("dialogs.lesson.pastTimeError", { time: nowTimeString() })}
+            </p>
+          ) : null}
+
+          <ConflictNotice single={singleConflicts} schedule={scheduleConflicts} />
+        </form>
+      </ModalCard>
+    );
 
   return (
     <ModalCard
@@ -498,14 +761,14 @@ function ConflictNotice({
       ];
 
   return (
-    <div className="flex flex-col gap-1.5 rounded-md bg-warning-bg px-4 py-3.5" role="alert">
+    <div className="flex flex-col gap-1.5 rounded-xl bg-warning-bg px-4 py-3.5 lg:rounded-md" role="alert">
       <strong className="flex items-center gap-2 text-title-sm text-warning-fg">
-        <Icon name="warning" size={16} className="text-warning" />
+        <Icon name="warning" size={18} className="text-warning" />
         {single.length
           ? t("dialogs.conflict.singleTitle")
           : t("dialogs.conflict.scheduleTitle", { count: schedule.length })}
       </strong>
-      <p className="text-body-xs text-warning-fg">
+      <p className="text-body-sm text-warning-fg lg:text-body-xs">
         {lines.map((line) => (
           <span key={line.key}>{`${line.text}. `}</span>
         ))}

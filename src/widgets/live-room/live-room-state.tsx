@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { ArrowLeft, CircleX, Wifi } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { Icon } from "@/shared/ui/icon";
 
 export interface LiveRoomStateProps {
   title: string;
@@ -28,6 +30,67 @@ export function LiveRoomState({
   onBack,
 }: LiveRoomStateProps) {
   const { t } = useTranslation("live");
+  const isCompact = useIsCompact();
+
+  if (isCompact) {
+    const close = onBack ?? onSecondary;
+    return (
+      <div
+        data-theme="dark"
+        className="dark flex h-dvh min-h-0 flex-col overflow-y-auto bg-canvas px-4 pt-5 pb-9 font-body text-ink"
+      >
+        <header className="flex h-11 shrink-0 items-center">
+          {close ? (
+            <button
+              type="button"
+              className="grid size-11 shrink-0 place-items-center rounded-full bg-surface-inverse text-ink-inverse"
+              aria-label={t("room.leaveAria")}
+              onClick={close}
+            >
+              <Icon name="close" size={22} />
+            </button>
+          ) : null}
+        </header>
+
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-2 pb-25 text-center">
+          {tone !== "neutral" ? (
+            <span className="grid size-24 shrink-0 place-items-center rounded-full bg-subtle text-error-text">
+              <Icon name={tone === "offline" ? "wifi" : "error"} size={40} />
+            </span>
+          ) : null}
+
+          {lessonTitle ? <small className="mt-3 text-body-sm text-ink-secondary">{lessonTitle}</small> : null}
+
+          <strong className="mt-3.5 font-heading text-title-lg text-ink">{title}</strong>
+
+          {description ? (
+            <p className="mt-5 px-6 text-body-sm text-ink-secondary">{description}</p>
+          ) : null}
+
+          {actionLabel && onAction ? (
+            <button
+              type="button"
+              className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action"
+              onClick={onAction}
+            >
+              {tone === "neutral" ? null : <Icon name="refresh" size={20} />}
+              {actionLabel}
+            </button>
+          ) : null}
+
+          {secondaryLabel && onSecondary ? (
+            <button
+              type="button"
+              className="mt-4 flex h-13 w-full items-center justify-center rounded-full bg-surface-inverse text-title font-semibold text-ink-inverse"
+              onClick={onSecondary}
+            >
+              {secondaryLabel}
+            </button>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

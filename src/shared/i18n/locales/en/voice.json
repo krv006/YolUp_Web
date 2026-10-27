@@ -30,7 +30,12 @@
     "titleRequired": "Enter a room name",
     "pastTime": "The start time cannot be in the past",
     "cancel": "Cancel",
-    "submit": "Open"
+    "submit": "Open",
+    "mobileDescription": "Microphone only — no camera or screen sharing",
+    "mobileOpen": "Open",
+    "mobileOpenHint": "Any group member can join",
+    "mobileInviteHint": "Students send a request, you approve",
+    "now": "Now"
   },
   "room": {
     "defaultTitle": "Voice chat",
@@ -48,6 +53,9 @@
     "speaking": "Speaking",
     "micOn": "Microphone on",
     "micOff": "Microphone off",
-    "requestNote": "Join request"
+    "requestNote": "Join request",
+    "you": "You",
+    "mobileClose": "Close",
+    "wantsToJoin": "{{name}} wants to join"
   }
 }

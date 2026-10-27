@@ -120,7 +120,8 @@
     "description": "Все участники будут выведены из комнаты. Запись урока сохранится и придёт в чат группы.",
     "cancel": "Отмена",
     "confirm": "Завершить",
-    "leaveOnly": "Просто выйти"
+    "leaveOnly": "Просто выйти",
+    "mobileDescription": "Все участники выйдут. Запись сохранится и отправится в чат."
   },
   "rateDialog": {
     "title": "Оцените урок",
@@ -199,7 +200,19 @@
     "failedTitle": "Не удалось подготовить запись",
     "noneTitle": "Записи нет",
     "sharedToChat": "Запись отправлена в чат группы",
-    "pdfFailed": "Не удалось скачать PDF"
+    "pdfFailed": "Не удалось скачать PDF",
+    "back": "Назад",
+    "menu": "Действия",
+    "downloadPdf": "Скачать PDF",
+    "mobileParticipants": "{{count}} участников",
+    "mobileAttendance": "Посещаемость {{value}}%",
+    "mobileBoardPages": "{{count}} стр. · PDF",
+    "mobileAttendanceTitle": "Посещаемость и фокус",
+    "mobileJoined": "{{joined}} / {{total}} присутствовали",
+    "mobileDelete": "Удалить запись",
+    "mobilePlatformOnly": "Открывается только на платформе — скачать нельзя.",
+    "mobileMerging": "Аудио и видео объединяются — это может занять время",
+    "mobileReadyNote": "Как только будет готово, в чат придёт сообщение."
   },
   "schedule": {
     "now": "СЕЙЧАС",
@@ -321,6 +334,23 @@
     "duration": "Длительность (мин)",
     "quiz": "Прикрепить тест",
     "noQuiz": "Тест не прикреплён",
-    "submit": "Сохранить урок"
+    "submit": "Сохранить урок",
+    "mobileDescription": "Выберите группу и время",
+    "weeksValue": "{{count}} нед.",
+    "fewerWeeks": "Меньше недель",
+    "moreWeeks": "Больше недель"
+  },
+  "mobileSchedule": {
+    "offline": "Нет интернета. Последнее сохранённое расписание",
+    "emptyHint": "Добавьте расписание — ученики получат напоминание.",
+    "studentsAndDuration": "{{count}} учеников - {{minutes}} мин",
+    "finished": "Завершён · {{count}} учеников",
+    "enter": "Войти",
+    "thisWeek": "Эта неделя",
+    "more": "Подробнее",
+    "statLessons": "Уроки",
+    "statHours": "Часы",
+    "statFinished": "Завершено",
+    "hoursShort": "{{count}} ч"
   }
 }

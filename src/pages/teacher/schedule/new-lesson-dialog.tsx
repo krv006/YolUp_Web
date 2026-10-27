@@ -1,8 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuizzes } from "@/modules/quiz";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { GroupTile } from "@/shared/ui/group-tile";
+import { Icon } from "@/shared/ui/icon";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
+import {
+  MOBILE_INPUT,
+  MobileChoiceChips,
+  MobileFieldLabel,
+  MobilePickerField,
+  MobileToggle,
+} from "@/shared/ui/mobile-fields";
 
 export interface NewLessonValues {
   courseId: string;
@@ -11,17 +21,26 @@ export interface NewLessonValues {
   time: string;
   duration: string;
   quizId: string;
+  repeatWeeks: number;
 }
 
 export interface NewLessonDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  courses: ReadonlyArray<{ id: string; title: string }>;
+  courses: ReadonlyArray<{
+    id: string;
+    title: string;
+    studentCount?: number;
+    tone?: string;
+    image?: string | null;
+  }>;
   pending?: boolean;
   onSubmit: (values: NewLessonValues) => void;
 }
 
 const DURATIONS = [45, 60, 90, 120];
+const MIN_WEEKS = 2;
+const MAX_WEEKS = 52;
 
 function today(): string {
   const date = new Date();
@@ -45,7 +64,184 @@ export function NewLessonDialog({
   const [time, setTime] = useState("18:00");
   const [duration, setDuration] = useState(90);
   const [quizId, setQuizId] = useState("");
+  const [weeks, setWeeks] = useState(8);
+  const isCompact = useIsCompact();
   const quizzes = useQuizzes(courseId || null, Boolean(courseId) && open);
+  const weekdays = t("list.weekdaysShort", { returnObjects: true }) as string[];
+  const months = t("list.months", { returnObjects: true }) as string[];
+  const canSubmit = !pending && Boolean(courseId) && Boolean(topic.trim());
+
+  function submit() {
+    onSubmit({
+      courseId,
+      topic: topic.trim(),
+      date,
+      time,
+      duration: String(duration),
+      quizId,
+      repeatWeeks: repeat ? weeks : 0,
+    });
+  }
+
+  if (isCompact) {
+    const picked = new Date(`${date}T00:00`);
+    const dateLabel = Number.isNaN(picked.getTime())
+      ? date
+      : `${weekdays[(picked.getDay() + 6) % 7] ?? ""}, ${picked.getDate()}-${(months[picked.getMonth()] ?? "").toLowerCase()}`;
+
+    return (
+      <AppDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        variant="adaptive"
+        title={t("scheduleDialog.title")}
+        description={t("scheduleDialog.mobileDescription")}
+        footerClassName="px-4 pt-7 pb-8.5"
+        footer={
+          <div className="grid w-full grid-cols-2 gap-3">
+            <button
+              type="button"
+              className={`${dialogButton.secondary} h-13 border-line-strong text-title font-semibold`}
+              onClick={() => onOpenChange(false)}
+            >
+              {t("schedule.cancel")}
+            </button>
+            <button
+              type="button"
+              className={`${dialogButton.primary} h-13 text-title font-semibold`}
+              disabled={!canSubmit}
+              onClick={submit}
+            >
+              {t("schedule.save")}
+            </button>
+          </div>
+        }
+      >
+        <div className="-mt-0.5 flex flex-col gap-3">
+          <MobileFieldLabel label={t("scheduleDialog.group")}>
+            <div className="mt-0.5 grid grid-cols-2 gap-x-2 gap-y-3">
+              {courses.map((course) => (
+                <button
+                  key={course.id}
+                  type="button"
+                  aria-pressed={course.id === courseId}
+                  className={`flex h-14 min-w-0 items-center gap-2.5 rounded-lg border-[1.5px] px-3 text-left transition-colors ${
+                    course.id === courseId ? "border-brand bg-brand-subtle" : "border-transparent bg-subtle"
+                  }`}
+                  onClick={() => {
+                    setCourseId(course.id);
+                    setQuizId("");
+                  }}
+                >
+                  <GroupTile
+                    name={course.title}
+                    tone={course.tone}
+                    src={course.image}
+                    className="size-8 rounded-md bg-surface text-caption-strong"
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="truncate text-body-sm font-semibold text-ink">{course.title}</strong>
+                    <small className="truncate text-caption text-ink-secondary">
+                      {t("schedule.students", { count: course.studentCount ?? 0 })}
+                    </small>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </MobileFieldLabel>
+
+          <MobileFieldLabel label={t("scheduleDialog.topic")}>
+            <input
+              className={MOBILE_INPUT}
+              value={topic}
+              placeholder={t("scheduleDialog.topicPlaceholder")}
+              onChange={(event) => setTopic(event.target.value)}
+            />
+          </MobileFieldLabel>
+
+          <div className="grid grid-cols-2 gap-3">
+            <MobileFieldLabel label={t("scheduleDialog.date")}>
+              <MobilePickerField
+                type="date"
+                value={date}
+                min={today()}
+                display={dateLabel}
+                ariaLabel={t("scheduleDialog.date")}
+                onChange={setDate}
+              />
+            </MobileFieldLabel>
+            <MobileFieldLabel label={t("schedule.time")}>
+              <MobilePickerField
+                type="time"
+                value={time}
+                display={time}
+                ariaLabel={t("schedule.time")}
+                onChange={setTime}
+              />
+            </MobileFieldLabel>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <MobileToggle
+              items={[
+                { id: "once", label: t("schedule.repeatOnce") },
+                { id: "weekly", label: t("schedule.repeatWeekly") },
+              ]}
+              value={repeat ? "weekly" : "once"}
+              onChange={(value) => setRepeat(value === "weekly")}
+            />
+            <span
+              className={`flex h-13 min-w-0 flex-1 items-center rounded-full bg-subtle px-1.5 transition-opacity ${
+                repeat ? "" : "opacity-50"
+              }`}
+            >
+              <button
+                type="button"
+                className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
+                disabled={!repeat || weeks <= MIN_WEEKS}
+                aria-label={t("scheduleDialog.fewerWeeks")}
+                onClick={() => setWeeks((value) => Math.max(MIN_WEEKS, value - 1))}
+              >
+                <Icon name="remove" size={20} />
+              </button>
+              <span className="min-w-0 flex-1 truncate text-center text-body-sm font-semibold text-ink">
+                {t("scheduleDialog.weeksValue", { count: weeks })}
+              </span>
+              <button
+                type="button"
+                className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
+                disabled={!repeat || weeks >= MAX_WEEKS}
+                aria-label={t("scheduleDialog.moreWeeks")}
+                onClick={() => setWeeks((value) => Math.min(MAX_WEEKS, value + 1))}
+              >
+                <Icon name="add" size={20} />
+              </button>
+            </span>
+          </div>
+
+          <MobileFieldLabel label={t("scheduleDialog.duration")}>
+            <MobileChoiceChips items={DURATIONS} value={duration} onChange={setDuration} />
+          </MobileFieldLabel>
+
+          <MobileFieldLabel label={t("scheduleDialog.quiz")}>
+            <MobilePickerField
+              type="select"
+              value={quizId}
+              display={
+                (quizzes.data ?? []).find((quiz) => quiz.id === quizId)?.title ?? t("scheduleDialog.noQuiz")
+              }
+              ariaLabel={t("scheduleDialog.quiz")}
+              options={[
+                { value: "", label: t("scheduleDialog.noQuiz") },
+                ...(quizzes.data ?? []).map((quiz) => ({ value: quiz.id, label: quiz.title })),
+              ]}
+              onChange={setQuizId}
+            />
+          </MobileFieldLabel>
+        </div>
+      </AppDialog>
+    );
+  }
 
   return (
     <AppDialog
@@ -58,17 +254,8 @@ export function NewLessonDialog({
         <button
           type="button"
           className={dialogButton.primary}
-          disabled={pending || !courseId || !topic.trim()}
-          onClick={() =>
-            onSubmit({
-              courseId,
-              topic: topic.trim(),
-              date,
-              time,
-              duration: String(duration),
-              quizId,
-            })
-          }
+          disabled={!canSubmit}
+          onClick={submit}
         >
           {t("scheduleDialog.submit")}
         </button>

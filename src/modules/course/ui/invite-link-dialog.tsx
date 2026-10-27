@@ -107,7 +107,7 @@ export function InviteLinkDialog({ courseId, open, onOpenChange }: InviteLinkDia
         onOpenChange(next);
         if (!next) setConfirmRefresh(false);
       }}
-      variant="confirm"
+      variant="adaptive"
       title={t("invite.title")}
       description={t("invite.description")}
       footer={

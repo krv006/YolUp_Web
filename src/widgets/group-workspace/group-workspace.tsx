@@ -58,6 +58,9 @@ import { ChatHeader, ConversationInfoPanel } from "@/modules/conversation";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { ForwardDialog } from "@/widgets/forward-dialog";
 import { VoiceRoomBar, useActiveVoiceRoom, useVoiceUiStore } from "@/modules/voice";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
+import { MobileEmptyCard } from "@/shared/ui/mobile-page";
+import { MobileAssignmentList } from "./mobile-assignment-list";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type {
   Assignment,
@@ -71,7 +74,6 @@ import type {
 } from "@/shared/types";
 import type { ChatController } from "@/modules/message";
 import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
-import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import {
@@ -178,8 +180,10 @@ export function GroupWorkspace({
         onVoice={courseId && !voice.active ? () => openVoiceCreate(true) : undefined}
         pinnedBelow
       />
-      <LiveLessonBar courseId={courseId} />
-      <VoiceRoomBar courseId={courseId} hideIdle={isCompact} />
+      <div className="hidden lg:contents">
+        <LiveLessonBar courseId={courseId} />
+      </div>
+      <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle={isCompact} />
       <nav
         className={`grid shrink-0 grid-cols-4 gap-2 px-4 pb-1 lg:px-7 lg:pt-4 lg:pb-2 ${
           selectionMode ? "pt-1" : "pt-4"
@@ -260,6 +264,7 @@ export function GroupWorkspace({
           {activeTab === "assignments" ? (
             <AssignmentsPanel
               courseId={courseId}
+              assignments={assignments.data}
               loading={assignments.isLoading}
               isLanguageSubject={Boolean(course.data?.isLanguageSubject)}
             />
@@ -406,16 +411,22 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
   };
 
   return (
-    <div className="flex h-full flex-col gap-2 overflow-y-auto bg-canvas p-4 lg:px-7 lg:pt-5 lg:pb-7">
-      <div className="flex shrink-0 items-center gap-4">
-        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-overline text-ink-tertiary uppercase">{t("lessons.eyebrow")}</span>
-          <h2 className="font-heading text-h1 text-ink">{t("lessons.title")}</h2>
-          <p className="text-body-xs text-ink-tertiary">{t("lessons.subtitle")}</p>
+    <div className="flex h-full flex-col gap-2 overflow-y-auto bg-canvas p-4 max-lg:gap-5 max-lg:bg-transparent max-lg:pt-5 max-lg:pb-8 lg:px-7 lg:pt-5 lg:pb-7">
+      <div className="flex shrink-0 items-center gap-4 max-lg:gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 max-lg:gap-[3px]">
+          <span className="text-overline text-ink-tertiary uppercase max-lg:text-caption max-lg:tracking-normal max-lg:text-ink-secondary">
+            {t("lessons.eyebrow")}
+          </span>
+          <h2 className="font-heading text-h1 text-ink max-lg:font-body max-lg:text-[24px]/[28px] max-lg:font-bold max-lg:tracking-normal">{t("lessons.title")}</h2>
+          <p className="text-body-xs text-ink-tertiary max-lg:truncate max-lg:text-[13.5px]/5 max-lg:text-ink-secondary">
+            {t("lessons.subtitle")}
+          </p>
         </div>
         <button
           type="button"
-          className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-5 text-button whitespace-nowrap text-ink-inverse transition-colors hover:bg-brand-strong"
+          className={`h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-5 text-button whitespace-nowrap text-ink-inverse transition-colors hover:bg-brand-strong max-lg:bg-brand-subtle max-lg:px-4 max-lg:text-brand ${
+            lessons.length ? "flex" : "hidden lg:flex"
+          }`}
           onClick={() => {
             setEditing(null);
             setDialog(true);
@@ -462,34 +473,19 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         onCreate={save}
         onCreateSchedule={saveSchedule}
       />
-      <AppDialog
+      <ConfirmDialog
         open={Boolean(deleteTarget)}
         onOpenChange={(open) => {
           if (!open) setDeleteTarget(null);
         }}
-        variant="confirm"
+        icon="trash"
         title={t("lessons.deleteConfirmTitle", { title: deleteTarget?.title ?? "" })}
         description={t("lessons.deleteDialogDescription", { title: deleteTarget?.title ?? "" })}
-        footer={
-          <>
-            <button
-              type="button"
-              className={dialogButton.secondary}
-              onClick={() => setDeleteTarget(null)}
-            >
-              {t("lessons.cancel")}
-            </button>
-            <button
-              type="button"
-              className={dialogButton.danger}
-              disabled={remove.isPending}
-              onClick={() =>
-                deleteTarget && remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))
-              }
-            >
-              {t("lessons.delete")}
-            </button>
-          </>
+        confirmLabel={t("lessons.delete")}
+        cancelLabel={t("lessons.cancel")}
+        pending={remove.isPending}
+        onConfirm={() =>
+          deleteTarget && remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))
         }
       />
       <CancelLessonDialog
@@ -543,6 +539,7 @@ function AssignmentsPanel({
   isLanguageSubject,
 }: AssignmentsPanelProps) {
   const { t } = useTranslation("group");
+  const isCompact = useIsCompact();
   const [dialog, setDialog] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Assignment | null>(null);
@@ -609,6 +606,201 @@ function AssignmentsPanel({
       .map((quiz) => ({ id: quiz.id, title: quizDisplayTitle(quiz) }))
       .filter((quiz) => quiz.title);
   }, [allQuizzes.data, courseQuizList, courseSubject]);
+
+  const dialogs = (
+    <>
+        <QuizAttemptsDialog
+          courseId={courseId}
+          quizId={attemptsOf?.id ?? null}
+          open={Boolean(attemptsOf)}
+          onOpenChange={(open) => {
+            if (!open) setAttemptsOf(null);
+          }}
+          title={attemptsOf?.title}
+        />
+
+        {editQuizTarget && editQuizDetail.data && !editQuizAttempts.isLoading ? (
+          <AddQuizDialog
+            key={editQuizTarget.id}
+            open
+            onOpenChange={(next) => {
+              if (!next) closeQuizEditor();
+            }}
+            courses={[]}
+            editQuiz={editQuizDetail.data}
+            initialWarnings={importedWarnings}
+            uploadingAudio={uploadAudio.isPending}
+            onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
+            onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
+            startOnQuestions={importedWarnings.length > 0}
+            questionsLocked={(editQuizAttempts.data ?? []).length > 0}
+            saving={updateQuiz.isPending}
+            publishing={publishQuiz.isPending}
+            publishError={publishError}
+            showSchedule
+            onCreate={() => undefined}
+            onUpdate={(values) =>
+              updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => closeQuizEditor())
+                .catch((error: unknown) => setPublishError(quizErrorMessage(error)))
+            }
+            onPublish={() => {
+              setPublishError(null);
+              publishQuiz
+                .mutateAsync(editQuizTarget.id)
+                .then(() => closeQuizEditor())
+                .catch((error: unknown) => setPublishError(quizErrorMessage(error)));
+            }}
+          />
+        ) : null}
+
+        <AssignQuizDialog
+          open={bankDialog && Boolean(courseId)}
+          onOpenChange={setBankDialog}
+          quizzes={bankOptions}
+          courseId={courseId}
+          pending={assignQuiz.isPending}
+          onSubmit={(value) => assignQuiz.mutateAsync(value).then(() => setBankDialog(false))}
+        />
+
+        {quizDialog && courseId ? (
+          <AddQuizDialog
+            open
+            onOpenChange={(open) => {
+              if (!open) setQuizDialog(false);
+            }}
+            courses={[{ id: courseId, title: course.data?.title ?? "" }]}
+            showSchedule
+            existingQuizzes={quizTitleOptions}
+            onImported={(result) => {
+              setImportedWarnings(result.warnings);
+              setPublishError(null);
+              setQuizDialog(false);
+              setEditQuizTarget({ ...result.quiz });
+            }}
+            onCreate={(values) =>
+              createQuiz.mutate(values, { onSuccess: () => setQuizDialog(false) })
+            }
+          />
+        ) : null}
+
+        <AddAssignmentDialog
+          key={editingAssignment?.id ?? "new"}
+          open={dialog}
+          onOpenChange={(open) => {
+            setDialog(open);
+            if (!open) setEditingAssignment(null);
+          }}
+          lessons={lessons.data ?? []}
+          isLanguageSubject={isLanguageSubject}
+          initialValues={editingAssignment}
+          onCreate={(form) => {
+            const payload = { ...form, courseId };
+            const request = editingAssignment
+              ? update.mutateAsync({ id: editingAssignment.id, form: payload })
+              : create.mutateAsync(payload);
+            request.then(() => {
+              setDialog(false);
+              setEditingAssignment(null);
+            });
+          }}
+        />
+        <Dialog
+          open={Boolean(deleteTarget)}
+          onOpenChange={(open) => {
+            if (!open) setDeleteTarget(null);
+          }}
+        >
+          {deleteTarget && (
+            <DialogContent
+              title={t("assignments.deleteDialogTitle")}
+              description={t("assignments.deleteDialogDescription", { title: deleteTarget.title })}
+            >
+              <div className="dialog-actions">
+                <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
+                  {t("assignments.cancel")}
+                </Button>
+                <Button
+                  loading={remove.isPending}
+                  onClick={() => remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))}
+                >
+                  {t("assignments.delete")}
+                </Button>
+              </div>
+            </DialogContent>
+          )}
+        </Dialog>
+        <AssignmentDetailDialog
+          key={linkedAssignmentId ?? detailId ?? "none"}
+          assignmentId={detailId ?? linkedAssignmentId}
+          openSubmissionId={linkedSubmissionId}
+          open={Boolean(detailId || linkedSubmissionId)}
+          onOpenChange={(open: boolean) => {
+            if (open) return;
+            setDetailId(null);
+            if (linkedSubmissionId) {
+              const next = new URLSearchParams(assignmentParams);
+              next.delete("submission");
+              setAssignmentParams(next, { replace: true });
+            }
+          }}
+        />
+    </>
+  );
+
+  if (isCompact)
+    return (
+      <div className="flex h-full flex-col gap-5 overflow-y-auto bg-transparent px-4 pt-5 pb-8">
+        <div className="flex shrink-0 items-center gap-1">
+          <div className="flex min-w-0 flex-1 flex-col gap-[3px]">
+            <span className="text-caption text-ink-secondary uppercase">{t("assignments.eyebrow")}</span>
+            <h2 className="text-[24px]/[28px] font-bold text-ink">{t("assignments.title")}</h2>
+            <p className="truncate text-[13.5px]/5 text-ink-secondary">{t("assignments.subtitleShort")}</p>
+          </div>
+          {assignments.length || courseQuizList.length ? (
+            <button
+              type="button"
+              className="flex h-11 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-button text-on-action"
+              onClick={() => setDialog(true)}
+            >
+              <Icon name="add" size={18} /> {t("assignments.addAssignment")}
+            </button>
+          ) : null}
+        </div>
+
+        {loading && !assignments.length ? (
+          <div className="flex flex-col gap-3">
+            {Array.from({ length: 3 }, (_, index) => (
+              <div key={index} className="h-32 animate-pulse rounded-xl bg-surface/70" />
+            ))}
+          </div>
+        ) : assignments.length || courseQuizList.length ? (
+          <MobileAssignmentList
+            assignments={assignments}
+            quizzes={courseQuizList}
+            courseTitle={course.data?.title ?? ""}
+            courseImage={course.data?.avatarUrl}
+            courseTone={course.data?.color}
+            onOpenAssignment={(item) => setDetailId(item.id)}
+            onEditAssignment={(item) => {
+              setEditingAssignment(item);
+              setDialog(true);
+            }}
+            onDeleteAssignment={setDeleteTarget}
+            onOpenQuiz={setAttemptsOf}
+            onEditQuiz={setEditQuizTarget}
+          />
+        ) : (
+          <MobileEmptyCard
+            icon="assign"
+            title={t("assignments.emptyTitle")}
+            description={t("assignments.emptyHint")}
+            action={{ label: t("assignments.emptyCreateFirst"), icon: "add", onClick: () => setDialog(true) }}
+          />
+        )}
+
+        {dialogs}
+      </div>
+    );
 
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">
@@ -801,141 +993,7 @@ function AssignmentsPanel({
         </div>
       )}
 
-      <QuizAttemptsDialog
-        courseId={courseId}
-        quizId={attemptsOf?.id ?? null}
-        open={Boolean(attemptsOf)}
-        onOpenChange={(open) => {
-          if (!open) setAttemptsOf(null);
-        }}
-        title={attemptsOf?.title}
-      />
-
-      {editQuizTarget && editQuizDetail.data && !editQuizAttempts.isLoading ? (
-        <AddQuizDialog
-          key={editQuizTarget.id}
-          open
-          onOpenChange={(next) => {
-            if (!next) closeQuizEditor();
-          }}
-          courses={[]}
-          editQuiz={editQuizDetail.data}
-          initialWarnings={importedWarnings}
-          uploadingAudio={uploadAudio.isPending}
-          onUploadAudio={(groupId, file) => uploadAudio.mutate({ groupId, file })}
-          onRemoveAudio={(groupId) => removeAudio.mutate(groupId)}
-          startOnQuestions={importedWarnings.length > 0}
-          questionsLocked={(editQuizAttempts.data ?? []).length > 0}
-          saving={updateQuiz.isPending}
-          publishing={publishQuiz.isPending}
-          publishError={publishError}
-          showSchedule
-          onCreate={() => undefined}
-          onUpdate={(values) =>
-            updateQuiz.mutateAsync({ id: editQuizTarget.id, values }).then(() => closeQuizEditor())
-              .catch((error: unknown) => setPublishError(quizErrorMessage(error)))
-          }
-          onPublish={() => {
-            setPublishError(null);
-            publishQuiz
-              .mutateAsync(editQuizTarget.id)
-              .then(() => closeQuizEditor())
-              .catch((error: unknown) => setPublishError(quizErrorMessage(error)));
-          }}
-        />
-      ) : null}
-
-      <AssignQuizDialog
-        open={bankDialog && Boolean(courseId)}
-        onOpenChange={setBankDialog}
-        quizzes={bankOptions}
-        courseId={courseId}
-        pending={assignQuiz.isPending}
-        onSubmit={(value) => assignQuiz.mutateAsync(value).then(() => setBankDialog(false))}
-      />
-
-      {quizDialog && courseId ? (
-        <AddQuizDialog
-          open
-          onOpenChange={(open) => {
-            if (!open) setQuizDialog(false);
-          }}
-          courses={[{ id: courseId, title: course.data?.title ?? "" }]}
-          showSchedule
-          existingQuizzes={quizTitleOptions}
-          onImported={(result) => {
-            setImportedWarnings(result.warnings);
-            setPublishError(null);
-            setQuizDialog(false);
-            setEditQuizTarget({ ...result.quiz });
-          }}
-          onCreate={(values) =>
-            createQuiz.mutate(values, { onSuccess: () => setQuizDialog(false) })
-          }
-        />
-      ) : null}
-
-      <AddAssignmentDialog
-        key={editingAssignment?.id ?? "new"}
-        open={dialog}
-        onOpenChange={(open) => {
-          setDialog(open);
-          if (!open) setEditingAssignment(null);
-        }}
-        lessons={lessons.data ?? []}
-        isLanguageSubject={isLanguageSubject}
-        initialValues={editingAssignment}
-        onCreate={(form) => {
-          const payload = { ...form, courseId };
-          const request = editingAssignment
-            ? update.mutateAsync({ id: editingAssignment.id, form: payload })
-            : create.mutateAsync(payload);
-          request.then(() => {
-            setDialog(false);
-            setEditingAssignment(null);
-          });
-        }}
-      />
-      <Dialog
-        open={Boolean(deleteTarget)}
-        onOpenChange={(open) => {
-          if (!open) setDeleteTarget(null);
-        }}
-      >
-        {deleteTarget && (
-          <DialogContent
-            title={t("assignments.deleteDialogTitle")}
-            description={t("assignments.deleteDialogDescription", { title: deleteTarget.title })}
-          >
-            <div className="dialog-actions">
-              <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-                {t("assignments.cancel")}
-              </Button>
-              <Button
-                loading={remove.isPending}
-                onClick={() => remove.mutateAsync(deleteTarget.id).then(() => setDeleteTarget(null))}
-              >
-                {t("assignments.delete")}
-              </Button>
-            </div>
-          </DialogContent>
-        )}
-      </Dialog>
-      <AssignmentDetailDialog
-        key={linkedAssignmentId ?? detailId ?? "none"}
-        assignmentId={detailId ?? linkedAssignmentId}
-        openSubmissionId={linkedSubmissionId}
-        open={Boolean(detailId || linkedSubmissionId)}
-        onOpenChange={(open: boolean) => {
-          if (open) return;
-          setDetailId(null);
-          if (linkedSubmissionId) {
-            const next = new URLSearchParams(assignmentParams);
-            next.delete("submission");
-            setAssignmentParams(next, { replace: true });
-          }
-        }}
-      />
+      {dialogs}
     </div>
   );
 }
@@ -949,6 +1007,7 @@ interface AttendancePanelProps {
 
 function AttendancePanel({ courseId, lessons = [], rows = [], loading }: AttendancePanelProps) {
   const { t } = useTranslation("group");
+  const isCompact = useIsCompact();
   const [range, setRange] = useState<"all" | "month" | "current">("all");
   const summary = useAttendanceSummary(
     courseId,
@@ -1043,10 +1102,102 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
     );
 
   const FILTERS = [
-    { id: "all" as const, label: t("attendance.filterAll") },
-    { id: "month" as const, label: t("attendance.filterMonth") },
+    { id: "all" as const, label: isCompact ? t("attendance.filterAllShort") : t("attendance.filterAll") },
+    { id: "month" as const, label: isCompact ? t("attendance.filterMonthShort") : t("attendance.filterMonth") },
     { id: "current" as const, label: t("attendance.filterCurrent") },
   ];
+
+  if (isCompact)
+    return (
+      <div className="flex h-full flex-col gap-5 overflow-y-auto px-4 pt-5 pb-8">
+        <div className="flex min-w-0 flex-col gap-[3px]">
+          <span className="text-caption text-ink-secondary uppercase">{t("attendance.eyebrow")}</span>
+          <h2 className="text-[24px]/[28px] font-bold text-ink">{t("attendance.title")}</h2>
+        </div>
+
+        {students.length ? (
+          <>
+            <div className="grid grid-cols-3 gap-2">
+              {FILTERS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
+                    range === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
+                  }`}
+                  onClick={() => setRange(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+
+            <section className="flex flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
+              <span className="flex h-6 w-fit items-center gap-1.5 rounded-full bg-on-brand-subtle px-2.5 text-caption-strong">
+                <Icon name="bar-chart" size={14} />
+                {t("attendance.mobileBadge", { lessonCount, recordCount: filtered.length })}
+              </span>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
+                  { value: `${avgFocus}%`, label: t("attendance.statFocus") },
+                  { value: String(lessonCount), label: t("attendance.statLessons") },
+                ].map((tile) => (
+                  <span key={tile.label} className="flex h-16 flex-col justify-center rounded-xl bg-on-brand-subtle px-3">
+                    <strong className="text-title-lg leading-6">{tile.value}</strong>
+                    <small className="text-caption">{tile.label}</small>
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            <div className="flex items-center gap-3">
+              <strong className="flex-1 text-body text-ink">{t("attendance.studentsTitle")}</strong>
+              <small className="text-body-sm text-brand-strong">{t("attendance.studentsMetaShort")}</small>
+            </div>
+
+            <ul className="-mt-1 flex flex-col overflow-hidden rounded-xl bg-surface">
+              {students.map((student) => (
+                <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
+                  <Avatar
+                    name={student.name}
+                    tone={student.tone}
+                    size="sm"
+                    className="[&_.avatar]:size-11"
+                  />
+                  <span className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <strong className="truncate text-title text-ink">{student.name}</strong>
+                    <span className="flex items-center gap-2">
+                      <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
+                        <span
+                          className={`block h-full rounded-full ${student.attendance >= 50 ? "bg-brand" : "bg-danger"}`}
+                          style={{ width: `${student.attendance}%` }}
+                        />
+                      </span>
+                      <small className="w-8 shrink-0 text-right font-numeric text-caption text-brand">
+                        {student.attendance}%
+                      </small>
+                    </span>
+                  </span>
+                  <span className="flex w-12 shrink-0 flex-col items-end">
+                    <strong className="font-numeric text-title text-ink">
+                      {student.focus === null ? "—" : `${student.focus}%`}
+                    </strong>
+                    <small className="text-caption text-ink-secondary">{t("attendance.focusSuffix")}</small>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <MobileEmptyCard
+            icon="check-circle"
+            title={t("attendance.emptyTitle")}
+            description={t("attendance.emptyDescription")}
+          />
+        )}
+      </div>
+    );
 
   return (
     <div className="flex h-full flex-col gap-5 overflow-y-auto bg-canvas p-4 lg:p-6">

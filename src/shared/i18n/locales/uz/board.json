@@ -179,5 +179,9 @@
     "pageLabel": "{{index}}-sahifa",
     "emptyPage": "Bo'sh sahifa",
     "renameAria": "{{index}}-sahifa nomi"
+  },
+  "preview": {
+    "label": "Doska · {{page}}-sahifa",
+    "empty": "Doska hozircha bo‘sh"
   }
 }

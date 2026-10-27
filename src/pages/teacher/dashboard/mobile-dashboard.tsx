@@ -1,10 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { NotificationBell } from "@/modules/notification";
 import type { Lesson } from "@/shared/types";
-import { Avatar } from "@/shared/ui/legacy";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
+import { MobileTeacherHeader } from "@/widgets/mobile-teacher-header";
 
 const TICK_MS = 30_000;
 
@@ -19,9 +18,6 @@ function endOf(lesson: Lesson): Date {
 }
 
 export interface MobileDashboardProps {
-  userName: string;
-  userSubject: string | null;
-  userAvatar: string | null;
   online: boolean;
   loading: boolean;
   hasGroups: boolean;
@@ -37,7 +33,6 @@ export interface MobileDashboardProps {
   studentsByCourse: Map<string, number>;
   toneByCourse: Map<string, string | undefined>;
   avatarByCourse: Map<string, string | null | undefined>;
-  notificationsHref: string;
   onOpenLesson: (lesson: Lesson) => void;
   onChat: (lesson: Lesson) => void;
   onReview: () => void;
@@ -48,9 +43,6 @@ export interface MobileDashboardProps {
 export function MobileDashboard(props: MobileDashboardProps) {
   const { t } = useTranslation("dashboard");
   const {
-    userName,
-    userSubject,
-    userAvatar,
     online,
     loading,
     hasGroups,
@@ -67,24 +59,7 @@ export function MobileDashboard(props: MobileDashboardProps) {
   return (
     <main className="h-full overflow-y-auto bg-canvas bg-auth-gradient px-4 pt-5 pb-32 font-body text-ink">
       <div className={`flex flex-col ${online ? "gap-6" : "gap-5"}`}>
-        <header className="flex items-center gap-2.5">
-          <Avatar
-            name={userName}
-            src={userAvatar ?? undefined}
-            size="lg"
-            className="shrink-0 [&_.avatar]:size-12"
-          />
-          <span className="flex min-w-0 flex-1 flex-col">
-            <small className="truncate text-caption text-ink-secondary">
-              {userSubject ? t("mobile.role", { subject: userSubject }) : t("mobile.roleFallback")}
-            </small>
-            <strong className="truncate text-title-lg text-ink">{userName}</strong>
-          </span>
-          <NotificationBell
-            pageHref={props.notificationsHref}
-            className="relative grid size-11 shrink-0 place-items-center rounded-full bg-surface text-ink transition-colors hover:bg-subtle [&_.notification-badge]:absolute [&_.notification-badge]:top-2.5 [&_.notification-badge]:right-2.5 [&_.notification-badge]:size-2 [&_.notification-badge]:overflow-hidden [&_.notification-badge]:rounded-full [&_.notification-badge]:bg-danger [&_.notification-badge]:text-[0px] [&_.notification-badge]:ring-2 [&_.notification-badge]:ring-surface"
-          />
-        </header>
+        <MobileTeacherHeader />
 
         {!online ? (
           <p className="flex h-11 items-center gap-3 rounded-xl bg-surface-inverse px-4 text-body-sm text-ink-inverse">

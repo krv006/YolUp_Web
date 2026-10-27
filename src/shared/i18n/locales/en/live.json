@@ -20,7 +20,8 @@
     "sentToAll": "Invitation sent to everyone",
     "linkCopied": "Link copied",
     "linkCopyFailed": "Could not copy the link",
-    "online": "Online"
+    "online": "Online",
+    "offline": "offline"
   },
   "preJoin": {
     "you": "You",
@@ -57,7 +58,15 @@
     "defaultCamera": "Default camera",
     "cameraOnTitle": "Camera on",
     "cameraOffTitle": "Camera off",
-    "start": "Start lesson"
+    "start": "Start lesson",
+    "mobileBothOn": "Microphone and camera on",
+    "mobileMicOnly": "Microphone on, camera off",
+    "mobileCameraOnly": "Camera on, microphone off",
+    "mobileBothOff": "Microphone and camera off",
+    "mobileChangeLater": "you can change this later",
+    "mobileRecordingNote": "The lesson is recorded — students can watch it later",
+    "mobileCancel": "Cancel",
+    "mobileJoin": "Join lesson"
   },
   "connection": {
     "connecting": "Connecting…",
@@ -115,7 +124,10 @@
     "studentsPresent": "{{count}} students",
     "teacherRole": "teacher",
     "wantsToSpeak": "Wants to speak ({{count}})",
-    "allow": "Allow"
+    "allow": "Allow",
+    "mobileShare": "Share",
+    "mobilePeople": "People",
+    "mobileParticipantsCount": "Participants · {{count}}"
   },
   "mic": {
     "label": "Microphone",
@@ -146,7 +158,8 @@
     "requestFailedToast": "Couldn't send the request",
     "requestNotifyTitle": "{{name}} wants to share their screen",
     "requestNotifyDescription": "Allow the student to share their screen?",
-    "grantAction": "Allow"
+    "grantAction": "Allow",
+    "denyAction": "Decline"
   },
   "participantsPanel": {
     "micRequestsAria": "Students requesting the microphone",
@@ -172,7 +185,11 @@
     "muteAllDone": "Muted {{count}} participants",
     "online": "Online",
     "micOff": "Microphone off",
-    "studentRole": "student"
+    "studentRole": "student",
+    "mobileMicRequesting": "Wants to speak ✋",
+    "mobileCameraRequesting": "Wants to turn on camera",
+    "teacherYouMobile": "You · teacher",
+    "studentYouMobile": "You · student"
   },
   "permissionDialog": {
     "title": "Camera and microphone access needed",
@@ -191,6 +208,9 @@
     "joinFailedFinished": "The “{{title}}” lesson ended at {{time}}. The recording goes to the group chat once it is ready.",
     "backToChat": "Back to group chat",
     "openRecording": "Watch the recording",
-    "joinFailedDescription": "The connection dropped — we could not join the lesson. The lesson is still running."
+    "joinFailedDescription": "The connection dropped — we could not join the lesson. The lesson is still running.",
+    "mobileJoinFailedTitle": "Couldn't connect to the lesson",
+    "mobileJoinFailedDescription": "Check your internet connection. The lesson is still going — try again.",
+    "mobileBackToChat": "Back to chat"
   }
 }

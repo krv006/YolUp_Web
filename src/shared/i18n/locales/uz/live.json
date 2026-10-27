@@ -20,7 +20,8 @@
     "sentToAll": "Chaqiruv hammaga yuborildi",
     "linkCopied": "Havola nusxalandi",
     "linkCopyFailed": "Havolani nusxalab bo‘lmadi",
-    "online": "Onlayn"
+    "online": "Onlayn",
+    "offline": "onlayn emas"
   },
   "preJoin": {
     "you": "Siz",
@@ -57,7 +58,15 @@
     "defaultCamera": "Standart kamera",
     "cameraOnTitle": "Kamera yoqilgan",
     "cameraOffTitle": "Kamera o'chiq",
-    "start": "Darsni boshlash"
+    "start": "Darsni boshlash",
+    "mobileBothOn": "Mikrofon va kamera yoqilgan",
+    "mobileMicOnly": "Mikrofon yoqilgan, kamera o‘chiq",
+    "mobileCameraOnly": "Kamera yoqilgan, mikrofon o‘chiq",
+    "mobileBothOff": "Mikrofon va kamera o‘chiq",
+    "mobileChangeLater": "keyin o‘zgartirish mumkin",
+    "mobileRecordingNote": "Dars yozib olinadi — o‘quvchilar keyin ko‘ra oladi",
+    "mobileCancel": "Bekor",
+    "mobileJoin": "Darsga kirish"
   },
   "connection": {
     "connecting": "Ulanmoqda…",
@@ -115,7 +124,10 @@
     "studentsPresent": "{{count}} o'quvchi",
     "teacherRole": "ustoz",
     "wantsToSpeak": "Gapirmoqchi ({{count}})",
-    "allow": "Ruxsat"
+    "allow": "Ruxsat",
+    "mobileShare": "Ulashish",
+    "mobilePeople": "Odamlar",
+    "mobileParticipantsCount": "Ishtirokchilar · {{count}}"
   },
   "mic": {
     "label": "Mikrofon",
@@ -146,7 +158,8 @@
     "requestFailedToast": "So'rovni yuborib bo'lmadi",
     "requestNotifyTitle": "{{name}} ekran ulashmoqchi",
     "requestNotifyDescription": "O'quvchiga ekran ulashish uchun ruxsat berasizmi?",
-    "grantAction": "Ruxsat berish"
+    "grantAction": "Ruxsat berish",
+    "denyAction": "Rad etish"
   },
   "participantsPanel": {
     "micRequestsAria": "Mikrofon so'ragan o'quvchilar",
@@ -172,7 +185,11 @@
     "muteAllDone": "{{count}} ta ishtirokchi ovozsiz qilindi",
     "online": "Onlayn",
     "micOff": "Mikrofon o'chiq",
-    "studentRole": "o'quvchi"
+    "studentRole": "o'quvchi",
+    "mobileMicRequesting": "Gapirmoqchi ✋",
+    "mobileCameraRequesting": "Kamerani yoqmoqchi",
+    "teacherYouMobile": "Siz · o‘qituvchi",
+    "studentYouMobile": "Siz · o‘quvchi"
   },
   "permissionDialog": {
     "title": "Kamera va mikrofonga ruxsat kerak",
@@ -191,6 +208,9 @@
     "joinFailedFinished": "“{{title}}” darsi {{time}} da tugagan. Dars yozuvi tayyor bo‘lgach guruh chatiga yuboriladi.",
     "backToChat": "Guruh chatiga qaytish",
     "openRecording": "Dars yozuvini ko‘rish",
-    "joinFailedDescription": "Internet uzildi — darsga ulanib bo'lmadi. Dars davom etmoqda."
+    "joinFailedDescription": "Internet uzildi — darsga ulanib bo'lmadi. Dars davom etmoqda.",
+    "mobileJoinFailedTitle": "Darsga ulanib bo‘lmadi",
+    "mobileJoinFailedDescription": "Internet aloqasini tekshiring. Dars hali davom etmoqda — qayta urinib ko‘ring.",
+    "mobileBackToChat": "Chatga qaytish"
   }
 }

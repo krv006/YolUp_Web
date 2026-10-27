@@ -44,7 +44,7 @@ export function JoinRequestsDialog({ courseId, open, onOpenChange }: JoinRequest
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      variant="confirm"
+      variant="adaptive"
       title={t("addStudent.requestsTitle", { count: rows.length })}
       description={t("addStudent.requestsDescription")}
       footer={
