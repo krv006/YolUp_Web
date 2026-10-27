@@ -38,7 +38,9 @@
     "emptyTitle": "Hali dars rejalashtirilmagan",
     "emptyHint": "Dars jadvalini qo‘shing — o‘quvchilaringiz eslatma oladi.",
     "cancelLesson": "Bekor qilish",
-    "finishedStats": "{{joined}} / {{total}} qatnashdi · davomat {{rate}}%"
+    "finishedStats": "{{joined}} / {{total}} qatnashdi · davomat {{rate}}%",
+    "cancelLessonLong": "Darsni bekor qilish",
+    "finishedStatsShort": "{{joined}} ishtirokchi · davomat {{rate}}%"
   },
   "assignments": {
     "eyebrow": "GURUH VAZIFALARI",
@@ -61,7 +63,9 @@
     "deleteDialogDescription": "\"{{title}}\" va unga bog'liq ma'lumotlar o'chadi.",
     "cancel": "Bekor",
     "delete": "O'chirish",
-    "fromBank": "Tayyor testdan"
+    "fromBank": "Tayyor testdan",
+    "subtitleShort": "Topshiriqlar va AI natijalari",
+    "emptyHint": "Birinchi uy vazifasini bering — o‘quvchilar uni guruh chatida ko‘radi."
   },
   "students": {
     "eyebrow": "ISHTIROKCHILAR",
@@ -83,7 +87,7 @@
     "summary": "{{lessonCount}} ta dars · {{recordCount}} ta yozuv",
     "empty": "Davomat hali yo'q.",
     "emptyTitle": "Davomat hali yo‘q",
-    "emptyDescription": "Dars o‘tkazilgach, o‘quvchilarning qatnashuvi va fokus ko‘rsatkichi shu yerda chiqadi.",
+    "emptyDescription": "Dars o‘tkazilgach, o‘quvchilar qatnashuvi va fokus ko‘rsatkichlari shu yerda chiqadi.",
     "filterAll": "Barcha darslar",
     "filterMonth": "Oxirgi 30 kun",
     "filterCurrent": "Shu oy",
@@ -92,7 +96,11 @@
     "statLessons": "Dars",
     "studentsTitle": "O‘quvchilar",
     "studentsMeta": "Davomat · fokus",
-    "focusSuffix": "fokus"
+    "focusSuffix": "fokus",
+    "mobileBadge": "{{lessonCount}} ta dars · {{recordCount}} ta yozuv",
+    "studentsMetaShort": "Davomat · fokus",
+    "filterMonthShort": "30 kun",
+    "filterAllShort": "Barchasi"
   },
   "dialogs": {
     "lesson": {
@@ -147,7 +155,13 @@
       "quizHint": "Dars tugagach test o‘quvchilarga avtomatik ochiladi.",
       "repeatingSubtitle": "Takrorlanuvchi jadval",
       "timeBusy": "Bu vaqt band",
-      "scheduleFirst": "{{count}} ta dars yaratiladi{{limitNote}} · birinchisi {{first}}, {{weekday}}"
+      "scheduleFirst": "{{count}} ta dars yaratiladi{{limitNote}} · birinchisi {{first}}, {{weekday}}",
+      "mobileSubtitle": "Guruh uchun mashg‘ulot vaqtini belgilang",
+      "todayDate": "Bugun, {{date}}",
+      "timeShort": "Vaqt",
+      "startShort": "Boshlanish",
+      "durationMinutes": "Davomiyligi (daqiqa)",
+      "minutesValue": "{{count}} daqiqa"
     },
     "conflict": {
       "singleTitle": "Bu vaqtda darsingiz bor",
@@ -281,5 +295,23 @@
     "close": "Yopish",
     "confirm": "Bekor qilish"
   },
-  "announcementBanner": "E’lon rejimi yoqildi — faqat siz yozasiz"
+  "announcementBanner": "E’lon rejimi yoqildi — faqat siz yozasiz",
+  "mobileAssignments": {
+    "draft": "Qoralama",
+    "review": "Tekshirish · {{count}}",
+    "finished": "Yakunlangan",
+    "noDue": "Muddatsiz",
+    "daysLeft": "{{count}} kun qoldi",
+    "draftMeta": "Yuborilmagan qoralama",
+    "due": "Muddat: {{date}}",
+    "notSent": "Yuborilmagan",
+    "average": "o‘rtacha {{value}}",
+    "submitted": "{{done}} / {{total}} topshirdi",
+    "quizMeta": "{{count}} ta savol · Test",
+    "open": "Ochish",
+    "edit": "Tahrirlash",
+    "delete": "O‘chirish",
+    "results": "Natijalar",
+    "menu": "Amallar"
+  }
 }

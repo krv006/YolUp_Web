@@ -110,5 +110,11 @@
     "forbiddenAction": "Akkauntni almashtirish",
     "back": "Orqaga",
     "help": "Yordam"
+  },
+  "relative": {
+    "now": "hozir",
+    "minutes": "{{count}} daqiqa oldin",
+    "hours": "{{count}} soat oldin",
+    "yesterday": "Kecha"
   }
 }

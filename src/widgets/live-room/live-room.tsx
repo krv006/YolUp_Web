@@ -51,7 +51,6 @@ import {
   CAMERA_SOURCE,
   canPublishSource,
   decodeScreenShareRequest,
-  encodeScreenShareRequest,
   LessonInviteDialog,
   MediaPermissionDialog,
   MICROPHONE_SOURCE,
@@ -67,8 +66,13 @@ import {
   type MicRequest,
 } from "@/modules/live";
 import type { Lesson } from "@/shared/types";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
+import { MobileLiveRoom } from "./mobile-live-room";
+import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
+import { useScreenShareRequest } from "./use-screen-share-request";
 
 type SidePanel = "board" | "people" | null;
 
@@ -155,19 +159,7 @@ function CameraTile({
 
 function RecordingChip({ startedAt }: { startedAt: Date }) {
   const { t } = useTranslation("live");
-  const [seconds, setSeconds] = useState(() =>
-    Math.max(0, Math.floor((Date.now() - startedAt.getTime()) / 1000))
-  );
-
-  useEffect(() => {
-    const timer = globalThis.setInterval(() => {
-      setSeconds(Math.max(0, Math.floor((Date.now() - startedAt.getTime()) / 1000)));
-    }, 1000);
-    return () => globalThis.clearInterval(timer);
-  }, [startedAt]);
-
-  const minutes = Math.floor(seconds / 60);
-  const label = `${String(minutes).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  const label = formatElapsed(useElapsedSeconds(startedAt));
 
   return (
     <span
@@ -487,9 +479,8 @@ function TeacherShareControl({ screenStream }: { screenStream: MediaStream }) {
 
 function StudentShareControl() {
   const { t } = useTranslation("live");
-  const room = useRoomContext();
   const permissions = useLocalParticipantPermissions();
-  const [requesting, setRequesting] = useState(false);
+  const { request: requestShare, requesting } = useScreenShareRequest();
   const canShare = canPublishSource(permissions, SCREEN_SHARE_SOURCE);
 
   if (canShare) {
@@ -504,25 +495,6 @@ function StudentShareControl() {
         <MonitorUp size={19} />
       </TrackToggle>
     );
-  }
-
-  async function requestShare() {
-    if (requesting) return;
-    setRequesting(true);
-    try {
-      const signal = encodeScreenShareRequest(
-        room.localParticipant.name || room.localParticipant.identity
-      );
-      await room.localParticipant.publishData(signal.payload, {
-        reliable: true,
-        topic: signal.topic,
-      });
-      toast.success(t("share.requestSentToast"));
-    } catch {
-      toast.error(t("share.requestFailedToast"));
-    } finally {
-      setRequesting(false);
-    }
   }
 
   return (
@@ -540,7 +512,20 @@ function StudentShareControl() {
   );
 }
 
-function ShareRequestListener({ lessonId, enabled }: { lessonId: string; enabled: boolean }) {
+interface ShareRequest {
+  identity: string;
+  name: string;
+}
+
+function ShareRequestListener({
+  lessonId,
+  enabled,
+  onRequest,
+}: {
+  lessonId: string;
+  enabled: boolean;
+  onRequest?: (request: ShareRequest) => void;
+}) {
   const room = useRoomContext();
   const { mutate: grantShare } = useAllowShare(lessonId);
 
@@ -558,6 +543,11 @@ function ShareRequestListener({ lessonId, enabled }: { lessonId: string; enabled
       const identity = participant.identity;
       const name = request.name || participant.name || identity;
 
+      if (onRequest) {
+        onRequest({ identity, name });
+        return;
+      }
+
       toast(i18n.t("live:share.requestNotifyTitle", { name }), {
         description: i18n.t("live:share.requestNotifyDescription"),
         duration: 12_000,
@@ -572,7 +562,7 @@ function ShareRequestListener({ lessonId, enabled }: { lessonId: string; enabled
     return () => {
       room.off(RoomEvent.DataReceived, receive);
     };
-  }, [enabled, grantShare, room]);
+  }, [enabled, grantShare, onRequest, room]);
 
   return null;
 }
@@ -594,6 +584,9 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   );
   const [inviteOpen, setInviteOpen] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
+  const [shareRequest, setShareRequest] = useState<ShareRequest | null>(null);
+  const isCompact = useIsCompact();
+  const allowShare = useAllowShare(lesson.id);
   const connectionState = useConnectionState();
   const participants = useParticipants();
   const room = useRoomContext();
@@ -656,6 +649,116 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           : null,
       ].filter(Boolean)
     : [];
+
+  const dialogs = (
+    <>
+      <AwayStudentsNotice lessonId={lesson.id} enabled={isTeacher} />
+
+      {isTeacher ? (
+        <LessonInviteDialog
+          lessonId={lesson.id}
+          courseId={lesson.courseId}
+          open={inviteOpen}
+          onOpenChange={setInviteOpen}
+        />
+      ) : null}
+
+      {isTeacher ? (
+        <FinishLessonDialog
+          lesson={finishOpen ? lesson : null}
+          onOpenChange={(open) => setFinishOpen(open)}
+          onFinished={onLeave}
+          onLeaveOnly={onLeave}
+        />
+      ) : null}
+
+      <AppDialog
+        open={peopleOpen}
+        onOpenChange={(open) => setPanel(open ? "people" : null)}
+        variant="panel"
+        width="lg:w-100"
+        title={
+          isCompact
+            ? t("room.mobileParticipantsCount", { count: participants.length })
+            : t("room.participantsCount", { count: participants.length })
+        }
+      >
+        <ParticipantsPanel
+          lessonId={lesson.id}
+          isTeacher={isTeacher}
+          micRequests={mic.requests}
+          onGrantMic={mic.grant.mutate}
+          onDenyMic={mic.deny.mutate}
+          micAnswerPending={mic.grant.isPending || mic.deny.isPending}
+          cameraRequests={camera.requests}
+          onGrantCamera={camera.grant.mutate}
+          onDenyCamera={camera.deny.mutate}
+          cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
+          onInvite={() => {
+            setPanel(null);
+            setInviteOpen(true);
+          }}
+        />
+      </AppDialog>
+
+      <MediaPermissionDialog open={permissionOpen} onOpenChange={setPermissionOpen} />
+      <MediaPermissionWatcher onDenied={() => setPermissionOpen(true)} />
+      <RoomAudioRenderer />
+      <ShareRequestListener
+        lessonId={lesson.id}
+        enabled={isTeacher}
+        onRequest={isCompact ? setShareRequest : undefined}
+      />
+      <ConfirmDialog
+        open={Boolean(shareRequest)}
+        onOpenChange={(open) => {
+          if (!open) setShareRequest(null);
+        }}
+        tone="brand"
+        icon="laptop"
+        title={t("share.requestNotifyTitle", { name: shareRequest?.name ?? "" })}
+        description={t("share.requestNotifyDescription")}
+        confirmLabel={t("share.grantAction")}
+        cancelLabel={t("share.denyAction")}
+        pending={allowShare.isPending}
+        onConfirm={() => {
+          if (!shareRequest) return;
+          allowShare.mutate(shareRequest.identity, { onSettled: () => setShareRequest(null) });
+        }}
+      />
+      {!isTeacher ? <AttentionCheckDialog lessonId={lesson.id} check={attention.data} /> : null}
+    </>
+  );
+
+  if (isCompact)
+    return (
+      <div
+        data-theme="dark"
+        data-lk-theme="default"
+        className="live-room-shell dark relative h-dvh min-h-0 overflow-hidden bg-canvas text-ink"
+      >
+        <ReconnectBanner />
+        <MobileLiveRoom
+          lesson={lesson}
+          isTeacher={isTeacher}
+          currentUserId={room.localParticipant.identity}
+          startedAt={joinedAt}
+          recording={recordingChips.length > 0}
+          participants={participants.length}
+          requests={pendingRequestsCount}
+          cameraTracks={cameraTracks}
+          activeShare={activeShare}
+          boardOpen={boardOpen}
+          mic={mic}
+          camera={camera}
+          onBack={onLeave}
+          onBoard={(open) => setPanel(open ? "board" : null)}
+          onPeople={() => setPanel("people")}
+          onEnd={() => (isTeacher ? setFinishOpen(true) : void room.disconnect())}
+        />
+        {dialogs}
+      </div>
+    );
 
   return (
     <div
@@ -903,56 +1006,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
         </div>
       </footer>
 
-      <AwayStudentsNotice lessonId={lesson.id} enabled={isTeacher} />
-
-      {isTeacher ? (
-        <LessonInviteDialog
-          lessonId={lesson.id}
-          courseId={lesson.courseId}
-          open={inviteOpen}
-          onOpenChange={setInviteOpen}
-        />
-      ) : null}
-
-      {isTeacher ? (
-        <FinishLessonDialog
-          lesson={finishOpen ? lesson : null}
-          onOpenChange={(open) => setFinishOpen(open)}
-          onFinished={onLeave}
-          onLeaveOnly={onLeave}
-        />
-      ) : null}
-
-      <AppDialog
-        open={peopleOpen}
-        onOpenChange={(open) => setPanel(open ? "people" : null)}
-        variant="panel"
-        width="lg:w-100"
-        title={t("room.participantsCount", { count: participants.length })}
-      >
-        <ParticipantsPanel
-          lessonId={lesson.id}
-          isTeacher={isTeacher}
-          micRequests={mic.requests}
-          onGrantMic={mic.grant.mutate}
-          onDenyMic={mic.deny.mutate}
-          micAnswerPending={mic.grant.isPending || mic.deny.isPending}
-          cameraRequests={camera.requests}
-          onGrantCamera={camera.grant.mutate}
-          onDenyCamera={camera.deny.mutate}
-          cameraAnswerPending={camera.grant.isPending || camera.deny.isPending}
-          onInvite={() => {
-            setPanel(null);
-            setInviteOpen(true);
-          }}
-        />
-      </AppDialog>
-
-      <MediaPermissionDialog open={permissionOpen} onOpenChange={setPermissionOpen} />
-      <MediaPermissionWatcher onDenied={() => setPermissionOpen(true)} />
-      <RoomAudioRenderer />
-      <ShareRequestListener lessonId={lesson.id} enabled={isTeacher} />
-      {!isTeacher ? <AttentionCheckDialog lessonId={lesson.id} check={attention.data} /> : null}
+      {dialogs}
     </div>
   );
 }
@@ -975,27 +1029,29 @@ function RequestRow({
   name,
   note,
   pending,
+  secondary = false,
   onGrant,
   onDeny,
 }: {
   name: string;
   note: string;
   pending: boolean;
+  secondary?: boolean;
   onGrant: () => void;
   onDeny: () => void;
 }) {
   const { t } = useTranslation("live");
 
   return (
-    <article className="flex items-center gap-3 rounded-lg bg-warning-bg px-3 py-2.5">
-      <Avatar name={name} size="sm" />
+    <article className="flex items-center gap-3 rounded-lg bg-warning-bg px-3 py-2.5 max-lg:h-16 max-lg:rounded-xl max-lg:bg-accent-saffron-bg max-lg:py-0">
+      <Avatar name={name} size="sm" className="max-lg:[&_.avatar]:size-9" />
       <span className="flex min-w-0 flex-1 flex-col">
-        <strong className="truncate text-title-sm text-ink">{name}</strong>
+        <strong className="truncate text-title-sm text-ink max-lg:text-title max-lg:font-semibold">{name}</strong>
         <small className="truncate text-body-xs text-warning-fg">{note}</small>
       </span>
       <button
         type="button"
-        className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink transition-opacity hover:opacity-80 disabled:opacity-50"
+        className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink transition-opacity hover:opacity-80 disabled:opacity-50 max-lg:size-11"
         aria-label={t("participantsPanel.denyAria", { name })}
         title={t("participantsPanel.denyTitle")}
         disabled={pending}
@@ -1005,7 +1061,9 @@ function RequestRow({
       </button>
       <button
         type="button"
-        className="flex h-9 shrink-0 items-center rounded-full bg-brand px-4 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
+        className={`flex h-9 shrink-0 items-center rounded-full bg-brand px-4 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50 max-lg:h-11 max-lg:px-3 max-lg:text-button-sm ${
+          secondary ? "max-lg:bg-brand-subtle max-lg:text-brand" : ""
+        }`}
         disabled={pending}
         onClick={onGrant}
       >
@@ -1029,6 +1087,7 @@ function ParticipantsPanel({
   onInvite,
 }: ParticipantsPanelProps) {
   const { t } = useTranslation("live");
+  const isCompact = useIsCompact();
   const participants = useParticipants();
   const allowShare = useAllowShare(lessonId);
   const ban = useBanFromLesson(lessonId);
@@ -1044,7 +1103,7 @@ function ParticipantsPanel({
         <RequestRow
           key={`mic-${request.studentId}`}
           name={request.name}
-          note={t("participantsPanel.micRequesting")}
+          note={isCompact ? t("participantsPanel.mobileMicRequesting") : t("participantsPanel.micRequesting")}
           pending={micAnswerPending}
           onGrant={() => onGrantMic(request.studentId)}
           onDeny={() => onDenyMic(request.studentId)}
@@ -1055,7 +1114,8 @@ function ParticipantsPanel({
         <RequestRow
           key={`camera-${request.studentId}`}
           name={request.name}
-          note={t("participantsPanel.cameraRequesting")}
+          note={isCompact ? t("participantsPanel.mobileCameraRequesting") : t("participantsPanel.cameraRequesting")}
+          secondary
           pending={cameraAnswerPending}
           onGrant={() => onGrantCamera(request.studentId)}
           onDeny={() => onDenyCamera(request.studentId)}
@@ -1068,7 +1128,7 @@ function ParticipantsPanel({
           const speaking = participant.isSpeaking;
           const micOn = participant.isMicrophoneEnabled;
           const raisedHand = raisedHands.has(name);
-          const note = participant.isLocal
+          const note = participant.isLocal && !isCompact
             ? isTeacher
               ? t("participantsPanel.teacherYou")
               : t("participantsPanel.you")
@@ -1081,17 +1141,21 @@ function ParticipantsPanel({
                   : t("participantsPanel.micOff");
 
           return (
-            <article key={participant.identity} className="group flex items-center gap-3 py-2.5">
-              <Avatar name={name} size="sm" />
+            <article key={participant.identity} className="group flex items-center gap-3 py-2.5 max-lg:py-[7px]">
+              <Avatar name={name} size="sm" className="max-lg:[&_.avatar]:size-9" />
               <span className="flex min-w-0 flex-1 flex-col">
-                <strong className="truncate text-title-sm text-ink">
+                <strong className="truncate text-title-sm text-ink max-lg:text-title max-lg:font-semibold">
                   {participant.isLocal
-                    ? `${t("room.youLabel")} · ${
-                        isTeacher ? t("room.teacherRole") : t("participantsPanel.studentRole")
-                      }`
+                    ? isCompact
+                      ? isTeacher
+                        ? t("participantsPanel.teacherYouMobile")
+                        : t("participantsPanel.studentYouMobile")
+                      : `${t("room.youLabel")} · ${
+                          isTeacher ? t("room.teacherRole") : t("participantsPanel.studentRole")
+                        }`
                     : name}
                 </strong>
-                <small className="truncate text-body-xs text-ink-tertiary">{note}</small>
+                <small className="truncate text-body-xs text-ink-tertiary max-lg:text-ink-secondary">{note}</small>
               </span>
 
               {raisedHand ? (
@@ -1123,7 +1187,13 @@ function ParticipantsPanel({
                 </span>
               ) : null}
 
-              {micOn ? (
+              {isCompact ? (
+                <Icon
+                  name="mic"
+                  size={20}
+                  className={`shrink-0 ${micOn ? "text-brand" : "text-icon-disabled"}`}
+                />
+              ) : micOn ? (
                 <Mic size={17} className="shrink-0 text-brand" aria-hidden="true" />
               ) : (
                 <MicOff size={17} className="shrink-0 text-icon-disabled" aria-hidden="true" />
@@ -1141,7 +1211,7 @@ function ParticipantsPanel({
         <div className="flex items-center gap-2.5 pt-2">
           <button
             type="button"
-            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink transition-colors hover:bg-muted disabled:opacity-60"
+            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink transition-colors hover:bg-muted disabled:opacity-60 max-lg:h-12 max-lg:border max-lg:border-line-strong max-lg:bg-surface"
             disabled={muteAll.isPending}
             onClick={() =>
               muteAll.mutate([], {
@@ -1149,15 +1219,15 @@ function ParticipantsPanel({
               })
             }
           >
-            <MicOff size={17} />
+            {isCompact ? <Icon name="notifications-off" size={18} /> : <MicOff size={17} />}
             {t("participantsPanel.muteAll")}
           </button>
           <button
             type="button"
-            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-opacity hover:opacity-85"
+            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-opacity hover:opacity-85 max-lg:h-12"
             onClick={onInvite}
           >
-            <UserRoundPlus size={17} />
+            {isCompact ? <Icon name="person" size={18} /> : <UserRoundPlus size={17} />}
             {t("participantsPanel.invite")}
           </button>
         </div>

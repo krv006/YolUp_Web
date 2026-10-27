@@ -89,7 +89,10 @@
     "online": "online",
     "onlineCount": "{{count}} online",
     "teacherBadge": "Teacher",
-    "deleteCourseWarning": "The group chat, lessons, assignments and recordings are deleted for good."
+    "deleteCourseWarning": "The group chat, lessons, assignments and recordings are deleted for good.",
+    "filesEmptyHint": "Files shared in the group are collected here.",
+    "mediaEmptyHint": "Photos and videos shared in the group are collected here.",
+    "descriptionShort": "Description"
   },
   "item": {
     "liveNow": "Lesson in progress",

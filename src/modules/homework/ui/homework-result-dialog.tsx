@@ -12,6 +12,9 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { Icon } from "@/shared/ui/icon";
 import { toIntlLocale } from "@/shared/i18n";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { FileViewer } from "@/shared/ui/file-viewer";
@@ -176,6 +179,7 @@ export function HomeworkResultDialog({
   const [fileOpen, setFileOpen] = useState(false);
   const review = useReviewSubmission();
   const submission = query.data ?? initial;
+  const isCompact = useIsCompact();
 
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [draft, setDraft] = useState<{
@@ -243,6 +247,161 @@ export function HomeworkResultDialog({
       }
     );
   }
+
+  if (isCompact)
+    return (
+      <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+        <DialogPrimitive.Portal>
+          <DialogPrimitive.Content className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-canvas bg-auth-gradient px-4 pt-5 pb-8 font-body text-ink outline-none [&>*]:shrink-0">
+            <header className="flex h-11 items-center gap-3">
+              <DialogPrimitive.Close
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink"
+                aria-label={t("resultDialog.cancel")}
+              >
+                <Icon name="chevron-left" size={22} />
+              </DialogPrimitive.Close>
+              <DialogPrimitive.Title className="min-w-0 flex-1 truncate text-center text-title-lg font-semibold">
+                {t("mobileResult.title")}
+              </DialogPrimitive.Title>
+              <span className="size-11 shrink-0" aria-hidden="true" />
+            </header>
+            <DialogPrimitive.Description className="sr-only">
+              {submission?.studentName ?? dialogTitle}
+            </DialogPrimitive.Description>
+
+            {!submission || submission.status === "checking" || submission.status === "error" ? (
+              <>
+                <section className="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4">
+                  <span className="flex items-center gap-3">
+                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-subtle text-brand">
+                      <Icon name="hourglass-empty" size={20} />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <strong className="text-title leading-6 text-ink">{t("mobileResult.checking")}</strong>
+                      <small className="text-body-sm leading-5 text-ink-secondary">{t("mobileResult.checkingHint")}</small>
+                    </span>
+                  </span>
+                  <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
+                    <i className="block h-full w-[30%] rounded-full bg-brand not-italic" />
+                  </span>
+                </section>
+                {submission?.status === "error" ? (
+                  <p className="mt-4 flex items-center gap-3 rounded-lg bg-danger-bg px-4 py-2.5 text-body-sm text-error-text">
+                    <Icon name="warning-fill" size={18} className="shrink-0 text-danger" />
+                    {t("mobileResult.error")}
+                  </p>
+                ) : null}
+              </>
+            ) : (
+              <>
+                <section className="mt-4 flex flex-col gap-3 rounded-lg bg-brand p-4 text-on-action">
+                  <span className="flex items-center gap-3">
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <small className="text-caption">{t("resultDialog.overallScore")}</small>
+                      <strong className="text-[32px]/[38px] font-bold">
+                        {draft ? (
+                          <input
+                            inputMode="numeric"
+                            className="w-20 rounded-lg bg-on-brand-subtle px-2 text-on-action outline-none"
+                            value={draft.score}
+                            onChange={(event) =>
+                              setDraft({ ...draft, score: event.target.value.replace(/[^\d]/g, "") })
+                            }
+                          />
+                        ) : (
+                          submission.overallScore ?? "—"
+                        )}{" "}
+                        / 100
+                      </strong>
+                    </span>
+                    {draft ? (
+                      <input
+                        className="size-15 shrink-0 rounded-full bg-surface text-center text-[28px] font-bold text-brand outline-none"
+                        value={draft.grade}
+                        onChange={(event) => setDraft({ ...draft, grade: event.target.value })}
+                      />
+                    ) : (
+                      <span className="grid size-15 shrink-0 place-items-center rounded-full bg-surface text-[28px] font-bold text-brand">
+                        {submission.grade || "—"}
+                      </span>
+                    )}
+                  </span>
+                  <span className="grid grid-cols-2 gap-2">
+                    {draft ? (
+                      <>
+                        <button
+                          type="button"
+                          className="flex h-11 items-center justify-center rounded-full bg-surface text-button text-ink"
+                          onClick={() => setDraft(null)}
+                        >
+                          {t("resultDialog.cancel")}
+                        </button>
+                        <button
+                          type="button"
+                          className="flex h-11 items-center justify-center rounded-full bg-surface text-button text-brand disabled:opacity-60"
+                          disabled={review.isPending}
+                          onClick={saveReview}
+                        >
+                          {t("resultDialog.save")}
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-surface text-button text-ink disabled:opacity-50"
+                          disabled={!canReview}
+                          onClick={beginEdit}
+                        >
+                          <Icon name="edit" size={16} /> {t("resultDialog.editGrade")}
+                        </button>
+                        <button
+                          type="button"
+                          className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-surface text-button text-ink disabled:opacity-50"
+                          disabled={!canRecheck || recheck.isPending}
+                          onClick={() => recheck.mutate(submission.id)}
+                        >
+                          <Icon name="refresh" size={16} /> {t("mobileResult.recheck")}
+                        </button>
+                      </>
+                    )}
+                  </span>
+                </section>
+                {reviewError ? (
+                  <p className="mt-3 rounded-xl bg-danger-bg px-4 py-3 text-body-sm text-error-text">{reviewError}</p>
+                ) : null}
+
+                {(
+                  [
+                    ["strengths", "check-circle", "text-success"],
+                    ["topicsToReview", "warning-fill", "text-accent-saffron-fg"],
+                    ["recommendations", "sparkles-fill", "text-brand"],
+                  ] as const
+                ).map(([key, icon, tone]) => {
+                  const values = (submission.result?.summary?.[key] ?? []).map(asText).filter(Boolean);
+                  if (!values.length) return null;
+                  return (
+                    <section key={key} className="mt-4 flex flex-col gap-2 rounded-lg bg-surface p-4">
+                      <strong className="flex items-center gap-2 text-title text-ink">
+                        <Icon name={icon} size={20} className={tone} />
+                        {t(`resultDialog.${key}`)}
+                      </strong>
+                      <ul className="flex flex-col gap-2">
+                        {values.map((value, index) => (
+                          <li key={index} className="text-body-sm text-ink-secondary">
+                            • {value}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
+              </>
+            )}
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
+    );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

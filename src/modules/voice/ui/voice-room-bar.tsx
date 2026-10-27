@@ -17,10 +17,11 @@ import { VoiceRoomPanel } from "./voice-room-panel";
 
 export interface VoiceRoomBarProps {
   courseId: string | null;
+  courseTitle?: string;
   hideIdle?: boolean;
 }
 
-export function VoiceRoomBar({ courseId, hideIdle = false }: VoiceRoomBarProps) {
+export function VoiceRoomBar({ courseId, courseTitle, hideIdle = false }: VoiceRoomBarProps) {
   const { t } = useTranslation("voice");
   const { active } = useActiveVoiceRoom(courseId);
   const create = useCreateVoiceRoom();
@@ -145,6 +146,7 @@ export function VoiceRoomBar({ courseId, hideIdle = false }: VoiceRoomBarProps) 
         <VoiceRoomPanel
           room={joined.room}
           token={joined.token}
+          courseTitle={courseTitle}
           closing={close.isPending}
           onLeave={leaveRoom}
           onClose={closeRoom}

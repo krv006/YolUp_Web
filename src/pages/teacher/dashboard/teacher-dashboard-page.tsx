@@ -143,9 +143,6 @@ export function TeacherDashboardPage() {
 
     return (
       <MobileDashboard
-        userName={user?.name ?? ""}
-        userSubject={user?.subject ?? null}
-        userAvatar={user?.avatarUrl ?? null}
         online={online}
         loading={loading}
         hasGroups={groups.length > 0}
@@ -161,7 +158,6 @@ export function TeacherDashboardPage() {
         studentsByCourse={studentsByCourse}
         toneByCourse={toneByCourse}
         avatarByCourse={avatarByCourse}
-        notificationsHref={ROUTES.teacher.notifications}
         onOpenLesson={(lesson) => navigate(ROUTES.live(lesson.id))}
         onChat={(lesson) => {
           const room = roomByCourse.get(lesson.courseId);

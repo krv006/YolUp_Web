@@ -1,5 +1,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import type { Lesson } from "@/shared/types";
 
@@ -33,6 +35,7 @@ export function LessonDetailDrawer({
   const { t } = useTranslation("lesson");
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysShort = t("list.weekdaysShort", { returnObjects: true }) as string[];
+  const isCompact = useIsCompact();
 
   if (!lesson) return null;
 
@@ -42,6 +45,109 @@ export function LessonDetailDrawer({
   const today = starts.toDateString() === now.toDateString();
   const live = lesson.status === "live";
   const finished = lesson.status === "finished";
+
+  const timeValue = `${today ? `${t("schedule.today")}, ` : `${starts.getDate()}-${months[starts.getMonth()]}, `}${clock(starts)} – ${clock(ends)} · ${t("list.durationMinutes", { count: lesson.durationMinutes || 45 })}`;
+  const statusLabel = live
+    ? t("schedule.live")
+    : minutes >= 0
+      ? t("schedule.startsIn", { count: minutes })
+      : t(`status.${lesson.status}`);
+
+  if (isCompact) {
+    const repeatValue = lesson.recurrence
+      ? [
+          lesson.recurrence.weekdays
+            .map((day) => weekdaysShort[day] ?? "")
+            .filter(Boolean)
+            .join(", "),
+          t(`schedule.rows.freq.${lesson.recurrence.freq}`, { defaultValue: t("schedule.rows.repeatValue") }),
+        ]
+          .filter(Boolean)
+          .join(" — ")
+      : t("schedule.rows.repeatValue");
+
+    return (
+      <AppDialog
+        open
+        onOpenChange={onOpenChange}
+        variant="adaptive"
+        title={lesson.courseTitle}
+        description={t("schedule.detailTitle")}
+        footerClassName="px-4 pt-6 pb-7"
+        footer={
+          <div className="grid w-full grid-cols-2 gap-3">
+            <button
+              type="button"
+              className={`${dialogButton.secondary} h-13 border-line-strong text-title font-semibold`}
+              onClick={() => onChat(lesson)}
+            >
+              {t("schedule.openChat")}
+            </button>
+            <button
+              type="button"
+              className={`${dialogButton.primary} h-13 text-title font-semibold`}
+              onClick={() => onJoin(lesson)}
+            >
+              {t("schedule.join")}
+            </button>
+          </div>
+        }
+      >
+        <div className="-mt-0.5 flex flex-col gap-4">
+          <span className="mb-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`flex h-6 items-center gap-1.5 rounded-full px-2.5 text-caption-strong ${
+                live ? "bg-danger-bg text-error-text" : finished ? "bg-success-bg text-success-fg" : "bg-accent-teal-bg text-accent-teal-fg"
+              }`}
+            >
+              <Icon name="schedule" size={14} />
+              {statusLabel}
+            </span>
+            {lesson.quizId ? (
+              <span className="flex h-6 items-center gap-1.5 rounded-full bg-brand-subtle px-2.5 text-caption-strong text-brand">
+                <Icon name="quiz" size={14} />
+                {t("schedule.quizAttached")}
+              </span>
+            ) : null}
+          </span>
+
+          <MobileRow icon="schedule" label={t("schedule.rows.time")} value={timeValue} />
+          {lesson.recurrence || lesson.recurrenceId ? (
+            <MobileRow icon="refresh" label={t("schedule.rows.repeat")} value={repeatValue} />
+          ) : null}
+          <MobileRow icon="quiz" label={t("schedule.rows.topic")} value={lesson.title || t("list.missingTopic")} />
+          {lesson.note ? (
+            <MobileRow icon="assign" label={t("schedule.rows.homework")} value={lesson.note} />
+          ) : null}
+          <MobileRow
+            icon="person"
+            label={t("schedule.rows.students")}
+            value={t("schedule.students", { count: studentCount })}
+          />
+
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              className="flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface text-button text-ink"
+              onClick={() => (finished ? onRatings(lesson) : onChat(lesson))}
+            >
+              <Icon name={finished ? "star" : "edit"} size={18} />
+              {finished ? t("schedule.ratings") : t("schedule.edit")}
+            </button>
+            <button
+              type="button"
+              className="flex h-11 items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-danger disabled:opacity-50"
+              disabled={finished}
+              onClick={() => onCancel(lesson)}
+            >
+              <Icon name="close" size={18} />
+              {t("schedule.cancel")}
+            </button>
+          </div>
+        </div>
+      </AppDialog>
+    );
+  }
 
   return (
     <DialogPrimitive.Root open onOpenChange={onOpenChange}>
@@ -179,6 +285,20 @@ function Row({ icon, label, value }: { icon: string; label: string; value: strin
       <span className="flex min-w-0 flex-1 flex-col">
         <dt className="truncate text-body-xs text-ink-tertiary">{label}</dt>
         <dd className="text-title-sm text-ink">{value}</dd>
+      </span>
+    </span>
+  );
+}
+
+function MobileRow({ icon, label, value }: { icon: string; label: string; value: string }) {
+  return (
+    <span className="flex items-center gap-3">
+      <span className="grid size-9 shrink-0 place-items-center rounded-md bg-brand-subtle text-brand">
+        <Icon name={icon} size={20} />
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col">
+        <small className="truncate text-caption text-ink-secondary">{label}</small>
+        <strong className="text-body-sm font-semibold text-ink">{value}</strong>
       </span>
     </span>
   );

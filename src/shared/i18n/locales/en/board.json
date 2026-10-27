@@ -179,5 +179,9 @@
     "pageLabel": "Page {{index}}",
     "emptyPage": "Empty page",
     "renameAria": "Page {{index}} title"
+  },
+  "preview": {
+    "label": "Board · page {{page}}",
+    "empty": "The board is empty for now"
   }
 }

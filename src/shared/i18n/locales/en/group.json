@@ -38,7 +38,9 @@
     "emptyTitle": "No lessons scheduled yet",
     "emptyHint": "Add the schedule — your students will get a reminder.",
     "cancelLesson": "Cancel lesson",
-    "finishedStats": "{{joined}} / {{total}} joined · attendance {{rate}}%"
+    "finishedStats": "{{joined}} / {{total}} joined · attendance {{rate}}%",
+    "cancelLessonLong": "Cancel lesson",
+    "finishedStatsShort": "{{joined}} attended · attendance {{rate}}%"
   },
   "assignments": {
     "eyebrow": "GROUP ASSIGNMENTS",
@@ -61,7 +63,9 @@
     "deleteDialogDescription": "\"{{title}}\" and its related data will be deleted.",
     "cancel": "Cancel",
     "delete": "Delete",
-    "fromBank": "From ready tests"
+    "fromBank": "From ready tests",
+    "subtitleShort": "Assignments and AI results",
+    "emptyHint": "Give the first homework — students will see it in the group chat."
   },
   "students": {
     "eyebrow": "PARTICIPANTS",
@@ -92,7 +96,11 @@
     "statLessons": "Lessons",
     "studentsTitle": "Students",
     "studentsMeta": "Attendance · focus",
-    "focusSuffix": "focus"
+    "focusSuffix": "focus",
+    "mobileBadge": "{{lessonCount}} lessons · {{recordCount}} records",
+    "studentsMetaShort": "Attendance · focus",
+    "filterMonthShort": "30 days",
+    "filterAllShort": "All"
   },
   "dialogs": {
     "lesson": {
@@ -147,7 +155,13 @@
       "quizHint": "The quiz opens for students automatically once the lesson ends.",
       "repeatingSubtitle": "Recurring schedule",
       "timeBusy": "This time is taken",
-      "scheduleFirst": "{{count}} lessons will be created{{limitNote}} · first on {{first}}, {{weekday}}"
+      "scheduleFirst": "{{count}} lessons will be created{{limitNote}} · first on {{first}}, {{weekday}}",
+      "mobileSubtitle": "Set the lesson time for the group",
+      "todayDate": "Today, {{date}}",
+      "timeShort": "Time",
+      "startShort": "Start",
+      "durationMinutes": "Duration (minutes)",
+      "minutesValue": "{{count}} minutes"
     },
     "conflict": {
       "singleTitle": "You already have a lesson at this time",
@@ -281,5 +295,23 @@
     "close": "Close",
     "confirm": "Cancel lesson"
   },
-  "announcementBanner": "Announcement mode on — only you can write"
+  "announcementBanner": "Announcement mode on — only you can write",
+  "mobileAssignments": {
+    "draft": "Draft",
+    "review": "Review · {{count}}",
+    "finished": "Completed",
+    "noDue": "No due date",
+    "daysLeft": "{{count}} days left",
+    "draftMeta": "Unsent draft",
+    "due": "Due: {{date}}",
+    "notSent": "Not sent",
+    "average": "average {{value}}",
+    "submitted": "{{done}} / {{total}} submitted",
+    "quizMeta": "{{count}} questions · Quiz",
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "results": "Results",
+    "menu": "Actions"
+  }
 }

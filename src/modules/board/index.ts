@@ -36,6 +36,7 @@ export { useBoardChannel } from "./model/use-board-channel";
 export { useBoardRealtime } from "./model/use-board-realtime";
 export { AwayStudentsNotice } from "./ui/away-students-notice";
 export { BoardPanel } from "./ui/board-panel";
+export { BoardPreview } from "./ui/board-preview";
 export { BoardStroke } from "./ui/board-stroke";
 export { BoardToolbar } from "./ui/board-toolbar";
 export type { BoardTool } from "./ui/board-toolbar";

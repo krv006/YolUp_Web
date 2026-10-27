@@ -20,7 +20,8 @@
     "sentToAll": "Приглашение отправлено всем",
     "linkCopied": "Ссылка скопирована",
     "linkCopyFailed": "Не удалось скопировать ссылку",
-    "online": "В сети"
+    "online": "В сети",
+    "offline": "не в сети"
   },
   "preJoin": {
     "you": "Вы",
@@ -57,7 +58,15 @@
     "defaultCamera": "Камера по умолчанию",
     "cameraOnTitle": "Камера включена",
     "cameraOffTitle": "Камера выключена",
-    "start": "Начать урок"
+    "start": "Начать урок",
+    "mobileBothOn": "Микрофон и камера включены",
+    "mobileMicOnly": "Микрофон включён, камера выключена",
+    "mobileCameraOnly": "Камера включена, микрофон выключен",
+    "mobileBothOff": "Микрофон и камера выключены",
+    "mobileChangeLater": "можно изменить позже",
+    "mobileRecordingNote": "Урок записывается — ученики смогут посмотреть позже",
+    "mobileCancel": "Отмена",
+    "mobileJoin": "Войти в урок"
   },
   "connection": {
     "connecting": "Подключение…",
@@ -115,7 +124,10 @@
     "studentsPresent": "{{count}} учеников",
     "teacherRole": "учитель",
     "wantsToSpeak": "Хотят говорить ({{count}})",
-    "allow": "Разрешить"
+    "allow": "Разрешить",
+    "mobileShare": "Показать",
+    "mobilePeople": "Люди",
+    "mobileParticipantsCount": "Участники · {{count}}"
   },
   "mic": {
     "label": "Микрофон",
@@ -146,7 +158,8 @@
     "requestFailedToast": "Не удалось отправить запрос",
     "requestNotifyTitle": "{{name}} хочет показать свой экран",
     "requestNotifyDescription": "Разрешить ученику показать экран?",
-    "grantAction": "Разрешить"
+    "grantAction": "Разрешить",
+    "denyAction": "Отклонить"
   },
   "participantsPanel": {
     "micRequestsAria": "Ученики, запросившие микрофон",
@@ -172,7 +185,11 @@
     "muteAllDone": "Микрофоны выключены: {{count}}",
     "online": "Онлайн",
     "micOff": "Микрофон выключен",
-    "studentRole": "ученик"
+    "studentRole": "ученик",
+    "mobileMicRequesting": "Хочет говорить ✋",
+    "mobileCameraRequesting": "Хочет включить камеру",
+    "teacherYouMobile": "Вы · учитель",
+    "studentYouMobile": "Вы · ученик"
   },
   "permissionDialog": {
     "title": "Нужен доступ к камере и микрофону",
@@ -191,6 +208,9 @@
     "joinFailedFinished": "Урок «{{title}}» закончился в {{time}}. Запись придёт в чат группы, когда будет готова.",
     "backToChat": "Вернуться в чат группы",
     "openRecording": "Смотреть запись урока",
-    "joinFailedDescription": "Соединение прервано — не удалось подключиться к уроку. Урок продолжается."
+    "joinFailedDescription": "Соединение прервано — не удалось подключиться к уроку. Урок продолжается.",
+    "mobileJoinFailedTitle": "Не удалось подключиться к уроку",
+    "mobileJoinFailedDescription": "Проверьте подключение к интернету. Урок ещё идёт — попробуйте снова.",
+    "mobileBackToChat": "Вернуться в чат"
   }
 }

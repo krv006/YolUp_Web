@@ -73,8 +73,8 @@ export function CancelLessonDialog({
               type="button"
               role="radio"
               aria-checked={active}
-              className={`flex h-12.5 items-center gap-3.5 rounded-md px-4.5 text-left text-body transition-colors ${
-                active ? "border border-brand bg-brand-subtle text-ink" : "bg-subtle text-ink"
+              className={`flex h-12.5 items-center gap-3.5 rounded-md border-[1.5px] px-4.5 text-left text-body transition-colors max-lg:h-18 max-lg:rounded-xl max-lg:px-6 ${
+                active ? "border-brand bg-brand-subtle text-ink" : "border-transparent bg-subtle text-ink"
               }`}
               onClick={() => setScope(option.id)}
             >

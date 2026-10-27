@@ -319,7 +319,7 @@
     "description": "{{count}} students get a notification in the app",
     "message": "Message",
     "defaultMessage": "“{{title}}” is due {{due}}. Please send your work.",
-    "parents": "Parents too",
+    "parents": "Send to parents too",
     "parentsHint": "Parents of students who haven't submitted get it as well",
     "rate": "One reminder per assignment every 10 minutes.",
     "cancel": "Cancel",
@@ -332,5 +332,42 @@
     "placeholder": "Send exercise 125 again and reduce the fraction in 122.",
     "cancel": "Cancel",
     "submit": "Return"
+  },
+  "mobileDetail": {
+    "back": "Back",
+    "menu": "Actions",
+    "review": "To review",
+    "aiSummary": "AI summary",
+    "groupAdvice": "Create group advice",
+    "graded": "Graded",
+    "eyebrow": "{{course}} · Due: {{due}}",
+    "status": {
+      "pending": "Not reviewed",
+      "late": "Late",
+      "graded": "Graded",
+      "checking": "AI checking",
+      "error": "Error"
+    }
+  },
+  "mobileReview": {
+    "position": "{{current}} / {{total}} submission",
+    "aiGrade": "AI preliminary grade",
+    "correct": "Correct answers: {{correct}} / {{total}}",
+    "matches": "AI suggests {{value}} — matches yours",
+    "resubmit": "Return"
+  },
+  "mobileResult": {
+    "title": "AI result",
+    "checking": "Checking...",
+    "checkingHint": "The result updates when ready. Usually 1–2 minutes.",
+    "error": "Checking failed — please try again",
+    "recheck": "Retry"
+  },
+  "mobileForm": {
+    "title": "New assignment",
+    "editTitle": "Edit assignment",
+    "close": "Close",
+    "groupPlaceholder": "Choose a group",
+    "dateValue": "{{weekday}}, {{month}} {{day}}"
   }
 }

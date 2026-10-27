@@ -1,14 +1,41 @@
 import { Camera } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 
 export interface MediaPermissionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onRecheck?: () => void;
+  onJoinWithout?: () => void;
 }
 
-export function MediaPermissionDialog({ open, onOpenChange }: MediaPermissionDialogProps) {
+export function MediaPermissionDialog({
+  open,
+  onOpenChange,
+  onRecheck = () => globalThis.location.reload(),
+  onJoinWithout,
+}: MediaPermissionDialogProps) {
   const { t } = useTranslation("live");
+  const isCompact = useIsCompact();
+
+  if (isCompact)
+    return (
+      <ConfirmDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        tone="brand"
+        icon="videocam-fill"
+        confirmIcon="refresh"
+        title={t("permissionDialog.title")}
+        description={t("permissionDialog.description")}
+        confirmLabel={t("permissionDialog.recheck")}
+        cancelLabel={t("permissionDialog.joinWithout")}
+        onConfirm={onRecheck}
+        onCancel={onJoinWithout}
+      />
+    );
 
   return (
     <AppDialog
@@ -27,14 +54,17 @@ export function MediaPermissionDialog({ open, onOpenChange }: MediaPermissionDia
           <button
             type="button"
             className={dialogButton.secondary}
-            onClick={() => onOpenChange(false)}
+            onClick={() => {
+              onOpenChange(false);
+              onJoinWithout?.();
+            }}
           >
             {t("permissionDialog.joinWithout")}
           </button>
           <button
             type="button"
             className={dialogButton.primary}
-            onClick={() => globalThis.location.reload()}
+            onClick={onRecheck}
           >
             {t("permissionDialog.recheck")}
           </button>

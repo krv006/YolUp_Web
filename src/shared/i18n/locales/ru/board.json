@@ -179,5 +179,9 @@
     "pageLabel": "Страница {{index}}",
     "emptyPage": "Пустая страница",
     "renameAria": "Название страницы {{index}}"
+  },
+  "preview": {
+    "label": "Доска · стр. {{page}}",
+    "empty": "Доска пока пуста"
   }
 }

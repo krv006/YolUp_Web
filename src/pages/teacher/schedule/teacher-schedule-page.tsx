@@ -13,8 +13,15 @@ import {
 } from "date-fns";
 import { useConversations } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
-import { useCancelLesson, useCreateLesson, useLessons } from "@/modules/lesson";
+import {
+  buildScheduleDates,
+  useCancelLesson,
+  useCreateLesson,
+  useCreateLessonSchedule,
+  useLessons,
+} from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useOnlineStatus } from "@/shared/model";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
@@ -22,7 +29,8 @@ import type { Lesson } from "@/shared/types";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { LessonDetailDrawer } from "./lesson-detail-drawer";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
-import { NewLessonDialog } from "./new-lesson-dialog";
+import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
+import { NewLessonDialog, type NewLessonValues } from "./new-lesson-dialog";
 import { ScheduleDay } from "./schedule-day";
 import { ScheduleMonth } from "./schedule-month";
 import { ScheduleWeek } from "./schedule-week";
@@ -45,6 +53,7 @@ export function TeacherSchedulePage() {
   const courses = useCourses();
   const conversations = useConversations("teacher");
   const createLesson = useCreateLesson();
+  const createSchedule = useCreateLessonSchedule();
   const cancelLesson = useCancelLesson();
 
   const [view, setView] = useState<View>("week");
@@ -53,6 +62,8 @@ export function TeacherSchedulePage() {
   const [detail, setDetail] = useState<Lesson | null>(null);
   const [ratingsOf, setRatingsOf] = useState<Lesson | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const isCompact = useIsCompact();
+  const [mobileView, setMobileView] = useState<MobileScheduleView>("day");
 
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
@@ -63,6 +74,14 @@ export function TeacherSchedulePage() {
     () => new Map((courses.data ?? []).map((course) => [course.id, course.studentCount ?? 0])),
     [courses.data]
   );
+
+  const courseLook = useMemo(() => {
+    const byId = new Map((courses.data ?? []).map((course) => [course.id, course]));
+    return (courseId: string) => {
+      const course = byId.get(courseId);
+      return { tone: course?.color, image: course?.avatarUrl, students: course?.studentCount ?? 0 };
+    };
+  }, [courses.data]);
 
   const roomByCourse = useMemo(
     () =>
@@ -110,10 +129,99 @@ export function TeacherSchedulePage() {
     setAnchor((current) => addDays(current, view === "day" ? direction : direction * 7));
   }
 
+  function createFromDialog(values: NewLessonValues) {
+    if (!values.repeatWeeks) return createLesson.mutateAsync(values).then(() => setCreateOpen(false));
+    const first = new Date(`${values.date}T00:00`);
+    const endsOn = addDays(first, values.repeatWeeks * 7 - 1);
+    const range = {
+      startsOn: values.date,
+      endsOn: `${endsOn.getFullYear()}-${String(endsOn.getMonth() + 1).padStart(2, "0")}-${String(endsOn.getDate()).padStart(2, "0")}`,
+      weekdays: [first.getDay() === 0 ? 7 : first.getDay()],
+    };
+    return createSchedule
+      .mutateAsync({
+        courseId: values.courseId,
+        title: values.topic,
+        time: values.time,
+        durationMinutes: Number(values.duration) || 45,
+        ...range,
+        dates: buildScheduleDates(range),
+      })
+      .then(() => setCreateOpen(false));
+  }
+
   function openChat(lesson: Lesson) {
     const room = roomByCourse.get(lesson.courseId);
     navigate(room ? ROUTES.teacher.chat(room) : ROUTES.teacher.chats);
   }
+
+  const dialogs = (
+    <>
+      <LessonDetailDrawer
+        lesson={detail}
+        studentCount={detail ? (studentCounts.get(detail.courseId) ?? 0) : 0}
+        now={now}
+        onOpenChange={(open) => {
+          if (!open) setDetail(null);
+        }}
+        onChat={(lesson) => {
+          setDetail(null);
+          openChat(lesson);
+        }}
+        onJoin={(lesson) => navigate(ROUTES.live(lesson.id))}
+        onRatings={(lesson) => {
+          setDetail(null);
+          setRatingsOf(lesson);
+        }}
+        onCancel={(lesson) => {
+          cancelLesson.mutate({ id: lesson.id, scope: "one" });
+          setDetail(null);
+        }}
+      />
+
+      <LessonRatingsDialog
+        lesson={ratingsOf}
+        onOpenChange={(open) => {
+          if (!open) setRatingsOf(null);
+        }}
+      />
+
+      <NewLessonDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        courses={(courses.data ?? []).map((course) => ({
+          id: course.id,
+          title: course.title,
+          studentCount: course.studentCount ?? 0,
+          tone: course.color,
+          image: course.avatarUrl,
+        }))}
+        pending={createLesson.isPending || createSchedule.isPending}
+        onSubmit={createFromDialog}
+      />
+    </>
+  );
+
+  if (isCompact)
+    return (
+      <>
+        <MobileSchedule
+          view={mobileView}
+          anchor={anchor}
+          now={now}
+          online={online}
+          lessons={items}
+          courseLook={courseLook}
+          onView={setMobileView}
+          onAnchor={setAnchor}
+          onSelect={setDetail}
+          onChat={openChat}
+          onJoin={(lesson) => navigate(ROUTES.live(lesson.id))}
+          onCreate={() => setCreateOpen(true)}
+        />
+        {dialogs}
+      </>
+    );
 
   return (
     <WorkspaceShell
@@ -251,42 +359,7 @@ export function TeacherSchedulePage() {
         </div>
       ) : null}
 
-      <LessonDetailDrawer
-        lesson={detail}
-        studentCount={detail ? (studentCounts.get(detail.courseId) ?? 0) : 0}
-        now={now}
-        onOpenChange={(open) => {
-          if (!open) setDetail(null);
-        }}
-        onChat={(lesson) => {
-          setDetail(null);
-          openChat(lesson);
-        }}
-        onJoin={(lesson) => navigate(ROUTES.live(lesson.id))}
-        onRatings={(lesson) => {
-          setDetail(null);
-          setRatingsOf(lesson);
-        }}
-        onCancel={(lesson) => {
-          cancelLesson.mutate({ id: lesson.id, scope: "one" });
-          setDetail(null);
-        }}
-      />
-
-      <LessonRatingsDialog
-        lesson={ratingsOf}
-        onOpenChange={(open) => {
-          if (!open) setRatingsOf(null);
-        }}
-      />
-
-      <NewLessonDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        courses={(courses.data ?? []).map((course) => ({ id: course.id, title: course.title }))}
-        pending={createLesson.isPending}
-        onSubmit={(values) => createLesson.mutateAsync(values).then(() => setCreateOpen(false))}
-      />
+      {dialogs}
     </WorkspaceShell>
   );
 }

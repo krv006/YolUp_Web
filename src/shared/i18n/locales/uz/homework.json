@@ -319,7 +319,7 @@
     "description": "{{count}} ta o‘quvchiga ilovada bildirishnoma yuboriladi",
     "message": "Xabar",
     "defaultMessage": "“{{title}}” muddati {{due}} da tugaydi. Iltimos, javobingizni yuboring.",
-    "parents": "Ota-onalarga ham",
+    "parents": "Ota-onalarga ham yuborish",
     "parentsHint": "Topshirmaganlarning ota-onalariga ham boradi",
     "rate": "Bir vazifaga 10 daqiqada bir marta eslatma yuborish mumkin.",
     "cancel": "Bekor qilish",
@@ -332,5 +332,42 @@
     "placeholder": "125-misolni qayta yuboring va 122-misolda kasrni oxirigacha qisqartiring.",
     "cancel": "Bekor qilish",
     "submit": "Qaytarish"
+  },
+  "mobileDetail": {
+    "back": "Orqaga",
+    "menu": "Amallar",
+    "review": "Tekshirish",
+    "aiSummary": "AI xulosasi",
+    "groupAdvice": "Guruhga tavsiya yaratish",
+    "graded": "Baholangan",
+    "eyebrow": "{{course}} · Muddat: {{due}}",
+    "status": {
+      "pending": "Tekshirilmagan",
+      "late": "Kech topshirdi",
+      "graded": "Baholangan",
+      "checking": "AI tekshirmoqda",
+      "error": "Xatolik"
+    }
+  },
+  "mobileReview": {
+    "position": "{{current}} / {{total}} topshiriq",
+    "aiGrade": "AI dastlabki baho",
+    "correct": "To‘g‘ri javoblar: {{correct}} / {{total}}",
+    "matches": "AI tavsiyasi: {{value}} — siz bilan mos",
+    "resubmit": "Qaytarish"
+  },
+  "mobileResult": {
+    "title": "AI natijasi",
+    "checking": "Tekshirilmoqda...",
+    "checkingHint": "Natija tayyor bo‘lishi bilan yangilanadi. Odatda 1–2 daqiqa.",
+    "error": "Tekshiruvda xatolik yuz berdi — qayta urinib ko‘ring",
+    "recheck": "Qayta"
+  },
+  "mobileForm": {
+    "title": "Yangi vazifa",
+    "editTitle": "Vazifani tahrirlash",
+    "close": "Yopish",
+    "groupPlaceholder": "Guruhni tanlang",
+    "dateValue": "{{weekday}}, {{day}}-{{month}}"
   }
 }

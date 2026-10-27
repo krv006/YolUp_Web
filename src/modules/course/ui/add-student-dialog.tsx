@@ -111,9 +111,9 @@ export function AddStudentDialog({
       <AppDialog
         open={open && !createOpen}
         onOpenChange={onOpenChange}
-        variant="confirm"
+        variant="adaptive"
         icon={
-          <span className="grid size-11 place-items-center rounded-md bg-brand-subtle text-brand">
+          <span className="hidden size-11 place-items-center rounded-md bg-brand-subtle text-brand lg:grid">
             <Icon name="person-add" size={22} />
           </span>
         }
@@ -122,17 +122,17 @@ export function AddStudentDialog({
         footer={
           empty ? null : (
             <>
-              <span className="min-w-0 flex-1" />
+              <span className="min-w-0 flex-1 max-lg:hidden" />
               <button
                 type="button"
-                className="flex h-12 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+                className="flex h-12 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle max-lg:h-13 max-lg:flex-1 max-lg:border-line-strong"
                 onClick={() => onOpenChange(false)}
               >
                 {t("addStudent.cancel")}
               </button>
               <button
                 type="button"
-                className="flex h-12 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
+                className="flex h-12 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40 max-lg:h-13 max-lg:flex-1"
                 disabled={!selected.length || enroll.isPending}
                 onClick={addSelected}
               >
@@ -315,7 +315,7 @@ function CreateStudentDialog({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      variant="confirm"
+      variant="adaptive"
       title={t("addStudent.createTitle")}
       description={t("addStudent.createDescription")}
       footer={

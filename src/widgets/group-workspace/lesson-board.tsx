@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
+import { MobileEmptyCard } from "@/shared/ui/mobile-page";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { Lesson, LessonStatus } from "@/shared/types";
 
 export interface LessonBoardProps {
@@ -16,7 +18,7 @@ export interface LessonBoardProps {
 }
 
 const BLOCK_TONE: Record<LessonStatus, string> = {
-  live: "bg-danger text-ink-inverse",
+  live: "bg-error-text text-ink-inverse lg:bg-danger",
   scheduled: "bg-ink-tertiary text-ink-inverse",
   finished: "bg-line-strong text-ink-inverse",
   cancelled: "bg-line-strong text-ink-inverse",
@@ -55,6 +57,7 @@ export function LessonBoard({
   onRatings,
 }: LessonBoardProps) {
   const { t } = useTranslation(["group", "lesson"]);
+  const isCompact = useIsCompact();
   const months = t("lesson:list.months", { returnObjects: true }) as string[];
 
   const days = useMemo(() => {
@@ -95,7 +98,16 @@ export function LessonBoard({
 
   if (!days.length) {
     return (
-      <div className="flex flex-col items-center justify-center gap-3 rounded-xl bg-surface px-6 py-7 text-center">
+      <>
+      <div className="lg:hidden">
+        <MobileEmptyCard
+          icon="schedule"
+          title={t("group:lessons.emptyTitle")}
+          description={t("group:lessons.emptyHint")}
+          action={{ label: t("group:lessons.addLesson"), icon: "add", onClick: onAdd }}
+        />
+      </div>
+      <div className="hidden flex-col items-center justify-center gap-3 rounded-xl bg-surface px-6 py-7 text-center lg:flex">
         <span className="grid size-18 place-items-center rounded-full bg-brand-subtle text-brand">
           <Icon name="schedule" size={32} />
         </span>
@@ -116,13 +128,14 @@ export function LessonBoard({
           {t("group:lessons.addLesson")}
         </button>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-3.5 lg:gap-5">
       {days.map((day) => (
-        <section key={day.key} className="flex flex-col gap-5">
+        <section key={day.key} className="flex flex-col gap-3 lg:gap-5">
           <div className="flex items-center gap-3">
             <span className="min-w-0 flex-1 truncate text-overline text-ink-tertiary uppercase">
               {day.label}
@@ -132,7 +145,7 @@ export function LessonBoard({
             </small>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-3 lg:grid-cols-2 lg:gap-4">
             {day.items.map((lesson) => {
               const starts = new Date(lesson.startsAt);
               const minutes = lesson.durationMinutes || 45;
@@ -140,22 +153,22 @@ export function LessonBoard({
               const status = lesson.status;
 
               return (
-                <article key={lesson.id} className="flex flex-col gap-3.5 rounded-lg bg-surface px-4 pt-4 pb-3">
+                <article key={lesson.id} className="flex flex-col gap-4 rounded-xl bg-surface p-4 lg:gap-3.5 lg:rounded-lg lg:pt-4 lg:pb-3">
                   <div className="flex items-start gap-3">
                     <span
                       className={`flex size-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg ${BLOCK_TONE[status]}`}
                     >
-                      <strong className="text-title-sm">{hhmm(starts)}</strong>
-                      <small className="text-micro opacity-90">
+                      <strong className="text-title leading-5 lg:text-title-sm">{hhmm(starts)}</strong>
+                      <small className="text-caption opacity-90 lg:text-micro">
                         {t("group:lessons.minutesShort", { count: minutes })}
                       </small>
                     </span>
 
-                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="flex min-w-0 flex-1 flex-col gap-1 lg:gap-0.5">
                       <span
-                        className={`flex h-5.5 w-fit items-center gap-1 rounded-full text-caption-strong ${PILL_TONE[status]}`}
+                        className={`flex h-6 w-fit lg:h-5.5 items-center gap-1 rounded-full text-caption-strong ${PILL_TONE[status]}`}
                       >
-                        <Icon name={PILL_ICON[status]} size={14} />
+                        <Icon name={status === "live" ? "videocam-fill" : PILL_ICON[status]} size={14} />
                         {t(`lesson:status.${status}`)}
                       </span>
 
@@ -163,7 +176,7 @@ export function LessonBoard({
                         {lesson.title || t("group:lessons.noTopic")}
                       </strong>
 
-                      <small className="truncate text-body-xs text-ink-tertiary">
+                      <small className="truncate text-body-sm text-ink-secondary lg:text-body-xs lg:text-ink-tertiary">
                         {status === "live" && typeof joinedCount === "number"
                           ? t("group:lessons.joined", {
                               joined: joinedCount,
@@ -171,7 +184,7 @@ export function LessonBoard({
                             })
                           : status === "finished"
                             ? lesson.participantsCount != null
-                              ? t("group:lessons.finishedStats", {
+                              ? t(isCompact ? "group:lessons.finishedStatsShort" : "group:lessons.finishedStats", {
                                   joined: lesson.participantsCount,
                                   total: lesson.studentCount ?? studentCount,
                                   rate: lesson.attendanceRate ?? 0,
@@ -188,7 +201,7 @@ export function LessonBoard({
                       className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
                       onClick={() => onJoin(lesson)}
                     >
-                      <Icon name="videocam" size={18} />
+                      <Icon name="videocam-fill" size={18} />
                       {t("group:lessons.join")}
                     </button>
                   ) : status === "finished" ? (
@@ -198,7 +211,7 @@ export function LessonBoard({
                         className={OUTLINE_BUTTON}
                         onClick={() => onRecording(lesson)}
                       >
-                        <Icon name="play-circle" size={18} />
+                        <Icon name="play-circle-fill" size={18} />
                         {t("group:lessons.recording")}
                       </button>
                       <button
@@ -226,11 +239,12 @@ export function LessonBoard({
                       </button>
                       <button
                         type="button"
-                        className={OUTLINE_BUTTON}
+                        className={`${OUTLINE_BUTTON} max-lg:border-0 max-lg:bg-transparent max-lg:text-error-text max-lg:hover:bg-danger-bg`}
                         onClick={() => onCancel(lesson)}
                       >
                         <Icon name="close" size={18} />
-                        {t("group:lessons.cancelLesson")}
+                        <span className="lg:hidden">{t("group:lessons.cancelLessonLong")}</span>
+                        <span className="hidden lg:inline">{t("group:lessons.cancelLesson")}</span>
                       </button>
                     </div>
                   )}

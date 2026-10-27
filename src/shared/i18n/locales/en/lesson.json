@@ -120,7 +120,8 @@
     "description": "Everyone will be removed from the room. The recording is saved and sent to the group chat.",
     "cancel": "Cancel",
     "confirm": "Finish",
-    "leaveOnly": "Just leave"
+    "leaveOnly": "Just leave",
+    "mobileDescription": "Everyone will be removed. The recording is saved and posted to the chat."
   },
   "rateDialog": {
     "title": "Rate the lesson",
@@ -199,7 +200,19 @@
     "failedTitle": "The recording could not be prepared",
     "noneTitle": "No recording",
     "sharedToChat": "The recording was sent to the group chat",
-    "pdfFailed": "The PDF could not be downloaded"
+    "pdfFailed": "The PDF could not be downloaded",
+    "back": "Back",
+    "menu": "Actions",
+    "downloadPdf": "Download PDF",
+    "mobileParticipants": "{{count}} participants",
+    "mobileAttendance": "Attendance {{value}}%",
+    "mobileBoardPages": "{{count}} pages · PDF",
+    "mobileAttendanceTitle": "Attendance and focus",
+    "mobileJoined": "{{joined}} / {{total}} attended",
+    "mobileDelete": "Delete recording",
+    "mobilePlatformOnly": "Opens only on the platform — it can't be downloaded.",
+    "mobileMerging": "Merging audio and video — this may take a while",
+    "mobileReadyNote": "We'll post to the chat as soon as it's ready."
   },
   "schedule": {
     "now": "NOW",
@@ -321,6 +334,23 @@
     "duration": "Duration (min)",
     "quiz": "Attach a quiz",
     "noQuiz": "No quiz attached",
-    "submit": "Save the lesson"
+    "submit": "Save the lesson",
+    "mobileDescription": "Pick a group and set the time",
+    "weeksValue": "{{count}} weeks",
+    "fewerWeeks": "Fewer weeks",
+    "moreWeeks": "More weeks"
+  },
+  "mobileSchedule": {
+    "offline": "No internet. Last saved schedule",
+    "emptyHint": "Add a lesson schedule — your students get reminders.",
+    "studentsAndDuration": "{{count}} students - {{minutes}} min",
+    "finished": "Finished · {{count}} students",
+    "enter": "Join",
+    "thisWeek": "This week",
+    "more": "Details",
+    "statLessons": "Lessons",
+    "statHours": "Hours",
+    "statFinished": "Finished",
+    "hoursShort": "{{count}} h"
   }
 }

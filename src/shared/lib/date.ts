@@ -44,3 +44,15 @@ export function formatDuration(totalSeconds: number): string {
   if (minutes) return `${minutes}${m} ${String(rest).padStart(2, "0")}${s}`;
   return `${rest}${s}`;
 }
+
+export function formatRelativeShort(value: string | number | Date): string {
+  const date = new Date(value);
+  const diff = Math.max(0, Date.now() - date.getTime());
+  const minutes = Math.round(diff / 60_000);
+  if (minutes < 1) return i18n.t("common:relative.now");
+  if (minutes < 60) return i18n.t("common:relative.minutes", { count: minutes });
+  const hours = Math.round(minutes / 60);
+  if (hours < 24 && isToday(date)) return i18n.t("common:relative.hours", { count: hours });
+  if (isYesterday(date)) return i18n.t("common:relative.yesterday");
+  return format(date, "d MMM", { locale: currentDateFnsLocale() });
+}

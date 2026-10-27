@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 export interface RecordingVideoProps {
   src: string;
   poster?: string | null;
+  variant?: "default" | "mobile";
 }
 
 function clock(seconds: number): string {
@@ -17,10 +18,12 @@ function clock(seconds: number): string {
   return `${hours ? `${hours}:` : ""}${mm}:${String(rest).padStart(2, "0")}`;
 }
 
-export function RecordingVideo({ src, poster }: RecordingVideoProps) {
+export function RecordingVideo({ src, poster, variant = "default" }: RecordingVideoProps) {
   const { t } = useTranslation("lesson");
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mobile = variant === "mobile";
   const [playing, setPlaying] = useState(false);
+  const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -43,7 +46,11 @@ export function RecordingVideo({ src, poster }: RecordingVideoProps) {
   }
 
   return (
-    <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-surface-inverse">
+    <div
+      className={`relative w-full overflow-hidden bg-surface-inverse ${
+        mobile ? "aspect-[358/211] rounded-2xl" : "aspect-video rounded-lg"
+      }`}
+    >
       <video
         ref={videoRef}
         className="size-full object-cover"
@@ -55,7 +62,10 @@ export function RecordingVideo({ src, poster }: RecordingVideoProps) {
         disablePictureInPicture
         onContextMenu={(event) => event.preventDefault()}
         onClick={toggle}
-        onPlay={() => setPlaying(true)}
+        onPlay={() => {
+          setPlaying(true);
+          setStarted(true);
+        }}
         onPause={() => setPlaying(false)}
         onTimeUpdate={(event) => setCurrent(event.currentTarget.currentTime)}
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
@@ -68,13 +78,21 @@ export function RecordingVideo({ src, poster }: RecordingVideoProps) {
           aria-label={t("recording.play")}
           onClick={toggle}
         >
-          <span className="grid size-18 place-items-center rounded-full bg-surface/90 text-brand">
-            <Play size={30} fill="currentColor" />
+          <span
+            className={`grid place-items-center rounded-full text-brand ${
+              mobile ? "size-16 bg-surface" : "size-18 bg-surface/90"
+            }`}
+          >
+            <Play size={mobile ? 26 : 30} fill="currentColor" />
           </span>
         </button>
       ) : null}
 
-      <div className="absolute inset-x-5 bottom-5 flex h-8.5 items-center gap-3 rounded-md bg-surface-inverse/55 px-3 text-ink-inverse backdrop-blur-sm">
+      <div
+        className={`absolute inset-x-5 bottom-5 h-8.5 items-center gap-3 rounded-md bg-surface-inverse/55 px-3 text-ink-inverse backdrop-blur-sm ${
+          mobile && !started ? "hidden" : "flex"
+        }`}
+      >
         <button
           type="button"
           className="grid size-5 shrink-0 place-items-center"

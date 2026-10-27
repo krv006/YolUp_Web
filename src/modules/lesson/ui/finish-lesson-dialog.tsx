@@ -1,7 +1,9 @@
 import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { Lesson } from "@/shared/types";
 import { AppDialog } from "@/shared/ui/app-dialog";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { useFinishLesson } from "../model/lesson.queries";
 
 export interface FinishLessonDialogProps {
@@ -20,6 +22,7 @@ export function FinishLessonDialog({
 }: FinishLessonDialogProps) {
   const { t } = useTranslation("lesson");
   const finish = useFinishLesson();
+  const isCompact = useIsCompact();
 
   function submit() {
     if (!lesson) return;
@@ -33,6 +36,23 @@ export function FinishLessonDialog({
       }
     );
   }
+
+  if (isCompact)
+    return (
+      <ConfirmDialog
+        open={Boolean(lesson)}
+        onOpenChange={onOpenChange}
+        tone="brand"
+        icon="logout"
+        title={t("finishDialog.title")}
+        description={t("finishDialog.mobileDescription")}
+        confirmLabel={t("finishDialog.confirm")}
+        cancelLabel={onLeaveOnly ? t("finishDialog.leaveOnly") : t("finishDialog.cancel")}
+        pending={finish.isPending}
+        onConfirm={submit}
+        onCancel={onLeaveOnly}
+      />
+    );
 
   return (
     <AppDialog

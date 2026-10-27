@@ -120,7 +120,8 @@
     "description": "Barcha ishtirokchilar xonadan chiqariladi. Dars yozuvi saqlanadi va guruh chatiga yuboriladi.",
     "cancel": "Bekor",
     "confirm": "Yakunlash",
-    "leaveOnly": "Faqat chiqish"
+    "leaveOnly": "Faqat chiqish",
+    "mobileDescription": "Barcha ishtirokchilar chiqariladi. Dars yozuvi saqlanadi va chatga yuboriladi."
   },
   "rateDialog": {
     "title": "Darsni baholang",
@@ -199,7 +200,19 @@
     "failedTitle": "Yozuvni tayyorlab bo'lmadi",
     "noneTitle": "Yozuv yo'q",
     "sharedToChat": "Yozuv guruh chatiga yuborildi",
-    "pdfFailed": "PDF yuklab bo'lmadi"
+    "pdfFailed": "PDF yuklab bo'lmadi",
+    "back": "Orqaga",
+    "menu": "Amallar",
+    "downloadPdf": "PDF yuklab olish",
+    "mobileParticipants": "{{count}} ishtirokchi",
+    "mobileAttendance": "Davomat {{value}}%",
+    "mobileBoardPages": "{{count}} sahifa · PDF",
+    "mobileAttendanceTitle": "Davomat va fokus",
+    "mobileJoined": "{{joined}} / {{total}} qatnashdi",
+    "mobileDelete": "Yozuvni o‘chirish",
+    "mobilePlatformOnly": "Faqat platformada ochiladi — yuklab olib bo‘lmaydi.",
+    "mobileMerging": "Audio va video birlashtirilmoqda — bu biroz vaqt olishi mumkin",
+    "mobileReadyNote": "Tayyor bo‘lishi bilan chatga xabar yuboriladi."
   },
   "schedule": {
     "now": "HOZIR",
@@ -321,6 +334,23 @@
     "duration": "Davomiyligi (daqiqa)",
     "quiz": "Test biriktirish",
     "noQuiz": "Test biriktirilmagan",
-    "submit": "Darsni saqlash"
+    "submit": "Darsni saqlash",
+    "mobileDescription": "Guruhni tanlang va vaqtni belgilang",
+    "weeksValue": "{{count}} hafta",
+    "fewerWeeks": "Haftani kamaytirish",
+    "moreWeeks": "Haftani ko‘paytirish"
+  },
+  "mobileSchedule": {
+    "offline": "Internet yo‘q. Oxirgi saqlangan jadval",
+    "emptyHint": "Dars jadvalini qo‘shing — o‘quvchilaringiz eslatma oladi.",
+    "studentsAndDuration": "{{count}} o‘quvchi - {{minutes}} daqiqa",
+    "finished": "Tugadi · {{count}} o‘quvchi",
+    "enter": "Kirish",
+    "thisWeek": "Bu hafta",
+    "more": "Batafsil",
+    "statLessons": "Dars",
+    "statHours": "Soat",
+    "statFinished": "Tugadi",
+    "hoursShort": "{{count}} s"
   }
 }

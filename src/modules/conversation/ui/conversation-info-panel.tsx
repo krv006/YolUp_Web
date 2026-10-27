@@ -34,6 +34,9 @@ import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
 import type { DirectAction } from "../api/conversation.dto";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { MobileGroupInfo } from "./mobile-group-info";
+import { MOBILE_INPUT, MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
 
 export interface ConversationInfoPanelProps {
   conversation: Conversation;
@@ -96,6 +99,7 @@ export function ConversationInfoPanel({
   const [tab, setTab] = useState<"members" | "files" | "media">("members");
   const imageRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const isCompact = useIsCompact();
 
   function toggleMute() {
     const next = !muted;
@@ -164,7 +168,54 @@ export function ConversationInfoPanel({
     (item) => item.courseId === conversation.courseId
   );
 
-  const body = (
+  function uploadImage(file: File) {
+    const done = {
+      onSuccess: () => toast.success(t("info.groupImageUpdated")),
+      onError: (error: Error) => toast.error(error.message),
+    };
+    if (conversation.courseId) updateCourseAvatar.mutate({ id: conversation.courseId, file }, done);
+    else setRoomImage.mutate({ roomId: conversation.id, image: file }, done);
+  }
+
+  function togglePinned() {
+    if (!pinnedMessage) {
+      toast.info(t("info.pinHint"));
+      return;
+    }
+    void messageApi
+      .unpin(conversation.id, pinnedMessage.messageId)
+      .then((items) => queryClient.setQueryData(messageKeys.pinned(conversation.id), items));
+  }
+
+  const mobileGroup = isCompact && isGroup && !embedded;
+
+  const body = mobileGroup ? (
+    <MobileGroupInfo
+      conversation={conversation}
+      subjectLabel={course.data?.subjectLabel}
+      muted={muted}
+      announcement={announcement}
+      requestsCount={pendingRequests.length}
+      canManage={teacherGroup}
+      imagePending={setRoomImage.isPending || updateCourseAvatar.isPending}
+      onBack={() => onOpenChange(false)}
+      onEdit={beginEdit}
+      onToggleMute={toggleMute}
+      onSearch={() => {
+        onOpenChange(false);
+        openChatSearch(true);
+      }}
+      onPinned={togglePinned}
+      onAnnouncement={(value) =>
+        announcementMode.mutate(
+          { roomId: conversation.id, enabled: value },
+          { onError: (error: Error) => toast.error(error.message) }
+        )
+      }
+      onImage={uploadImage}
+      onDelete={() => setDeleteOpen(true)}
+    />
+  ) : (
     <>
           <header className="flex h-16 shrink-0 items-center gap-3 px-4 lg:h-[72px] lg:px-6">
             <button
@@ -634,7 +685,7 @@ export function ConversationInfoPanel({
       <AppDialog
         open={editOpen}
         onOpenChange={setEditOpen}
-        variant="confirm"
+        variant="adaptive"
         title={t("info.editCourseTitle")}
         description={t("info.editCourseDescription")}
         footer={
@@ -658,16 +709,41 @@ export function ConversationInfoPanel({
         }
       >
         <form id="course-edit-form" className="flex flex-col gap-4" onSubmit={saveCourse}>
-          <label className="field-group">
+          <label className="field-group max-lg:hidden">
             <span>{t("info.courseName")}</span>
             <input
               value={courseForm.title}
               onChange={(event) =>
                 setCourseForm((value) => ({ ...value, title: event.target.value }))
               }
-              required
+              required={!isCompact}
             />
           </label>
+          <div className="lg:hidden">
+            <MobileFieldLabel label={t("info.courseName")}>
+              <input
+                className={MOBILE_INPUT}
+                value={courseForm.title}
+                onChange={(event) => setCourseForm((value) => ({ ...value, title: event.target.value }))}
+                required={isCompact}
+              />
+            </MobileFieldLabel>
+          </div>
+          <div className="lg:hidden">
+            <MobileFieldLabel label={t("info.subject")}>
+              <MobilePickerField
+                type="select"
+                value={courseForm.subject ?? ""}
+                display={
+                  (subjects.data ?? []).find((item) => item.value === courseForm.subject)?.label ?? "—"
+                }
+                options={(subjects.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
+                ariaLabel={t("info.subject")}
+                onChange={(value) => setCourseForm((current) => ({ ...current, subject: value }))}
+              />
+            </MobileFieldLabel>
+          </div>
+          <div className="max-lg:hidden">
           <SelectPicker
             label={t("info.subject")}
             icon={GraduationCap}
@@ -678,7 +754,17 @@ export function ConversationInfoPanel({
               label: item.label,
             }))}
           />
-          <label className="field-group">
+          </div>
+          <div className="lg:hidden">
+            <MobileFieldLabel label={t("info.descriptionShort")}>
+              <textarea
+                className={`${MOBILE_INPUT} h-28 resize-none py-3.5`}
+                value={courseForm.description}
+                onChange={(event) => setCourseForm((value) => ({ ...value, description: event.target.value }))}
+              />
+            </MobileFieldLabel>
+          </div>
+          <label className="field-group max-lg:hidden">
             <span>{t("info.descriptionOptional")}</span>
             <textarea
               value={courseForm.description}
@@ -697,7 +783,7 @@ export function ConversationInfoPanel({
           setDeleteOpen(open);
           if (!open) setDeleteConfirmation("");
         }}
-        variant="confirm"
+        variant="adaptive"
         title={t("info.deleteCourseConfirmTitle", { title: conversation.title })}
         footer={
           <>
@@ -725,11 +811,22 @@ export function ConversationInfoPanel({
           </>
         }
       >
-        <p className="flex items-start gap-2.5 rounded-md bg-danger-bg px-4 py-3.5 text-body-xs text-danger">
-          <Icon name="error" size={16} className="mt-0.5 shrink-0" />
+        <p className="flex items-start gap-2.5 rounded-md bg-danger-bg px-4 py-3.5 text-body-xs text-danger max-lg:rounded-xl max-lg:text-body-sm max-lg:text-error-text">
+          <Icon name="warning" size={18} className="mt-0.5 shrink-0" />
           {t("info.deleteCourseWarning")}
         </p>
-        <label className="field-group">
+        <div className="lg:hidden">
+          <MobileFieldLabel label={t("info.deleteTypeName")}>
+            <input
+              className={MOBILE_INPUT}
+              value={deleteConfirmation}
+              onChange={(event) => setDeleteConfirmation(event.target.value)}
+              placeholder={conversation.title}
+              autoComplete="off"
+            />
+          </MobileFieldLabel>
+        </div>
+        <label className="field-group max-lg:hidden">
           <span>{t("info.deleteTypeName")}</span>
           <input
             value={deleteConfirmation}

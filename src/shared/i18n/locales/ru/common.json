@@ -110,5 +110,11 @@
     "forbiddenAction": "Сменить аккаунт",
     "back": "Назад",
     "help": "Помощь"
+  },
+  "relative": {
+    "now": "только что",
+    "minutes": "{{count}} мин назад",
+    "hours": "{{count}} ч назад",
+    "yesterday": "Вчера"
   }
 }

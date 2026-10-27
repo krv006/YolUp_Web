@@ -15,6 +15,7 @@ import {
 } from "@/modules/live";
 import { RateLessonDialog, useLesson, useLessonWaiting } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
 
@@ -35,6 +36,7 @@ export function LiveLessonPage() {
   const [choices, setChoices] = useState<LessonPreJoinChoices | null>(null);
   const waiting = useLessonWaiting(lessonId ?? null, !choices);
   const [readyToConnect, setReadyToConnect] = useState(false);
+  const isCompact = useIsCompact();
 
   useEffect(() => {
     if (!choices || !token.data || token.data.joinDelayMs <= 0) return;
@@ -128,20 +130,22 @@ export function LiveLessonPage() {
       <main className="live-page">
         <LiveRoomState
           tone="offline"
-          title={t("state.joinFailedTitle")}
+          title={isCompact && !finished ? t("state.mobileJoinFailedTitle") : t("state.joinFailedTitle")}
           description={
             finished
               ? t("state.joinFailedFinished", {
                   title: lesson.data.title,
                   time: lesson.data.time,
                 })
-              : (token.error?.message ?? t("state.joinFailedDescription"))
+              : isCompact
+                ? t("state.mobileJoinFailedDescription")
+                : (token.error?.message ?? t("state.joinFailedDescription"))
           }
           actionLabel={finished ? t("state.openRecording") : t("state.retry")}
           onAction={
             finished ? () => navigate(ROUTES.teacher.recording(lesson.data!.id)) : () => void token.refetch()
           }
-          secondaryLabel={t("state.backToChat")}
+          secondaryLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
           onSecondary={handleLeave}
         />
       </main>

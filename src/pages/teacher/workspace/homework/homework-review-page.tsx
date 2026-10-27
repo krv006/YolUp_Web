@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
+  HomeworkResultDialog,
   useAssignment,
   useDownloadSubmissionFile,
   useRequestResubmit,
@@ -14,6 +16,7 @@ import { Icon } from "@/shared/ui/icon";
 import { formatDue } from "./format-due";
 import { Switch } from "@/shared/ui/switch";
 import type { Submission } from "@/shared/types";
+import { SubmissionPreview } from "./submission-preview";
 import { ResubmitDialog } from "./resubmit-dialog";
 
 const GRADES = [1, 2, 3, 4, 5];
@@ -49,7 +52,9 @@ export function HomeworkReviewPage() {
   const [comment, setComment] = useState("");
   const [shareWithParent, setShareWithParent] = useState(true);
   const [resubmitOpen, setResubmitOpen] = useState(false);
+  const [resultOpen, setResultOpen] = useState(false);
   const [loadedId, setLoadedId] = useState<string | null>(null);
+  const isCompact = useIsCompact();
 
   const item = assignment.data ?? null;
   const rows = useMemo(() => item?.submissions ?? [], [item]);
@@ -92,6 +97,173 @@ export function HomeworkReviewPage() {
       })
       .then(() => move(1));
   }
+
+  const questions = current?.result?.questions ?? [];
+  const correctCount = questions.filter((question) => (question.score ?? 0) > 0).length;
+  const resubmitDialog = (
+    <ResubmitDialog
+      open={resubmitOpen}
+      student={current?.studentName ?? ""}
+      pending={resubmit.isPending}
+      onOpenChange={setResubmitOpen}
+      onConfirm={(value) => {
+        if (!current) return;
+        resubmit.mutateAsync({ id: current.id, comment: value }).then(() => setResubmitOpen(false));
+      }}
+    />
+  );
+
+  if (isCompact)
+    return (
+      <div className="flex h-full min-h-0 flex-col bg-canvas bg-auth-gradient font-body">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-5 pb-6 [&>*]:shrink-0">
+          <header className="flex items-center gap-3">
+            <button
+              type="button"
+              className="grid size-11 place-items-center rounded-full bg-subtle text-ink disabled:opacity-40"
+              aria-label={index <= 0 ? t("review.back") : t("review.prev")}
+              onClick={() =>
+                index <= 0
+                  ? navigate(assignmentId ? ROUTES.teacher.homeworkItem(assignmentId) : ROUTES.teacher.homework)
+                  : move(-1)
+              }
+            >
+              <Icon name="chevron-left" size={22} />
+            </button>
+            <strong className="min-w-0 flex-1 truncate text-center text-title-lg text-ink">
+              {t("mobileReview.position", { current: Math.max(index + 1, 1), total: rows.length })}
+            </strong>
+            <button
+              type="button"
+              className="grid size-11 place-items-center rounded-full bg-subtle text-ink disabled:opacity-40"
+              disabled={index < 0 || index >= rows.length - 1}
+              aria-label={t("review.next")}
+              onClick={() => move(1)}
+            >
+              <Icon name="chevron-right" size={22} />
+            </button>
+          </header>
+
+          <div className="mt-4 flex items-center gap-3">
+            <Avatar name={current?.studentName} size="sm" className="[&_.avatar]:size-12" />
+            <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
+              <strong className="max-w-full truncate text-title-lg text-ink">{current?.studentName}</strong>
+              <span className="flex items-center gap-2">
+                {current?.isLate ? (
+                  <span className="flex h-6 items-center gap-1 rounded-full bg-accent-saffron-bg px-2 text-caption-strong text-accent-saffron-fg">
+                    <Icon name="hourglass-empty" size={13} />
+                    {t("mobileDetail.status.late")}
+                  </span>
+                ) : null}
+                <small className="text-caption text-ink-secondary">{formatDue(current?.createdAt ?? null, months)}</small>
+              </span>
+            </span>
+          </div>
+
+          <div className="relative mt-4 flex h-42 items-center justify-center overflow-hidden rounded-xl bg-surface">
+            {current?.fileName ? (
+              <SubmissionPreview id={current.id} fileName={current.fileName} />
+            ) : (
+              <p className="text-body-sm text-ink-secondary">{t("review.noFile")}</p>
+            )}
+            {current?.fileName ? (
+              <button
+                type="button"
+                className="absolute right-3 bottom-3 flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-button text-ink"
+                onClick={() => download.mutate({ id: current.id, fileName: current.fileName })}
+              >
+                <Icon name="add" size={18} /> {t("review.download")}
+              </button>
+            ) : null}
+          </div>
+
+          <button
+            type="button"
+            className="mt-4 flex flex-col gap-2 rounded-xl bg-surface p-4 text-left disabled:cursor-default"
+            disabled={!current}
+            onClick={() => setResultOpen(true)}
+          >
+            <span className="flex w-full items-center gap-2">
+              <Icon name="auto-awesome" size={20} className="text-accent-saffron-fg" />
+              <strong className="min-w-0 flex-1 text-title text-ink">
+                {checking ? t("review.aiChecking") : t("mobileReview.aiGrade")}
+              </strong>
+              {checking ? null : (
+                <strong className="text-title-lg text-brand">{aiGrade ?? "—"} / 5</strong>
+              )}
+            </span>
+            <small className="text-caption text-ink-secondary">
+              {checking ? t("review.aiCheckingHint") : t("review.aiSuggestionHint")}
+            </small>
+            {questions.length && !checking ? (
+              <span className="flex items-center gap-2 text-body-sm text-ink">
+                <Icon name="check-circle" size={18} className="text-success" />
+                {t("mobileReview.correct", { correct: correctCount, total: questions.length })}
+              </span>
+            ) : null}
+            {findings.slice(0, 2).map((question, position) => (
+              <span key={position} className="flex items-start gap-2 text-body-sm text-ink">
+                <Icon name="warning" size={18} className="mt-0.5 shrink-0 text-accent-saffron-fg" />
+                <span className="line-clamp-2">{question.analysis}</span>
+              </span>
+            ))}
+          </button>
+
+          <span className="mt-5 text-body-sm text-ink">{t("review.yourGrade")}</span>
+          <div className="mt-2 grid grid-cols-5 gap-2">
+            {GRADES.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={`flex h-11 items-center justify-center rounded-full text-title-sm transition-colors ${
+                  grade === value ? "bg-brand text-on-action" : "border border-line-strong bg-surface text-ink"
+                }`}
+                onClick={() => setGrade(value)}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+          {aiGrade !== null ? (
+            <small
+              className={`mt-2 text-caption-strong ${grade === aiGrade ? "text-success-fg" : "text-ink-secondary"}`}
+            >
+              {grade === aiGrade
+                ? t("mobileReview.matches", { value: aiGrade })
+                : t("review.aiSuggestion", { value: aiGrade })}
+            </small>
+          ) : null}
+        </div>
+
+        <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-t-2xl bg-surface px-4 pt-3 pb-8">
+          <button
+            type="button"
+            className="flex h-13 items-center justify-center gap-2 rounded-full border border-line-strong text-title font-medium text-ink disabled:opacity-40"
+            disabled={!current}
+            onClick={() => setResubmitOpen(true)}
+          >
+            <Icon name="refresh" size={18} /> {t("mobileReview.resubmit")}
+          </button>
+          <button
+            type="button"
+            className="flex h-13 items-center justify-center gap-2 rounded-full bg-brand text-title font-medium text-on-action disabled:opacity-40"
+            disabled={!current || review.isPending || grade === null}
+            onClick={confirm}
+          >
+            <Icon name="check" size={18} /> {t("review.confirm")}
+          </button>
+        </div>
+        {resubmitDialog}
+        <HomeworkResultDialog
+          submissionId={current?.id}
+          initial={current ?? undefined}
+          open={resultOpen && Boolean(current)}
+          onOpenChange={setResultOpen}
+          canRecheck
+          canReview
+        />
+      </div>
+    );
 
   return (
     <div className="flex h-full min-h-0 bg-canvas">

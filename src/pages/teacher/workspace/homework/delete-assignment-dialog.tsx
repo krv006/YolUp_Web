@@ -1,5 +1,7 @@
 import { useTranslation } from "react-i18next";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 
 export interface DeleteAssignmentDialogProps {
@@ -18,6 +20,22 @@ export function DeleteAssignmentDialog({
   onConfirm,
 }: DeleteAssignmentDialogProps) {
   const { t } = useTranslation("homework");
+  const isCompact = useIsCompact();
+
+  if (isCompact)
+    return (
+      <ConfirmDialog
+        open={open}
+        onOpenChange={onOpenChange}
+        icon="logout"
+        title={t("deleteDialog.title")}
+        description={t("deleteDialog.description", { count })}
+        confirmLabel={t("deleteDialog.confirm")}
+        cancelLabel={t("deleteDialog.cancel")}
+        pending={pending}
+        onConfirm={onConfirm}
+      />
+    );
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>

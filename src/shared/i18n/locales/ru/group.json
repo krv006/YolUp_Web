@@ -38,7 +38,9 @@
     "emptyTitle": "Уроки ещё не запланированы",
     "emptyHint": "Добавьте расписание — ученики получат напоминание.",
     "cancelLesson": "Отменить",
-    "finishedStats": "{{joined}} / {{total}} участвовали · посещаемость {{rate}}%"
+    "finishedStats": "{{joined}} / {{total}} участвовали · посещаемость {{rate}}%",
+    "cancelLessonLong": "Отменить урок",
+    "finishedStatsShort": "{{joined}} участников · посещаемость {{rate}}%"
   },
   "assignments": {
     "eyebrow": "ЗАДАНИЯ ГРУППЫ",
@@ -61,7 +63,9 @@
     "deleteDialogDescription": "«{{title}}» и связанные с ним данные будут удалены.",
     "cancel": "Отмена",
     "delete": "Удалить",
-    "fromBank": "Из готовых тестов"
+    "fromBank": "Из готовых тестов",
+    "subtitleShort": "Задания и результаты AI",
+    "emptyHint": "Дайте первое задание — ученики увидят его в чате группы."
   },
   "students": {
     "eyebrow": "УЧАСТНИКИ",
@@ -92,7 +96,11 @@
     "statLessons": "Занятий",
     "studentsTitle": "Ученики",
     "studentsMeta": "Посещаемость · фокус",
-    "focusSuffix": "фокус"
+    "focusSuffix": "фокус",
+    "mobileBadge": "{{lessonCount}} уроков · {{recordCount}} записей",
+    "studentsMetaShort": "Посещаемость · фокус",
+    "filterMonthShort": "30 дней",
+    "filterAllShort": "Все"
   },
   "dialogs": {
     "lesson": {
@@ -147,7 +155,13 @@
       "quizHint": "После урока тест автоматически откроется ученикам.",
       "repeatingSubtitle": "Повторяющееся расписание",
       "timeBusy": "Это время занято",
-      "scheduleFirst": "Будет создано уроков: {{count}}{{limitNote}} · первый {{first}}, {{weekday}}"
+      "scheduleFirst": "Будет создано уроков: {{count}}{{limitNote}} · первый {{first}}, {{weekday}}",
+      "mobileSubtitle": "Укажите время занятия для группы",
+      "todayDate": "Сегодня, {{date}}",
+      "timeShort": "Время",
+      "startShort": "Начало",
+      "durationMinutes": "Длительность (мин)",
+      "minutesValue": "{{count}} минут"
     },
     "conflict": {
       "singleTitle": "У вас уже есть урок в это время",
@@ -281,5 +295,23 @@
     "close": "Закрыть",
     "confirm": "Отменить урок"
   },
-  "announcementBanner": "Режим объявлений — пишете только вы"
+  "announcementBanner": "Режим объявлений — пишете только вы",
+  "mobileAssignments": {
+    "draft": "Черновик",
+    "review": "Проверить · {{count}}",
+    "finished": "Завершено",
+    "noDue": "Без срока",
+    "daysLeft": "Осталось {{count}} дн.",
+    "draftMeta": "Неотправленный черновик",
+    "due": "Срок: {{date}}",
+    "notSent": "Не отправлено",
+    "average": "среднее {{value}}",
+    "submitted": "{{done}} / {{total}} сдали",
+    "quizMeta": "{{count}} вопросов · Тест",
+    "open": "Открыть",
+    "edit": "Изменить",
+    "delete": "Удалить",
+    "results": "Результаты",
+    "menu": "Действия"
+  }
 }

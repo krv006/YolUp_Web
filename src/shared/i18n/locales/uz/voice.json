@@ -30,7 +30,12 @@
     "titleRequired": "Xona nomini kiriting",
     "pastTime": "Boshlanish vaqti o'tmishda bo'lmasligi kerak",
     "cancel": "Bekor qilish",
-    "submit": "Ochish"
+    "submit": "Ochish",
+    "mobileDescription": "Faqat mikrofon — kamera va ekran ulashish yo‘q",
+    "mobileOpen": "Ochiq",
+    "mobileOpenHint": "Guruhning istalgan a’zosi kira oladi",
+    "mobileInviteHint": "O‘quvchilar so‘rov yuboradi, siz tasdiqlaysiz",
+    "now": "Hozir"
   },
   "room": {
     "defaultTitle": "Ovozli suhbat",
@@ -48,6 +53,9 @@
     "speaking": "Gapirmoqda",
     "micOn": "Mikrofon yoqilgan",
     "micOff": "Mikrofon o'chiq",
-    "requestNote": "Kirish so'rovi"
+    "requestNote": "Kirish so'rovi",
+    "you": "Siz",
+    "mobileClose": "Yopish",
+    "wantsToJoin": "{{name}} kirmoqchi"
   }
 }
