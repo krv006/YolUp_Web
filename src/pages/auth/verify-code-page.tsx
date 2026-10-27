@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import {
   AuthButton,
-  AuthFieldError,
   AuthScreen,
   OtpInput,
   describeResetError,
   usePasswordResetRequestMutation,
   usePasswordResetVerifyMutation,
 } from "@/modules/auth";
+import { AppError } from "@/shared/api";
+import { showErrorToast } from "@/shared/ui/app-toast";
 
 const CODE_LENGTH = 5;
 const DEFAULT_EXPIRES_IN = 120;
@@ -18,8 +18,18 @@ const DEFAULT_RETRY_AFTER = 45;
 
 interface ResetCodeState {
   phone?: string;
+  digits?: string;
   expiresIn?: number;
   retryAfter?: number;
+}
+
+function maskPhone(digits: string): string {
+  return `+998 ${digits.slice(0, 2)} ••• •• ${digits.slice(7, 9)}`;
+}
+
+function formatClock(seconds: number): string {
+  const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
+  return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
 export function VerifyCodePage() {
@@ -28,10 +38,11 @@ export function VerifyCodePage() {
   const location = useLocation();
   const state = (location.state ?? null) as ResetCodeState | null;
   const phone = state?.phone ?? "";
+  const digits = state?.digits ?? phone.replace(/^\+?998/, "");
   const verifyCode = usePasswordResetVerifyMutation();
   const requestCode = usePasswordResetRequestMutation();
   const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
   const [expiresIn, setExpiresIn] = useState(state?.expiresIn ?? DEFAULT_EXPIRES_IN);
   const [retryIn, setRetryIn] = useState(state?.retryAfter ?? DEFAULT_RETRY_AFTER);
 
@@ -44,23 +55,22 @@ export function VerifyCodePage() {
     return () => globalThis.clearTimeout(timer);
   }, [expiresIn, retryIn]);
 
-  async function confirm() {
-    if (!phone) return;
-    if (code.length < CODE_LENGTH) {
-      setError(t("mobile.code.invalid"));
-      toast.error(t("mobile.code.errorToastTitle"), {
-        description: t("mobile.code.errorToastDescription"),
-      });
-      return;
-    }
+  const expired = expiresIn <= 0;
+
+  async function confirm(value = code) {
+    if (!phone || value.length < CODE_LENGTH || expired) return;
     try {
-      const response = await verifyCode.mutateAsync({ phone, code });
+      const response = await verifyCode.mutateAsync({ phone, code: value });
       navigate("/new-password", { state: { resetToken: response.reset_token }, replace: true });
     } catch (caught) {
-      const message = describeResetError(caught, t);
-      setError(message);
-      setCode("");
-      toast.error(message);
+      if (caught instanceof AppError && caught.status >= 400 && caught.status < 500) {
+        setInvalid(true);
+        return;
+      }
+      showErrorToast({
+        title: t("mobile.code.errorToastTitle"),
+        description: describeResetError(caught, t),
+      });
     }
   }
 
@@ -71,70 +81,85 @@ export function VerifyCodePage() {
       setExpiresIn(response.expires_in ?? DEFAULT_EXPIRES_IN);
       setRetryIn(response.retry_after ?? DEFAULT_RETRY_AFTER);
       setCode("");
-      setError(null);
-      toast.success(t("mobile.reset.sent"));
+      setInvalid(false);
     } catch (caught) {
-      toast.error(describeResetError(caught, t));
+      showErrorToast({
+        title: t("mobile.code.errorToastTitle"),
+        description: describeResetError(caught, t),
+      });
     }
   }
 
   if (!phone) return <Navigate to="/forgot-password" replace />;
 
-  const clock = `${Math.floor(retryIn / 60)}:${String(retryIn % 60).padStart(2, "0")}`;
+  const error = expired ? t("mobile.code.expired") : invalid ? t("mobile.code.invalid") : null;
+  const shownCode = expired ? "" : code;
 
   return (
     <AuthScreen
       onBack={() => navigate(-1)}
       title={t("mobile.code.title")}
-      description={t("mobile.code.descriptionPhone", { phone })}
+      description={t("mobile.code.descriptionPhone", {
+        phone: maskPhone(digits),
+        length: CODE_LENGTH,
+      })}
       action={
         <AuthButton
-          onClick={confirm}
+          onClick={() => confirm()}
           loading={verifyCode.isPending}
           loadingLabel={t("mobile.code.submitting")}
+          disabled={expired || code.length < CODE_LENGTH}
         >
           {t("mobile.code.submit")}
         </AuthButton>
       }
       footer={
         <>
-          {t("mobile.reset.remembered")}{" "}
-          <Link className="text-action" to="/login">
-            {t("form.submit")}
-          </Link>
+          {t("mobile.code.wrongNumber")}{" "}
+          <button
+            type="button"
+            className="font-semibold text-brand-strong"
+            onClick={() => navigate("/forgot-password", { state: { digits }, replace: true })}
+          >
+            {t("mobile.code.change")}
+          </button>
         </>
       }
     >
-      <OtpInput
-        length={CODE_LENGTH}
-        value={code}
-        invalid={Boolean(error)}
-        onChange={(next) => {
-          setError(null);
-          setCode(next);
-        }}
-      />
+      <div className="flex flex-col items-center">
+        <OtpInput
+          length={CODE_LENGTH}
+          value={shownCode}
+          tone={verifyCode.isPending ? "verifying" : invalid ? "invalid" : "idle"}
+          onChange={(next) => {
+            setInvalid(false);
+            setCode(next);
+            if (next.length === CODE_LENGTH) void confirm(next);
+          }}
+        />
 
-      {error ? <AuthFieldError>{error}</AuthFieldError> : null}
+        {error ? (
+          <p className="mt-3 text-center text-caption text-error-text" role="alert">
+            {error}
+          </p>
+        ) : null}
 
-      {expiresIn <= 0 ? (
-        <p className="px-1 text-body-sm text-error-text">{t("mobile.code.expired")}</p>
-      ) : null}
-
-      {retryIn > 0 ? (
-        <p className="px-1 text-body-sm text-ink-secondary">
-          {t("mobile.code.resendIn")} <b className="font-numeric text-ink">{clock}</b>
-        </p>
-      ) : (
-        <button
-          type="button"
-          className="self-start px-1 text-label-strong text-action disabled:opacity-60"
-          disabled={requestCode.isPending}
-          onClick={resend}
-        >
-          {t("mobile.code.resend")}
-        </button>
-      )}
+        {retryIn > 0 && !expired ? (
+          <p className="mt-5 flex items-center gap-2 text-body-sm text-ink">
+            {t("mobile.code.resendIn")}
+            <b className="font-numeric font-semibold">{formatClock(retryIn)}</b>
+          </p>
+        ) : (
+          <button
+            type="button"
+            className="mt-5 text-body-sm font-semibold text-brand-strong disabled:opacity-60"
+            disabled={requestCode.isPending}
+            onClick={resend}
+          >
+            {t("mobile.code.resend")}
+          </button>
+        )}
+      </div>
     </AuthScreen>
   );
 }

@@ -780,7 +780,7 @@ textarea.quiz-page-question-text:focus {
 .exam-form .form-picker-label { font-size: var(--fs-body-sm); }
 
 /* Toast (D-122, D-127) */
-[data-sonner-toaster] [data-sonner-toast].fokus-toast {
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"].fokus-toast {
   width: auto;
   min-height: 44px;
   padding: 11px 18px;
@@ -792,9 +792,9 @@ textarea.quiz-page-question-text:focus {
   font-size: var(--fs-body-sm);
   font-weight: 500;
 }
-[data-sonner-toaster] [data-sonner-toast].fokus-toast [data-icon] {
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"].fokus-toast [data-icon] {
   color: var(--status-success-fg);
 }
-[data-sonner-toaster] [data-sonner-toast].fokus-toast[data-type="error"] [data-icon] {
+[data-sonner-toaster] [data-sonner-toast][data-styled="true"].fokus-toast[data-type="error"] [data-icon] {
   color: var(--status-danger-fg);
 }

@@ -6,7 +6,7 @@ import { RootLayout } from "@/app/layouts/root-layout";
 import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout";
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
-import { LoadingFallback } from "@/shared/ui/legacy";
+import { SplashScreen } from "@/shared/ui/splash-screen";
 import { ProtectedRoute } from "./protected-route";
 import { PublicRoute } from "./public-route";
 import { RoleRoute } from "./role-route";
@@ -183,7 +183,7 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <RouteErrorBoundary>
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<SplashScreen />}>
           <Routes>
             <Route element={<RootLayout />}>
               <Route element={<PublicRoute />}>

@@ -1,12 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
-import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
+import { RouteState } from "@/shared/ui/legacy";
+import { SplashScreen } from "@/shared/ui/splash-screen";
 import { ROUTES } from "@/shared/config";
 
 export function ProtectedRoute() {
   const { user, isInitializing, initializationError, retrySession } = useAuth();
   const location = useLocation();
-  if (isInitializing) return <LoadingFallback />;
+  if (isInitializing) return <SplashScreen />;
   if (initializationError) {
     return (
       <RouteState
