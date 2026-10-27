@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocalParticipantPermissions, useRoomContext } from "@livekit/components-react";
 import { toast } from "sonner";
-import { useBoard, useBoardChannel, type BoardSocketEvent } from "@/modules/board";
+import { useBoardChannel, useTeacherSignals, type BoardSocketEvent } from "@/modules/board";
 import { CAMERA_SOURCE, canPublishSource } from "../lib/live-permissions";
 import { useDenyCamera, useGrantCamera, useRequestCamera } from "./live.queries";
 
@@ -21,8 +21,8 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
   const [answered, setAnswered] = useState<string[]>([]);
   const [waiting, setWaiting] = useState(false);
 
-  const board = useBoard(lessonId, { enabled: isTeacher });
-  const pending = board.data?.pendingCameraRequests;
+  const signals = useTeacherSignals(lessonId, { enabled: isTeacher });
+  const pending = signals.data?.pendingCameraRequests;
 
   const requests = useMemo(() => {
     if (!isTeacher) return [];

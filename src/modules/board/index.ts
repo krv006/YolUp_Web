@@ -31,6 +31,7 @@ export {
   useSetBoardPermissions,
   usePeriodicTable,
   useSolveFormula,
+  useTeacherSignals,
 } from "./model/board.queries";
 export { useBoardChannel } from "./model/use-board-channel";
 export { useBoardRealtime } from "./model/use-board-realtime";

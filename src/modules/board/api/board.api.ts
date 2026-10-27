@@ -1,4 +1,4 @@
-import { apiClient, type RequestOptions } from "@/shared/api";
+import { apiClient, AppError, type RequestOptions } from "@/shared/api";
 import { boardEndpoints } from "./board.endpoints";
 import type {
   BoardStateDto,
@@ -6,11 +6,26 @@ import type {
   PeriodicElementDto,
   StrokeInput,
 } from "./board.dto";
-import { mapBoardDto, mapPeriodicElementDto } from "../lib/board.mappers";
+import { mapBoardDto, mapPeriodicElementDto, mapSignalsDto, type BoardSignalsDto } from "../lib/board.mappers";
 
 export const boardApi = {
   async getState(lessonId: string, options?: RequestOptions) {
     return mapBoardDto(await apiClient.get<BoardStateDto>(boardEndpoints.state(lessonId), options));
+  },
+  /** O'qituvchi signallari (oynadan chiqqanlar, mikrofon/kamera so'rovlari) — doskani yuklamasdan, ~100 bayt.
+   *  Eski backend'da endpoint yo'q (404) bo'lsa — avvalgidek doska ichidan olinadi. */
+  async getSignals(lessonId: string, options?: RequestOptions) {
+    try {
+      return mapSignalsDto(await apiClient.get<BoardSignalsDto>(boardEndpoints.signals(lessonId), options));
+    } catch (error) {
+      if (!(error instanceof AppError) || error.status !== 404) throw error;
+      const state = await boardApi.getState(lessonId, options);
+      return {
+        awayStudents: state.awayStudents,
+        pendingMicRequests: state.pendingMicRequests,
+        pendingCameraRequests: state.pendingCameraRequests,
+      };
+    }
   },
   async getPeriodicTable(options?: RequestOptions) {
     const payload = await apiClient.get<PeriodicElementDto[]>(boardEndpoints.periodicTable, options);

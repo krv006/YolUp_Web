@@ -6,10 +6,13 @@ import type { StrokeInput } from "../api/board.dto";
 export const boardKeys = Object.freeze({
   all: ["board"] as const,
   state: (id: string) => ["board", id] as const,
+  signals: (id: string) => ["board", id, "signals"] as const,
   periodicTable: ["board", "periodic-table"] as const,
 });
 
 const FALLBACK_POLL_MS = 2000;
+// O'qituvchi signallari: javob juda kichik, shuning uchun doskaning o'zini (yuzlab KB) emas, shuni so'raymiz
+const SIGNALS_POLL_MS = 3000;
 
 export function useBoard(lessonId: string, { enabled = true, live = false } = {}) {
   return useQuery({
@@ -17,6 +20,16 @@ export function useBoard(lessonId: string, { enabled = true, live = false } = {}
     queryFn: ({ signal }) => boardApi.getState(lessonId, { signal }),
     enabled: Boolean(lessonId && enabled),
     refetchInterval: live ? false : FALLBACK_POLL_MS,
+  });
+}
+
+/** Faqat o'qituvchi uchun: kim oynadan chiqdi, kim mikrofon/kamera so'radi. Doska ichidagi chizmalarni YUKLAMAYDI. */
+export function useTeacherSignals(lessonId: string, { enabled = true } = {}) {
+  return useQuery({
+    queryKey: boardKeys.signals(lessonId),
+    queryFn: ({ signal }) => boardApi.getSignals(lessonId, { signal }),
+    enabled: Boolean(lessonId && enabled),
+    refetchInterval: SIGNALS_POLL_MS,
   });
 }
 

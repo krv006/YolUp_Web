@@ -5,6 +5,24 @@ import type {
   PeriodicElementDto,
 } from "../api/board.dto";
 
+export interface BoardSignalsDto {
+  away_students?: Array<{ student_id: string | number; name: string }>;
+  pending_mic_requests?: Array<{ student_id: string | number; name: string }>;
+  pending_camera_requests?: Array<{ student_id: string | number; name: string }>;
+}
+
+export function mapSignalsDto(dto: BoardSignalsDto) {
+  const person = (item: { student_id: string | number; name: string }) => ({
+    id: String(item.student_id),
+    name: item.name || "O‘quvchi",
+  });
+  return {
+    awayStudents: (dto.away_students ?? []).map(person),
+    pendingMicRequests: (dto.pending_mic_requests ?? []).map(person),
+    pendingCameraRequests: (dto.pending_camera_requests ?? []).map(person),
+  };
+}
+
 export function mapBoardDto(dto: BoardStateDto): BoardState {
   return {
     sheets: (dto.sheets ?? []).map((sheet) => ({

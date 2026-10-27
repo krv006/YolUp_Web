@@ -1,6 +1,6 @@
 import { UserMinus } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useBoard } from "../model/board.queries";
+import { useTeacherSignals } from "../model/board.queries";
 
 export interface AwayStudentsNoticeProps {
   lessonId: string;
@@ -9,8 +9,8 @@ export interface AwayStudentsNoticeProps {
 
 export function AwayStudentsNotice({ lessonId, enabled }: AwayStudentsNoticeProps) {
   const { t } = useTranslation("board");
-  const board = useBoard(lessonId, { enabled });
-  const away = enabled ? (board.data?.awayStudents ?? []) : [];
+  const signals = useTeacherSignals(lessonId, { enabled });
+  const away = enabled ? (signals.data?.awayStudents ?? []) : [];
 
   if (!away.length) return null;
 

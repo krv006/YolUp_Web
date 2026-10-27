@@ -37,12 +37,16 @@ export function useLiveToken(lessonId: string | undefined, enabled: boolean) {
   });
 }
 
+// Tekshiruv oynasi 15 soniya (+8 s server imtiyozi). 6 s oraliqda o'quvchi eng kechi bilan 9 soniya qoladi; 3 s dan 2 barobar
+// kam so'rov (1 500 o'quvchida ~500 -> ~250 so'rov/s). Oraliqni 8 s dan oshirmang — oyna juda qisqa qoladi.
+const ATTENTION_POLL_MS = 6000;
+
 export function useAttentionCheck(lessonId: string | undefined, enabled: boolean) {
   return useQuery({
     queryKey: liveKeys.attention(lessonId ?? ""),
     queryFn: ({ signal }) => liveApi.getAttention(lessonId as string, { signal }),
     enabled: Boolean(lessonId && enabled),
-    refetchInterval: 3000,
+    refetchInterval: ATTENTION_POLL_MS,
   });
 }
 
