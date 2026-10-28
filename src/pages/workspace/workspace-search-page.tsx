@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/modules/auth";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
-import { ROLES } from "@/shared/constants";
+import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
 
@@ -16,9 +16,8 @@ export function WorkspaceSearchPage() {
   const { t } = useTranslation("workspace");
   const { t: tl } = useTranslation("lesson");
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isStudent = user?.role === ROLES.STUDENT;
-  const basePath = isStudent ? "/student/chats" : "/teacher/chats";
+  const isStudent = useIsStudent();
+  const routes = useRoleRoutes();
 
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -146,7 +145,10 @@ export function WorkspaceSearchPage() {
                 tone="bg-brand-subtle text-ink"
                 title={course.title}
                 hint={`${t("groupMeta", { count: course.studentCount ?? 0 })} · ${course.subjectLabel || course.subject}`}
-                onClick={() => navigate(basePath)}
+                onClick={() => {
+                  const room = conversations.data?.find((item) => item.courseId === course.id);
+                  navigate(room ? routes.chat(room.id) : routes.chats);
+                }}
               />
             ))}
           </ResultSection>
@@ -161,6 +163,7 @@ export function WorkspaceSearchPage() {
                 tone="bg-accent-teal-bg text-accent-teal-fg"
                 title={item.title ? `${item.courseTitle} — ${item.title}` : item.courseTitle}
                 hint={lessonMoment(item.startsAt)}
+                onClick={() => navigate(routes.schedule)}
               />
             ))}
           </ResultSection>
@@ -175,7 +178,15 @@ export function WorkspaceSearchPage() {
                 tone="bg-accent-violet-bg text-accent-violet-fg"
                 title={quizDisplayTitle(quiz)}
                 hint={`${quiz.status === "draft" ? t("draft") : t("published")} · ${t("quizQuestions", { count: quiz.questionCount })}`}
-                onClick={() => navigate(`${basePath}/quizzes?quiz=${quiz.id}`)}
+                onClick={() =>
+                  navigate(
+                    isStudent
+                      ? ROUTES.student.test(quiz.id)
+                      : quiz.status === "draft"
+                        ? ROUTES.teacher.test(quiz.id)
+                        : ROUTES.teacher.testResults(quiz.id)
+                  )
+                }
               />
             ))}
           </ResultSection>
@@ -190,7 +201,7 @@ export function WorkspaceSearchPage() {
                 tone="bg-success-bg text-success-fg"
                 title={room.title}
                 hint={room.lastMessage}
-                onClick={() => navigate(`${basePath}/${room.id}`)}
+                onClick={() => navigate(routes.chat(room.id))}
               />
             ))}
           </ResultSection>

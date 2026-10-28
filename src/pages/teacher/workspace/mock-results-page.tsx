@@ -96,26 +96,34 @@ export function MockResultsPage() {
   });
   const essayDetail = useExamStudentResult(isCompact ? examId : null, isCompact ? essayStudent : null);
   const scoringResult = useExamStudentResult(isCompact ? examId : null, isCompact ? (scoring?.studentId ?? null) : null);
+  const scoringRow = rows.find((row) => row.studentId === scoring?.studentId) ?? null;
+  const scoringDetail = isCompact ? scoringResult.data : detail.data;
+  const scoringKey = isCompact ? writingKey : (writing?.key ?? writingKey);
+  const scoreSheet = (
+    <ExamScoreDialog
+      open={Boolean(scoringRow)}
+      onOpenChange={(open) => !open && setScoring(null)}
+      result={scoringRow}
+      prefill={scoring?.prefill}
+      suggested={
+        scoringDetail?.writingAi?.suggestedBand != null ? { [scoringKey]: scoringDetail.writingAi.suggestedBand } : {}
+      }
+      pending={saveScores.isPending}
+      onSave={(scores) =>
+        scoringRow &&
+        saveScores.mutate({ studentId: scoringRow.studentId, scores }, { onSuccess: () => setScoring(null) })
+      }
+    />
+  );
+
+  function shareResults() {
+    if (!examId) return;
+    share.mutate(examId, {
+      onSuccess: (data) => toast.success(t("mock.mobile.shared", { count: data.students || participated.length })),
+    });
+  }
 
   if (isCompact) {
-    const scoringRow = rows.find((row) => row.studentId === scoring?.studentId) ?? null;
-    const scoringDetail = scoringResult.data;
-    const scoreSheet = (
-      <ExamScoreDialog
-        open={Boolean(scoringRow)}
-        onOpenChange={(open) => !open && setScoring(null)}
-        result={scoringRow}
-        prefill={scoring?.prefill}
-        suggested={
-          scoringDetail?.writingAi?.suggestedBand != null ? { [writingKey]: scoringDetail.writingAi.suggestedBand } : {}
-        }
-        pending={saveScores.isPending}
-        onSave={(scores) =>
-          scoringRow &&
-          saveScores.mutate({ studentId: scoringRow.studentId, scores }, { onSuccess: () => setScoring(null) })
-        }
-      />
-    );
     const finishedDate = exam.data?.endsAt ? new Date(exam.data.endsAt) : null;
     const dateLabel =
       finishedDate && !Number.isNaN(finishedDate.getTime())
@@ -191,12 +199,7 @@ export function MockResultsPage() {
           loading={results.isLoading}
           sharing={share.isPending}
           onBack={() => navigate(ROUTES.teacher.mockExams)}
-          onShare={() =>
-            examId &&
-            share.mutate(examId, {
-              onSuccess: (data) => toast.success(t("mock.mobile.shared", { count: data.students || participated.length })),
-            })
-          }
+          onShare={shareResults}
           onSection={(key) => setParams({ view: "writing", section: key })}
           onStudent={(row) => setScoring({ studentId: row.studentId })}
         />
@@ -215,8 +218,9 @@ export function MockResultsPage() {
       action={
         <button
           type="button"
-          className={workspaceAction}
-          onClick={() => toast.info(t("mock.soon"))}
+          className={`${workspaceAction} disabled:opacity-60`}
+          disabled={share.isPending || !participated.length}
+          onClick={shareResults}
         >
           {t("results.share")}
         </button>
@@ -338,15 +342,17 @@ export function MockResultsPage() {
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="flex h-10 items-center justify-center rounded-full bg-surface text-button text-ink transition-colors hover:bg-subtle"
-                  onClick={() => toast.info(t("mock.soon"))}
+                  className="flex h-10 items-center justify-center rounded-full bg-surface text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+                  disabled={!writing || !activeRow.participated || requestAi.isPending}
+                  onClick={() => requestAi.mutate(activeRow.studentId)}
                 >
                   {t("results.aiRetry")}
                 </button>
                 <button
                   type="button"
-                  className="flex h-10 items-center justify-center rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-                  onClick={() => toast.info(t("mock.soon"))}
+                  className="flex h-10 items-center justify-center rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-50"
+                  disabled={!activeRow.participated}
+                  onClick={() => setScoring({ studentId: activeRow.studentId })}
                 >
                   {t("results.grade")}
                 </button>
@@ -355,6 +361,7 @@ export function MockResultsPage() {
           ) : null}
         </div>
       </div>
+      {scoreSheet}
     </WorkspaceShell>
   );
 }

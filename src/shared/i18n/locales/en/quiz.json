@@ -543,7 +543,6 @@
     "pickFile": "Choose a file",
     "pickHint": "Single and multiple choice questions are imported",
     "templates": "Download a template:",
-    "templateSoon": "Template coming soon",
     "googleLabel": "or from a Google link",
     "googleHint": "The document or form must be shared as “anyone with the link can view”.",
     "found": "{{count}} questions found · {{warnings}} warnings",

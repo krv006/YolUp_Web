@@ -543,7 +543,6 @@
     "pickFile": "Fayl tanlash",
     "pickHint": "Faqat bitta va bir nechta tanlovli savollar olinadi",
     "templates": "Shablonni yuklab olish:",
-    "templateSoon": "Shablon tez orada",
     "googleLabel": "yoki Google havolasidan",
     "googleHint": "Hujjat yoki forma “Havolaga ega har kim ko‘ra oladi” qilib ulashilgan bo‘lishi kerak.",
     "found": "{{count}} ta savol topildi · {{warnings}} ta ogohlantirish",

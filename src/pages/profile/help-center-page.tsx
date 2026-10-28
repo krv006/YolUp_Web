@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAuth } from "@/modules/auth";
+import { useAuth, useIsStudent } from "@/modules/auth";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { storage } from "@/shared/lib";
@@ -23,6 +23,7 @@ export function HelpCenterPage() {
   const { t } = useTranslation("account");
   const navigate = useNavigate();
   const { user } = useAuth();
+  const student = useIsStudent();
   const isCompact = useIsCompact();
   const [query, setQuery] = useState("");
   const soon = () => toast.info(t("help.soon"));
@@ -30,11 +31,18 @@ export function HelpCenterPage() {
   const sections: Array<{ id: string; items: HelpItem[] }> = [
     {
       id: "faq",
-      items: [
-        { id: "startLesson", icon: "help", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.dashboard) },
-        { id: "addStudent", icon: "person-add", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.chats) },
-        { id: "checkHomework", icon: "task-alt", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.homework) },
-      ],
+      items: student
+        ? [
+            { id: "joinLesson", icon: "help", tone: FAQ_TONE, action: () => navigate(ROUTES.student.schedule) },
+            { id: "joinGroup", icon: "person-add", tone: FAQ_TONE, action: () => navigate(ROUTES.student.chats) },
+            { id: "submitHomework", icon: "task-alt", tone: FAQ_TONE, action: () => navigate(ROUTES.student.homework) },
+            { id: "takeTest", icon: "quiz", tone: FAQ_TONE, action: () => navigate(ROUTES.student.tests) },
+          ]
+        : [
+            { id: "startLesson", icon: "help", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.dashboard) },
+            { id: "addStudent", icon: "person-add", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.chats) },
+            { id: "checkHomework", icon: "task-alt", tone: FAQ_TONE, action: () => navigate(ROUTES.teacher.homework) },
+          ],
     },
     {
       id: "videos",
@@ -44,16 +52,20 @@ export function HelpCenterPage() {
       id: "contact",
       items: [
         { id: "support", icon: "forum", tone: SETTINGS_TONES.success, action: soon },
-        {
-          id: "tour",
-          icon: "school",
-          tone: SETTINGS_TONES.success,
-          action: () => {
-            if (!isCompact) return soon();
-            storage.remove(`yolup:onboarding:${user?.id ?? ""}`);
-            navigate(ROUTES.teacher.dashboard);
-          },
-        },
+        ...(student
+          ? []
+          : [
+              {
+                id: "tour",
+                icon: "school",
+                tone: SETTINGS_TONES.success,
+                action: () => {
+                  if (!isCompact) return soon();
+                  storage.remove(`yolup:onboarding:${user?.id ?? ""}`);
+                  navigate(ROUTES.teacher.dashboard);
+                },
+              },
+            ]),
       ],
     },
   ];

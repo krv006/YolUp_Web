@@ -9,7 +9,7 @@ import { Icon } from "@/shared/ui/icon";
 import type { QuizImportPreview, QuizSummary } from "@/shared/types";
 import { quizApi } from "../api/quiz.api";
 import type { QuizImportRequest } from "../api/quiz.dto";
-import { useImportGoogleLink, useImportQuizDocx } from "../model/quiz.queries";
+import { useDownloadQuizTemplate, useImportGoogleLink, useImportQuizDocx } from "../model/quiz.queries";
 
 export interface QuizImportDialogProps {
   open: boolean;
@@ -19,6 +19,8 @@ export interface QuizImportDialogProps {
 }
 
 const ACCEPT = ".docx,.xlsx,.json";
+const TEMPLATES = ["docx", "xlsx"] as const;
+const TEMPLATE_QUESTION_COUNT = 10;
 
 export function QuizImportDialog({
   open,
@@ -35,6 +37,7 @@ export function QuizImportDialog({
 
   const importDocx = useImportQuizDocx();
   const importLink = useImportGoogleLink();
+  const downloadTemplate = useDownloadQuizTemplate();
   const previewFile = useMutation({
     mutationFn: (value: File) => quizApi.importDocxPreview(value),
     onSuccess: setPreview,
@@ -141,14 +144,15 @@ export function QuizImportDialog({
 
           <p className="mt-3 flex flex-wrap items-center gap-2 text-body-xs text-ink-secondary">
             {t("importDialog.templates")}
-            {[".docx", ".xlsx", ".json"].map((extension) => (
+            {TEMPLATES.map((type) => (
               <button
-                key={extension}
+                key={type}
                 type="button"
-                className="font-medium text-brand transition-colors hover:text-brand-strong"
-                onClick={() => toast.info(t("importDialog.templateSoon"))}
+                className="font-medium text-brand transition-colors hover:text-brand-strong disabled:opacity-50"
+                disabled={downloadTemplate.isPending}
+                onClick={() => downloadTemplate.mutate({ type, count: TEMPLATE_QUESTION_COUNT })}
               >
-                {extension}
+                .{type}
               </button>
             ))}
           </p>
@@ -238,14 +242,15 @@ export function QuizImportDialog({
 
       <p className="flex flex-wrap items-center gap-2 text-body-xs text-ink-tertiary">
         {t("importDialog.templates")}
-        {[".docx", ".xlsx", ".json"].map((extension) => (
+        {TEMPLATES.map((type) => (
           <button
-            key={extension}
+            key={type}
             type="button"
-            className="text-brand transition-colors hover:text-brand-strong"
-            onClick={() => toast.info(t("importDialog.templateSoon"))}
+            className="text-brand transition-colors hover:text-brand-strong disabled:opacity-50"
+            disabled={downloadTemplate.isPending}
+            onClick={() => downloadTemplate.mutate({ type, count: TEMPLATE_QUESTION_COUNT })}
           >
-            {extension}
+            .{type}
           </button>
         ))}
       </p>
