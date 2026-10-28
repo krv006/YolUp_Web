@@ -2,12 +2,12 @@ import { useMemo, useRef, useState, type ReactNode } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/modules/auth";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
-import { ROLES } from "@/shared/constants";
+import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -46,9 +46,8 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
   const { t } = useTranslation("workspace");
   const { t: tl } = useTranslation("lesson");
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const isStudent = user?.role === ROLES.STUDENT;
-  const basePath = isStudent ? "/student/chats" : "/teacher/chats";
+  const isStudent = useIsStudent();
+  const routes = useRoleRoutes();
 
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -87,7 +86,10 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
             .filter(Boolean)
             .join(" · "),
           avatar: item.title,
-          to: basePath,
+          to: (() => {
+            const room = conversations.data?.find((conversation) => conversation.courseId === item.id);
+            return room ? routes.chat(room.id) : routes.chats;
+          })(),
         })),
       ...(lessons.data ?? [])
         .filter((item) => matches(item.title))
@@ -97,7 +99,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           title: item.title,
           meta: [item.courseTitle, moment(item.startsAt)].filter(Boolean).join(" · "),
           icon: "nav-calendar",
-          to: `${basePath}/schedule`,
+          to: routes.schedule,
         })),
       ...(quizzes.data ?? [])
         .filter((item) => matches(quizDisplayTitle(item)))
@@ -109,7 +111,11 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
             count: item.questionCount,
           })}`,
           icon: "assign",
-          to: `${basePath}/quizzes?quiz=${item.id}`,
+          to: isStudent
+            ? ROUTES.student.test(item.id)
+            : item.status === "draft"
+              ? ROUTES.teacher.test(item.id)
+              : ROUTES.teacher.testResults(item.id),
         })),
       ...(conversations.data ?? [])
         .filter((item) => matches(item.title) || matches(item.lastMessage))
@@ -119,10 +125,10 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           title: item.title,
           meta: item.lastMessage,
           avatar: item.title,
-          to: `${basePath}/${item.id}`,
+          to: routes.chat(item.id),
         })),
     ];
-  }, [enabled, query, courses.data, lessons.data, quizzes.data, conversations.data, basePath, months, t]);
+  }, [enabled, query, courses.data, lessons.data, quizzes.data, conversations.data, routes, isStudent, months, t]);
 
   const visible = hits.filter((hit) => filter === "all" || hit.section === filter);
 

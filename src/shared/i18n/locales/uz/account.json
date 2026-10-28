@@ -314,6 +314,22 @@
       "tour": {
         "title": "Yo‘l-yo‘riqni qayta ko‘rish",
         "hint": "Asosiy ekran bo‘yicha qisqa tanishuv"
+      },
+      "joinLesson": {
+        "title": "Darsga qanday qo‘shilaman?",
+        "hint": "Jadval → dars → «Darsga qo‘shilish»"
+      },
+      "joinGroup": {
+        "title": "Guruhga qanday qo‘shilaman?",
+        "hint": "Suhbatlar → «Guruhga qo‘shilish» — o‘qituvchi bergan kod bilan"
+      },
+      "submitHomework": {
+        "title": "Vazifani qanday topshiraman?",
+        "hint": "Workspace → Vazifalar → faylni yuklang"
+      },
+      "takeTest": {
+        "title": "Testni qanday yechaman?",
+        "hint": "Workspace → Testlar → «Yechish»"
       }
     }
   }

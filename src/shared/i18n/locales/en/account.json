@@ -314,6 +314,22 @@
       "tour": {
         "title": "Replay the walkthrough",
         "hint": "A short tour of the Home screen"
+      },
+      "joinLesson": {
+        "title": "How do I join a lesson?",
+        "hint": "Schedule → lesson → “Join lesson”"
+      },
+      "joinGroup": {
+        "title": "How do I join a group?",
+        "hint": "Chats → “Join group” — with your teacher’s code"
+      },
+      "submitHomework": {
+        "title": "How do I submit homework?",
+        "hint": "Workspace → Assignments → upload a file"
+      },
+      "takeTest": {
+        "title": "How do I take a test?",
+        "hint": "Workspace → Tests → “Start”"
       }
     }
   }
