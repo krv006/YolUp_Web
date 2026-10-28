@@ -276,7 +276,10 @@
     "studying": "O‘qiyotgan fanlar",
     "studentRatingsTitle": "O‘qituvchilardan so‘nggi baholar",
     "studentRatingMeta": "{{course}} · {{when}} · baho {{value}}",
-    "studentNoRatingsHint": "O‘qituvchingiz vazifangizni baholagach, bahosi shu yerda chiqadi."
+    "studentNoRatingsHint": "O‘qituvchingiz vazifangizni baholagach, bahosi shu yerda chiqadi.",
+    "pagination": "Sahifalar",
+    "prevPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa"
   },
   "help": {
     "search": "Savol yoki mavzu qidirish…",

@@ -192,7 +192,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
           ) : null}
         </label>
 
-        <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 lg:mx-0 lg:flex-wrap lg:px-0">
+        <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
           {(
             [
               { id: "all" as const, label: t("filterAll", { count: hits.length }) },

@@ -13,7 +13,7 @@ import {
 } from "date-fns";
 import { useAttendance } from "@/modules/attendance";
 import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
-import { useConversations } from "@/modules/conversation";
+import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import {
   RateLessonDialog,
@@ -54,6 +54,7 @@ export function SchedulePage() {
   const lessons = useLessons({ page_size: 200 });
   const courses = useCourses();
   const conversations = useConversations(student ? "student" : "teacher");
+  const groupImages = useGroupImages(student ? "student" : "teacher");
   const attendance = useAttendance({ page_size: 200 }, student);
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
@@ -80,12 +81,12 @@ export function SchedulePage() {
       const course = byId.get(courseId);
       return {
         tone: course?.color,
-        image: course?.avatarUrl,
+        image: course?.avatarUrl ?? groupImages.get(courseId) ?? null,
         students: course?.studentCount ?? 0,
         teacher: course?.teacher ?? "",
       };
     };
-  }, [courses.data]);
+  }, [courses.data, groupImages]);
 
   const roomByCourse = useMemo(
     () =>
@@ -222,7 +223,7 @@ export function SchedulePage() {
           title: course.title,
           studentCount: course.studentCount ?? 0,
           tone: course.color,
-          image: course.avatarUrl,
+          image: course.avatarUrl ?? groupImages.get(course.id) ?? null,
         }))}
         pending={createLesson.isPending || createSchedule.isPending}
         onSubmit={createFromDialog}

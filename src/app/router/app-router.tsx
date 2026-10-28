@@ -7,7 +7,7 @@ import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
 import { PageSkeleton } from "@/shared/ui/page-skeleton";
-import { SplashScreen } from "@/shared/ui/splash-screen";
+import { BootSkeleton } from "./boot-skeleton";
 import { ProtectedRoute } from "./protected-route";
 import { PublicRoute } from "./public-route";
 import { RoleRoute } from "./role-route";
@@ -199,7 +199,7 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <RouteErrorBoundary>
-        <Suspense fallback={<SplashScreen />}>
+        <Suspense fallback={<BootSkeleton />}>
           <Routes>
             <Route element={<RootLayout />}>
               <Route element={<PublicRoute />}>

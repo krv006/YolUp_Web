@@ -368,7 +368,7 @@ textarea.quiz-page-question-text:focus {
 }
 .live-room-shell .live-control--share[data-lk-enabled="true"] { background: var(--action-primary); color: var(--text-on-action); }
 .live-room-shell .live-control--mic-request { background: var(--saffron-subtle); color: var(--saffron-strong); }
-.live-room-shell .live-control--leave { width: 52px; min-height: 52px; background: var(--status-error); color: #fff; }
+.live-room-shell .live-control--leave { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: auto; height: 50px; min-height: 50px; padding: 0 22px; background: var(--status-error); color: #fff; font-size: 16px; font-weight: 600; line-height: 1; white-space: nowrap; }
 .live-room-shell .live-control--leave:hover { background: var(--status-error); opacity: .9; }
 .live-room-shell .live-control-badge { top: 2px; right: 2px; }
 

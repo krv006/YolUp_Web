@@ -3,6 +3,7 @@ import { useAuth, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
 import { NotificationBell } from "@/modules/notification";
 import { Avatar } from "@/shared/ui/legacy";
+import { useOpenNotificationLink } from "@/widgets/notification-link";
 
 export function MobileUserHeader() {
   const { t } = useTranslation("dashboard");
@@ -11,6 +12,7 @@ export function MobileUserHeader() {
   const isStudent = useIsStudent();
   const routes = useRoleRoutes();
   const conversations = useConversations(isStudent ? "student" : "teacher");
+  const openLink = useOpenNotificationLink();
   const name = user?.name ?? "";
   const group = (conversations.data ?? []).find((item) => item.type === "group")?.title;
 
@@ -34,6 +36,7 @@ export function MobileUserHeader() {
       </span>
       <NotificationBell
         pageHref={routes.notifications}
+        onOpenLink={openLink}
         className="relative grid size-11 shrink-0 place-items-center rounded-full bg-surface text-ink transition-colors hover:bg-subtle [&_.notification-badge]:absolute [&_.notification-badge]:top-2.5 [&_.notification-badge]:right-2.5 [&_.notification-badge]:size-2 [&_.notification-badge]:overflow-hidden [&_.notification-badge]:rounded-full [&_.notification-badge]:bg-danger [&_.notification-badge]:text-[0px] [&_.notification-badge]:ring-2 [&_.notification-badge]:ring-surface"
       />
     </header>

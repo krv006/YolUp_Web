@@ -15,6 +15,7 @@ import {
   type DirectTeacher,
 } from "@/modules/conversation";
 import { useLiveLessons } from "@/modules/lesson";
+import { useWheelScrollX } from "@/shared/hooks/use-wheel-scroll-x";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { useAuth } from "@/modules/auth";
@@ -54,6 +55,7 @@ function mentionsMe(lastMessage: string, username?: string | null): boolean {
 
 export function ConversationPanel({ role = "teacher", hidden = false }: ConversationPanelProps) {
   const { t } = useTranslation("chat");
+  const chipsRef = useWheelScrollX<HTMLDivElement>();
   const FILTERS = useFilters();
   const [search, setSearch] = useState("");
   const { filter, setFilter } = useConversationFilter();
@@ -189,7 +191,8 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
       </label>
 
       <div
-        className="flex shrink-0 items-center gap-1.5 overflow-x-auto lg:gap-2"
+        ref={chipsRef}
+        className="flex shrink-0 items-center gap-1.5 overflow-x-auto overscroll-x-contain [scrollbar-width:none] lg:gap-2 [&::-webkit-scrollbar]:hidden"
         role="tablist"
         aria-label={t("panel.filtersAria")}
       >

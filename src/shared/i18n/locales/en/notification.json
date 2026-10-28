@@ -36,5 +36,6 @@
     "review": "Review",
     "open": "Open"
   },
-  "back": "Back"
+  "back": "Back",
+  "openFailed": "Couldn’t open the notification"
 }

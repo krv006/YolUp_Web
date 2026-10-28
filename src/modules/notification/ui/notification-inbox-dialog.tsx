@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { Dialog, DialogContent } from "@/shared/ui/legacy";
-import type { NotificationLink } from "../api/notification.dto";
+import type { OpenNotificationLink } from "../api/notification.dto";
 import { NotificationInboxPanel } from "./notification-inbox-panel";
 
 export interface NotificationInboxDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onOpenLink?: (link: NotificationLink) => void;
+  onOpenLink?: OpenNotificationLink;
 }
 
 export function NotificationInboxDialog({

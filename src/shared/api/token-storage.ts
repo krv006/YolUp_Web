@@ -62,6 +62,23 @@ export const tokenStorage = {
   clearTokens(): void {
     removeEverywhere(STORAGE_KEYS.ACCESS_TOKEN);
     removeEverywhere(STORAGE_KEYS.REFRESH_TOKEN);
+    removeEverywhere(STORAGE_KEYS.USER_SNAPSHOT);
+  },
+
+  readUser(): string | null {
+    return this.hasSession() ? read(STORAGE_KEYS.USER_SNAPSHOT) : null;
+  },
+
+  writeUser(value: string | null): void {
+    removeEverywhere(STORAGE_KEYS.USER_SNAPSHOT);
+    if (!value || !this.hasSession()) return;
+    const targets = storages();
+    const target = this.isPersistent() ? targets[1] : targets[0];
+    try {
+      target?.setItem(STORAGE_KEYS.USER_SNAPSHOT, value);
+    } catch (error) {
+      void error;
+    }
   },
 
   clear(): void {

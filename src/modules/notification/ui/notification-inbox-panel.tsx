@@ -7,7 +7,7 @@ import {
   useMarkNotificationRead,
   useNotificationInbox,
 } from "../model/notification.queries";
-import type { InboxNotification, NotificationLink } from "../api/notification.dto";
+import type { InboxNotification, OpenNotificationLink } from "../api/notification.dto";
 import {
   notificationActionKey,
   notificationGroupKey,
@@ -17,7 +17,7 @@ import {
 } from "../lib/notification-display";
 
 export interface NotificationInboxPanelProps {
-  onOpenLink?: (link: NotificationLink) => void;
+  onOpenLink?: OpenNotificationLink;
   onClose: () => void;
   /** Rendered inside a dialog or page that already shows the title. */
   embedded?: boolean;
@@ -50,7 +50,7 @@ export function NotificationInboxPanel({
   function openItem(item: InboxNotification) {
     if (!item.isRead) markRead.mutate(item.notificationId);
     if (item.link && onOpenLink) {
-      onOpenLink(item.link);
+      onOpenLink(item.link, item.kind);
       onClose();
     }
   }

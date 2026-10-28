@@ -307,12 +307,6 @@ function Timeline({ rows, now, courseLook, onSelect, onChat, onJoin, student = f
                 }`}
                 onClick={() => onSelect(lesson)}
               >
-                <span className="flex w-11 shrink-0 flex-col">
-                  <strong className={`text-title-sm ${finished ? "text-ink-secondary" : "text-ink"}`}>
-                    {clock(lesson.startsAt)}
-                  </strong>
-                  <small className="text-caption text-ink-secondary">{clock(endOf(lesson))}</small>
-                </span>
                 <GroupTile
                   name={lesson.courseTitle}
                   tone={look.tone}

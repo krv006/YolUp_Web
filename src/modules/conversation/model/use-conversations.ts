@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 import type { Page } from "@/shared/api";
 import type { Conversation, ConversationRole } from "@/shared/types";
@@ -90,4 +91,17 @@ export function useRespondDirect() {
       conversationApi.respondDirect(roomId, action),
     onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
   });
+}
+
+export function useGroupImages(role: ConversationRole = "teacher") {
+  const conversations = useConversations(role);
+  return useMemo(
+    () =>
+      new Map(
+        (conversations.data ?? [])
+          .filter((item) => item.courseId && item.imageUrl)
+          .map((item) => [item.courseId as string, item.imageUrl as string])
+      ),
+    [conversations.data]
+  );
 }

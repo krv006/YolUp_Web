@@ -117,7 +117,7 @@ export function AiAssistantPage() {
 
   return (
     <WorkspaceShell eyebrow={t("ai.eyebrow")} title={t("ai.title")}>
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_490px]">
+      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_490px]">
         <section className="flex min-w-0 flex-col gap-4.5 rounded-lg bg-surface p-6">
           <p className="text-body-sm text-ink-secondary">{t("ai.intro")}</p>
 
@@ -268,8 +268,10 @@ export function AiAssistantPage() {
           </button>
         </section>
 
-        <section className="flex min-w-0 flex-col gap-3">
-          <strong className="text-title text-ink">{t("ai.jobsTitle")}</strong>
+        <section
+          className="flex min-w-0 flex-col gap-3 xl:max-h-[calc(100dvh-140px)] xl:overflow-y-auto xl:overscroll-contain xl:[scrollbar-width:thin]"
+          aria-label={t("ai.jobsTitle")}
+        >
 
           {(jobs.data ?? []).map((job) => {
             const done = job.status === "done";

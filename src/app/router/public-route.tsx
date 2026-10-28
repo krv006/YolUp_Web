@@ -1,12 +1,12 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { RouteState } from "@/shared/ui/legacy";
-import { SplashScreen } from "@/shared/ui/splash-screen";
+import { BootSkeleton } from "./boot-skeleton";
 import { resolveHomeRoute } from "./resolve-home-route";
 
 export function PublicRoute() {
   const { user, isInitializing, initializationError, retrySession } = useAuth();
-  if (isInitializing) return <SplashScreen />;
+  if (isInitializing) return <BootSkeleton />;
   if (initializationError) {
     return (
       <RouteState

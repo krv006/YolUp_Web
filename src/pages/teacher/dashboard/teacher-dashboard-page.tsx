@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { useDashboardActivity, useMyAnalytics, useTeacherDashboard } from "@/modules/analytics";
-import { useConversations, useNewConversationStore } from "@/modules/conversation";
+import { useConversations, useGroupImages, useNewConversationStore } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useLessons } from "@/modules/lesson";
@@ -58,6 +58,7 @@ export function TeacherDashboardPage() {
   const dashboard = useTeacherDashboard();
   const activity = useDashboardActivity(10);
   const conversations = useConversations("teacher");
+  const groupImages = useGroupImages("teacher");
   const [searchOpen, setSearchOpen] = useState(false);
   const [today] = useState(() => new Date());
 
@@ -119,7 +120,8 @@ export function TeacherDashboardPage() {
 
   const studentsByCourse = new Map(groups.map((course) => [course.id, course.studentCount ?? 0]));
   const toneByCourse = new Map(groups.map((course) => [course.id, course.color]));
-  const avatarByCourse = new Map(groups.map((course) => [course.id, course.avatarUrl]));
+  const avatarByCourse = new Map<string, string | null | undefined>(groupImages);
+  for (const course of groups) if (course.avatarUrl) avatarByCourse.set(course.id, course.avatarUrl);
 
   const roomByCourse = new Map(
     (conversations.data ?? [])

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRoleRoutes } from "@/modules/auth";
 import { ConversationActionsSheet, useNewConversationStore } from "@/modules/conversation";
+import { useWheelScrollX } from "@/shared/hooks/use-wheel-scroll-x";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
@@ -15,6 +16,7 @@ export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const chipsRef = useWheelScrollX<HTMLDivElement>();
   const { conversationId } = useParams();
   const {
     isLoading,
@@ -84,7 +86,11 @@ export function ConversationListPanel() {
           {t("panel.resultCount", { count: visible.length + peopleRows.length })}
         </p>
       ) : (
-        <div className="flex shrink-0 items-center gap-2 overflow-x-auto px-5 pt-4.5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist">
+        <div
+          ref={chipsRef}
+          className="flex shrink-0 items-center gap-2 overflow-x-auto overscroll-x-contain px-5 pt-4.5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          role="tablist"
+        >
           {CONVERSATION_FILTERS.map((id) => (
             <button
               key={id}

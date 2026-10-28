@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useMyAnalytics } from "@/modules/analytics";
+import { useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { useExams } from "@/modules/exam";
 import { useQuizzes } from "@/modules/quiz";
@@ -12,7 +13,15 @@ export function useStudentWorkspace() {
   const quizzes = useQuizzes(null);
   const exams = useExams(null);
   const analytics = useMyAnalytics();
-  const groups = useMemo(() => courses.data ?? [], [courses.data]);
+  const groupImages = useGroupImages("student");
+  const groups = useMemo(
+    () =>
+      (courses.data ?? []).map((course) => ({
+        ...course,
+        avatarUrl: course.avatarUrl ?? groupImages.get(course.id) ?? null,
+      })),
+    [courses.data, groupImages]
+  );
   const assignments = useStudentAssignments(groups);
 
   const attempts = useMemo<StudentAttemptSummary[]>(

@@ -276,7 +276,10 @@
     "studying": "Subjects you study",
     "studentRatingsTitle": "Latest grades from teachers",
     "studentRatingMeta": "{{course}} · {{when}} · grade {{value}}",
-    "studentNoRatingsHint": "Grades appear here once your teacher marks your work."
+    "studentNoRatingsHint": "Grades appear here once your teacher marks your work.",
+    "pagination": "Pages",
+    "prevPage": "Previous page",
+    "nextPage": "Next page"
   },
   "help": {
     "search": "Search a question or topic…",

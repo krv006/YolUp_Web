@@ -262,6 +262,7 @@ export function GroupWorkspace({
               assignments={assignments.data}
               loading={assignments.isLoading}
               isLanguageSubject={Boolean(course.data?.isLanguageSubject)}
+              groupImage={conversation.imageUrl}
             />
           ) : null}
           {activeTab === "attendance" ? (
@@ -526,6 +527,7 @@ interface AssignmentsPanelProps {
   assignments?: Assignment[];
   loading: boolean;
   isLanguageSubject: boolean;
+  groupImage?: string | null;
 }
 
 function useAssignmentHighlight(assignmentId: string | null, ready: boolean) {
@@ -542,6 +544,7 @@ function AssignmentsPanel({
   assignments = [],
   loading,
   isLanguageSubject,
+  groupImage = null,
 }: AssignmentsPanelProps) {
   const { t } = useTranslation("group");
   const [dialog, setDialog] = useState(false);
@@ -802,7 +805,7 @@ function AssignmentsPanel({
           assignments={assignments}
           quizzes={courseQuizList}
           courseTitle={course.data?.title ?? ""}
-          courseImage={course.data?.avatarUrl}
+          courseImage={course.data?.avatarUrl ?? groupImage}
           courseTone={course.data?.color}
           highlightId={highlightId}
           onOpenAssignment={(item) => setDetailId(item.id)}

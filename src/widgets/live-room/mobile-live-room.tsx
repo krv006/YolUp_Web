@@ -144,7 +144,7 @@ export function MobileLiveLayout({
         </div>
       </div>
 
-      <nav className="flex shrink-0 justify-between rounded-t-2xl bg-subtle/40 px-4 pt-0.5 pb-6.5">
+      <nav className="flex shrink-0 justify-between rounded-t-2xl bg-subtle/40 px-3 pt-0.5 pb-6.5 min-[380px]:px-4">
         {toolbar}
       </nav>
     </div>
@@ -180,12 +180,12 @@ export function ToolbarButton({
   return (
     <button
       type="button"
-      className="flex w-13 flex-col items-center gap-1 disabled:opacity-50"
+      className="flex w-12 flex-col items-center gap-1 disabled:opacity-50 min-[380px]:w-13"
       aria-pressed={pressed}
       disabled={disabled}
       onClick={onClick}
     >
-      <span className={`relative grid size-13 place-items-center rounded-full ${TOOLBAR_TONES[tone]}`}>
+      <span className={`relative grid size-12 place-items-center rounded-full min-[380px]:size-13 ${TOOLBAR_TONES[tone]}`}>
         {icon}
         {badge ? (
           <span className="absolute -top-0.5 -right-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-danger px-1 text-micro font-semibold text-on-action">
@@ -193,7 +193,7 @@ export function ToolbarButton({
           </span>
         ) : null}
       </span>
-      <small className="-mx-3 text-caption whitespace-nowrap text-ink">{label}</small>
+      <small className="-mx-2 text-[11px] leading-4 whitespace-nowrap text-ink">{label}</small>
     </button>
   );
 }
@@ -210,8 +210,9 @@ function MicButton({ isTeacher, request }: { isTeacher: boolean; request: Reques
   const permissions = useLocalParticipantPermissions();
   const { enabled, pending, toggle } = useTrackToggle({ source: Track.Source.Microphone });
   const label = t("mic.label");
+  const allowed = canPublishSource(permissions, MICROPHONE_SOURCE);
 
-  if (canPublishSource(permissions, MICROPHONE_SOURCE))
+  if (allowed || isTeacher)
     return (
       <ToolbarButton
         icon={enabled ? <Icon name="mic" size={22} /> : <MicOff size={22} />}
@@ -219,11 +220,9 @@ function MicButton({ isTeacher, request }: { isTeacher: boolean; request: Reques
         tone={enabled ? "default" : "off"}
         pressed={enabled}
         disabled={pending}
-        onClick={() => void toggle()}
+        onClick={() => (allowed ? void toggle() : toast.error(t("mic.disabledTitle")))}
       />
     );
-
-  if (isTeacher) return <ToolbarButton icon={<MicOff size={22} />} label={label} tone="off" disabled />;
 
   return (
     <ToolbarButton
@@ -241,8 +240,9 @@ function CameraButton({ isTeacher, request }: { isTeacher: boolean; request: Req
   const permissions = useLocalParticipantPermissions();
   const { enabled, pending, toggle } = useTrackToggle({ source: Track.Source.Camera });
   const label = t("camera.label");
+  const allowed = canPublishSource(permissions, CAMERA_SOURCE);
 
-  if (canPublishSource(permissions, CAMERA_SOURCE))
+  if (allowed || isTeacher)
     return (
       <ToolbarButton
         icon={enabled ? <Icon name="videocam-fill" size={22} /> : <VideoOff size={22} />}
@@ -250,11 +250,9 @@ function CameraButton({ isTeacher, request }: { isTeacher: boolean; request: Req
         tone={enabled ? "default" : "off"}
         pressed={enabled}
         disabled={pending}
-        onClick={() => void toggle()}
+        onClick={() => (allowed ? void toggle() : toast.error(t("camera.disabledTitle")))}
       />
     );
-
-  if (isTeacher) return <ToolbarButton icon={<VideoOff size={22} />} label={label} tone="off" disabled />;
 
   return (
     <ToolbarButton

@@ -181,7 +181,7 @@ export function StudentGroupWorkspace({
                   quizzes={(quizzes.data ?? []).filter((quiz) => quiz.courseId === courseId)}
                   loading={assignments.isLoading}
                   courseTitle={hydrated.title}
-                  courseImage={course.data?.avatarUrl}
+                  courseImage={course.data?.avatarUrl ?? conversation.imageUrl}
                   courseTone={course.data?.color}
                 />
               ) : null}

@@ -231,6 +231,14 @@ export function LessonBoard({
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
+                        className="col-span-2 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+                        onClick={() => onJoin(lesson)}
+                      >
+                        <Icon name="videocam-fill" size={18} />
+                        {t("group:lessons.join")}
+                      </button>
+                      <button
+                        type="button"
                         className={OUTLINE_BUTTON}
                         onClick={() => onEdit(lesson)}
                       >

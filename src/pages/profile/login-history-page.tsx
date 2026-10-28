@@ -11,6 +11,8 @@ import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 
 type GroupKey = "todayGroup" | "yesterdayGroup" | "earlierGroup";
 
+const PAGE_SIZE = 10;
+
 function groupOf(value: string): GroupKey {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "earlierGroup";
@@ -37,8 +39,12 @@ export function LoginHistoryPage() {
   const logins = useLoginHistory(null, true);
   const logoutOthers = useLogoutOtherSessionsMutation();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const rows = logins.data ?? [];
+  const all = logins.data ?? [];
+  const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+  const current = Math.min(page, pages);
+  const rows = all.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
   const groups: GroupKey[] = ["todayGroup", "yesterdayGroup", "earlierGroup"];
 
   function closeOthers() {
@@ -68,13 +74,13 @@ export function LoginHistoryPage() {
           return (
             <SettingsSection key={group} label={t(`page.${group}`)}>
               {items.map((row, index) => {
-                const current = group === "todayGroup" && index === 0;
+                const thisDevice = current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <SettingsRow
                     key={row.id}
                     icon={isPhone(row.device) ? "person" : "settings"}
                     tone={
-                      current
+                      thisDevice
                         ? "bg-success-bg text-ink"
                         : isPhone(row.device)
                           ? "bg-brand-subtle text-ink"
@@ -83,7 +89,7 @@ export function LoginHistoryPage() {
                     title={row.device || "—"}
                     hint={row.ip}
                     right={
-                      current ? (
+                      thisDevice ? (
                         <small className="shrink-0 text-caption-strong text-success-fg">{t("page.thisDevice")}</small>
                       ) : (
                         <small className="shrink-0 text-caption-strong text-ink">{clock(row.at)}</small>
@@ -95,6 +101,8 @@ export function LoginHistoryPage() {
             </SettingsSection>
           );
         })}
+
+        <Pager page={current} pages={pages} onChange={setPage} />
 
         {!logins.isLoading && !rows.length ? (
           <p className="rounded-xl bg-surface px-5 py-8 text-center text-body-sm text-ink-secondary">{t("page.noLogins")}</p>
@@ -143,15 +151,15 @@ export function LoginHistoryPage() {
 
             <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-lg bg-surface">
               {items.map((row, index) => {
-                const current = group === "todayGroup" && index === 0;
+                const thisDevice = current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <div key={row.id} className="flex items-center gap-3 px-4 py-3.5">
                     <span
                       className={`grid size-9 shrink-0 place-items-center rounded-md ${
-                        current ? SETTINGS_TONES.success : SETTINGS_TONES.brand
+                        thisDevice ? SETTINGS_TONES.success : SETTINGS_TONES.brand
                       }`}
                     >
-                      <Icon name={current ? "person" : "settings"} size={18} />
+                      <Icon name={thisDevice ? "person" : "settings"} size={18} />
                     </span>
 
                     <span className="flex min-w-0 flex-1 flex-col">
@@ -161,7 +169,7 @@ export function LoginHistoryPage() {
                       <small className="truncate text-body-xs text-ink-tertiary">{row.ip}</small>
                     </span>
 
-                    {current ? (
+                    {thisDevice ? (
                       <small className="shrink-0 text-body-xs text-success">
                         {t("page.thisDevice")}
                       </small>
@@ -177,6 +185,8 @@ export function LoginHistoryPage() {
           </section>
         );
       })}
+
+      <Pager page={current} pages={pages} onChange={setPage} />
 
       {!logins.isLoading && !rows.length ? (
         <p className="rounded-lg bg-surface px-5 py-8 text-center text-body-sm text-ink-tertiary">
@@ -221,5 +231,50 @@ export function LoginHistoryPage() {
         }
       />
     </ProfileSubPage>
+  );
+}
+
+function pageList(page: number, pages: number): Array<number | "gap"> {
+  const wanted = new Set([1, pages, page - 1, page, page + 1].filter((value) => value >= 1 && value <= pages));
+  const sorted = [...wanted].sort((a, b) => a - b);
+  return sorted.flatMap((value, index) => (index && value - sorted[index - 1] > 1 ? ["gap" as const, value] : [value]));
+}
+
+function Pager({ page, pages, onChange }: { page: number; pages: number; onChange: (page: number) => void }) {
+  const { t } = useTranslation("account");
+  if (pages <= 1) return null;
+  const go = (value: number, target: HTMLElement) => {
+    onChange(value);
+    target.closest("main")?.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const step = "grid size-10 shrink-0 place-items-center rounded-full bg-surface text-ink transition-colors hover:bg-subtle disabled:opacity-40";
+  return (
+    <nav className="flex items-center justify-center gap-1.5" aria-label={t("page.pagination")}>
+      <button type="button" className={step} disabled={page <= 1} aria-label={t("page.prevPage")} onClick={(event) => go(page - 1, event.currentTarget)}>
+        <Icon name="chevron-left" size={20} />
+      </button>
+      {pageList(page, pages).map((value, index) =>
+        value === "gap" ? (
+          <span key={`gap-${index}`} className="w-6 text-center text-body-sm text-ink-secondary">
+            …
+          </span>
+        ) : (
+          <button
+            key={value}
+            type="button"
+            aria-current={value === page ? "page" : undefined}
+            className={`grid size-10 shrink-0 place-items-center rounded-full text-body-sm font-semibold transition-colors ${
+              value === page ? "bg-brand text-ink-inverse" : "bg-surface text-ink hover:bg-subtle"
+            }`}
+            onClick={(event) => go(value, event.currentTarget)}
+          >
+            {value}
+          </button>
+        )
+      )}
+      <button type="button" className={step} disabled={page >= pages} aria-label={t("page.nextPage")} onClick={(event) => go(page + 1, event.currentTarget)}>
+        <Icon name="chevron-right" size={20} />
+      </button>
+    </nav>
   );
 }
