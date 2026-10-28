@@ -1,13 +1,13 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { RouteState } from "@/shared/ui/legacy";
-import { SplashScreen } from "@/shared/ui/splash-screen";
 import { ROUTES } from "@/shared/config";
+import { BootSkeleton } from "./boot-skeleton";
 
 export function ProtectedRoute() {
   const { user, isInitializing, initializationError, retrySession } = useAuth();
   const location = useLocation();
-  if (isInitializing) return <SplashScreen />;
+  if (isInitializing) return <BootSkeleton />;
   if (initializationError) {
     return (
       <RouteState

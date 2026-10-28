@@ -157,7 +157,7 @@ export function ChatHeader({
         ) : (
           <button
             className={`flex h-11 min-w-0 flex-1 items-center gap-2.5 rounded-xl text-left transition-colors ${desk("lg:h-auto lg:gap-3 lg:px-1 lg:py-1 lg:hover:bg-subtle")}`}
-            onClick={() => setInfoOpen(true)}
+            onClick={() => (onToggleInfo ? onToggleInfo() : setInfoOpen(true))}
             aria-label={t("header.openInfoAria", { title: conversation.title })}
           >
             {conversation.type === "group" ? (

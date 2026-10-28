@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useAttendance } from "@/modules/attendance";
-import { useConversations } from "@/modules/conversation";
+import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import { useNotificationInbox } from "@/modules/notification";
@@ -25,6 +25,7 @@ export function useStudentHome() {
   const lessons = useLessons({ page_size: 100 });
   const courses = useCourses();
   const conversations = useConversations("student");
+  const groupImages = useGroupImages("student");
   const quizzes = useQuizzes(null);
   const attendance = useAttendance({ page_size: 200 });
   const inbox = useNotificationInbox({ page_size: 30 });
@@ -32,7 +33,13 @@ export function useStudentHome() {
 
   const { data: assignments } = useStudentAssignments(groups);
 
-  const courseById = useMemo(() => new Map<string, Course>(groups.map((course) => [course.id, course])), [groups]);
+  const courseById = useMemo(
+    () =>
+      new Map<string, Course>(
+        groups.map((course) => [course.id, { ...course, avatarUrl: course.avatarUrl ?? groupImages.get(course.id) ?? null }])
+      ),
+    [groups, groupImages]
+  );
   const roomByCourse = useMemo(
     () =>
       new Map(

@@ -303,11 +303,12 @@ function TeacherMicControl() {
     <button
       type="button"
       className="live-control"
-      disabled
+      data-lk-enabled="false"
       aria-label={t("mic.disabledAria")}
       title={t("mic.disabledTitle")}
+      onClick={() => toast.error(t("mic.disabledTitle"))}
     >
-      <MicOff size={19} />
+      <MicOff size={19} className="live-control-off" />
     </button>
   );
 }
@@ -376,11 +377,12 @@ function TeacherCameraControl() {
     <button
       type="button"
       className="live-control"
-      disabled
+      data-lk-enabled="false"
       aria-label={t("camera.disabledAria")}
       title={t("camera.disabledTitle")}
+      onClick={() => toast.error(t("camera.disabledTitle"))}
     >
-      <VideoOff size={19} />
+      <VideoOff size={19} className="live-control-off" />
     </button>
   );
 }

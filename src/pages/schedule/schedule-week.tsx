@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { addDays, isSameDay, isToday, startOfWeek } from "date-fns";
 import { Icon } from "@/shared/ui/icon";
@@ -5,8 +6,8 @@ import type { Lesson } from "@/shared/types";
 import { lessonTone } from "./lesson-tone";
 
 const WEEK_OPTIONS = { weekStartsOn: 1 } as const;
-const START_HOUR = 9;
-const END_HOUR = 22;
+const START_HOUR = 0;
+const END_HOUR = 24;
 const HOUR_HEIGHT = 52;
 const GUTTER = 72;
 
@@ -35,6 +36,13 @@ export function ScheduleWeek({ anchor, lessons, now, onSelect, onCreate }: Sched
   const nowOffset = (minutesFromStart(now) / 60) * HOUR_HEIGHT;
   const showNow = nowOffset >= 0 && nowOffset <= (END_HOUR - START_HOUR) * HOUR_HEIGHT;
   const empty = !lessons.length;
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const node = scrollRef.current;
+    if (!node) return;
+    node.scrollTop = Math.max(0, nowOffset - node.clientHeight / 2);
+  }, [nowOffset]);
 
   return (
     <section className="relative flex min-w-0 flex-col overflow-hidden rounded-lg bg-surface">
@@ -70,7 +78,7 @@ export function ScheduleWeek({ anchor, lessons, now, onSelect, onCreate }: Sched
         })}
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto pt-1">
+      <div ref={scrollRef} className="h-[calc(100dvh-262px)] min-h-90 overflow-y-auto overscroll-contain pt-1">
         <div
           className="relative grid"
           style={{ gridTemplateColumns: `${GUTTER}px repeat(7, minmax(0, 1fr))` }}

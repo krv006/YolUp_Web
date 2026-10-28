@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { useNotificationFeed } from "../model/use-notification-feed";
-import type { NotificationLink } from "../api/notification.dto";
+import type { OpenNotificationLink } from "../api/notification.dto";
 import { NotificationInboxPanel } from "./notification-inbox-panel";
 
 export interface NotificationBellProps {
@@ -12,7 +12,7 @@ export interface NotificationBellProps {
   className?: string;
   /** Phones open this route instead of the popover. */
   pageHref?: string;
-  onOpenLink?: (link: NotificationLink) => void;
+  onOpenLink?: OpenNotificationLink;
 }
 
 export function NotificationBell({

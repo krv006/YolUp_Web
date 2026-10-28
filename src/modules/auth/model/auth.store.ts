@@ -71,6 +71,17 @@ function toAppError(error: unknown): AppError {
       });
 }
 
+function cachedUser(): AuthUser | null {
+  try {
+    const raw = tokenStorage.readUser();
+    return raw ? (JSON.parse(raw) as AuthUser) : null;
+  } catch {
+    return null;
+  }
+}
+
+const initialUser = cachedUser();
+
 let pendingBootstrap: Promise<void> | null = null;
 let sessionSeq = 0;
 
@@ -88,8 +99,12 @@ function endSession(): void {
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
-  user: null,
-  status: tokenStorage.hasSession() ? AUTH_STATUS.INITIALIZING : AUTH_STATUS.ANONYMOUS,
+  user: initialUser,
+  status: initialUser
+    ? AUTH_STATUS.AUTHENTICATED
+    : tokenStorage.hasSession()
+      ? AUTH_STATUS.INITIALIZING
+      : AUTH_STATUS.ANONYMOUS,
   error: null,
 
   async bootstrap() {
@@ -98,7 +113,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
         return;
       }
-      set({ status: AUTH_STATUS.INITIALIZING, error: null });
+      const cached = get().user;
+      if (!cached) set({ status: AUTH_STATUS.INITIALIZING, error: null });
       try {
         const user = mapUserDto(await authApi.getCurrentUser());
         set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
@@ -110,6 +126,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
           set({ user: null, status: AUTH_STATUS.ANONYMOUS, error: null });
           return;
         }
+        if (cached) return;
         set({ user: null, status: AUTH_STATUS.ERROR, error: appError });
       }
     })();
@@ -213,6 +230,11 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 }));
 
 configureAuthRefresh();
+
+useAuthStore.subscribe((state, prevState) => {
+  if (state.user === prevState.user) return;
+  tokenStorage.writeUser(state.user ? JSON.stringify(state.user) : null);
+});
 
 useLanguageStore.subscribe((state, prevState) => {
   if (suppressLanguagePush || state.language === prevState.language) return;

@@ -14,6 +14,7 @@ import {
 import { formatMessageTime } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
+import { useOpenNotificationLink } from "@/widgets/notification-link";
 
 const GROUP_ORDER: NotificationGroupKey[] = ["today", "yesterday", "earlier"];
 
@@ -24,6 +25,7 @@ export function NotificationsPage() {
   const inbox = useNotificationInbox({ page_size: 30 }, true);
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
+  const openLink = useOpenNotificationLink();
 
   const all = inbox.data?.items ?? [];
   const unreadCount = all.filter((item) => !item.isRead).length;
@@ -114,6 +116,7 @@ export function NotificationsPage() {
                     }`}
                     onClick={() => {
                       if (!item.isRead) markRead.mutate(item.notificationId);
+                      if (item.link) openLink(item.link, item.kind);
                     }}
                   >
                     <span className={`mt-0.5 grid size-10 shrink-0 place-items-center rounded-lg ${tone}`}>

@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Play } from "lucide-react";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
 import { Avatar } from "@/shared/ui/legacy";
@@ -41,12 +41,15 @@ function senderColor(id: string): string {
   return SENDER_COLORS[total % SENDER_COLORS.length];
 }
 
-const RECORDING_PATH = /\/recordings\/[\w-]+/;
+const RECORDING_PATH = /\/recordings\/([\w-]+)/;
 const QUOTED_TITLE = /[“"']([^“”"']+)[”"']/;
 
 function SystemMessage({ text }: { text: string }) {
   const { t } = useTranslation("chat");
-  const path = text.match(RECORDING_PATH)?.[0] ?? null;
+  const { pathname } = useLocation();
+  const lessonId = text.match(RECORDING_PATH)?.[1] ?? null;
+  const area = pathname.match(/^\/(teacher|student)\//)?.[1];
+  const path = lessonId ? `${area ? `/${area}` : ""}/recordings/${lessonId}` : null;
 
   if (path) {
     const title = text.match(QUOTED_TITLE)?.[1] ?? "";

@@ -16,6 +16,7 @@ export {
   readCachedConversation,
   useAnnouncementMode,
   useConversations,
+  useGroupImages,
   useLeaveConversation,
   useMuteConversation,
   usePinConversation,

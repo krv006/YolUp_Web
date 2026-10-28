@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NotificationBell } from "@/modules/notification";
 import { Icon } from "@/shared/ui/icon";
 import { GlobalSearchDialog } from "@/widgets/global-search";
+import { useOpenNotificationLink } from "@/widgets/notification-link";
 
 export interface DashboardShellProps {
   user: string;
@@ -28,6 +29,7 @@ export function DashboardShell({
   children,
 }: DashboardShellProps) {
   const { t } = useTranslation("dashboard");
+  const openLink = useOpenNotificationLink();
 
   return (
     <main className="flex h-full min-h-0 flex-col overflow-y-auto bg-canvas bg-page-gradient">
@@ -52,7 +54,7 @@ export function DashboardShell({
             </kbd>
           </button>
 
-          <NotificationBell className="relative grid size-11 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle" />
+          <NotificationBell onOpenLink={openLink} className="relative grid size-11 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle" />
         </header>
 
         {!online ? (

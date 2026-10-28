@@ -36,5 +36,6 @@
     "review": "Ko‘rib chiqish",
     "open": "Ochish"
   },
-  "back": "Orqaga"
+  "back": "Orqaga",
+  "openFailed": "Bildirishnomani ochib bo‘lmadi"
 }
