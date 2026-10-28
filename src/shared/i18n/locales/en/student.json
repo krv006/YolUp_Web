@@ -1,20 +1,4 @@
 {
-  "dashboard": {
-    "loading": "Loading the student dashboard",
-    "loadError": "Couldn't load the data",
-    "retry": "Retry",
-    "eyebrow": "STUDENT DASHBOARD",
-    "greeting": "Good day, {{name}}! 👋",
-    "subtitle": "Today's lessons and assignments, all in one place.",
-    "nextLessonEyebrow": "NEXT LESSON",
-    "nextLessonTitle": "Today's plan",
-    "schedule": "Schedule",
-    "enterCourse": "Go to course",
-    "noPlannedLesson": "No lesson planned.",
-    "assignmentsEyebrow": "ASSIGNMENTS",
-    "upcomingDeadlines": "Upcoming deadlines",
-    "all": "All"
-  },
   "groupWorkspace": {
     "tabs": {
       "chat": "Chat",
@@ -23,37 +7,48 @@
     },
     "sendFailed": "Couldn't send the message",
     "replyFallback": "Reply",
-    "lessons": {
-      "eyebrow": "COURSE LESSONS",
-      "title": "Lessons"
+    "tasks": {
+      "eyebrow": "GROUP TASKS",
+      "title": "Tasks",
+      "subtitle": "Your assignments and results",
+      "due": "Due: {{date}}",
+      "noDue": "No deadline",
+      "quizMeta": "{{count}} questions · Test",
+      "daysLeft": "{{count}} days left",
+      "overdue": "Overdue",
+      "checking": "Under review",
+      "finished": "Completed",
+      "new": "New",
+      "notSubmitted": "Not submitted",
+      "submittedOn": "Submitted · {{date}}",
+      "result": "Result · {{value}}",
+      "grade": "Grade · {{value}}",
+      "solve": "Solve",
+      "open": "Open",
+      "results": "View result",
+      "emptyTitle": "No tasks yet",
+      "emptyHint": "Tasks from your teacher will appear here."
     },
-    "assignments": {
-      "eyebrow": "COURSE ASSIGNMENTS",
-      "title": "Assignments",
-      "downloadAria": "Download the assignment file",
-      "downloadFallback": "Download the assignment file",
-      "scoreSuffix": "pts",
-      "checkError": "Check error",
-      "checking": "Being checked…",
-      "openResultAria": "Open result",
-      "quizBadge": "Quiz",
-      "quizQuestions": "{{count}} questions",
-      "quizSolve": "Solve",
-      "quizHistoryAria": "Attempt history",
-      "overdueLabel": "Past due",
-      "dueLabel": "Due",
-      "noDue": "No due date",
-      "missed": "Not submitted",
-      "submit": "Submit",
-      "empty": "No assignments.",
-      "submitDialogDescription": "Upload the assignment file (25 MB max).",
-      "chooseFile": "Choose file",
-      "send": "Send",
-      "deadlinePassed": "The submission deadline has passed",
-      "resultDialogTitle": "Your assignment result",
-      "solveOnBoard": "Solve on the board",
-      "solveOnBoardHint": "Solve on the full whiteboard (pen, formulas, shapes) or upload a file below."
-    }
+    "lessonsTab": {
+      "eyebrow": "SCHEDULE",
+      "title": "Lessons",
+      "subtitle": "All live sessions of the group",
+      "today": "Today, {{date}}",
+      "yesterday": "Yesterday, {{date}}",
+      "tomorrow": "Tomorrow, {{date}}",
+      "attended": "You attended",
+      "missed": "You missed it",
+      "video": "Recording",
+      "rate": "Rate",
+      "myRating": "Your rating · {{value}}",
+      "join": "Join lesson",
+      "remind": "Set reminder",
+      "noTopic": "No topic",
+      "emptyTitle": "No lessons scheduled yet",
+      "emptyHint": "Lessons will appear here once your teacher adds them.",
+      "minutes": "{{count}} min"
+    },
+    "soon": "Coming soon"
   },
   "enrollmentDialog": {
     "title": "New conversation",
@@ -72,5 +67,360 @@
     "join": "Join",
     "noOpenCourses": "No open courses yet.",
     "loadError": "Couldn't load the data"
+  },
+  "home": {
+    "noLessons": "no lessons today",
+    "lessonCount": "{{count}} lessons today",
+    "searchPlaceholder": "Search lessons, tasks, tests...",
+    "hero": {
+      "live": "Lesson in progress · {{count}} min",
+      "startsIn": "In {{count}} min",
+      "startsInHours": "In {{count}} h",
+      "startsNow": "Starting now",
+      "tomorrow": "Tomorrow · {{time}}",
+      "inLesson": "{{count}} in the lesson",
+      "online": "online",
+      "join": "Join lesson",
+      "details": "Details",
+      "chat": "Open chat"
+    },
+    "stats": {
+      "lessons": "Today's lessons",
+      "lessonsDone": "{{count}} finished",
+      "dayOff": "day off",
+      "tasks": "Tasks",
+      "tasksTomorrow": "{{count}} due tomorrow",
+      "tasksToday": "{{count}} due today",
+      "tasksLater": "nothing due soon",
+      "grade": "Average grade",
+      "gradeHint": "last 30 days",
+      "attendance": "Attendance",
+      "attendanceHint": "this month"
+    },
+    "today": {
+      "title": "Today's lessons",
+      "finished": "Finished · {{teacher}}",
+      "emptyTitle": "No lessons today",
+      "emptyNext": "Take a rest! First lesson tomorrow — {{time}}, {{title}}",
+      "emptyLater": "Take a rest! Next lesson — {{date}}, {{title}}",
+      "emptyNone": "Take a rest! No lessons in the coming days.",
+      "openSchedule": "Open schedule"
+    },
+    "tasks": {
+      "title": "Upcoming deadlines",
+      "today": "today, {{time}}",
+      "tomorrow": "tomorrow, {{time}}",
+      "daysLeft": "{{count}} days left",
+      "test": "Test · {{count}} questions",
+      "empty": "Nothing due soon"
+    },
+    "grades": {
+      "title": "Recent grades",
+      "empty": "No grades yet",
+      "yesterday": "Yesterday"
+    },
+    "seeAll": "See all",
+    "mobile": {
+      "tasksTitle": "Upcoming deadlines",
+      "tasksHint": "{{count}} tasks · nearest {{when}}",
+      "liveRow": "Lesson in progress",
+      "enter": "Join",
+      "chat": "Chat",
+      "tomorrowTitle": "Tomorrow's lessons",
+      "schedule": "Schedule"
+    },
+    "offline": "No internet. Showing saved data"
+  },
+  "workspace": {
+    "eyebrow": "Student workspace",
+    "soon": "Coming soon",
+    "back": "Back",
+    "stats": {
+      "tests": "Tests",
+      "testsHint": "{{count}} due today",
+      "assignments": "Active tasks",
+      "assignmentsHint": "{{count}} due tomorrow",
+      "mock": "Mock exam",
+      "mockNone": "not scheduled",
+      "average": "Average score",
+      "averageHint": "last {{count}} attempts"
+    },
+    "modulesTitle": "Modules",
+    "modules": {
+      "tests": {
+        "title": "Tests",
+        "description": "Take tests from your teacher and see results instantly."
+      },
+      "assignments": {
+        "title": "Assignments",
+        "description": "Submit homework and see your grades."
+      },
+      "mock": {
+        "title": "Mock tests",
+        "description": "IELTS, SAT and national certificate practice exams."
+      },
+      "ai": {
+        "title": "AI assistant",
+        "description": "Explains your mistakes and builds practice for you."
+      },
+      "analytics": {
+        "title": "Analytics",
+        "description": "Your results, progress and weak topics."
+      },
+      "materials": {
+        "title": "Materials",
+        "description": "Textbooks, audio and files"
+      }
+    },
+    "counts": {
+      "tests": "{{count}} new",
+      "assignments": "{{count}} active",
+      "mockNone": "Not scheduled",
+      "ai": "New",
+      "analytics": "Average {{value}}",
+      "materials": "Coming soon"
+    },
+    "mobile": {
+      "eyebrow": "Workspace",
+      "overview": "Overview",
+      "details": "Details",
+      "stats": {
+        "tests": "New tests",
+        "assignments": "Tasks",
+        "average": "Score"
+      }
+    },
+    "tests": {
+      "eyebrow": "Workspace / Tests · {{count}}",
+      "title": "Tests",
+      "filters": {
+        "all": "All",
+        "new": "New",
+        "solved": "Solved",
+        "overdue": "Overdue"
+      },
+      "attempts": "Attempts",
+      "meta": "{{subject}} · {{count}} questions",
+      "solve": "Start",
+      "result": "Result",
+      "retry": "Retake",
+      "solvedChip": "Solved · {{value}}%",
+      "overdueChip": "Overdue",
+      "otherSubject": "Other",
+      "emptyTitle": "No tests yet",
+      "emptyHint": "Tests from your teacher will appear here.",
+      "attemptsTitle": "My attempts",
+      "attemptsSubtitle": "Your latest test attempts",
+      "attemptsEmpty": "You haven’t taken any tests yet"
+    },
+    "player": {
+      "questions": "Questions · {{count}}",
+      "meta": "no time limit",
+      "later": "Continue later",
+      "finish": "Finish and submit",
+      "overline": "Question {{n}} · {{type}}",
+      "prev": "Previous",
+      "next": "Next question",
+      "submitting": "Submitting…",
+      "loadError": "Couldn’t load the test",
+      "retry": "Try again",
+      "savedLater": "Your answers are saved — continue any time",
+      "submitted": "Test submitted",
+      "unanswered": "{{count}} questions are unanswered. Submit anyway?",
+      "types": {
+        "single": "Single answer",
+        "multiple": "Multiple answers",
+        "true_false": "True / False",
+        "numeric": "Number",
+        "text": "Short answer",
+        "matching": "Matching",
+        "ordering": "Ordering",
+        "fill_blank": "Fill the gap",
+        "essay": "Essay"
+      },
+      "hints": {
+        "single": "Choose one correct answer. Answers are saved automatically.",
+        "multiple": "Select all correct answers. Answers are saved automatically.",
+        "true_false": "Mark whether the statement is true or false.",
+        "numeric": "Enter the answer as a number.",
+        "text": "Write a short answer.",
+        "matching": "Match each item.",
+        "ordering": "Put the items in the right order.",
+        "fill_blank": "Fill in the blanks.",
+        "essay": "Write your essay. Answers are saved automatically."
+      },
+      "trueLabel": "True",
+      "falseLabel": "False",
+      "finishShort": "Finish"
+    },
+    "results": {
+      "eyebrow": "Tests / Your result · {{course}}",
+      "retry": "Retake",
+      "stats": {
+        "score": "Your score",
+        "correct": "Correct answers",
+        "group": "Group average",
+        "time": "Time spent"
+      },
+      "minutes": "{{count}} min",
+      "table": {
+        "attempt": "Attempt",
+        "number": "#",
+        "correct": "Correct",
+        "time": "Time",
+        "result": "Result",
+        "last": "latest"
+      },
+      "mistakes": "Questions you missed",
+      "wrong": "Wrong",
+      "questionLabel": "Q{{n}} · {{text}}",
+      "noMistakes": "No mistakes — well done!",
+      "mistakesUnknown": "Per-question analysis appears after you take the test.",
+      "ai": {
+        "title": "AI tip",
+        "text": "We’ll build {{count}} practice questions from the ones you missed.",
+        "textNone": "Great result! Practise more to lock it in.",
+        "start": "Start practice",
+        "started": "Practice is being prepared — you’ll get a notification"
+      },
+      "empty": "You haven’t taken this test yet",
+      "emptyHint": "Take the test — your result will appear here.",
+      "solve": "Take the test"
+    },
+    "analytics": {
+      "eyebrow": "Your results, grades and attendance",
+      "title": "Analytics",
+      "stats": {
+        "grade": "Average grade",
+        "gradeHint": "from {{count}} grades",
+        "lessons": "Lessons attended",
+        "lessonsHint": "{{count}} missed",
+        "attendance": "Attendance",
+        "attendanceHint": "this month",
+        "homework": "Assignments",
+        "homeworkHint": "submitted on time"
+      },
+      "chart": {
+        "title": "Your test results — average score",
+        "range": "Last 8 weeks",
+        "empty": "No tests taken yet"
+      },
+      "subjects": {
+        "title": "By subject",
+        "test": "tests {{value}}%",
+        "empty": "You haven’t joined a group yet"
+      }
+    },
+    "mock": {
+      "eyebrow": "Practice exams assigned to you",
+      "title": "Mock tests",
+      "filters": {
+        "all": "All",
+        "ielts": "IELTS",
+        "sat": "SAT",
+        "milliy": "National",
+        "other": "Other"
+      },
+      "states": {
+        "running": "Live",
+        "upcoming": "Scheduled",
+        "finished": "Finished",
+        "submitted": "Submitted"
+      },
+      "today": "today {{time}}",
+      "hours": "{{count}} h",
+      "hoursMinutes": "{{hours}} h {{minutes}} min",
+      "minutesOnly": "{{count}} min",
+      "continue": "Continue",
+      "remind": "Set reminder",
+      "result": "Result",
+      "live": "Live",
+      "left": "left",
+      "leftSection": "left · {{section}}",
+      "back": "Back to exam",
+      "emptyTitle": "No mock exams yet",
+      "emptyHint": "Practice exams from your teacher will appear here."
+    },
+    "mockResult": {
+      "eyebrow": "Mock tests / Your result · {{date}}",
+      "pdf": "Download PDF",
+      "stats": {
+        "overall": "Overall band",
+        "group": "Group average",
+        "target": "Your target"
+      },
+      "sections": "Your results by section",
+      "details": "Section details",
+      "correct": "{{earned}} / {{max}} correct",
+      "manual": "Graded by teacher",
+      "pending": "Being graded",
+      "essay": "Your essay · {{title}}",
+      "words": "{{count}} words",
+      "aiTitle": "AI review · IELTS criteria",
+      "aiQueued": "AI review in progress…",
+      "mistakes": "Main mistakes: {{value}}",
+      "strengths": "Strengths: {{value}}",
+      "askTeacher": "Ask the teacher",
+      "practice": "Work on mistakes",
+      "notReady": "Results aren’t published yet",
+      "notReadyHint": "They’ll appear here once your teacher publishes them."
+    },
+    "homework": {
+      "eyebrow": "Workspace / Assignments · {{count}}",
+      "title": "Assignments",
+      "filters": {
+        "all": "All",
+        "open": "Not submitted",
+        "checking": "Being checked",
+        "graded": "Graded"
+      },
+      "emptyTitle": "No assignments yet",
+      "emptyHint": "Assignments from your teacher will appear here."
+    },
+    "hwItem": {
+      "eyebrow": "Assignments / {{course}} · {{teacher}}",
+      "daysLeft": "{{count}} days left",
+      "today": "Due today",
+      "overdue": "Overdue",
+      "aiCheck": "AI pre-check",
+      "answer": "Your answer",
+      "answerHint": "Upload a file and leave a note if needed. Your teacher reviews it after you submit.",
+      "drop": "Drop a file here or browse",
+      "dropHint": "PDF, JPG, PNG, DOCX · up to 25 MB",
+      "dropSpeaking": "MP3, WAV, M4A, OGG · up to 25 MB",
+      "fileReady": "{{size}} · selected",
+      "remove": "Remove",
+      "comment": "Note (optional)",
+      "commentPlaceholder": "E.g. I needed help with exercise 124…",
+      "dueNotice": "Due: {{date}} · {{left}}.",
+      "lateAllowed": "Late submission is allowed.",
+      "lateDenied": "Late submission isn’t allowed.",
+      "noDue": "No due date.",
+      "draft": "Save draft",
+      "draftSaved": "Draft saved",
+      "submit": "Submit",
+      "board": "Solve on the board",
+      "resultTitle": "{{title}} · your answer",
+      "onTime": "submitted on time",
+      "late": "submitted late",
+      "download": "Download",
+      "aiScore": "AI pre-grade: {{value}}",
+      "aiHint": "Your teacher sets the final grade",
+      "aiHintDone": "Your teacher set the final grade",
+      "checking": "AI is checking",
+      "checkingHint": "Updates as soon as the result is ready",
+      "failed": "Couldn’t check the file automatically — your teacher will grade it",
+      "findings": "Issues found",
+      "teacherGrade": "Teacher’s grade",
+      "waitingGrade": "Not graded yet",
+      "matchesAi": "Matches AI",
+      "teacherComment": "Teacher’s note",
+      "writeTeacher": "Message teacher",
+      "ok": "Got it",
+      "resubmit": "Resubmit",
+      "resubmitAsked": "Your teacher asked you to resubmit",
+      "notFound": "Assignment not found",
+      "retry": "Try again"
+    }
   }
 }

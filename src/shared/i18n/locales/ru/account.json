@@ -263,7 +263,6 @@
       "file": "Файл",
       "pickFile": "Выберите файл",
       "pickOrDrop": "Выберите файл или перетащите сюда",
-      "today": "сегодня",
       "fileTypes": "PDF, JPG или PNG · до {{size}} МБ",
       "fileTooBig": "Файл должен быть меньше {{size}} МБ",
       "fileMeta": "{{type}} · {{size}} · загружено",
@@ -273,7 +272,11 @@
       "noCertificatesTitle": "Сертификатов пока нет",
       "noCertificatesHint": "Загрузите IELTS, CELTA или другой сертификат — ученики увидят его в профиле.",
       "openFile": "Открыть файл"
-    }
+    },
+    "studying": "Изучаемые предметы",
+    "studentRatingsTitle": "Последние оценки от преподавателей",
+    "studentRatingMeta": "{{course}} · {{when}} · оценка {{value}}",
+    "studentNoRatingsHint": "Оценки появятся здесь, когда преподаватель проверит работу."
   },
   "help": {
     "search": "Поиск вопроса или темы…",

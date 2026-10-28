@@ -212,7 +212,10 @@
     "mobileDelete": "Yozuvni o‘chirish",
     "mobilePlatformOnly": "Faqat platformada ochiladi — yuklab olib bo‘lmaydi.",
     "mobileMerging": "Audio va video birlashtirilmoqda — bu biroz vaqt olishi mumkin",
-    "mobileReadyNote": "Tayyor bo‘lishi bilan chatga xabar yuboriladi."
+    "mobileReadyNote": "Tayyor bo‘lishi bilan chatga xabar yuboriladi.",
+    "joinedYou": "Qatnashdingiz",
+    "minutesShort": "{{count}} daq",
+    "download": "Yuklab olish"
   },
   "schedule": {
     "now": "HOZIR",
@@ -296,7 +299,7 @@
     "students": "{{count}} o‘quvchi",
     "studentsAndDuration": "{{count}} o‘quvchi · {{minutes}} daqiqa",
     "openChat": "Chatga o‘tish",
-    "join": "Darsga kirish",
+    "join": "Darsga qo‘shilish",
     "ratings": "Baholar",
     "close": "Yopish",
     "nextLesson": "Keyingi dars",
@@ -317,9 +320,31 @@
         "weekly": "har hafta",
         "daily": "har kuni",
         "monthly": "har oy"
-      }
+      },
+      "teacher": "O‘qituvchi"
     },
-    "title": "Jadval"
+    "title": "Jadval",
+    "nowOpen": "Hozir · davomat ochiq",
+    "nextLessonShort": "Keyingi dars",
+    "finishedBy": "Tugadi · {{teacher}}",
+    "teacherDuration": "{{teacher}} · {{count}} daqiqa",
+    "todayStat": "Bugun",
+    "attendanceStat": "Davomat",
+    "emptyStudentHint": "O‘qituvchingiz dars qo‘shganda shu yerda ko‘rinadi.",
+    "remind": "Eslatma qo‘yish",
+    "soon": "Tez orada",
+    "recording": "Video yozuv",
+    "rate": "Baholash",
+    "myRating": "Bahoyingiz · {{value}}",
+    "joinShort": "Qo‘shilish",
+    "chip": {
+      "finished": "Tugadi",
+      "live": "Ketmoqda",
+      "scheduled": "Rejalashtirilgan",
+      "cancelled": "Bekor qilindi"
+    },
+    "dayToday": "Bugun",
+    "dayTomorrow": "Ertaga"
   },
   "scheduleDialog": {
     "title": "Yangi dars",

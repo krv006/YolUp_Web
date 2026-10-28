@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation } from "react-router-dom";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
-import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 
 interface TabItem {
@@ -10,18 +10,19 @@ interface TabItem {
   to: string;
 }
 
-const TABS: TabItem[] = [
-  { id: "workspace", icon: "nav-workspace", to: ROUTES.teacher.workspace },
-  { id: "schedule", icon: "nav-calendar", to: ROUTES.teacher.schedule },
-  { id: "home", icon: "home", to: ROUTES.teacher.dashboard },
-  { id: "chat", icon: "nav-chat", to: ROUTES.teacher.chats },
-  { id: "profile", icon: "nav-profile", to: ROUTES.teacher.profile },
-];
 
 export function MobileTabBar() {
   const { t } = useTranslation("nav");
   const { pathname } = useLocation();
-  const { data = [] } = useConversations("teacher");
+  const routes = useRoleRoutes();
+  const { data = [] } = useConversations(useIsStudent() ? "student" : "teacher");
+  const tabs: TabItem[] = [
+    { id: "workspace", icon: "nav-workspace", to: routes.workspace },
+    { id: "schedule", icon: "nav-calendar", to: routes.schedule },
+    { id: "home", icon: "home", to: routes.dashboard },
+    { id: "chat", icon: "nav-chat", to: routes.chats },
+    { id: "profile", icon: "nav-profile", to: routes.profile },
+  ];
   const unread = data.filter((item) => item.unreadCount > 0).length;
 
   return (
@@ -29,7 +30,7 @@ export function MobileTabBar() {
       className="fixed inset-x-4 bottom-[max(30px,env(safe-area-inset-bottom))] z-30 flex h-17 items-stretch rounded-[28px] bg-surface px-2 font-body shadow-lg lg:hidden"
       aria-label={t("rail.sectionsLabel")}
     >
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const active = pathname === tab.to || pathname.startsWith(`${tab.to}/`);
 
         if (tab.id === "home")

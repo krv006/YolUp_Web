@@ -46,23 +46,6 @@
     "emptyDescription": "Создайте первый тест или импортируйте из файла .docx / .xlsx / .json.",
     "subjectSearch": "Поиск"
   },
-  "studentPage": {
-    "loading": "Загрузка тестов",
-    "eyebrow": "ТЕСТЫ",
-    "loadError": "Не удалось загрузить тесты",
-    "retry": "Повторить",
-    "allCourses": "ВСЕ КУРСЫ",
-    "title": "Тесты",
-    "subtitle": "Без ограничения по времени — неограниченные попытки.",
-    "courseFallback": "Курс",
-    "dueLabel": "Срок: {{date}}",
-    "noDue": "Без срока",
-    "questionCount": "{{count}} вопросов",
-    "historyAria": "История попыток",
-    "solveButton": "Пройти тест",
-    "empty": "Тестов пока нет.",
-    "attemptsOfTitle": "«{{title}}» — ваши попытки"
-  },
   "createDialog": {
     "title": "Новый тест",
     "description": "8 типов вопросов — проверка автоматическая и мгновенная.",

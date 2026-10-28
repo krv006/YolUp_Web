@@ -1,9 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation } from "react-router-dom";
 import logoUrl from "@/shared/assets/y-logo.svg";
-import { useAuth } from "@/modules/auth";
+import { useAuth, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
-import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 
@@ -26,19 +25,6 @@ const WORKSPACE_PATHS = [
   "/homework-board",
 ];
 
-const ITEMS: NavItem[] = [
-  { id: "home", icon: "home", to: ROUTES.teacher.dashboard },
-  { id: "chat", icon: "nav-chat", to: ROUTES.teacher.chats, end: true },
-  { id: "schedule", icon: "nav-calendar", to: ROUTES.teacher.schedule },
-  {
-    id: "workspace",
-    icon: "nav-workspace",
-    to: ROUTES.teacher.workspace,
-    extra: WORKSPACE_PATHS,
-  },
-  { id: "profile", icon: "nav-profile", to: ROUTES.teacher.profile },
-];
-
 const LINK_BASE =
   "flex h-11 items-center gap-3 rounded-xl px-3 text-label-lg transition-colors";
 const LINK_IDLE = "text-ink-secondary hover:bg-subtle hover:text-ink";
@@ -48,19 +34,29 @@ export function AppSidebar() {
   const { t } = useTranslation("nav");
   const { pathname } = useLocation();
   const { user } = useAuth();
-  const conversations = useConversations("teacher");
+  const routes = useRoleRoutes();
+  const isStudent = useIsStudent();
+  const conversations = useConversations(isStudent ? "student" : "teacher");
+  const items: NavItem[] = [
+    { id: "home", icon: "home", to: routes.dashboard },
+    { id: "chat", icon: "nav-chat", to: routes.chats, end: true },
+    { id: "schedule", icon: "nav-calendar", to: routes.schedule, extra: ["/recordings"] },
+    { id: "workspace", icon: "nav-workspace", to: routes.workspace, extra: WORKSPACE_PATHS },
+    { id: "profile", icon: "nav-profile", to: routes.profile },
+  ];
 
   const unreadChats = (conversations.data ?? []).filter((item) => item.unreadCount > 0).length;
+  const studentGroup = (conversations.data ?? []).find((item) => item.type === "group")?.title;
 
   return (
     <aside className="flex h-full w-(--layout-sidebar) shrink-0 flex-col gap-6 border-r border-line-subtle bg-surface px-4 pt-6 pb-5 font-body text-ink">
-      <NavLink to={ROUTES.teacher.dashboard} className="flex items-center gap-2 px-3">
+      <NavLink to={routes.dashboard} className="flex items-center gap-2 px-3">
         <img className="size-8" src={logoUrl} alt="" />
         <span className="font-heading text-h3 text-ink">YolUp</span>
       </NavLink>
 
       <nav className="-mt-0.5 flex flex-col gap-1.5" aria-label={t("rail.sectionsLabel")}>
-        {ITEMS.map((item) => {
+        {items.map((item) => {
           const extraActive = (item.extra ?? []).some(
             (path) => pathname.endsWith(path) || pathname.includes(`${path}/`)
           );
@@ -88,16 +84,18 @@ export function AppSidebar() {
       <span className="min-h-0 flex-1" aria-hidden="true" />
 
       <NavLink
-        to={ROUTES.teacher.profile}
+        to={routes.profile}
         className="flex items-center gap-2.5 rounded-2xl bg-subtle py-2.5 pr-[9px] pl-2.5 transition-colors hover:bg-muted"
       >
         <Avatar name={user?.name} src={user?.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-[38px]" />
         <span className="flex min-w-0 flex-1 flex-col">
           <strong className="truncate text-body-xs font-semibold tracking-tight text-ink">{user?.name}</strong>
           <small className="truncate text-caption font-normal text-ink-secondary">
-            {user?.subject
-              ? t("sidebar.subjectTeacher", { subject: user.subject })
-              : t("roles.teacher")}
+            {isStudent
+              ? [t("roles.student"), studentGroup].filter(Boolean).join(" · ")
+              : user?.subject
+                ? t("sidebar.subjectTeacher", { subject: user.subject })
+                : t("roles.teacher")}
           </small>
         </span>
         <Icon name="settings" size={18} className="-ml-1.5 shrink-0 text-icon-secondary" />

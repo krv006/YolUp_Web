@@ -7,7 +7,9 @@
     "noChatsTeacher": "Guruh yarating va o‘quvchilaringizni taklif qiling. Suhbatlar shu yerda paydo bo‘ladi.",
     "noChatsStudent": "Kursga yoziling yoki o‘qituvchi toping. Suhbatlar shu yerda paydo bo‘ladi.",
     "createGroup": "Guruh yaratish",
-    "findTeacher": "Kursga yozilish"
+    "findTeacher": "Kursga yozilish",
+    "newChat": "Yangi suhbat",
+    "joinGroup": "Guruhga qo‘shilish"
   },
   "header": {
     "backAria": "Suhbatlar ro'yxatiga qaytish",
@@ -92,7 +94,8 @@
     "deleteCourseWarning": "Guruh chati, darslar, vazifalar va video yozuvlar butunlay o‘chiriladi.",
     "filesEmptyHint": "Guruhda yuborilgan fayllar shu yerda to‘planadi.",
     "mediaEmptyHint": "Guruhda yuborilgan rasm va videolar shu yerda to‘planadi.",
-    "descriptionShort": "Tavsif"
+    "descriptionShort": "Tavsif",
+    "memberYou": "{{name}} (siz)"
   },
   "item": {
     "liveNow": "Dars ketmoqda",

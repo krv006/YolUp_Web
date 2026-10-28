@@ -263,7 +263,6 @@
       "file": "Fayl",
       "pickFile": "Faylni tanlang",
       "pickOrDrop": "Faylni tanlang yoki shu yerga tashlang",
-      "today": "bugun",
       "fileTypes": "PDF, JPG yoki PNG · {{size}} MB gacha",
       "fileTooBig": "Fayl {{size}} MB dan katta bo‘lmasligi kerak",
       "fileMeta": "{{type}} · {{size}} · yuklandi",
@@ -273,7 +272,11 @@
       "noCertificatesTitle": "Hali sertifikat yo‘q",
       "noCertificatesHint": "IELTS, CELTA yoki boshqa sertifikatingizni yuklang — o‘quvchilar profilingizda ko‘radi.",
       "openFile": "Faylni ochish"
-    }
+    },
+    "studying": "O‘qiyotgan fanlar",
+    "studentRatingsTitle": "O‘qituvchilardan so‘nggi baholar",
+    "studentRatingMeta": "{{course}} · {{when}} · baho {{value}}",
+    "studentNoRatingsHint": "O‘qituvchingiz vazifangizni baholagach, bahosi shu yerda chiqadi."
   },
   "help": {
     "search": "Savol yoki mavzu qidirish…",

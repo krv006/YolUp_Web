@@ -66,7 +66,10 @@
     "mobileChangeLater": "you can change this later",
     "mobileRecordingNote": "The lesson is recorded — students can watch it later",
     "mobileCancel": "Cancel",
-    "mobileJoin": "Join lesson"
+    "mobileJoin": "Join lesson",
+    "teacher": "Teacher: {{name}}",
+    "inLessonNames": "{{names}} and {{count}} more in the lesson",
+    "recordingNoteStudent": "The lesson is recorded — you can watch it later under “Lesson recording”."
   },
   "connection": {
     "connecting": "Connecting…",
@@ -129,7 +132,13 @@
     "mobileShare": "Share",
     "mobilePeople": "People",
     "mobileParticipantsCount": "Participants · {{count}}",
-    "liveLesson": "Live lesson"
+    "liveLesson": "Live lesson",
+    "peopleInLesson": "{{count}} in the lesson",
+    "recordingStudent": "Recording — audio and video",
+    "queueTitle": "You’re in the queue ({{count}})",
+    "handRaised": "hand raised",
+    "cancelRequest": "Cancel",
+    "soon": "Coming soon"
   },
   "mic": {
     "label": "Microphone",

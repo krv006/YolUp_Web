@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useAttendance } from "@/modules/attendance";
+import { useCurrentUser, useIsStudent } from "@/modules/auth";
 import { useCourse } from "@/modules/course";
 import { boardApi } from "@/modules/board";
 import { useDeleteRecording, useShareRecording } from "@/modules/lesson";
@@ -41,6 +42,10 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
   const attendance = useAttendance({ lesson: lesson.id });
   const removeRecording = useDeleteRecording();
   const share = useShareRecording(lesson.id);
+  const student = useIsStudent();
+  const me = useCurrentUser();
+  const months = t("list.months", { returnObjects: true }) as string[];
+  const boardRoute = student ? ROUTES.board(lesson.id) : ROUTES.teacher.board(lesson.id);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
@@ -81,13 +86,20 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
 
   const pending = Boolean(recording) && recording?.status !== "failed" && !recording?.ready;
 
+  const own = rows.find((row) => row.studentId === me?.id) ?? (student ? (rows[0] ?? null) : null);
+  const ownFocus = own ? focusPercent(own, lesson.durationMinutes) : null;
+  const starts = new Date(lesson.startsAt);
   const visibleRows = rows.slice(0, 3);
   const previews = recording?.boardPreviews ?? [];
   const boardPages = previews.length || (recording?.boardPages ?? 0);
 
   return (
     <WorkspaceShell
-      eyebrow={`${t("recording.eyebrow")} · ${lesson.courseTitle} · ${lesson.date}, ${lesson.time} · ${durationLabel}`}
+      eyebrow={
+        student
+          ? `${t("recording.eyebrow")} · ${lesson.courseTitle} · ${starts.getDate()}-${(months[starts.getMonth()] ?? "").toLowerCase()}`
+          : `${t("recording.eyebrow")} · ${lesson.courseTitle} · ${lesson.date}, ${lesson.time} · ${durationLabel}`
+      }
       title={lesson.title || t("list.missingTopic")}
     >
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
@@ -154,18 +166,29 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
-          <div className="grid grid-cols-2 gap-2.5">
-            <StatCard
-              label={t("recording.joined")}
-              value={`${joined}/${studentCount}`}
-              tone="text-success"
-            />
-            <StatCard
-              label={t("recording.focus")}
-              value={focus === null ? "—" : `${focus}%`}
-              tone="text-ink"
-            />
-          </div>
+          {student ? (
+            <div className="grid grid-cols-2 gap-2.5">
+              <StatCard
+                label={t("recording.joinedYou")}
+                value={own?.minutes ? t("recording.minutesShort", { count: own.minutes }) : "—"}
+                tone="text-success"
+              />
+              <StatCard label={t("recording.focus")} value={ownFocus === null ? "—" : `${ownFocus}%`} tone="text-ink" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2.5">
+              <StatCard
+                label={t("recording.joined")}
+                value={`${joined}/${studentCount}`}
+                tone="text-success"
+              />
+              <StatCard
+                label={t("recording.focus")}
+                value={focus === null ? "—" : `${focus}%`}
+                tone="text-ink"
+              />
+            </div>
+          )}
 
           <section className="flex flex-col gap-5">
             <header className="flex items-center gap-3">
@@ -190,7 +213,7 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
                     type="button"
                     className="h-17.5 overflow-hidden rounded-md bg-surface transition-opacity hover:opacity-85"
                     title={preview.title}
-                    onClick={() => navigate(ROUTES.teacher.board(lesson.id))}
+                    onClick={() => navigate(boardRoute)}
                   >
                     <img
                       className="size-full object-cover object-top"
@@ -208,7 +231,7 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
                     key={index}
                     type="button"
                     className="flex h-17.5 flex-col justify-start gap-1.5 rounded-md bg-surface px-3 pt-3 text-left transition-colors hover:bg-subtle"
-                    onClick={() => navigate(ROUTES.teacher.board(lesson.id))}
+                    onClick={() => navigate(boardRoute)}
                   >
                     <i className="h-1 w-3/5 rounded-full bg-line-strong not-italic" />
                     <i className="h-1 w-4/5 rounded-full bg-line not-italic" />
@@ -223,6 +246,18 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
             )}
           </section>
 
+          {student ? (
+            <button
+              type="button"
+              className="flex h-[42px] items-center justify-center rounded-full border border-line-strong bg-surface text-body-sm font-semibold text-ink transition-colors hover:bg-subtle disabled:opacity-40"
+              disabled={!recording?.pdfUrl || downloading}
+              onClick={downloadPdf}
+            >
+              {t("recording.download")}
+            </button>
+          ) : null}
+
+          {student ? null : (
           <section className="flex flex-col gap-5">
             <header className="flex items-center gap-3">
               <strong className="min-w-0 flex-1 truncate font-heading text-title text-ink">
@@ -282,6 +317,7 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
               ) : null}
             </div>
           </section>
+          )}
 
           {canManage ? (
             <div className="grid grid-cols-2 gap-2.5">

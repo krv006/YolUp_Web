@@ -1,20 +1,4 @@
 {
-  "dashboard": {
-    "loading": "Загрузка панели ученика",
-    "loadError": "Не удалось загрузить данные",
-    "retry": "Повторить",
-    "eyebrow": "КАБИНЕТ УЧЕНИКА",
-    "greeting": "Доброго дня, {{name}}! 👋",
-    "subtitle": "Сегодняшние уроки и задания в одном месте.",
-    "nextLessonEyebrow": "СЛЕДУЮЩИЙ УРОК",
-    "nextLessonTitle": "План на сегодня",
-    "schedule": "Расписание",
-    "enterCourse": "Перейти к курсу",
-    "noPlannedLesson": "Запланированных уроков нет.",
-    "assignmentsEyebrow": "ЗАДАНИЯ",
-    "upcomingDeadlines": "Ближайшие сроки",
-    "all": "Все"
-  },
   "groupWorkspace": {
     "tabs": {
       "chat": "Чат",
@@ -23,37 +7,48 @@
     },
     "sendFailed": "Не удалось отправить сообщение",
     "replyFallback": "Ответ",
-    "lessons": {
-      "eyebrow": "УРОКИ КУРСА",
-      "title": "Уроки"
-    },
-    "assignments": {
-      "eyebrow": "ЗАДАНИЯ КУРСА",
+    "tasks": {
+      "eyebrow": "ЗАДАНИЯ ГРУППЫ",
       "title": "Задания",
-      "downloadAria": "Скачать файл задания",
-      "downloadFallback": "Скачать файл задания",
-      "scoreSuffix": "баллов",
-      "checkError": "Ошибка проверки",
-      "checking": "Проверяется…",
-      "openResultAria": "Открыть результат",
-      "quizBadge": "Тест",
-      "quizQuestions": "Вопросов: {{count}}",
-      "quizSolve": "Решить",
-      "quizHistoryAria": "История попыток",
-      "overdueLabel": "Срок истёк",
-      "dueLabel": "Срок",
+      "subtitle": "Ваши задания и результаты",
+      "due": "Срок: {{date}}",
       "noDue": "Без срока",
-      "missed": "Не сдано",
-      "submit": "Сдать",
-      "empty": "Заданий нет.",
-      "submitDialogDescription": "Загрузите файл задания (максимум 25 МБ).",
-      "chooseFile": "Выбрать файл",
-      "send": "Отправить",
-      "deadlinePassed": "Срок сдачи истёк",
-      "resultDialogTitle": "Результат вашего задания",
-      "solveOnBoard": "Решить на доске",
-      "solveOnBoardHint": "Решайте на полноценной доске (перо, формулы, фигуры) или загрузите файл ниже."
-    }
+      "quizMeta": "{{count}} вопросов · Тест",
+      "daysLeft": "Осталось {{count}} дн.",
+      "overdue": "Просрочено",
+      "checking": "На проверке",
+      "finished": "Завершено",
+      "new": "Новое",
+      "notSubmitted": "Не сдано",
+      "submittedOn": "Сдано · {{date}}",
+      "result": "Результат · {{value}}",
+      "grade": "Оценка · {{value}}",
+      "solve": "Решить",
+      "open": "Открыть",
+      "results": "Результат",
+      "emptyTitle": "Заданий пока нет",
+      "emptyHint": "Здесь появятся задания от учителя."
+    },
+    "lessonsTab": {
+      "eyebrow": "РАСПИСАНИЕ",
+      "title": "Уроки",
+      "subtitle": "Все онлайн-занятия группы",
+      "today": "Сегодня, {{date}}",
+      "yesterday": "Вчера, {{date}}",
+      "tomorrow": "Завтра, {{date}}",
+      "attended": "Вы присутствовали",
+      "missed": "Вы пропустили",
+      "video": "Запись",
+      "rate": "Оценить",
+      "myRating": "Ваша оценка · {{value}}",
+      "join": "Войти на урок",
+      "remind": "Напомнить",
+      "noTopic": "Тема не указана",
+      "emptyTitle": "Уроков пока нет",
+      "emptyHint": "Уроки появятся здесь, когда учитель их добавит.",
+      "minutes": "{{count}} мин"
+    },
+    "soon": "Скоро"
   },
   "enrollmentDialog": {
     "title": "Новое общение",
@@ -72,5 +67,360 @@
     "join": "Присоединиться",
     "noOpenCourses": "Открытых курсов пока нет.",
     "loadError": "Не удалось загрузить данные"
+  },
+  "home": {
+    "noLessons": "сегодня уроков нет",
+    "lessonCount": "сегодня {{count}} урока",
+    "searchPlaceholder": "Поиск уроков, заданий, тестов...",
+    "hero": {
+      "live": "Урок идёт · {{count}} мин",
+      "startsIn": "Через {{count}} мин",
+      "startsInHours": "Через {{count}} ч",
+      "startsNow": "Начинается сейчас",
+      "tomorrow": "Завтра · {{time}}",
+      "inLesson": "{{count}} на уроке",
+      "online": "онлайн",
+      "join": "Войти на урок",
+      "details": "Подробнее",
+      "chat": "Перейти в чат"
+    },
+    "stats": {
+      "lessons": "Уроки сегодня",
+      "lessonsDone": "{{count}} завершено",
+      "dayOff": "выходной",
+      "tasks": "Задания",
+      "tasksTomorrow": "{{count}} на завтра",
+      "tasksToday": "{{count}} на сегодня",
+      "tasksLater": "сроки не горят",
+      "grade": "Средняя оценка",
+      "gradeHint": "последние 30 дней",
+      "attendance": "Посещаемость",
+      "attendanceHint": "в этом месяце"
+    },
+    "today": {
+      "title": "Уроки сегодня",
+      "finished": "Завершён · {{teacher}}",
+      "emptyTitle": "Сегодня уроков нет",
+      "emptyNext": "Отдохните! Первый урок завтра — {{time}}, {{title}}",
+      "emptyLater": "Отдохните! Следующий урок — {{date}}, {{title}}",
+      "emptyNone": "Отдохните! В ближайшие дни уроков нет.",
+      "openSchedule": "Открыть расписание"
+    },
+    "tasks": {
+      "title": "Ближайшие сроки",
+      "today": "сегодня, {{time}}",
+      "tomorrow": "завтра, {{time}}",
+      "daysLeft": "осталось {{count}} дн.",
+      "test": "Тест · {{count}} вопросов",
+      "empty": "Ближайших сроков нет"
+    },
+    "grades": {
+      "title": "Последние оценки",
+      "empty": "Оценок пока нет",
+      "yesterday": "Вчера"
+    },
+    "seeAll": "Все",
+    "mobile": {
+      "tasksTitle": "Ближайшие сроки",
+      "tasksHint": "{{count}} заданий · ближайшее {{when}}",
+      "liveRow": "Идёт урок",
+      "enter": "Войти",
+      "chat": "Чат",
+      "tomorrowTitle": "Уроки завтра",
+      "schedule": "Расписание"
+    },
+    "offline": "Нет интернета. Показаны сохранённые данные"
+  },
+  "workspace": {
+    "eyebrow": "Рабочее пространство ученика",
+    "soon": "Скоро",
+    "back": "Назад",
+    "stats": {
+      "tests": "Тесты",
+      "testsHint": "{{count}} на сегодня",
+      "assignments": "Активные задания",
+      "assignmentsHint": "{{count}} на завтра",
+      "mock": "Пробный экзамен",
+      "mockNone": "не запланирован",
+      "average": "Средний результат",
+      "averageHint": "последние {{count}} попыток"
+    },
+    "modulesTitle": "Модули",
+    "modules": {
+      "tests": {
+        "title": "Тесты",
+        "description": "Решайте тесты преподавателя и сразу смотрите результат."
+      },
+      "assignments": {
+        "title": "Задания",
+        "description": "Сдавайте домашние задания и смотрите оценки."
+      },
+      "mock": {
+        "title": "Пробные тесты",
+        "description": "Пробные экзамены IELTS, SAT и нацсертификата."
+      },
+      "ai": {
+        "title": "AI-помощник",
+        "description": "Объясняет ошибки и составляет упражнения."
+      },
+      "analytics": {
+        "title": "Аналитика",
+        "description": "Ваши результаты, рост и слабые темы."
+      },
+      "materials": {
+        "title": "Материалы",
+        "description": "Учебники, аудио и файлы"
+      }
+    },
+    "counts": {
+      "tests": "{{count}} новых",
+      "assignments": "{{count}} активных",
+      "mockNone": "Не запланирован",
+      "ai": "Новое",
+      "analytics": "В среднем {{value}}",
+      "materials": "Скоро"
+    },
+    "mobile": {
+      "eyebrow": "Рабочее пространство",
+      "overview": "Общее состояние",
+      "details": "Подробнее",
+      "stats": {
+        "tests": "Новые тесты",
+        "assignments": "Задания",
+        "average": "Результат"
+      }
+    },
+    "tests": {
+      "eyebrow": "Workspace / Тесты · {{count}}",
+      "title": "Тесты",
+      "filters": {
+        "all": "Все",
+        "new": "Новые",
+        "solved": "Решённые",
+        "overdue": "Просроченные"
+      },
+      "attempts": "Попытки",
+      "meta": "{{subject}} · вопросов: {{count}}",
+      "solve": "Решить",
+      "result": "Результат",
+      "retry": "Пересдать",
+      "solvedChip": "Решён · {{value}}%",
+      "overdueChip": "Просрочен",
+      "otherSubject": "Другое",
+      "emptyTitle": "Тестов пока нет",
+      "emptyHint": "Тесты преподавателя появятся здесь.",
+      "attemptsTitle": "Мои попытки",
+      "attemptsSubtitle": "Последние решённые тесты",
+      "attemptsEmpty": "Вы ещё не решали тесты"
+    },
+    "player": {
+      "questions": "Вопросы · {{count}}",
+      "meta": "без ограничения времени",
+      "later": "Продолжить позже",
+      "finish": "Завершить и сдать",
+      "overline": "Вопрос {{n}} · {{type}}",
+      "prev": "Назад",
+      "next": "Следующий вопрос",
+      "submitting": "Отправка…",
+      "loadError": "Не удалось загрузить тест",
+      "retry": "Повторить",
+      "savedLater": "Ответы сохранены — продолжите позже",
+      "submitted": "Тест сдан",
+      "unanswered": "Без ответа вопросов: {{count}}. Всё равно сдать?",
+      "types": {
+        "single": "Один ответ",
+        "multiple": "Несколько ответов",
+        "true_false": "Да / Нет",
+        "numeric": "Число",
+        "text": "Краткий ответ",
+        "matching": "Сопоставление",
+        "ordering": "Порядок",
+        "fill_blank": "Пропуск",
+        "essay": "Эссе"
+      },
+      "hints": {
+        "single": "Выберите один правильный ответ. Ответы сохраняются автоматически.",
+        "multiple": "Отметьте все правильные ответы. Ответы сохраняются автоматически.",
+        "true_false": "Отметьте, верно ли утверждение.",
+        "numeric": "Введите ответ числом.",
+        "text": "Напишите краткий ответ.",
+        "matching": "Сопоставьте элементы.",
+        "ordering": "Расставьте элементы по порядку.",
+        "fill_blank": "Заполните пропуски.",
+        "essay": "Напишите эссе. Ответы сохраняются автоматически."
+      },
+      "trueLabel": "Верно",
+      "falseLabel": "Неверно",
+      "finishShort": "Завершить"
+    },
+    "results": {
+      "eyebrow": "Тесты / Ваш результат · {{course}}",
+      "retry": "Пересдать",
+      "stats": {
+        "score": "Ваш результат",
+        "correct": "Правильные ответы",
+        "group": "Среднее по группе",
+        "time": "Затрачено"
+      },
+      "minutes": "{{count}} мин",
+      "table": {
+        "attempt": "Попытка",
+        "number": "№",
+        "correct": "Верно",
+        "time": "Время",
+        "result": "Результат",
+        "last": "последняя"
+      },
+      "mistakes": "Вопросы с ошибками",
+      "wrong": "Ошибка",
+      "questionLabel": "Вопрос {{n}} · {{text}}",
+      "noMistakes": "Ошибок нет — отлично!",
+      "mistakesUnknown": "Разбор по вопросам появится после решения теста.",
+      "ai": {
+        "title": "Совет AI",
+        "text": "Подготовим {{count}} упражнений по вопросам с ошибками.",
+        "textNone": "Отличный результат! Закрепите тему дополнительными упражнениями.",
+        "start": "Начать упражнения",
+        "started": "Упражнения готовятся — придёт уведомление"
+      },
+      "empty": "Вы ещё не решали этот тест",
+      "emptyHint": "Решите тест — результат появится здесь.",
+      "solve": "Решить тест"
+    },
+    "analytics": {
+      "eyebrow": "Ваши результаты, оценки и посещаемость",
+      "title": "Аналитика",
+      "stats": {
+        "grade": "Средняя оценка",
+        "gradeHint": "из {{count}} оценок",
+        "lessons": "Посещено уроков",
+        "lessonsHint": "пропущено: {{count}}",
+        "attendance": "Посещаемость",
+        "attendanceHint": "в этом месяце",
+        "homework": "Задания",
+        "homeworkHint": "сдано вовремя"
+      },
+      "chart": {
+        "title": "Результаты тестов — средний балл",
+        "range": "Последние 8 недель",
+        "empty": "Тесты ещё не решались"
+      },
+      "subjects": {
+        "title": "По предметам",
+        "test": "тесты {{value}}%",
+        "empty": "Вы ещё не в группе"
+      }
+    },
+    "mock": {
+      "eyebrow": "Назначенные вам пробные экзамены",
+      "title": "Пробные тесты",
+      "filters": {
+        "all": "Все",
+        "ielts": "IELTS",
+        "sat": "SAT",
+        "milliy": "Нацсертификат",
+        "other": "Другие"
+      },
+      "states": {
+        "running": "Идёт",
+        "upcoming": "Запланирован",
+        "finished": "Завершён",
+        "submitted": "Сдан"
+      },
+      "today": "сегодня {{time}}",
+      "hours": "{{count}} ч",
+      "hoursMinutes": "{{hours}} ч {{minutes}} мин",
+      "minutesOnly": "{{count}} мин",
+      "continue": "Продолжить",
+      "remind": "Напомнить",
+      "result": "Результат",
+      "live": "Live",
+      "left": "осталось",
+      "leftSection": "осталось · {{section}}",
+      "back": "Вернуться к экзамену",
+      "emptyTitle": "Пробных экзаменов пока нет",
+      "emptyHint": "Пробные экзамены преподавателя появятся здесь."
+    },
+    "mockResult": {
+      "eyebrow": "Пробные тесты / Ваш результат · {{date}}",
+      "pdf": "Скачать PDF",
+      "stats": {
+        "overall": "Общий балл",
+        "group": "Среднее по группе",
+        "target": "Ваша цель"
+      },
+      "sections": "Результаты по разделам",
+      "details": "Подробно по разделам",
+      "correct": "{{earned}} / {{max}} правильных",
+      "manual": "Оценивает преподаватель",
+      "pending": "Проверяется",
+      "essay": "Ваше эссе · {{title}}",
+      "words": "{{count}} слов",
+      "aiTitle": "AI-разбор · критерии IELTS",
+      "aiQueued": "AI-разбор готовится…",
+      "mistakes": "Основные ошибки: {{value}}",
+      "strengths": "Сильные стороны: {{value}}",
+      "askTeacher": "Вопрос преподавателю",
+      "practice": "Работа над ошибками",
+      "notReady": "Результаты ещё не опубликованы",
+      "notReadyHint": "Появятся здесь после публикации преподавателем."
+    },
+    "homework": {
+      "eyebrow": "Workspace / Задания · {{count}}",
+      "title": "Задания",
+      "filters": {
+        "all": "Все",
+        "open": "Не сданы",
+        "checking": "На проверке",
+        "graded": "Оценены"
+      },
+      "emptyTitle": "Заданий пока нет",
+      "emptyHint": "Задания преподавателя появятся здесь."
+    },
+    "hwItem": {
+      "eyebrow": "Задания / {{course}} · {{teacher}}",
+      "daysLeft": "осталось дней: {{count}}",
+      "today": "Срок сегодня",
+      "overdue": "Просрочено",
+      "aiCheck": "Предпроверка AI",
+      "answer": "Ваш ответ",
+      "answerHint": "Загрузите файл и при необходимости оставьте комментарий. После отправки преподаватель проверит работу.",
+      "drop": "Перетащите файл сюда или выберите",
+      "dropHint": "PDF, JPG, PNG, DOCX · до 25 МБ",
+      "dropSpeaking": "MP3, WAV, M4A, OGG · до 25 МБ",
+      "fileReady": "{{size}} · выбран",
+      "remove": "Убрать",
+      "comment": "Комментарий (необязательно)",
+      "commentPlaceholder": "Например: нужна помощь с задачей 124…",
+      "dueNotice": "Срок: {{date}} · {{left}}.",
+      "lateAllowed": "Можно сдать с опозданием.",
+      "lateDenied": "После срока сдать нельзя.",
+      "noDue": "Срок не указан.",
+      "draft": "Сохранить черновик",
+      "draftSaved": "Черновик сохранён",
+      "submit": "Сдать",
+      "board": "Решить на доске",
+      "resultTitle": "{{title}} · ваш ответ",
+      "onTime": "сдано вовремя",
+      "late": "сдано с опозданием",
+      "download": "Скачать",
+      "aiScore": "Предварительная оценка AI: {{value}}",
+      "aiHint": "Итоговую оценку ставит преподаватель",
+      "aiHintDone": "Итоговую оценку поставил преподаватель",
+      "checking": "AI проверяет",
+      "checkingHint": "Обновится, как только результат будет готов",
+      "failed": "Не удалось проверить файл автоматически — оценит преподаватель",
+      "findings": "Найденные недочёты",
+      "teacherGrade": "Оценка преподавателя",
+      "waitingGrade": "Оценки пока нет",
+      "matchesAi": "Совпадает с AI",
+      "teacherComment": "Комментарий преподавателя",
+      "writeTeacher": "Написать преподавателю",
+      "ok": "Понятно",
+      "resubmit": "Сдать заново",
+      "resubmitAsked": "Преподаватель попросил пересдать",
+      "notFound": "Задание не найдено",
+      "retry": "Повторить"
+    }
   }
 }

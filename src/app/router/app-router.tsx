@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams, type Params } from "react-router-dom";
 import { AuthLayout } from "@/app/layouts/auth-layout";
-import { TeacherShellLayout } from "@/app/layouts/teacher-shell";
+import { AppShellLayout } from "@/app/layouts/app-shell";
 import { RootLayout } from "@/app/layouts/root-layout";
 import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout";
 import { useCurrentUser } from "@/modules/auth";
@@ -134,7 +134,6 @@ const LiveLessonPage = lazy(() => import("@/pages/live/live-lesson-page").then((
 const DesignSystemPage = lazy(() => import("@/pages/design-system/design-system-page").then((module) => ({ default: module.DesignSystemPage })));
 const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) => ({ default: module.BoardPage })));
 const WorkspaceHomePage = lazy(() => import("@/pages/teacher/workspace/workspace-home-page").then((module) => ({ default: module.WorkspaceHomePage })));
-const TeacherSchedulePage = lazy(() => import("@/pages/teacher/schedule/teacher-schedule-page").then((module) => ({ default: module.TeacherSchedulePage })));
 const HomeworkListPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-list-page").then((module) => ({ default: module.HomeworkListPage })));
 const HomeworkDetailPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-detail-page").then((module) => ({ default: module.HomeworkDetailPage })));
 const HomeworkReviewPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-review-page").then((module) => ({ default: module.HomeworkReviewPage })));
@@ -151,12 +150,18 @@ const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then
 const SchedulePage = lazy(() => import("@/pages/schedule/schedule-page").then((module) => ({ default: module.SchedulePage })));
 const ParentExamsPage = lazy(() => import("@/pages/parent/exams/parent-exams-page").then((module) => ({ default: module.ParentExamsPage })));
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
-const WorkspacePage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.WorkspacePage })));
-const AnalyticsPage = lazy(() => import("@/pages/workspace").then((module) => ({ default: module.AnalyticsPage })));
-const StudentExamsPage = lazy(() => import("@/pages/student/exams/student-exams-page").then((module) => ({ default: module.StudentExamsPage })));
+const StudentWorkspacePage = lazy(() => import("@/pages/student/workspace/student-workspace-page").then((module) => ({ default: module.StudentWorkspacePage })));
+const StudentTestsPage = lazy(() => import("@/pages/student/workspace/student-tests-page").then((module) => ({ default: module.StudentTestsPage })));
+const StudentTestPage = lazy(() => import("@/pages/student/workspace/student-test-page").then((module) => ({ default: module.StudentTestPage })));
+const StudentTestResultsPage = lazy(() => import("@/pages/student/workspace/student-test-results-page").then((module) => ({ default: module.StudentTestResultsPage })));
+const StudentAnalyticsPage = lazy(() => import("@/pages/student/workspace/student-analytics-page").then((module) => ({ default: module.StudentAnalyticsPage })));
+const StudentMockPage = lazy(() => import("@/pages/student/workspace/student-mock-page").then((module) => ({ default: module.StudentMockPage })));
+const StudentMockResultPage = lazy(() => import("@/pages/student/workspace/student-mock-result-page").then((module) => ({ default: module.StudentMockResultPage })));
+const StudentHomeworkItemPage = lazy(() => import("@/pages/student/workspace/student-homework-item-page").then((module) => ({ default: module.StudentHomeworkItemPage })));
+const StudentHomeworkPage = lazy(() => import("@/pages/student/workspace/student-homework-page").then((module) => ({ default: module.StudentHomeworkPage })));
 const StudentHomeworkBoardPage = lazy(() => import("@/pages/student/homework-board/student-homework-board-page").then((module) => ({ default: module.StudentHomeworkBoardPage })));
 const StudentExamPage = lazy(() => import("@/pages/student/exams/student-exam-page").then((module) => ({ default: module.StudentExamPage })));
-const StudentQuizzesPage = lazy(() => import("@/pages/student/quizzes/student-quizzes-page").then((module) => ({ default: module.StudentQuizzesPage })));
+const StudentDashboardPage = lazy(() => import("@/pages/student/dashboard/student-dashboard-page").then((module) => ({ default: module.StudentDashboardPage })));
 
 type ChunkLoader = () => Promise<unknown>;
 
@@ -182,6 +187,10 @@ function usePrefetchRoutes(role: Role | undefined) {
       for (const load of loaders) void load().catch(() => undefined);
     });
   }, [role]);
+}
+
+function LegacyRedirect({ to }: { to: (params: Readonly<Params<string>>) => string }) {
+  return <Navigate to={to(useParams())} replace />;
 }
 
 export function AppRouter() {
@@ -213,11 +222,11 @@ export function AppRouter() {
                     path={ROUTES.teacher.root}
                     element={<Navigate to={ROUTES.teacher.dashboard} replace />}
                   />
-                  <Route element={<TeacherShellLayout />}>
+                  <Route element={<AppShellLayout />}>
                     <Route path={ROUTES.teacher.dashboard} element={<TeacherDashboardPage />} />
                     <Route path={ROUTES.teacher.notifications} element={<NotificationsPage />} />
                     <Route path={ROUTES.teacher.search} element={<WorkspaceSearchPage />} />
-                    <Route path={ROUTES.teacher.schedule} element={<TeacherSchedulePage />} />
+                    <Route path={ROUTES.teacher.schedule} element={<SchedulePage />} />
                     <Route path="/teacher/recordings/:lessonId" element={<RecordingPage />} />
                     <Route path="/teacher/boards/:lessonId" element={<BoardPage />} />
                     <Route path={ROUTES.teacher.workspace} element={<WorkspaceHomePage />} />
@@ -296,35 +305,32 @@ export function AppRouter() {
                 <Route element={<RoleRoute allowedRoles={[ROLES.STUDENT]} />}>
                   <Route
                     path={ROUTES.student.root}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
+                    element={<Navigate to={ROUTES.student.dashboard} replace />}
                   />
-                  <Route
-                    path={ROUTES.student.dashboard}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
-                  />
-                  <Route
-                    path={ROUTES.student.courses}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
-                  />
-                  <Route
-                    path={ROUTES.student.assignments}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
-                  />
-                  <Route
-                    path={ROUTES.student.grades}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
-                  />
-                  <Route
-                    path={ROUTES.student.schedule}
-                    element={<Navigate to={ROUTES.student.chats} replace />}
-                  />
-                  <Route
-                    path={ROUTES.student.chats}
-                    element={<StudentLayout />}
-                  >
-                    <Route index element={<ChatsPage />} />
-                    <Route path="schedule" element={<SchedulePage />} />
-                    <Route path="profile" element={<ProfileLayout />}>
+                  <Route path="/student/courses/*" element={<Navigate to={ROUTES.student.chats} replace />} />
+                  <Route path="/student/assignments" element={<Navigate to={ROUTES.student.homework} replace />} />
+                  <Route path="/student/grades" element={<Navigate to={ROUTES.student.workspaceAnalytics} replace />} />
+                  <Route element={<AppShellLayout />}>
+                    <Route path={ROUTES.student.dashboard} element={<StudentDashboardPage />} />
+                    <Route path={ROUTES.student.notifications} element={<NotificationsPage />} />
+                    <Route path={ROUTES.student.search} element={<WorkspaceSearchPage />} />
+                    <Route path={ROUTES.student.schedule} element={<SchedulePage />} />
+                    <Route path="/student/recordings/:lessonId" element={<RecordingPage />} />
+                    <Route path={ROUTES.student.workspace} element={<StudentWorkspacePage />} />
+                    <Route path={ROUTES.student.tests} element={<StudentTestsPage />} />
+                    <Route path="/student/workspace/tests/:quizId" element={<StudentTestPage />} />
+                    <Route path="/student/workspace/tests/:quizId/results" element={<StudentTestResultsPage />} />
+                    <Route path={ROUTES.student.workspaceAnalytics} element={<StudentAnalyticsPage />} />
+                    <Route path={ROUTES.student.mockExams} element={<StudentMockPage />} />
+                    <Route path="/student/workspace/mock/:examId" element={<StudentMockResultPage />} />
+                    <Route path="/student/workspace/mock/:examId/take" element={<StudentExamPage />} />
+                    <Route path={ROUTES.student.homework} element={<StudentHomeworkPage />} />
+                    <Route path="/student/workspace/homework/:assignmentId" element={<StudentHomeworkItemPage />} />
+                    <Route
+                      path="/student/workspace/homework/:assignmentId/board"
+                      element={<StudentHomeworkBoardPage />}
+                    />
+                    <Route path={ROUTES.student.profile} element={<ProfileLayout />}>
                       <Route index element={<ProfileIndexRoute />} />
                       <Route path="personal" element={<PersonalInfoPage />} />
                       <Route path="account" element={<AccountSettingsPage />} />
@@ -332,15 +338,31 @@ export function AppRouter() {
                       <Route path="ratings" element={<MyRatingsPage />} />
                       <Route path="certificates" element={<CertificatesPage />} />
                       <Route path="logins" element={<LoginHistoryPage />} />
+                      <Route path="help" element={<HelpCenterPage />} />
                     </Route>
-                    <Route path="search" element={<WorkspaceSearchPage />} />
-                    <Route path="notifications" element={<NotificationsPage />} />
-                    <Route path="workspace" element={<WorkspacePage />} />
-                    <Route path="analytics" element={<AnalyticsPage />} />
-                    <Route path="exams" element={<StudentExamsPage />} />
-                    <Route path="exams/:examId" element={<StudentExamPage />} />
-                    <Route path="homework-board/:assignmentId" element={<StudentHomeworkBoardPage />} />
-                    <Route path="quizzes" element={<StudentQuizzesPage />} />
+                  </Route>
+                  <Route
+                    path={ROUTES.student.chats}
+                    element={
+                      <Suspense fallback={<PageSkeleton />}>
+                        <StudentLayout />
+                      </Suspense>
+                    }
+                  >
+                    <Route index element={<ChatsPage />} />
+                    <Route path="schedule" element={<Navigate to={ROUTES.student.schedule} replace />} />
+                    <Route path="profile/*" element={<LegacyRedirect to={(params) => `${ROUTES.student.profile}/${params["*"] ?? ""}`} />} />
+                    <Route path="workspace" element={<Navigate to={ROUTES.student.workspace} replace />} />
+                    <Route path="analytics" element={<Navigate to={ROUTES.student.workspaceAnalytics} replace />} />
+                    <Route path="quizzes" element={<Navigate to={ROUTES.student.tests} replace />} />
+                    <Route path="exams" element={<Navigate to={ROUTES.student.mockExams} replace />} />
+                    <Route path="exams/:examId" element={<LegacyRedirect to={(params) => ROUTES.student.mockExam(params.examId ?? "")} />} />
+                    <Route
+                      path="homework-board/:assignmentId"
+                      element={<LegacyRedirect to={(params) => ROUTES.student.homeworkBoard(params.assignmentId ?? "")} />}
+                    />
+                    <Route path="search" element={<Navigate to={ROUTES.student.search} replace />} />
+                    <Route path="notifications" element={<Navigate to={ROUTES.student.notifications} replace />} />
                     <Route
                       path=":conversationId"
                       element={<StudentConversationPage />}

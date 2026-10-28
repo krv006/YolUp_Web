@@ -66,7 +66,10 @@
     "mobileChangeLater": "keyin o‘zgartirish mumkin",
     "mobileRecordingNote": "Dars yozib olinadi — o‘quvchilar keyin ko‘ra oladi",
     "mobileCancel": "Bekor",
-    "mobileJoin": "Darsga kirish"
+    "mobileJoin": "Darsga kirish",
+    "teacher": "O‘qituvchi: {{name}}",
+    "inLessonNames": "{{names}} va yana {{count}} kishi darsda",
+    "recordingNoteStudent": "Dars yozib olinadi — keyin “Dars yozuvi” bo‘limida ko‘rishingiz mumkin."
   },
   "connection": {
     "connecting": "Ulanmoqda…",
@@ -129,7 +132,13 @@
     "mobileShare": "Ulashish",
     "mobilePeople": "Odamlar",
     "mobileParticipantsCount": "Ishtirokchilar · {{count}}",
-    "liveLesson": "Jonli dars"
+    "liveLesson": "Jonli dars",
+    "peopleInLesson": "{{count}} kishi darsda",
+    "recordingStudent": "Yozib olinmoqda — audio va video",
+    "queueTitle": "Navbatdasiz ({{count}})",
+    "handRaised": "qo‘l ko‘tardingiz",
+    "cancelRequest": "Bekor qilish",
+    "soon": "Tez orada"
   },
   "mic": {
     "label": "Mikrofon",

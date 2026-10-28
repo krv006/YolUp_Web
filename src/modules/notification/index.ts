@@ -39,6 +39,7 @@ export {
   notificationActionKey,
   notificationGroupKey,
   notificationIcon,
+  notificationLines,
 } from "./lib/notification-display";
 export type { NotificationGroupKey } from "./lib/notification-display";
 export { useNotificationFeed } from "./model/use-notification-feed";

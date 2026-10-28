@@ -263,7 +263,6 @@
       "file": "File",
       "pickFile": "Choose a file",
       "pickOrDrop": "Choose a file or drop it here",
-      "today": "today",
       "fileTypes": "PDF, JPG or PNG · up to {{size}} MB",
       "fileTooBig": "The file must be smaller than {{size}} MB",
       "fileMeta": "{{type}} · {{size}} · uploaded",
@@ -273,7 +272,11 @@
       "noCertificatesTitle": "No certificates yet",
       "noCertificatesHint": "Upload IELTS, CELTA or another certificate — students will see it on your profile.",
       "openFile": "Open file"
-    }
+    },
+    "studying": "Subjects you study",
+    "studentRatingsTitle": "Latest grades from teachers",
+    "studentRatingMeta": "{{course}} · {{when}} · grade {{value}}",
+    "studentNoRatingsHint": "Grades appear here once your teacher marks your work."
   },
   "help": {
     "search": "Search a question or topic…",

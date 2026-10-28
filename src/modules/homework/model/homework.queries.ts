@@ -165,11 +165,13 @@ export function useSubmitHomework() {
       assignmentId,
       file,
       skillKey,
+      comment,
     }: {
       assignmentId: string;
       file: File | null;
       skillKey?: string;
-    }) => homeworkApi.submit(assignmentId, file, skillKey),
+      comment?: string;
+    }) => homeworkApi.submit(assignmentId, file, skillKey, comment),
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });

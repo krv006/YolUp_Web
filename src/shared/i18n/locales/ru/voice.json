@@ -56,6 +56,10 @@
     "requestNote": "Запрос на вход",
     "you": "Вы",
     "mobileClose": "Закрыть",
-    "wantsToJoin": "{{name}} хочет войти"
+    "wantsToJoin": "{{name}} хочет войти",
+    "raiseTitle": "Чтобы включить микрофон",
+    "raiseHint": "Поднимите руку",
+    "raiseHand": "Поднять руку",
+    "soon": "Скоро"
   }
 }

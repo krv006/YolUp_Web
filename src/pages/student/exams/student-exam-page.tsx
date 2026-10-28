@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { ExamRunner, useExam, useExamCurrent } from "@/modules/exam";
+import { ROUTES } from "@/shared/config";
 import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
 export function StudentExamPage() {
@@ -30,7 +31,7 @@ export function StudentExamPage() {
         title={exam.data?.title ?? ""}
         current={current.data}
         onRefresh={() => void current.refetch()}
-        onExit={() => navigate("../exams")}
+        onExit={() => navigate(ROUTES.student.mockExams)}
       />
     </div>
   );

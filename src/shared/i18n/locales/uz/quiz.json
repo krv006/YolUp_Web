@@ -46,23 +46,6 @@
     "emptyDescription": "Birinchi testingizni yarating yoki .docx / .xlsx / .json fayldan import qiling.",
     "subjectSearch": "Qidirish"
   },
-  "studentPage": {
-    "loading": "Testlar yuklanmoqda",
-    "eyebrow": "TESTLAR",
-    "loadError": "Testlarni yuklab bo'lmadi",
-    "retry": "Qayta urinish",
-    "allCourses": "BARCHA KURSLAR",
-    "title": "Testlar",
-    "subtitle": "Vaqt chegarasi yo'q — cheklanmagan qayta urinish.",
-    "courseFallback": "Kurs",
-    "dueLabel": "Muddat: {{date}}",
-    "noDue": "Muddat yo'q",
-    "questionCount": "{{count}} ta savol",
-    "historyAria": "Urinishlar tarixi",
-    "solveButton": "Yechish",
-    "empty": "Hali test yo'q.",
-    "attemptsOfTitle": "\"{{title}}\" — urinishlaringiz"
-  },
   "createDialog": {
     "title": "Yangi test",
     "description": "8 xil savol turi — baholash avtomatik va darhol.",

@@ -212,7 +212,10 @@
     "mobileDelete": "Удалить запись",
     "mobilePlatformOnly": "Открывается только на платформе — скачать нельзя.",
     "mobileMerging": "Аудио и видео объединяются — это может занять время",
-    "mobileReadyNote": "Как только будет готово, в чат придёт сообщение."
+    "mobileReadyNote": "Как только будет готово, в чат придёт сообщение.",
+    "joinedYou": "Вы были",
+    "minutesShort": "{{count}} мин",
+    "download": "Скачать"
   },
   "schedule": {
     "now": "СЕЙЧАС",
@@ -296,7 +299,7 @@
     "students": "{{count}} учеников",
     "studentsAndDuration": "{{count}} учеников · {{minutes}} минут",
     "openChat": "Перейти в чат",
-    "join": "Войти в урок",
+    "join": "Войти на урок",
     "ratings": "Оценки",
     "close": "Закрыть",
     "nextLesson": "Следующий урок",
@@ -317,9 +320,31 @@
         "weekly": "каждую неделю",
         "daily": "каждый день",
         "monthly": "каждый месяц"
-      }
+      },
+      "teacher": "Преподаватель"
     },
-    "title": "Расписание"
+    "title": "Расписание",
+    "nowOpen": "Сейчас · отметка открыта",
+    "nextLessonShort": "Следующий урок",
+    "finishedBy": "Завершён · {{teacher}}",
+    "teacherDuration": "{{teacher}} · {{count}} мин",
+    "todayStat": "Сегодня",
+    "attendanceStat": "Посещаемость",
+    "emptyStudentHint": "Уроки появятся здесь, когда преподаватель их добавит.",
+    "remind": "Напомнить",
+    "soon": "Скоро",
+    "recording": "Запись",
+    "rate": "Оценить",
+    "myRating": "Ваша оценка · {{value}}",
+    "joinShort": "Войти",
+    "chip": {
+      "finished": "Завершён",
+      "live": "Идёт",
+      "scheduled": "Запланирован",
+      "cancelled": "Отменён"
+    },
+    "dayToday": "Сегодня",
+    "dayTomorrow": "Завтра"
   },
   "scheduleDialog": {
     "title": "Новый урок",

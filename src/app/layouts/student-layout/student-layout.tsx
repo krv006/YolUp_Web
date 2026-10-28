@@ -1,5 +1,5 @@
-import { ConversationLayout } from "@/app/layouts/conversation-layout";
+import { ChatsLayout } from "@/app/layouts/chats-layout";
 
 export function StudentLayout() {
-  return <ConversationLayout role="student" />;
+  return <ChatsLayout role="student" />;
 }

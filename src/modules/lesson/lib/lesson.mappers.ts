@@ -50,6 +50,8 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     participantsCount: dto.participants_count ?? null,
     attendanceRate: dto.attendance_rate ?? null,
     joinedCount: dto.joined_count ?? null,
+    myRating: dto.my_rating ?? null,
+    attended: dto.attended ?? null,
     assignment: dto.assignment
       ? { id: String(dto.assignment.id), title: dto.assignment.title ?? "" }
       : null,

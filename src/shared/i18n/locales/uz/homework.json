@@ -113,7 +113,9 @@
     "overdue": "Muddati o‘tgan",
     "fileCount": "{{count}} ta fayl",
     "submittedAt": "Topshirildi · {{value}}",
-    "submit": "Vazifani topshirish"
+    "submit": "Vazifani topshirish",
+    "notSubmitted": "Hali topshirilmagan",
+    "open": "Vazifani ochish"
   },
   "form": {
     "title": "Vazifa berish",

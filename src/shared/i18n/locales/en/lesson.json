@@ -212,7 +212,10 @@
     "mobileDelete": "Delete recording",
     "mobilePlatformOnly": "Opens only on the platform — it can't be downloaded.",
     "mobileMerging": "Merging audio and video — this may take a while",
-    "mobileReadyNote": "We'll post to the chat as soon as it's ready."
+    "mobileReadyNote": "We'll post to the chat as soon as it's ready.",
+    "joinedYou": "You attended",
+    "minutesShort": "{{count}} min",
+    "download": "Download"
   },
   "schedule": {
     "now": "NOW",
@@ -296,7 +299,7 @@
     "students": "{{count}} students",
     "studentsAndDuration": "{{count}} students · {{minutes}} minutes",
     "openChat": "Open the chat",
-    "join": "Join the lesson",
+    "join": "Join lesson",
     "ratings": "Ratings",
     "close": "Close",
     "nextLesson": "Next lesson",
@@ -317,9 +320,31 @@
         "weekly": "weekly",
         "daily": "daily",
         "monthly": "monthly"
-      }
+      },
+      "teacher": "Teacher"
     },
-    "title": "Schedule"
+    "title": "Schedule",
+    "nowOpen": "Now · attendance open",
+    "nextLessonShort": "Next lesson",
+    "finishedBy": "Finished · {{teacher}}",
+    "teacherDuration": "{{teacher}} · {{count}} min",
+    "todayStat": "Today",
+    "attendanceStat": "Attendance",
+    "emptyStudentHint": "Lessons appear here once your teacher schedules them.",
+    "remind": "Set reminder",
+    "soon": "Coming soon",
+    "recording": "Recording",
+    "rate": "Rate",
+    "myRating": "Your rating · {{value}}",
+    "joinShort": "Join",
+    "chip": {
+      "finished": "Finished",
+      "live": "Live",
+      "scheduled": "Scheduled",
+      "cancelled": "Cancelled"
+    },
+    "dayToday": "Today",
+    "dayTomorrow": "Tomorrow"
   },
   "scheduleDialog": {
     "title": "New lesson",

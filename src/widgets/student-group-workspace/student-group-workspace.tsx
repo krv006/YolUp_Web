@@ -1,77 +1,27 @@
-import { useEffect, useRef, useState } from "react";
-import { formatDayTime, sanitizeHtml } from "@/shared/lib";
+import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  BookOpen,
-  CalendarDays,
-  CheckCircle2,
-  CircleAlert,
-  FileQuestion,
-  FileUp,
-  History,
-  ListChecks,
-  Paperclip,
-  PenLine,
-} from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
-import { ChatHeader } from "@/modules/conversation";
-import { ForwardDialog } from "@/widgets/forward-dialog";
-import { VoiceRoomBar } from "@/modules/voice";
+import { ChatHeader, ConversationInfoPanel } from "@/modules/conversation";
 import { useCourse } from "@/modules/course";
-import { MessageComposer, MessageList } from "@/modules/message";
-import { Icon } from "@/shared/ui/icon";
-import {
-  HomeworkResultDialog,
-  homeworkFieldError,
-  useAssignments,
-  useDownloadAssignmentFile,
-  useSubmission,
-  useSubmitHomework,
-} from "@/modules/homework";
-import {
-  LessonCalendar,
-  LessonList,
-  LessonViewSwitch,
-  LiveLessonBar,
-  RateLessonDialog,
-  useLessons,
-  useLessonView,
-} from "@/modules/lesson";
-import { QuizAttemptDialog, QuizAttemptsDialog, useQuizzes, quizDisplayTitle } from "@/modules/quiz";
-import type {
-  Assignment,
-  ChatMessage,
-  Conversation,
-  Lesson,
-  QuizSummary,
-  SendMessagePayload,
-  Submission,
-} from "@/shared/types";
+import { useAssignments } from "@/modules/homework";
+import { LiveLessonBar, useLessons } from "@/modules/lesson";
+import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type { ChatController } from "@/modules/message";
+import { useQuizzes } from "@/modules/quiz";
+import { VoiceRoomBar, useActiveVoiceRoom, useVoiceUiStore } from "@/modules/voice";
 import { ROUTES } from "@/shared/config";
-import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
+import type { ChatMessage, Conversation, SendMessagePayload } from "@/shared/types";
+import { Icon } from "@/shared/ui/icon";
+import { ForwardDialog } from "@/widgets/forward-dialog";
+import { StudentLessons } from "./student-lessons";
+import { StudentTasks } from "./student-tasks";
 
 type TabId = "chat" | "lessons" | "assignments";
 
-function useTabs(): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
-  const { t } = useTranslation("student");
-  return [
-    { id: "chat", label: t("groupWorkspace.tabs.chat"), icon: BookOpen },
-    { id: "lessons", label: t("groupWorkspace.tabs.lessons"), icon: CalendarDays },
-    { id: "assignments", label: t("groupWorkspace.tabs.assignments"), icon: ListChecks },
-  ];
-}
-
-const SPEAKING_ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.docx,.mp3,.wav,.m4a,.ogg";
-const DEFAULT_ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.docx";
-
-function isAssignmentOverdue(assignment: Assignment): boolean {
-  if (!assignment.dueAt || assignment.mySubmission) return false;
-  const deadline = Date.parse(assignment.dueAt);
-  return Number.isFinite(deadline) && deadline < Date.now();
-}
+const TABS: TabId[] = ["chat", "lessons", "assignments"];
 
 export interface StudentGroupWorkspaceProps {
   conversation: Conversation;
@@ -93,23 +43,30 @@ export function StudentGroupWorkspace({
   currentUserId,
 }: StudentGroupWorkspaceProps) {
   const { t } = useTranslation("student");
-  const chatT = useTranslation("chat").t;
-  const announcementMode = Boolean(conversation.announcementOnly);
-  const TABS = useTabs();
+  const { t: chatT } = useTranslation("chat");
   const [params, setParams] = useSearchParams();
+  const navigate = useNavigate();
   const [reply, setReply] = useState<ChatMessage | null>(null);
   const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
   const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [hiddenPin, setHiddenPin] = useState<string | null>(null);
+  const isCompact = useIsCompact();
   const courseId = conversation.courseId;
+  const voice = useActiveVoiceRoom(courseId);
+  const openVoiceCreate = useVoiceUiStore((state) => state.setCreateOpen);
+  const selectionMode = useChatUiStore((state) => state.selected.length > 0);
+  const announcementMode = Boolean(conversation.announcementOnly);
 
   const tabParam = params.get("tab") as TabId | null;
-  const active: TabId = TABS.some((item) => item.id === tabParam) ? (tabParam as TabId) : "chat";
+  const active: TabId = tabParam && TABS.includes(tabParam) ? tabParam : "chat";
 
+  const course = useCourse(courseId);
   const lessons = useLessons({ course: courseId, page_size: 100 }, active === "lessons");
   const assignments = useAssignments(courseId, active === "assignments" || active === "chat");
   const quizzes = useQuizzes(courseId, active === "assignments" && Boolean(courseId));
-
-  const course = useCourse(courseId);
+  const pinned = chat.pinnedMessages.data?.[0]?.messageId ?? null;
+  const submittedById = new Map((assignments.data ?? []).map((item) => [item.id, Boolean(item.mySubmission)]));
 
   const hydrated: Conversation = {
     ...conversation,
@@ -123,10 +80,7 @@ export function StudentGroupWorkspace({
   async function send(payload: SendMessagePayload) {
     try {
       if (editingMessageTarget) {
-        await chat.updateMessage.mutateAsync({
-          messageId: editingMessageTarget.id,
-          text: payload.text,
-        });
+        await chat.updateMessage.mutateAsync({ messageId: editingMessageTarget.id, text: payload.text });
         setEditingMessageTarget(null);
         return;
       }
@@ -142,464 +96,137 @@ export function StudentGroupWorkspace({
   }
 
   return (
-    <section className="chat-page group-workspace student-group-workspace relative">
-      <ChatHeader conversation={hydrated} backTo="/student/chats" />
-      <LiveLessonBar courseId={courseId} />
-      <VoiceRoomBar courseId={courseId} />
-      <nav className="group-tabs">
-        {TABS.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              className={active === tab.id ? "is-active" : ""}
-              onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
-            >
-              {active === tab.id ? (
-                <motion.span layoutId="student-group-tab" className="group-tab-indicator" />
-              ) : null}
-              <Icon size={16} />
-              {tab.label}
-            </button>
-          );
-        })}
-      </nav>
-
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active}
-          className="group-tab-content"
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {active === "chat" ? (
-            <MessageList
-              messages={messages.data}
-              conversation={hydrated}
-              loading={messages.isLoading}
-              error={messages.isError}
-              onRetry={messages.refetch}
-              onRetryMessage={retryMessage}
-              currentUserId={currentUserId}
-              onReply={setReply}
-              onEdit={setEditingMessageTarget}
-              onDelete={(message, scope) =>
-                chat.deleteMessage.mutate({ messageId: message.id, scope })
-              }
-              onReact={(message, emoji) =>
-                chat.toggleReaction.mutate({ messageId: message.id, emoji })
-              }
-              pinnedIds={(chat.pinnedMessages.data ?? []).map((item) => item.messageId)}
-              onPin={(message, pinned) =>
-                chat.pinMessage.mutate({ messageId: message.id, pinned })
-              }
-              onForward={(items) => setForwardTarget(items)}
-              onBulkDelete={(messageIds, scope) =>
-                chat.deleteMessages.mutate({ messageIds, scope })
-              }
-            />
-          ) : null}
-          {active === "lessons" ? (
-            <StudentLessons
-              lessons={lessons.data}
-              loading={lessons.isLoading}
-              currentUserId={currentUserId}
-            />
-          ) : null}
-          {active === "assignments" ? (
-            <StudentAssignments
-              loading={assignments.isLoading}
-              quizzes={(quizzes.data ?? []).filter((quiz) => quiz.courseId === courseId)}
-            />
-          ) : null}
-        </motion.div>
-      </AnimatePresence>
-
-      {active === "chat" && announcementMode ? (
-        <div className="shrink-0 border-t border-line bg-surface px-4 py-4 lg:px-6">
-          <div className="mx-auto flex w-full max-w-[920px] items-center justify-center gap-2.5 rounded-2xl bg-subtle px-4 py-3.5 text-body-sm text-ink-secondary">
-            <Icon name="bell" size={17} className="shrink-0" />
-            {chatT("list.announcementLocked")}
+    <div className="flex h-full min-h-0">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <section className="chat-page group-workspace max-lg:bg-auth-gradient lg:bg-page-gradient">
+          <ChatHeader
+            conversation={hydrated}
+            backTo={ROUTES.student.chats}
+            onToggleInfo={() => setInfoOpen((open) => !open)}
+            onVoice={active === "chat" && courseId && !voice.active ? () => openVoiceCreate(true) : undefined}
+            workspace
+          />
+          <div className="hidden lg:contents">
+            <LiveLessonBar courseId={courseId} />
           </div>
-        </div>
-      ) : null}
-
-      {active === "chat" && !announcementMode ? (
-        <MessageComposer
-          key={editingMessageTarget?.id ?? "compose"}
-          onSend={send}
-          onTyping={sendTyping}
-          sending={sendMessage.isPending || chat.updateMessage.isPending}
-          replyTo={reply}
-          editingMessage={editingMessageTarget}
-          currentUserId={currentUserId}
-          onCancelContext={() => {
-            setReply(null);
-            setEditingMessageTarget(null);
-          }}
-          roomId={conversation.id}
-        />
-      ) : null}
-
-      <ForwardDialog
-        open={forwardTarget.length > 0}
-        onOpenChange={(open) => !open && setForwardTarget([])}
-        messages={forwardTarget}
-        role="student"
-        pending={chat.forwardMessages.isPending}
-        onConfirm={(roomIds) =>
-          chat.forwardMessages.mutate(
-            { messageIds: forwardTarget.map((item) => item.id), roomIds },
-            { onSuccess: () => setForwardTarget([]) }
-          )
-        }
-      />
-    </section>
-  );
-}
-
-function StudentLessons({
-  lessons = [],
-  loading,
-  currentUserId,
-}: {
-  lessons?: Lesson[];
-  loading: boolean;
-  currentUserId?: string;
-}) {
-  const { t } = useTranslation("student");
-  const navigate = useNavigate();
-  const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
-  const { view, setView } = useLessonView();
-
-  const actions = {
-    onJoin: (lesson: Lesson) => navigate(ROUTES.live(lesson.id)),
-    onRecording: (lesson: Lesson) => navigate(ROUTES.recording(lesson.id)),
-    onRate: setRateTarget,
-  };
-
-  return (
-    <div className="group-panel student-readonly-panel">
-      <div className="group-panel-head">
-        <div>
-          <span>{t("groupWorkspace.lessons.eyebrow")}</span>
-          <h2>{t("groupWorkspace.lessons.title")}</h2>
-        </div>
-        <div className="group-panel-tools">
-          <LessonViewSwitch view={view} onChange={setView} />
-        </div>
-      </div>
-
-      {loading ? (
-        <div className="student-tab-loading">
-          <span />
-        </div>
-      ) : view === "calendar" ? (
-        <LessonCalendar lessons={lessons} {...actions} />
-      ) : (
-        <LessonList lessons={lessons} {...actions} />
-      )}
-
-      <RateLessonDialog
-        lesson={rateTarget}
-        currentUserId={currentUserId}
-        onOpenChange={(open) => {
-          if (!open) setRateTarget(null);
-        }}
-      />
-    </div>
-  );
-}
-
-function AttachmentButton({ assignment }: { assignment: Assignment }) {
-  const { t } = useTranslation("student");
-  const download = useDownloadAssignmentFile();
-  if (!assignment.hasAttachment) return null;
-  return (
-    <button
-      className="icon-button"
-      aria-label={t("groupWorkspace.assignments.downloadAria")}
-      disabled={download.isPending}
-      onClick={() =>
-        download.mutate({ id: assignment.id, fileName: assignment.attachmentName || assignment.title })
-      }
-    >
-      <Paperclip size={16} />
-    </button>
-  );
-}
-
-function AttachmentDownloadRow({ assignment }: { assignment: Assignment }) {
-  const { t } = useTranslation("student");
-  const download = useDownloadAssignmentFile();
-  return (
-    <Button
-      variant="secondary"
-      loading={download.isPending}
-      onClick={() =>
-        download.mutate({ id: assignment.id, fileName: assignment.attachmentName || assignment.title })
-      }
-    >
-      <Paperclip size={16} /> {assignment.attachmentName || t("groupWorkspace.assignments.downloadFallback")}
-    </Button>
-  );
-}
-
-function SubmissionStatus({
-  initial,
-  onOpen,
-}: {
-  initial: Submission;
-  onOpen: (submission: Submission) => void;
-}) {
-  const { t } = useTranslation("student");
-  const submission = useSubmission(initial.id, { poll: initial.status === "checking" });
-  const data = submission.data ?? initial;
-  const tone =
-    data.status === "done" ? "" : data.status === "error" ? " grade-pill--error" : " grade-pill--checking";
-  const label =
-    data.status === "done" ? (
-      <>
-        <CheckCircle2 size={15} /> {data.overallScore} {t("groupWorkspace.assignments.scoreSuffix")}
-      </>
-    ) : data.status === "error" ? (
-      t("groupWorkspace.assignments.checkError")
-    ) : (
-      t("groupWorkspace.assignments.checking")
-    );
-
-  return (
-    <button
-      className={`grade-pill grade-pill--button${tone}`}
-      onClick={() => onOpen(data)}
-      aria-label={t("groupWorkspace.assignments.openResultAria")}
-    >
-      {label}
-    </button>
-  );
-}
-
-function useAssignmentHighlight(assignmentId: string | null, ready: boolean) {
-  useEffect(() => {
-    if (!assignmentId || !ready) return;
-    document
-      .querySelector(`[data-assignment-id="${CSS.escape(assignmentId)}"]`)
-      ?.scrollIntoView({ block: "center", behavior: "smooth" });
-  }, [assignmentId, ready]);
-}
-
-function StudentAssignments({
-  assignments = [],
-  loading,
-  quizzes = [],
-}: {
-  assignments?: Assignment[];
-  loading: boolean;
-  quizzes?: QuizSummary[];
-}) {
-  const { t } = useTranslation("student");
-  const navigate = useNavigate();
-  const [selected, setSelected] = useState<Assignment | null>(null);
-  const [attemptOf, setAttemptOf] = useState<QuizSummary | null>(null);
-  const [historyOf, setHistoryOf] = useState<QuizSummary | null>(null);
-  const [params, setParams] = useSearchParams();
-  const highlightId = params.get("assignment");
-  const linkedSubmissionId = params.get("submission");
-  useAssignmentHighlight(highlightId, assignments.length > 0);
-  const [file, setFile] = useState<File | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
-  const [resultOf, setResultOf] = useState<Submission | null>(null);
-  const submit = useSubmitHomework();
-  const [submitError, setSubmitError] = useState<string | null>(null);
-
-  if (loading)
-    return (
-      <div className="student-tab-loading">
-        <span />
-      </div>
-    );
-
-  return (
-    <div className="group-panel student-readonly-panel">
-      <div className="group-panel-head">
-        <div>
-          <span>{t("groupWorkspace.assignments.eyebrow")}</span>
-          <h2>{t("groupWorkspace.assignments.title")}</h2>
-        </div>
-      </div>
-      <div className="student-workspace-list">
-        {quizzes.map((quiz) => (
-          <article key={quiz.id} data-quiz-id={quiz.id}>
-            <span className="workspace-list-icon">
-              <FileQuestion size={20} />
-            </span>
-            <div>
-              <strong>{quizDisplayTitle(quiz)}</strong>
-              <p>
-                {t("groupWorkspace.assignments.quizBadge")} ·{" "}
-                {quiz.dueAt
-                  ? `${t("groupWorkspace.assignments.dueLabel")}: ${formatDayTime(quiz.dueAt)}`
-                  : t("groupWorkspace.assignments.noDue")}{" "}
-                · {t("groupWorkspace.assignments.quizQuestions", { count: quiz.questionCount })}
-              </p>
-            </div>
-            <button
-              className="icon-button"
-              aria-label={t("groupWorkspace.assignments.quizHistoryAria")}
-              onClick={() => setHistoryOf(quiz)}
-            >
-              <History size={16} />
-            </button>
-            <Button size="sm" onClick={() => setAttemptOf(quiz)}>
-              {t("groupWorkspace.assignments.quizSolve")}
-            </Button>
-          </article>
-        ))}
-        {assignments.map((item) => {
-          const overdue = isAssignmentOverdue(item);
-          const deadlineLabel = item.dueAt
-            ? formatDayTime(item.dueAt)
-            : null;
-
-          return (
-            <article
-              key={item.id}
-              data-assignment-id={item.id}
-              className={`${item.id === highlightId ? "is-highlighted " : ""}${overdue ? "is-overdue" : ""}`.trim()}
-            >
-              <span className="workspace-list-icon">
-                <ListChecks size={20} />
-              </span>
-              <div>
-                <strong>{item.title}</strong>
-                <p className={overdue ? "is-overdue" : ""}>
-                  {deadlineLabel
-                    ? `${overdue ? t("groupWorkspace.assignments.overdueLabel") : t("groupWorkspace.assignments.dueLabel")}: ${deadlineLabel}`
-                    : t("groupWorkspace.assignments.noDue")}
-                </p>
-              </div>
-              <AttachmentButton assignment={item} />
-              {item.mySubmission ? (
-                <SubmissionStatus initial={item.mySubmission} onOpen={setResultOf} />
-              ) : overdue ? (
-                <span className="assignment-missed-pill" role="status">
-                  <CircleAlert size={15} /> {t("groupWorkspace.assignments.missed")}
-                </span>
-              ) : (
-                <Button size="sm" onClick={() => setSelected(item)}>
-                  {t("groupWorkspace.assignments.submit")}
-                </Button>
-              )}
-            </article>
-          );
-        })}
-        {!assignments.length && !quizzes.length ? (
-          <p className="portal-muted">{t("groupWorkspace.assignments.empty")}</p>
-        ) : null}
-      </div>
-
-      <QuizAttemptDialog
-        quizId={attemptOf?.id ?? null}
-        open={Boolean(attemptOf)}
-        onOpenChange={(open) => {
-          if (!open) setAttemptOf(null);
-        }}
-      />
-      <QuizAttemptsDialog
-        quizId={historyOf?.id ?? null}
-        open={Boolean(historyOf)}
-        onOpenChange={(open) => {
-          if (!open) setHistoryOf(null);
-        }}
-        title={historyOf?.title}
-      />
-
-      <Dialog
-        open={Boolean(selected)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setSelected(null);
-            setFile(null);
-            setSubmitError(null);
-          }
-        }}
-      >
-        {selected ? (
-          <DialogContent title={selected.title} description={t("groupWorkspace.assignments.submitDialogDescription")}>
-            <div className="homework-submit-dialog">
-              <p>{selected.description}</p>
-              {selected.body ? (
-                <div className="homework-board-task-body" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selected.body) }} />
-              ) : null}
-              {selected.hasAttachment ? <AttachmentDownloadRow assignment={selected} /> : null}
-              <div className="assignment-board-row">
-                <Button
-                  variant="secondary"
-                  disabled={isAssignmentOverdue(selected)}
-                  onClick={() => navigate(`/student/chats/homework-board/${selected.id}`)}
-                >
-                  <PenLine size={16} /> {t("groupWorkspace.assignments.solveOnBoard")}
-                </Button>
-                <small>{t("groupWorkspace.assignments.solveOnBoardHint")}</small>
-              </div>
-              <div className="assignment-upload-row">
-                <input
-                  ref={fileRef}
-                  type="file"
-                  accept={selected.skillKey === "speaking" ? SPEAKING_ACCEPT : DEFAULT_ACCEPT}
-                  hidden
-                  onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-                />
-                <button type="button" onClick={() => fileRef.current?.click()}>
-                  <FileUp size={16} /> {t("groupWorkspace.assignments.chooseFile")}
-                </button>
-                {file ? (
-                  <span>
-                    <Paperclip size={14} /> {file.name}
-                  </span>
-                ) : null}
-              </div>
-              {submitError ? <div className="form-alert">{submitError}</div> : null}
-              <Button
-                loading={submit.isPending}
-                disabled={!file || isAssignmentOverdue(selected)}
-                onClick={() => {
-                  if (isAssignmentOverdue(selected)) {
-                    toast.error(t("groupWorkspace.assignments.deadlinePassed"));
-                    setSelected(null);
-                    return;
-                  }
-                  setSubmitError(null);
-                  void submit
-                    .mutateAsync({ assignmentId: selected.id, file, skillKey: selected.skillKey })
-                    .then(() => setSelected(null))
-                    .catch((error: unknown) => setSubmitError(homeworkFieldError(error, "file")));
-                }}
+          <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle />
+          <nav
+            className={`grid shrink-0 grid-cols-3 gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
+              selectionMode ? "pt-1" : "pt-4"
+            }`}
+          >
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
+                  active === tab ? "bg-brand text-ink-inverse lg:border-brand" : "bg-surface text-ink lg:border-line"
+                }`}
+                onClick={() => setParams(tab === "chat" ? {} : { tab })}
               >
-                {t("groupWorkspace.assignments.send")}
-              </Button>
-            </div>
-          </DialogContent>
-        ) : null}
-      </Dialog>
+                {t(`groupWorkspace.tabs.${tab}`)}
+              </button>
+            ))}
+          </nav>
 
-      <HomeworkResultDialog
-        submissionId={resultOf?.id ?? linkedSubmissionId ?? undefined}
-        initial={resultOf}
-        open={Boolean(resultOf || linkedSubmissionId)}
-        onOpenChange={(open: boolean) => {
-          if (open) return;
-          setResultOf(null);
-          if (linkedSubmissionId) {
-            const next = new URLSearchParams(params);
-            next.delete("submission");
-            setParams(next, { replace: true });
-          }
-        }}
-        canDownloadFile
-        title={t("groupWorkspace.assignments.resultDialogTitle")}
-      />
+          {active === "chat" && !selectionMode && announcementMode ? (
+            <p className="mx-4 mt-3 flex h-11 shrink-0 items-center gap-2.5 rounded-xl bg-brand-subtle px-4 text-body-sm text-brand lg:mx-7 lg:mt-3.5">
+              <Icon name="bolt" size={18} className="shrink-0" />
+              <span className="truncate">{chatT("list.announcementLocked")}</span>
+            </p>
+          ) : active === "chat" && !selectionMode && pinned !== hiddenPin ? (
+            <PinnedMessageBar roomId={conversation.id} variant="workspace" onUnpin={setHiddenPin} />
+          ) : null}
+
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              className="group-tab-content"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -3 }}
+            >
+              {active === "chat" ? (
+                <MessageList
+                  messages={messages.data}
+                  conversation={hydrated}
+                  loading={messages.isLoading}
+                  error={messages.isError}
+                  onRetry={messages.refetch}
+                  onRetryMessage={retryMessage}
+                  currentUserId={currentUserId}
+                  onReply={setReply}
+                  onEdit={setEditingMessageTarget}
+                  onDelete={(message, scope) => chat.deleteMessage.mutate({ messageId: message.id, scope })}
+                  onReact={(message, emoji) => chat.toggleReaction.mutate({ messageId: message.id, emoji })}
+                  pinnedIds={(chat.pinnedMessages.data ?? []).map((item) => item.messageId)}
+                  onPin={(message, isPinned) => chat.pinMessage.mutate({ messageId: message.id, pinned: isPinned })}
+                  onForward={(items) => setForwardTarget(items)}
+                  onBulkDelete={(messageIds, scope) => chat.deleteMessages.mutate({ messageIds, scope })}
+                  onOpenAssignment={(id) => navigate(ROUTES.student.homeworkItem(id))}
+                  assignmentSubmitted={(id) => submittedById.get(id) ?? null}
+                  variant="workspace"
+                />
+              ) : null}
+              {active === "lessons" ? (
+                <StudentLessons
+                  lessons={lessons.data}
+                  loading={lessons.isLoading}
+                  currentUserId={currentUserId}
+                  teacher={course.data?.teacher}
+                />
+              ) : null}
+              {active === "assignments" ? (
+                <StudentTasks
+                  assignments={assignments.data ?? []}
+                  quizzes={(quizzes.data ?? []).filter((quiz) => quiz.courseId === courseId)}
+                  loading={assignments.isLoading}
+                  courseTitle={hydrated.title}
+                  courseImage={course.data?.avatarUrl}
+                  courseTone={course.data?.color}
+                />
+              ) : null}
+            </motion.div>
+          </AnimatePresence>
+
+          {active === "chat" && !selectionMode && !announcementMode ? (
+            <MessageComposer
+              key={editingMessageTarget?.id ?? "compose"}
+              onSend={send}
+              onTyping={sendTyping}
+              sending={sendMessage.isPending || chat.updateMessage.isPending}
+              replyTo={reply}
+              editingMessage={editingMessageTarget}
+              currentUserId={currentUserId}
+              onCancelContext={() => {
+                setReply(null);
+                setEditingMessageTarget(null);
+              }}
+              roomId={conversation.id}
+              variant="workspace"
+            />
+          ) : null}
+
+          <ForwardDialog
+            open={forwardTarget.length > 0}
+            onOpenChange={(open) => !open && setForwardTarget([])}
+            messages={forwardTarget}
+            role="student"
+            pending={chat.forwardMessages.isPending}
+            onConfirm={(roomIds) =>
+              chat.forwardMessages.mutate(
+                { messageIds: forwardTarget.map((item) => item.id), roomIds },
+                { onSuccess: () => setForwardTarget([]) }
+              )
+            }
+          />
+        </section>
+      </div>
+
+      {isCompact ? (
+        <ConversationInfoPanel conversation={hydrated} open={infoOpen} onOpenChange={setInfoOpen} />
+      ) : infoOpen ? (
+        <ConversationInfoPanel embedded conversation={hydrated} open onOpenChange={setInfoOpen} />
+      ) : null}
     </div>
   );
 }
-

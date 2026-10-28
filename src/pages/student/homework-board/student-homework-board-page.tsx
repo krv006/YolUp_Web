@@ -10,6 +10,7 @@ import {
   useSubmitHomeworkBoard,
   type HomeworkBoardSaveState,
 } from "@/modules/homework";
+import { ROUTES } from "@/shared/config";
 import { sanitizeHtml } from "@/shared/lib";
 import type { Assignment } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
@@ -36,7 +37,7 @@ export function StudentHomeworkBoardPage() {
       />
     );
 
-  return <HomeworkBoardScreen assignment={assignment.data} board={board.data} onBack={() => navigate(-1)} onSubmitted={() => navigate("/student/chats")} />;
+  return <HomeworkBoardScreen assignment={assignment.data} board={board.data} onBack={() => navigate(-1)} onSubmitted={() => navigate(ROUTES.student.homeworkItem(assignment.data.id), { replace: true })} />;
 }
 
 function HomeworkBoardScreen({

@@ -41,3 +41,13 @@ export function notificationGroupKey(value: string): NotificationGroupKey {
   if (date.getTime() >= start.getTime() - 86_400_000) return "yesterday";
   return "earlier";
 }
+
+export function notificationLines(html: string): { title: string; body: string } {
+  const text = html.replace(/<br\s*\/?>|<\/(p|div|li|h\d)>/gi, "\n");
+  const doc = new DOMParser().parseFromString(text, "text/html");
+  const lines = (doc.body.textContent ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return { title: lines[0] ?? "", body: lines.slice(1).join(" · ") };
+}

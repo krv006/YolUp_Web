@@ -46,23 +46,6 @@
     "emptyDescription": "Create your first test or import it from a .docx / .xlsx / .json file.",
     "subjectSearch": "Search"
   },
-  "studentPage": {
-    "loading": "Loading quizzes",
-    "eyebrow": "QUIZZES",
-    "loadError": "Couldn't load quizzes",
-    "retry": "Retry",
-    "allCourses": "ALL COURSES",
-    "title": "Quizzes",
-    "subtitle": "No time limit — unlimited retries.",
-    "courseFallback": "Course",
-    "dueLabel": "Due: {{date}}",
-    "noDue": "No due date",
-    "questionCount": "{{count}} questions",
-    "historyAria": "Attempt history",
-    "solveButton": "Take quiz",
-    "empty": "No quizzes yet.",
-    "attemptsOfTitle": "\"{{title}}\" — your attempts"
-  },
   "createDialog": {
     "title": "New quiz",
     "description": "8 question types — graded automatically and instantly.",

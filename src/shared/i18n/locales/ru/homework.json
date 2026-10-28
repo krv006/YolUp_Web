@@ -113,7 +113,9 @@
     "overdue": "Срок истёк",
     "fileCount": "{{count}} файл",
     "submittedAt": "Сдано · {{value}}",
-    "submit": "Сдать задание"
+    "submit": "Сдать задание",
+    "notSubmitted": "Ещё не сдано",
+    "open": "Открыть задание"
   },
   "form": {
     "title": "Выдать задание",

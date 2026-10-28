@@ -50,10 +50,11 @@ export const homeworkApi = {
   async downloadAssignment(id: string, options?: RequestOptions) {
     return apiClient.get<Blob>(homeworkEndpoints.assignmentFile(id), { ...options, responseType: "blob" });
   },
-  async submit(assignmentId: string, file: File | null, skillKey?: string): Promise<Submission | null> {
+  async submit(assignmentId: string, file: File | null, skillKey?: string, comment?: string): Promise<Submission | null> {
     validateHomeworkFile(file, { speaking: skillKey === "speaking" });
     const body = new FormData();
     body.set("file", file as File);
+    if (comment?.trim()) body.set("comment", comment.trim());
     return mapSubmissionDto(
       await apiClient.post<SubmissionDto>(homeworkEndpoints.submit(assignmentId), body)
     );

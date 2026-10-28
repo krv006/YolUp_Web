@@ -1,20 +1,4 @@
 {
-  "dashboard": {
-    "loading": "O'quvchi paneli yuklanmoqda",
-    "loadError": "Ma'lumotlarni yuklab bo'lmadi",
-    "retry": "Qayta urinish",
-    "eyebrow": "O'QUVCHI KABINETI",
-    "greeting": "Xayrli kun, {{name}}! 👋",
-    "subtitle": "Bugungi darslar va vazifalaringiz bir joyda.",
-    "nextLessonEyebrow": "KEYINGI DARS",
-    "nextLessonTitle": "Bugungi reja",
-    "schedule": "Jadval",
-    "enterCourse": "Kursga kirish",
-    "noPlannedLesson": "Rejalashtirilgan dars yo'q.",
-    "assignmentsEyebrow": "VAZIFALAR",
-    "upcomingDeadlines": "Yaqin muddatlar",
-    "all": "Barchasi"
-  },
   "groupWorkspace": {
     "tabs": {
       "chat": "Chat",
@@ -23,37 +7,48 @@
     },
     "sendFailed": "Xabar yuborilmadi",
     "replyFallback": "Javob",
-    "lessons": {
-      "eyebrow": "KURS DARSLARI",
-      "title": "Darslar"
-    },
-    "assignments": {
-      "eyebrow": "KURS VAZIFALARI",
+    "tasks": {
+      "eyebrow": "GURUH VAZIFALARI",
       "title": "Vazifalar",
-      "downloadAria": "Vazifa faylini yuklab olish",
-      "downloadFallback": "Vazifa faylini yuklab olish",
-      "scoreSuffix": "ball",
-      "checkError": "Tekshiruv xatosi",
-      "checking": "Tekshirilmoqda…",
-      "openResultAria": "Natijani ochish",
-      "quizBadge": "Test",
-      "quizQuestions": "{{count}} ta savol",
-      "quizSolve": "Yechish",
-      "quizHistoryAria": "Urinishlar tarixi",
-      "overdueLabel": "Muddat tugagan",
-      "dueLabel": "Muddat",
-      "noDue": "Muddat yo'q",
-      "missed": "Topshirilmagan",
-      "submit": "Topshirish",
-      "empty": "Vazifa yo'q.",
-      "submitDialogDescription": "Topshiriq faylini yuklang (maksimal 25 MB).",
-      "chooseFile": "Fayl tanlash",
-      "send": "Yuborish",
-      "deadlinePassed": "Topshirish muddati tugagan",
-      "resultDialogTitle": "Vazifangiz bo'yicha natija",
-      "solveOnBoard": "Doskada yechish",
-      "solveOnBoardHint": "Qalam, formula, shakllar bilan to'liq doskada yeching yoki quyida fayl yuklang."
-    }
+      "subtitle": "Sizning topshiriqlaringiz va natijalaringiz",
+      "due": "Muddat: {{date}}",
+      "noDue": "Muddat yo‘q",
+      "quizMeta": "{{count}} ta savol · Test",
+      "daysLeft": "{{count}} kun qoldi",
+      "overdue": "Muddati o‘tgan",
+      "checking": "Tekshirilmoqda",
+      "finished": "Yakunlangan",
+      "new": "Yangi",
+      "notSubmitted": "Topshirilmagan",
+      "submittedOn": "Topshirildi · {{date}}",
+      "result": "Natija · {{value}}",
+      "grade": "Baho · {{value}}",
+      "solve": "Yechish",
+      "open": "Ochish",
+      "results": "Natijani ko‘rish",
+      "emptyTitle": "Hali vazifa yo‘q",
+      "emptyHint": "O‘qituvchi vazifa berganda shu yerda ko‘rinadi."
+    },
+    "lessonsTab": {
+      "eyebrow": "DARS JADVALI",
+      "title": "Darslar",
+      "subtitle": "Guruhdagi barcha jonli mashg‘ulotlar",
+      "today": "Bugun, {{date}}",
+      "yesterday": "Kecha, {{date}}",
+      "tomorrow": "Ertaga, {{date}}",
+      "attended": "Siz qatnashdingiz",
+      "missed": "Qatnashmadingiz",
+      "video": "Video yozuv",
+      "rate": "Baholash",
+      "myRating": "Bahoyingiz · {{value}}",
+      "join": "Darsga qo‘shilish",
+      "remind": "Eslatma qo‘yish",
+      "noTopic": "Mavzu yozilmagan",
+      "emptyTitle": "Hali dars rejalashtirilmagan",
+      "emptyHint": "O‘qituvchi dars qo‘shganda shu yerda ko‘rinadi.",
+      "minutes": "{{count}} daq"
+    },
+    "soon": "Tez orada"
   },
   "enrollmentDialog": {
     "title": "Yangi muloqot",
@@ -72,5 +67,360 @@
     "join": "Qo'shilish",
     "noOpenCourses": "Hozircha ochiq kurs yo'q.",
     "loadError": "Ma'lumotlarni yuklab bo'lmadi"
+  },
+  "home": {
+    "noLessons": "bugun dars yo‘q",
+    "lessonCount": "bugun {{count}} ta dars",
+    "searchPlaceholder": "Dars, vazifa, test qidirish...",
+    "hero": {
+      "live": "Dars ketmoqda · {{count}} daqiqa",
+      "startsIn": "{{count}} daqiqadan so‘ng",
+      "startsInHours": "{{count}} soatdan so‘ng",
+      "startsNow": "Hozir boshlanadi",
+      "tomorrow": "Ertaga · {{time}}",
+      "inLesson": "{{count}} kishi darsda",
+      "online": "onlayn",
+      "join": "Darsga qo‘shilish",
+      "details": "Batafsil",
+      "chat": "Chatga o‘tish"
+    },
+    "stats": {
+      "lessons": "Bugungi darslar",
+      "lessonsDone": "{{count}} tasi tugadi",
+      "dayOff": "dam olish kuni",
+      "tasks": "Vazifalar",
+      "tasksTomorrow": "{{count}} tasi ertaga",
+      "tasksToday": "{{count}} tasi bugun",
+      "tasksLater": "muddati yaqin emas",
+      "grade": "O‘rtacha baho",
+      "gradeHint": "oxirgi 30 kun",
+      "attendance": "Davomat",
+      "attendanceHint": "bu oy"
+    },
+    "today": {
+      "title": "Bugungi darslar",
+      "finished": "Tugadi · {{teacher}}",
+      "emptyTitle": "Bugun dars yo‘q",
+      "emptyNext": "Dam oling! Ertangi birinchi dars — {{time}}, {{title}}",
+      "emptyLater": "Dam oling! Keyingi dars — {{date}}, {{title}}",
+      "emptyNone": "Dam oling! Yaqin kunlarda dars yo‘q.",
+      "openSchedule": "Jadvalni ochish"
+    },
+    "tasks": {
+      "title": "Muddati yaqin vazifalar",
+      "today": "bugun, {{time}}",
+      "tomorrow": "ertaga, {{time}}",
+      "daysLeft": "{{count}} kun qoldi",
+      "test": "Test · {{count}} ta savol",
+      "empty": "Muddati yaqin vazifa yo‘q"
+    },
+    "grades": {
+      "title": "So‘nggi baholar",
+      "empty": "Hali baho qo‘yilmagan",
+      "yesterday": "Kecha"
+    },
+    "seeAll": "Barchasi",
+    "mobile": {
+      "tasksTitle": "Muddati yaqin vazifalar",
+      "tasksHint": "{{count}} ta vazifa · eng yaqini {{when}}",
+      "liveRow": "Dars ketmoqda",
+      "enter": "Kirish",
+      "chat": "Chat",
+      "tomorrowTitle": "Ertangi darslar",
+      "schedule": "Jadval"
+    },
+    "offline": "Internet yo‘q. Oxirgi saqlangan ma’lumot"
+  },
+  "workspace": {
+    "eyebrow": "O‘quvchi ish maydoni",
+    "soon": "Tez orada",
+    "back": "Orqaga",
+    "stats": {
+      "tests": "Testlar",
+      "testsHint": "{{count}} tasi bugun",
+      "assignments": "Faol vazifalar",
+      "assignmentsHint": "{{count}} tasi ertaga",
+      "mock": "Mock imtihon",
+      "mockNone": "rejalashtirilmagan",
+      "average": "O‘rtacha natija",
+      "averageHint": "oxirgi {{count}} urinish"
+    },
+    "modulesTitle": "Modullar",
+    "modules": {
+      "tests": {
+        "title": "Testlar",
+        "description": "O‘qituvchi bergan testlarni yeching, natijani darhol ko‘ring."
+      },
+      "assignments": {
+        "title": "Vazifalar",
+        "description": "Uy vazifalarini topshiring va baholarni ko‘ring."
+      },
+      "mock": {
+        "title": "Mock testlar",
+        "description": "IELTS, SAT, Milliy sertifikat sinov imtihonlari."
+      },
+      "ai": {
+        "title": "AI yordamchi",
+        "description": "Xatolaringizni tushuntiradi va mashq tuzib beradi."
+      },
+      "analytics": {
+        "title": "Tahlil",
+        "description": "Natijalaringiz, o‘sish va kuchsiz mavzular."
+      },
+      "materials": {
+        "title": "Materiallar",
+        "description": "Darsliklar, audio va fayllar"
+      }
+    },
+    "counts": {
+      "tests": "{{count}} ta yangi",
+      "assignments": "{{count}} ta faol",
+      "mockNone": "Rejalashtirilmagan",
+      "ai": "Yangi",
+      "analytics": "O‘rtacha {{value}}",
+      "materials": "Tez orada"
+    },
+    "mobile": {
+      "eyebrow": "Ish maydoni",
+      "overview": "Umumiy holat",
+      "details": "Batafsil",
+      "stats": {
+        "tests": "Yangi test",
+        "assignments": "Vazifa",
+        "average": "Natija"
+      }
+    },
+    "tests": {
+      "eyebrow": "Workspace / Testlar · {{count}} ta",
+      "title": "Testlar",
+      "filters": {
+        "all": "Barchasi",
+        "new": "Yangi",
+        "solved": "Yechilgan",
+        "overdue": "Muddati o‘tgan"
+      },
+      "attempts": "Urinishlar",
+      "meta": "{{subject}} · {{count}} ta savol",
+      "solve": "Yechish",
+      "result": "Natija",
+      "retry": "Qayta yechish",
+      "solvedChip": "Yechilgan · {{value}}%",
+      "overdueChip": "Muddati o‘tgan",
+      "otherSubject": "Boshqa",
+      "emptyTitle": "Hozircha test yo‘q",
+      "emptyHint": "O‘qituvchingiz test bersa, shu yerda ko‘rinadi.",
+      "attemptsTitle": "Urinishlarim",
+      "attemptsSubtitle": "Oxirgi yechgan testlaringiz",
+      "attemptsEmpty": "Hali test yechmagansiz"
+    },
+    "player": {
+      "questions": "Savollar · {{count}}",
+      "meta": "vaqt chegarasi yo‘q",
+      "later": "Keyinroq davom etish",
+      "finish": "Yakunlash va topshirish",
+      "overline": "{{n}}-savol · {{type}}",
+      "prev": "Oldingi",
+      "next": "Keyingi savol",
+      "submitting": "Topshirilmoqda…",
+      "loadError": "Testni yuklab bo‘lmadi",
+      "retry": "Qayta urinish",
+      "savedLater": "Javoblaringiz saqlandi — keyinroq davom ettirasiz",
+      "submitted": "Test topshirildi",
+      "unanswered": "{{count}} ta savolga javob berilmagan. Baribir topshirasizmi?",
+      "types": {
+        "single": "Bitta javob",
+        "multiple": "Bir nechta javob",
+        "true_false": "Ha / Yo‘q",
+        "numeric": "Son kiritish",
+        "text": "Qisqa javob",
+        "matching": "Moslashtirish",
+        "ordering": "Tartibga solish",
+        "fill_blank": "Bo‘sh joy",
+        "essay": "Insho"
+      },
+      "hints": {
+        "single": "Bitta to‘g‘ri javobni tanlang. Javoblar avtomatik saqlanadi.",
+        "multiple": "Bir nechta to‘g‘ri javobni belgilang. Javoblar avtomatik saqlanadi.",
+        "true_false": "To‘g‘ri yoki noto‘g‘ri ekanini belgilang.",
+        "numeric": "Javobni son bilan kiriting.",
+        "text": "Qisqa javob yozing.",
+        "matching": "Har bir elementni mosini tanlang.",
+        "ordering": "Elementlarni to‘g‘ri tartibga keltiring.",
+        "fill_blank": "Bo‘sh joylarni to‘ldiring.",
+        "essay": "Inshoingizni yozing. Javoblar avtomatik saqlanadi."
+      },
+      "trueLabel": "To‘g‘ri",
+      "falseLabel": "Noto‘g‘ri",
+      "finishShort": "Yakunlash"
+    },
+    "results": {
+      "eyebrow": "Testlar / Natijangiz · {{course}}",
+      "retry": "Qayta yechish",
+      "stats": {
+        "score": "Natijangiz",
+        "correct": "To‘g‘ri javoblar",
+        "group": "Guruh o‘rtachasi",
+        "time": "Sarflangan vaqt"
+      },
+      "minutes": "{{count}} daq",
+      "table": {
+        "attempt": "Urinish",
+        "number": "№",
+        "correct": "To‘g‘ri",
+        "time": "Vaqt",
+        "result": "Natija",
+        "last": "oxirgi"
+      },
+      "mistakes": "Xato qilgan savollaringiz",
+      "wrong": "Xato",
+      "questionLabel": "{{n}}-savol · {{text}}",
+      "noMistakes": "Xato yo‘q — barakalla!",
+      "mistakesUnknown": "Savollar bo‘yicha tahlil testni yechganingizdan keyin ko‘rinadi.",
+      "ai": {
+        "title": "AI tavsiya",
+        "text": "Xato qilgan savollaringiz asosida siz uchun {{count}} ta mashq tayyorlaymiz.",
+        "textNone": "Natijangiz yaxshi! Mavzuni mustahkamlash uchun qo‘shimcha mashq yeching.",
+        "start": "Mashqni boshlash",
+        "started": "Mashq tayyorlanmoqda — tayyor bo‘lgach bildirishnoma keladi"
+      },
+      "empty": "Bu testni hali yechmagansiz",
+      "emptyHint": "Testni yeching — natijangiz shu yerda ko‘rinadi.",
+      "solve": "Testni yechish"
+    },
+    "analytics": {
+      "eyebrow": "Natijalaringiz, baholaringiz va davomatingiz",
+      "title": "Tahlil",
+      "stats": {
+        "grade": "O‘rtacha baho",
+        "gradeHint": "{{count}} ta bahodan",
+        "lessons": "Qatnashgan darslar",
+        "lessonsHint": "{{count}} tasi qoldirilgan",
+        "attendance": "Davomat",
+        "attendanceHint": "bu oy",
+        "homework": "Vazifalar",
+        "homeworkHint": "o‘z vaqtida topshirilgan"
+      },
+      "chart": {
+        "title": "Test natijalaringiz — o‘rtacha ball",
+        "range": "Oxirgi 8 hafta",
+        "empty": "Hali test yechilmagan"
+      },
+      "subjects": {
+        "title": "Fanlar bo‘yicha",
+        "test": "test {{value}}%",
+        "empty": "Hali guruhga qo‘shilmagansiz"
+      }
+    },
+    "mock": {
+      "eyebrow": "Sizga biriktirilgan sinov imtihonlari",
+      "title": "Mock testlar",
+      "filters": {
+        "all": "Hammasi",
+        "ielts": "IELTS",
+        "sat": "SAT",
+        "milliy": "Milliy",
+        "other": "Boshqa"
+      },
+      "states": {
+        "running": "Ketmoqda",
+        "upcoming": "Rejalashtirilgan",
+        "finished": "Tugagan",
+        "submitted": "Topshirilgan"
+      },
+      "today": "bugun {{time}}",
+      "hours": "{{count}} soat",
+      "hoursMinutes": "{{hours}} soat {{minutes}} daq",
+      "minutesOnly": "{{count}} daq",
+      "continue": "Davom ettirish",
+      "remind": "Eslatma qo‘yish",
+      "result": "Natija",
+      "live": "Jonli",
+      "left": "qoldi",
+      "leftSection": "qoldi · {{section}}",
+      "back": "Imtihonga qaytish",
+      "emptyTitle": "Hozircha mock imtihon yo‘q",
+      "emptyHint": "O‘qituvchingiz sinov imtihonini belgilasa, shu yerda ko‘rinadi."
+    },
+    "mockResult": {
+      "eyebrow": "Mock testlar / Natijangiz · {{date}}",
+      "pdf": "PDF yuklab olish",
+      "stats": {
+        "overall": "Umumiy band",
+        "group": "Guruh o‘rtachasi",
+        "target": "Maqsadingiz"
+      },
+      "sections": "Bo‘limlar bo‘yicha natijangiz",
+      "details": "Bo‘limlar tafsiloti",
+      "correct": "{{earned}} / {{max}} to‘g‘ri javob",
+      "manual": "O‘qituvchi baholaydi",
+      "pending": "Baholanmoqda",
+      "essay": "Sizning inshoyingiz · {{title}}",
+      "words": "{{count}} so‘z",
+      "aiTitle": "AI tahlili · IELTS mezonlari",
+      "aiQueued": "AI tahlili tayyorlanmoqda…",
+      "mistakes": "Asosiy xatolar: {{value}}",
+      "strengths": "Kuchli tomonlar: {{value}}",
+      "askTeacher": "O‘qituvchiga savol",
+      "practice": "Xatolar ustida ishlash",
+      "notReady": "Natija hali e’lon qilinmagan",
+      "notReadyHint": "O‘qituvchi natijalarni e’lon qilgach, shu yerda ko‘rinadi."
+    },
+    "homework": {
+      "eyebrow": "Workspace / Vazifalar · {{count}} ta",
+      "title": "Vazifalar",
+      "filters": {
+        "all": "Barchasi",
+        "open": "Topshirilmagan",
+        "checking": "Tekshirilmoqda",
+        "graded": "Baholangan"
+      },
+      "emptyTitle": "Hozircha vazifa yo‘q",
+      "emptyHint": "O‘qituvchingiz vazifa bersa, shu yerda ko‘rinadi."
+    },
+    "hwItem": {
+      "eyebrow": "Vazifalar / {{course}} · {{teacher}}",
+      "daysLeft": "{{count}} kun qoldi",
+      "today": "Bugun tugaydi",
+      "overdue": "Muddati o‘tgan",
+      "aiCheck": "AI dastlabki tekshiruv",
+      "answer": "Javobingiz",
+      "answerHint": "Fayl yuklang va kerak bo‘lsa izoh qoldiring. Topshirgandan so‘ng o‘qituvchi tekshiradi.",
+      "drop": "Faylni shu yerga tashlang yoki tanlang",
+      "dropHint": "PDF, JPG, PNG, DOCX · 25 MB gacha",
+      "dropSpeaking": "MP3, WAV, M4A, OGG · 25 MB gacha",
+      "fileReady": "{{size}} · tanlandi",
+      "remove": "Olib tashlash",
+      "comment": "Izoh (ixtiyoriy)",
+      "commentPlaceholder": "Masalan: 124-misolda yordam kerak bo‘ldi…",
+      "dueNotice": "Muddat: {{date}} · {{left}}.",
+      "lateAllowed": "Kech topshirishga ruxsat bor.",
+      "lateDenied": "Muddatdan keyin topshirib bo‘lmaydi.",
+      "noDue": "Muddat belgilanmagan.",
+      "draft": "Qoralama saqlash",
+      "draftSaved": "Qoralama saqlandi",
+      "submit": "Topshirish",
+      "board": "Doskada yechish",
+      "resultTitle": "{{title}} · javobingiz",
+      "onTime": "o‘z vaqtida topshirildi",
+      "late": "kech topshirildi",
+      "download": "Yuklab olish",
+      "aiScore": "AI dastlabki bahosi: {{value}}",
+      "aiHint": "Yakuniy bahoni o‘qituvchingiz qo‘yadi",
+      "aiHintDone": "Yakuniy bahoni o‘qituvchingiz qo‘ydi",
+      "checking": "AI tekshirmoqda",
+      "checkingHint": "Natija tayyor bo‘lishi bilan yangilanadi",
+      "failed": "Faylni avtomatik tekshirib bo‘lmadi — o‘qituvchi o‘zi baholaydi",
+      "findings": "Topilgan kamchiliklar",
+      "teacherGrade": "O‘qituvchi bahosi",
+      "waitingGrade": "O‘qituvchi hali baho qo‘ymadi",
+      "matchesAi": "AI bilan mos",
+      "teacherComment": "O‘qituvchi izohi",
+      "writeTeacher": "O‘qituvchiga yozish",
+      "ok": "Tushunarli",
+      "resubmit": "Qayta topshirish",
+      "resubmitAsked": "O‘qituvchi qayta topshirishni so‘radi",
+      "notFound": "Vazifa topilmadi",
+      "retry": "Qayta urinish"
+    }
   }
 }

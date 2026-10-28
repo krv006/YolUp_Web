@@ -56,6 +56,10 @@
     "requestNote": "Join request",
     "you": "You",
     "mobileClose": "Close",
-    "wantsToJoin": "{{name}} wants to join"
+    "wantsToJoin": "{{name}} wants to join",
+    "raiseTitle": "To turn on your mic",
+    "raiseHint": "Raise your hand",
+    "raiseHand": "Raise hand",
+    "soon": "Coming soon"
   }
 }

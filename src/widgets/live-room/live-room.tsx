@@ -37,6 +37,7 @@ import {
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { AwayStudentsNotice, BoardPanel } from "@/modules/board";
+import { useCourse } from "@/modules/course";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { i18n } from "@/shared/i18n";
 import {
@@ -605,6 +606,8 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   const mic = useMicSignals(lesson.id, isTeacher);
   const camera = useCameraSignals(lesson.id, isTeacher);
   useFocusTracker(lesson.id, !isTeacher);
+  const course = useCourse(lesson.courseId || null);
+  const teacherId = course.data?.teacherUser?.id ?? null;
 
   const tracks = useTracks(
     [
@@ -639,7 +642,11 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
 
   const localCamera =
     cameraTracks.find((track) => track.participant.isLocal) ?? cameraTracks[0] ?? null;
-  const remoteCameras = cameraTracks.filter((track) => track !== localCamera);
+  const leadCamera = isTeacher
+    ? localCamera
+    : (cameraTracks.find((track) => track.participant.identity === teacherId) ?? localCamera);
+  const remoteCameras = cameraTracks.filter((track) => track !== leadCamera);
+  const raisedHand = !isTeacher && (mic.waiting || camera.waiting);
   const hostName = room.localParticipant.name ?? "";
   const studentCount = Math.max(participants.length - 1, 0);
 
@@ -792,13 +799,23 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
             {lesson.courseTitle} — {lesson.title}
           </strong>
           <small className="truncate text-body-xs text-ink-tertiary">
-            {hostName ? `${hostName} · ` : ""}
-            {t("room.studentsPresent", { count: studentCount })}
+            {isTeacher
+              ? `${hostName ? `${hostName} · ` : ""}${t("room.studentsPresent", { count: studentCount })}`
+              : `${course.data?.teacher ? `${course.data.teacher} · ` : ""}${t("room.peopleInLesson", { count: participants.length })}`}
             {connected ? "" : ` · ${connectionLabels[connectionState] ?? connectionState}`}
           </small>
         </div>
 
         {recordingChips.length ? <RecordingChip startedAt={joinedAt} /> : null}
+
+        {!isTeacher && lesson.status === "live" ? (
+          <>
+            <RecordingChip startedAt={new Date(lesson.startsAt)} />
+            <span className="flex h-6 shrink-0 items-center rounded-full bg-subtle px-3 text-caption text-ink-secondary" role="status">
+              {t("room.recordingStudent")}
+            </span>
+          </>
+        ) : null}
 
         {recordingChips.map((chip) => (
           <span
@@ -847,10 +864,14 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           className="hidden w-84 shrink-0 flex-col gap-2.5 overflow-y-auto lg:flex"
           aria-label={t("room.filmstripAria")}
         >
-          {localCamera ? (
+          {leadCamera ? (
             <CameraTile
-              track={localCamera}
-              label={`${t("room.youLabel")}${isTeacher ? ` · ${t("room.teacherRole")}` : ""}`}
+              track={leadCamera}
+              label={
+                leadCamera.participant.isLocal
+                  ? `${t("room.youLabel")}${isTeacher ? ` · ${t("room.teacherRole")}` : ""}`
+                  : `${firstName(leadCamera.participant.name || leadCamera.participant.identity)} · ${t("room.teacherRole")}`
+              }
             />
           ) : null}
 
@@ -864,6 +885,25 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
                 />
               ))}
             </div>
+          ) : null}
+
+          {raisedHand ? (
+            <section className="flex flex-col gap-3 rounded-lg bg-surface p-3.5">
+              <strong className="text-title-sm text-ink">{t("room.queueTitle", { count: 1 })}</strong>
+              <span className="flex items-center gap-2.5">
+                <Avatar name={room.localParticipant.name || t("room.youLabel")} size="xs" />
+                <small className="min-w-0 flex-1 truncate text-body-xs text-ink">
+                  {t("room.youLabel")} · ✋ {t("room.handRaised")}
+                </small>
+                <button
+                  type="button"
+                  className="flex h-8 shrink-0 items-center rounded-full bg-brand px-4 text-caption-strong text-on-action transition-colors hover:bg-brand-strong"
+                  onClick={() => toast.info(t("room.soon"))}
+                >
+                  {t("room.cancelRequest")}
+                </button>
+              </span>
+            </section>
           ) : null}
 
           {isTeacher && pendingRequestsCount ? (

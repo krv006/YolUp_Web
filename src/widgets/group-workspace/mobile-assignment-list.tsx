@@ -1,42 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Assignment, QuizSummary } from "@/shared/types";
-import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
-import { GroupTile } from "@/shared/ui/group-tile";
-import { Icon } from "@/shared/ui/icon";
+import { TaskCards, type TaskRow } from "./task-cards";
 
 const DAY_MS = 86_400_000;
-
-type Tone = "teal" | "brand" | "success" | "violet" | "danger";
-
-const PILL: Record<Tone, string> = {
-  teal: "bg-accent-teal-bg text-accent-teal-fg",
-  brand: "bg-brand-subtle text-brand",
-  success: "bg-success-bg text-success-fg",
-  violet: "bg-accent-violet-bg text-accent-violet-fg",
-  danger: "bg-danger-bg text-error-text",
-};
-
-const BAR: Record<Tone, string> = {
-  teal: "bg-brand",
-  brand: "bg-brand",
-  success: "bg-success",
-  violet: "bg-brand",
-  danger: "bg-danger",
-};
-
-interface Row {
-  id: string;
-  assignmentId?: string;
-  quizId?: string;
-  title: string;
-  meta: string;
-  pill: { tone: Tone; icon: string; label: string };
-  aside: string;
-  progress: number | null;
-  onOpen: () => void;
-  menu: Array<{ id: string; label: string; danger?: boolean; run: () => void }>;
-}
 
 export interface MobileAssignmentListProps {
   assignments: Assignment[];
@@ -89,7 +56,7 @@ export function MobileAssignmentList({
     return Math.ceil((due - now) / DAY_MS);
   }
 
-  const assignmentRows: Row[] = assignments.map((item) => {
+  const assignmentRows: TaskRow[] = assignments.map((item) => {
     const total = item.stats?.studentsCount ?? item.submissions.length;
     const submitted = item.stats?.submittedCount ?? item.submissionsCount ?? item.submissions.length;
     const pending = item.submissions.filter((entry) => !entry.grade).length;
@@ -99,7 +66,7 @@ export function MobileAssignmentList({
     const done = total > 0 && submitted >= total;
     const skill = item.skillKey ? t(`dialogs.assignment.skillOptions.${item.skillKey}`) : "";
 
-    const pill: Row["pill"] = draft
+    const pill: TaskRow["pill"] = draft
       ? { tone: "violet", icon: "edit", label: t("mobileAssignments.draft") }
       : (closed || done) && pending > 0
         ? { tone: "brand", icon: "quiz", label: t("mobileAssignments.review", { count: pending }) }
@@ -147,7 +114,7 @@ export function MobileAssignmentList({
     };
   });
 
-  const quizRows: Row[] = quizzes.map((quiz) => {
+  const quizRows: TaskRow[] = quizzes.map((quiz) => {
     const left = daysLeft(quiz.dueAt);
     const draft = quiz.status === "draft";
     const closed = left !== null && left < 0;
@@ -172,81 +139,13 @@ export function MobileAssignmentList({
   });
 
   return (
-    <div className={className}>
-      {[...assignmentRows, ...quizRows].map((row) => (
-        <article
-          key={row.id}
-          data-assignment-id={row.assignmentId}
-          data-quiz-id={row.quizId}
-          role="button"
-          tabIndex={0}
-          className={`flex flex-col gap-3 rounded-xl bg-surface p-4 ${
-            row.assignmentId && row.assignmentId === highlightId ? "ring-2 ring-brand" : ""
-          }`}
-          onClick={row.onOpen}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") row.onOpen();
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <GroupTile
-              name={courseTitle}
-              tone={courseTone}
-              src={courseImage}
-              className="size-11 rounded-xl bg-subtle"
-            />
-            <span className="flex min-w-0 flex-1 flex-col">
-              <strong className="truncate text-title text-ink">{row.title}</strong>
-              <small className="truncate text-body-sm text-ink-secondary">{row.meta}</small>
-            </span>
-            <Dropdown>
-              <DropdownTrigger asChild>
-                <button
-                  type="button"
-                  className="-mr-2 grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-subtle"
-                  aria-label={t("mobileAssignments.menu")}
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Icon name="more" size={20} />
-                </button>
-              </DropdownTrigger>
-              <DropdownContent>
-                {row.menu.map((item) => (
-                  <DropdownItem
-                    key={item.id}
-                    destructive={item.danger}
-                    onClick={(event) => event.stopPropagation()}
-                    onSelect={item.run}
-                  >
-                    {item.label}
-                  </DropdownItem>
-                ))}
-              </DropdownContent>
-            </Dropdown>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span
-              className={`flex h-6 shrink-0 items-center gap-1.5 rounded-full pr-2.5 pl-2 text-caption-strong ${PILL[row.pill.tone]}`}
-            >
-              <Icon name={row.pill.icon} size={14} />
-              {row.pill.label}
-            </span>
-            {row.aside ? (
-              <small className="ml-auto shrink-0 text-body-xs text-ink-secondary">{row.aside}</small>
-            ) : null}
-          </div>
-
-          {row.progress === null ? null : (
-            <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
-              <span
-                className={`block h-full rounded-full ${BAR[row.pill.tone]}`}
-                style={{ width: `${row.progress}%` }}
-              />
-            </span>
-          )}
-        </article>
-      ))}
-    </div>
+    <TaskCards
+      rows={[...assignmentRows, ...quizRows]}
+      courseTitle={courseTitle}
+      courseImage={courseImage}
+      courseTone={courseTone}
+      highlightId={highlightId}
+      className={className}
+    />
   );
 }

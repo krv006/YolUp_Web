@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { useIsStudent } from "@/modules/auth";
 import { NotificationBell } from "@/modules/notification";
 import { Icon } from "@/shared/ui/icon";
 import { GlobalSearchDialog } from "@/widgets/global-search";
@@ -14,6 +15,7 @@ export interface WorkspaceShellProps {
 export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceShellProps) {
   const { t } = useTranslation("dashboard");
   const [searchOpen, setSearchOpen] = useState(false);
+  const student = useIsStudent();
 
   return (
     <main className="flex h-full min-h-0 flex-col overflow-y-auto bg-canvas bg-page-gradient">
@@ -21,7 +23,7 @@ export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceSh
         <header className="mb-[3px] flex flex-wrap items-center gap-4">
           <div className="flex min-w-0 flex-1 flex-col gap-0.5">
             <small className="truncate text-body-xs text-ink-secondary">{eyebrow}</small>
-            <h1 className="truncate font-heading text-display text-ink">{title}</h1>
+            <h1 className="truncate font-heading text-[26px]/9 font-semibold text-ink">{title}</h1>
           </div>
 
           <button
@@ -31,7 +33,7 @@ export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceSh
           >
             <Icon name="search" size={18} className="shrink-0 text-icon-tertiary" />
             <span className="min-w-0 flex-1 truncate text-left">
-              {t("header.searchPlaceholder")}
+              {student ? t("student:home.searchPlaceholder") : t("header.searchPlaceholder")}
             </span>
             <kbd className="shrink-0 rounded-sm bg-subtle px-2 py-0.5 text-caption text-ink-tertiary">
               ⌘ K
