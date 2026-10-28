@@ -45,21 +45,36 @@ export function ChatEmptyState({ onOpenConversations }: { onOpenConversations?: 
   }
 
   return (
-    <section className="flex h-full w-full flex-col items-center justify-center gap-4 bg-canvas px-8 text-center">
-      <span className="grid size-24 place-items-center rounded-full bg-illustration text-white">
-        <Icon name="nav-chat" size={40} />
+    <section className="flex h-full w-full flex-col items-center justify-center bg-canvas bg-page-gradient px-8 text-center">
+      <span className="grid size-22 place-items-center rounded-2xl bg-brand-subtle text-brand">
+        <Icon name="forum" size={44} />
       </span>
-      <h2 className="font-heading text-h3 text-ink">{t("emptyState.title")}</h2>
-      <p className="max-w-[360px] text-body-sm text-ink-secondary">{t("emptyState.description")}</p>
+      <h2 className="mt-3 font-heading text-[24px]/8 font-semibold text-ink">{t("emptyState.title")}</h2>
+      <p className="mt-2.5 max-w-[330px] text-[15px]/5 text-ink-secondary">{t("emptyState.description")}</p>
       {onOpenConversations ? (
         <button
-          className="mt-2 flex h-(--size-control-xl) items-center gap-2 rounded-2xl bg-action px-6 text-label-strong text-on-action transition-colors hover:bg-action-hover"
+          className="mt-3.5 flex h-[42px] items-center gap-2 rounded-full bg-brand px-[15px] text-button text-on-action transition-colors hover:bg-brand-strong"
           onClick={onOpenConversations}
         >
           {t("emptyState.openConversations")}
           <Icon name="chevron-right" size={18} />
         </button>
-      ) : null}
+      ) : (
+        <span className="mt-3.5 flex gap-2.5">
+          <button
+            className="flex h-[42px] items-center rounded-full border border-line-strong bg-surface px-[15px] text-button text-ink transition-colors hover:bg-subtle"
+            onClick={() => openNewConversation(true)}
+          >
+            {t("emptyState.newChat")}
+          </button>
+          <button
+            className="flex h-[42px] items-center rounded-full bg-brand px-[15px] text-button text-on-action transition-colors hover:bg-brand-strong"
+            onClick={() => openNewConversation(true)}
+          >
+            {isTeacher ? t("emptyState.createGroup") : t("emptyState.joinGroup")}
+          </button>
+        </span>
+      )}
     </section>
   );
 }

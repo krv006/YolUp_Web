@@ -56,6 +56,10 @@
     "requestNote": "Kirish so'rovi",
     "you": "Siz",
     "mobileClose": "Yopish",
-    "wantsToJoin": "{{name}} kirmoqchi"
+    "wantsToJoin": "{{name}} kirmoqchi",
+    "raiseTitle": "Mikrofonni yoqish uchun",
+    "raiseHint": "Qo‘l ko‘taring",
+    "raiseHand": "Qo‘l ko‘tarish",
+    "soon": "Tez orada"
   }
 }

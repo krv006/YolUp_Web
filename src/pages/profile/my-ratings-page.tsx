@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useMyAnalytics } from "@/modules/analytics";
-import { useAuth, useMyRatings } from "@/modules/auth";
+import { useAuth, useIsStudent, useMyRatings } from "@/modules/auth";
 import { StarRating } from "@/modules/lesson";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { formatDayTime } from "@/shared/lib";
@@ -8,6 +8,7 @@ import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { MobileEmptyCard, MobileListSkeleton } from "@/shared/ui/mobile-page";
 import { ProfileSubPage } from "./profile-shell";
+import { StudentRatings } from "./student-ratings";
 
 function Stars({ value, size }: { value: number; size: number }) {
   const filled = Math.round(value);
@@ -36,6 +37,10 @@ function relativeDay(value: string, labels: { today: string; yesterday: string }
 }
 
 export function MyRatingsPage() {
+  return useIsStudent() ? <StudentRatings /> : <TeacherRatings />;
+}
+
+function TeacherRatings() {
   const { t } = useTranslation("account");
   const { user } = useAuth();
   const isCompact = useIsCompact();

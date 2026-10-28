@@ -34,6 +34,8 @@ export interface MessageListProps {
   onForward?: (messages: ChatMessage[]) => void;
   onBulkDelete?: (messageIds: string[], scope: "me" | "everyone") => void;
   variant?: "default" | "workspace";
+  onOpenAssignment?: (assignmentId: string) => void;
+  assignmentSubmitted?: (assignmentId: string) => boolean | null;
 }
 
 type TimelineEntry = { kind: "message" | "assignment"; message: ChatMessage };
@@ -61,6 +63,8 @@ export function MessageList({
   onForward,
   onBulkDelete,
   variant = "default",
+  onOpenAssignment,
+  assignmentSubmitted,
 }: MessageListProps) {
   const workspace = variant === "workspace";
   const { t } = useTranslation("chat");
@@ -270,6 +274,9 @@ export function MessageList({
               <HomeworkMessageCard
                 assignment={entry.message.assignment}
                 canReview={entry.message.senderId === currentUserId}
+                compact={workspace}
+                submitted={assignmentSubmitted?.(entry.message.assignment.id) ?? null}
+                onOpen={onOpenAssignment ? () => onOpenAssignment(entry.message.assignment?.id ?? "") : undefined}
               />
             </div>
           ) : (

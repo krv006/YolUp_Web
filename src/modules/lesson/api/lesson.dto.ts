@@ -19,6 +19,8 @@ export interface LessonDto {
   participants_count?: number | null;
   attendance_rate?: number | null;
   joined_count?: number | null;
+  my_rating?: number | null;
+  attended?: boolean | null;
   assignment?: { id: string | number; title?: string | null } | null;
   recurrence?: {
     freq?: string | null;

@@ -1,12 +1,12 @@
 import { Fragment, useRef, useState, type PointerEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useRoleRoutes } from "@/modules/auth";
 import {
   ConversationActionsSheet,
   useNewConversationStore,
   type ConversationActionsFocus,
 } from "@/modules/conversation";
-import { ROUTES } from "@/shared/config";
 import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -25,6 +25,7 @@ const LONG_PRESS_MS = 450;
 export function MobileConversationList() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
+  const routes = useRoleRoutes();
   const openNewConversation = useNewConversationStore((state) => state.setOpen);
   const {
     data,
@@ -195,7 +196,7 @@ export function MobileConversationList() {
                         pressed.current = false;
                         return;
                       }
-                      navigate(ROUTES.teacher.chat(conversation.id));
+                      navigate(routes.chat(conversation.id));
                     }}
                   >
                     <ConversationRowBody conversation={conversation} />
@@ -216,7 +217,7 @@ export function MobileConversationList() {
                     className="flex items-center gap-3 border-b border-line px-4 py-4 text-left last:border-b-0"
                     onClick={() => {
                       if (person.roomId) {
-                        navigate(ROUTES.teacher.chat(person.roomId));
+                        navigate(routes.chat(person.roomId));
                         setSearch("");
                       }
                     }}

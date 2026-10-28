@@ -5,6 +5,7 @@ import {
   useConversations,
   type ConversationFilter,
 } from "@/modules/conversation";
+import { useIsStudent } from "@/modules/auth";
 import { useUserSearch } from "@/modules/notification";
 
 export const CONVERSATION_FILTERS: ConversationFilter[] = ["all", "group", "direct", "unread"];
@@ -12,7 +13,7 @@ export const CONVERSATION_FILTERS: ConversationFilter[] = ["all", "group", "dire
 export function useConversationList() {
   const { filter, setFilter } = useConversationFilter();
   const [search, setSearch] = useState("");
-  const { data = [], isLoading, isError, refetch } = useConversations("teacher");
+  const { data = [], isLoading, isError, refetch } = useConversations(useIsStudent() ? "student" : "teacher");
 
   const query = search.trim().toLowerCase();
 

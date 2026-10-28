@@ -113,7 +113,9 @@
     "overdue": "Overdue",
     "fileCount": "{{count}} file",
     "submittedAt": "Submitted · {{value}}",
-    "submit": "Submit homework"
+    "submit": "Submit homework",
+    "notSubmitted": "Not submitted yet",
+    "open": "Open task"
   },
   "form": {
     "title": "Set an assignment",

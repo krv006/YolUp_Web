@@ -1,7 +1,7 @@
 import { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, NavLink, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@/modules/auth";
+import { useAuth, useIsStudent } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { CardsSkeleton } from "@/shared/ui/page-skeleton";
@@ -33,7 +33,9 @@ const navClass = ({ isActive }: { isActive: boolean }) =>
 
 export function ProfileLayout() {
   const { t } = useTranslation("account");
+  const { t: tn } = useTranslation("nav");
   const { user } = useAuth();
+  const student = useIsStudent();
   const { pathname } = useLocation();
   const isCompact = useIsCompact();
   const [switchOpen, setSwitchOpen] = useState(false);
@@ -45,7 +47,7 @@ export function ProfileLayout() {
 
   return (
     <WorkspaceShell
-      eyebrow={`${user?.name ?? ""}${user?.username ? ` · @${user.username}` : ""}`}
+      eyebrow={`${student ? tn("roles.student") : (user?.name ?? "")}${user?.username ? ` · @${user.username}` : ""}`}
       title={t(active?.titleKey ?? "page.title")}
     >
       <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,640px)] lg:items-start">

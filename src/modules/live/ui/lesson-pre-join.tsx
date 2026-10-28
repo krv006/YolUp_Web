@@ -26,6 +26,7 @@ export interface LessonPreJoinProps {
   waitingCount?: number | null;
   totalCount?: number | null;
   waitingNames?: string[];
+  teacherName?: string;
   onJoin: (choices: LessonPreJoinChoices) => void;
   onCancel: () => void;
 }
@@ -38,6 +39,7 @@ export function LessonPreJoin({
   waitingCount = null,
   totalCount = null,
   waitingNames = [],
+  teacherName = "",
   onJoin,
   onCancel,
 }: LessonPreJoinProps) {
@@ -325,9 +327,11 @@ export function LessonPreJoin({
 
           <p className="text-body-sm text-ink-secondary">
             {timeRange}
-            {waitingCount !== null
-              ? ` · ${t("preJoin.waiting", { count: waitingCount, total: totalCount ?? waitingCount })}`
-              : ` · ${t("preJoin.minutesValue", { count: lesson.durationMinutes })}`}
+            {!isTeacher && teacherName
+              ? ` · ${t("preJoin.teacher", { name: teacherName })}`
+              : waitingCount !== null
+                ? ` · ${t("preJoin.waiting", { count: waitingCount, total: totalCount ?? waitingCount })}`
+                : ` · ${t("preJoin.minutesValue", { count: lesson.durationMinutes })}`}
           </p>
 
           {waitingNames.length ? (
@@ -338,7 +342,7 @@ export function LessonPreJoin({
                 ))}
               </span>
               <small className="min-w-0 flex-1 truncate text-body-xs text-ink-tertiary">
-                {t("preJoin.waitingNames", {
+                {t(isTeacher ? "preJoin.waitingNames" : "preJoin.inLessonNames", {
                   names: waitingNames.slice(0, 2).join(", "),
                   count: Math.max(waitingNames.length - 2, 0),
                 })}
@@ -366,7 +370,7 @@ export function LessonPreJoin({
 
           <p className="flex items-center gap-2 text-body-xs text-ink-tertiary">
             <Info size={15} className="shrink-0" />
-            {t("preJoin.recordingNote")}
+            {isTeacher ? t("preJoin.recordingNote") : t("preJoin.recordingNoteStudent")}
           </p>
 
           {deviceError ? (

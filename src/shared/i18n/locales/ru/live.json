@@ -66,7 +66,10 @@
     "mobileChangeLater": "можно изменить позже",
     "mobileRecordingNote": "Урок записывается — ученики смогут посмотреть позже",
     "mobileCancel": "Отмена",
-    "mobileJoin": "Войти в урок"
+    "mobileJoin": "Войти в урок",
+    "teacher": "Преподаватель: {{name}}",
+    "inLessonNames": "{{names}} и ещё {{count}} на уроке",
+    "recordingNoteStudent": "Урок записывается — позже его можно посмотреть в разделе «Запись урока»."
   },
   "connection": {
     "connecting": "Подключение…",
@@ -129,7 +132,13 @@
     "mobileShare": "Показать",
     "mobilePeople": "Люди",
     "mobileParticipantsCount": "Участники · {{count}}",
-    "liveLesson": "Онлайн-урок"
+    "liveLesson": "Онлайн-урок",
+    "peopleInLesson": "на уроке: {{count}}",
+    "recordingStudent": "Идёт запись — аудио и видео",
+    "queueTitle": "Вы в очереди ({{count}})",
+    "handRaised": "рука поднята",
+    "cancelRequest": "Отменить",
+    "soon": "Скоро"
   },
   "mic": {
     "label": "Микрофон",

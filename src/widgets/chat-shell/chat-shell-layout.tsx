@@ -1,7 +1,9 @@
 import { Suspense } from "react";
 import { Outlet, useLocation, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useIsStudent } from "@/modules/auth";
 import { NewConversationDialog, useNewConversationStore } from "@/modules/conversation";
+import { StudentEnrollmentDialog } from "@/modules/student";
 import { ChatSkeleton } from "@/shared/ui/page-skeleton";
 import { ConversationTopbar } from "@/widgets/conversation-topbar";
 import { AppSidebar } from "@/widgets/app-sidebar";
@@ -30,6 +32,7 @@ export function ChatShellLayout() {
   const { pathname } = useLocation();
   const { conversationId } = useParams();
   const section = sectionFromPath(pathname);
+  const isStudent = useIsStudent();
   const newGroupOpen = useNewConversationStore((state) => state.open);
   const setNewGroupOpen = useNewConversationStore((state) => state.setOpen);
 
@@ -42,7 +45,7 @@ export function ChatShellLayout() {
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {section === "chat" || section === "profile" ? null : (
           <ConversationTopbar
-            role="teacher"
+            role={isStudent ? "student" : "teacher"}
             section={section}
             title={
               pathname.endsWith("/assignments") ? t("titles.assignments") : t(`titles.${section}`)
@@ -56,7 +59,11 @@ export function ChatShellLayout() {
         </main>
       </div>
 
-      <NewConversationDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />
+      {isStudent ? (
+        <StudentEnrollmentDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />
+      ) : (
+        <NewConversationDialog open={newGroupOpen} onOpenChange={setNewGroupOpen} />
+      )}
     </div>
   );
 }

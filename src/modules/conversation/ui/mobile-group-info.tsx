@@ -11,7 +11,7 @@ import {
 } from "@/modules/course";
 import { useAuth } from "@/modules/auth";
 import { formatRelativeShort } from "@/shared/lib";
-import type { Conversation, DomainUser } from "@/shared/types";
+import type { ChatMember, Conversation, DomainUser } from "@/shared/types";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger, Avatar } from "@/shared/ui/legacy";
 import { GroupTile } from "@/shared/ui/group-tile";
@@ -37,6 +37,8 @@ export interface MobileGroupInfoProps {
   onImage: (file: File) => void;
   onDelete: () => void;
   variant?: "screen" | "panel";
+  teacherName?: string;
+  roomMembers?: ChatMember[];
 }
 
 type Tab = "members" | "files" | "media";
@@ -58,6 +60,8 @@ export function MobileGroupInfo({
   onImage,
   onDelete,
   variant = "screen",
+  teacherName,
+  roomMembers = [],
 }: MobileGroupInfoProps) {
   const panel = variant === "panel";
   const rowTitle = `truncate text-title text-ink ${panel ? "leading-5" : ""}`;
@@ -71,8 +75,8 @@ export function MobileGroupInfo({
   const [requestsOpen, setRequestsOpen] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<DomainUser | null>(null);
   const imageRef = useRef<HTMLInputElement>(null);
-  const students = useCourseStudents(courseId, { page_size: 100 });
-  const presence = useCourseStudentPresence(courseId);
+  const students = useCourseStudents(courseId, { page_size: 100 }, canManage);
+  const presence = useCourseStudentPresence(courseId, canManage);
   const unenroll = useUnenrollStudent();
 
   const presenceById = useMemo(
@@ -80,9 +84,12 @@ export function MobileGroupInfo({
     [presence.data]
   );
   const members = (students.data?.items ?? []).map((item) => item.student);
-  const memberCount = students.data?.total ?? conversation.memberCount ?? members.length;
+  const roomTeachers = roomMembers.filter((member) => member.role.toLowerCase() === "teacher");
+  const roomStudents = roomMembers.filter((member) => member.role.toLowerCase() !== "teacher");
+  const memberCount =
+    students.data?.total ?? conversation.memberCount ?? (canManage ? members.length : roomStudents.length);
   const meta = [
-    subjectLabel,
+    canManage ? subjectLabel : teacherName,
     t("info.memberCount", { count: memberCount }),
     conversation.onlineCount ? t("info.onlineCount", { count: conversation.onlineCount }) : "",
   ]
@@ -195,7 +202,7 @@ export function MobileGroupInfo({
         <p className={`text-center text-ink-secondary ${panel ? "mt-1.5 text-body-xs" : "mt-1 text-body-sm"}`}>{meta}</p>
       </section>
 
-      <div className={`grid grid-cols-4 gap-2 ${panel ? "mt-[18px]" : "mt-4"}`}>
+      <div className={`grid gap-2 ${actions.length > 3 ? "grid-cols-4" : "grid-cols-3"} ${panel ? "mt-[18px]" : "mt-4"}`}>
         {actions.map((action) => (
           <button
             key={action.id}
@@ -262,7 +269,35 @@ export function MobileGroupInfo({
       <div className={panel ? "mt-5" : "mt-4"}>
         {tab === "members" ? (
           <ul className="flex flex-col overflow-hidden rounded-xl bg-surface">
-            {user ? (
+            {!canManage
+              ? [...roomTeachers, ...roomStudents].map((member) => {
+                  const teacher = member.role.toLowerCase() === "teacher";
+                  return (
+                    <li key={member.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
+                      <Avatar
+                        name={member.name}
+                        src={member.avatarUrl ?? undefined}
+                        size="sm"
+                        className={panel ? "[&_.avatar]:size-10" : "[&_.avatar]:size-11"}
+                      />
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <strong className={rowTitle}>
+                          {member.id === user?.id ? t("info.memberYou", { name: member.name }) : member.name}
+                        </strong>
+                        {teacher ? (
+                          <small className="truncate text-body-sm text-brand">{t("info.teacherBadge")}</small>
+                        ) : (
+                          <small className="truncate text-body-sm text-ink-secondary">
+                            @{member.username}
+                            {member.isOnline ? ` · ${t("info.online")}` : ""}
+                          </small>
+                        )}
+                      </span>
+                    </li>
+                  );
+                })
+              : null}
+            {canManage && user ? (
               <li className="flex items-center gap-3 border-b border-line px-4 py-3.5">
                 <Avatar
                   name={user.name}
@@ -276,7 +311,7 @@ export function MobileGroupInfo({
                 </span>
               </li>
             ) : null}
-            {members.map((member) => {
+            {(canManage ? members : []).map((member) => {
               const state = presenceById.get(member.id);
               const status = state?.isOnline
                 ? t("info.online")

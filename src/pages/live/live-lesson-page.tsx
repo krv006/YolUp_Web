@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth } from "@/modules/auth";
+import { useCourse } from "@/modules/course";
 import {
   LessonPreJoin,
   liveApi,
@@ -15,6 +16,7 @@ import {
 } from "@/modules/live";
 import { RateLessonDialog, useLesson, useLessonWaiting } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
+import { ROLES } from "@/shared/constants";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
@@ -29,6 +31,7 @@ export function LiveLessonPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const lesson = useLesson(lessonId ?? null);
+  const course = useCourse(lesson.data?.courseId ?? null);
   const token = useLiveToken(lessonId, true);
   const joined = useRef(false);
   const isTeacher = useRef(false);
@@ -143,7 +146,14 @@ export function LiveLessonPage() {
           }
           actionLabel={finished ? t("state.openRecording") : t("state.retry")}
           onAction={
-            finished ? () => navigate(ROUTES.teacher.recording(lesson.data!.id)) : () => void token.refetch()
+            finished
+              ? () =>
+                  navigate(
+                    user?.role === ROLES.STUDENT
+                      ? ROUTES.student.recording(lesson.data!.id)
+                      : ROUTES.teacher.recording(lesson.data!.id)
+                  )
+              : () => void token.refetch()
           }
           secondaryLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
           onSecondary={handleLeave}
@@ -163,6 +173,7 @@ export function LiveLessonPage() {
           waitingCount={waiting.data?.waitingCount ?? null}
           totalCount={waiting.data?.totalCount ?? null}
           waitingNames={(waiting.data?.students ?? []).map((item) => item.name)}
+          teacherName={course.data?.teacher ?? ""}
           onJoin={setChoices}
           onCancel={() => navigate(-1)}
         />

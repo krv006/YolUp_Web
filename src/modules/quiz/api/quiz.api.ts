@@ -25,7 +25,6 @@ import type {
 import {
   mapQuizAttemptRequest,
   mapQuizAttemptResultDto,
-  mapQuizAttemptSummaryDto,
   mapQuizQuestionStatDto,
   mapQuizDto,
   mapImportWarningDtos,
@@ -187,7 +186,9 @@ export const quizApi = {
   },
   async getAttempts(quizId: string, options?: RequestOptions) {
     const dto = await apiClient.get<unknown>(quizEndpoints.attempts(quizId), options);
-    return normalizePagination<QuizAttemptSummaryDto>(dto).items.map(mapQuizAttemptSummaryDto);
+    return normalizePagination<QuizAttemptSummaryDto & Partial<QuizAttemptResultDto>>(dto).items.map((item) =>
+      mapQuizAttemptResultDto({ ...item, answers: item.answers ?? [] })
+    );
   },
 
   exportAttempts(quizId: string, type: "xlsx" | "csv" = "xlsx") {

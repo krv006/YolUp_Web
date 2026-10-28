@@ -1,8 +1,8 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/modules/auth";
-import { useSubjects } from "@/modules/course";
+import { useAuth, useIsStudent, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/modules/auth";
+import { useCourses, useSubjects } from "@/modules/course";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -40,6 +40,9 @@ export function PersonalInfoPage() {
   const update = useUpdateProfileMutation();
   const updateAvatar = useUpdateAvatarMutation();
   const subjects = useSubjects();
+  const student = useIsStudent();
+  const courses = useCourses();
+  const studying = [...new Set((courses.data ?? []).map((course) => course.subjectLabel).filter(Boolean))].join(", ");
   const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     firstName: user?.firstName ?? "",
@@ -117,16 +120,20 @@ export function PersonalInfoPage() {
           </div>
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.email")}>{field("email", { inputMode: "email" })}</MobileFieldLabel>
           <div className="grid grid-cols-2 gap-3">
-            <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.subject")}>
-              <MobilePickerField
-                type="select"
-                surface
-                value={form.subject}
-                display={subjectLabel}
-                ariaLabel={t("page.subject")}
-                options={subjectOptions.map((item) => ({ value: item.value, label: item.label }))}
-                onChange={(value) => setForm((current) => ({ ...current, subject: value }))}
-              />
+            <MobileFieldLabel gapClassName="gap-[7px]" label={student ? t("page.studying") : t("page.subject")}>
+              {student ? (
+                <span className={`${MOBILE_INPUT_SURFACE} flex items-center truncate`}>{studying || "—"}</span>
+              ) : (
+                <MobilePickerField
+                  type="select"
+                  surface
+                  value={form.subject}
+                  display={subjectLabel}
+                  ariaLabel={t("page.subject")}
+                  options={subjectOptions.map((item) => ({ value: item.value, label: item.label }))}
+                  onChange={(value) => setForm((current) => ({ ...current, subject: value }))}
+                />
+              )}
             </MobileFieldLabel>
             <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.city")}>
               <MobilePickerField
@@ -186,7 +193,10 @@ export function PersonalInfoPage() {
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <strong className="truncate font-heading text-h2 text-ink">{user?.name}</strong>
           <small className="truncate text-body-sm text-ink-secondary">
-            {[user?.subject ? tn("sidebar.subjectTeacher", { subject: user.subject }) : "", user?.city]
+            {[
+              student ? tn("roles.student") : user?.subject ? tn("sidebar.subjectTeacher", { subject: user.subject }) : "",
+              user?.city,
+            ]
               .filter(Boolean)
               .join(" · ") || "—"}
           </small>
@@ -266,13 +276,23 @@ export function PersonalInfoPage() {
         </label>
 
         <div className="profile-form grid grid-cols-2 items-start gap-3">
-          <SelectPicker
-            label={t("page.subject")}
-            value={form.subject}
-            onChange={(value) => setForm((c) => ({ ...c, subject: value }))}
-            options={subjectOptions}
-            searchable
-          />
+          {student ? (
+            <div className={FIELD}>
+              <span className={LABEL}>{t("page.studying")}</span>
+              <span className={`${INPUT} flex items-center gap-3`}>
+                <span className="min-w-0 flex-1 truncate">{studying || "—"}</span>
+                <Icon name="chevron-down" size={18} className="shrink-0 text-icon-secondary" />
+              </span>
+            </div>
+          ) : (
+            <SelectPicker
+              label={t("page.subject")}
+              value={form.subject}
+              onChange={(value) => setForm((c) => ({ ...c, subject: value }))}
+              options={subjectOptions}
+              searchable
+            />
+          )}
 
           <SelectPicker
             label={t("page.city")}

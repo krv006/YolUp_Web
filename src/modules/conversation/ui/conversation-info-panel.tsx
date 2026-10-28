@@ -194,6 +194,8 @@ export function ConversationInfoPanel({
       variant={embedded ? "panel" : "screen"}
       conversation={conversation}
       subjectLabel={course.data?.subjectLabel}
+      teacherName={course.data?.teacher}
+      roomMembers={roomMembers.data ?? []}
       muted={muted}
       announcement={announcement}
       requestsCount={pendingRequests.length}

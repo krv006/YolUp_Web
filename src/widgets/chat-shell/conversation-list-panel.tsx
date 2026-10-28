@@ -1,8 +1,8 @@
 import { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useRoleRoutes } from "@/modules/auth";
 import { ConversationActionsSheet, useNewConversationStore } from "@/modules/conversation";
-import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
@@ -14,6 +14,7 @@ import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-li
 export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
+  const routes = useRoleRoutes();
   const { conversationId } = useParams();
   const {
     isLoading,
@@ -149,7 +150,7 @@ export function ConversationListPanel() {
                     className={`mx-5 flex shrink-0 items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors ${
                       active ? "bg-brand-subtle" : "hover:bg-subtle"
                     }`}
-                    onClick={() => navigate(ROUTES.teacher.chat(conversation.id))}
+                    onClick={() => navigate(routes.chat(conversation.id))}
                     onContextMenu={(event) => {
                       event.preventDefault();
                       setActionsAt({ x: event.clientX, y: event.clientY });
@@ -176,7 +177,7 @@ export function ConversationListPanel() {
                 className="mx-5 flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-subtle"
                 onClick={() => {
                   if (person.roomId) {
-                    navigate(ROUTES.teacher.chat(person.roomId));
+                    navigate(routes.chat(person.roomId));
                     setSearch("");
                   }
                 }}

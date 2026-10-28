@@ -12,9 +12,9 @@ import {
   notificationActionKey,
   notificationGroupKey,
   notificationIcon,
+  notificationLines,
   type NotificationGroupKey,
 } from "../lib/notification-display";
-import { NotificationHtml } from "./notification-html";
 
 export interface NotificationInboxPanelProps {
   onOpenLink?: (link: NotificationLink) => void;
@@ -61,15 +61,15 @@ export function NotificationInboxPanel({
         fullWidth ? "h-full w-full" : `max-h-[560px] ${embedded ? "w-full" : "w-[420px]"}`
       }`}
     >
-      <div className="flex items-center gap-3 px-5 pt-5 pb-3">
+      <div className="flex items-center gap-3 px-[18px] pt-5 pb-3.5">
         {embedded ? (
           <span className="flex-1" />
         ) : (
-          <strong className="min-w-0 flex-1 truncate text-title-lg text-ink">{t("title")}</strong>
+          <strong className="min-w-0 flex-1 truncate text-title text-ink">{t("title")}</strong>
         )}
         {unreadCount ? (
           <button
-            className="shrink-0 text-label-sm text-brand transition-opacity hover:opacity-80 disabled:opacity-50"
+            className="shrink-0 text-caption-strong text-brand transition-opacity hover:opacity-80 disabled:opacity-50"
             disabled={markAllRead.isPending}
             onClick={() => markAllRead.mutate()}
           >
@@ -79,15 +79,15 @@ export function NotificationInboxPanel({
       </div>
 
       {inbox.isSuccess && all.length ? (
-        <div className="grid grid-cols-2 px-5 pb-3">
+        <div className="grid grid-cols-2 gap-2 px-[18px] pb-3">
           {(["all", "unread"] as const).map((id) => (
             <button
               key={id}
               type="button"
-              className={`flex h-9 items-center justify-center rounded-full px-4 text-label transition-colors ${
+              className={`flex h-9 items-center justify-center rounded-full border px-4 text-body-sm transition-colors ${
                 tab === id
-                  ? "bg-brand text-ink-inverse"
-                  : "text-ink-secondary hover:bg-subtle hover:text-ink"
+                  ? "border-brand bg-brand text-ink-inverse"
+                  : "border-line bg-surface text-ink hover:bg-subtle"
               }`}
               onClick={() => setTab(id)}
             >
@@ -134,56 +134,50 @@ export function NotificationInboxPanel({
       ) : null}
 
       {groups.length ? (
-        <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-3 pb-4">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-[18px] pb-[18px]">
           {groups.map((group) => (
-            <div key={group.key} className="flex flex-col gap-1">
-              <span className="px-2 pt-1 pb-1 text-caption-strong text-ink-tertiary">
-                {t(`groups.${group.key}`)}
-              </span>
-              {group.items.map((item) => {
-                const { icon, tone } = notificationIcon(item);
-                const action = notificationActionKey(item.link);
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`flex items-start gap-3 rounded-2xl px-3 py-3 text-left transition-colors ${
-                      item.isRead ? "hover:bg-subtle" : "bg-brand-subtle/60 hover:bg-brand-subtle"
-                    }`}
-                    onClick={() => openItem(item)}
-                  >
-                    <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone}`}>
-                      <Icon name={icon} size={20} />
-                    </span>
+            <div key={group.key} className="flex flex-col gap-3">
+              <span className="text-body text-ink">{t(`groups.${group.key}`)}</span>
+              <div className="flex flex-col overflow-hidden rounded-2xl">
+                {group.items.map((item) => {
+                  const { icon, tone } = notificationIcon(item);
+                  const action = notificationActionKey(item.link);
+                  const { title, body } = notificationLines(item.html);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`flex items-start gap-3 border-b border-line px-4 py-4 text-left transition-colors last:border-b-0 ${
+                        item.isRead ? "bg-surface hover:bg-subtle" : "bg-brand-subtle"
+                      }`}
+                      onClick={() => openItem(item)}
+                    >
+                      <span className={`grid size-10 shrink-0 place-items-center rounded-md ${tone}`}>
+                        <Icon name={icon} size={20} />
+                      </span>
 
-                    <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <NotificationHtml
-                        className="line-clamp-2 text-body-sm text-ink"
-                        html={item.html}
-                      />
-                      {action ? (
-                        <span className="text-label text-brand">{t(`actions.${action}`)}</span>
-                      ) : (
-                        <small className="truncate text-caption text-ink-tertiary">
-                          {item.sender?.name ?? t("system")}
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <strong className="line-clamp-2 text-[15px]/5 font-semibold text-ink">{title}</strong>
+                        {body ? (
+                          <small className="mt-1 line-clamp-2 text-body-xs text-ink-secondary">{body}</small>
+                        ) : null}
+                        {action ? (
+                          <span className="mt-1 text-body-sm font-medium text-brand">{t(`actions.${action}`)}</span>
+                        ) : null}
+                      </span>
+
+                      <span className="flex shrink-0 flex-col items-end gap-2">
+                        <small className="text-body-xs text-ink-secondary">
+                          {item.createdAt ? formatMessageTime(item.createdAt) : ""}
                         </small>
-                      )}
-                    </span>
-
-                    <span className="flex shrink-0 flex-col items-end gap-1.5">
-                      <small className="text-caption text-ink-tertiary">
-                        {item.createdAt ? formatMessageTime(item.createdAt) : ""}
-                      </small>
-                      {item.isRead ? null : (
-                        <span
-                          className="size-2 rounded-full bg-brand"
-                          aria-label={t("markRead")}
-                        />
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
+                        {item.isRead ? null : (
+                          <span className="size-2 rounded-full bg-brand" aria-label={t("markRead")} />
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           ))}
         </div>

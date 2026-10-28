@@ -7,7 +7,9 @@
     "noChatsTeacher": "Create a group and invite your students. Chats will appear here.",
     "noChatsStudent": "Join a course or find a teacher. Chats will appear here.",
     "createGroup": "Create a group",
-    "findTeacher": "Join a course"
+    "findTeacher": "Join a course",
+    "newChat": "New chat",
+    "joinGroup": "Join a group"
   },
   "header": {
     "backAria": "Back to conversations",
@@ -92,7 +94,8 @@
     "deleteCourseWarning": "The group chat, lessons, assignments and recordings are deleted for good.",
     "filesEmptyHint": "Files shared in the group are collected here.",
     "mediaEmptyHint": "Photos and videos shared in the group are collected here.",
-    "descriptionShort": "Description"
+    "descriptionShort": "Description",
+    "memberYou": "{{name}} (you)"
   },
   "item": {
     "liveNow": "Lesson in progress",

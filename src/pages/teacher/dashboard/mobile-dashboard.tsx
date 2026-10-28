@@ -4,7 +4,7 @@ import type { Lesson } from "@/shared/types";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { MobileListCard, MobileListRow, MobileSectionTitle, MobileWarningNote } from "@/shared/ui/mobile-page";
-import { MobileTeacherHeader } from "@/widgets/mobile-teacher-header";
+import { MobileUserHeader } from "@/widgets/mobile-user-header";
 import { MobileOnboarding } from "./mobile-onboarding";
 
 const TICK_MS = 30_000;
@@ -65,7 +65,7 @@ export function MobileDashboard(props: MobileDashboardProps) {
   return (
     <main className="h-full overflow-y-auto bg-canvas bg-auth-gradient px-4 pt-5 pb-32 font-body text-ink">
       <div className={`flex flex-col ${online ? "gap-6" : "gap-5"}`}>
-        <MobileTeacherHeader />
+        <MobileUserHeader />
 
         {!online ? (
           <p className="flex h-11 items-center gap-3 rounded-xl bg-surface-inverse px-4 text-body-sm text-ink-inverse">

@@ -33,6 +33,7 @@ export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
 export { describeUserAgent } from "./lib/describe-user-agent";
 export { useAuth, useCurrentUser, useIsAuthenticated } from "./model/use-auth";
+export { useIsStudent, useRoleRoutes } from "./model/use-role-routes";
 export { createLoginSchema, createRegisterSchema } from "./model/auth.schemas";
 export {
   useChangePasswordMutation,

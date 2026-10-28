@@ -244,6 +244,8 @@ export interface Lesson {
   participantsCount: number | null;
   attendanceRate: number | null;
   joinedCount: number | null;
+  myRating: number | null;
+  attended: boolean | null;
   assignment: { id: string; title: string } | null;
   recurrence: LessonRecurrence | null;
 }
