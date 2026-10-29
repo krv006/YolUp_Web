@@ -186,6 +186,7 @@
     "absent": "Kelmadi",
     "rowDistracted": "{{minutes}} daq · {{count}} marta chalg'igan",
     "rowFocus": "{{minutes}} daq · fokus {{percent}}%",
+    "rowMinutes": "{{minutes}} daq",
     "noAttendance": "Davomat ma'lumoti yo'q",
     "sendToChat": "Chatga yuborish",
     "chapters": "Bo'limlar",
@@ -384,5 +385,28 @@
     "errorHint": "Internet aloqasini tekshirib, qayta urinib ko‘ring. Saqlangan darslaringiz o‘chmaydi.",
     "retry": "Qayta urinish",
     "loading": "yuklanmoqda…"
+  },
+  "attendanceDetail": {
+    "title": "Dars davomati",
+    "statJoined": "Qatnashdi",
+    "statLate": "Kechikdi",
+    "statAbsent": "Kelmadi",
+    "statFocus": "O‘rtacha fokus",
+    "lateHint": "Dars boshlanganidan {{count}} daqiqa va undan keyin kirganlar kechikkan hisoblanadi.",
+    "statusInLesson": "Darsda",
+    "statusPresent": "Qatnashdi",
+    "statusLate": "{{count}} daq kechikdi",
+    "statusAbsent": "Kelmadi",
+    "since": "{{time}} dan beri darsda",
+    "stay": "{{from}}–{{to}}, {{minutes}} daq",
+    "focus": "fokus {{value}}%",
+    "exits": "{{count}} marta chiqdi ({{duration}})",
+    "noExits": "chetga chiqmagan",
+    "attention": "e’tibor {{answered}}/{{total}}",
+    "alert": "Ko‘p chiqqani uchun ota-onaga xabar ketgan",
+    "awayTotal": "Jami chetda: {{duration}}",
+    "longest": "Eng uzuni: {{duration}}",
+    "notReturned": "qaytmagan",
+    "empty": "Bu dars bo‘yicha davomat ma’lumoti yo‘q."
   }
 }

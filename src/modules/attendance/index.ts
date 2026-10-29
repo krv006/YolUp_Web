@@ -3,6 +3,8 @@ export type { AttendanceDto, FocusExitDto, FocusJournalDto } from "./api/attenda
 export { mapAttendanceDto, mapAttendancePage } from "./lib/attendance.mappers";
 export { attendanceKeys, useAttendance, useAttendancePage, useAttendanceSummary } from "./model/attendance.queries";
 export { groupAttendanceByLesson } from "./lib/group-by-lesson";
+export { averageFocus, buildLessonRoster, LATE_AFTER_MINUTES } from "./lib/lesson-roster";
+export type { RosterEntry, RosterStatus } from "./lib/lesson-roster";
 export type { LessonAttendanceGroup } from "./lib/group-by-lesson";
 export { AttendanceAccordion } from "./ui/attendance-accordion";
 export { FocusJournalCell } from "./ui/focus-journal-cell";

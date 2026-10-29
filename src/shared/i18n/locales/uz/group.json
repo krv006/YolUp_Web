@@ -111,7 +111,13 @@
     "mobileBadge": "{{lessonCount}} ta dars · {{recordCount}} ta yozuv",
     "studentsMetaShort": "Davomat · fokus",
     "filterMonthShort": "30 kun",
-    "filterAllShort": "Barchasi"
+    "filterAllShort": "Barchasi",
+    "studentLessons": "{{attended}}/{{total}}",
+    "lessonsTitle": "Darslar bo‘yicha",
+    "lessonsMeta": "Kim keldi, kim kelmadi",
+    "untitledLesson": "Mavzusiz dars",
+    "lessonJoined": "{{joined}} / {{total}} qatnashdi",
+    "lessonOpen": "Davomatni ko‘rish"
   },
   "dialogs": {
     "lesson": {

@@ -11,6 +11,7 @@ import type { Lesson, LessonRecording } from "@/shared/types";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
+import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
 import { RecordingVideo } from "./recording-video";
 
 export interface RecordingMobileProps {
@@ -29,11 +30,12 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
   const removeRecording = useDeleteRecording();
   const share = useShareRecording(lesson.id);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [attendanceOpen, setAttendanceOpen] = useState(false);
 
   const ready = Boolean(recording?.ready && recording.streamUrl);
   const rows = useMemo(() => attendance.data ?? [], [attendance.data]);
   const studentCount = course.data?.studentCount ?? rows.length;
-  const joined = recording?.participantsCount ?? rows.filter((row) => row.minutes > 0).length;
+  const joined = recording?.participantsCount ?? rows.length;
   const boardPages = recording?.boardPreviews.length || recording?.boardPages || 0;
 
   const day = new Date(`${lesson.date}T00:00`);
@@ -184,7 +186,7 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
               <button
                 type="button"
                 className="flex items-center gap-3 border-b border-line px-4 py-3.5 text-left"
-                onClick={() => navigate(ROUTES.teacher.attendance)}
+                onClick={() => setAttendanceOpen(true)}
               >
                 <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-success-bg text-success-fg">
                   <Icon name="check-circle" size={20} />
@@ -230,6 +232,10 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
       )}
 
       {children}
+
+      {canManage ? (
+        <LessonAttendanceDialog lesson={lesson} open={attendanceOpen} onOpenChange={setAttendanceOpen} />
+      ) : null}
 
       <ConfirmDialog
         open={confirmOpen}

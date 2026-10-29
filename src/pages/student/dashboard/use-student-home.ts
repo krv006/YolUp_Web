@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useMyAnalytics } from "@/modules/analytics";
-import { useAttendance } from "@/modules/attendance";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
@@ -28,7 +27,6 @@ export function useStudentHome() {
   const conversations = useConversations("student");
   const groupImages = useGroupImages("student");
   const quizzes = useQuizzes(null);
-  const attendance = useAttendance({ page_size: 200 });
   const inbox = useNotificationInbox({ page_size: 30 });
   const analytics = useMyAnalytics();
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
@@ -105,7 +103,7 @@ export function useStudentHome() {
   const avgGrade = grades.length ? grades.reduce((sum, value) => sum + value, 0) / grades.length : null;
 
   const overview = analytics.data?.kind === "student" ? analytics.data.overview : null;
-  const attendanceRate = overview ? overview.attendanceRateMonth : monthAttendanceRate(active, attendance.data ?? [], now);
+  const attendanceRate = overview ? overview.attendanceRateMonth : monthAttendanceRate(active, now);
 
   const recentGrades = (inbox.data?.items ?? []).filter(
     (item) =>

@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { startOfWeek } from "date-fns";
-import { useAttendance } from "@/modules/attendance";
 import { useLessons } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -28,17 +27,15 @@ export function StudentAnalyticsPage() {
   const data = useStudentWorkspace();
   const { now } = data;
   const lessons = useLessons({ page_size: 200 });
-  const attendance = useAttendance({ page_size: 200 });
 
   const grades = data.assignments
     .map((item) => item.mySubmission?.gradeValue ?? null)
     .filter((value): value is number => value !== null);
   const avgGrade = grades.length ? grades.reduce((sum, value) => sum + value, 0) / grades.length : null;
 
-  const joined = new Set((attendance.data ?? []).filter((row) => row.joinedAt).map((row) => row.lessonId));
   const finished = (lessons.data ?? []).filter((lesson) => lesson.status === "finished");
-  const attended = finished.filter((lesson) => lesson.attended ?? joined.has(lesson.id)).length;
-  const rate = monthAttendanceRate(lessons.data ?? [], attendance.data ?? [], now);
+  const attended = finished.filter((lesson) => lesson.attended === true).length;
+  const rate = monthAttendanceRate(lessons.data ?? [], now);
 
   const due = data.assignments.filter(
     (item) => item.mySubmission || (item.dueAt && new Date(item.dueAt).getTime() < now.getTime())

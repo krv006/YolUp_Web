@@ -111,7 +111,13 @@
     "mobileBadge": "{{lessonCount}} lessons · {{recordCount}} records",
     "studentsMetaShort": "Attendance · focus",
     "filterMonthShort": "30 days",
-    "filterAllShort": "All"
+    "filterAllShort": "All",
+    "studentLessons": "{{attended}}/{{total}}",
+    "lessonsTitle": "By lesson",
+    "lessonsMeta": "Who came, who didn’t",
+    "untitledLesson": "Untitled lesson",
+    "lessonJoined": "{{joined}} / {{total}} attended",
+    "lessonOpen": "View attendance"
   },
   "dialogs": {
     "lesson": {

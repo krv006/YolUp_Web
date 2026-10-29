@@ -72,7 +72,7 @@ export function FocusJournalCell({ focus, student, lesson }: FocusJournalCellPro
                         </p>
                       </div>
                       <strong className="focus-timeline-duration">
-                        {formatDuration(exit.seconds)}
+                        {exit.seconds === null ? "—" : formatDuration(exit.seconds)}
                       </strong>
                     </li>
                   ))}
