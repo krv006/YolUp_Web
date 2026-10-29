@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import {
   Bold,
   CalendarDays,
-  FileQuestion,
   FileUp,
   GraduationCap,
   Hourglass,
@@ -53,7 +52,6 @@ export interface AddLessonDialogProps {
   onCreateSchedule?: (values: LessonScheduleDraft) => void;
   existingLessons?: readonly Lesson[];
   initialValues?: Lesson | null;
-  quizOptions?: ReadonlyArray<{ id: string; title: string }>;
   onDelete?: () => void;
 }
 
@@ -128,7 +126,6 @@ export function AddLessonDialog({
   onCreateSchedule,
   existingLessons = [],
   initialValues = null,
-  quizOptions = [],
   onDelete,
 }: AddLessonDialogProps) {
   const { t } = useTranslation("group");
@@ -237,11 +234,6 @@ export function AddLessonDialog({
     if (value === today) return t("dialogs.lesson.todayDate", { date: label });
     return `${weekdayText.short[date.getDay() || 7]}, ${label}`;
   };
-  const quizSelectOptions = [
-    { value: "", label: t("dialogs.lesson.quizNone") },
-    ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
-  ];
-  const quizLabel = quizSelectOptions.find((option) => option.value === form.quizId)?.label;
   const submitDisabled = isRepeating
     ? !dates.length || invalidRange || scheduleConflicts.length > 0
     : !form.topic.trim() || startsInPast || singleConflicts.length > 0;
@@ -450,26 +442,13 @@ export function AddLessonDialog({
               </div>
 
               {timeBusy ? null : (
-                <>
-                  <MobileFieldLabel label={t("dialogs.lesson.durationMinutes")}>
-                    <MobileChoiceChips
-                      items={MOBILE_DURATIONS}
-                      value={duration}
-                      onChange={(value) => update("duration", String(value))}
-                    />
-                  </MobileFieldLabel>
-
-                  <MobileFieldLabel label={t("dialogs.lesson.quizLabel")}>
-                    <MobilePickerField
-                      type="select"
-                      value={form.quizId}
-                      display={quizLabel}
-                      options={quizSelectOptions}
-                      ariaLabel={t("dialogs.lesson.quizLabel")}
-                      onChange={(value) => update("quizId", value)}
-                    />
-                  </MobileFieldLabel>
-                </>
+                <MobileFieldLabel label={t("dialogs.lesson.durationMinutes")}>
+                  <MobileChoiceChips
+                    items={MOBILE_DURATIONS}
+                    value={duration}
+                    onChange={(value) => update("duration", String(value))}
+                  />
+                </MobileFieldLabel>
               )}
             </>
           )}
@@ -686,16 +665,6 @@ export function AddLessonDialog({
                 value={form.duration}
                 onChange={(value) => update("duration", value)}
                 options={DURATION_OPTIONS}
-              />
-              <SelectPicker
-                label={t("dialogs.lesson.quizLabel")}
-                icon={FileQuestion}
-                value={form.quizId}
-                onChange={(value) => update("quizId", value)}
-                options={[
-                  { value: "", label: t("dialogs.lesson.quizNone") },
-                  ...quizOptions.map((quiz) => ({ value: quiz.id, label: quiz.title })),
-                ]}
               />
             </div>
           </>

@@ -93,8 +93,6 @@ export function mapUserDto(dto: unknown): AuthUser {
     name,
     role: normalizeRole(parsed.role) as Role,
     phone: parsed.phone ?? null,
-    phoneVerified: parsed.phone_verified === true,
-    phoneVerifiedAt: parsed.phone_verified_at ?? null,
     inviteCode: parsed.invite_code ?? null,
     avatarUrl: normalizeMediaUrl(parsed.avatar),
     email: parsed.email ?? null,

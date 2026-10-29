@@ -314,7 +314,7 @@ export function MobileEmptyCard({
 }
 
 export interface MobileSegmentProps<T extends string> {
-  items: Array<{ id: T; label: ReactNode }>;
+  items: Array<{ id: T; label: ReactNode; badge?: number }>;
   value: T;
   onChange: (value: T) => void;
   scroll?: boolean;
@@ -332,12 +332,21 @@ export function MobileSegment<T extends string>({ items, value, onChange, scroll
           type="button"
           role="tab"
           aria-selected={value === item.id}
-          className={`flex h-11 items-center justify-center rounded-full border px-4 text-body-sm font-medium whitespace-nowrap transition-colors ${
-            scroll ? "w-28.5 shrink-0" : "min-w-0 flex-1"
+          className={`flex h-11 items-center justify-center gap-1.5 rounded-full border px-4 text-body-sm font-medium whitespace-nowrap transition-colors ${
+            scroll ? "min-w-28.5 shrink-0" : "min-w-0 flex-1"
           } ${value === item.id ? "border-brand bg-brand text-on-action" : "border-line bg-surface text-ink hover:bg-subtle"}`}
           onClick={() => onChange(item.id)}
         >
           {item.label}
+          {item.badge ? (
+            <span
+              className={`flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-caption-strong ${
+                value === item.id ? "bg-surface text-brand" : "bg-brand text-on-action"
+              }`}
+            >
+              {item.badge}
+            </span>
+          ) : null}
         </button>
       ))}
     </div>

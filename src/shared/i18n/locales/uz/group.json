@@ -159,8 +159,6 @@
       "saveChanges": "O'zgarishlarni saqlash",
       "saveMultiple": "{{count}} ta darsni saqlash",
       "saveSingle": "Darsni saqlash",
-      "quizLabel": "Test biriktirish",
-      "quizNone": "Test biriktirilmagan",
       "editDescription": "Mavzu, vaqt va biriktirilgan testni o‘zgartiring. O‘quvchilarga bildirishnoma boradi.",
       "deleteLesson": "Darsni o‘chirish",
       "quizHint": "Dars tugagach test o‘quvchilarga avtomatik ochiladi.",

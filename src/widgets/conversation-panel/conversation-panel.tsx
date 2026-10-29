@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import {
   ConversationActionsSheet,
   ConversationItem,
+  countUnreadChats,
   matchesConversationFilter,
   useConversationFilter,
   useConversations,
@@ -29,7 +30,6 @@ function useFilters(): Array<{ id: ConversationFilter; label: string }> {
     { id: "all", label: t("panel.filters.all") },
     { id: "direct", label: t("panel.filters.direct") },
     { id: "group", label: t("panel.filters.group") },
-    { id: "unread", label: t("panel.filters.unread") },
   ];
 }
 
@@ -203,7 +203,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
               key={item.id}
               role="tab"
               aria-selected={active}
-              className={`flex h-10 shrink-0 items-center rounded-full border px-3 text-caption-strong transition-colors lg:px-4 lg:text-label-strong ${
+              className={`flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-caption-strong transition-colors lg:px-4 lg:text-label-strong ${
                 active
                   ? "border-action bg-action-subtle text-action"
                   : "border-line bg-surface text-ink-secondary hover:bg-subtle hover:text-ink"
@@ -211,6 +211,11 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
               onClick={() => setFilter(item.id)}
             >
               {item.label}
+              {countUnreadChats(data, item.id) ? (
+                <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-action px-1.5 text-caption-strong text-on-action">
+                  {countUnreadChats(data, item.id)}
+                </span>
+              ) : null}
             </button>
           );
         })}

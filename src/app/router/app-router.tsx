@@ -347,7 +347,6 @@ export function AppRouter() {
                       <Route path="account" element={<AccountSettingsPage />} />
                       <Route path="system" element={<SystemSettingsPage />} />
                       <Route path="ratings" element={<MyRatingsPage />} />
-                      <Route path="certificates" element={<CertificatesPage />} />
                       <Route path="logins" element={<LoginHistoryPage />} />
                       <Route path="help" element={<HelpCenterPage />} />
                     </Route>

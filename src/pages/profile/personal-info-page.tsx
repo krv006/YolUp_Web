@@ -2,12 +2,8 @@ import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
-  PhoneVerifyDialog,
-  normalizeUzPhone,
   useAuth,
-  useConfirmPhoneChangeMutation,
   useIsStudent,
-  usePhoneChangeCodeMutation,
   useRemoveAvatarMutation,
   useUpdateAvatarMutation,
   useUpdateProfileMutation,
@@ -50,9 +46,6 @@ export function PersonalInfoPage() {
   const update = useUpdateProfileMutation();
   const updateAvatar = useUpdateAvatarMutation();
   const removeAvatar = useRemoveAvatarMutation();
-  const requestPhoneCode = usePhoneChangeCodeMutation();
-  const confirmPhone = useConfirmPhoneChangeMutation();
-  const [verifyPhone, setVerifyPhone] = useState<string | null>(null);
   const subjects = useSubjects();
   const student = useIsStudent();
   const courses = useCourses();
@@ -82,19 +75,9 @@ export function PersonalInfoPage() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextPhone = form.phone.trim() ? normalizeUzPhone(form.phone) : "";
-    if (nextPhone && nextPhone !== normalizeUzPhone(user?.phone ?? "")) {
-      setVerifyPhone(nextPhone);
-      return;
-    }
-    save();
-  }
-
-  function save() {
     update.mutate(
       {
         ...form,
-        phone: undefined,
         middleName: user?.middleName ?? "",
         birthDate: user?.birthDate ?? "",
         bio: user?.bio ?? "",
@@ -138,10 +121,7 @@ export function PersonalInfoPage() {
             <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.firstName")}>{field("firstName")}</MobileFieldLabel>
             <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.lastName")}>{field("lastName")}</MobileFieldLabel>
           </div>
-          <div className="flex flex-col gap-2">
-            <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.phone")}>{field("phone", { inputMode: "tel" })}</MobileFieldLabel>
-            <small className="text-caption font-normal text-ink-secondary">{t("page.phoneNote")}</small>
-          </div>
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.phone")}>{field("phone", { inputMode: "tel" })}</MobileFieldLabel>
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.email")}>{field("email", { inputMode: "email" })}</MobileFieldLabel>
           <div className="grid grid-cols-2 gap-3">
             <MobileFieldLabel gapClassName="gap-[7px]" label={student ? t("page.studying") : t("page.subject")}>
@@ -175,20 +155,7 @@ export function PersonalInfoPage() {
             </MobileFieldLabel>
           </div>
         </form>
-        <PhoneVerifyDialog
-        key={verifyPhone ?? "none"}
-        open={Boolean(verifyPhone)}
-        onOpenChange={(open) => !open && setVerifyPhone(null)}
-        phone={verifyPhone ?? ""}
-        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
-        onVerify={async (phone, code) => {
-          await confirmPhone.mutateAsync({ phone, code });
-          toast.success(t("auth:phoneVerify.verified"));
-          setVerifyPhone(null);
-          save();
-        }}
-      />
-    </ProfileSubPage>
+      </ProfileSubPage>
     );
   }
 
@@ -300,7 +267,6 @@ export function PersonalInfoPage() {
             inputMode="tel"
             onChange={(event) => setForm((c) => ({ ...c, phone: event.target.value }))}
           />
-          <small className="text-caption font-normal text-ink-secondary">{t("page.phoneNote")}</small>
         </label>
 
         <label className={FIELD}>
@@ -341,19 +307,6 @@ export function PersonalInfoPage() {
           />
         </div>
       </form>
-      <PhoneVerifyDialog
-        key={verifyPhone ?? "none"}
-        open={Boolean(verifyPhone)}
-        onOpenChange={(open) => !open && setVerifyPhone(null)}
-        phone={verifyPhone ?? ""}
-        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
-        onVerify={async (phone, code) => {
-          await confirmPhone.mutateAsync({ phone, code });
-          toast.success(t("auth:phoneVerify.verified"));
-          setVerifyPhone(null);
-          save();
-        }}
-      />
     </ProfileSubPage>
   );
 }

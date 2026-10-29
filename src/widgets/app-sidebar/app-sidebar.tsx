@@ -42,7 +42,6 @@ export function AppSidebar() {
     { id: "chat", icon: "nav-chat", to: routes.chats, end: true },
     { id: "schedule", icon: "nav-calendar", to: routes.schedule, extra: ["/recordings"] },
     { id: "workspace", icon: "nav-workspace", to: routes.workspace, extra: WORKSPACE_PATHS },
-    { id: "profile", icon: "nav-profile", to: routes.profile },
   ];
 
   const unreadChats = (conversations.data ?? []).filter((item) => item.unreadCount > 0).length;
@@ -85,7 +84,12 @@ export function AppSidebar() {
 
       <NavLink
         to={routes.profile}
-        className="flex items-center gap-2.5 rounded-2xl bg-subtle py-2.5 pr-[9px] pl-2.5 transition-colors hover:bg-muted"
+        aria-label={t("titles.profile")}
+        className={({ isActive }) =>
+          `flex items-center gap-2.5 rounded-2xl py-2.5 pr-[9px] pl-2.5 transition-colors ${
+            isActive ? "bg-brand-subtle" : "bg-subtle hover:bg-muted"
+          }`
+        }
       >
         <Avatar name={user?.name} src={user?.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-[38px]" />
         <span className="flex min-w-0 flex-1 flex-col">

@@ -47,7 +47,9 @@
   },
   "activity": {
     "title": "Recent activity",
-    "empty": "Nothing has happened yet."
+    "empty": "Nothing has happened yet.",
+    "today": "Today",
+    "yesterday": "Yesterday"
   },
   "noGroups": {
     "title": "Create your first group",

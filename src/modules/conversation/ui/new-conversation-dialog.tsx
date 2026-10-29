@@ -28,6 +28,11 @@ const MOBILE_FIELD =
 
 const EMPTY: GroupDraft = { name: "", subject: "", description: "", lessonsPerWeek: "3", fee: "" };
 
+function formatFee(value: string): string {
+  const digits = value.replace(/\D/g, "").replace(/^0+(?=\d)/, "").slice(0, 12);
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
 export interface NewConversationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -299,7 +304,7 @@ export function NewConversationDialog({ open, onOpenChange }: NewConversationDia
             <span>{t("newDialog.feeLabel")}</span>
             <input
               value={group.fee}
-              onChange={(event) => update("fee", event.target.value)}
+              onChange={(event) => update("fee", formatFee(event.target.value))}
               placeholder={t("newDialog.feePlaceholder")}
               inputMode="numeric"
             />

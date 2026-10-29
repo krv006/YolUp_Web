@@ -359,8 +359,6 @@
     "date": "Sana",
     "start": "Boshlanish",
     "duration": "Davomiyligi (daqiqa)",
-    "quiz": "Test biriktirish",
-    "noQuiz": "Test biriktirilmagan",
     "submit": "Darsni saqlash",
     "mobileDescription": "Guruhni tanlang va vaqtni belgilang",
     "weeksValue": "{{count}} hafta",

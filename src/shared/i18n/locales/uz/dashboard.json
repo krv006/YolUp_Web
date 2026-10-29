@@ -47,7 +47,9 @@
   },
   "activity": {
     "title": "So‘nggi faollik",
-    "empty": "Hozircha faollik yo‘q."
+    "empty": "Hozircha faollik yo‘q.",
+    "today": "Bugun",
+    "yesterday": "Kecha"
   },
   "noGroups": {
     "title": "Birinchi guruhingizni yarating",

@@ -40,6 +40,7 @@ export function MobileConversationList() {
     visible,
     peopleRows,
     unreadTotal,
+    unreadByFilter,
   } = useConversationList();
   const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
   const [focus, setFocus] = useState<ConversationActionsFocus | null>(null);
@@ -125,7 +126,11 @@ export function MobileConversationList() {
             <div className="mt-5">
               <MobileSegment
                 scroll
-                items={CONVERSATION_FILTERS.map((id) => ({ id, label: t(`panel.filters.${id}`) }))}
+                items={CONVERSATION_FILTERS.map((id) => ({
+                  id,
+                  label: t(`panel.filters.${id}`),
+                  badge: unreadByFilter[id],
+                }))}
                 value={filter}
                 onChange={setFilter}
               />

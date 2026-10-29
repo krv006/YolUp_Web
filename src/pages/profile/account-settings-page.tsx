@@ -1,20 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
-  OtpInput,
-  PhoneVerifyDialog,
   useAuth,
   useAuthStore,
   useChangePasswordMutation,
-  useConfirmTwoFactorMutation,
   useDeleteAccountMutation,
-  useDisableTwoFactorMutation,
-  useEnableTwoFactorMutation,
-  useTwoFactorStatus,
-  useConfirmPhoneChangeMutation,
-  usePhoneChangeCodeMutation,
   useUpdateSettingsMutation,
 } from "@/modules/auth";
 import { AppError } from "@/shared/api";
@@ -26,52 +18,7 @@ import { DeleteAccountDialog } from "./profile-dialogs";
 import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 import { SETTINGS_TONES } from "./settings-tones";
 
-type DialogId =
-  | "password"
-  | "delete"
-  | "twoFactorEnable"
-  | "twoFactorCode"
-  | "twoFactorDisable"
-  | null;
-
-const TWO_FACTOR_CODE_LENGTH = 5;
-const RESEND_SECONDS = 60;
-
-function maskPhone(phone: string): string {
-  const digits = phone.replace(/\D/g, "");
-  if (digits.length < 9) return phone;
-  const local = digits.slice(-9);
-  return `+998 ${local.slice(0, 2)} *** ** ${local.slice(-2)}`;
-}
-
-function ResendTimer({ until, pending, onResend }: { until: number | null; pending: boolean; onResend: () => void }) {
-  const { t } = useTranslation("account");
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (!until) return undefined;
-    const timer = window.setInterval(() => setNow(Date.now()), 1000);
-    return () => window.clearInterval(timer);
-  }, [until]);
-
-  const left = until ? Math.max(0, Math.ceil((until - now) / 1000)) : 0;
-  if (left > 0)
-    return (
-      <small className="min-w-0 flex-1 truncate text-body-xs text-ink-tertiary max-lg:text-body-sm max-lg:text-ink-secondary">
-        {t("page.mobile.resendIn", { time: `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}` })}
-      </small>
-    );
-  return (
-    <button
-      type="button"
-      className="min-w-0 flex-1 truncate text-left text-body-xs text-brand disabled:opacity-50 max-lg:text-body-sm max-lg:font-medium"
-      disabled={pending}
-      onClick={onResend}
-    >
-      {t("page.resendCode")}
-    </button>
-  );
-}
+type DialogId = "password" | "delete" | null;
 
 const FIELD = "flex flex-col gap-2";
 const LABEL = "text-body-sm text-ink-secondary";
@@ -85,24 +32,14 @@ export function AccountSettingsPage() {
   const isCompact = useIsCompact();
   const changePassword = useChangePasswordMutation();
   const deleteAccount = useDeleteAccountMutation();
-  const twoFactor = useTwoFactorStatus();
-  const enableTwoFactor = useEnableTwoFactorMutation();
-  const confirmTwoFactor = useConfirmTwoFactorMutation();
-  const disableTwoFactor = useDisableTwoFactorMutation();
   const logout = useAuthStore((state) => state.logout);
   const [dialog, setDialog] = useState<DialogId>(null);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [twoFactorPassword, setTwoFactorPassword] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [mismatch, setMismatch] = useState(false);
-  const [resendAt, setResendAt] = useState<number | null>(null);
-  const [phoneOpen, setPhoneOpen] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
-  const requestPhoneCode = usePhoneChangeCodeMutation();
-  const confirmPhone = useConfirmPhoneChangeMutation();
   const updateSettings = useUpdateSettingsMutation();
 
   function saveUsername() {
@@ -127,7 +64,6 @@ export function AccountSettingsPage() {
     );
   }
 
-  const twoFactorEnabled = twoFactor.data?.enabled === true;
   const sheet = isCompact
     ? ({ variant: "adaptive", footerClassName: "px-4 pt-6 pb-8.5" } as const)
     : ({ variant: "confirm", width: "lg:w-120" } as const);
@@ -135,17 +71,6 @@ export function AccountSettingsPage() {
   const field = isCompact ? "flex flex-col gap-[7px]" : FIELD;
   const label = isCompact ? "text-body-sm text-ink" : LABEL;
   const primary = isCompact ? `${dialogButton.primary} h-13 text-title font-semibold` : dialogButton.primary;
-  const secondary = isCompact
-    ? `${dialogButton.secondary} h-13 border-line-strong text-title font-semibold`
-    : dialogButton.secondary;
-  const danger = isCompact ? `${dialogButton.danger} h-13 text-title font-semibold` : dialogButton.danger;
-
-  function closeTwoFactor() {
-    setDialog(null);
-    setTwoFactorPassword("");
-    setTwoFactorCode("");
-    setResendAt(null);
-  }
 
   function closePassword() {
     setDialog(null);
@@ -176,49 +101,6 @@ export function AccountSettingsPage() {
     );
   }
 
-  function startTwoFactor() {
-    if (!twoFactorPassword) {
-      toast.error(t("page.passwordRule"));
-      return;
-    }
-    enableTwoFactor.mutate(twoFactorPassword, {
-      onSuccess: () => {
-        setResendAt(Date.now() + RESEND_SECONDS * 1000);
-        setDialog("twoFactorCode");
-      },
-      onError: (error: Error & { status?: number }) =>
-        toast.error(error.status === 503 ? t("page.twoFactorSmsUnavailable") : error.message),
-    });
-  }
-
-  function finishTwoFactor() {
-    if (twoFactorCode.length < TWO_FACTOR_CODE_LENGTH) {
-      toast.error(t("page.twoFactorCodeRequired"));
-      return;
-    }
-    confirmTwoFactor.mutate(twoFactorCode, {
-      onSuccess: () => {
-        toast.success(t("page.twoFactorEnabled"));
-        closeTwoFactor();
-      },
-      onError: (error: Error) => toast.error(error.message),
-    });
-  }
-
-  function stopTwoFactor() {
-    if (!twoFactorPassword) {
-      toast.error(t("page.passwordRule"));
-      return;
-    }
-    disableTwoFactor.mutate(twoFactorPassword, {
-      onSuccess: () => {
-        toast.success(t("page.twoFactorDisabled"));
-        closeTwoFactor();
-      },
-      onError: (error: Error) => toast.error(error.message),
-    });
-  }
-
   return (
     <ProfileSubPage title={t("page.accountTitle")}>
       <SettingsSection label={t("page.loginSectionTitle")}>
@@ -233,11 +115,10 @@ export function AccountSettingsPage() {
           }}
         />
         <SettingsRow
-          icon={user?.phoneVerified ? "check-circle" : "warning-fill"}
-          tone={user?.phoneVerified ? SETTINGS_TONES.success : SETTINGS_TONES.warning}
+          icon="call"
+          tone={SETTINGS_TONES.success}
           title={isCompact ? t("page.mobile.phone") : t("page.phoneLabel")}
-          value={user?.phoneVerified ? t("page.verified") : user?.phone ? t("page.notVerified") : t("page.noPhone")}
-          onClick={() => setPhoneOpen(true)}
+          value={user?.phone || "—"}
         />
       </SettingsSection>
 
@@ -252,13 +133,6 @@ export function AccountSettingsPage() {
               : undefined
           }
           onClick={() => setDialog("password")}
-        />
-        <SettingsRow
-          icon="shield"
-          tone={SETTINGS_TONES.violet}
-          title={t("page.twoFactor")}
-          value={twoFactorEnabled ? t("page.twoFactorOn") : t("page.twoFactorOff")}
-          onClick={() => setDialog(twoFactorEnabled ? "twoFactorDisable" : "twoFactorEnable")}
         />
         <SettingsRow
           icon="clock"
@@ -353,125 +227,6 @@ export function AccountSettingsPage() {
         </div>
       </AppDialog>
 
-      <AppDialog
-        open={dialog === "twoFactorEnable"}
-        onOpenChange={(open) => !open && closeTwoFactor()}
-        {...sheet}
-        title={t("page.twoFactorEnableTitle")}
-        description={t("page.twoFactorEnableDescription")}
-        footer={
-          <>
-            <button type="button" className={secondary} onClick={closeTwoFactor}>
-              {t("page.cancel")}
-            </button>
-            <button
-              type="button"
-              className={primary}
-              disabled={enableTwoFactor.isPending}
-              onClick={startTwoFactor}
-            >
-              {t("page.enable")}
-            </button>
-          </>
-        }
-      >
-        <label className={field}>
-          <span className={label}>{t("page.currentPassword")}</span>
-          <input
-            type="password"
-            className={input}
-            autoComplete="current-password"
-            value={twoFactorPassword}
-            onChange={(event) => setTwoFactorPassword(event.target.value)}
-          />
-        </label>
-      </AppDialog>
-
-      <AppDialog
-        open={dialog === "twoFactorCode"}
-        onOpenChange={(open) => !open && closeTwoFactor()}
-        {...sheet}
-        title={t("page.twoFactorCodeTitle")}
-        description={
-          isCompact && user?.phone
-            ? t("page.mobile.codeSentTo", { phone: maskPhone(user.phone) })
-            : t("page.twoFactorCodeDescription")
-        }
-        footer={
-          <button
-            type="button"
-            className={primary}
-            disabled={confirmTwoFactor.isPending}
-            onClick={finishTwoFactor}
-          >
-            {t("page.confirmCode")}
-          </button>
-        }
-      >
-        <OtpInput
-          length={TWO_FACTOR_CODE_LENGTH}
-          value={twoFactorCode}
-          onChange={setTwoFactorCode}
-        />
-
-        <span className="flex items-center gap-3">
-          <ResendTimer
-            until={resendAt}
-            pending={enableTwoFactor.isPending}
-            onResend={() =>
-              enableTwoFactor.mutate(twoFactorPassword, {
-                onSuccess: () => setResendAt(Date.now() + RESEND_SECONDS * 1000),
-                onError: (error: Error) => toast.error(error.message),
-              })
-            }
-          />
-          <button
-            type="button"
-            className="shrink-0 text-body-xs text-brand transition-opacity hover:opacity-80 max-lg:text-body-sm max-lg:font-medium"
-            onClick={() => {
-              closeTwoFactor();
-              navigate("../personal");
-            }}
-          >
-            {t("page.changeNumber")}
-          </button>
-        </span>
-      </AppDialog>
-
-      <AppDialog
-        open={dialog === "twoFactorDisable"}
-        onOpenChange={(open) => !open && closeTwoFactor()}
-        {...sheet}
-        title={t("page.twoFactorDisableTitle")}
-        description={t("page.twoFactorDisableDescription")}
-        footer={
-          <>
-            <button type="button" className={secondary} onClick={closeTwoFactor}>
-              {t("page.cancel")}
-            </button>
-            <button
-              type="button"
-              className={danger}
-              disabled={disableTwoFactor.isPending}
-              onClick={stopTwoFactor}
-            >
-              {t("page.delete")}
-            </button>
-          </>
-        }
-      >
-        <label className={field}>
-          <span className={label}>{t("page.currentPassword")}</span>
-          <input
-            type="password"
-            className={input}
-            autoComplete="current-password"
-            value={twoFactorPassword}
-            onChange={(event) => setTwoFactorPassword(event.target.value)}
-          />
-        </label>
-      </AppDialog>
-
       <DeleteAccountDialog
         open={dialog === "delete"}
         pending={deleteAccount.isPending}
@@ -486,20 +241,6 @@ export function AccountSettingsPage() {
           })
         }
       />
-      <PhoneVerifyDialog
-        key={phoneOpen ? "open" : "closed"}
-        open={phoneOpen}
-        onOpenChange={setPhoneOpen}
-        phone={user?.phone ?? ""}
-        editablePhone
-        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
-        onVerify={async (phone, code) => {
-          await confirmPhone.mutateAsync({ phone, code });
-          toast.success(t("auth:phoneVerify.verified"));
-          setPhoneOpen(false);
-        }}
-      />
-
       <AppDialog
         open={username !== null}
         onOpenChange={(open) => !open && setUsername(null)}

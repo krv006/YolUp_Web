@@ -156,28 +156,6 @@ export const authApi = {
   updateSettings(dto: { theme?: string; text_size?: string; target_band?: number | null; username?: string }) {
     return apiClient.patch<AuthUserDto>(authEndpoints.me, dto);
   },
-  requestRegisterPhoneCode(phone: string) {
-    return apiClient.post<{ sent?: boolean; expires_in?: number; retry_after?: number }>(
-      authEndpoints.registerPhoneRequest,
-      { phone },
-      { skipAuth: true, skipRefresh: true }
-    );
-  },
-  verifyRegisterPhone(phone: string, code: string) {
-    return apiClient.post<{ phone_token: string }>(
-      authEndpoints.registerPhoneVerify,
-      { phone, code },
-      { skipAuth: true, skipRefresh: true }
-    );
-  },
-  requestPhoneChangeCode(phone: string) {
-    return apiClient.post<{ sent?: boolean; expires_in?: number; retry_after?: number }>(authEndpoints.mePhoneRequest, {
-      phone,
-    });
-  },
-  confirmPhoneChange(phone: string, code: string) {
-    return apiClient.post<AuthUserDto>(authEndpoints.mePhoneConfirm, { phone, code });
-  },
   async getLoginsPage(page: number, pageSize: number, options?: RequestOptions) {
     return mapLoginRecordsPage(
       await apiClient.get(authEndpoints.logins, { ...options, query: { page, page_size: pageSize } }),

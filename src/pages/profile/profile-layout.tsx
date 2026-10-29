@@ -43,7 +43,8 @@ export function ProfileLayout() {
 
   if (isCompact) return <Outlet />;
 
-  const active = [...ITEMS, HELP].find((item) => pathname.endsWith(`/${item.to}`));
+  const items = student ? ITEMS.filter((item) => item.to !== "certificates") : ITEMS;
+  const active = [...items, HELP].find((item) => pathname.endsWith(`/${item.to}`));
 
   return (
     <WorkspaceShell
@@ -52,7 +53,7 @@ export function ProfileLayout() {
     >
       <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,640px)] lg:items-start">
         <nav className="flex flex-col rounded-2xl bg-surface p-2.5" aria-label={t("page.title")}>
-          {ITEMS.map((item) => (
+          {items.map((item) => (
             <NavLink key={item.to} to={item.to} className={navClass}>
               <Icon name={item.icon} size={20} className="shrink-0" />
               <span className="min-w-0 flex-1 truncate">{t(item.labelKey)}</span>

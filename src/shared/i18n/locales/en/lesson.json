@@ -359,8 +359,6 @@
     "date": "Date",
     "start": "Starts",
     "duration": "Duration (min)",
-    "quiz": "Attach a quiz",
-    "noQuiz": "No quiz attached",
     "submit": "Save the lesson",
     "mobileDescription": "Pick a group and set the time",
     "weeksValue": "{{count}} weeks",
