@@ -215,7 +215,8 @@
     "mobileReadyNote": "We'll post to the chat as soon as it's ready.",
     "joinedYou": "You attended",
     "minutesShort": "{{count}} min",
-    "download": "Download"
+    "download": "Download",
+    "volume": "Volume"
   },
   "schedule": {
     "now": "NOW",

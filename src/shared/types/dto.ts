@@ -7,6 +7,7 @@ export interface UserDto {
   role?: string;
   phone?: string | null;
   invite_code?: string | null;
+  avatar?: string | null;
 }
 
 export interface PaginatedDto<T> {

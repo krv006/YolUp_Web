@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Pencil, Users, Wifi, X } from "lucide-react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -149,13 +149,27 @@ export function BoardPanel({
   }
 
   const boardHeight = state?.height ?? 900;
+  const boardWidth = state?.width ?? 1600;
+  const [canvasWrap, setCanvasWrap] = useState<HTMLDivElement | null>(null);
+  const [viewRatio, setViewRatio] = useState(0);
+
+  useEffect(() => {
+    if (!canvasWrap) return undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      if (width > 0) setViewRatio(height / width);
+    });
+    observer.observe(canvasWrap);
+    return () => observer.disconnect();
+  }, [canvasWrap]);
+
   const canvasHeight = useMemo(() => {
     const bottom = (active?.strokes ?? []).reduce((max, stroke) => {
       const span = strokeSpan(stroke);
       return span ? Math.max(max, span.bottom) : max;
     }, 0);
-    return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN));
-  }, [active?.strokes, boardHeight]);
+    return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN), Math.floor(boardWidth * viewRatio));
+  }, [active?.strokes, boardHeight, boardWidth, viewRatio]);
 
   function flowPointFor(lines: number): Point {
     return nextTextPoint(active?.strokes ?? [], {
@@ -178,9 +192,12 @@ export function BoardPanel({
   }
 
   const lastOwn = history.filter((entry) => entry.sheet === sheet).at(-1) ?? null;
-  const undoTarget = lastOwn
-    ? ([...(active?.strokes ?? [])].reverse().find((stroke) => strokeKey(stroke) === strokeKey(lastOwn.shape)) ?? null)
-    : null;
+  const activeStrokes = active?.strokes;
+  const undoTarget = useMemo(() => {
+    if (!lastOwn) return null;
+    const key = strokeKey(lastOwn.shape);
+    return [...(activeStrokes ?? [])].reverse().find((stroke) => strokeKey(stroke) === key) ?? null;
+  }, [activeStrokes, lastOwn]);
 
   function undo() {
     if (!lastOwn || !undoTarget) return;
@@ -211,11 +228,11 @@ export function BoardPanel({
     strokeWidth,
     enabled: canDraw,
     onCommit: commitStroke,
-    onPlacePoint: () => {
+    onPlacePoint: (point) => {
       if (tool !== "text" && tool !== "math") return;
       setDraftText("");
       setDraftLines([]);
-      setPlacement({ tool, point: flowPointFor(1) });
+      setPlacement({ tool, point });
     },
   });
 
@@ -229,15 +246,19 @@ export function BoardPanel({
     setDraftLines([]);
   }
 
+  function anchorFor(point: Point): Point {
+    const width = state?.width ?? 1600;
+    return [Math.min(Math.max(point[0], 8), width - 40), point[1] + BOARD_TEXT_SIZE * 0.35];
+  }
+
   function placeBlock(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     if (!placement || !canPlaceBlock) return;
     let stroke: StrokeShapeDto;
+    const [x, y] = anchorFor(placement.point);
     if (placement.tool === "math") {
-      const [x, y] = flowPointFor(1);
       stroke = { type: "math", latex: draftText.trim(), x, y, size: BOARD_TEXT_SIZE, color };
     } else {
-      const [x, y] = flowPointFor(Math.max(1, draftLines.length));
       stroke = {
         type: "text",
         text: draftPlainText,
@@ -263,13 +284,24 @@ export function BoardPanel({
     );
   }
 
-  function handleStrokeClick(id: string) {
-    if (tool !== "erase" || !canDraw) return;
-    if (source) return source.eraseStroke(sheet, id); // shaxsiy doska: o'chirishga sabab so'ralmaydi
-    setSelected(id);
-    setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
-    setReasonOpen(true);
-  }
+  const handleStrokeClick = useCallback(
+    (id: string) => {
+      if (tool !== "erase" || !canDraw) return;
+      if (source) return source.eraseStroke(sheet, id); // shaxsiy doska: o'chirishga sabab so'ralmaydi
+      setSelected(id);
+      setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
+      setReasonOpen(true);
+    },
+    [tool, canDraw, source, sheet, mobileLayout, t]
+  );
+
+  const strokeNodes = useMemo(
+    () =>
+      (activeStrokes ?? []).map((stroke) => (
+        <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
+      )),
+    [activeStrokes, selected, handleStrokeClick]
+  );
 
   function closeReasonDialog() {
     setReasonOpen(false);
@@ -367,7 +399,7 @@ export function BoardPanel({
 
 
   const canvas = (
-    <div className="board-canvas-wrap h-full">
+    <div ref={setCanvasWrap} className="board-canvas-wrap h-full">
       <svg
         ref={svgRef}
         className={`board-canvas board-canvas--${tool}`}
@@ -379,14 +411,7 @@ export function BoardPanel({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
       >
-        {active?.strokes.map((stroke) => (
-          <BoardStroke
-            key={stroke.id}
-            stroke={stroke}
-            selected={selected === stroke.id}
-            onSelect={handleStrokeClick}
-          />
-        ))}
+        {strokeNodes}
         {preview ? (
           <BoardStroke
             stroke={{ ...preview, id: "draft" }}
@@ -453,7 +478,9 @@ export function BoardPanel({
       ) : placement ? (
         <form
           ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
-          className={`board-inline-editor is-wide is-${placement.tool}`}
+          className={`board-inline-editor is-wide is-${placement.tool} ${
+            placement.point[0] > state.width * 0.6 ? "is-right" : ""
+          }`}
           style={{
             top: 0,
             left: `${(placement.point[0] / state.width) * 100}%`,
@@ -582,7 +609,7 @@ export function BoardPanel({
   if (mobileLayout && mobile) {
     const page = (active?.index ?? sheet) + 1;
     const total = state.sheets.length;
-    const pill = !canDraw ? (
+    const pill = source ? null : !canDraw ? (
       <MobileBoardPill icon={<Eye size={14} />} tone="neutral">
         {t("status.viewOnly")}
       </MobileBoardPill>

@@ -52,9 +52,11 @@ import {
   CAMERA_SOURCE,
   canPublishSource,
   decodeScreenShareRequest,
+  hasLiveVideo,
   LessonInviteDialog,
   MediaPermissionDialog,
   MICROPHONE_SOURCE,
+  requestScreenCapture,
   SCREEN_SHARE_SOURCE,
   useAllowShare,
   useAttentionCheck,
@@ -136,7 +138,7 @@ function CameraTile({
 
   return (
     <article
-      className={`live-camera-tile relative isolate overflow-hidden rounded-lg bg-subtle ${
+      className={`live-camera-tile relative isolate overflow-hidden rounded-lg bg-subtle [&_.lk-participant-metadata]:hidden! ${
         compact ? "is-compact aspect-3/2" : "aspect-5/3"
       } ${cameraOff ? "is-camera-off" : ""} ${speaking ? "ring-2 ring-success" : ""}`}
     >
@@ -155,6 +157,110 @@ function CameraTile({
         </span>
       </span>
     </article>
+  );
+}
+
+const SURFACES = ["browser", "window", "monitor"] as const;
+
+function LocalSharePreview({ stream }: { stream: MediaStream }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return undefined;
+    element.srcObject = stream;
+    void element.play().catch(() => undefined);
+    return () => {
+      element.srcObject = null;
+    };
+  }, [stream]);
+
+  return <video ref={ref} className="size-full bg-black object-contain" autoPlay muted playsInline />;
+}
+
+function ShareStage({
+  track,
+  localStream,
+}: {
+  track: TrackReferenceOrPlaceholder;
+  localStream: MediaStream | null;
+}) {
+  const { t } = useTranslation("live");
+  const local = track.participant.isLocal;
+  const surface = localStream?.getVideoTracks()[0]?.getSettings().displaySurface;
+  const surfaceLabel = SURFACES.find((item) => item === surface);
+  const caption = local
+    ? [t("share.previewSelf"), surfaceLabel ? t(`share.surface.${surfaceLabel}`) : ""].filter(Boolean).join(" · ")
+    : t("share.previewRemote", { name: firstName(track.participant.name || track.participant.identity) });
+
+  return (
+    <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-black">
+      {local && hasLiveVideo(localStream) && localStream ? (
+        <LocalSharePreview stream={localStream} />
+      ) : (
+        <ParticipantTile trackRef={track} />
+      )}
+      <span className="absolute top-3 left-3 z-10 flex h-8 items-center gap-2 rounded-full bg-canvas/80 px-3 text-caption-strong text-ink backdrop-blur-sm">
+        <MonitorUp size={15} className="shrink-0 text-brand" />
+        {caption}
+      </span>
+    </div>
+  );
+}
+
+function TeacherStage({
+  name,
+  avatarUrl,
+  track,
+}: {
+  name: string;
+  avatarUrl: string | null;
+  track: TrackReferenceOrPlaceholder | null;
+}) {
+  const { t } = useTranslation("live");
+  const publication = track && "publication" in track ? track.publication : undefined;
+  const cameraOn = Boolean(track && publication && !publication.isMuted);
+
+  if (cameraOn && track)
+    return (
+      <div className="live-camera-tile relative isolate min-h-0 flex-1 overflow-hidden rounded-xl bg-subtle">
+        <ParticipantTile trackRef={track} />
+        <span className="live-camera-name absolute bottom-3 left-3 z-10 flex items-center rounded-sm bg-canvas/70 px-2.5 py-1 text-caption-strong text-ink backdrop-blur-sm">
+          {name} · {t("room.teacherRole")}
+        </span>
+      </div>
+    );
+
+  return (
+    <div className="relative isolate grid min-h-0 flex-1 place-items-center overflow-hidden rounded-xl bg-subtle">
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 size-full scale-110 object-cover opacity-45 blur-2xl"
+          draggable={false}
+        />
+      ) : null}
+      <div className="flex flex-col items-center gap-4 text-center">
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={name}
+            className="size-40 rounded-full object-cover shadow-2xl ring-4 ring-ink/10"
+            draggable={false}
+          />
+        ) : (
+          <span className="grid size-40 place-items-center rounded-full bg-surface font-heading text-display text-ink shadow-2xl">
+            {firstName(name).slice(0, 1)}
+          </span>
+        )}
+        <span className="flex flex-col gap-1">
+          <strong className="font-heading text-title-lg text-ink">{name}</strong>
+          <small className="text-body-sm text-ink-secondary">{t("room.teacherRole")}</small>
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -396,7 +502,13 @@ async function waitForVideoDimensions(track: MediaStreamTrack, timeoutMs = 500):
   }
 }
 
-function TeacherShareControl({ screenStream }: { screenStream: MediaStream }) {
+function TeacherShareControl({
+  screenStream,
+  onStreamChange,
+}: {
+  screenStream: MediaStream;
+  onStreamChange: (stream: MediaStream) => void;
+}) {
   const { t } = useTranslation("live");
   const room = useRoomContext();
   const connectionState = useConnectionState();
@@ -417,9 +529,19 @@ function TeacherShareControl({ screenStream }: { screenStream: MediaStream }) {
   async function startSharing() {
     setStarting(true);
     try {
+      let source = screenStream;
+      if (!hasLiveVideo(source)) {
+        try {
+          source = await requestScreenCapture();
+        } catch {
+          toast.error(t("share.failedToast"));
+          return;
+        }
+        onStreamChange(source);
+      }
       const toPublish: Array<{ track: MediaStreamTrack; source: Track.Source }> = [];
-      const videoTrack = screenStream.getVideoTracks()[0];
-      const audioTrack = screenStream.getAudioTracks()[0];
+      const videoTrack = source.getVideoTracks()[0];
+      const audioTrack = source.getAudioTracks()[0];
       if (videoTrack) {
         const clone = videoTrack.clone();
         await waitForVideoDimensions(clone);
@@ -588,7 +710,7 @@ export interface LiveRoomProps {
   onLeave: () => void;
 }
 
-export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomProps) {
+export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream, onLeave }: LiveRoomProps) {
   const { t } = useTranslation("live");
   const connectionLabels = useConnectionLabels();
   const audioRecordingLabels = useAudioRecordingLabels();
@@ -599,6 +721,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   const [inviteOpen, setInviteOpen] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
   const [shareRequest, setShareRequest] = useState<ShareRequest | null>(null);
+  const [screenStream, setScreenStream] = useState(initialScreenStream);
   const isCompact = useIsCompact();
   const allowShare = useAllowShare(lesson.id);
   const connectionState = useConnectionState();
@@ -648,6 +771,15 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
     ? localCamera
     : (cameraTracks.find((track) => track.participant.identity === teacherId) ?? localCamera);
   const remoteCameras = cameraTracks.filter((track) => track !== leadCamera);
+  const teacherCamera = isTeacher
+    ? localCamera
+    : (cameraTracks.find((track) => track.participant.identity === teacherId) ?? null);
+  const teacherName = course.data?.teacher || (isTeacher ? room.localParticipant.name : "") || "";
+  const leadLabel = leadCamera
+    ? leadCamera.participant.isLocal
+      ? `${t("room.youLabel")}${isTeacher ? ` · ${t("room.teacherRole")}` : ""}`
+      : `${firstName(leadCamera.participant.name || leadCamera.participant.identity)} · ${t("room.teacherRole")}`
+    : "";
   const raisedHand = !isTeacher && (mic.waiting || camera.waiting);
   const hostName = room.localParticipant.name ?? "";
   const studentCount = Math.max(participants.length - 1, 0);
@@ -657,6 +789,12 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
   const [moreOpen, setMoreOpen] = useState(false);
   const [permissionOpen, setPermissionOpen] = useState(false);
   const [joinedAt] = useState(() => new Date());
+  const lessonStartedAt = useMemo(() => {
+    const recorded = lesson.recordingStartedAt ? new Date(lesson.recordingStartedAt) : null;
+    if (recorded && !Number.isNaN(recorded.getTime())) return recorded;
+    const scheduled = new Date(lesson.startsAt);
+    return !Number.isNaN(scheduled.getTime()) && scheduled.getTime() <= joinedAt.getTime() ? scheduled : joinedAt;
+  }, [lesson.recordingStartedAt, lesson.startsAt, joinedAt]);
   const connected = connectionState === ConnectionState.Connected;
 
   const recordingChips = isTeacher
@@ -762,7 +900,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           lesson={lesson}
           isTeacher={isTeacher}
           currentUserId={room.localParticipant.identity}
-          startedAt={joinedAt}
+          startedAt={lessonStartedAt}
           recording={isTeacher ? recordingChips.length > 0 : lesson.recordingActive}
           participants={participants.length}
           requests={pendingRequestsCount}
@@ -808,11 +946,11 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           </small>
         </div>
 
-        {recordingChips.length ? <RecordingChip startedAt={joinedAt} /> : null}
+        {recordingChips.length ? <RecordingChip startedAt={lessonStartedAt} /> : null}
 
         {!isTeacher && lesson.status === "live" && lesson.recordingActive ? (
           <>
-            <RecordingChip startedAt={new Date(lesson.recordingStartedAt ?? lesson.startsAt)} />
+            <RecordingChip startedAt={lessonStartedAt} />
             <span className="flex h-6 shrink-0 items-center rounded-full bg-subtle px-3 text-caption text-ink-secondary" role="status">
               {t("room.recordingStudent")}
             </span>
@@ -845,20 +983,13 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
               currentUserId={room.localParticipant.identity}
             />
           ) : activeShare ? (
-            <div className="min-h-0 flex-1 overflow-hidden rounded-xl bg-subtle">
-              <ParticipantTile trackRef={activeShare} />
-            </div>
-          ) : cameraTracks.length ? (
-            <div className="grid min-h-0 flex-1 auto-rows-min grid-cols-2 content-start gap-4 overflow-y-auto lg:grid-cols-3">
-              {cameraTracks.map((track) => (
-                <CameraTile key={`${track.participant.identity}-${track.source}`} track={track} />
-              ))}
-            </div>
+            <ShareStage track={activeShare} localStream={isTeacher ? screenStream : null} />
           ) : (
-            <div className="m-auto flex flex-col items-center gap-3 text-ink-tertiary">
-              <Video size={30} />
-              <p className="text-body-sm">{t("room.empty")}</p>
-            </div>
+            <TeacherStage
+              name={teacherName}
+              avatarUrl={course.data?.teacherUser?.avatarUrl ?? null}
+              track={teacherCamera}
+            />
           )}
         </main>
 
@@ -866,18 +997,22 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           className="hidden w-84 shrink-0 flex-col gap-2.5 overflow-y-auto lg:flex"
           aria-label={t("room.filmstripAria")}
         >
-          {leadCamera ? (
-            <CameraTile
-              track={leadCamera}
-              label={
-                leadCamera.participant.isLocal
-                  ? `${t("room.youLabel")}${isTeacher ? ` · ${t("room.teacherRole")}` : ""}`
-                  : `${firstName(leadCamera.participant.name || leadCamera.participant.identity)} · ${t("room.teacherRole")}`
-              }
-            />
+          {!activeShare ? (
+            <div className="grid grid-cols-2 gap-2.5">
+              {[...(leadCamera ? [leadCamera] : []), ...remoteCameras].map((track) => (
+                <CameraTile
+                  key={`${track.participant.identity}-${track.source}`}
+                  track={track}
+                  compact
+                  label={track === leadCamera ? leadLabel : undefined}
+                />
+              ))}
+            </div>
           ) : null}
 
-          {remoteCameras.length ? (
+          {activeShare && leadCamera ? <CameraTile track={leadCamera} label={leadLabel} /> : null}
+
+          {activeShare && remoteCameras.length ? (
             <div className="grid grid-cols-2 gap-2.5">
               {remoteCameras.map((track) => (
                 <CameraTile
@@ -977,7 +1112,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
             />
           )}
           {isTeacher ? (
-            screenStream && <TeacherShareControl screenStream={screenStream} />
+            screenStream && <TeacherShareControl screenStream={screenStream} onStreamChange={setScreenStream} />
           ) : (
             <StudentShareControl />
           )}

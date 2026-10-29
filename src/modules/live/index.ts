@@ -9,6 +9,7 @@ export {
 } from "./lib/live-permissions";
 export { MIC_TRACK, tokenAllowsTrack } from "./lib/live-token";
 export { decodeScreenShareRequest, encodeScreenShareRequest } from "./lib/screen-share-signal";
+export { hasLiveVideo, requestScreenCapture } from "./lib/screen-capture";
 export { useFocusTracker } from "./lib/use-focus-tracker";
 export {
   liveKeys,

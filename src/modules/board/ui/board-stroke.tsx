@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { StrokeDto } from "../api/board.dto";
 import { arrowHeadPoints, polylinePoints, textLines } from "../lib/board.geometry";
 import { listMarkers } from "../lib/rich-text";
@@ -9,7 +10,7 @@ export interface BoardStrokeProps {
   onSelect: (id: string) => void;
 }
 
-export function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
+export const BoardStroke = memo(function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
   const color = selected ? "var(--destructive)" : (stroke.color ?? "currentColor");
   const shared = {
     onClick: () => onSelect(stroke.id),
@@ -135,4 +136,4 @@ export function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
         />
       );
   }
-}
+});

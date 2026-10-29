@@ -11,6 +11,7 @@ import {
   type HomeworkBoardSaveState,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { sanitizeHtml } from "@/shared/lib";
 import type { Assignment } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
@@ -55,6 +56,7 @@ function HomeworkBoardScreen({
   const { source, saveState, flush } = useHomeworkBoardSource(assignment.id, board);
   const submit = useSubmitHomeworkBoard();
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const isCompact = useIsCompact();
   const html = assignment.body ? sanitizeHtml(assignment.body) : "";
 
   async function send() {
@@ -67,6 +69,52 @@ function HomeworkBoardScreen({
       onError: () => setConfirmOpen(false),
     });
   }
+
+  const confirmDialog = (
+    <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+      {confirmOpen ? (
+        <DialogContent title={t("board.confirmTitle")} description={t("board.confirmDescription")}>
+          <div className="dialog-actions">
+            <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
+              {t("board.cancel")}
+            </Button>
+            <Button loading={submit.isPending} onClick={() => void send()}>
+              <CheckCircle2 size={16} /> {t("board.confirm")}
+            </Button>
+          </div>
+        </DialogContent>
+      ) : null}
+    </Dialog>
+  );
+
+  if (isCompact)
+    return (
+      <div data-theme="light" className="flex h-full min-h-0 flex-col bg-subtle px-3 pt-5 pb-[26px] font-body text-ink">
+        <BoardPanel
+          lessonId=""
+          courseId={null}
+          source={source}
+          mobile={{
+            title: assignment.title,
+            subtitle: [assignment.courseTitle, t(`board.save.${saveState}`)].filter(Boolean).join(" · "),
+            backLabel: t("board.back"),
+            onBack,
+            action: (
+              <button
+                type="button"
+                className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-button text-on-action disabled:opacity-60"
+                disabled={submit.isPending}
+                onClick={() => setConfirmOpen(true)}
+              >
+                <Send size={16} />
+                {t("board.submit")}
+              </button>
+            ),
+          }}
+        />
+        {confirmDialog}
+      </div>
+    );
 
   return (
     <div className="portal-page homework-board-page">
@@ -99,20 +147,7 @@ function HomeworkBoardScreen({
         <BoardPanel lessonId="" courseId={null} source={source} />
       </section>
 
-      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        {confirmOpen ? (
-          <DialogContent title={t("board.confirmTitle")} description={t("board.confirmDescription")}>
-            <div className="dialog-actions">
-              <Button variant="secondary" onClick={() => setConfirmOpen(false)}>
-                {t("board.cancel")}
-              </Button>
-              <Button loading={submit.isPending} onClick={() => void send()}>
-                <CheckCircle2 size={16} /> {t("board.confirm")}
-              </Button>
-            </div>
-          </DialogContent>
-        ) : null}
-      </Dialog>
+      {confirmDialog}
     </div>
   );
 }

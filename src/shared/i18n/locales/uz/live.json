@@ -169,7 +169,14 @@
     "requestNotifyTitle": "{{name}} ekran ulashmoqchi",
     "requestNotifyDescription": "O'quvchiga ekran ulashish uchun ruxsat berasizmi?",
     "grantAction": "Ruxsat berish",
-    "denyAction": "Rad etish"
+    "denyAction": "Rad etish",
+    "previewSelf": "Siz ulashayapsiz",
+    "previewRemote": "{{name}} ekranni ulashmoqda",
+    "surface": {
+      "browser": "Brauzer tabi",
+      "window": "Oyna",
+      "monitor": "Butun ekran"
+    }
   },
   "participantsPanel": {
     "micRequestsAria": "Mikrofon so'ragan o'quvchilar",

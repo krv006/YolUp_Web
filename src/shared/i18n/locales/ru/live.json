@@ -169,7 +169,14 @@
     "requestNotifyTitle": "{{name}} хочет показать свой экран",
     "requestNotifyDescription": "Разрешить ученику показать экран?",
     "grantAction": "Разрешить",
-    "denyAction": "Отклонить"
+    "denyAction": "Отклонить",
+    "previewSelf": "Вы показываете",
+    "previewRemote": "{{name}} показывает экран",
+    "surface": {
+      "browser": "Вкладка браузера",
+      "window": "Окно",
+      "monitor": "Весь экран"
+    }
   },
   "participantsPanel": {
     "micRequestsAria": "Ученики, запросившие микрофон",

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Pause, Play, Volume2, VolumeX } from "lucide-react";
+import { Pause, Play, Volume1, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export interface RecordingVideoProps {
@@ -25,6 +25,7 @@ export function RecordingVideo({ src, poster, variant = "default" }: RecordingVi
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
+  const [volume, setVolume] = useState(1);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
 
@@ -35,6 +36,24 @@ export function RecordingVideo({ src, poster, variant = "default" }: RecordingVi
     if (!video) return;
     if (video.paused) void video.play();
     else video.pause();
+  }
+
+  function changeVolume(value: number) {
+    const video = videoRef.current;
+    if (!video) return;
+    video.volume = value;
+    video.muted = value === 0;
+  }
+
+  function toggleMute() {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.muted || video.volume === 0) {
+      video.volume = volume > 0 ? volume : 0.5;
+      video.muted = false;
+    } else {
+      video.muted = true;
+    }
   }
 
   function seek(event: React.MouseEvent<HTMLDivElement>) {
@@ -68,6 +87,10 @@ export function RecordingVideo({ src, poster, variant = "default" }: RecordingVi
         }}
         onPause={() => setPlaying(false)}
         onTimeUpdate={(event) => setCurrent(event.currentTarget.currentTime)}
+        onVolumeChange={(event) => {
+          setMuted(event.currentTarget.muted || event.currentTarget.volume === 0);
+          if (event.currentTarget.volume > 0) setVolume(event.currentTarget.volume);
+        }}
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
       />
 
@@ -123,15 +146,21 @@ export function RecordingVideo({ src, poster, variant = "default" }: RecordingVi
           type="button"
           className="grid size-5 shrink-0 place-items-center"
           aria-label={muted ? t("recording.unmute") : t("recording.mute")}
-          onClick={() => {
-            const video = videoRef.current;
-            if (!video) return;
-            video.muted = !video.muted;
-            setMuted(video.muted);
-          }}
+          onClick={toggleMute}
         >
-          {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+          {muted ? <VolumeX size={16} /> : volume < 0.5 ? <Volume1 size={16} /> : <Volume2 size={16} />}
         </button>
+
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.05}
+          value={muted ? 0 : volume}
+          aria-label={t("recording.volume")}
+          className={`h-1 shrink-0 cursor-pointer accent-ink-inverse ${mobile ? "w-14" : "w-20"}`}
+          onChange={(event) => changeVolume(Number(event.target.value))}
+        />
       </div>
     </div>
   );
