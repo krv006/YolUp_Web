@@ -1,9 +1,8 @@
-import { AppError } from "@/shared/api";
 import { lessonApi } from "../api/lesson.api";
+import { chunkStore, newSessionId, runExclusive, uploadWithRetry } from "./recording-upload-queue";
 
 const CHUNK_INTERVAL_MS = 30_000;
 const FIRST_CHUNK_MS = 5_000;
-const MAX_RETRY_DELAY_MS = 30_000;
 const MIME_CANDIDATES = ["audio/webm;codecs=opus", "audio/webm"] as const;
 
 export type TeacherAudioRecordingPhase =
@@ -29,29 +28,9 @@ function chooseMimeType(): string | undefined {
   return MIME_CANDIDATES.find((mime) => MediaRecorder.isTypeSupported(mime));
 }
 
-function isRetryableUpload(error: unknown): boolean {
-  if (!(error instanceof AppError)) return true;
-  return error.status === 0 || error.status === 408 || error.status === 429 || error.status >= 500;
-}
-
-function newSessionId(): string {
-  const random = globalThis.crypto?.randomUUID?.();
-  return random ?? `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-function wait(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => globalThis.setTimeout(resolve, milliseconds));
-}
-
-function waitUntilOnline(): Promise<void> {
-  if (typeof navigator === "undefined" || navigator.onLine) return Promise.resolve();
-  return new Promise((resolve) => {
-    globalThis.addEventListener("online", () => resolve(), { once: true });
-  });
-}
-
 export class TeacherAudioRecordingSession {
   readonly lessonId: string;
+  readonly sessionId = newSessionId();
 
   private audioContext: AudioContext | null = null;
   private destination: MediaStreamAudioDestinationNode | null = null;
@@ -59,7 +38,6 @@ export class TeacherAudioRecordingSession {
   private sources = new Map<string, MediaStreamAudioSourceNode>();
   private pendingChunks: Array<{ blob: Blob; index: number }> = [];
   // Bo'lak raqami: javob yo'qolib qayta yuborilsa server uni ikkinchi marta yozmaydi
-  private readonly sessionId = newSessionId();
   private nextIndex = 0;
   private listeners = new Set<SnapshotListener>();
   private uploadLoop: Promise<void> | null = null;
@@ -69,6 +47,7 @@ export class TeacherAudioRecordingSession {
   private firstChunkTimer: ReturnType<typeof globalThis.setTimeout> | null = null;
   private startedAt: string | null = null;
   private firstChunkUploaded = false;
+  private leftoversChecked = false;
   private uploadedChunks = 0;
   private phase: TeacherAudioRecordingPhase = "idle";
   private error: string | null = null;
@@ -208,7 +187,18 @@ export class TeacherAudioRecordingSession {
   }
 
   private enqueue(chunk: Blob): void {
-    this.pendingChunks.push({ blob: chunk, index: this.nextIndex++ });
+    const index = this.nextIndex++;
+    this.pendingChunks.push({ blob: chunk, index });
+    // Yuklanmaguncha brauzer xotirasida ham saqlanadi: sahifa yopilsa/yangilansa keyingi sessiya yuboradi
+    void chunkStore.put({
+      lessonId: this.lessonId,
+      kind: "audio",
+      session: this.sessionId,
+      index,
+      blob: chunk,
+      startedAt: index === 0 ? (this.startedAt ?? undefined) : undefined,
+      createdAt: Date.now(),
+    });
     this.setState("uploading", null);
     void this.drainUploads().catch(() => undefined);
   }
@@ -217,42 +207,61 @@ export class TeacherAudioRecordingSession {
     if (!this.pendingChunks.length) return Promise.resolve();
     if (this.uploadLoop) return this.uploadLoop;
 
-    this.uploadLoop = this.uploadPendingChunks().finally(() => {
+    // Bir dars uchun audio yuklashlari ketma-ket (eski sessiyaning bo'laklari yangisidan oldin yetib borishi kerak)
+    this.uploadLoop = runExclusive(`${this.lessonId}|audio`, () => this.uploadPendingChunks()).finally(() => {
       this.uploadLoop = null;
     });
     return this.uploadLoop;
   }
 
+  /** Oldingi sessiyadan (sahifa yopilgan/yangilangan) yuklanmay qolgan bo'laklar — yangi sessiyadan OLDIN. */
+  private async uploadLeftovers(): Promise<void> {
+    if (this.leftoversChecked) return;
+    const leftovers = await chunkStore.leftovers(this.lessonId, "audio", activeSessionIds(this.lessonId));
+    for (const chunk of leftovers) {
+      try {
+        await uploadWithRetry(
+          () =>
+            lessonApi.uploadRecordingAudio(this.lessonId, chunk.blob, chunk.startedAt, {
+              session: chunk.session,
+              index: chunk.index,
+            }),
+          (error) => this.setState("retrying", error instanceof Error ? error.message : null)
+        );
+      } catch {
+        // qayta urinib bo'lmaydigan xato (dars yopilgan, ruxsat yo'q): bu bo'lak endi kerak emas
+      }
+      await chunkStore.remove(chunk);
+    }
+    this.leftoversChecked = true;
+  }
+
   private async uploadPendingChunks(): Promise<void> {
-    let attempt = 0;
+    await this.uploadLeftovers();
     while (this.pendingChunks.length) {
       const chunk = this.pendingChunks[0];
       if (!chunk) return;
       try {
-        await lessonApi.uploadRecordingAudio(
-          this.lessonId,
-          chunk.blob,
-          this.firstChunkUploaded ? undefined : (this.startedAt ?? undefined),
-          { session: this.sessionId, index: chunk.index }
+        await uploadWithRetry(
+          () =>
+            lessonApi.uploadRecordingAudio(
+              this.lessonId,
+              chunk.blob,
+              this.firstChunkUploaded ? undefined : (this.startedAt ?? undefined),
+              { session: this.sessionId, index: chunk.index }
+            ),
+          (error) =>
+            this.setState("retrying", error instanceof Error ? error.message : "Audio bo‘lagini yuklab bo‘lmadi")
         );
-        this.pendingChunks.shift();
-        this.firstChunkUploaded = true;
-        this.uploadedChunks += 1;
-        attempt = 0;
-        this.setState(this.recorder?.state === "recording" ? "recording" : "uploading", null);
       } catch (error) {
-        this.error = error instanceof Error ? error.message : "Audio bo‘lagini yuklab bo‘lmadi";
-        if (!isRetryableUpload(error)) {
-          this.setState("error", this.error);
-          throw error;
-        }
-
-        this.setState("retrying", this.error);
-        await waitUntilOnline();
-        const delay = Math.min(1_000 * 2 ** attempt, MAX_RETRY_DELAY_MS);
-        attempt += 1;
-        await wait(delay);
+        this.setState("error", error instanceof Error ? error.message : "Audio bo‘lagini yuklab bo‘lmadi");
+        throw error;
       }
+      this.pendingChunks.shift();
+      void chunkStore.remove({ lessonId: this.lessonId, kind: "audio", session: this.sessionId, index: chunk.index });
+      this.firstChunkUploaded = true;
+      this.uploadedChunks += 1;
+      this.setState(this.recorder?.state === "recording" ? "recording" : "uploading", null);
     }
   }
 
@@ -265,6 +274,10 @@ export class TeacherAudioRecordingSession {
 }
 
 const sessionsByLesson = new Map<string, Set<TeacherAudioRecordingSession>>();
+
+function activeSessionIds(lessonId: string): Set<string> {
+  return new Set([...(sessionsByLesson.get(lessonId) ?? [])].map((session) => session.sessionId));
+}
 
 export function createTeacherAudioRecording(lessonId: string): TeacherAudioRecordingSession {
   const session = new TeacherAudioRecordingSession(lessonId);

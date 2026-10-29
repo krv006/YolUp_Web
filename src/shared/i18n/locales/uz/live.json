@@ -93,7 +93,8 @@
     "retrying": "Video navbatda",
     "stopped": "Video saqlandi",
     "unsupported": "Video yozuv mavjud emas",
-    "error": "Video yozuvda xato"
+    "error": "Video yozuvda xato",
+    "interrupted": "Ekran yozuvi to‘xtadi. Yozuv davom etishi uchun ekranni qayta ulashing."
   },
   "room": {
     "cameraOffAria": "{{name}} kamerasi o'chiq",

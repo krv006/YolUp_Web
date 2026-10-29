@@ -764,6 +764,11 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
     return videoTrack ? new MediaStream([videoTrack]) : null;
   }, [screenStream]);
   const videoRecording = useTeacherVideoRecording(lesson.id, screenVideoOnlyStream, isTeacher);
+  // Brauzerning "Ulashishni to'xtatish" tugmasi bosilsa video yozuv to'xtaydi, dars esa davom etadi: o'qituvchi bilsin
+  useEffect(() => {
+    if (!isTeacher || !videoRecording.interrupted) return;
+    toast.warning(t("videoRecording.interrupted"), { id: "video-recording-interrupted", duration: 20_000 });
+  }, [isTeacher, videoRecording.interrupted, t]);
 
   const localCamera =
     cameraTracks.find((track) => track.participant.isLocal) ?? cameraTracks[0] ?? null;

@@ -11,6 +11,7 @@ const INITIAL_SNAPSHOT: TeacherVideoRecordingSnapshot = {
   pendingChunks: 0,
   uploadedChunks: 0,
   error: null,
+  interrupted: false,
 };
 
 export function useTeacherVideoRecording(
