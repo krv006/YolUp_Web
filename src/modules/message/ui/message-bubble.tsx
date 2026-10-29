@@ -1,13 +1,15 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Play } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { formatMessageTime } from "@/shared/lib";
 import { ROLES } from "@/shared/constants";
 import { Avatar } from "@/shared/ui/legacy";
+import { FileViewer } from "@/shared/ui/file-viewer";
 import { Icon } from "@/shared/ui/icon";
 import type { ChatMessage } from "@/shared/types";
+import { messageApi } from "../api/message.api";
 import { MessageAttachment } from "./message-attachment";
 import { VoiceMessage } from "./voice-message";
 import { useChatUiStore } from "../model/chat-ui.store";
@@ -44,39 +46,93 @@ function senderColor(id: string): string {
 const RECORDING_PATH = /\/recordings\/([\w-]+)/;
 const QUOTED_TITLE = /[“"']([^“”"']+)[”"']/;
 
-function SystemMessage({ text }: { text: string }) {
+function SystemCard({
+  icon,
+  tone,
+  title,
+  subtitle,
+  time,
+  action,
+}: {
+  icon: ReactNode;
+  tone: string;
+  title: string;
+  subtitle: string;
+  time: string;
+  action: ReactNode;
+}) {
+  return (
+    <div className="flex justify-end py-1">
+      <div className="flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-sm">
+        <span className={`grid size-10 shrink-0 place-items-center rounded-xl ${tone}`}>{icon}</span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <strong className="truncate text-label-strong text-ink">{title}</strong>
+          <small className="flex min-w-0 items-center gap-1 text-caption text-ink-tertiary">
+            {subtitle ? <span className="truncate">{subtitle}</span> : null}
+            {time ? <time className="shrink-0">{subtitle ? `· ${time}` : time}</time> : null}
+          </small>
+        </span>
+        {action}
+      </div>
+    </div>
+  );
+}
+
+const SYSTEM_ACTION =
+  "flex h-9 shrink-0 items-center rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover";
+
+function SystemMessage({ message }: { message: ChatMessage }) {
   const { t } = useTranslation("chat");
   const { pathname } = useLocation();
+  const [boardOpen, setBoardOpen] = useState(false);
+  const text = message.text;
   const lessonId = text.match(RECORDING_PATH)?.[1] ?? null;
   const area = pathname.match(/^\/(teacher|student)\//)?.[1];
   const path = lessonId ? `${area ? `/${area}` : ""}/recordings/${lessonId}` : null;
+  const title = text.match(QUOTED_TITLE)?.[1] ?? "";
+  const time = message.createdAt ? formatMessageTime(message.createdAt) : "";
 
-  if (path) {
-    const title = text.match(QUOTED_TITLE)?.[1] ?? "";
+  if (path)
     return (
-      <div className="flex justify-end py-1">
-        <div className="flex w-full max-w-[420px] items-center gap-3 rounded-2xl border border-line bg-surface p-3 shadow-sm">
-          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action-subtle text-action">
-            <Play size={18} />
-          </span>
-          <span className="flex min-w-0 flex-1 flex-col">
-            <strong className="truncate text-label-strong text-ink">
-              {t("system.recordingTitle")}
-            </strong>
-            <small className="truncate text-caption text-ink-tertiary">
-              {title || t("system.recordingHint")}
-            </small>
-          </span>
-          <Link
-            to={path}
-            className="flex h-9 shrink-0 items-center rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover"
-          >
+      <SystemCard
+        icon={<Play size={18} />}
+        tone="bg-action-subtle text-action"
+        title={t("system.recordingTitle")}
+        subtitle={title || t("system.recordingHint")}
+        time={time}
+        action={
+          <Link to={path} className={SYSTEM_ACTION}>
             {t("system.recordingAction")}
           </Link>
-        </div>
-      </div>
+        }
+      />
     );
-  }
+
+  if (message.attachment)
+    return (
+      <>
+        <SystemCard
+          icon={<Icon name="board-marker" size={20} />}
+          tone="bg-accent-saffron-bg text-accent-saffron-fg"
+          title={t("system.boardTitle")}
+          subtitle={title || message.attachment.name}
+          time={time}
+          action={
+            <button type="button" className={SYSTEM_ACTION} onClick={() => setBoardOpen(true)}>
+              {t("system.boardAction")}
+            </button>
+          }
+        />
+        <FileViewer
+          open={boardOpen}
+          onOpenChange={setBoardOpen}
+          name={title ? t("system.boardName", { title }) : message.attachment.name}
+          mimeType={message.attachment.mimeType}
+          meta={time}
+          load={(signal) => messageApi.downloadFile(message.id, { signal })}
+        />
+      </>
+    );
 
   return (
     <div className="flex justify-center py-1">
@@ -114,7 +170,7 @@ export function MessageBubble({
     }
   }
 
-  if (message.type === "system") return <SystemMessage text={message.text} />;
+  if (message.type === "system") return <SystemMessage message={message} />;
 
   return (
     <motion.div

@@ -12,6 +12,7 @@ import { useLessonPresence } from "@/modules/live";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useOnline } from "@/shared/hooks/use-online";
+import type { Lesson } from "@/shared/types";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { DashboardShell, SectionHeader, StatCard } from "@/widgets/dashboard-shell";
@@ -28,6 +29,8 @@ function isToday(value: string): boolean {
   const now = new Date();
   return date.toDateString() === now.toDateString();
 }
+
+const ACTIVITY_LIMIT = 6;
 
 function clock(value: string): string {
   const date = new Date(value);
@@ -57,6 +60,36 @@ export function TeacherDashboardPage() {
   const stats = useMyAnalytics();
   const dashboard = useTeacherDashboard();
   const activity = useDashboardActivity(10);
+
+  function openLesson(lesson: Lesson) {
+    if (lesson.status === "finished") navigate(ROUTES.teacher.recording(lesson.id));
+    else if (lesson.status === "cancelled") navigate(ROUTES.teacher.schedule);
+    else navigate(ROUTES.live(lesson.id));
+  }
+  const activityDays = useMemo(() => {
+    const today = new Date();
+    const yesterday = new Date(today.getTime() - 86_400_000);
+    const rows = [...(activity.data ?? [])]
+      .filter((item) => !Number.isNaN(new Date(item.createdAt).getTime()))
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, ACTIVITY_LIMIT);
+    const days = new Map<string, { label: string; items: typeof rows }>();
+    for (const item of rows) {
+      const date = new Date(item.createdAt);
+      const key = date.toDateString();
+      const dayMonth = `${date.getDate()}-${(months[date.getMonth()] ?? "").toLowerCase()}`;
+      const label =
+        key === today.toDateString()
+          ? `${t("activity.today")} · ${dayMonth}`
+          : key === yesterday.toDateString()
+            ? `${t("activity.yesterday")} · ${dayMonth}`
+            : `${weekdays[(date.getDay() + 6) % 7] ?? ""}, ${dayMonth}`;
+      const day = days.get(key) ?? { label, items: [] };
+      day.items.push(item);
+      days.set(key, day);
+    }
+    return [...days.entries()].map(([key, day]) => ({ key, ...day }));
+  }, [activity.data, months, weekdays, t]);
   const conversations = useConversations("teacher");
   const groupImages = useGroupImages("teacher");
   const [searchOpen, setSearchOpen] = useState(false);
@@ -161,7 +194,7 @@ export function TeacherDashboardPage() {
         studentsByCourse={studentsByCourse}
         toneByCourse={toneByCourse}
         avatarByCourse={avatarByCourse}
-        onOpenLesson={(lesson) => navigate(ROUTES.live(lesson.id))}
+        onOpenLesson={openLesson}
         onChat={(lesson) => {
           const room = roomByCourse.get(lesson.courseId);
           navigate(room ? ROUTES.teacher.chat(room) : ROUTES.teacher.chats);
@@ -214,7 +247,7 @@ export function TeacherDashboardPage() {
                 studentCount={studentsByCourse.get(heroLesson.courseId) ?? 0}
                 hasQuiz={Boolean(heroLesson.quizId)}
                 joinedCount={liveLesson ? (presence.data?.count ?? null) : null}
-                onOpen={() => navigate(ROUTES.live(heroLesson.id))}
+                onOpen={() => openLesson(heroLesson)}
                 onChat={() => {
                   const room = roomByCourse.get(heroLesson.courseId);
                   navigate(room ? ROUTES.teacher.chat(room) : ROUTES.teacher.chats);
@@ -263,7 +296,7 @@ export function TeacherDashboardPage() {
                       key={lesson.id}
                       type="button"
                       className="flex items-center gap-4 border-b border-line px-5 py-4 text-left transition-colors last:border-b-0 hover:bg-subtle"
-                      onClick={() => navigate(ROUTES.live(lesson.id))}
+                      onClick={() => openLesson(lesson)}
                     >
                       <span className="flex w-12 shrink-0 flex-col">
                         <strong className="text-title-sm text-ink">{clock(lesson.startsAt)}</strong>
@@ -373,22 +406,27 @@ export function TeacherDashboardPage() {
             <section className="flex flex-col gap-3">
               <SectionHeader title={t("activity.title")} />
               <div className="flex flex-col overflow-hidden rounded-lg bg-surface">
-                {(activity.data ?? []).slice(0, 4).map((item) => (
-                  <span
-                    key={item.id}
-                    className="flex items-start gap-3 border-b border-line px-5 py-4 last:border-b-0"
-                  >
-                    <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-subtle text-icon-secondary">
-                      <Icon name={activityIcon(item.category)} size={20} />
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <strong className="truncate text-title-sm text-ink">{item.title}</strong>
-                      <small className="truncate text-caption text-ink-tertiary">{item.body}</small>
-                    </span>
-                    <small className="shrink-0 text-caption text-ink-tertiary">
-                      {clock(item.createdAt)}
-                    </small>
-                  </span>
+                {activityDays.map((day) => (
+                  <div key={day.key} className="flex flex-col border-b border-line last:border-b-0">
+                    <small className="px-5 pt-3.5 text-caption-strong text-ink-secondary">{day.label}</small>
+                    {day.items.map((item) => (
+                      <span
+                        key={item.id}
+                        className="flex items-start gap-3 border-b border-line-subtle px-5 py-3.5 last:border-b-0"
+                      >
+                        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-subtle text-icon-secondary">
+                          <Icon name={activityIcon(item.category)} size={20} />
+                        </span>
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          <strong className="truncate text-title-sm text-ink">{item.title}</strong>
+                          <small className="truncate text-caption text-ink-tertiary">{item.body}</small>
+                        </span>
+                        <small className="shrink-0 text-caption text-ink-tertiary">
+                          {clock(item.createdAt)}
+                        </small>
+                      </span>
+                    ))}
+                  </div>
                 ))}
                 {!(activity.data ?? []).length ? (
                   <p className="px-4 py-8 text-center text-body-sm text-ink-tertiary">

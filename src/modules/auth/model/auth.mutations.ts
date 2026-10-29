@@ -16,7 +16,6 @@ export function useRegisterMutation() {
         last_name: values.lastName.trim(),
         role: values.role,
         phone: values.phone?.trim() || "",
-        ...(values.phoneToken ? { phone_token: values.phoneToken } : {}),
       }),
   });
 }
@@ -83,7 +82,7 @@ export function useUpdateProfileMutation() {
         await authApi.updateCurrentUser({
           first_name: values.firstName.trim(),
           last_name: values.lastName.trim(),
-          ...(values.phone !== undefined ? { phone: values.phone.trim() } : {}),
+          phone: values.phone?.trim() || "",
           ...(username ? { username } : {}),
           ...(values.middleName !== undefined ? { middle_name: values.middleName.trim() } : {}),
           ...(values.birthDate !== undefined ? { birth_date: values.birthDate || null } : {}),
@@ -178,28 +177,6 @@ export function useUpdateSettingsMutation() {
   return useMutation({
     mutationFn: async (dto: { theme?: string; text_size?: string; target_band?: number | null; username?: string }) =>
       mapUserDto(await authApi.updateSettings(dto)),
-    onSuccess: (user) => useAuthStore.getState().setUser(user),
-  });
-}
-
-export function useRegisterPhoneCodeMutation() {
-  return useMutation({ mutationFn: (phone: string) => authApi.requestRegisterPhoneCode(phone) });
-}
-
-export function useVerifyRegisterPhoneMutation() {
-  return useMutation({
-    mutationFn: ({ phone, code }: { phone: string; code: string }) => authApi.verifyRegisterPhone(phone, code),
-  });
-}
-
-export function usePhoneChangeCodeMutation() {
-  return useMutation({ mutationFn: (phone: string) => authApi.requestPhoneChangeCode(phone) });
-}
-
-export function useConfirmPhoneChangeMutation() {
-  return useMutation({
-    mutationFn: async ({ phone, code }: { phone: string; code: string }) =>
-      mapUserDto(await authApi.confirmPhoneChange(phone, code)),
     onSuccess: (user) => useAuthStore.getState().setUser(user),
   });
 }

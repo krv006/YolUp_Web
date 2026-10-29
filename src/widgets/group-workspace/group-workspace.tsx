@@ -355,15 +355,6 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
   const presence = useLessonPresence(liveLesson?.id, Boolean(liveLesson));
 
   const allLessons = useLessons({ page_size: 200 }, dialog);
-  const courseQuizzes = useQuizzes(courseId, dialog && Boolean(courseId));
-
-  const quizOptions = useMemo(
-    () =>
-      (courseQuizzes.data ?? [])
-        .filter((quiz) => !quiz.lessonId || quiz.lessonId === editing?.id)
-        .map((quiz) => ({ id: quiz.id, title: quizDisplayTitle(quiz) })),
-    [courseQuizzes.data, editing]
-  );
 
   function save(form: LessonDraft) {
     const payload = { ...form, courseId };
@@ -475,7 +466,6 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         }}
         initialValues={editing}
         existingLessons={allLessons.data ?? []}
-        quizOptions={quizOptions}
         onCreate={save}
         onCreateSchedule={saveSchedule}
       />

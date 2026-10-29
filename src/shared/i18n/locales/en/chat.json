@@ -249,8 +249,7 @@
     "filters": {
       "all": "All",
       "direct": "Direct",
-      "group": "Groups",
-      "unread": "Unread"
+      "group": "Groups"
     },
     "searchPlaceholder": "Search conversations...",
     "searchAria": "Search conversations",
@@ -343,7 +342,10 @@
   "system": {
     "recordingTitle": "The lesson recording is ready",
     "recordingHint": "The recording can only be watched on the platform",
-    "recordingAction": "Watch"
+    "recordingAction": "Watch",
+    "boardTitle": "Lesson board",
+    "boardAction": "Open",
+    "boardName": "“{{title}}” board"
   },
   "attach": {
     "title": "Attach",

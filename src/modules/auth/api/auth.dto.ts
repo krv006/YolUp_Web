@@ -43,8 +43,6 @@ export const userDtoSchema = z.object({
   last_name: z.string().default(""),
   role: z.string(),
   phone: z.string().nullable().optional(),
-  phone_verified: z.boolean().nullable().optional(),
-  phone_verified_at: z.string().nullable().optional(),
   invite_code: z.string().nullable().optional(),
   avatar: z.string().nullable().optional(),
   avg_rating: z.number().nullable().optional(),
@@ -145,7 +143,6 @@ export interface RegisterRequestDto {
   last_name: string;
   role: string;
   phone: string;
-  phone_token?: string;
 }
 
 export interface CreateChildRequestDto {
@@ -171,7 +168,6 @@ export interface RegisterFormValues {
   firstName: string;
   lastName: string;
   phone?: string;
-  phoneToken?: string;
   role: "teacher" | "parent" | "student";
 }
 

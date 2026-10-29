@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useQuizzes } from "@/modules/quiz";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { GroupTile } from "@/shared/ui/group-tile";
@@ -20,7 +19,6 @@ export interface NewLessonValues {
   date: string;
   time: string;
   duration: string;
-  quizId: string;
   repeatWeeks: number;
 }
 
@@ -63,10 +61,8 @@ export function NewLessonDialog({
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("18:00");
   const [duration, setDuration] = useState(90);
-  const [quizId, setQuizId] = useState("");
   const [weeks, setWeeks] = useState(8);
   const isCompact = useIsCompact();
-  const quizzes = useQuizzes(courseId || null, Boolean(courseId) && open);
   const weekdays = t("list.weekdaysShort", { returnObjects: true }) as string[];
   const months = t("list.months", { returnObjects: true }) as string[];
   const canSubmit = !pending && Boolean(courseId) && Boolean(topic.trim());
@@ -78,7 +74,6 @@ export function NewLessonDialog({
       date,
       time,
       duration: String(duration),
-      quizId,
       repeatWeeks: repeat ? weeks : 0,
     });
   }
@@ -128,10 +123,7 @@ export function NewLessonDialog({
                   className={`flex h-14 min-w-0 items-center gap-2.5 rounded-lg border-[1.5px] px-3 text-left transition-colors ${
                     course.id === courseId ? "border-brand bg-brand-subtle" : "border-transparent bg-subtle"
                   }`}
-                  onClick={() => {
-                    setCourseId(course.id);
-                    setQuizId("");
-                  }}
+                  onClick={() => setCourseId(course.id)}
                 >
                   <GroupTile
                     name={course.title}
@@ -223,21 +215,6 @@ export function NewLessonDialog({
             <MobileChoiceChips items={DURATIONS} value={duration} onChange={setDuration} />
           </MobileFieldLabel>
 
-          <MobileFieldLabel label={t("scheduleDialog.quiz")}>
-            <MobilePickerField
-              type="select"
-              value={quizId}
-              display={
-                (quizzes.data ?? []).find((quiz) => quiz.id === quizId)?.title ?? t("scheduleDialog.noQuiz")
-              }
-              ariaLabel={t("scheduleDialog.quiz")}
-              options={[
-                { value: "", label: t("scheduleDialog.noQuiz") },
-                ...(quizzes.data ?? []).map((quiz) => ({ value: quiz.id, label: quiz.title })),
-              ]}
-              onChange={setQuizId}
-            />
-          </MobileFieldLabel>
         </div>
       </AppDialog>
     );
@@ -320,16 +297,6 @@ export function NewLessonDialog({
             ))}
           </div>
         </div>
-
-        <SelectPicker
-          label={t("scheduleDialog.quiz")}
-          value={quizId}
-          onChange={setQuizId}
-          options={[
-            { value: "", label: t("scheduleDialog.noQuiz") },
-            ...(quizzes.data ?? []).map((quiz) => ({ value: quiz.id, label: quiz.title })),
-          ]}
-        />
       </div>
     </AppDialog>
   );

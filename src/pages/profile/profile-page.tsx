@@ -55,12 +55,16 @@ export function ProfilePage() {
       tone: "bg-accent-saffron-bg text-accent-saffron-fg",
       subtitle: t("page.mobile.ratingsHint", { value: ratingLabel, count: ratingCount }),
     },
-    {
-      id: "certificates",
-      icon: "check-circle",
-      tone: "bg-success-bg text-success",
-      subtitle: t("page.mobile.certificatesHint", { count: certificates }),
-    },
+    ...(user?.role === ROLES.STUDENT
+      ? []
+      : [
+          {
+            id: "certificates",
+            icon: "check-circle",
+            tone: "bg-success-bg text-success",
+            subtitle: t("page.mobile.certificatesHint", { count: certificates }),
+          },
+        ]),
     { id: "logins", icon: "clock", tone: "bg-brand-subtle text-brand", subtitle: t("page.loginsRowHint") },
   ];
 

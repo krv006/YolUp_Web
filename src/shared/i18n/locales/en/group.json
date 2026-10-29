@@ -159,8 +159,6 @@
       "saveChanges": "Save changes",
       "saveMultiple": "Save {{count}} lessons",
       "saveSingle": "Save lesson",
-      "quizLabel": "Attach a quiz",
-      "quizNone": "No quiz attached",
       "editDescription": "Change the topic, time and attached quiz. Students get a notification.",
       "deleteLesson": "Delete the lesson",
       "quizHint": "The quiz opens for students automatically once the lesson ends.",

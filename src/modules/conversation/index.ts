@@ -6,6 +6,7 @@ export { mapConversationDto, mapConversationPage, mapTeacherDto } from "./lib/co
 export { conversationKeys } from "./model/conversation.keys";
 export {
   matchesConversationFilter,
+  countUnreadChats,
   useConversationFilter,
   useConversationFilterStore,
 } from "./model/conversation-filter.store";

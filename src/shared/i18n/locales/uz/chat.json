@@ -249,8 +249,7 @@
     "filters": {
       "all": "Barchasi",
       "direct": "Shaxsiy",
-      "group": "Guruhlar",
-      "unread": "O'qilmagan"
+      "group": "Guruhlar"
     },
     "searchPlaceholder": "Suhbatlarni qidirish...",
     "searchAria": "Suhbatlarni qidirish",
@@ -343,7 +342,10 @@
   "system": {
     "recordingTitle": "Dars video yozuvi tayyor",
     "recordingHint": "Yozuvni faqat platformada ko‘rish mumkin",
-    "recordingAction": "Ko‘rish"
+    "recordingAction": "Ko‘rish",
+    "boardTitle": "Dars doskasi",
+    "boardAction": "Ochish",
+    "boardName": "«{{title}}» doskasi"
   },
   "attach": {
     "title": "Biriktirish",

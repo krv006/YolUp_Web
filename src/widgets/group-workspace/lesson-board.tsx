@@ -39,7 +39,7 @@ const PILL_ICON: Record<LessonStatus, string> = {
 };
 
 const OUTLINE_BUTTON =
-  "flex h-11 items-center justify-center gap-1.5 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle";
+  "flex h-11 items-center justify-center gap-1.5 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle lg:px-5";
 
 function hhmm(date: Date): string {
   return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
@@ -145,7 +145,7 @@ export function LessonBoard({
             </small>
           </div>
 
-          <div className="grid gap-3 lg:grid-cols-2 lg:gap-4">
+          <div className="flex flex-col gap-3">
             {day.items.map((lesson) => {
               const starts = new Date(lesson.startsAt);
               const minutes = lesson.durationMinutes || 45;
@@ -153,8 +153,11 @@ export function LessonBoard({
               const status = lesson.status;
 
               return (
-                <article key={lesson.id} className="flex flex-col gap-4 rounded-xl bg-surface p-4 lg:gap-3.5 lg:rounded-lg lg:pt-4 lg:pb-3">
-                  <div className="flex items-start gap-3">
+                <article
+                  key={lesson.id}
+                  className="flex flex-col gap-4 rounded-xl bg-surface p-4 lg:flex-row lg:items-center lg:gap-5 lg:rounded-lg lg:py-3.5"
+                >
+                  <div className="flex items-start gap-3 lg:min-w-0 lg:flex-1 lg:items-center">
                     <span
                       className={`flex size-14 shrink-0 flex-col items-center justify-center gap-0.5 rounded-lg ${BLOCK_TONE[status]}`}
                     >
@@ -198,14 +201,14 @@ export function LessonBoard({
                   {status === "live" ? (
                     <button
                       type="button"
-                      className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+                      className="flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong lg:w-auto lg:shrink-0 lg:px-6"
                       onClick={() => onJoin(lesson)}
                     >
                       <Icon name="videocam-fill" size={18} />
                       {t("group:lessons.join")}
                     </button>
                   ) : status === "finished" ? (
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 lg:flex lg:shrink-0">
                       <button
                         type="button"
                         className={OUTLINE_BUTTON}
@@ -216,7 +219,7 @@ export function LessonBoard({
                       </button>
                       <button
                         type="button"
-                        className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-brand-subtle text-button text-brand-strong transition-colors hover:bg-tint"
+                        className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-brand-subtle text-button text-brand-strong transition-colors hover:bg-tint lg:px-5"
                         onClick={() => onRatings(lesson)}
                       >
                         <Icon name="star" size={18} />
@@ -228,10 +231,10 @@ export function LessonBoard({
                       </button>
                     </div>
                   ) : status === "cancelled" ? null : (
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 lg:flex lg:shrink-0">
                       <button
                         type="button"
-                        className="col-span-2 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+                        className="col-span-2 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong lg:order-last lg:w-auto lg:px-6"
                         onClick={() => onJoin(lesson)}
                       >
                         <Icon name="videocam-fill" size={18} />

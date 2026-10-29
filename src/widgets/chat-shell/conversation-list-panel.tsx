@@ -30,6 +30,7 @@ export function ConversationListPanel() {
     visible,
     peopleRows,
     unreadTotal,
+    unreadByFilter,
   } = useConversationList();
   const [actionsFor, setActionsFor] = useState<Conversation | null>(null);
   const [actionsAt, setActionsAt] = useState<{ x: number; y: number } | null>(null);
@@ -60,7 +61,7 @@ export function ConversationListPanel() {
         </button>
       </header>
 
-      <label className="mx-5 mt-0.5 flex h-11 shrink-0 items-center gap-2.5 px-4">
+      <label className="mx-5 mt-0.5 flex h-11 shrink-0 items-center gap-2.5 rounded-full border border-line-strong bg-surface px-4 transition-colors focus-within:border-brand">
         <Icon name="search" size={20} className="shrink-0 text-icon-secondary" />
         <input
           className="h-full min-w-0 flex-1 bg-transparent text-body-sm text-ink outline-none placeholder:text-ink-secondary"
@@ -96,7 +97,7 @@ export function ConversationListPanel() {
               key={id}
               role="tab"
               aria-selected={filter === id}
-              className={`flex h-9 min-w-[101px] shrink-0 items-center justify-center rounded-full border px-5 text-body-sm font-medium whitespace-nowrap transition-colors ${
+              className={`flex h-9 min-w-[101px] shrink-0 items-center justify-center gap-1.5 rounded-full border px-5 text-body-sm font-medium whitespace-nowrap transition-colors ${
                 filter === id
                   ? "border-brand bg-brand text-ink-inverse"
                   : "border-line bg-surface text-ink hover:bg-subtle"
@@ -104,6 +105,15 @@ export function ConversationListPanel() {
               onClick={() => setFilter(id)}
             >
               {t(`panel.filters.${id}`)}
+              {unreadByFilter[id] ? (
+                <span
+                  className={`flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1.5 text-caption-strong ${
+                    filter === id ? "bg-surface text-brand" : "bg-brand text-ink-inverse"
+                  }`}
+                >
+                  {unreadByFilter[id]}
+                </span>
+              ) : null}
             </button>
           ))}
         </div>

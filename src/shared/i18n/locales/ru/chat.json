@@ -249,8 +249,7 @@
     "filters": {
       "all": "Все",
       "direct": "Личные",
-      "group": "Группы",
-      "unread": "Непрочитанные"
+      "group": "Группы"
     },
     "searchPlaceholder": "Поиск бесед...",
     "searchAria": "Поиск бесед",
@@ -343,7 +342,10 @@
   "system": {
     "recordingTitle": "Видеозапись урока готова",
     "recordingHint": "Запись доступна только на платформе",
-    "recordingAction": "Смотреть"
+    "recordingAction": "Смотреть",
+    "boardTitle": "Доска занятия",
+    "boardAction": "Открыть",
+    "boardName": "Доска «{{title}}»"
   },
   "attach": {
     "title": "Прикрепить",

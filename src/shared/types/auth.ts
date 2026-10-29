@@ -35,8 +35,6 @@ export interface AuthUser {
   name: string;
   role: Role;
   phone: string | null;
-  phoneVerified: boolean;
-  phoneVerifiedAt: string | null;
   inviteCode: string | null;
   avatarUrl: string | null;
   email: string | null;
