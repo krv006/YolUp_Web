@@ -28,6 +28,10 @@ export {
   useTeacherStats,
   useTeachers,
   useTwoFactorStatus,
+  useLoginHistoryPage,
+  useAdminCertificates,
+  useVerifyCertificate,
+  useRejectCertificate,
 } from "./model/auth.queries";
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
@@ -55,6 +59,12 @@ export {
   useUpdateNotificationPrefsMutation,
   useUpdateProfileMutation,
   useUploadCertificate,
+  useRemoveAvatarMutation,
+  useUpdateSettingsMutation,
+  useRegisterPhoneCodeMutation,
+  useVerifyRegisterPhoneMutation,
+  usePhoneChangeCodeMutation,
+  useConfirmPhoneChangeMutation,
 } from "./model/auth.mutations";
 export {
   mapCertificateDto,
@@ -83,3 +93,5 @@ export { OtpInput } from "./ui/otp-input";
 export { MobileTwoFactorForm, TwoFactorForm } from "./ui/two-factor-form";
 export { describeTwoFactorChallenge } from "./lib/describe-two-factor";
 export { describeResetError } from "./lib/describe-reset-error";
+export { PhoneVerifyDialog } from "./ui/phone-verify-dialog";
+export { maskUzPhone, normalizeUzPhone } from "./lib/phone";

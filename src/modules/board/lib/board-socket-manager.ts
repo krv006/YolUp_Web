@@ -11,6 +11,9 @@ export type BoardSocketEvent =
   | { type: "mic_request"; studentId: string; name: string }
   | { type: "mic_granted"; studentId: string }
   | { type: "mic_denied"; studentId: string }
+  | { type: "mic_request_cancelled"; studentId: string }
+  | { type: "camera_request_cancelled"; studentId: string }
+  | { type: "current_sheet"; sheet: number }
   | { type: "camera_request"; studentId: string; name: string }
   | { type: "camera_granted"; studentId: string }
   | { type: "camera_denied"; studentId: string }
@@ -65,6 +68,12 @@ export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
       return event.student_id
         ? { type: "camera_request", studentId: String(event.student_id), name: event.name ?? "" }
         : null;
+    case "mic_request_cancelled":
+      return event.student_id ? { type: "mic_request_cancelled", studentId: String(event.student_id) } : null;
+    case "camera_request_cancelled":
+      return event.student_id ? { type: "camera_request_cancelled", studentId: String(event.student_id) } : null;
+    case "current_sheet":
+      return { type: "current_sheet", sheet: Number(event.sheet ?? 0) };
     case "camera_granted":
       return event.student_id ? { type: "camera_granted", studentId: String(event.student_id) } : null;
     case "camera_denied":

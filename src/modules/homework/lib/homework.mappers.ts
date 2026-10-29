@@ -58,6 +58,14 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     gradeValue: dto.grade_value ?? null,
     shareWithParent: dto.share_with_parent !== false,
     resubmitComment: dto.resubmit_comment || "",
+    comment: dto.comment || "",
+    teacherComment: dto.teacher_comment || "",
+    files: (dto.files?.length ? dto.files : [{ name: dto.file_name, index: 0 }]).map((file, position) => ({
+      name: file.name || dto.file_name || "",
+      size: file.size ?? null,
+      mimeType: file.mime || "",
+      index: file.index ?? position,
+    })),
   };
 }
 
@@ -106,6 +114,9 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     status: dto.status === "draft" ? "draft" : "active",
     announceInChat: dto.announce_in_chat !== false,
     allowLate: dto.allow_late !== false,
+    aiCheck: dto.ai_check !== false,
+    attachmentSize: dto.attachment_size ?? null,
+    lessonStartsAt: dto.lesson_starts_at ?? null,
     grading: dto.grading ?? "five",
     maxScore: dto.max_score ?? defaultMaxScore(dto.grading ?? "five"),
     aiGroupSummary: dto.ai_group_summary
@@ -188,6 +199,7 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.status) data.set("status", form.status);
   if (form.announceInChat !== undefined) data.set("announce_in_chat", String(form.announceInChat));
   if (form.allowLate !== undefined) data.set("allow_late", String(form.allowLate));
+  if (form.aiCheck !== undefined) data.set("ai_check", String(form.aiCheck));
   if (form.grading) data.set("grading", form.grading);
   if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);

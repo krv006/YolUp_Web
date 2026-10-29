@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
-import { useAiQuizJobs, useStartAiQuiz } from "@/modules/quiz";
+import { useAiQuizJobs, useGenerateQuizFromBank, useStartAiQuiz } from "@/modules/quiz";
 import type { AiQuizStandard } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -16,6 +16,7 @@ const EXAM_MODES: Array<{ id: string; standard: AiQuizStandard | null }> = [
   { id: "uzbmb", standard: "uzbmb" },
   { id: "ielts", standard: "ielts" },
   { id: "sat", standard: "sat" },
+  { id: "bank", standard: null },
 ];
 
 const MAX_FILES = 5;
@@ -33,6 +34,7 @@ export function AiAssistantPage() {
   const subjectOptions = useSubjects();
   const jobs = useAiQuizJobs();
   const start = useStartAiQuiz();
+  const bank = useGenerateQuizFromBank();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [subject, setSubject] = useState("");
@@ -75,6 +77,14 @@ export function AiAssistantPage() {
         error={start.isError ? (start.error?.message ?? null) : null}
         onBack={() => navigate(ROUTES.teacher.workspace)}
         onHistory={() => setParams({ view: "jobs" })}
+        bankPending={bank.isPending}
+        bankError={bank.isError ? (bank.error?.message ?? null) : null}
+        onBank={(value) =>
+          bank.mutate(
+            { topic: value.topic, count: value.count },
+            { onSuccess: (quiz) => navigate(ROUTES.teacher.test(quiz.id)) }
+          )
+        }
         onSubmit={(value) =>
           start.mutate(
             {
@@ -95,6 +105,13 @@ export function AiAssistantPage() {
 
   function submit() {
     if (!topic.trim()) return;
+    if (mode === "bank") {
+      bank.mutate(
+        { topic: topic.trim(), count, courseId: courseId || null },
+        { onSuccess: (quiz) => navigate(ROUTES.teacher.test(quiz.id)) }
+      );
+      return;
+    }
     start.mutate(
       {
         files,
@@ -165,9 +182,16 @@ export function AiAssistantPage() {
             />
           </div>
 
+          {mode === "bank" ? (
+            <p className="flex items-start gap-2.5 rounded-md bg-brand-subtle px-4 py-3 text-body-sm text-brand">
+              <Icon name="info" size={18} className="mt-0.5 shrink-0" />
+              {t("ai.bankHint")}
+            </p>
+          ) : null}
+
           <button
             type="button"
-            className="flex items-center gap-3 rounded-md border border-dashed border-brand bg-brand-subtle/40 px-4 py-3.5 text-left transition-colors hover:bg-brand-subtle"
+            className={`${mode === "bank" ? "hidden" : "flex"} items-center gap-3 rounded-md border border-dashed border-brand bg-brand-subtle/40 px-4 py-3.5 text-left transition-colors hover:bg-brand-subtle`}
             onClick={() => fileRef.current?.click()}
           >
             <span className="grid size-9 shrink-0 place-items-center rounded-md bg-surface text-brand">
@@ -200,14 +224,14 @@ export function AiAssistantPage() {
             }}
           />
 
-          {fileError || start.isError ? (
+          {fileError || start.isError || bank.isError ? (
             <p className="flex items-start gap-2.5 rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger">
               <Icon name="error" size={18} className="mt-0.5 shrink-0" />
-              {fileError ?? start.error?.message}
+              {fileError ?? (mode === "bank" ? bank.error?.message : start.error?.message)}
             </p>
           ) : null}
 
-          {files.length ? (
+          {files.length && mode !== "bank" ? (
             <div className="flex flex-col gap-2">
               {files.map((file) => (
                 <span
@@ -261,10 +285,10 @@ export function AiAssistantPage() {
           <button
             type="button"
             className="flex h-12.5 w-full items-center justify-center rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
-            disabled={start.isPending || !topic.trim()}
+            disabled={start.isPending || bank.isPending || !topic.trim()}
             onClick={submit}
           >
-            {t("ai.submit")}
+            {mode === "bank" ? t("ai.bankSubmit") : t("ai.submit")}
           </button>
         </section>
 

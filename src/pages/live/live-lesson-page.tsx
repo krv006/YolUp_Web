@@ -30,7 +30,7 @@ export function LiveLessonPage() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const lesson = useLesson(lessonId ?? null);
+  const lesson = useLesson(lessonId ?? null, 30_000);
   const course = useCourse(lesson.data?.courseId ?? null);
   const token = useLiveToken(lessonId, true);
   const joined = useRef(false);

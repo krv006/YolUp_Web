@@ -47,8 +47,7 @@
       "emptyTitle": "No lessons scheduled yet",
       "emptyHint": "Lessons will appear here once your teacher adds them.",
       "minutes": "{{count}} min"
-    },
-    "soon": "Coming soon"
+    }
   },
   "enrollmentDialog": {
     "title": "New conversation",
@@ -133,7 +132,6 @@
   },
   "workspace": {
     "eyebrow": "Student workspace",
-    "soon": "Coming soon",
     "back": "Back",
     "stats": {
       "tests": "Tests",
@@ -176,9 +174,9 @@
       "tests": "{{count}} new",
       "assignments": "{{count}} active",
       "mockNone": "Not scheduled",
-      "ai": "New",
+      "ai": "Practice and explanations",
       "analytics": "Average {{value}}",
-      "materials": "Coming soon"
+      "materials": "{{count}} files"
     },
     "mobile": {
       "eyebrow": "Workspace",
@@ -339,7 +337,10 @@
       "leftSection": "left · {{section}}",
       "back": "Back to exam",
       "emptyTitle": "No mock exams yet",
-      "emptyHint": "Practice exams from your teacher will appear here."
+      "emptyHint": "Practice exams from your teacher will appear here.",
+      "reminderOn": "Reminder · {{count}} min before",
+      "reminderSet": "We'll remind you {{count}} minutes before the exam",
+      "reminderCleared": "Reminder removed"
     },
     "mockResult": {
       "eyebrow": "Mock tests / Your result · {{date}}",
@@ -363,7 +364,14 @@
       "askTeacher": "Ask the teacher",
       "practice": "Work on mistakes",
       "notReady": "Results aren’t published yet",
-      "notReadyHint": "They’ll appear here once your teacher publishes them."
+      "notReadyHint": "They’ll appear here once your teacher publishes them.",
+      "practiceTitle": "Practice your mistakes",
+      "targetTitle": "Your target",
+      "targetHint": "Enter the score you want to reach (e.g. 7.5 or 1400).",
+      "targetPlaceholder": "e.g. 7.5",
+      "targetSave": "Save",
+      "targetCancel": "Cancel",
+      "targetInvalid": "Score must be between 0 and 1600"
     },
     "homework": {
       "eyebrow": "Workspace / Assignments · {{count}}",
@@ -420,7 +428,41 @@
       "resubmit": "Resubmit",
       "resubmitAsked": "Your teacher asked you to resubmit",
       "notFound": "Assignment not found",
-      "retry": "Try again"
+      "retry": "Try again",
+      "tooManyFiles": "You can attach up to {{count}} files",
+      "filesCount": "{{count}} / {{max}} files",
+      "myComment": "Your note",
+      "filesTitle": "Submitted files · {{count}}"
     }
+  },
+  "tutor": {
+    "score": "Result: {{correct}} / {{total}} correct",
+    "progress": "{{answered}} / {{total}} answered",
+    "usage": "Today: {{used}} / {{limit}} AI requests",
+    "more": "New questions",
+    "eyebrow": "20 requests per day",
+    "title": "AI assistant",
+    "modes": {
+      "practice": "Topic practice",
+      "explain": "Explain a question"
+    },
+    "practiceTitle": "Practice questions",
+    "practiceHint": "Enter a topic — AI will write quiz questions for you.",
+    "topic": "Topic",
+    "topicPlaceholder": "e.g. Present Perfect or quadratic equations",
+    "material": "Extra text (optional)",
+    "materialPlaceholder": "Paste notes or a textbook excerpt",
+    "count": "Questions",
+    "generate": "Generate questions",
+    "generating": "Generating…",
+    "explainTitle": "A question you didn't get",
+    "explainHint": "Write the question and your answer — AI explains it step by step.",
+    "question": "Question",
+    "questionPlaceholder": "Type the question here",
+    "wrongAnswer": "Your answer (optional)",
+    "correctAnswer": "Correct answer (optional)",
+    "explain": "Explain",
+    "thinking": "Thinking…",
+    "answerTitle": "Explanation"
   }
 }

@@ -40,6 +40,7 @@ export {
   notificationActionKey,
   notificationGroupKey,
   notificationIcon,
+  notificationContent,
   notificationLines,
 } from "./lib/notification-display";
 export type { NotificationGroupKey } from "./lib/notification-display";

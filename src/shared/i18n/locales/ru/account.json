@@ -180,7 +180,6 @@
     "textLarge": "Katta",
     "clearCache": "Keshni tozalash",
     "cacheCleared": "Kesh tozalandi",
-    "notAvailable": "Это действие пока не поддерживается бэкендом",
     "loginsDescription": "Hisobingizga qaysi qurilma va IP manzildan kirilgani. Notanish kirishni ko‘rsangiz, parolni darhol o‘zgartiring.",
     "ratingsDescription": "O‘quvchilar har darsdan keyin baho qo‘yadi. Ism faqat sizga ko‘rinadi.",
     "ratingsCount": "{{count}} ta baho",
@@ -279,7 +278,17 @@
     "studentNoRatingsHint": "Оценки появятся здесь, когда преподаватель проверит работу.",
     "pagination": "Страницы",
     "prevPage": "Предыдущая страница",
-    "nextPage": "Следующая страница"
+    "nextPage": "Следующая страница",
+    "notVerified": "Не подтверждён",
+    "noPhone": "Не добавлен",
+    "usernameTitle": "Изменить логин",
+    "usernameHint": "Латинские буквы, цифры и символ _.",
+    "usernameSaved": "Логин изменён",
+    "certificateIssuer": "Кем выдан",
+    "certificateIssuerPlaceholder": "Например: British Council",
+    "certificateYear": "Год",
+    "certificateRejected": "Отклонён",
+    "certificateRejectReason": "Причина: {{reason}}"
   },
   "help": {
     "search": "Поиск вопроса или темы…",
@@ -331,6 +340,33 @@
         "title": "Как решить тест?",
         "hint": "Workspace → Тесты → «Решить»"
       }
-    }
+    },
+    "videoHint": "Открыть видео"
+  },
+  "support": {
+    "title": "Поддержка",
+    "subtitle": "Здесь ваши обращения и ответы",
+    "new": "Новое обращение",
+    "newTitle": "Новое обращение",
+    "threadTitle": "Обращение",
+    "empty": "Обращений пока нет",
+    "subject": "Тема",
+    "subjectPlaceholder": "Например, не могу войти на занятие",
+    "message": "Сообщение",
+    "messagePlaceholder": "Опишите проблему подробно",
+    "send": "Отправить",
+    "back": "Назад",
+    "sent": "Обращение отправлено",
+    "staff": "Поддержка",
+    "you": "Вы",
+    "replyPlaceholder": "Напишите ответ…",
+    "close": "Закрыть обращение",
+    "closedNote": "Обращение закрыто",
+    "status": {
+      "open": "Открыто",
+      "answered": "Есть ответ",
+      "closed": "Закрыто"
+    },
+    "user": "Пользователь"
   }
 }

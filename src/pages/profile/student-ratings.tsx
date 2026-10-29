@@ -43,7 +43,7 @@ export function StudentRatings() {
         at: submission.checkedAt ?? submission.createdAt,
         value: raw,
         stars: Math.max(1, Math.min(5, Math.round(item.grading === "hundred" ? raw / 20 : raw))),
-        text: submission.resubmitComment || item.title,
+        text: submission.teacherComment || submission.resubmitComment || item.title,
       };
     })
     .sort((a, b) => b.at.localeCompare(a.at));

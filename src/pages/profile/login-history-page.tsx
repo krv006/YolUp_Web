@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useLoginHistory, useLogoutOtherSessionsMutation } from "@/modules/auth";
+import { useLoginHistoryPage, useLogoutOtherSessionsMutation } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -36,15 +36,16 @@ function isPhone(device: string): boolean {
 export function LoginHistoryPage() {
   const { t } = useTranslation("account");
   const isCompact = useIsCompact();
-  const logins = useLoginHistory(null, true);
+  const [page, setPage] = useState(1);
+  const logins = useLoginHistoryPage(page, PAGE_SIZE);
   const logoutOthers = useLogoutOtherSessionsMutation();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [page, setPage] = useState(1);
 
-  const all = logins.data ?? [];
-  const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+  const items = logins.data?.items ?? [];
+  const pages = Math.max(1, logins.data?.totalPages ?? 1);
   const current = Math.min(page, pages);
-  const rows = all.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
+  const rows = items.length > PAGE_SIZE ? items.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE) : items;
+  const anyCurrent = items.some((row) => row.isCurrent);
   const groups: GroupKey[] = ["todayGroup", "yesterdayGroup", "earlierGroup"];
 
   function closeOthers() {
@@ -74,7 +75,7 @@ export function LoginHistoryPage() {
           return (
             <SettingsSection key={group} label={t(`page.${group}`)}>
               {items.map((row, index) => {
-                const thisDevice = current === 1 && group === "todayGroup" && index === 0;
+                const thisDevice = anyCurrent ? row.isCurrent : current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <SettingsRow
                     key={row.id}
@@ -87,7 +88,7 @@ export function LoginHistoryPage() {
                           : SETTINGS_TONES.brand
                     }
                     title={row.device || "—"}
-                    hint={row.ip}
+                    hint={[row.location, row.ip].filter(Boolean).join(" · ")}
                     right={
                       thisDevice ? (
                         <small className="shrink-0 text-caption-strong text-success-fg">{t("page.thisDevice")}</small>
@@ -151,7 +152,7 @@ export function LoginHistoryPage() {
 
             <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-lg bg-surface">
               {items.map((row, index) => {
-                const thisDevice = current === 1 && group === "todayGroup" && index === 0;
+                const thisDevice = anyCurrent ? row.isCurrent : current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <div key={row.id} className="flex items-center gap-3 px-4 py-3.5">
                     <span
@@ -166,7 +167,9 @@ export function LoginHistoryPage() {
                       <strong className="truncate text-title-sm text-ink">
                         {row.device || "—"}
                       </strong>
-                      <small className="truncate text-body-xs text-ink-tertiary">{row.ip}</small>
+                      <small className="truncate text-body-xs text-ink-tertiary">
+                        {[row.location, row.ip].filter(Boolean).join(" · ")}
+                      </small>
                     </span>
 
                     {thisDevice ? (

@@ -2,6 +2,7 @@ import { normalizeMediaUrl, normalizePagination, type Page, type PaginationOptio
 import { normalizeRole } from "@/modules/permission";
 import type { Role } from "@/shared/constants";
 import type {
+  AdminCertificate,
   AuthUser,
   Certificate,
   LinkedAccount,
@@ -17,6 +18,7 @@ import {
   switchAccountResponseDtoSchema,
   tokenPairDtoSchema,
   userDtoSchema,
+  type AdminCertificateDto,
   type LinkedAccountDto,
   type LoginRecord,
   type LoginRequestDto,
@@ -62,7 +64,11 @@ export function mapCertificateDto(dto: unknown): Certificate {
     title: parsed.title || "",
     createdAt: parsed.created_at,
     issuer: parsed.issuer ?? "",
-    verified: Boolean(parsed.verified),
+    issuedYear: parsed.issued_year ?? null,
+    status: parsed.status ?? (parsed.verified ? "verified" : "pending"),
+    rejectReason: parsed.reject_reason ?? "",
+    verified: parsed.status ? parsed.status === "verified" : Boolean(parsed.verified),
+    verifiedAt: parsed.verified_at ?? null,
   };
 }
 
@@ -87,6 +93,8 @@ export function mapUserDto(dto: unknown): AuthUser {
     name,
     role: normalizeRole(parsed.role) as Role,
     phone: parsed.phone ?? null,
+    phoneVerified: parsed.phone_verified === true,
+    phoneVerifiedAt: parsed.phone_verified_at ?? null,
     inviteCode: parsed.invite_code ?? null,
     avatarUrl: normalizeMediaUrl(parsed.avatar),
     email: parsed.email ?? null,
@@ -108,6 +116,9 @@ export function mapUserDto(dto: unknown): AuthUser {
     experienceYears: parsed.experience_years ?? null,
     parentPhone: parsed.parent_phone ?? null,
     passwordChangedAt: parsed.password_changed_at ?? null,
+    theme: parsed.theme ?? null,
+    textSize: parsed.text_size ?? null,
+    targetBand: parsed.target_band ?? null,
   };
 }
 
@@ -117,6 +128,27 @@ export function mapSwitchAccountResponse(dto: unknown): { tokens: TokenPair; use
     tokens: { accessToken: parsed.access, refreshToken: parsed.refresh },
     user: mapUserDto(parsed.user),
   };
+}
+
+export function mapAdminCertificate(dto: AdminCertificateDto): AdminCertificate {
+  const owner = dto.owner ?? dto.user ?? null;
+  return {
+    ...mapCertificateDto(dto),
+    owner: owner
+      ? {
+          id: String(owner.id),
+          name: owner.name || [owner.first_name, owner.last_name].filter(Boolean).join(" ") || owner.username || "—",
+          username: owner.username ?? "",
+          role: owner.role ?? "",
+          avatarUrl: normalizeMediaUrl(owner.avatar ?? null),
+        }
+      : null,
+  };
+}
+
+export function mapLoginRecordsPage(dto: unknown, options: PaginationOptions): Page<LoginRecord> {
+  const page = normalizePagination<unknown>(dto, options);
+  return { ...page, items: mapLoginRecords(page.items) };
 }
 
 export function mapLoginRecords(dto: unknown): LoginRecord[] {
@@ -131,6 +163,8 @@ export function mapLoginRecords(dto: unknown): LoginRecord[] {
       userAgent: item.user_agent ?? "",
       isNewIp: item.new_ip,
       isNewDevice: item.new_device,
+      isCurrent: item.is_current === true,
+      location: item.location ?? "",
     }));
 }
 
@@ -147,6 +181,9 @@ export function mapTeacherRatings(dto: unknown, options?: PaginationOptions): Pa
         lessonId: String(parsed.lesson),
         studentName: name || student.username || "—",
         studentUsername: student.username ?? "",
+        studentAvatar: normalizeMediaUrl(student.avatar),
+        courseTitle: parsed.course_title ?? "",
+        lessonTitle: parsed.lesson_title ?? "",
         stars: Number(parsed.stars ?? 0),
         description: parsed.description ?? "",
         createdAt: parsed.created_at ?? "",

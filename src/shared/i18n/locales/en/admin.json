@@ -57,7 +57,9 @@
       "colReliability": "Reliability",
       "noCourses": "No active courses found.",
       "noTeachers": "No active teachers found."
-    }
+    },
+    "certificatesLink": "Certificates",
+    "supportLink": "Support"
   },
   "stats": {
     "title": "{{name}} — statistics",
@@ -117,5 +119,49 @@
     "hours": "{{count}}h",
     "peakLabel": "Busiest moment",
     "pointNote": "{{count}} points"
+  },
+  "certificates": {
+    "eyebrow": "Review",
+    "title": "Certificates",
+    "subtitle": "Review and approve certificates uploaded by users.",
+    "listTitle": "Certificates",
+    "filterLabel": "Status",
+    "status": {
+      "pending": "Pending",
+      "verified": "Verified",
+      "rejected": "Rejected"
+    },
+    "empty": {
+      "pending": "No certificates awaiting review.",
+      "verified": "No verified certificates.",
+      "rejected": "No rejected certificates."
+    },
+    "loading": "Loading certificates",
+    "openFile": "Open file",
+    "verify": "Verify",
+    "reject": "Reject",
+    "reason": "Reason: {{reason}}",
+    "rejectTitle": "Reject certificate",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "E.g. the document is unreadable or belongs to someone else",
+    "cancel": "Cancel",
+    "verifiedToast": "Certificate verified",
+    "rejectedToast": "Certificate rejected"
+  },
+  "support": {
+    "eyebrow": "Support",
+    "title": "Support requests",
+    "subtitle": "Reply to requests from users",
+    "listTitle": "Requests",
+    "filterLabel": "Status",
+    "loading": "Loading requests",
+    "empty": "No requests with this status",
+    "threadTitle": "Request",
+    "status": {
+      "open": "Open",
+      "answered": "Answered",
+      "closed": "Closed",
+      "all": "All"
+    }
   }
 }

@@ -55,6 +55,9 @@ export interface ExamSummaryDto {
   total_minutes: number;
   state: Exclude<ExamStateDto, "submitted">;
   server_now: string;
+  has_reminder?: boolean | null;
+  reminder_minutes?: number | null;
+  my_total?: { score?: number | null; max?: number | null; label?: string | null } | null;
 }
 
 export interface ExamDetailDto extends ExamSummaryDto {
@@ -138,7 +141,7 @@ export interface ExamTotalResultDto {
 }
 
 export interface ExamStudentResultDto {
-  student: { id: string | number; username?: string | null; name?: string | null };
+  student: { id: string | number; username?: string | null; name?: string | null; avatar?: string | null };
   participated: boolean;
   finished_at?: string | null;
   engine?: string | null;
@@ -157,6 +160,7 @@ export interface ExamResultsDto {
   engine?: string;
   state?: string;
   hidden?: boolean;
+  group_average?: number | null;
   results?: ExamStudentResultDto[];
 }
 

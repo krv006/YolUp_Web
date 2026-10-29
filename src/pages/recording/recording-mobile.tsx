@@ -126,7 +126,7 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
 
       <div className="mt-4">
         {ready && recording?.streamUrl ? (
-          <RecordingVideo src={recording.streamUrl} variant="mobile" />
+          <RecordingVideo src={recording.streamUrl} poster={recording.thumbnailUrl} variant="mobile" />
         ) : (
           <div className="flex aspect-[358/211] w-full flex-col items-center justify-center gap-3 rounded-2xl bg-surface px-6 text-center text-ink-secondary">
             <Icon

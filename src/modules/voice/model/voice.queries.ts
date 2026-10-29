@@ -8,6 +8,7 @@ export const voiceKeys = Object.freeze({
   all: ["voice-rooms"] as const,
   list: (courseId: string) => ["voice-rooms", "list", courseId] as const,
   requests: (roomId: string) => ["voice-rooms", "requests", roomId] as const,
+  hands: (roomId: string) => ["voice-rooms", "hands", roomId] as const,
 });
 
 export function useVoiceRooms(courseId: string | null, enabled = true) {
@@ -90,6 +91,35 @@ export function useAnswerVoiceJoinRequest(roomId: string) {
     mutationFn: ({ requestId, approve }: { requestId: string; approve: boolean }) =>
       approve ? voiceApi.approveRequest(roomId, requestId) : voiceApi.denyRequest(roomId, requestId),
     onSuccess: () => client.invalidateQueries({ queryKey: voiceKeys.requests(roomId) }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useVoiceHands(roomId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: voiceKeys.hands(roomId ?? ""),
+    queryFn: ({ signal }) => voiceApi.getHands(roomId as string, { signal }),
+    enabled: Boolean(roomId) && enabled,
+    refetchInterval: 5_000,
+  });
+}
+
+export function useToggleVoiceHand(roomId: string) {
+  return useMutation({
+    mutationFn: async (raised: boolean) => {
+      if (raised) await voiceApi.raiseHand(roomId);
+      else await voiceApi.lowerHand(roomId);
+      return raised;
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useAnswerVoiceHand(roomId: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ userId, allow }: { userId: string; allow: boolean }) => voiceApi.answerHand(roomId, userId, allow),
+    onSuccess: (hands) => client.setQueryData(voiceKeys.hands(roomId), hands),
     onError: (error: Error) => toast.error(error.message),
   });
 }

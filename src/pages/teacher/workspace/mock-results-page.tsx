@@ -287,7 +287,7 @@ export function MockResultsPage() {
                 onClick={() => setPicked(row.studentId)}
               >
                 <span className="flex min-w-0 items-center gap-3">
-                  <Avatar name={row.studentName} size="sm" />
+                  <Avatar name={row.studentName} src={row.avatarUrl ?? undefined} size="sm" />
                   <span className="min-w-0 truncate text-body text-ink">{row.studentName}</span>
                 </span>
 

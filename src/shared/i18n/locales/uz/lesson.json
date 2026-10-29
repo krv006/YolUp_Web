@@ -332,7 +332,6 @@
     "attendanceStat": "Davomat",
     "emptyStudentHint": "O‘qituvchingiz dars qo‘shganda shu yerda ko‘rinadi.",
     "remind": "Eslatma qo‘yish",
-    "soon": "Tez orada",
     "recording": "Video yozuv",
     "rate": "Baholash",
     "myRating": "Bahoyingiz · {{value}}",
@@ -344,7 +343,10 @@
       "cancelled": "Bekor qilindi"
     },
     "dayToday": "Bugun",
-    "dayTomorrow": "Ertaga"
+    "dayTomorrow": "Ertaga",
+    "reminderOn": "Eslatma · {{count}} daq oldin",
+    "reminderSet": "Dars boshlanishidan {{count}} daqiqa oldin eslatamiz",
+    "reminderCleared": "Eslatma bekor qilindi"
   },
   "scheduleDialog": {
     "title": "Yangi dars",

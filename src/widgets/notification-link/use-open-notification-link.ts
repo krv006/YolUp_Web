@@ -71,7 +71,15 @@ export function useOpenNotificationLink(): OpenNotificationLink {
         navigate(room ? routes.chat(room.id) : routes.chats);
         return;
       }
-      if (type === "conversation" || type === "room" || type === "chat" || type === "message") {
+      if (type === "certificate") {
+        navigate(`${routes.profile}/certificates`);
+        return;
+      }
+      if (type === "support") {
+        navigate(`${routes.profile}/help?ticket=${encodeURIComponent(link.id)}`);
+        return;
+      }
+      if (type === "conversation" || type === "room" || type === "chat" || type === "chat_room" || type === "message") {
         navigate(routes.chat(link.id));
         return;
       }

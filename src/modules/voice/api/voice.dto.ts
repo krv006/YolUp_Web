@@ -41,3 +41,17 @@ export interface VoiceRoomFormValues {
   accessMode: "open" | "invite_only";
   scheduledAt: string | null;
 }
+
+export interface VoiceHandDto {
+  user_id: string | number;
+  name?: string | null;
+  status?: string | null;
+  raised_at?: string | null;
+}
+
+export interface VoiceHand {
+  userId: string;
+  name: string;
+  status: "raised" | "allowed";
+  raisedAt: string | null;
+}

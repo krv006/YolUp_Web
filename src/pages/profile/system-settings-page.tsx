@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth, useUpdateLessonReminderMutation } from "@/modules/auth";
+import { useAuth, useUpdateLessonReminderMutation, useUpdateSettingsMutation } from "@/modules/auth";
 import { usePushNotifications } from "@/modules/notification";
 import { ROLES } from "@/shared/constants";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -65,6 +65,7 @@ export function SystemSettingsPage() {
   const setSize = useTextSizeStore((state) => state.setSize);
   const push = usePushNotifications();
   const reminder = useUpdateLessonReminderMutation();
+  const settings = useUpdateSettingsMutation();
   const [languageOpen, setLanguageOpen] = useState(false);
   const [reminderOpen, setReminderOpen] = useState(false);
   const [draftLanguage, setDraftLanguage] = useState(language);
@@ -101,7 +102,10 @@ export function SystemSettingsPage() {
 
           <Segmented
             value={mode}
-            onChange={setMode}
+            onChange={(next) => {
+              setMode(next);
+              settings.mutate({ theme: next });
+            }}
             options={[
               { id: "light", label: t("page.themeLight") },
               { id: "dark", label: t("page.themeDark") },
@@ -124,7 +128,10 @@ export function SystemSettingsPage() {
 
           <Segmented
             value={size}
-            onChange={setSize}
+            onChange={(next) => {
+              setSize(next);
+              settings.mutate({ text_size: next });
+            }}
             options={[
               { id: SIZES[0], label: t("page.textSmall") },
               { id: SIZES[1], label: t("page.textMedium") },

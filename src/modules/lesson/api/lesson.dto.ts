@@ -21,6 +21,11 @@ export interface LessonDto {
   joined_count?: number | null;
   my_rating?: number | null;
   attended?: boolean | null;
+  recording_active?: boolean | null;
+  recording_started_at?: string | null;
+  attendance_opens_at?: string | null;
+  has_reminder?: boolean | null;
+  reminder_minutes?: number | null;
   assignment?: { id: string | number; title?: string | null } | null;
   recurrence?: {
     freq?: string | null;
@@ -85,6 +90,7 @@ export interface LessonRecordingDto {
     image_url?: string | null;
   }> | null;
   pdf_url?: string | null;
+  thumbnail_url?: string | null;
 }
 
 export interface LessonRatingDto {

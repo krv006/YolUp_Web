@@ -83,6 +83,7 @@ export function PeriodicTableDialog({
             element.symbol.toLowerCase() === term ||
             element.symbol.toLowerCase().startsWith(term) ||
             element.name.toLowerCase().includes(term) ||
+            element.latinName.toLowerCase().includes(term) ||
             String(element.z) === term
         )
         .map((element) => element.z)
@@ -215,6 +216,7 @@ export function PeriodicTableDialog({
                   </strong>
                   <small className="mt-[3px] text-body-sm text-ink-secondary">
                     {[
+                      selected.latinName,
                       t(`periodic.categories.${selected.category}`, { defaultValue: "" }),
                       [
                         selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
@@ -345,6 +347,7 @@ export function PeriodicTableDialog({
                 </strong>
                 <small className="truncate text-body-xs text-ink-secondary">
                   {[
+                    selected.latinName,
                     selected.period ? t("periodic.periodShort", { value: selected.period }) : "",
                     selected.group ? t("periodic.groupShort", { value: selected.group }) : "",
                   ]

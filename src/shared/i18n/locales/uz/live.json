@@ -137,8 +137,7 @@
     "recordingStudent": "Yozib olinmoqda — audio va video",
     "queueTitle": "Navbatdasiz ({{count}})",
     "handRaised": "qo‘l ko‘tardingiz",
-    "cancelRequest": "Bekor qilish",
-    "soon": "Tez orada"
+    "cancelRequest": "Bekor qilish"
   },
   "mic": {
     "label": "Mikrofon",

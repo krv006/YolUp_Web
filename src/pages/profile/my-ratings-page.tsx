@@ -114,13 +114,18 @@ function TeacherRatings() {
                   {rows.map((row) => (
                     <article key={row.id} className="flex flex-col px-4 py-3">
                       <span className="flex items-center gap-2.5">
-                        <Avatar name={row.studentName} size="sm" className="[&_.avatar]:size-8" />
+                        <Avatar name={row.studentName} src={row.studentAvatar ?? undefined} size="sm" className="[&_.avatar]:size-8" />
                         <span className="flex min-w-0 flex-1 flex-col">
                           <strong className="truncate text-title-sm text-ink">{row.studentName}</strong>
                           <small className="truncate text-caption font-normal text-ink-secondary">
-                            {row.createdAt
-                              ? relativeDay(row.createdAt, { today: t("page.mobile.today"), yesterday: t("page.mobile.yesterday") })
-                              : ""}
+                            {[
+                              row.courseTitle,
+                              row.createdAt
+                                ? relativeDay(row.createdAt, { today: t("page.mobile.today"), yesterday: t("page.mobile.yesterday") })
+                                : "",
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
                           </small>
                         </span>
                         <Stars value={row.stars} size={14} />
@@ -189,11 +194,13 @@ function TeacherRatings() {
             {rows.map((row) => (
               <article key={row.id} className="flex flex-col gap-2 px-4 py-3.5">
                 <span className="flex items-center gap-3">
-                  <Avatar name={row.studentName} size="sm" />
+                  <Avatar name={row.studentName} src={row.studentAvatar ?? undefined} size="sm" />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <strong className="truncate text-title-sm text-ink">{row.studentName}</strong>
                     <small className="truncate text-body-xs text-ink-tertiary">
-                      {row.createdAt ? formatDayTime(row.createdAt) : ""}
+                      {[row.courseTitle, row.lessonTitle, row.createdAt ? formatDayTime(row.createdAt) : ""]
+                        .filter(Boolean)
+                        .join(" · ")}
                     </small>
                   </span>
                   <StarRating value={row.stars} readOnly size={14} />

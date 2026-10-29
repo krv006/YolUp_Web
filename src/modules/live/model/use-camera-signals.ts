@@ -3,7 +3,7 @@ import { useLocalParticipantPermissions, useRoomContext } from "@livekit/compone
 import { toast } from "sonner";
 import { useBoardChannel, useTeacherSignals, type BoardSocketEvent } from "@/modules/board";
 import { CAMERA_SOURCE, canPublishSource } from "../lib/live-permissions";
-import { useDenyCamera, useGrantCamera, useRequestCamera } from "./live.queries";
+import { useCancelCameraRequest, useDenyCamera, useGrantCamera, useRequestCamera } from "./live.queries";
 
 export interface CameraRequest {
   studentId: string;
@@ -16,6 +16,7 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
   const grant = useGrantCamera(lessonId);
   const deny = useDenyCamera(lessonId);
   const request = useRequestCamera(lessonId);
+  const cancel = useCancelCameraRequest(lessonId);
 
   const [live, setLive] = useState<CameraRequest[]>([]);
   const [answered, setAnswered] = useState<string[]>([]);
@@ -68,6 +69,12 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
         return;
       }
 
+      if (event.type === "camera_request_cancelled") {
+        setAnswered((current) => (current.includes(event.studentId) ? current : [...current, event.studentId]));
+        if (isMine(event.studentId)) setWaiting(false);
+        return;
+      }
+
       if (event.type !== "camera_granted" && event.type !== "camera_denied") return;
 
       setAnswered((current) =>
@@ -102,11 +109,16 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
     [sendRequest]
   );
 
+  const { mutate: sendCancel } = cancel;
+  const cancelCamera = useCallback(() => sendCancel(undefined, { onSuccess: () => setWaiting(false) }), [sendCancel]);
+
   return {
     requests,
     grant,
     deny,
     requestCamera,
+    cancelCamera,
+    cancelling: cancel.isPending,
     requesting: request.isPending,
     waiting,
   };

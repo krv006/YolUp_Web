@@ -60,6 +60,12 @@
     "raiseTitle": "Mikrofonni yoqish uchun",
     "raiseHint": "Qo‘l ko‘taring",
     "raiseHand": "Qo‘l ko‘tarish",
-    "soon": "Tez orada"
+    "lowerHand": "Qo‘lni tushirish",
+    "handSent": "Xona egasi qo‘l ko‘targaningizni ko‘radi",
+    "handsTitle": "Qo‘l ko‘targanlar · {{count}}",
+    "handAllowed": "So‘z berildi",
+    "handWaiting": "So‘z kutmoqda",
+    "handAllow": "So‘z berish",
+    "handDismiss": "Qo‘lni tushirish"
   }
 }

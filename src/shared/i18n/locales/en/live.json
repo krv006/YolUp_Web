@@ -137,8 +137,7 @@
     "recordingStudent": "Recording — audio and video",
     "queueTitle": "You’re in the queue ({{count}})",
     "handRaised": "hand raised",
-    "cancelRequest": "Cancel",
-    "soon": "Coming soon"
+    "cancelRequest": "Cancel"
   },
   "mic": {
     "label": "Microphone",

@@ -180,7 +180,6 @@
     "textLarge": "Katta",
     "clearCache": "Keshni tozalash",
     "cacheCleared": "Kesh tozalandi",
-    "notAvailable": "Bu amal backendda hali mavjud emas",
     "loginsDescription": "Hisobingizga qaysi qurilma va IP manzildan kirilgani. Notanish kirishni ko‘rsangiz, parolni darhol o‘zgartiring.",
     "ratingsDescription": "O‘quvchilar har darsdan keyin baho qo‘yadi. Ism faqat sizga ko‘rinadi.",
     "ratingsCount": "{{count}} ta baho",
@@ -279,7 +278,17 @@
     "studentNoRatingsHint": "O‘qituvchingiz vazifangizni baholagach, bahosi shu yerda chiqadi.",
     "pagination": "Sahifalar",
     "prevPage": "Oldingi sahifa",
-    "nextPage": "Keyingi sahifa"
+    "nextPage": "Keyingi sahifa",
+    "notVerified": "Tasdiqlanmagan",
+    "noPhone": "Qo‘shilmagan",
+    "usernameTitle": "Loginni o‘zgartirish",
+    "usernameHint": "Lotin harflari, raqamlar va _ belgisidan foydalaning.",
+    "usernameSaved": "Login o‘zgartirildi",
+    "certificateIssuer": "Bergan tashkilot",
+    "certificateIssuerPlaceholder": "Masalan: British Council",
+    "certificateYear": "Yil",
+    "certificateRejected": "Rad etildi",
+    "certificateRejectReason": "Sabab: {{reason}}"
   },
   "help": {
     "search": "Savol yoki mavzu qidirish…",
@@ -331,6 +340,33 @@
         "title": "Testni qanday yechaman?",
         "hint": "Workspace → Testlar → «Yechish»"
       }
-    }
+    },
+    "videoHint": "Videoni ochish"
+  },
+  "support": {
+    "title": "Qo‘llab-quvvatlash",
+    "subtitle": "Murojaatlaringiz va javoblar shu yerda",
+    "new": "Yangi murojaat",
+    "newTitle": "Yangi murojaat",
+    "threadTitle": "Murojaat",
+    "empty": "Hali murojaat yo‘q",
+    "subject": "Mavzu",
+    "subjectPlaceholder": "Masalan, darsga kira olmayapman",
+    "message": "Xabar",
+    "messagePlaceholder": "Muammoni batafsil yozing",
+    "send": "Yuborish",
+    "back": "Orqaga",
+    "sent": "Murojaat yuborildi",
+    "staff": "Qo‘llab-quvvatlash",
+    "you": "Siz",
+    "replyPlaceholder": "Javob yozing…",
+    "close": "Murojaatni yopish",
+    "closedNote": "Murojaat yopilgan",
+    "status": {
+      "open": "Ochiq",
+      "answered": "Javob berildi",
+      "closed": "Yopilgan"
+    },
+    "user": "Foydalanuvchi"
   }
 }

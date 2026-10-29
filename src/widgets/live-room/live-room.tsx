@@ -763,7 +763,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
           isTeacher={isTeacher}
           currentUserId={room.localParticipant.identity}
           startedAt={joinedAt}
-          recording={recordingChips.length > 0}
+          recording={isTeacher ? recordingChips.length > 0 : lesson.recordingActive}
           participants={participants.length}
           requests={pendingRequestsCount}
           cameraTracks={cameraTracks}
@@ -810,9 +810,9 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
 
         {recordingChips.length ? <RecordingChip startedAt={joinedAt} /> : null}
 
-        {!isTeacher && lesson.status === "live" ? (
+        {!isTeacher && lesson.status === "live" && lesson.recordingActive ? (
           <>
-            <RecordingChip startedAt={new Date(lesson.startsAt)} />
+            <RecordingChip startedAt={new Date(lesson.recordingStartedAt ?? lesson.startsAt)} />
             <span className="flex h-6 shrink-0 items-center rounded-full bg-subtle px-3 text-caption text-ink-secondary" role="status">
               {t("room.recordingStudent")}
             </span>
@@ -899,8 +899,12 @@ export function LiveRoom({ lesson, isTeacher, screenStream, onLeave }: LiveRoomP
                 </small>
                 <button
                   type="button"
-                  className="flex h-8 shrink-0 items-center rounded-full bg-brand px-4 text-caption-strong text-on-action transition-colors hover:bg-brand-strong"
-                  onClick={() => toast.info(t("room.soon"))}
+                  className="flex h-8 shrink-0 items-center rounded-full bg-brand px-4 text-caption-strong text-on-action transition-colors hover:bg-brand-strong disabled:opacity-60"
+                  disabled={mic.cancelling || camera.cancelling}
+                  onClick={() => {
+                    if (mic.waiting) mic.cancelMic();
+                    if (camera.waiting) camera.cancelCamera();
+                  }}
                 >
                   {t("room.cancelRequest")}
                 </button>

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAttendance } from "@/modules/attendance";
-import { RateLessonDialog } from "@/modules/lesson";
+import { RateLessonDialog, useLessonReminder } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import type { Lesson, LessonStatus } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
@@ -56,6 +56,22 @@ export function StudentLessons({ lessons = [], loading, currentUserId, teacher =
   const attendance = useAttendance({ page_size: 200 });
   const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
   const [now] = useState(() => Date.now());
+  const reminder = useLessonReminder();
+
+  function toggleReminder(lesson: Lesson) {
+    const enabled = !lesson.hasReminder;
+    reminder.mutate(
+      { id: lesson.id, enabled },
+      {
+        onSuccess: (minutes) =>
+          toast.success(
+            enabled
+              ? tl("schedule.reminderSet", { count: minutes ?? 15 })
+              : tl("schedule.reminderCleared")
+          ),
+      }
+    );
+  }
 
   const joined = useMemo(
     () => new Set((attendance.data ?? []).filter((row) => row.joinedAt).map((row) => row.lessonId)),
@@ -179,9 +195,21 @@ export function StudentLessons({ lessons = [], loading, currentUserId, teacher =
                     </button>
                   </div>
                 ) : (
-                  <button type="button" className={`${OUTLINE} shrink-0`} onClick={() => toast.info(t("groupWorkspace.soon"))}>
-                    <Icon name="edit" size={18} />
-                    {t("groupWorkspace.lessonsTab.remind")}
+                  <button
+                    type="button"
+                    className={
+                      lesson.hasReminder
+                        ? "flex h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-subtle px-4 text-button text-brand transition-colors hover:bg-tint"
+                        : `${OUTLINE} shrink-0`
+                    }
+                    aria-pressed={lesson.hasReminder}
+                    disabled={reminder.isPending && reminder.variables?.id === lesson.id}
+                    onClick={() => toggleReminder(lesson)}
+                  >
+                    <Icon name={lesson.hasReminder ? "notifications-off" : "notifications"} size={18} />
+                    {lesson.hasReminder
+                      ? tl("schedule.reminderOn", { count: lesson.reminderMinutes ?? 15 })
+                      : t("groupWorkspace.lessonsTab.remind")}
                   </button>
                 )}
               </article>

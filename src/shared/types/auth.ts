@@ -1,13 +1,23 @@
 import type { AppError } from "@/shared/api";
 import type { Role } from "@/shared/constants";
 
+export type CertificateStatus = "pending" | "verified" | "rejected";
+
 export interface Certificate {
   id: string;
   file: string;
   title: string;
   createdAt: string;
   issuer: string;
+  issuedYear: number | null;
+  status: CertificateStatus;
+  rejectReason: string;
   verified: boolean;
+  verifiedAt: string | null;
+}
+
+export interface AdminCertificate extends Certificate {
+  owner: { id: string; name: string; username: string; role: string; avatarUrl: string | null } | null;
 }
 
 export interface LinkedAccount {
@@ -25,6 +35,8 @@ export interface AuthUser {
   name: string;
   role: Role;
   phone: string | null;
+  phoneVerified: boolean;
+  phoneVerifiedAt: string | null;
   inviteCode: string | null;
   avatarUrl: string | null;
   email: string | null;
@@ -46,6 +58,9 @@ export interface AuthUser {
   experienceYears: number | null;
   parentPhone: string | null;
   passwordChangedAt: string | null;
+  theme: "light" | "dark" | "system" | null;
+  textSize: "small" | "medium" | "large" | null;
+  targetBand: number | null;
 }
 
 export interface TeacherRating {
@@ -53,6 +68,9 @@ export interface TeacherRating {
   lessonId: string;
   studentName: string;
   studentUsername: string;
+  studentAvatar: string | null;
+  courseTitle: string;
+  lessonTitle: string;
   stars: number;
   description: string;
   createdAt: string;

@@ -1,6 +1,13 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
 import { voiceEndpoints } from "./voice.endpoints";
-import type { VoiceJoinRequestDto, VoiceRoomDto, VoiceRoomFormValues, VoiceTokenDto } from "./voice.dto";
+import type {
+  VoiceHand,
+  VoiceHandDto,
+  VoiceJoinRequestDto,
+  VoiceRoomDto,
+  VoiceRoomFormValues,
+  VoiceTokenDto,
+} from "./voice.dto";
 import {
   mapVoiceJoinRequestDto,
   mapVoiceRoomDto,
@@ -50,4 +57,30 @@ export const voiceApi = {
     await apiClient.post(voiceEndpoints.deny(id, requestId), {});
     return requestId;
   },
+  async raiseHand(id: string) {
+    await apiClient.post(voiceEndpoints.raiseHand(id), {});
+  },
+  async lowerHand(id: string) {
+    await apiClient.delete(voiceEndpoints.raiseHand(id));
+  },
+  async getHands(id: string, options?: RequestOptions): Promise<VoiceHand[]> {
+    return mapHands(await apiClient.get<VoiceHandDto[]>(voiceEndpoints.raiseHand(id), options));
+  },
+  async answerHand(id: string, userId: string, allow: boolean): Promise<VoiceHand[]> {
+    return mapHands(
+      await apiClient.post<VoiceHandDto[]>(
+        allow ? voiceEndpoints.allowHand(id, userId) : voiceEndpoints.dismissHand(id, userId),
+        {}
+      )
+    );
+  },
 };
+
+function mapHands(items: VoiceHandDto[] | null | undefined): VoiceHand[] {
+  return (Array.isArray(items) ? items : []).map((item) => ({
+    userId: String(item.user_id),
+    name: item.name ?? "",
+    status: item.status === "allowed" ? "allowed" : "raised",
+    raisedAt: item.raised_at ?? null,
+  }));
+}

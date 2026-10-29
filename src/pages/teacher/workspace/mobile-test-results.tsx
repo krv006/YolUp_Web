@@ -27,6 +27,7 @@ export interface MobileTestResultsProps {
   loading: boolean;
   onBack: () => void;
   onAttempts: () => void;
+  onShare: () => void;
 }
 
 function percentTone(value: number): string {
@@ -35,7 +36,16 @@ function percentTone(value: number): string {
   return "text-warning-fg";
 }
 
-export function MobileTestResults({ eyebrow, title, stats, rows, loading, onBack, onAttempts }: MobileTestResultsProps) {
+export function MobileTestResults({
+  eyebrow,
+  title,
+  stats,
+  rows,
+  loading,
+  onBack,
+  onAttempts,
+  onShare,
+}: MobileTestResultsProps) {
   const { t } = useTranslation("quiz");
 
   return (
@@ -44,9 +54,14 @@ export function MobileTestResults({ eyebrow, title, stats, rows, loading, onBack
         <button type="button" className={mobileRoundButton} aria-label={t("tests.mobile.back")} onClick={onBack}>
           <Icon name="chevron-left" size={22} />
         </button>
-        <button type="button" className={mobileRoundButton} aria-label={t("tests.attempts")} onClick={onAttempts}>
-          <Icon name="assign" size={22} />
-        </button>
+        <span className="flex items-center gap-2">
+          <button type="button" className={mobileRoundButton} aria-label={t("results.share")} onClick={onShare}>
+            <Icon name="send" size={20} />
+          </button>
+          <button type="button" className={mobileRoundButton} aria-label={t("tests.attempts")} onClick={onAttempts}>
+            <Icon name="assign" size={22} />
+          </button>
+        </span>
       </header>
 
       <div className="mt-3.5">

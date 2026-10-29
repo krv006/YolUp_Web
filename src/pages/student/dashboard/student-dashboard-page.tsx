@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { useLessonPresence } from "@/modules/live";
-import { notificationLines } from "@/modules/notification";
+import { notificationContent } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useOnline } from "@/shared/hooks/use-online";
@@ -263,7 +263,7 @@ export function StudentDashboardPage() {
               <SectionTitle>{t("home.grades.title")}</SectionTitle>
               <div className="flex flex-col overflow-hidden rounded-2xl bg-surface">
                 {home.recentGrades.slice(0, 3).map((item) => {
-                  const { title, body } = notificationLines(item.html);
+                  const { title, body } = notificationContent(item);
                   return (
                     <span key={item.id} className="flex h-[72px] items-center gap-3 pr-5 pl-[18px]">
                       <span className="grid size-9 shrink-0 place-items-center rounded-md bg-subtle text-ink">

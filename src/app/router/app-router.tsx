@@ -47,6 +47,12 @@ function WelcomeRoute() {
 
 const loadTeacherLayout = () => import("@/app/layouts/teacher-layout");
 const loadChatsPage = () => import("@/pages/teacher/chats-page");
+const MaterialsPage = lazy(() =>
+  import("@/pages/workspace/materials-page").then((module) => ({ default: module.MaterialsPage }))
+);
+const StudentAiPage = lazy(() =>
+  import("@/pages/student/workspace/student-ai-page").then((module) => ({ default: module.StudentAiPage }))
+);
 const WorkspaceSearchPage = lazy(() =>
   import("@/pages/workspace/workspace-search-page").then((module) => ({
     default: module.WorkspaceSearchPage,
@@ -129,6 +135,8 @@ const ParentAttendancePage = lazy(() =>
 );
 const ParentHomeworkPage = lazy(() => import("@/pages/parent/homework/parent-homework-page").then((module) => ({ default: module.ParentHomeworkPage })));
 const AdminDashboardPage = lazy(() => import("@/pages/admin/admin-dashboard-page").then((module) => ({ default: module.AdminDashboardPage })));
+const AdminSupportPage = lazy(() => import("@/pages/admin/support/admin-support-page").then((module) => ({ default: module.AdminSupportPage })));
+const AdminCertificatesPage = lazy(() => import("@/pages/admin/certificates/admin-certificates-page").then((module) => ({ default: module.AdminCertificatesPage })));
 const AdminTeachersPage = lazy(() => import("@/pages/admin/teachers/admin-teachers-page").then((module) => ({ default: module.AdminTeachersPage })));
 const LiveLessonPage = lazy(() => import("@/pages/live/live-lesson-page").then((module) => ({ default: module.LiveLessonPage })));
 const DesignSystemPage = lazy(() => import("@/pages/design-system/design-system-page").then((module) => ({ default: module.DesignSystemPage })));
@@ -238,6 +246,7 @@ export function AppRouter() {
                     <Route path="/teacher/workspace/homework/:assignmentId" element={<HomeworkDetailPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId/review" element={<HomeworkReviewPage />} />
                     <Route path={ROUTES.teacher.workspaceAi} element={<AiAssistantPage />} />
+                    <Route path={ROUTES.teacher.materials} element={<MaterialsPage />} />
                     <Route path={ROUTES.teacher.workspaceAnalytics} element={<WorkspaceAnalyticsPage />} />
                     <Route path={ROUTES.teacher.mockExams} element={<MockExamsPage />} />
                     <Route path="/teacher/workspace/mock/:examId" element={<MockResultsPage />} />
@@ -321,6 +330,8 @@ export function AppRouter() {
                     <Route path="/student/workspace/tests/:quizId" element={<StudentTestPage />} />
                     <Route path="/student/workspace/tests/:quizId/results" element={<StudentTestResultsPage />} />
                     <Route path={ROUTES.student.workspaceAnalytics} element={<StudentAnalyticsPage />} />
+                    <Route path={ROUTES.student.materials} element={<MaterialsPage />} />
+                    <Route path={ROUTES.student.ai} element={<StudentAiPage />} />
                     <Route path={ROUTES.student.mockExams} element={<StudentMockPage />} />
                     <Route path="/student/workspace/mock/:examId" element={<StudentMockResultPage />} />
                     <Route path="/student/workspace/mock/:examId/take" element={<StudentExamPage />} />
@@ -410,6 +421,14 @@ export function AppRouter() {
                   <Route
                     path={ROUTES.admin.teachers}
                     element={<AdminTeachersPage />}
+                  />
+                  <Route
+                    path={ROUTES.admin.certificates}
+                    element={<AdminCertificatesPage />}
+                  />
+                  <Route
+                    path={ROUTES.admin.support}
+                    element={<AdminSupportPage />}
                   />
                 </Route>
               </Route>

@@ -69,6 +69,7 @@ export interface QuizGroupDto {
 }
 
 export interface QuizDto extends QuizSummaryDto {
+  group_avg_percentage?: number | null;
   groups?: QuizGroupDto[];
   questions: QuizQuestionDto[];
   warnings?: QuizImportWarningDto[];
@@ -159,13 +160,18 @@ export interface QuizImportPreviewDto {
 }
 
 export interface QuizAttemptAnswerDto {
-  question: string | number;
-  question_text: string;
+  question?: string | number;
+  question_id?: string | number;
+  question_text?: string;
+  label?: string;
+  order?: number | null;
   question_type?: QuizQuestionTypeDto;
-  selected_option: string | number | null;
-  selected_option_text: string | null;
+  type?: QuizQuestionTypeDto;
+  selected_option?: string | number | null;
+  selected_option_text?: string | null;
   is_correct: boolean;
-  correct_option: { id: string | number; text: string } | null;
+  correct_option?: { id: string | number; text: string } | null;
+  given?: string | null;
   points?: number | null;
   earned_points?: number | null;
   given_display?: string | null;

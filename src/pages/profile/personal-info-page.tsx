@@ -1,7 +1,17 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAuth, useIsStudent, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/modules/auth";
+import {
+  PhoneVerifyDialog,
+  normalizeUzPhone,
+  useAuth,
+  useConfirmPhoneChangeMutation,
+  useIsStudent,
+  usePhoneChangeCodeMutation,
+  useRemoveAvatarMutation,
+  useUpdateAvatarMutation,
+  useUpdateProfileMutation,
+} from "@/modules/auth";
 import { useCourses, useSubjects } from "@/modules/course";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -39,6 +49,10 @@ export function PersonalInfoPage() {
   const isCompact = useIsCompact();
   const update = useUpdateProfileMutation();
   const updateAvatar = useUpdateAvatarMutation();
+  const removeAvatar = useRemoveAvatarMutation();
+  const requestPhoneCode = usePhoneChangeCodeMutation();
+  const confirmPhone = useConfirmPhoneChangeMutation();
+  const [verifyPhone, setVerifyPhone] = useState<string | null>(null);
   const subjects = useSubjects();
   const student = useIsStudent();
   const courses = useCourses();
@@ -68,9 +82,19 @@ export function PersonalInfoPage() {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const nextPhone = form.phone.trim() ? normalizeUzPhone(form.phone) : "";
+    if (nextPhone && nextPhone !== normalizeUzPhone(user?.phone ?? "")) {
+      setVerifyPhone(nextPhone);
+      return;
+    }
+    save();
+  }
+
+  function save() {
     update.mutate(
       {
         ...form,
+        phone: undefined,
         middleName: user?.middleName ?? "",
         birthDate: user?.birthDate ?? "",
         bio: user?.bio ?? "",
@@ -151,7 +175,20 @@ export function PersonalInfoPage() {
             </MobileFieldLabel>
           </div>
         </form>
-      </ProfileSubPage>
+        <PhoneVerifyDialog
+        key={verifyPhone ?? "none"}
+        open={Boolean(verifyPhone)}
+        onOpenChange={(open) => !open && setVerifyPhone(null)}
+        phone={verifyPhone ?? ""}
+        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
+        onVerify={async (phone, code) => {
+          await confirmPhone.mutateAsync({ phone, code });
+          toast.success(t("auth:phoneVerify.verified"));
+          setVerifyPhone(null);
+          save();
+        }}
+      />
+    </ProfileSubPage>
     );
   }
 
@@ -224,8 +261,9 @@ export function PersonalInfoPage() {
 
         <button
           type="button"
-          className="flex h-9 shrink-0 items-center px-3.5 text-body-xs font-semibold text-brand transition-opacity hover:opacity-80"
-          onClick={() => toast.info(t("page.notAvailable"))}
+          className="flex h-9 shrink-0 items-center px-3.5 text-body-xs font-semibold text-brand transition-opacity hover:opacity-80 disabled:opacity-40"
+          disabled={!user?.avatarUrl || removeAvatar.isPending}
+          onClick={() => removeAvatar.mutate()}
         >
           {t("page.avatarRemove")}
         </button>
@@ -303,6 +341,19 @@ export function PersonalInfoPage() {
           />
         </div>
       </form>
+      <PhoneVerifyDialog
+        key={verifyPhone ?? "none"}
+        open={Boolean(verifyPhone)}
+        onOpenChange={(open) => !open && setVerifyPhone(null)}
+        phone={verifyPhone ?? ""}
+        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
+        onVerify={async (phone, code) => {
+          await confirmPhone.mutateAsync({ phone, code });
+          toast.success(t("auth:phoneVerify.verified"));
+          setVerifyPhone(null);
+          save();
+        }}
+      />
     </ProfileSubPage>
   );
 }

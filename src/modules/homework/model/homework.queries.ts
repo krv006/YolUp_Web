@@ -22,6 +22,7 @@ export const homeworkKeys = Object.freeze({
   submission: (id: string) => ["homework", "submission", id] as const,
   board: (id: string) => ["homework", "board", id] as const,
   report: (studentId?: string | null) => ["homework", "report", studentId ?? "me"] as const,
+  draft: (id: string) => ["homework", "draft", id] as const,
 });
 
 export function getHomeworkPollingInterval(
@@ -163,21 +164,38 @@ export function useSubmitHomework() {
   return useMutation({
     mutationFn: ({
       assignmentId,
-      file,
+      files,
       skillKey,
       comment,
     }: {
       assignmentId: string;
-      file: File | null;
+      files: File[];
       skillKey?: string;
       comment?: string;
-    }) => homeworkApi.submit(assignmentId, file, skillKey, comment),
+    }) => homeworkApi.submit(assignmentId, files, skillKey, comment),
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });
       toast.success(t("toast.submitted"));
     },
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useHomeworkDraft(assignmentId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: homeworkKeys.draft(assignmentId ?? ""),
+    queryFn: ({ signal }) => homeworkApi.getDraft(assignmentId as string, { signal }),
+    enabled: Boolean(assignmentId) && enabled,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useSaveHomeworkDraft(assignmentId: string) {
+  return useMutation({
+    mutationFn: (comment: string) =>
+      comment.trim() ? homeworkApi.saveDraft(assignmentId, comment) : homeworkApi.deleteDraft(assignmentId),
   });
 }
 
@@ -260,8 +278,8 @@ export function useDownloadAssignmentFile() {
 
 export function useDownloadSubmissionFile() {
   return useMutation({
-    mutationFn: async ({ id, fileName }: { id: string; fileName?: string }) =>
-      downloadBlob(await homeworkApi.downloadSubmission(id), fileName),
+    mutationFn: async ({ id, fileName, index = 0 }: { id: string; fileName?: string; index?: number }) =>
+      downloadBlob(await homeworkApi.downloadSubmission(id, undefined, index), fileName),
     onError: (error: Error) => toast.error(error.message),
   });
 }

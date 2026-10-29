@@ -1,5 +1,7 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
 import { mapAttemptAnswerRequest, type QuizAttemptAnswerInput } from "@/modules/quiz";
+import { mapPracticeSet, type PracticeSetDto } from "@/modules/tutor";
+import { i18n } from "@/shared/i18n";
 import { examEndpoints } from "./exam.endpoints";
 import type {
   ExamCurrentDto,
@@ -120,5 +122,19 @@ export const examApi = {
   async finish(id: string) {
     await apiClient.post(examEndpoints.finish(id), {});
     return id;
+  },
+  async setReminder(id: string) {
+    return apiClient.post<{ has_reminder: boolean; minutes_before: number }>(examEndpoints.reminder(id), {});
+  },
+  async clearReminder(id: string) {
+    await apiClient.delete(examEndpoints.reminder(id));
+  },
+  downloadResultPdf(id: string, studentId: string) {
+    return apiClient.get<Blob>(examEndpoints.resultPdf(id, studentId), { responseType: "blob" });
+  },
+  async mistakesPractice(id: string, count = 5) {
+    return mapPracticeSet(
+      await apiClient.post<PracticeSetDto>(examEndpoints.mistakesPractice(id), { count, language: i18n.language })
+    );
   },
 };

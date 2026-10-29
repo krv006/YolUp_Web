@@ -49,5 +49,6 @@ export function useStudentWorkspace() {
     attemptByQuiz,
     attemptCount: analytics.data?.kind === "student" ? analytics.data.attemptCount : 0,
     avgPercentage: analytics.data?.kind === "student" ? analytics.data.avgPercentage : null,
+    overview: analytics.data?.kind === "student" ? analytics.data.overview : null,
   };
 }

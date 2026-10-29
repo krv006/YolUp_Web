@@ -42,6 +42,11 @@ export function notificationGroupKey(value: string): NotificationGroupKey {
   return "earlier";
 }
 
+export function notificationContent(item: { html: string; title?: string; body?: string }): { title: string; body: string } {
+  if (item.title) return { title: item.title, body: item.body ?? "" };
+  return notificationLines(item.html);
+}
+
 export function notificationLines(html: string): { title: string; body: string } {
   const text = html.replace(/<br\s*\/?>|<\/(p|div|li|h\d)>/gi, "\n");
   const doc = new DOMParser().parseFromString(text, "text/html");

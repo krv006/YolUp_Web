@@ -20,6 +20,9 @@ export {
   useExamTemplates,
   useExams,
   useFinishExam,
+  useExamReminder,
+  useExamResultPdf,
+  useExamMistakesPractice,
   useSaveExamAnswers,
 } from "./model/exam.queries";
 export { formatClock, secondsUntil, serverNow, syncServerTime } from "./lib/server-time";

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Pencil, Users, Wifi, X } from "lucide-react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -19,6 +19,7 @@ import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
 import {
   useAddSheet,
   useRenameSheet,
+  useSetCurrentSheet,
   useAddStroke,
   useBoard,
   useEraseStrokes,
@@ -101,6 +102,7 @@ export function BoardPanel({
   const permissions = useSetBoardPermissions(lessonId);
   const renameSheet = useRenameSheet(lessonId);
   const solve = useSolveFormula(lessonId);
+  const currentSheet = useSetCurrentSheet(lessonId);
   const members = useCourseStudents(board.data?.isTeacher ? courseId : null, { page_size: 100 });
 
   const [localSheet, setLocalSheet] = useState(0);
@@ -131,6 +133,20 @@ export function BoardPanel({
   const state = source ? source.state : board.data;
   const active = state?.sheets.find((item) => item.index === sheet) ?? state?.sheets[0];
   const canDraw = Boolean(state?.canDraw);
+  const followSheet = !source && board.data && !board.data.isTeacher ? board.data.currentSheet : null;
+  const lastFollowed = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (followSheet === null || followSheet === lastFollowed.current) return;
+    lastFollowed.current = followSheet;
+    setSheet(followSheet);
+  }, [followSheet, setSheet]);
+
+  const { mutate: announceSheet } = currentSheet;
+  function changeSheet(next: number) {
+    setSheet(next);
+    if (!source && board.data?.isTeacher) announceSheet(next);
+  }
 
   const boardHeight = state?.height ?? 900;
   const canvasHeight = useMemo(() => {
@@ -497,7 +513,7 @@ export function BoardPanel({
           boardHeight={state.height}
           canAdd={state.isTeacher || Boolean(source)}
           onSelect={(index) => {
-            setSheet(index);
+            changeSheet(index);
             setPagesOpen(false);
           }}
           onAdd={() => (source ? source.addSheet() : addSheet.mutate())}
@@ -655,8 +671,8 @@ export function BoardPanel({
               canRedo={redoStack.length > 0}
               onUndo={undo}
               onRedo={redo}
-              onPrev={() => setSheet(Math.max(0, sheet - 1))}
-              onNext={() => setSheet(Math.min(total - 1, sheet + 1))}
+              onPrev={() => changeSheet(Math.max(0, sheet - 1))}
+              onNext={() => changeSheet(Math.min(total - 1, sheet + 1))}
               onPages={() => setPagesOpen(true)}
               onAdd={state.isTeacher || source ? () => (source ? source.addSheet() : addSheet.mutate()) : undefined}
             />
@@ -711,7 +727,7 @@ export function BoardPanel({
               className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
               aria-label={t("sheet.prev")}
               disabled={sheet <= 0}
-              onClick={() => setSheet(sheet - 1)}
+              onClick={() => changeSheet(sheet - 1)}
             >
               <ChevronLeft size={16} />
             </button>
@@ -729,7 +745,7 @@ export function BoardPanel({
               className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
               aria-label={t("sheet.next")}
               disabled={sheet >= state.sheets.length - 1}
-              onClick={() => setSheet(sheet + 1)}
+              onClick={() => changeSheet(sheet + 1)}
             >
               <ChevronRight size={16} />
             </button>

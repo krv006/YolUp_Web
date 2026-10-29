@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
@@ -34,7 +33,7 @@ const MODULES = [
     to: ROUTES.teacher.mockExams,
   },
   { id: "assignments", icon: "assign", tone: "bg-accent-red-bg text-accent-red-fg", to: ROUTES.teacher.homework },
-  { id: "materials", icon: "folder", tone: "bg-accent-violet-bg text-accent-red-fg", to: null },
+  { id: "materials", icon: "folder", tone: "bg-accent-violet-bg text-accent-red-fg", to: ROUTES.teacher.materials },
 ] as const;
 
 const CREATE = [
@@ -99,7 +98,7 @@ export function MobileWorkspaceHome({ unchecked, tests, exams }: MobileWorkspace
               tone={module.tone}
               title={t(`home.mobile.modules.${module.id}.title`)}
               subtitle={t(`home.mobile.modules.${module.id}.description`)}
-              onClick={() => (module.to ? navigate(module.to) : toast.info(t("soon")))}
+              onClick={() => navigate(module.to)}
             />
           ))}
         </MobileListCard>

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
   OtpInput,
+  PhoneVerifyDialog,
   useAuth,
   useAuthStore,
   useChangePasswordMutation,
@@ -12,7 +13,11 @@ import {
   useDisableTwoFactorMutation,
   useEnableTwoFactorMutation,
   useTwoFactorStatus,
+  useConfirmPhoneChangeMutation,
+  usePhoneChangeCodeMutation,
+  useUpdateSettingsMutation,
 } from "@/modules/auth";
+import { AppError } from "@/shared/api";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
@@ -93,6 +98,34 @@ export function AccountSettingsPage() {
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [mismatch, setMismatch] = useState(false);
   const [resendAt, setResendAt] = useState<number | null>(null);
+  const [phoneOpen, setPhoneOpen] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const requestPhoneCode = usePhoneChangeCodeMutation();
+  const confirmPhone = useConfirmPhoneChangeMutation();
+  const updateSettings = useUpdateSettingsMutation();
+
+  function saveUsername() {
+    const value = username?.trim() ?? "";
+    if (!value || value === user?.username) {
+      setUsername(null);
+      return;
+    }
+    setUsernameError(null);
+    updateSettings.mutate(
+      { username: value },
+      {
+        onSuccess: () => {
+          toast.success(t("page.usernameSaved"));
+          setUsername(null);
+        },
+        onError: (error: Error) => {
+          const field = error instanceof AppError ? error.fields?.username : undefined;
+          setUsernameError((Array.isArray(field) ? field[0] : field) ?? error.message);
+        },
+      }
+    );
+  }
 
   const twoFactorEnabled = twoFactor.data?.enabled === true;
   const sheet = isCompact
@@ -194,14 +227,17 @@ export function AccountSettingsPage() {
           tone={SETTINGS_TONES.brand}
           title={t("page.loginLabel")}
           value={user?.username ?? "—"}
-          onClick={() => toast.info(t("page.notAvailable"))}
+          onClick={() => {
+            setUsernameError(null);
+            setUsername(user?.username ?? "");
+          }}
         />
         <SettingsRow
-          icon="check-circle"
-          tone={SETTINGS_TONES.success}
+          icon={user?.phoneVerified ? "check-circle" : "warning-fill"}
+          tone={user?.phoneVerified ? SETTINGS_TONES.success : SETTINGS_TONES.warning}
           title={isCompact ? t("page.mobile.phone") : t("page.phoneLabel")}
-          value={user?.phone ? t("page.verified") : "—"}
-          onClick={() => toast.info(t("page.notAvailable"))}
+          value={user?.phoneVerified ? t("page.verified") : user?.phone ? t("page.notVerified") : t("page.noPhone")}
+          onClick={() => setPhoneOpen(true)}
         />
       </SettingsSection>
 
@@ -450,6 +486,60 @@ export function AccountSettingsPage() {
           })
         }
       />
+      <PhoneVerifyDialog
+        key={phoneOpen ? "open" : "closed"}
+        open={phoneOpen}
+        onOpenChange={setPhoneOpen}
+        phone={user?.phone ?? ""}
+        editablePhone
+        onRequest={(phone) => requestPhoneCode.mutateAsync(phone)}
+        onVerify={async (phone, code) => {
+          await confirmPhone.mutateAsync({ phone, code });
+          toast.success(t("auth:phoneVerify.verified"));
+          setPhoneOpen(false);
+        }}
+      />
+
+      <AppDialog
+        open={username !== null}
+        onOpenChange={(open) => !open && setUsername(null)}
+        {...sheet}
+        title={t("page.usernameTitle")}
+        description={t("page.usernameHint")}
+        footer={
+          <div className="grid w-full grid-cols-2 gap-3">
+            <button type="button" className={dialogButton.secondary} onClick={() => setUsername(null)}>
+              {t("page.cancel")}
+            </button>
+            <button
+              type="button"
+              className={dialogButton.primary}
+              disabled={updateSettings.isPending || !username?.trim()}
+              onClick={saveUsername}
+            >
+              {t("page.save")}
+            </button>
+          </div>
+        }
+      >
+        <label className="flex flex-col gap-2">
+          <span className="text-body-sm text-ink">{t("page.loginLabel")}</span>
+          <input
+            className={MOBILE_INPUT}
+            value={username ?? ""}
+            autoFocus
+            autoCapitalize="none"
+            onChange={(event) => {
+              setUsernameError(null);
+              setUsername(event.target.value);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") saveUsername();
+            }}
+          />
+          {usernameError ? <small className="text-body-xs text-error-text">{usernameError}</small> : null}
+        </label>
+      </AppDialog>
     </ProfileSubPage>
   );
 }

@@ -21,6 +21,7 @@ import {
   useCancelLesson,
   useCreateLesson,
   useCreateLessonSchedule,
+  useLessonReminder,
   useLessons,
 } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
@@ -59,6 +60,7 @@ export function SchedulePage() {
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
   const cancelLesson = useCancelLesson();
+  const reminder = useLessonReminder();
 
   const [view, setView] = useState<View>("week");
   const [anchor, setAnchor] = useState(() => new Date());
@@ -74,6 +76,18 @@ export function SchedulePage() {
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
 
   const items = useMemo(() => lessons.data ?? [], [lessons.data]);
+  const detailLesson = detail ? (items.find((item) => item.id === detail.id) ?? detail) : null;
+
+  function toggleReminder(lesson: Lesson) {
+    const enabled = !lesson.hasReminder;
+    reminder.mutate(
+      { id: lesson.id, enabled },
+      {
+        onSuccess: (minutes) =>
+          toast.success(enabled ? t("schedule.reminderSet", { count: minutes ?? 15 }) : t("schedule.reminderCleared")),
+      }
+    );
+  }
 
   const courseLook = useMemo(() => {
     const byId = new Map((courses.data ?? []).map((course) => [course.id, course]));
@@ -170,7 +184,7 @@ export function SchedulePage() {
   const dialogs = (
     <>
       <LessonDetailDrawer
-        lesson={detail}
+        lesson={detailLesson}
         studentCount={detail ? courseLook(detail.courseId).students : 0}
         now={now}
         onOpenChange={(open) => {
@@ -183,7 +197,7 @@ export function SchedulePage() {
         onJoin={joinLesson}
         student={student}
         teacherName={detail ? courseLook(detail.courseId).teacher : ""}
-        onRemind={() => toast.info(t("schedule.soon"))}
+        onRemind={toggleReminder}
         onRecording={(lesson) => navigate(ROUTES.student.recording(lesson.id))}
         onRate={(lesson) => {
           setDetail(null);

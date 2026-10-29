@@ -1,5 +1,7 @@
 import { useState } from "react";
 import {
+  Award,
+  LifeBuoy,
   BookOpen,
   CalendarCheck,
   CheckCircle2,
@@ -49,6 +51,12 @@ export function AdminDashboardPage() {
     if (link.type === "teacher") {
       navigate(`${ROUTES.admin.teachers}?teacher=${encodeURIComponent(link.id)}`);
     }
+    if (link.type === "certificate") {
+      navigate(`${ROUTES.admin.certificates}?certificate=${encodeURIComponent(link.id)}`);
+    }
+    if (link.type === "support") {
+      navigate(`${ROUTES.admin.support}?ticket=${encodeURIComponent(link.id)}`);
+    }
   }
 
   async function signOut() {
@@ -88,6 +96,12 @@ export function AdminDashboardPage() {
         <div className="heading-actions">
           <Link className="portal-primary-link" to={ROUTES.admin.teachers}>
             <UsersRound size={15} /> {t("dashboard.teachersLink")}
+          </Link>
+          <Link className="portal-primary-link" to={ROUTES.admin.certificates}>
+            <Award size={15} /> {t("dashboard.certificatesLink")}
+          </Link>
+          <Link className="portal-primary-link" to={ROUTES.admin.support}>
+            <LifeBuoy size={15} /> {t("dashboard.supportLink")}
           </Link>
           <NotificationBell enabled={Boolean(user)} onOpenLink={openNotificationLink} />
           <Button variant="secondary" onClick={signOut}>

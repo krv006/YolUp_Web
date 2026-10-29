@@ -123,10 +123,17 @@ export function NotificationsPage() {
                       <Icon name={icon} size={22} />
                     </span>
                     <span className="flex min-w-0 flex-1 flex-col gap-1">
-                      <NotificationHtml
-                        className="line-clamp-3 text-body-sm text-ink-secondary [&_b]:mb-1 [&_b]:block [&_b]:text-title [&_b]:text-ink [&_strong]:mb-1 [&_strong]:block [&_strong]:text-title [&_strong]:text-ink"
-                        html={item.html}
-                      />
+                      {item.title ? (
+                        <span className="flex flex-col gap-1">
+                          <strong className="line-clamp-2 text-title text-ink">{item.title}</strong>
+                          {item.body ? <span className="line-clamp-3 text-body-sm text-ink-secondary">{item.body}</span> : null}
+                        </span>
+                      ) : (
+                        <NotificationHtml
+                          className="line-clamp-3 text-body-sm text-ink-secondary [&_b]:mb-1 [&_b]:block [&_b]:text-title [&_b]:text-ink [&_strong]:mb-1 [&_strong]:block [&_strong]:text-title [&_strong]:text-ink"
+                          html={item.html}
+                        />
+                      )}
                       {action ? (
                         <span className="text-body-sm font-semibold text-brand-strong">
                           {t(`actions.${action}`)}

@@ -47,8 +47,7 @@
       "emptyTitle": "Hali dars rejalashtirilmagan",
       "emptyHint": "O‘qituvchi dars qo‘shganda shu yerda ko‘rinadi.",
       "minutes": "{{count}} daq"
-    },
-    "soon": "Tez orada"
+    }
   },
   "enrollmentDialog": {
     "title": "Yangi muloqot",
@@ -133,7 +132,6 @@
   },
   "workspace": {
     "eyebrow": "O‘quvchi ish maydoni",
-    "soon": "Tez orada",
     "back": "Orqaga",
     "stats": {
       "tests": "Testlar",
@@ -176,9 +174,9 @@
       "tests": "{{count}} ta yangi",
       "assignments": "{{count}} ta faol",
       "mockNone": "Rejalashtirilmagan",
-      "ai": "Yangi",
+      "ai": "Mashq va tushuntirish",
       "analytics": "O‘rtacha {{value}}",
-      "materials": "Tez orada"
+      "materials": "{{count}} ta fayl"
     },
     "mobile": {
       "eyebrow": "Ish maydoni",
@@ -339,7 +337,10 @@
       "leftSection": "qoldi · {{section}}",
       "back": "Imtihonga qaytish",
       "emptyTitle": "Hozircha mock imtihon yo‘q",
-      "emptyHint": "O‘qituvchingiz sinov imtihonini belgilasa, shu yerda ko‘rinadi."
+      "emptyHint": "O‘qituvchingiz sinov imtihonini belgilasa, shu yerda ko‘rinadi.",
+      "reminderOn": "Eslatma · {{count}} daq oldin",
+      "reminderSet": "Imtihondan {{count}} daqiqa oldin eslatamiz",
+      "reminderCleared": "Eslatma bekor qilindi"
     },
     "mockResult": {
       "eyebrow": "Mock testlar / Natijangiz · {{date}}",
@@ -363,7 +364,14 @@
       "askTeacher": "O‘qituvchiga savol",
       "practice": "Xatolar ustida ishlash",
       "notReady": "Natija hali e’lon qilinmagan",
-      "notReadyHint": "O‘qituvchi natijalarni e’lon qilgach, shu yerda ko‘rinadi."
+      "notReadyHint": "O‘qituvchi natijalarni e’lon qilgach, shu yerda ko‘rinadi.",
+      "practiceTitle": "Xatolar ustida mashq",
+      "targetTitle": "Maqsadingiz",
+      "targetHint": "Erishmoqchi bo‘lgan ballingizni kiriting (masalan, 7.5 yoki 1400).",
+      "targetPlaceholder": "Masalan, 7.5",
+      "targetSave": "Saqlash",
+      "targetCancel": "Bekor qilish",
+      "targetInvalid": "Ball 0 dan 1600 gacha bo‘lishi kerak"
     },
     "homework": {
       "eyebrow": "Workspace / Vazifalar · {{count}} ta",
@@ -420,7 +428,41 @@
       "resubmit": "Qayta topshirish",
       "resubmitAsked": "O‘qituvchi qayta topshirishni so‘radi",
       "notFound": "Vazifa topilmadi",
-      "retry": "Qayta urinish"
+      "retry": "Qayta urinish",
+      "tooManyFiles": "Ko‘pi bilan {{count}} ta fayl yuklash mumkin",
+      "filesCount": "{{count}} / {{max}} fayl",
+      "myComment": "Sizning izohingiz",
+      "filesTitle": "Yuborilgan fayllar · {{count}}"
     }
+  },
+  "tutor": {
+    "score": "Natija: {{correct}} / {{total}} to‘g‘ri",
+    "progress": "{{answered}} / {{total}} savolga javob berildi",
+    "usage": "Bugun: {{used}} / {{limit}} AI so‘rov",
+    "more": "Yangi savollar",
+    "eyebrow": "Kuniga 20 ta so‘rov",
+    "title": "AI yordamchi",
+    "modes": {
+      "practice": "Mavzu bo‘yicha mashq",
+      "explain": "Savolni tushuntirish"
+    },
+    "practiceTitle": "Mashq savollari",
+    "practiceHint": "Mavzuni yozing — AI test savollarini tuzib beradi.",
+    "topic": "Mavzu",
+    "topicPlaceholder": "Masalan, Present Perfect yoki kvadrat tenglamalar",
+    "material": "Qo‘shimcha matn (ixtiyoriy)",
+    "materialPlaceholder": "Konspekt yoki darslikdan parcha qo‘ying",
+    "count": "Savollar soni",
+    "generate": "Savollar yaratish",
+    "generating": "Yaratilmoqda…",
+    "explainTitle": "Tushunmagan savolingiz",
+    "explainHint": "Savol va javobingizni yozing — AI qadamma-qadam tushuntiradi.",
+    "question": "Savol",
+    "questionPlaceholder": "Savol matnini shu yerga yozing",
+    "wrongAnswer": "Sizning javobingiz (ixtiyoriy)",
+    "correctAnswer": "To‘g‘ri javob (ixtiyoriy)",
+    "explain": "Tushuntirish",
+    "thinking": "O‘ylanmoqda…",
+    "answerTitle": "Tushuntirish"
   }
 }

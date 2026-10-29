@@ -184,6 +184,36 @@ export function useShareExamResults() {
   });
 }
 
+export function useExamReminder() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, enabled }: { id: string; enabled: boolean }) => {
+      if (!enabled) {
+        await examApi.clearReminder(id);
+        return null;
+      }
+      return (await examApi.setReminder(id)).minutes_before;
+    },
+    onSuccess: () => client.invalidateQueries({ queryKey: examKeys.all }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useExamResultPdf() {
+  return useMutation({
+    mutationFn: ({ examId, studentId }: { examId: string; studentId: string }) =>
+      examApi.downloadResultPdf(examId, studentId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useExamMistakesPractice(examId: string) {
+  return useMutation({
+    mutationFn: () => examApi.mistakesPractice(examId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useFinishExam(examId: string) {
   const { t } = useTranslation("exam");
   const client = useQueryClient();

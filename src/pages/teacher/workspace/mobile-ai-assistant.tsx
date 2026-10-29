@@ -28,9 +28,22 @@ export interface MobileAiFormProps {
   onBack: () => void;
   onHistory: () => void;
   onSubmit: (value: { files: File[]; subject: string; topic: string; count: number; standard: AiQuizStandard | null }) => void;
+  bankPending: boolean;
+  bankError: string | null;
+  onBank: (value: { topic: string; count: number }) => void;
 }
 
-export function MobileAiForm({ subjects, pending, error, onBack, onHistory, onSubmit }: MobileAiFormProps) {
+export function MobileAiForm({
+  subjects,
+  pending,
+  error,
+  onBack,
+  onHistory,
+  onSubmit,
+  bankPending,
+  bankError,
+  onBank,
+}: MobileAiFormProps) {
   const { t } = useTranslation("quiz");
   const fileRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<Tab>("simple");
@@ -67,8 +80,49 @@ export function MobileAiForm({ subjects, pending, error, onBack, onHistory, onSu
         </div>
 
         {tab === "bank" ? (
-          <div className="mt-5">
-            <MobileEmptyCard icon="quiz" title={t("ai.mobile.bankTitle")} description={t("ai.mobile.bankHint")} />
+          <div className="mt-[15px] flex flex-col gap-[15px]">
+            <p className="flex items-start gap-2.5 rounded-lg bg-brand-subtle px-4 py-3 text-body-sm text-brand">
+              <Icon name="info" size={18} className="mt-0.5 shrink-0" />
+              {t("ai.bankHint")}
+            </p>
+            <MobileFieldLabel gapClassName="gap-[7px]" label={t("ai.topic")}>
+              <input
+                className={MOBILE_INPUT_SURFACE}
+                value={topic}
+                placeholder={t("ai.topicPlaceholder")}
+                onChange={(event) => setTopic(event.target.value)}
+              />
+            </MobileFieldLabel>
+            {bankError ? (
+              <p className="flex items-start gap-2.5 rounded-lg bg-danger-bg px-4 py-3 text-body-sm text-error-text">
+                <Icon name="warning-fill" size={18} className="mt-0.5 shrink-0 text-danger" />
+                {bankError}
+              </p>
+            ) : null}
+            <div className="flex items-center gap-3">
+              <span className="min-w-0 flex-1 text-body-sm text-ink">{t("ai.questionCount")}</span>
+              <span className="flex h-13 shrink-0 items-center gap-1 rounded-full bg-subtle p-1.5">
+                <button
+                  type="button"
+                  className="grid size-10 place-items-center rounded-full bg-surface text-ink transition-colors hover:bg-muted disabled:opacity-40"
+                  aria-label={t("ai.less")}
+                  disabled={count <= MIN_QUESTIONS}
+                  onClick={() => setCount((value) => Math.max(MIN_QUESTIONS, value - 5))}
+                >
+                  <Icon name="remove" size={22} />
+                </button>
+                <strong className="w-13 text-center text-title-sm text-ink">{t("ai.mobile.count", { count })}</strong>
+                <button
+                  type="button"
+                  className="grid size-10 place-items-center rounded-full bg-surface text-ink transition-colors hover:bg-muted disabled:opacity-40"
+                  aria-label={t("ai.more")}
+                  disabled={count >= MAX_QUESTIONS}
+                  onClick={() => setCount((value) => Math.min(MAX_QUESTIONS, value + 5))}
+                >
+                  <Icon name="add" size={22} />
+                </button>
+              </span>
+            </div>
           </div>
         ) : (
           <>
@@ -179,7 +233,19 @@ export function MobileAiForm({ subjects, pending, error, onBack, onHistory, onSu
         )}
       </div>
 
-      {tab === "bank" ? null : (
+      {tab === "bank" ? (
+        <MobileActionBar>
+          <button
+            type="button"
+            className={mobileButton.primary}
+            disabled={bankPending || !topic.trim()}
+            onClick={() => onBank({ topic: topic.trim(), count })}
+          >
+            <Icon name="quiz" size={20} />
+            {t("ai.bankSubmit")}
+          </button>
+        </MobileActionBar>
+      ) : (
         <MobileActionBar>
           <button
             type="button"

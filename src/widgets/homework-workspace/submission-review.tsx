@@ -283,6 +283,15 @@ export function SubmissionReview({
             </small>
           ) : null}
 
+          {current.comment ? (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-caption-strong text-ink-tertiary">{t("review.studentComment")}</span>
+              <p className="rounded-xl border border-line px-3 py-2.5 text-body-sm whitespace-pre-line text-ink">
+                {current.comment}
+              </p>
+            </div>
+          ) : null}
+
           <label className="field-group">
             <span>{t("review.comment")}</span>
             <textarea
@@ -328,7 +337,7 @@ export function SubmissionReview({
                   input: {
                     gradeValue: grading === "none" ? undefined : score,
                     shareWithParent,
-                    result: { ...(current.rawResult ?? {}), teacher_comment: comment },
+                    teacherComment: comment.trim(),
                   },
                 })
               }
@@ -396,6 +405,7 @@ function initialScore(submission: Submission, fallback: number | null): number |
 }
 
 function initialComment(submission: Submission): string {
+  if (submission.teacherComment) return submission.teacherComment;
   const stored = submission.rawResult?.teacher_comment;
   if (typeof stored === "string" && stored) return stored;
   return aiComment(submission.result) || "";

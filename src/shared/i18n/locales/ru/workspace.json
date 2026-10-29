@@ -2,7 +2,6 @@
   "eyebrow": "РАБОЧЕЕ ПРОСТРАНСТВО",
   "title": "Workspace",
   "subtitle": "Разделы для ежедневной работы собраны здесь.",
-  "soon": "Скоро",
   "cards": {
     "quizzes": {
       "title": "Тест",
@@ -88,7 +87,7 @@
   "searchAria": "Поиск",
   "notificationsAria": "Уведомления",
   "searchTitle": "Поиск",
-  "searchPlaceholder": "Группа, занятие, тест или сообщение",
+  "searchPlaceholder": "Группа, занятие, тест, сообщение или человек",
   "searchHint": "Введите минимум 2 символа.",
   "searchEmpty": "По «{{query}}» ничего не найдено.",
   "filterAll": "Все · {{count}}",
@@ -232,6 +231,45 @@
     "tomorrow": "Завтра",
     "emptyTitle": "Ничего не найдено",
     "emptyHint": "По запросу «{{query}}» не найдено групп, уроков, тестов или сообщений. Попробуйте другое слово.",
-    "clear": "Очистить"
+    "clear": "Очистить",
+    "people": "Люди · {{count}}"
+  },
+  "filterPeople": "Люди",
+  "sectionPeople": "ЛЮДИ · {{count}}",
+  "materials": {
+    "eyebrow": "Файлов: {{count}}",
+    "title": "Материалы",
+    "allGroups": "Все группы",
+    "group": "Группа",
+    "searchPlaceholder": "Поиск по названию",
+    "kinds": {
+      "all": "Все",
+      "pdf": "PDF",
+      "doc": "Документы",
+      "video": "Видео",
+      "audio": "Аудио",
+      "image": "Изображения",
+      "other": "Другое"
+    },
+    "download": "Скачать",
+    "downloadFailed": "Не удалось скачать файл",
+    "delete": "Удалить",
+    "deleteTitle": "Удалить материал?",
+    "deleted": "Материал удалён",
+    "cancel": "Отмена",
+    "emptyTitle": "Материалов пока нет",
+    "emptyFiltered": "Ничего не найдено",
+    "emptyHintTeacher": "Загрузите учебник, аудио или видео — ученики группы увидят их.",
+    "emptyHintStudent": "Здесь появятся материалы, которые загрузит учитель.",
+    "upload": "Загрузить",
+    "uploading": "Загрузка…",
+    "uploadTitle": "Загрузка материала",
+    "uploadHint": "PDF, Office, аудио, видео, изображение или ZIP · до 50 МБ",
+    "pickFile": "Выберите файл",
+    "fileHint": "Нажмите, чтобы выбрать на компьютере",
+    "name": "Название",
+    "namePlaceholder": "Например, конспект 3 главы",
+    "tooLarge": "Файл больше 50 МБ",
+    "uploaded": "Материал загружен"
   }
 }

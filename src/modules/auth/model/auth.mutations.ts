@@ -16,6 +16,7 @@ export function useRegisterMutation() {
         last_name: values.lastName.trim(),
         role: values.role,
         phone: values.phone?.trim() || "",
+        ...(values.phoneToken ? { phone_token: values.phoneToken } : {}),
       }),
   });
 }
@@ -82,7 +83,7 @@ export function useUpdateProfileMutation() {
         await authApi.updateCurrentUser({
           first_name: values.firstName.trim(),
           last_name: values.lastName.trim(),
-          phone: values.phone?.trim() || "",
+          ...(values.phone !== undefined ? { phone: values.phone.trim() } : {}),
           ...(username ? { username } : {}),
           ...(values.middleName !== undefined ? { middle_name: values.middleName.trim() } : {}),
           ...(values.birthDate !== undefined ? { birth_date: values.birthDate || null } : {}),
@@ -161,10 +162,61 @@ export function useUpdateAvatarMutation() {
   });
 }
 
+export function useRemoveAvatarMutation() {
+  return useMutation({
+    mutationFn: async (): Promise<AuthUser> => {
+      const dto = await authApi.removeAvatar();
+      if (dto && typeof dto === "object") return mapUserDto(dto);
+      return mapUserDto(await authApi.getCurrentUser());
+    },
+    onSuccess: (user) => useAuthStore.getState().setUser(user),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useUpdateSettingsMutation() {
+  return useMutation({
+    mutationFn: async (dto: { theme?: string; text_size?: string; target_band?: number | null; username?: string }) =>
+      mapUserDto(await authApi.updateSettings(dto)),
+    onSuccess: (user) => useAuthStore.getState().setUser(user),
+  });
+}
+
+export function useRegisterPhoneCodeMutation() {
+  return useMutation({ mutationFn: (phone: string) => authApi.requestRegisterPhoneCode(phone) });
+}
+
+export function useVerifyRegisterPhoneMutation() {
+  return useMutation({
+    mutationFn: ({ phone, code }: { phone: string; code: string }) => authApi.verifyRegisterPhone(phone, code),
+  });
+}
+
+export function usePhoneChangeCodeMutation() {
+  return useMutation({ mutationFn: (phone: string) => authApi.requestPhoneChangeCode(phone) });
+}
+
+export function useConfirmPhoneChangeMutation() {
+  return useMutation({
+    mutationFn: async ({ phone, code }: { phone: string; code: string }) =>
+      mapUserDto(await authApi.confirmPhoneChange(phone, code)),
+    onSuccess: (user) => useAuthStore.getState().setUser(user),
+  });
+}
+
 export function useUploadCertificate() {
   return useMutation({
-    mutationFn: async ({ file, title }: { file: File; title?: string }) =>
-      mapCertificateDto(await authApi.uploadCertificate(file, title)),
+    mutationFn: async ({
+      file,
+      title,
+      issuer,
+      issuedYear,
+    }: {
+      file: File;
+      title?: string;
+      issuer?: string;
+      issuedYear?: number | null;
+    }) => mapCertificateDto(await authApi.uploadCertificate(file, title, issuer, issuedYear)),
     onSuccess: (certificate) => {
       const { user, setUser } = useAuthStore.getState();
       if (user) setUser({ ...user, certificates: [...user.certificates, certificate] });

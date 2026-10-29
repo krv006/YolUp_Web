@@ -17,5 +17,7 @@ export { MessageList } from "./ui/message-list";
 export { MessageText } from "./ui/message-text";
 export { TypingIndicator } from "./ui/typing-indicator";
 export { PinnedMessageBar } from "./ui/pinned-message-bar";
+export { RoomAttachments } from "./ui/room-attachments";
+export type { RoomAttachmentsProps } from "./ui/room-attachments";
 export { VoiceMessage } from "./ui/voice-message";
 export { useChatUiStore } from "./model/chat-ui.store";

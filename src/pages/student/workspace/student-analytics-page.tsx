@@ -48,7 +48,15 @@ export function StudentAnalyticsPage() {
       item.mySubmission &&
       (!item.dueAt || new Date(item.mySubmission.createdAt).getTime() <= new Date(item.dueAt).getTime())
   ).length;
-  const homeworkRate = due.length ? Math.round((onTime / due.length) * 100) : null;
+  const localHomeworkRate = due.length ? Math.round((onTime / due.length) * 100) : null;
+  const overview = data.overview;
+  const shownGrade = overview ? overview.avgGrade : avgGrade;
+  const gradeCount = overview ? overview.gradesCount : grades.length;
+  const shownAttended = overview ? overview.lessonsAttended : attended;
+  const shownMissed = overview ? overview.lessonsMissed : finished.length - attended;
+  const shownRate = overview ? overview.attendanceRateMonth : rate;
+  const homeworkRate = overview ? overview.homeworkOnTimeRate : localHomeworkRate;
+  const courseStats = new Map((overview?.courses ?? []).map((item) => [item.courseId, item]));
 
   const weeks = useMemo(() => {
     const first = startOfWeek(new Date(now.getTime() - (WEEKS - 1) * WEEK_MS), { weekStartsOn: 1 }).getTime();
@@ -70,29 +78,36 @@ export function StudentAnalyticsPage() {
       .filter((item) => item.courseId === course.id)
       .map((item) => item.mySubmission?.gradeValue ?? null)
       .filter((value): value is number => value !== null);
+    const server = courseStats.get(course.id);
     return {
       course,
-      test: tests.length ? Math.round(tests.reduce((sum, attempt) => sum + (attempt.percentage ?? 0), 0) / tests.length) : null,
-      grade: marks.length ? marks.reduce((sum, value) => sum + value, 0) / marks.length : null,
+      test: server
+        ? server.testAvg === null
+          ? null
+          : Math.round(server.testAvg)
+        : tests.length
+          ? Math.round(tests.reduce((sum, attempt) => sum + (attempt.percentage ?? 0), 0) / tests.length)
+          : null,
+      grade: server ? server.gradeAvg : marks.length ? marks.reduce((sum, value) => sum + value, 0) / marks.length : null,
     };
   });
 
   const stats = [
     {
       id: "grade",
-      value: avgGrade === null ? "—" : decimal(avgGrade),
-      hint: t("workspace.analytics.stats.gradeHint", { count: grades.length }),
+      value: shownGrade === null ? "—" : decimal(shownGrade),
+      hint: t("workspace.analytics.stats.gradeHint", { count: gradeCount }),
       tone: "text-success-fg",
     },
     {
       id: "lessons",
-      value: lessons.isLoading ? "—" : String(attended),
-      hint: t("workspace.analytics.stats.lessonsHint", { count: finished.length - attended }),
+      value: !overview && lessons.isLoading ? "—" : String(shownAttended),
+      hint: t("workspace.analytics.stats.lessonsHint", { count: shownMissed }),
       tone: "text-ink",
     },
     {
       id: "attendance",
-      value: rate === null ? "—" : `${rate}%`,
+      value: shownRate === null ? "—" : `${shownRate}%`,
       hint: t("workspace.analytics.stats.attendanceHint"),
       tone: "text-ink",
     },
