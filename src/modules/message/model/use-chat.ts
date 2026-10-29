@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import type { Page } from "@/shared/api";
 import { i18n } from "@/shared/i18n";
 import { conversationApi, conversationKeys, readCachedConversation } from "@/modules/conversation";
-import type { ChatMessage, ConversationRole, SendMessagePayload } from "@/shared/types";
+import type { ChatMessage, Conversation, ConversationRole, SendMessagePayload } from "@/shared/types";
 import { messageApi } from "../api/message.api";
 import { ChatSocketManager, type SocketState } from "../lib/chat-socket-manager";
 import { applyReactions, markMessageFailed, upsertMessage } from "../lib/message.mappers";
@@ -34,7 +35,7 @@ export function useChat(
     [conversationId, role]
   );
   const [socketState, setSocketState] = useState<SocketState>("idle");
-  const [typing, setTyping] = useState<string | null>(null);
+  const [typing, setTyping] = useState<{ name: string; kind: "text" | "voice" } | null>(null);
 
   const cachedConversation = readCachedConversation(queryClient, conversationId, role);
 
@@ -99,8 +100,26 @@ export function useChat(
                 });
               }
               if (event.type === "typing" && event.userId !== String(senderId)) {
-                setTyping(event.name);
-                globalThis.setTimeout(() => setTyping(null), TYPING_RESET_MS);
+                const markRow = (value: { name: string; kind: "text" | "voice" } | null) =>
+                  queryClient.setQueryData<Page<Conversation>>(conversationKeys.list(role), (current) =>
+                    current
+                      ? {
+                          ...current,
+                          items: current.items.map((item) =>
+                            item.id === conversationId
+                              ? { ...item, typing: Boolean(value), typingName: value?.name ?? null, typingKind: value?.kind }
+                              : item
+                          ),
+                        }
+                      : current
+                  );
+                const value = { name: event.name, kind: event.kind };
+                setTyping(value);
+                markRow(value);
+                globalThis.setTimeout(() => {
+                  setTyping(null);
+                  markRow(null);
+                }, TYPING_RESET_MS);
               }
               if (event.type === "removed") {
                 toast.error(i18n.t("chat:removedFromGroup"));
@@ -233,7 +252,7 @@ export function useChat(
     conversation: {
       ...conversation,
       data: conversation.data
-        ? { ...conversation.data, typing: Boolean(typing), typingName: typing }
+        ? { ...conversation.data, typing: Boolean(typing), typingName: typing?.name ?? null, typingKind: typing?.kind }
         : conversation.data,
     },
     messages,
@@ -248,7 +267,7 @@ export function useChat(
     pinMessage,
     markRead,
     socketState,
-    sendTyping: () => socket?.sendTyping(),
+    sendTyping: (kind?: "text" | "voice") => socket?.sendTyping(kind),
   };
 }
 

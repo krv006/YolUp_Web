@@ -347,7 +347,7 @@ export function MessageList({
           );
         })}
         {!search && conversation.typing && (
-          <TypingIndicator name={conversation.typingName || conversation.title} />
+          <TypingIndicator name={conversation.typingName || conversation.title} kind={conversation.typingKind} />
         )}
         <div ref={bottomRef} />
         </div>

@@ -201,7 +201,10 @@ export function ToolbarButton({
 interface RequestSignal {
   requestMic?: () => void;
   requestCamera?: () => void;
+  cancelMic?: () => void;
+  cancelCamera?: () => void;
   requesting: boolean;
+  cancelling?: boolean;
   waiting: boolean;
 }
 
@@ -227,10 +230,10 @@ function MicButton({ isTeacher, request }: { isTeacher: boolean; request: Reques
   return (
     <ToolbarButton
       icon={<Hand size={22} />}
-      label={label}
+      label={request.waiting ? t("room.cancelRequest") : label}
       tone={request.waiting ? "active" : "default"}
-      disabled={request.requesting || request.waiting}
-      onClick={request.requestMic}
+      disabled={request.requesting || Boolean(request.cancelling)}
+      onClick={request.waiting ? request.cancelMic : request.requestMic}
     />
   );
 }
@@ -257,10 +260,10 @@ function CameraButton({ isTeacher, request }: { isTeacher: boolean; request: Req
   return (
     <ToolbarButton
       icon={<Hand size={22} />}
-      label={label}
+      label={request.waiting ? t("room.cancelRequest") : label}
       tone={request.waiting ? "active" : "default"}
-      disabled={request.requesting || request.waiting}
-      onClick={request.requestCamera}
+      disabled={request.requesting || Boolean(request.cancelling)}
+      onClick={request.waiting ? request.cancelCamera : request.requestCamera}
     />
   );
 }

@@ -94,12 +94,14 @@
     "filesEmptyHint": "Guruhda yuborilgan fayllar shu yerda to‘planadi.",
     "mediaEmptyHint": "Guruhda yuborilgan rasm va videolar shu yerda to‘planadi.",
     "descriptionShort": "Tavsif",
-    "memberYou": "{{name}} (siz)"
+    "memberYou": "{{name}} (siz)",
+    "messageTeacher": "Xabar yozish"
   },
   "item": {
     "liveNow": "Dars ketmoqda",
     "typing": "yozmoqda...",
-    "mentionTitle": "Sizni eslatib o‘tishdi"
+    "mentionTitle": "Sizni eslatib o‘tishdi",
+    "recordingVoice": "ovozli xabar yozmoqda..."
   },
   "newDialog": {
     "title": "Yangi guruh",
@@ -221,7 +223,8 @@
     "recordingHint": "Dars yozuvini ochish"
   },
   "typing": {
-    "suffix": "yozmoqda"
+    "suffix": "yozmoqda",
+    "voiceSuffix": "ovozli xabar yozmoqda"
   },
   "attachment": {
     "openAria": "{{name}} — ochish",
@@ -294,7 +297,11 @@
     "peopleSection": "Odamlar",
     "startChat": "Suhbat ochish",
     "connectionLost": "Ulanish yo‘q",
-    "freshStart": "Yangi boshlanish"
+    "freshStart": "Yangi boshlanish",
+    "voiceMessage": "Ovozli xabar",
+    "imageMessage": "Rasm",
+    "videoMessage": "Video",
+    "recordingVoice": "{{name}} ovozli xabar yozmoqda..."
   },
   "pinned": {
     "label": "Qadalgan xabar",

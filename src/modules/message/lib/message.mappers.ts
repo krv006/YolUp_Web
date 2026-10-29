@@ -146,7 +146,7 @@ export function mapChatMemberDto(dto: ChatMemberDto): ChatMember {
 
 export type ParsedSocketEvent =
   | { type: "message"; message: ChatMessage }
-  | { type: "typing"; userId: string; name: string }
+  | { type: "typing"; userId: string; name: string; kind: "text" | "voice" }
   | { type: "removed" }
   | { type: "edited"; messageId: string; text: string; editedAt: string | null }
   | { type: "deleted"; messageIds: string[]; scope: "me" | "everyone" }
@@ -175,7 +175,12 @@ export function parseSocketEvent(raw: unknown, currentUserId?: string | null): P
     case "message":
       return event.message ? { type: "message", message: mapMessageDto(event.message, currentUserId) } : null;
     case "typing":
-      return { type: "typing", userId: String(event.user_id), name: event.name ?? "" };
+      return {
+        type: "typing",
+        userId: String(event.user_id),
+        name: event.name ?? "",
+        kind: payload.kind === "voice" ? "voice" : "text",
+      };
     case "removed":
       return { type: "removed" };
     case "message_edited":

@@ -40,6 +40,8 @@ export interface MobileGroupInfoProps {
   variant?: "screen" | "panel";
   teacherName?: string;
   roomMembers?: ChatMember[];
+  onMessage?: (member: ChatMember) => void;
+  messagePending?: boolean;
 }
 
 type Tab = "members" | "files" | "media";
@@ -63,6 +65,8 @@ export function MobileGroupInfo({
   variant = "screen",
   teacherName,
   roomMembers = [],
+  onMessage,
+  messagePending = false,
 }: MobileGroupInfoProps) {
   const panel = variant === "panel";
   const rowTitle = `truncate text-title text-ink ${panel ? "leading-5" : ""}`;
@@ -298,6 +302,21 @@ export function MobileGroupInfo({
                           </small>
                         )}
                       </span>
+                      {teacher && onMessage && member.id !== user?.id ? (
+                        <button
+                          type="button"
+                          className={`flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-brand-subtle text-caption-strong text-brand transition-colors hover:bg-tint disabled:opacity-60 ${
+                            panel ? "w-9" : "px-3"
+                          }`}
+                          disabled={messagePending}
+                          aria-label={t("info.messageTeacher")}
+                          title={t("info.messageTeacher")}
+                          onClick={() => onMessage(member)}
+                        >
+                          <Icon name="chat" size={16} />
+                          {panel ? null : t("info.messageTeacher")}
+                        </button>
+                      ) : null}
                     </li>
                   );
                 })

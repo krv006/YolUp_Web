@@ -1,15 +1,17 @@
 import { useTranslation } from "react-i18next";
+import { useCurrentUser } from "@/modules/auth";
+import { isOwnLastMessage, lastMessageBody } from "@/modules/conversation";
 import { formatMessageTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 
-function preview(conversation: Conversation, youLabel: string): string {
+function preview(conversation: Conversation, mine: boolean, youLabel: string, body: string): string {
   if (!conversation.lastMessage) return "";
   const sender = conversation.lastSender;
-  if (!sender) return conversation.lastMessage;
-  return `${sender === "me" ? youLabel : sender}: ${conversation.lastMessage}`;
+  if (!sender) return body;
+  return `${mine ? youLabel : sender}: ${body}`;
 }
 
 function listTime(value: string, yesterday: string, weekdays: string[]): string {
@@ -26,7 +28,14 @@ function listTime(value: string, yesterday: string, weekdays: string[]): string 
 
 export function ConversationRowBody({ conversation }: { conversation: Conversation }) {
   const { t } = useTranslation("chat");
+  const user = useCurrentUser();
   const weekdays = t("listTime.weekdays", { returnObjects: true }) as string[];
+  const mine = isOwnLastMessage(conversation, user);
+  const body = lastMessageBody(conversation, {
+    voice: t("panel.voiceMessage"),
+    image: t("panel.imageMessage"),
+    video: t("panel.videoMessage"),
+  });
 
   return (
     <>
@@ -54,7 +63,9 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
       </strong>
       {conversation.typing ? (
         <small className="truncate text-body-sm text-brand">
-          {t("panel.typing", { name: conversation.typingName ?? "" })}
+          {conversation.typingKind === "voice"
+            ? t("panel.recordingVoice", { name: conversation.typingName ?? "" })
+            : t("panel.typing", { name: conversation.typingName ?? "" })}
         </small>
       ) : (
         <small
@@ -62,10 +73,8 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
             conversation.unreadCount ? "text-ink" : "text-ink-secondary"
           }`}
         >
-          {conversation.lastSender === "me" ? (
-            <Icon name="done-all" size={16} className="shrink-0 text-brand" />
-          ) : null}
-          <span className="truncate">{preview(conversation, t("panel.you"))}</span>
+          {mine ? <Icon name="done-all" size={16} className="shrink-0 text-brand" /> : null}
+          <span className="truncate">{preview(conversation, mine, t("panel.you"), body)}</span>
         </small>
       )}
     </span>

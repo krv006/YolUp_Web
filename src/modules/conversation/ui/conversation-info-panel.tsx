@@ -4,6 +4,7 @@ import { GraduationCap, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ROUTES } from "@/shared/config";
 import { formatRelativeShort, initials, storage } from "@/shared/lib";
 import { useAuth } from "@/modules/auth";
 import {
@@ -21,6 +22,8 @@ import {
   DIRECT_STATUS,
   InviteStudentsDialog,
   useAnnouncementMode,
+  useConversations,
+  useRequestDirect,
   useDirectStatusLabel,
   useRespondDirect,
   useSetRoomImage,
@@ -163,6 +166,26 @@ export function ConversationInfoPanel({
   }
 
   const teacherGroup = isGroup && user?.role === "TEACHER";
+  const studentViewer = user?.role === "STUDENT";
+  const studentRooms = useConversations("student");
+  const requestDirect = useRequestDirect();
+
+  function messageTeacher(teacherId: string) {
+    const existing = (studentRooms.data ?? []).find(
+      (item) => item.type === "direct" && item.participantId === teacherId
+    );
+    if (existing?.directStatus === DIRECT_STATUS.ACTIVE) {
+      navigate(ROUTES.student.chat(existing.id));
+      return;
+    }
+    requestDirect.mutate(teacherId, {
+      onSuccess: (room) => {
+        if (room.directStatus === DIRECT_STATUS.ACTIVE) navigate(ROUTES.student.chat(room.id));
+        else toast.success(t("panel.directRequestSent"));
+      },
+      onError: (error: Error) => toast.error(error.message),
+    });
+  }
   const joinRequests = useCourseRequests({ page_size: 50 }, open && teacherGroup);
   const pendingRequests = (joinRequests.data?.items ?? []).filter(
     (item) => item.courseId === conversation.courseId
@@ -196,6 +219,8 @@ export function ConversationInfoPanel({
       subjectLabel={course.data?.subjectLabel}
       teacherName={course.data?.teacher}
       roomMembers={roomMembers.data ?? []}
+      onMessage={studentViewer ? (member) => messageTeacher(member.id) : undefined}
+      messagePending={requestDirect.isPending}
       muted={muted}
       announcement={announcement}
       requestsCount={pendingRequests.length}
@@ -594,7 +619,7 @@ export function ConversationInfoPanel({
                       tone={course.data.teacherUser?.avatarTone}
                       size="sm"
                     />
-                    <span className="flex min-w-0 flex-col">
+                    <span className="flex min-w-0 flex-1 flex-col">
                       <strong className="truncate text-label-strong text-ink">
                         {course.data.teacher}
                       </strong>
@@ -604,6 +629,17 @@ export function ConversationInfoPanel({
                         </small>
                       ) : null}
                     </span>
+                    {studentViewer && course.data.teacherUser?.id ? (
+                      <button
+                        type="button"
+                        className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-brand-subtle px-3 text-caption-strong text-brand transition-colors hover:bg-tint disabled:opacity-60"
+                        disabled={requestDirect.isPending}
+                        onClick={() => messageTeacher(course.data!.teacherUser!.id)}
+                      >
+                        <Icon name="chat" size={16} />
+                        {t("info.messageTeacher")}
+                      </button>
+                    ) : null}
                   </div>
                 ) : (
                   <p className="px-1 text-body-sm text-ink-secondary">

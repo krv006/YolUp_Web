@@ -94,12 +94,14 @@
     "filesEmptyHint": "Files shared in the group are collected here.",
     "mediaEmptyHint": "Photos and videos shared in the group are collected here.",
     "descriptionShort": "Description",
-    "memberYou": "{{name}} (you)"
+    "memberYou": "{{name}} (you)",
+    "messageTeacher": "Message"
   },
   "item": {
     "liveNow": "Lesson in progress",
     "typing": "typing...",
-    "mentionTitle": "You were mentioned"
+    "mentionTitle": "You were mentioned",
+    "recordingVoice": "recording a voice message..."
   },
   "newDialog": {
     "title": "New group",
@@ -221,7 +223,8 @@
     "recordingHint": "Open the lesson recording"
   },
   "typing": {
-    "suffix": "typing"
+    "suffix": "typing",
+    "voiceSuffix": "is recording a voice message"
   },
   "attachment": {
     "openAria": "{{name}} — open",
@@ -294,7 +297,11 @@
     "peopleSection": "People",
     "startChat": "Start chat",
     "connectionLost": "No connection",
-    "freshStart": "Fresh start"
+    "freshStart": "Fresh start",
+    "voiceMessage": "Voice message",
+    "imageMessage": "Photo",
+    "videoMessage": "Video",
+    "recordingVoice": "{{name}} is recording a voice message..."
   },
   "pinned": {
     "label": "Pinned message",
