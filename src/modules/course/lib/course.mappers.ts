@@ -51,6 +51,7 @@ export function mapCourseUserDto(dto: UserDto = {} as UserDto): DomainUser {
     phone: dto.phone ?? null,
     inviteCode: dto.invite_code ?? null,
     avatarTone: toneFor(dto.id),
+    avatarUrl: normalizeMediaUrl(dto.avatar ?? null),
     status: "offline",
   };
 }

@@ -15,6 +15,7 @@ export interface DomainUser {
   phone?: string | null;
   inviteCode?: string | null;
   avatarTone?: string;
+  avatarUrl?: string | null;
   status?: string;
 }
 

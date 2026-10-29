@@ -215,7 +215,8 @@
     "mobileReadyNote": "Tayyor bo‘lishi bilan chatga xabar yuboriladi.",
     "joinedYou": "Qatnashdingiz",
     "minutesShort": "{{count}} daq",
-    "download": "Yuklab olish"
+    "download": "Yuklab olish",
+    "volume": "Ovoz balandligi"
   },
   "schedule": {
     "now": "HOZIR",

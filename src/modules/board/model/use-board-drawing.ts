@@ -1,9 +1,10 @@
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import type { Point, StrokeShapeDto } from "../api/board.dto";
 import { buildStroke, type DrawKind } from "../lib/board.geometry";
 import type { BoardTool } from "../ui/board-toolbar";
 
 const PLACED_TOOLS = new Set<BoardTool>(["text", "math"]);
+const MIN_POINT_DISTANCE = 2;
 
 export interface UseBoardDrawingInit {
   width: number;
@@ -34,6 +35,24 @@ export function useBoardDrawing({
 }: UseBoardDrawingInit) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [draft, setDraft] = useState<BoardDraft | null>(null);
+  const liveRef = useRef<BoardDraft | null>(null);
+  const frameRef = useRef<number | null>(null);
+
+  useEffect(
+    () => () => {
+      if (frameRef.current !== null) globalThis.cancelAnimationFrame(frameRef.current);
+    },
+    []
+  );
+
+  function scheduleRender() {
+    if (frameRef.current !== null) return;
+    frameRef.current = globalThis.requestAnimationFrame(() => {
+      frameRef.current = null;
+      const live = liveRef.current;
+      setDraft(live ? { from: live.from, to: live.to, points: live.points.slice() } : null);
+    });
+  }
 
   function toBoardPoint(event: PointerEvent<SVGSVGElement>): Point {
     const svg = svgRef.current!;
@@ -59,24 +78,35 @@ export function useBoardDrawing({
     }
 
     event.currentTarget.setPointerCapture(event.pointerId);
+    liveRef.current = { from: point, to: point, points: [point] };
     setDraft({ from: point, to: point, points: [point] });
   }
 
   function handlePointerMove(event: PointerEvent<SVGSVGElement>) {
-    if (!draft) return;
+    const live = liveRef.current;
+    if (!live) return;
     const point = toBoardPoint(event);
-    setDraft((current) =>
-      current ? { ...current, to: point, points: [...current.points, point] } : current
-    );
+    const last = live.points[live.points.length - 1];
+    live.to = point;
+    if (!last || Math.hypot(point[0] - last[0], point[1] - last[1]) >= MIN_POINT_DISTANCE) live.points.push(point);
+    scheduleRender();
   }
 
   function handlePointerUp() {
-    if (!draft) return;
+    const live = liveRef.current;
+    if (!live) return;
+    liveRef.current = null;
+    if (frameRef.current !== null) {
+      globalThis.cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+    const last = live.points[live.points.length - 1];
+    if (last && (last[0] !== live.to[0] || last[1] !== live.to[1])) live.points.push(live.to);
     const stroke = buildStroke({
       kind: tool as DrawKind,
-      from: draft.from,
-      to: draft.to,
-      points: draft.points,
+      from: live.from,
+      to: live.to,
+      points: live.points,
       color,
       width: strokeWidth,
     });

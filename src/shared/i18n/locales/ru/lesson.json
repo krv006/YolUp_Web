@@ -215,7 +215,8 @@
     "mobileReadyNote": "Как только будет готово, в чат придёт сообщение.",
     "joinedYou": "Вы были",
     "minutesShort": "{{count}} мин",
-    "download": "Скачать"
+    "download": "Скачать",
+    "volume": "Громкость"
   },
   "schedule": {
     "now": "СЕЙЧАС",

@@ -10,6 +10,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Switch } from "@/shared/ui/switch";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MediaPermissionDialog } from "./media-permission-dialog";
+import { requestScreenCapture } from "../lib/screen-capture";
 
 export interface LessonPreJoinChoices {
   micOn: boolean;
@@ -110,15 +111,7 @@ export function LessonPreJoin({
     setJoining(true);
     setScreenShareError(null);
     try {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: { frameRate: 15, displaySurface: "browser" },
-        audio: true,
-        systemAudio: "include",
-        selfBrowserSurface: "exclude",
-      } as DisplayMediaStreamOptions & {
-        selfBrowserSurface?: "include" | "exclude";
-        systemAudio?: "include" | "exclude";
-      });
+      const screenStream = await requestScreenCapture();
       if (screenStream.getAudioTracks().length === 0) {
         screenStream.getTracks().forEach((track) => track.stop());
         setScreenShareError(t("preJoin.screenShareNoAudio"));
