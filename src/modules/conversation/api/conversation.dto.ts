@@ -46,6 +46,7 @@ export interface DirectTeacher {
   username: string;
   name: string;
   phone: string | null;
+  avatarUrl: string | null;
   directStatus: DirectStatus | null;
   roomId: string | null;
 }

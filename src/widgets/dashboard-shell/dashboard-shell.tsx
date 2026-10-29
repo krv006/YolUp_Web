@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { NotificationBell } from "@/modules/notification";
 import { Icon } from "@/shared/ui/icon";
-import { GlobalSearchDialog } from "@/widgets/global-search";
 import { useOpenNotificationLink } from "@/widgets/notification-link";
 
 export interface DashboardShellProps {
@@ -10,10 +9,6 @@ export interface DashboardShellProps {
   dateLine: string;
   online: boolean;
   approved: boolean;
-  searchOpen: boolean;
-  onSearch: () => void;
-  onSearchOpenChange: (open: boolean) => void;
-  searchPlaceholder?: string;
   children: ReactNode;
 }
 
@@ -22,10 +17,6 @@ export function DashboardShell({
   dateLine,
   online,
   approved,
-  searchOpen,
-  onSearch,
-  onSearchOpenChange,
-  searchPlaceholder,
   children,
 }: DashboardShellProps) {
   const { t } = useTranslation("dashboard");
@@ -41,18 +32,6 @@ export function DashboardShell({
               {t("header.greeting", { name: user.split(" ")[0] || user })}
             </h1>
           </div>
-
-          <button
-            type="button"
-            className="flex h-11 w-full max-w-[320px] items-center gap-2.5 rounded-full border border-line-subtle bg-surface px-4 text-body-sm text-ink-tertiary transition-colors hover:bg-subtle"
-            onClick={onSearch}
-          >
-            <Icon name="search" size={20} className="shrink-0 text-icon-tertiary" />
-            <span className="min-w-0 flex-1 truncate text-left">{searchPlaceholder ?? t("header.searchPlaceholder")}</span>
-            <kbd className="shrink-0 rounded-lg bg-subtle px-2 py-1 text-caption text-ink-tertiary">
-              ⌘ K
-            </kbd>
-          </button>
 
           <NotificationBell onOpenLink={openLink} className="relative grid size-11 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle" />
         </header>
@@ -73,8 +52,6 @@ export function DashboardShell({
 
         {children}
       </div>
-
-      <GlobalSearchDialog open={searchOpen} onOpenChange={onSearchOpenChange} />
     </main>
   );
 }

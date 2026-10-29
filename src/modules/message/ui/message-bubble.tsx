@@ -174,9 +174,7 @@ export function MessageBubble({
 
   return (
     <motion.div
-      className={`group relative flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${
-        message.pending ? "lg:opacity-70" : ""
-      } ${selectionMode ? "cursor-pointer select-none" : ""} ${
+      className={`group relative flex items-end gap-2 ${outgoing ? "flex-row-reverse" : ""} ${selectionMode ? "cursor-pointer select-none" : ""} ${
         selected
           ? "rounded-xl bg-brand-subtle px-2 py-2 lg:rounded-2xl lg:bg-action-subtle/70 lg:p-0"
           : ""
@@ -231,7 +229,12 @@ export function MessageBubble({
       {outgoing ? null : (
         <span className="mb-1 w-7 shrink-0 lg:w-8">
           {showAvatar ? (
-            <Avatar name={message.senderName} size="sm" className="max-lg:[&_.avatar]:size-7" />
+            <Avatar
+              name={message.senderName}
+              src={message.senderAvatarUrl ?? undefined}
+              size="sm"
+              className="max-lg:[&_.avatar]:size-7"
+            />
           ) : null}
         </span>
       )}

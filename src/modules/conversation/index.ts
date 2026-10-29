@@ -1,6 +1,6 @@
 export { conversationApi } from "./api/conversation.api";
 export type { ChatRoomDto, DirectAction, DirectTeacher, DirectTeacherDto } from "./api/conversation.dto";
-export { DIRECT_STATUS, useDirectStatusLabel } from "./constants/direct-status";
+export { DIRECT_STATUS, isDirectLocked, useDirectStatusLabel } from "./constants/direct-status";
 export type { DirectStatusValue } from "./constants/direct-status";
 export { mapConversationDto, mapConversationPage, mapTeacherDto } from "./lib/conversation.mappers";
 export { isOwnLastMessage, lastMessageBody } from "./lib/last-message";
@@ -19,6 +19,7 @@ export {
   readCachedConversation,
   useAnnouncementMode,
   useConversations,
+  useConversationSync,
   useGroupImages,
   useLeaveConversation,
   useMuteConversation,
@@ -31,6 +32,7 @@ export {
 export { ChatEmptyState } from "./ui/chat-empty-state";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";
+export { DirectRequestBar } from "./ui/direct-request-bar";
 export { ConversationActionsSheet } from "./ui/conversation-actions-sheet";
 export type { ConversationActionsFocus } from "./ui/conversation-actions-sheet";
 export { ConversationItem } from "./ui/conversation-item";

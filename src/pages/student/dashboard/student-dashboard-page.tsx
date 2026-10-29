@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
@@ -52,7 +51,6 @@ export function StudentDashboardPage() {
   const { user } = useAuth();
   const online = useOnline();
   const isCompact = useIsCompact();
-  const [searchOpen, setSearchOpen] = useState(false);
   const home = useStudentHome();
   const presence = useLessonPresence(home.liveLesson?.id, Boolean(home.liveLesson));
   const { now } = home;
@@ -108,10 +106,6 @@ export function StudentDashboardPage() {
       }`}
       online={online}
       approved
-      searchPlaceholder={t("home.searchPlaceholder")}
-      onSearch={() => setSearchOpen(true)}
-      searchOpen={searchOpen}
-      onSearchOpenChange={setSearchOpen}
     >
       {home.loading ? (
         <div className="max-w-[728px]">

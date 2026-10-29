@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type { Page } from "@/shared/api";
 import { i18n } from "@/shared/i18n";
-import { conversationApi, conversationKeys, readCachedConversation } from "@/modules/conversation";
+import { conversationApi, conversationKeys, readCachedConversation, useConversations } from "@/modules/conversation";
 import type { ChatMessage, Conversation, ConversationRole, SendMessagePayload } from "@/shared/types";
 import { messageApi } from "../api/message.api";
 import { ChatSocketManager, type SocketState } from "../lib/chat-socket-manager";
@@ -44,6 +44,7 @@ export function useChat(
     queryFn: ({ signal }) => conversationApi.getById(conversationId as string, { signal }),
     enabled: Boolean(conversationId),
     placeholderData: cachedConversation,
+    refetchInterval: (query) => (query.state.data?.directStatus === "pending" ? REST_FALLBACK_POLL_MS : false),
   });
 
   const messages = useQuery({
@@ -58,6 +59,16 @@ export function useChat(
     enabled: Boolean(conversationId),
     refetchInterval: socketState === "connected" ? false : REST_FALLBACK_POLL_MS,
   });
+
+  const rooms = useConversations(role);
+  const roomActivityAt = rooms.data?.find((item) => item.id === conversationId)?.updatedAt ?? null;
+  const latestMessageAt = messages.data?.at(-1)?.createdAt ?? null;
+  const refetchMessages = messages.refetch;
+
+  useEffect(() => {
+    if (!roomActivityAt || !latestMessageAt) return;
+    if (Date.parse(roomActivityAt) - Date.parse(latestMessageAt) > 1000) void refetchMessages();
+  }, [roomActivityAt, latestMessageAt, refetchMessages]);
 
   const socket = useMemo(
     () =>
@@ -146,11 +157,14 @@ export function useChat(
       const temporaryId = `temp-${crypto.randomUUID()}`;
       const optimistic: ChatMessage = {
         id: temporaryId,
+        clientMessageId: payload.clientMessageId ?? null,
         conversationId: conversationId ?? "",
         senderId: senderId ?? "",
         senderName: "",
         senderUsername: "",
         text: payload.text,
+        replyTo: payload.replyTo,
+        replyToId: payload.replyToId ?? null,
         type: "text",
         createdAt: new Date().toISOString(),
         status: "pending",
@@ -163,14 +177,14 @@ export function useChat(
       );
       return { temporaryId };
     },
-    onSuccess: (message, _payload, context) => {
+    onSuccess: (message, payload, context) => {
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
         upsertMessage(
           current.filter((item) => item.id !== context.temporaryId),
-          message
+          { ...message, clientMessageId: message.clientMessageId || payload.clientMessageId || null }
         )
       );
-      queryClient.invalidateQueries({ queryKey: conversationKeys.all });
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(role), exact: true });
     },
     onError: (_error, _payload, context) =>
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
@@ -236,9 +250,18 @@ export function useChat(
   });
 
   const markRead = useMutation({
-    mutationFn: (lastReadMessageId?: string | null) =>
-      messageApi.markRead(conversationId as string, lastReadMessageId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: conversationKeys.all }),
+    mutationFn: () => messageApi.markRead(conversationId as string),
+    onSuccess: () => {
+      const clear = (item: Conversation) =>
+        item.id === conversationId ? { ...item, unreadCount: 0, hasUnreadMention: false } : item;
+      queryClient.setQueryData<Page<Conversation>>(conversationKeys.list(role), (current) =>
+        current ? { ...current, items: current.items.map(clear) } : current
+      );
+      queryClient.setQueryData<Conversation>(conversationKeys.detail(conversationId ?? "", role), (current) =>
+        current ? { ...clear(current), firstUnreadMessageId: null } : current
+      );
+      queryClient.invalidateQueries({ queryKey: conversationKeys.list(role), exact: true });
+    },
   });
 
   function retryMessage(message: ChatMessage) {

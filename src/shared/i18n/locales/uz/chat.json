@@ -149,6 +149,7 @@
     "emptyGroupHint": "Birinchi bo‘lib salom bering yoki e’lon yozing — barcha a’zolarga boradi.",
     "emptyTitle": "Hali xabar yo‘q",
     "emptyHint": "Birinchi bo‘lib salom bering.",
+    "emptyLockedHint": "Suhbat ochilgach, xabarlar shu yerda ko'rinadi.",
     "today": "Bugun",
     "loadError": "Xabarlar yuklanmadi",
     "loadErrorHint": "Bir ozdan so'ng yana urinib ko'ring.",
@@ -384,5 +385,19 @@
       "Ju",
       "Sh"
     ]
+  },
+  "directGate": {
+    "studentPendingTitle": "So'rov yuborildi",
+    "studentPendingHint": "O'qituvchi qabul qilgach, shu yerda yozishingiz mumkin bo'ladi.",
+    "studentBlockedTitle": "Suhbat yopilgan",
+    "studentBlockedHint": "O'qituvchi bu suhbatni yopgan. Qayta so'rov yuborishingiz mumkin.",
+    "resend": "Qayta so'rov yuborish",
+    "teacherPendingTitle": "{{name}} sizga yozmoqchi",
+    "teacherPendingHint": "Qabul qilsangiz, ikkalangiz ham shu chatda yoza olasiz.",
+    "teacherBlockedTitle": "Suhbat bloklangan",
+    "teacherBlockedHint": "O'quvchi sizga yoza olmaydi.",
+    "accept": "Qabul qilish",
+    "block": "Bloklash",
+    "unblock": "Blokdan chiqarish"
   }
 }

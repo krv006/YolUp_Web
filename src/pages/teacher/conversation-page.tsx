@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
 import { ForwardDialog } from "@/widgets/forward-dialog";
-import { ChatHeader } from "@/modules/conversation";
+import { ChatHeader, DirectRequestBar, isDirectLocked } from "@/modules/conversation";
 import { MessageComposer, MessageList, useChat, useChatUiStore } from "@/modules/message";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
 import { GroupWorkspace } from "@/widgets/group-workspace";
@@ -37,14 +37,16 @@ export function ConversationPage() {
   const [replyMessage, setReplyMessage] = useState<ChatMessage | null>(null);
   const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
   const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
-  const lastMessageId = messages.data?.[messages.data.length - 1]?.id ?? null;
+  const lastIncomingId =
+    messages.data?.filter((item) => !item.pending && item.senderId !== currentUserId).at(-1)?.id ?? "";
+  const readKey = messages.data ? `${conversationId}:${lastIncomingId}` : null;
   const readRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!lastMessageId || readRef.current === lastMessageId) return;
-    readRef.current = lastMessageId;
-    markRead.mutate(lastMessageId);
-  }, [lastMessageId, markRead]);
+    if (!readKey || readRef.current === readKey) return;
+    readRef.current = readKey;
+    markRead.mutate();
+  }, [readKey, markRead]);
 
   const activeConversation = conversation.data;
 
@@ -89,6 +91,7 @@ export function ConversationPage() {
       }
       await sendMessage.mutateAsync({
         ...payload,
+        replyToId: replyMessage?.id ?? null,
         replyTo: replyMessage
           ? {
               author:
@@ -143,7 +146,9 @@ export function ConversationPage() {
         onBulkDelete={(messageIds, scope) => deleteMessages.mutate({ messageIds, scope })}
         onRetryMessage={retryMessage}
       />
-      {selectionMode ? null : (
+      {selectionMode ? null : isDirectLocked(activeConversation) ? (
+        <DirectRequestBar conversation={activeConversation} role="teacher" />
+      ) : (
       <MessageComposer
         key={editingMessage?.id ?? "compose"}
         onSend={handleSend}
