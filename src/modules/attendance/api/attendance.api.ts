@@ -17,7 +17,7 @@ export const attendanceApi = {
   ) {
     const dto = await apiClient.get<{
       attendance_percent?: number;
-      focus_percent?: number;
+      focus_percent?: number | null;
       lesson_count?: number;
       students?: Array<{
         id: string | number;
@@ -29,7 +29,7 @@ export const attendanceApi = {
     }>(attendanceEndpoints.summary(courseId), { ...options, query: { range } });
     return {
       attendancePercent: dto?.attendance_percent ?? 0,
-      focusPercent: dto?.focus_percent ?? 0,
+      focusPercent: dto?.focus_percent ?? null,
       lessonCount: dto?.lesson_count ?? 0,
       students: (dto?.students ?? []).map((item) => ({
         id: String(item.id),

@@ -939,7 +939,7 @@ export interface HomeworkReport {
 export interface FocusExit {
   leftAt: string;
   returnedAt: string | null;
-  seconds: number;
+  seconds: number | null;
 }
 
 export interface FocusJournal {
@@ -961,7 +961,8 @@ export interface AttendanceRow {
   leftAt: string | null;
   entered: string;
   exited: string;
-  minutes: number;
+  /** Darsda turgan daqiqa — dars davom etayotganda null. */
+  minutes: number | null;
   duration: string;
   attentionTotal: number;
   attentionAnswered: number;

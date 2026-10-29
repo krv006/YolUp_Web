@@ -186,6 +186,7 @@
     "absent": "Absent",
     "rowDistracted": "{{minutes}} min · distracted {{count}} times",
     "rowFocus": "{{minutes}} min · focus {{percent}}%",
+    "rowMinutes": "{{minutes}} min",
     "noAttendance": "No attendance data",
     "sendToChat": "Send to chat",
     "chapters": "Chapters",
@@ -384,5 +385,28 @@
     "errorHint": "Check your internet connection and try again. Your saved lessons are safe.",
     "retry": "Try again",
     "loading": "loading…"
+  },
+  "attendanceDetail": {
+    "title": "Lesson attendance",
+    "statJoined": "Attended",
+    "statLate": "Late",
+    "statAbsent": "Absent",
+    "statFocus": "Avg. focus",
+    "lateHint": "Students who joined {{count}} or more minutes after the start are counted as late.",
+    "statusInLesson": "In lesson",
+    "statusPresent": "Attended",
+    "statusLate": "{{count}} min late",
+    "statusAbsent": "Absent",
+    "since": "in lesson since {{time}}",
+    "stay": "{{from}}–{{to}}, {{minutes}} min",
+    "focus": "focus {{value}}%",
+    "exits": "left {{count}} times ({{duration}})",
+    "noExits": "stayed focused",
+    "attention": "attention {{answered}}/{{total}}",
+    "alert": "Parent was notified about frequent exits",
+    "awayTotal": "Total away: {{duration}}",
+    "longest": "Longest: {{duration}}",
+    "notReturned": "did not return",
+    "empty": "No attendance data for this lesson."
   }
 }

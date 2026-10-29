@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
-import { useAttendance, useAttendanceSummary } from "@/modules/attendance";
+import { useAttendanceSummary } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -55,7 +55,6 @@ import { PanelHeading } from "./panel-heading";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type {
   Assignment,
-  AttendanceRow,
   ChatMessage,
   Conversation,
   Lesson,
@@ -75,6 +74,8 @@ import {
 } from "./group-action-dialogs";
 import { CancelLessonDialog } from "./cancel-lesson-dialog";
 import { LessonBoard } from "./lesson-board";
+import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
+import { formatMessageTime } from "@/shared/lib";
 
 type TabId = "chat" | "lessons" | "assignments" | "attendance";
 
@@ -129,7 +130,6 @@ export function GroupWorkspace({
     activeTab === "lessons" || activeTab === "attendance"
   );
   const assignments = useAssignments(courseId, activeTab === "assignments" || activeTab === "chat");
-  const attendance = useAttendance({ page_size: 100 }, activeTab === "attendance");
 
   async function send(payload: SendMessagePayload) {
     try {
@@ -266,12 +266,7 @@ export function GroupWorkspace({
             />
           ) : null}
           {activeTab === "attendance" ? (
-            <AttendancePanel
-              courseId={courseId}
-              lessons={lessons.data}
-              rows={attendance.data}
-              loading={attendance.isLoading}
-            />
+            <AttendancePanel courseId={courseId} lessons={lessons.data} />
           ) : null}
         </motion.div>
       </AnimatePresence>
@@ -821,99 +816,51 @@ function AssignmentsPanel({
   );
 }
 
+function dayMonth(value: string): string {
+  const date = new Date(value);
+  return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
 interface AttendancePanelProps {
   courseId: string | null;
   lessons?: Lesson[];
-  rows?: AttendanceRow[];
-  loading: boolean;
 }
 
-function AttendancePanel({ courseId, lessons = [], rows = [], loading }: AttendancePanelProps) {
+function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
   const { t } = useTranslation("group");
   const isCompact = useIsCompact();
   const [range, setRange] = useState<"all" | "month" | "current">("all");
+  const [openLesson, setOpenLesson] = useState<Lesson | null>(null);
+  const [now] = useState(() => new Date());
   const summary = useAttendanceSummary(
     courseId,
     range === "month" ? "30d" : range === "current" ? "month" : "all"
   );
 
-  const lessonDates = useMemo(
-    () => new Map(lessons.map((lesson) => [lesson.id, new Date(lesson.startsAt)])),
-    [lessons]
+  const finishedLessons = useMemo(() => {
+    const monthAgo = now.getTime() - 30 * 86_400_000;
+    return lessons
+      .filter((lesson) => {
+        if (lesson.status !== "finished") return false;
+        const date = new Date(lesson.startsAt);
+        if (range === "month") return date.getTime() >= monthAgo;
+        if (range === "current")
+          return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+        return true;
+      })
+      .sort((a, b) => b.startsAt.localeCompare(a.startsAt));
+  }, [lessons, range, now]);
+
+  const students = useMemo(
+    () =>
+      [...(summary.data?.students ?? [])].sort(
+        (a, b) => b.attendancePercent - a.attendancePercent || a.name.localeCompare(b.name)
+      ),
+    [summary.data]
   );
-
-  const filtered = useMemo(() => {
-    const lessonIds = new Set(lessons.map((lesson) => lesson.id));
-    const now = new Date();
-    const monthAgo = new Date(now.getTime() - 30 * 86_400_000);
-    return rows.filter((row) => {
-      if (!lessonIds.has(row.lessonId)) return false;
-      const date = lessonDates.get(row.lessonId);
-      if (!date) return range === "all";
-      if (range === "month") return date >= monthAgo;
-      if (range === "current")
-        return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
-      return true;
-    });
-  }, [rows, lessons, lessonDates, range]);
-
-  const computedLessonCount = new Set(filtered.map((row) => row.lessonId)).size;
-  const lessonCount = summary.data?.lessonCount ?? computedLessonCount;
-
-  const computedStudents = useMemo(() => {
-    const map = new Map<
-      string,
-      { name: string; tone?: string; lessons: Set<string>; answered: number; total: number }
-    >();
-    for (const row of filtered) {
-      const current = map.get(row.studentId) ?? {
-        name: row.student?.name || row.child,
-        tone: row.student?.avatarTone,
-        lessons: new Set<string>(),
-        answered: 0,
-        total: 0,
-      };
-      current.lessons.add(row.lessonId);
-      current.answered += row.attentionAnswered;
-      current.total += row.attentionTotal;
-      map.set(row.studentId, current);
-    }
-    return [...map.entries()]
-      .map(([id, value]) => ({
-        id,
-        name: value.name,
-        tone: value.tone,
-        attendance: lessonCount ? Math.round((value.lessons.size / lessonCount) * 100) : 0,
-        focus: value.total ? Math.round((value.answered / value.total) * 100) : null,
-      }))
-      .sort((a, b) => b.attendance - a.attendance);
-  }, [filtered, computedLessonCount]);
-
-  const students = summary.data?.students.length
-    ? summary.data.students
-        .map((item) => ({
-          id: item.id,
-          name: item.name,
-          tone: undefined as string | undefined,
-          attendance: item.attendancePercent,
-          focus: item.focusPercent,
-        }))
-        .sort((a, b) => b.attendance - a.attendance)
-    : computedStudents;
-
-  const avgAttendance =
-    summary.data?.attendancePercent ??
-    (students.length
-      ? Math.round(students.reduce((sum, item) => sum + item.attendance, 0) / students.length)
-      : 0);
-  const focusValues = students
-    .map((item) => item.focus)
-    .filter((value): value is number => value !== null);
-  const avgFocus =
-    summary.data?.focusPercent ??
-    (focusValues.length
-      ? Math.round(focusValues.reduce((sum, value) => sum + value, 0) / focusValues.length)
-      : 0);
+  const lessonCount = summary.data?.lessonCount ?? 0;
+  const attendedTotal = students.reduce((sum, item) => sum + item.attendedCount, 0);
+  const avgFocus = summary.data?.focusPercent ?? null;
 
   const FILTERS = [
     { id: "all" as const, label: isCompact ? t("attendance.filterAllShort") : t("attendance.filterAll") },
@@ -925,7 +872,22 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
     <div className="flex h-full flex-col gap-5 overflow-y-auto px-4 pt-5 pb-8 lg:gap-3.5 lg:px-7 lg:pt-3.5">
       <PanelHeading eyebrow={t("attendance.eyebrow")} title={t("attendance.title")} className="mb-1 shrink-0" />
 
-      {loading ? (
+      <div className="grid grid-cols-3 gap-2">
+        {FILTERS.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
+              range === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
+            }`}
+            onClick={() => setRange(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {summary.isLoading ? (
         <ul className="flex flex-col overflow-hidden rounded-xl bg-surface" aria-hidden="true">
           {Array.from({ length: 4 }, (_, index) => (
             <li key={index} className="flex h-[74px] items-center border-b border-line px-4 last:border-b-0">
@@ -933,32 +895,17 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
             </li>
           ))}
         </ul>
-      ) : students.length ? (
+      ) : lessonCount && students.length ? (
         <>
-          <div className="grid grid-cols-3 gap-2">
-            {FILTERS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
-                  range === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
-                }`}
-                onClick={() => setRange(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-
-          <section className="flex flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
+          <section className="flex shrink-0 flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
             <span className="flex h-6 w-fit items-center gap-1.5 rounded-full bg-on-brand-subtle px-2.5 text-caption-strong">
               <Icon name="bar-chart" size={14} />
-              {t("attendance.mobileBadge", { lessonCount, recordCount: filtered.length })}
+              {t("attendance.mobileBadge", { lessonCount, recordCount: attendedTotal })}
             </span>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { value: `${avgAttendance}%`, label: t("attendance.statAttendance") },
-                { value: `${avgFocus}%`, label: t("attendance.statFocus") },
+                { value: `${summary.data?.attendancePercent ?? 0}%`, label: t("attendance.statAttendance") },
+                { value: avgFocus === null ? "—" : `${avgFocus}%`, label: t("attendance.statFocus") },
                 { value: String(lessonCount), label: t("attendance.statLessons") },
               ].map((tile) => (
                 <span key={tile.label} className="flex h-16 flex-col justify-center rounded-xl bg-on-brand-subtle px-3">
@@ -974,38 +921,77 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
             <small className="text-body-sm text-brand-strong">{t("attendance.studentsMetaShort")}</small>
           </div>
 
-          <ul className="-mt-1 flex flex-col overflow-hidden rounded-xl bg-surface">
+          <ul className="-mt-1 flex shrink-0 flex-col overflow-hidden rounded-xl bg-surface">
             {students.map((student) => (
               <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
-                <Avatar
-                  name={student.name}
-                  tone={student.tone}
-                  size="sm"
-                  className="[&_.avatar]:size-11"
-                />
+                <Avatar name={student.name} size="sm" className="[&_.avatar]:size-11" />
                 <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                   <strong className="truncate text-title text-ink">{student.name}</strong>
                   <span className="flex items-center gap-2">
                     <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
                       <span
-                        className={`block h-full rounded-full ${student.attendance >= 50 ? "bg-brand" : "bg-danger"}`}
-                        style={{ width: `${student.attendance}%` }}
+                        className={`block h-full rounded-full ${student.attendancePercent >= 50 ? "bg-brand" : "bg-danger"}`}
+                        style={{ width: `${student.attendancePercent}%` }}
                       />
                     </span>
-                    <small className="w-8 shrink-0 text-right font-numeric text-caption text-brand">
-                      {student.attendance}%
+                    <small className="shrink-0 text-right font-numeric text-caption text-brand">
+                      {t("attendance.studentLessons", { attended: student.attendedCount, total: lessonCount })} ·{" "}
+                      {student.attendancePercent}%
                     </small>
                   </span>
                 </span>
                 <span className="flex w-12 shrink-0 flex-col items-end">
                   <strong className="font-numeric text-title text-ink">
-                    {student.focus === null ? "—" : `${student.focus}%`}
+                    {student.focusPercent === null ? "—" : `${student.focusPercent}%`}
                   </strong>
                   <small className="text-caption text-ink-secondary">{t("attendance.focusSuffix")}</small>
                 </span>
               </li>
             ))}
           </ul>
+
+          {finishedLessons.length ? (
+            <>
+              <div className="flex items-center gap-3">
+                <strong className="flex-1 text-body text-ink">{t("attendance.lessonsTitle")}</strong>
+                <small className="text-body-sm text-brand-strong">{t("attendance.lessonsMeta")}</small>
+              </div>
+              <ul className="-mt-1 flex shrink-0 flex-col overflow-hidden rounded-xl bg-surface">
+                {finishedLessons.map((lesson) => (
+                  <li key={lesson.id} className="border-b border-line last:border-b-0">
+                    <button
+                      type="button"
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-subtle"
+                      onClick={() => setOpenLesson(lesson)}
+                    >
+                      <span className="flex w-12 shrink-0 flex-col">
+                        <strong className="font-numeric text-title-sm text-ink">{formatMessageTime(lesson.startsAt)}</strong>
+                        <small className="text-caption text-ink-secondary">{dayMonth(lesson.startsAt)}</small>
+                      </span>
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <strong className="truncate text-title-sm text-ink">{lesson.title || t("attendance.untitledLesson")}</strong>
+                        <small className="truncate text-body-xs text-ink-secondary">
+                          {lesson.participantsCount !== null && lesson.studentCount !== null
+                            ? t("attendance.lessonJoined", { joined: lesson.participantsCount, total: lesson.studentCount })
+                            : t("attendance.lessonOpen")}
+                        </small>
+                      </span>
+                      {lesson.attendanceRate !== null ? (
+                        <strong
+                          className={`shrink-0 font-numeric text-title-sm ${
+                            lesson.attendanceRate >= 50 ? "text-success" : "text-danger"
+                          }`}
+                        >
+                          {Math.round(lesson.attendanceRate)}%
+                        </strong>
+                      ) : null}
+                      <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
         </>
       ) : (
         <MobileEmptyCard
@@ -1014,6 +1000,12 @@ function AttendancePanel({ courseId, lessons = [], rows = [], loading }: Attenda
           description={t("attendance.emptyDescription")}
         />
       )}
+
+      <LessonAttendanceDialog
+        lesson={openLesson}
+        open={openLesson !== null}
+        onOpenChange={(open) => !open && setOpenLesson(null)}
+      />
     </div>
   );
 }

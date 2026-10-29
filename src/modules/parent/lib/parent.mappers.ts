@@ -34,7 +34,7 @@ export function mapParentLinkDto(dto: ParentLinkDto): ParentLink {
 
 export function mapChildFromLink(link: ParentLink, attendance: AttendanceRow[] = []): ParentChild {
   const rows = attendance.filter((item) => item.studentId === link.studentId);
-  const minutes = rows.reduce((sum, item) => sum + item.minutes, 0);
+  const minutes = rows.reduce((sum, item) => sum + (item.minutes ?? 0), 0);
   return {
     id: link.studentId,
     linkId: link.id,
@@ -67,7 +67,7 @@ export function createParentDashboard(
       {
         id: "minutes",
         label: "Jami daqiqa",
-        value: String(attendance.reduce((sum, item) => sum + item.minutes, 0)),
+        value: String(attendance.reduce((sum, item) => sum + (item.minutes ?? 0), 0)),
         icon: "minutes",
       },
     ],

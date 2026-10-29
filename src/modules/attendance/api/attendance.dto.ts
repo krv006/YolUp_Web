@@ -3,7 +3,7 @@ import type { UserDto } from "@/shared/types";
 export interface FocusExitDto {
   left_at: string;
   returned_at: string | null;
-  seconds: number;
+  seconds: number | null;
 }
 
 export interface FocusJournalDto {
@@ -20,7 +20,7 @@ export interface AttendanceDto {
   student: UserDto;
   joined_at: string | null;
   left_at: string | null;
-  minutes: number;
+  minutes: number | null;
   attention_total: number;
   attention_answered: number;
   focus_exits: number;

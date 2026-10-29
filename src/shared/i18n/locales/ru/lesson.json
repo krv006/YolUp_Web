@@ -186,6 +186,7 @@
     "absent": "Не пришёл",
     "rowDistracted": "{{minutes}} мин · отвлёкся {{count}} раз",
     "rowFocus": "{{minutes}} мин · фокус {{percent}}%",
+    "rowMinutes": "{{minutes}} мин",
     "noAttendance": "Нет данных о посещаемости",
     "sendToChat": "Отправить в чат",
     "chapters": "Разделы",
@@ -384,5 +385,28 @@
     "errorHint": "Проверьте подключение к интернету и попробуйте снова. Сохранённые уроки не пропадут.",
     "retry": "Повторить",
     "loading": "загрузка…"
+  },
+  "attendanceDetail": {
+    "title": "Посещаемость урока",
+    "statJoined": "Пришли",
+    "statLate": "Опоздали",
+    "statAbsent": "Не пришли",
+    "statFocus": "Средний фокус",
+    "lateHint": "Вошедшие через {{count}} и более минут после начала считаются опоздавшими.",
+    "statusInLesson": "На уроке",
+    "statusPresent": "Присутствовал",
+    "statusLate": "опоздал на {{count}} мин",
+    "statusAbsent": "Не пришёл",
+    "since": "на уроке с {{time}}",
+    "stay": "{{from}}–{{to}}, {{minutes}} мин",
+    "focus": "фокус {{value}}%",
+    "exits": "выходил {{count}} раз ({{duration}})",
+    "noExits": "не отвлекался",
+    "attention": "внимание {{answered}}/{{total}}",
+    "alert": "Родителям отправлено уведомление о частых выходах",
+    "awayTotal": "Всего вне урока: {{duration}}",
+    "longest": "Самый долгий: {{duration}}",
+    "notReturned": "не вернулся",
+    "empty": "По этому уроку нет данных о посещаемости."
   }
 }

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAttendance } from "@/modules/attendance";
 import { RateLessonDialog, useLessonReminder } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import type { Lesson, LessonStatus } from "@/shared/types";
@@ -53,7 +52,6 @@ export function StudentLessons({ lessons = [], loading, currentUserId, teacher =
   const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
   const { t: tl } = useTranslation("lesson");
   const navigate = useNavigate();
-  const attendance = useAttendance({ page_size: 200 });
   const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
   const [now] = useState(() => Date.now());
   const reminder = useLessonReminder();
@@ -73,10 +71,6 @@ export function StudentLessons({ lessons = [], loading, currentUserId, teacher =
     );
   }
 
-  const joined = useMemo(
-    () => new Set((attendance.data ?? []).filter((row) => row.joinedAt).map((row) => row.lessonId)),
-    [attendance.data]
-  );
   const visible = useMemo(
     () =>
       lessons
@@ -133,7 +127,7 @@ export function StudentLessons({ lessons = [], loading, currentUserId, teacher =
             const minutes = lesson.durationMinutes || 45;
             const end = new Date(start.getTime() + minutes * 60_000);
             const status = lesson.status;
-            const attended = lesson.attended ?? joined.has(lesson.id);
+            const attended = lesson.attended === true;
             const meta =
               status === "finished"
                 ? t(attended ? "groupWorkspace.lessonsTab.attended" : "groupWorkspace.lessonsTab.missed")

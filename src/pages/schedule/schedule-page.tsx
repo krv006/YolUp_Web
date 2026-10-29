@@ -11,7 +11,6 @@ import {
   startOfWeek,
   endOfWeek,
 } from "date-fns";
-import { useAttendance } from "@/modules/attendance";
 import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
@@ -56,7 +55,6 @@ export function SchedulePage() {
   const courses = useCourses();
   const conversations = useConversations(student ? "student" : "teacher");
   const groupImages = useGroupImages(student ? "student" : "teacher");
-  const attendance = useAttendance({ page_size: 200 }, student);
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
   const cancelLesson = useCancelLesson();
@@ -126,8 +124,8 @@ export function SchedulePage() {
   }, [items, view, anchor]);
 
   const attendanceRate = useMemo(
-    () => (student ? monthAttendanceRate(items, attendance.data ?? [], now) : null),
-    [student, items, attendance.data, now]
+    () => (student ? monthAttendanceRate(items, now) : null),
+    [student, items, now]
   );
 
   const rangeLabel = useMemo(() => {

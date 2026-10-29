@@ -111,7 +111,13 @@
     "mobileBadge": "{{lessonCount}} уроков · {{recordCount}} записей",
     "studentsMetaShort": "Посещаемость · фокус",
     "filterMonthShort": "30 дней",
-    "filterAllShort": "Все"
+    "filterAllShort": "Все",
+    "studentLessons": "{{attended}}/{{total}}",
+    "lessonsTitle": "По урокам",
+    "lessonsMeta": "Кто пришёл, кто нет",
+    "untitledLesson": "Урок без темы",
+    "lessonJoined": "{{joined}} / {{total}} присутствовали",
+    "lessonOpen": "Посмотреть посещаемость"
   },
   "dialogs": {
     "lesson": {

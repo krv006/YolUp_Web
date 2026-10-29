@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useAttendance } from "@/modules/attendance";
+import { averageFocus, buildLessonRoster, useAttendance } from "@/modules/attendance";
 import { useCurrentUser, useIsStudent } from "@/modules/auth";
-import { useCourse } from "@/modules/course";
+import { useCourse, useCourseStudents } from "@/modules/course";
 import { boardApi } from "@/modules/board";
 import { useDeleteRecording, useShareRecording } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
@@ -12,6 +12,7 @@ import type { AttendanceRow, Lesson, LessonRecording } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
+import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { RecordingVideo } from "./recording-video";
 
@@ -27,12 +28,8 @@ function chapterClock(seconds: number): string {
   return `${String(minutes).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
-function focusPercent(row: AttendanceRow, durationMinutes: number): number | null {
-  if (row.focusPercent !== null) return Math.round(row.focusPercent);
-  const total = durationMinutes * 60;
-  if (!total || !row.minutes) return null;
-  const away = row.focus.awaySeconds;
-  return Math.max(0, Math.min(100, Math.round((1 - away / total) * 100)));
+function focusPercent(row: AttendanceRow): number | null {
+  return row.focusPercent === null ? null : Math.round(row.focusPercent);
 }
 
 export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesktopProps) {
@@ -48,6 +45,8 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
   const boardRoute = student ? ROUTES.board(lesson.id) : ROUTES.teacher.board(lesson.id);
 
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [attendanceOpen, setAttendanceOpen] = useState(false);
+  const students = useCourseStudents(student ? null : lesson.courseId, { page_size: 100 });
   const [downloading, setDownloading] = useState(false);
 
   async function downloadPdf() {
@@ -68,16 +67,20 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
   }
 
   const rows = useMemo(() => attendance.data ?? [], [attendance.data]);
-  const studentCount = course.data?.studentCount ?? rows.length;
   const joined = recording?.participantsCount ?? rows.length;
 
-  const focus = useMemo(() => {
-    const values = rows
-      .map((row) => focusPercent(row, lesson.durationMinutes))
-      .filter((value): value is number => value !== null);
-    if (!values.length) return recording?.attendanceRate ?? null;
-    return Math.round(values.reduce((sum, value) => sum + value, 0) / values.length);
-  }, [rows, lesson.durationMinutes, recording?.attendanceRate]);
+  const focus = useMemo(() => averageFocus(rows), [rows]);
+  const roster = useMemo(
+    () =>
+      buildLessonRoster(
+        rows,
+        (students.data?.items ?? []).filter((item) => item.status === "approved").map((item) => item.student),
+        lesson.startsAt,
+        lesson.status === "live"
+      ),
+    [rows, students.data, lesson.startsAt, lesson.status]
+  );
+  const studentCount = roster.length || (course.data?.studentCount ?? rows.length);
 
   const hours = Math.floor(lesson.durationMinutes / 60);
   const durationLabel = hours
@@ -87,9 +90,9 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
   const pending = Boolean(recording) && recording?.status !== "failed" && !recording?.ready;
 
   const own = rows.find((row) => row.studentId === me?.id) ?? (student ? (rows[0] ?? null) : null);
-  const ownFocus = own ? focusPercent(own, lesson.durationMinutes) : null;
+  const ownFocus = own ? focusPercent(own) : null;
   const starts = new Date(lesson.startsAt);
-  const visibleRows = rows.slice(0, 3);
+  const visibleRows = roster.slice(0, 3);
   const previews = recording?.boardPreviews ?? [];
   const boardPages = previews.length || (recording?.boardPages ?? 0);
 
@@ -266,23 +269,23 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
               <button
                 type="button"
                 className="shrink-0 text-button text-brand transition-opacity hover:opacity-80"
-                onClick={() => navigate(ROUTES.teacher.attendance)}
+                onClick={() => setAttendanceOpen(true)}
               >
                 {t("recording.details")}
               </button>
             </header>
 
             <div className="flex flex-col gap-4 rounded-lg bg-surface p-4">
-              {visibleRows.map((row) => {
-                const percent = focusPercent(row, lesson.durationMinutes);
-                const absent = !row.minutes;
-                const distracted = row.focus.exits > 0;
+              {visibleRows.map(({ student: person, status, row }) => {
+                const percent = row ? focusPercent(row) : null;
+                const absent = status === "absent";
+                const distracted = Boolean(row?.focus.exits);
                 return (
-                  <span key={row.id} className="flex items-center gap-3">
-                    <Avatar name={row.child} size="xs" tone={row.student?.avatarTone} />
+                  <span key={person.id} className="flex items-center gap-3">
+                    <Avatar name={person.name} src={person.avatarUrl ?? undefined} size="xs" tone={person.avatarTone} />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <strong className="truncate text-title-sm leading-5 text-ink">
-                        {row.child}
+                        {person.name}
                       </strong>
                       <small
                         className={`truncate text-body-xs leading-4.5 ${
@@ -293,17 +296,19 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
                               : "text-success"
                         }`}
                       >
-                        {absent
+                        {absent || !row
                           ? t("recording.absent")
                           : distracted
                             ? t("recording.rowDistracted", {
-                                minutes: row.minutes,
+                                minutes: row.minutes ?? 0,
                                 count: row.focus.exits,
                               })
-                            : t("recording.rowFocus", {
-                                minutes: row.minutes,
-                                percent: percent ?? 100,
-                              })}
+                            : percent === null
+                              ? t("recording.rowMinutes", { minutes: row.minutes ?? 0 })
+                              : t("recording.rowFocus", {
+                                  minutes: row.minutes ?? 0,
+                                  percent,
+                                })}
                       </small>
                     </span>
                   </span>
@@ -346,6 +351,10 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
           ) : null}
         </div>
       </div>
+
+      {student ? null : (
+        <LessonAttendanceDialog lesson={lesson} open={attendanceOpen} onOpenChange={setAttendanceOpen} />
+      )}
 
       <AppDialog
         open={confirmOpen}

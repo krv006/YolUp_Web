@@ -1,6 +1,22 @@
-import { normalizePagination, type Page, type PaginationOptions } from "@/shared/api";
+import { normalizeMediaUrl, normalizePagination, type Page, type PaginationOptions } from "@/shared/api";
 import type { AttendanceRow, DomainUser, FocusJournal } from "@/shared/types";
 import type { AttendanceDto, FocusJournalDto } from "../api/attendance.dto";
+
+const TONES = ["violet", "blue", "emerald", "amber", "rose"] as const;
+
+function mapStudent(dto: AttendanceDto["student"] | undefined): DomainUser {
+  const id = dto?.id ? String(dto.id) : "";
+  return {
+    id,
+    username: dto?.username ?? "",
+    name: [dto?.first_name, dto?.last_name].filter(Boolean).join(" ") || dto?.username || "O‘quvchi",
+    firstName: dto?.first_name ?? "",
+    lastName: dto?.last_name ?? "",
+    role: dto?.role,
+    avatarTone: TONES[Math.abs(id.charCodeAt(0) || 0) % TONES.length],
+    avatarUrl: normalizeMediaUrl(dto?.avatar ?? null),
+  };
+}
 
 function time(value: string | null | undefined): string {
   return value
@@ -20,31 +36,29 @@ function mapFocusJournal(
     timeline: (dto?.timeline ?? []).map((item) => ({
       leftAt: item.left_at,
       returnedAt: item.returned_at,
-      seconds: Number(item.seconds ?? 0),
+      seconds: item.seconds == null ? null : Number(item.seconds),
     })),
     alert,
   };
 }
 
 export function mapAttendanceDto(dto: AttendanceDto): AttendanceRow {
-  const studentName =
-    [dto.student?.first_name, dto.student?.last_name].filter(Boolean).join(" ") ||
-    dto.student?.username ||
-    "O‘quvchi";
+  const student = mapStudent(dto.student);
+  const minutes = dto.minutes == null ? null : Number(dto.minutes);
 
   return {
     id: String(dto.id),
     lessonId: String(dto.lesson),
     lesson: dto.lesson_title,
-    studentId: String(dto.student?.id),
-    student: dto.student as unknown as DomainUser,
-    child: studentName,
+    studentId: student.id,
+    student,
+    child: student.name,
     joinedAt: dto.joined_at,
     leftAt: dto.left_at,
     entered: time(dto.joined_at),
     exited: time(dto.left_at),
-    minutes: Number(dto.minutes ?? 0),
-    duration: `${Number(dto.minutes ?? 0)} daqiqa`,
+    minutes,
+    duration: minutes === null ? "Darsda" : `${minutes} daqiqa`,
     attentionTotal: Number(dto.attention_total ?? 0),
     attentionAnswered: Number(dto.attention_answered ?? 0),
     focus: mapFocusJournal(dto.focus, Number(dto.focus_exits ?? 0), Boolean(dto.focus_alert)),
