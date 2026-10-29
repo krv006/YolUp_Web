@@ -32,6 +32,19 @@ function normalizeBaseUrl(value: string): string {
   return value.replace(/\/+$/, "");
 }
 
+/**
+ * API manzili. Production build'da `VITE_API_URL="/"` bo'lsa, so'rovlar Vercel proxy'si (`vercel.json` rewrite) orqali
+ * o'tardi: o'lchandi (2026-10-29) — har so'rovga ~250-300 ms qo'shimcha (ba'zan 850 ms). Shuning uchun production'da API
+ * to'g'ridan-to'g'ri chaqiriladi: manzil `VITE_WS_URL` domenidan olinadi (wss://host -> https://host), WebSocket va katta
+ * fayllar uchun (`directApiUrl`) allaqachon shunday. Server CORS'da Vercel domenlarini ruxsat etgan.
+ * Eski usulga qaytish kerak bo'lsa: `VITE_API_PROXY=1`. Dev rejimda o'zgarmaydi (Vite proxy).
+ */
+function resolveApiUrl(apiUrl: string, wsUrl: string): string {
+  const base = normalizeBaseUrl(apiUrl);
+  if (base !== "" || !import.meta.env.PROD || import.meta.env.VITE_API_PROXY === "1") return base;
+  return normalizeBaseUrl(wsUrl).replace(/^ws/, "http");
+}
+
 export interface AppEnv {
   readonly appName: string;
   readonly appEnv: "development" | "test" | "production";
@@ -44,7 +57,7 @@ export interface AppEnv {
 export const env: AppEnv = Object.freeze({
   appName: parsedEnv.data.VITE_APP_NAME,
   appEnv: parsedEnv.data.VITE_APP_ENV,
-  apiUrl: normalizeBaseUrl(parsedEnv.data.VITE_API_URL),
+  apiUrl: resolveApiUrl(parsedEnv.data.VITE_API_URL, parsedEnv.data.VITE_WS_URL),
   wsUrl: normalizeBaseUrl(parsedEnv.data.VITE_WS_URL),
   requestTimeout: parsedEnv.data.VITE_REQUEST_TIMEOUT,
   isProduction: parsedEnv.data.VITE_APP_ENV === "production",
