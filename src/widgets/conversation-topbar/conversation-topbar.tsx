@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import logoUrl from "@/shared/assets/y-logo.svg";
@@ -7,7 +6,6 @@ import { useNewConversationStore } from "@/modules/conversation";
 import { useScheduleStore } from "@/modules/lesson";
 import { useAssignmentCreateStore } from "@/widgets/homework-workspace";
 import { usePageCreateStore } from "@/shared/model";
-import { GlobalSearchDialog } from "@/widgets/global-search";
 import { Icon } from "@/shared/ui/icon";
 import { NotificationBell } from "@/modules/notification";
 import { useOpenNotificationLink } from "@/widgets/notification-link";
@@ -34,7 +32,6 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const exams = pathname.endsWith("/exams");
   const isSubPage = workspace && !pathname.endsWith("/workspace");
   const quizT = useTranslation("quiz").t;
-  const [searchOpen, setSearchOpen] = useState(false);
   const lessonT = useTranslation("lesson").t;
   const view = useScheduleStore((state) => state.view);
   const anchor = useScheduleStore((state) => state.anchor);
@@ -164,17 +161,6 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         </>
       ) : null}
 
-      {workspace ? (
-        <button
-          type="button"
-          className="grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
-          onClick={() => setSearchOpen(true)}
-          aria-label={t("workspace:searchAria")}
-        >
-          <Icon name="search" size={19} />
-        </button>
-      ) : null}
-
       {assignments && role === "teacher" ? (
         <>
           <button
@@ -234,8 +220,6 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         className="relative grid size-11 shrink-0 place-items-center rounded-full border border-line bg-surface text-ink transition-colors hover:bg-subtle"
         onOpenLink={openLink}
       />
-
-      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </header>
 
     {schedule ? (

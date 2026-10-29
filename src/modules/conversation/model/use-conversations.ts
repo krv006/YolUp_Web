@@ -6,6 +6,17 @@ import { conversationApi } from "../api/conversation.api";
 import type { DirectAction } from "../api/conversation.dto";
 import { conversationKeys } from "./conversation.keys";
 
+const LIST_SYNC_MS = 10_000;
+
+export function useConversationSync(role: ConversationRole | null) {
+  useQuery({
+    queryKey: conversationKeys.list(role ?? "teacher"),
+    queryFn: ({ signal }) => conversationApi.getAll({ signal }),
+    enabled: role !== null,
+    refetchInterval: LIST_SYNC_MS,
+  });
+}
+
 export function useConversations(role: ConversationRole = "teacher") {
   return useQuery({
     queryKey: conversationKeys.list(role),

@@ -149,6 +149,7 @@
     "emptyGroupHint": "Be the first to say hi or post an announcement — every member will get it.",
     "emptyTitle": "No messages yet",
     "emptyHint": "Be the first to say hi.",
+    "emptyLockedHint": "Messages will appear here once the conversation is open.",
     "today": "Today",
     "loadError": "Couldn't load messages",
     "loadErrorHint": "Please try again shortly.",
@@ -384,5 +385,19 @@
       "Fr",
       "Sa"
     ]
+  },
+  "directGate": {
+    "studentPendingTitle": "Request sent",
+    "studentPendingHint": "You can write here once the teacher accepts.",
+    "studentBlockedTitle": "Conversation closed",
+    "studentBlockedHint": "The teacher closed this conversation. You can send a new request.",
+    "resend": "Send request again",
+    "teacherPendingTitle": "{{name}} wants to message you",
+    "teacherPendingHint": "Accept to let both of you write in this chat.",
+    "teacherBlockedTitle": "Conversation blocked",
+    "teacherBlockedHint": "The student can't message you.",
+    "accept": "Accept",
+    "block": "Block",
+    "unblock": "Unblock"
   }
 }

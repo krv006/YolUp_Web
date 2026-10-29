@@ -92,7 +92,6 @@ export function TeacherDashboardPage() {
   }, [activity.data, months, weekdays, t]);
   const conversations = useConversations("teacher");
   const groupImages = useGroupImages("teacher");
-  const [searchOpen, setSearchOpen] = useState(false);
   const [today] = useState(() => new Date());
 
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
@@ -215,9 +214,6 @@ export function TeacherDashboardPage() {
         ).toLowerCase()}`}
         online={online}
         approved={user?.isApproved !== false}
-        onSearch={() => setSearchOpen(true)}
-        searchOpen={searchOpen}
-        onSearchOpenChange={setSearchOpen}
       >
         <DashboardEmptyGroups onCreate={() => navigate(ROUTES.teacher.workspace)} />
       </DashboardShell>
@@ -231,9 +227,6 @@ export function TeacherDashboardPage() {
       ).toLowerCase()} · ${t("header.lessonCount", { count: todayLessons.length })}`}
       online={online}
       approved={user?.isApproved !== false}
-      onSearch={() => setSearchOpen(true)}
-      searchOpen={searchOpen}
-      onSearchOpenChange={setSearchOpen}
     >
       {loading ? (
         <DashboardSkeleton />

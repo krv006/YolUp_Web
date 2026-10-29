@@ -145,6 +145,7 @@ export interface ChatMessage {
   senderName: string;
   senderUsername: string;
   senderRole?: string;
+  senderAvatarUrl?: string | null;
   text: string;
   replyTo?: MessageReply;
   type: string;

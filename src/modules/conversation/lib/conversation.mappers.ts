@@ -41,7 +41,7 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
     typing: false,
     avatarTone: toneFor(dto.id),
     memberCount: Number(dto.member_count ?? 0),
-    imageUrl: normalizeMediaUrl(dto.image_url ?? dto.image ?? null),
+    imageUrl: normalizeMediaUrl(dto.image_url ?? dto.image ?? other?.avatar ?? null),
     isPinned: Boolean(dto.is_pinned),
     isMuted: Boolean(dto.is_muted),
     hasUnreadMention: Boolean(dto.has_unread_mention),
@@ -72,6 +72,7 @@ export function mapTeacherDto(dto: DirectTeacherDto): DirectTeacher {
     username: dto.username,
     name: [dto.first_name, dto.last_name].filter(Boolean).join(" ") || dto.username,
     phone: dto.phone ?? null,
+    avatarUrl: normalizeMediaUrl(dto.avatar ?? null),
     directStatus: dto.direct_status ?? null,
     roomId: dto.room_id ? String(dto.room_id) : null,
   };

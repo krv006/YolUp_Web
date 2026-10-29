@@ -218,7 +218,11 @@ export function MessageList({
             {conversation.kind === "course" ? t("list.emptyGroupTitle") : t("list.emptyTitle")}
           </strong>
           <p className="mt-3 max-w-[260px] text-body-sm text-ink-secondary">
-            {conversation.kind === "course" ? t("list.emptyGroupHint") : t("list.emptyHint")}
+            {conversation.kind === "course"
+              ? t("list.emptyGroupHint")
+              : conversation.directStatus && conversation.directStatus !== "active"
+                ? t("list.emptyLockedHint")
+                : t("list.emptyHint")}
           </p>
         </div>
       ) : null}
@@ -270,7 +274,7 @@ export function MessageList({
           const showName = !sameAs(previous);
           const showAvatar = !sameAs(next);
           return entry.kind === "assignment" && entry.message.assignment ? (
-            <div key={entry.message.id} className="flex justify-start">
+            <div key={entry.message.clientMessageId || entry.message.id} className="flex justify-start">
               <HomeworkMessageCard
                 assignment={entry.message.assignment}
                 canReview={entry.message.senderId === currentUserId}
@@ -280,7 +284,7 @@ export function MessageList({
               />
             </div>
           ) : (
-            <Fragment key={entry.message.id}>
+            <Fragment key={entry.message.clientMessageId || entry.message.id}>
               {dividerId === entry.message.id ? (
                 <DateSeparator>{t("actionsMenu.newMessages", { count: unread })}</DateSeparator>
               ) : null}

@@ -1,9 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { useIsStudent } from "@/modules/auth";
+import type { ReactNode } from "react";
 import { NotificationBell } from "@/modules/notification";
-import { Icon } from "@/shared/ui/icon";
-import { GlobalSearchDialog } from "@/widgets/global-search";
 import { useOpenNotificationLink } from "@/widgets/notification-link";
 
 export interface WorkspaceShellProps {
@@ -14,9 +10,6 @@ export interface WorkspaceShellProps {
 }
 
 export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceShellProps) {
-  const { t } = useTranslation("dashboard");
-  const [searchOpen, setSearchOpen] = useState(false);
-  const student = useIsStudent();
   const openLink = useOpenNotificationLink();
 
   return (
@@ -28,20 +21,6 @@ export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceSh
             <h1 className="truncate font-heading text-[26px]/9 font-semibold text-ink">{title}</h1>
           </div>
 
-          <button
-            type="button"
-            className="flex h-10 w-full max-w-80 items-center gap-2.5 rounded-full bg-surface px-4 text-body-sm text-ink-tertiary transition-colors hover:bg-subtle"
-            onClick={() => setSearchOpen(true)}
-          >
-            <Icon name="search" size={18} className="shrink-0 text-icon-tertiary" />
-            <span className="min-w-0 flex-1 truncate text-left">
-              {student ? t("student:home.searchPlaceholder") : t("header.searchPlaceholder")}
-            </span>
-            <kbd className="shrink-0 rounded-sm bg-subtle px-2 py-0.5 text-caption text-ink-tertiary">
-              ⌘ K
-            </kbd>
-          </button>
-
           <NotificationBell onOpenLink={openLink} className="relative grid size-10 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle" />
 
           {action}
@@ -49,8 +28,6 @@ export function WorkspaceShell({ eyebrow, title, action, children }: WorkspaceSh
 
         {children}
       </div>
-
-      <GlobalSearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
     </main>
   );
 }

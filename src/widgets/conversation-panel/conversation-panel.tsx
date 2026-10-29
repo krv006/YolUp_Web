@@ -297,7 +297,7 @@ export function ConversationPanel({ role = "teacher", hidden = false }: Conversa
                 disabled={requestDirect.isPending}
                 onClick={() => startDirect(teacher)}
               >
-                <Avatar name={teacher.name} size="lg" />
+                <Avatar name={teacher.name} src={teacher.avatarUrl ?? undefined} size="lg" />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-title text-ink">{teacher.name}</strong>
                   <small className="truncate text-body-sm text-ink-secondary">

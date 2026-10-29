@@ -5,6 +5,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { formatConversationTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
+import { isDirectLocked, useDirectStatusLabel } from "../constants/direct-status";
 import { lastMessageBody } from "../lib/last-message";
 
 export interface ConversationItemProps {
@@ -29,6 +30,7 @@ export function ConversationItem({
   onOpenActions,
 }: ConversationItemProps) {
   const { t } = useTranslation("chat");
+  const directStatusLabel = useDirectStatusLabel();
   const unread = conversation.unreadCount > 0;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -105,7 +107,9 @@ export function ConversationItem({
                 <Icon name="groups" size={14} className="shrink-0" />
               )}
               <span className="truncate">
-                {conversation.typing
+                {isDirectLocked(conversation)
+                  ? directStatusLabel(conversation.directStatus)
+                  : conversation.typing
                   ? conversation.typingKind === "voice"
                     ? t("item.recordingVoice")
                     : t("item.typing")
