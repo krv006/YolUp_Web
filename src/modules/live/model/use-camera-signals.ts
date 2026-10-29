@@ -38,7 +38,11 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
   const pendingEnable = useRef(false);
 
   const enableCamera = useCallback(() => {
-    room.localParticipant.setCameraEnabled(true).catch(() => undefined);
+    room.localParticipant.setCameraEnabled(true).catch(() => {
+      toast.error("Kamera yoqilmadi", {
+        description: "Brauzerda kameraga ruxsat berilganini va boshqa ilova kamerani band qilmaganini tekshiring.",
+      });
+    });
   }, [room]);
 
   const { mutate: grantCamera } = grant;

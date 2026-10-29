@@ -38,7 +38,11 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
   const pendingEnable = useRef(false);
 
   const enableMic = useCallback(() => {
-    room.localParticipant.setMicrophoneEnabled(true).catch(() => undefined);
+    room.localParticipant.setMicrophoneEnabled(true).catch(() => {
+      toast.error("Mikrofon yoqilmadi", {
+        description: "Brauzerda mikrofonga ruxsat berilganini va boshqa ilova mikrofonni band qilmaganini tekshiring.",
+      });
+    });
   }, [room]);
 
   const { mutate: grantMic } = grant;
