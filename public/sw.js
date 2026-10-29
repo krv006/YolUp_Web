@@ -3,7 +3,7 @@ function readPayload(event) {
   if (!event.data) return {};
   try {
     return event.data.json();
-  } catch (error) {
+  } catch {
     return { body: event.data.text() };
   }
 }

@@ -51,7 +51,7 @@ export function ChatHeader({
   useEffect(() => {
     setSearchOpen(false);
     setSearch("");
-  }, [conversation.id, setSearch]);
+  }, [conversation.id, setSearch, setSearchOpen]);
 
   function closeSearch() {
     setSearchOpen(false);

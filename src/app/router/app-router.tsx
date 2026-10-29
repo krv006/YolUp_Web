@@ -139,7 +139,10 @@ const AdminSupportPage = lazy(() => import("@/pages/admin/support/admin-support-
 const AdminCertificatesPage = lazy(() => import("@/pages/admin/certificates/admin-certificates-page").then((module) => ({ default: module.AdminCertificatesPage })));
 const AdminTeachersPage = lazy(() => import("@/pages/admin/teachers/admin-teachers-page").then((module) => ({ default: module.AdminTeachersPage })));
 const LiveLessonPage = lazy(() => import("@/pages/live/live-lesson-page").then((module) => ({ default: module.LiveLessonPage })));
-const DesignSystemPage = lazy(() => import("@/pages/design-system/design-system-page").then((module) => ({ default: module.DesignSystemPage })));
+// Dizayn-tizim sahifasi faqat ishlab chiqishda (prod bundle'ga kirmaydi va ochiq marshrut bo'lmaydi)
+const DesignSystemPage = import.meta.env.DEV
+  ? lazy(() => import("@/pages/design-system/design-system-page").then((module) => ({ default: module.DesignSystemPage })))
+  : null;
 const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) => ({ default: module.BoardPage })));
 const WorkspaceHomePage = lazy(() => import("@/pages/teacher/workspace/workspace-home-page").then((module) => ({ default: module.WorkspaceHomePage })));
 const HomeworkListPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-list-page").then((module) => ({ default: module.HomeworkListPage })));
@@ -432,10 +435,12 @@ export function AppRouter() {
                 </Route>
               </Route>
 
-              <Route
-                path={ROUTES.designSystem}
-                element={<DesignSystemPage />}
-              />
+              {DesignSystemPage ? (
+                <Route
+                  path={ROUTES.designSystem}
+                  element={<DesignSystemPage />}
+                />
+              ) : null}
               <Route
                 path={ROUTES.errors.forbidden}
                 element={<ForbiddenPage />}
