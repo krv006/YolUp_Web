@@ -113,6 +113,7 @@ export interface SocketTypingEventDto {
   type: "typing";
   user_id: string | number;
   name: string;
+  kind?: "text" | "voice";
 }
 
 export interface SocketErrorEventDto {

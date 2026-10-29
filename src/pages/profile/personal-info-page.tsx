@@ -9,6 +9,7 @@ import {
   useUpdateProfileMutation,
 } from "@/modules/auth";
 import { useCourses, useSubjects } from "@/modules/course";
+import { AppError } from "@/shared/api";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
@@ -54,6 +55,7 @@ export function PersonalInfoPage() {
   const [form, setForm] = useState({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
+    username: user?.username ?? "",
     phone: user?.phone ?? "",
     email: user?.email ?? "",
     subject: user?.subject ?? "",
@@ -61,11 +63,14 @@ export function PersonalInfoPage() {
   });
 
   const subjectOptions = [{ value: "", label: t("page.subjectNone") }, ...(subjects.data ?? [])];
+  const usernameField = update.error instanceof AppError ? update.error.fields?.username : undefined;
+  const usernameError = Array.isArray(usernameField) ? usernameField[0] : usernameField;
 
   function reset() {
     setForm({
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
+      username: user?.username ?? "",
       phone: user?.phone ?? "",
       email: user?.email ?? "",
       subject: user?.subject ?? "",
@@ -84,17 +89,24 @@ export function PersonalInfoPage() {
       },
       {
         onSuccess: () => toast.success(isCompact ? t("page.mobile.saved") : t("page.savedHint")),
+        onError: (error) => {
+          if (!(error instanceof AppError && error.fields?.username)) toast.error(error.message);
+        },
       }
     );
   }
 
   if (isCompact) {
     const subjectLabel = subjectOptions.find((item) => item.value === form.subject)?.label ?? "";
-    const field = (key: "firstName" | "lastName" | "phone" | "email", extra: { inputMode?: "tel" | "email" } = {}) => (
+    const field = (
+      key: "firstName" | "lastName" | "username" | "phone" | "email",
+      extra: { inputMode?: "tel" | "email" } = {}
+    ) => (
       <input
         className={MOBILE_INPUT_SURFACE}
         value={form[key]}
         inputMode={extra.inputMode}
+        autoCapitalize={key === "username" ? "none" : undefined}
         onChange={(event) => setForm((current) => ({ ...current, [key]: event.target.value }))}
         required={key === "firstName" || key === "lastName"}
       />
@@ -120,6 +132,12 @@ export function PersonalInfoPage() {
           <div className="grid grid-cols-2 gap-3">
             <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.firstName")}>{field("firstName")}</MobileFieldLabel>
             <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.lastName")}>{field("lastName")}</MobileFieldLabel>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.loginLabel")}>{field("username")}</MobileFieldLabel>
+            <small className={`text-caption ${usernameError ? "text-error-text" : "text-ink-secondary"}`}>
+              {usernameError ?? t("page.usernameHint")}
+            </small>
           </div>
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.phone")}>{field("phone", { inputMode: "tel" })}</MobileFieldLabel>
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.email")}>{field("email", { inputMode: "email" })}</MobileFieldLabel>
@@ -258,6 +276,20 @@ export function PersonalInfoPage() {
             />
           </label>
         </div>
+
+        <label className={FIELD}>
+          <span className={LABEL}>{t("page.loginLabel")}</span>
+          <input
+            className={`${INPUT} ${usernameError ? "border-danger" : ""}`}
+            value={form.username}
+            autoCapitalize="none"
+            spellCheck={false}
+            onChange={(event) => setForm((c) => ({ ...c, username: event.target.value }))}
+          />
+          <small className={`text-caption ${usernameError ? "text-error-text" : "text-ink-tertiary"}`}>
+            {usernameError ?? t("page.usernameHint")}
+          </small>
+        </label>
 
         <label className={FIELD}>
           <span className={LABEL}>{t("page.phone")}</span>

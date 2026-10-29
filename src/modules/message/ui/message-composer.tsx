@@ -22,7 +22,7 @@ export interface MessageComposerProps {
   editingMessage?: ChatMessage | null;
   onCancelContext: () => void;
   currentUserId?: string | null;
-  onTyping?: () => void;
+  onTyping?: (kind?: "text" | "voice") => void;
   allowAttachments?: boolean;
   roomId?: string | null;
   /** Mobil biriktirish panelidagi "Vazifa" tugmasi (faqat o'qituvchi guruhida). */
@@ -115,16 +115,21 @@ export function MessageComposer({
     if (editingMessage || replyTo) textareaRef.current?.focus();
   }, [editingMessage, replyTo]);
 
+  const typingRef = useRef(onTyping);
+  useEffect(() => {
+    typingRef.current = onTyping;
+  });
+
   useEffect(() => {
     if (!recording) return undefined;
-    const timer = window.setInterval(
-      () =>
-        setSeconds((value) => {
-          secondsRef.current = value + 1;
-          return value + 1;
-        }),
-      1000
-    );
+    typingRef.current?.("voice");
+    const timer = window.setInterval(() => {
+      typingRef.current?.("voice");
+      setSeconds((value) => {
+        secondsRef.current = value + 1;
+        return value + 1;
+      });
+    }, 1000);
     return () => window.clearInterval(timer);
   }, [recording]);
 

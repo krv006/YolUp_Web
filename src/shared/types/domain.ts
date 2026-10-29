@@ -41,11 +41,14 @@ export interface Conversation {
   directStatus: DirectStatus | null;
   lastMessage: string;
   lastSender: string | null;
+  lastSenderId?: string | null;
+  lastMessageType?: string | null;
   updatedAt: string;
   unreadCount: number;
   status: PresenceStatus;
   typing: boolean;
   typingName?: string | null;
+  typingKind?: "text" | "voice";
   avatarTone: string;
   memberCount: number;
   imageUrl: string | null;

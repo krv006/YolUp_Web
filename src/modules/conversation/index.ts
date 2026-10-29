@@ -3,6 +3,8 @@ export type { ChatRoomDto, DirectAction, DirectTeacher, DirectTeacherDto } from 
 export { DIRECT_STATUS, useDirectStatusLabel } from "./constants/direct-status";
 export type { DirectStatusValue } from "./constants/direct-status";
 export { mapConversationDto, mapConversationPage, mapTeacherDto } from "./lib/conversation.mappers";
+export { isOwnLastMessage, lastMessageBody } from "./lib/last-message";
+export type { LastMessageLabels } from "./lib/last-message";
 export { conversationKeys } from "./model/conversation.keys";
 export {
   matchesConversationFilter,

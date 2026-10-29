@@ -94,12 +94,14 @@
     "filesEmptyHint": "Здесь собираются файлы из группы.",
     "mediaEmptyHint": "Здесь собираются фото и видео из группы.",
     "descriptionShort": "Описание",
-    "memberYou": "{{name}} (вы)"
+    "memberYou": "{{name}} (вы)",
+    "messageTeacher": "Написать"
   },
   "item": {
     "liveNow": "Идёт урок",
     "typing": "печатает...",
-    "mentionTitle": "Вас упомянули"
+    "mentionTitle": "Вас упомянули",
+    "recordingVoice": "записывает голосовое..."
   },
   "newDialog": {
     "title": "Новая группа",
@@ -221,7 +223,8 @@
     "recordingHint": "Открыть запись урока"
   },
   "typing": {
-    "suffix": "печатает"
+    "suffix": "печатает",
+    "voiceSuffix": "записывает голосовое"
   },
   "attachment": {
     "openAria": "{{name}} — открыть",
@@ -294,7 +297,11 @@
     "peopleSection": "Люди",
     "startChat": "Начать чат",
     "connectionLost": "Нет соединения",
-    "freshStart": "Новое начало"
+    "freshStart": "Новое начало",
+    "voiceMessage": "Голосовое сообщение",
+    "imageMessage": "Фото",
+    "videoMessage": "Видео",
+    "recordingVoice": "{{name}} записывает голосовое..."
   },
   "pinned": {
     "label": "Закреплённое сообщение",

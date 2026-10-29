@@ -5,6 +5,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { formatConversationTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
+import { lastMessageBody } from "../lib/last-message";
 
 export interface ConversationItemProps {
   conversation: Conversation;
@@ -104,7 +105,15 @@ export function ConversationItem({
                 <Icon name="groups" size={14} className="shrink-0" />
               )}
               <span className="truncate">
-                {conversation.typing ? t("item.typing") : conversation.lastMessage}
+                {conversation.typing
+                  ? conversation.typingKind === "voice"
+                    ? t("item.recordingVoice")
+                    : t("item.typing")
+                  : lastMessageBody(conversation, {
+                      voice: t("panel.voiceMessage"),
+                      image: t("panel.imageMessage"),
+                      video: t("panel.videoMessage"),
+                    })}
               </span>
             </span>
           )}

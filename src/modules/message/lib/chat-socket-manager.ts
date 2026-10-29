@@ -43,9 +43,9 @@ export class ChatSocketManager {
     this.socket.stop();
   }
 
-  sendTyping(): void {
+  sendTyping(kind: "text" | "voice" = "text"): void {
     const now = Date.now();
     if (now - this.lastTypingAt < TYPING_THROTTLE_MS) return;
-    if (this.socket.send({ type: "typing" })) this.lastTypingAt = now;
+    if (this.socket.send({ type: "typing", kind })) this.lastTypingAt = now;
   }
 }
