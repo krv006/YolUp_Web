@@ -1,4 +1,5 @@
 import { mapQuizQuestionDto, toQuestionType } from "@/modules/quiz";
+import { normalizeMediaUrl } from "@/shared/api";
 import type {
   ExamCurrent,
   ExamCurrentItem,
@@ -93,6 +94,11 @@ export function mapExamSummaryDto(dto: ExamSummaryDto): ExamSummary {
     totalMinutes: Number(dto.total_minutes) || 0,
     state: dto.state,
     serverNow: dto.server_now,
+    hasReminder: Boolean(dto.has_reminder),
+    reminderMinutes: dto.reminder_minutes ?? null,
+    myTotal: dto.my_total
+      ? { score: dto.my_total.score ?? null, max: dto.my_total.max ?? null, label: dto.my_total.label || "" }
+      : null,
   };
 }
 
@@ -257,6 +263,7 @@ export function mapExamStudentResultDto(dto: ExamStudentResultDto): ExamStudentR
     studentId: String(dto.student?.id ?? ""),
     studentName: dto.student?.name || dto.student?.username || "",
     username: dto.student?.username || "",
+    avatarUrl: normalizeMediaUrl(dto.student?.avatar ?? null),
     participated: Boolean(dto.participated),
     finishedAt: dto.finished_at ?? null,
     approximate: Boolean(dto.approximate),
@@ -283,6 +290,7 @@ export function mapExamResultsDto(dto: ExamResultsDto): ExamResults {
     hidden: Boolean(dto.hidden),
     engine: dto.engine || "",
     state: dto.state || "",
+    groupAverage: dto.group_average ?? null,
     results: (dto.results ?? []).map(mapExamStudentResultDto),
   };
 }

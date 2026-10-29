@@ -3,7 +3,7 @@ import { useLocalParticipantPermissions, useRoomContext } from "@livekit/compone
 import { toast } from "sonner";
 import { useBoardChannel, useTeacherSignals, type BoardSocketEvent } from "@/modules/board";
 import { canPublishSource, MICROPHONE_SOURCE } from "../lib/live-permissions";
-import { useDenyMic, useGrantMic, useRequestMic } from "./live.queries";
+import { useCancelMicRequest, useDenyMic, useGrantMic, useRequestMic } from "./live.queries";
 
 export interface MicRequest {
   studentId: string;
@@ -16,6 +16,7 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
   const grant = useGrantMic(lessonId);
   const deny = useDenyMic(lessonId);
   const request = useRequestMic(lessonId);
+  const cancel = useCancelMicRequest(lessonId);
 
   const [live, setLive] = useState<MicRequest[]>([]);
   const [answered, setAnswered] = useState<string[]>([]);
@@ -68,6 +69,12 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
         return;
       }
 
+      if (event.type === "mic_request_cancelled") {
+        setAnswered((current) => (current.includes(event.studentId) ? current : [...current, event.studentId]));
+        if (isMine(event.studentId)) setWaiting(false);
+        return;
+      }
+
       if (event.type !== "mic_granted" && event.type !== "mic_denied") return;
 
       setAnswered((current) =>
@@ -102,11 +109,16 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
     [sendRequest]
   );
 
+  const { mutate: sendCancel } = cancel;
+  const cancelMic = useCallback(() => sendCancel(undefined, { onSuccess: () => setWaiting(false) }), [sendCancel]);
+
   return {
     requests,
     grant,
     deny,
     requestMic,
+    cancelMic,
+    cancelling: cancel.isPending,
     requesting: request.isPending,
     waiting,
   };

@@ -68,6 +68,14 @@ export const liveApi = {
     return Boolean(dto?.denied);
   },
 
+  async cancelMicRequest(lessonId: string) {
+    await apiClient.delete(liveEndpoints.micRequest(lessonId));
+  },
+
+  async cancelCameraRequest(lessonId: string) {
+    await apiClient.delete(liveEndpoints.cameraRequest(lessonId));
+  },
+
   async requestCamera(lessonId: string) {
     return apiClient.post(liveEndpoints.requestCamera, { lesson_id: lessonId });
   },

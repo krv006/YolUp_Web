@@ -13,6 +13,7 @@ export const quizKeys = Object.freeze({
   list: (courseId: string | null) => ["quizzes", "list", courseId] as const,
   detail: (id: string) => ["quizzes", "detail", id] as const,
   attempts: (id: string) => ["quizzes", "attempts", id] as const,
+  draft: (id: string) => ["quizzes", "draft", id] as const,
   aiJobs: ["quizzes", "ai-jobs"] as const,
 });
 
@@ -238,8 +239,33 @@ export function useSubmitQuizAttempt() {
     }) => quizApi.submitAttempt(quizId, answers, durationSeconds),
     onSuccess: (result) => {
       client.invalidateQueries({ queryKey: quizKeys.attempts(result.quizId) });
+      client.removeQueries({ queryKey: quizKeys.draft(result.quizId) });
     },
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useQuizDraft(quizId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: quizKeys.draft(quizId ?? ""),
+    queryFn: ({ signal }) => quizApi.getDraft(quizId as string, { signal }),
+    enabled: Boolean(quizId) && enabled,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+  });
+}
+
+export function useShareQuizResults() {
+  return useMutation({
+    mutationFn: ({ quizId, parents }: { quizId: string; parents: boolean }) => quizApi.shareResults(quizId, parents),
+  });
+}
+
+export function useGenerateQuizFromBank() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: quizApi.generateFromBank,
+    onSuccess: () => client.invalidateQueries({ queryKey: quizKeys.all }),
   });
 }
 

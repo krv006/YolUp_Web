@@ -4,7 +4,7 @@ import { GraduationCap, Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { initials, storage } from "@/shared/lib";
+import { formatRelativeShort, initials, storage } from "@/shared/lib";
 import { useAuth } from "@/modules/auth";
 import {
   CourseMembersSection,
@@ -16,7 +16,7 @@ import {
   useUpdateCourse,
   useUpdateCourseAvatar,
 } from "@/modules/course";
-import { useChatUiStore, messageApi, messageKeys } from "@/modules/message";
+import { RoomAttachments, useChatUiStore, messageApi, messageKeys } from "@/modules/message";
 import {
   DIRECT_STATUS,
   InviteStudentsDialog,
@@ -555,7 +555,11 @@ export function ConversationInfoPanel({
                                 member.isOnline ? "text-success-text" : "text-ink-tertiary"
                               }`}
                             >
-                              {member.isOnline ? t("info.online") : `@${member.username}`}
+                              {member.isOnline
+                                ? t("info.online")
+                                : [`@${member.username}`, member.lastSeenAt ? formatRelativeShort(member.lastSeenAt) : ""]
+                                    .filter(Boolean)
+                                    .join(" · ")}
                             </small>
                           </span>
                           {member.role === "teacher" ? (
@@ -573,17 +577,7 @@ export function ConversationInfoPanel({
                     </div>
                   )
                 ) : (
-                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-line bg-surface px-6 py-10 text-center">
-                    <span className="grid size-12 place-items-center rounded-full bg-subtle text-ink-tertiary">
-                      <Icon name={tab === "files" ? "assign" : "camera"} size={22} />
-                    </span>
-                    <strong className="text-label-strong text-ink">
-                      {tab === "files" ? t("info.filesEmpty") : t("info.mediaEmpty")}
-                    </strong>
-                    <small className="text-caption text-ink-tertiary">
-                      {t("info.sectionPending")}
-                    </small>
-                  </div>
+                  <RoomAttachments roomId={conversation.id} type={tab === "files" ? "file" : "media"} />
                 )}
               </section>
             ) : null}

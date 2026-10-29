@@ -114,6 +114,7 @@ export function mapQuizGroupDto(dto: QuizGroupDto): QuizGroup {
 export function mapQuizDto(dto: QuizDto): QuizDetail {
   return {
     ...mapQuizSummaryDto(dto),
+    groupAvgPercentage: dto.group_avg_percentage ?? null,
     groups: (dto.groups ?? []).map(mapQuizGroupDto),
     questions: (dto.questions ?? []).map(mapQuizQuestionDto),
   };
@@ -121,18 +122,18 @@ export function mapQuizDto(dto: QuizDto): QuizDetail {
 
 export function mapQuizAttemptAnswerDto(dto: QuizAttemptAnswerDto): QuizAttemptAnswer {
   return {
-    questionId: String(dto.question),
-    questionText: dto.question_text,
+    questionId: String(dto.question ?? dto.question_id ?? ""),
+    questionText: dto.question_text ?? dto.label ?? "",
     selectedOptionId: dto.selected_option == null ? null : String(dto.selected_option),
-    selectedOptionText: dto.selected_option_text,
-    questionType: toQuestionType(dto.question_type),
+    selectedOptionText: dto.selected_option_text ?? null,
+    questionType: toQuestionType(dto.question_type ?? dto.type),
     isCorrect: dto.is_correct,
     correctOption: dto.correct_option
       ? { id: String(dto.correct_option.id), text: dto.correct_option.text }
       : null,
     points: dto.points ?? null,
     earnedPoints: dto.earned_points ?? null,
-    givenDisplay: dto.given_display ?? null,
+    givenDisplay: dto.given_display ?? dto.given ?? null,
     correctDisplay: dto.correct_display ?? null,
   };
 }

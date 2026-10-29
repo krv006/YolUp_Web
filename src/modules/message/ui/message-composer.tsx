@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { useQuery } from "@tanstack/react-query";
+import { formatRelativeShort } from "@/shared/lib";
 import { useOnlineStatus } from "@/shared/model";
 import { messageApi } from "../api/message.api";
 import { messageKeys } from "../model/message.keys";
@@ -307,7 +308,13 @@ export function MessageComposer({
                       <span className="lg:hidden">
                         {student.role === "teacher"
                           ? t("mention.teacher")
-                          : `@${student.username}${student.isOnline ? ` · ${t("mention.online")}` : ""}`}
+                          : `@${student.username}${
+                              student.isOnline
+                                ? ` · ${t("mention.online")}`
+                                : student.lastSeenAt
+                                  ? ` · ${formatRelativeShort(student.lastSeenAt)}`
+                                  : ""
+                            }`}
                       </span>
                       <span className="hidden lg:inline">@{student.username}</span>
                     </small>

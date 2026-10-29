@@ -105,7 +105,7 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <div className="flex min-w-0 flex-col gap-5">
           {recording?.ready && recording.streamUrl ? (
-            <RecordingVideo src={recording.streamUrl} />
+            <RecordingVideo src={recording.streamUrl} poster={recording.thumbnailUrl} />
           ) : (
             <div className="flex aspect-video w-full flex-col items-center justify-center gap-3.5 rounded-lg bg-subtle px-6 text-center">
               <span className="grid size-18 place-items-center rounded-xl bg-surface text-brand">

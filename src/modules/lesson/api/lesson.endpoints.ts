@@ -15,4 +15,5 @@ export const lessonEndpoints = Object.freeze({
   conflicts: "/api/v1/lessons/conflicts/",
   rate: (id: string) => `/api/v1/lessons/${id}/rate/`,
   ratings: (id: string) => `/api/v1/lessons/${id}/ratings/`,
+  reminder: (id: string) => `/api/v1/lessons/${id}/reminder/`,
 });

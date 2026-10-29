@@ -82,6 +82,10 @@ export function useRenameSheet(lessonId: string) {
   });
 }
 
+export function useSetCurrentSheet(lessonId: string) {
+  return useMutation({ mutationFn: (sheet: number) => boardApi.setCurrentSheet(lessonId, sheet) });
+}
+
 export function useEraseStrokes(lessonId: string) {
   const client = useQueryClient();
   return useMutation({

@@ -7,7 +7,7 @@ import {
   type TokenPair,
 } from "@/shared/api";
 import { STORAGE_KEYS } from "@/shared/constants";
-import { SUPPORTED_LANGUAGES, useLanguageStore, type AppLanguage } from "@/shared/model";
+import { SUPPORTED_LANGUAGES, useLanguageStore, useTextSizeStore, useThemeStore, type AppLanguage } from "@/shared/model";
 import type { AuthStatus, AuthUser, LoginCredentials } from "@/shared/types";
 import { authApi } from "../api/auth.api";
 import type { RegisterRequestDto, TwoFactorChallenge } from "../api/auth.dto";
@@ -22,6 +22,11 @@ import { configureAuthRefresh } from "../lib/auth-session";
 import { resolveHomeRoute } from "../lib/resolve-home-route";
 
 let suppressLanguagePush = false;
+
+function syncPreferencesFromServer(user: AuthUser) {
+  if (user.theme && useThemeStore.getState().mode !== user.theme) useThemeStore.getState().setMode(user.theme);
+  if (user.textSize && useTextSizeStore.getState().size !== user.textSize) useTextSizeStore.getState().setSize(user.textSize);
+}
 
 function syncLanguageFromServer(preferred: string) {
   if (!SUPPORTED_LANGUAGES.includes(preferred as AppLanguage)) return;
@@ -119,6 +124,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         const user = mapUserDto(await authApi.getCurrentUser());
         set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
         syncLanguageFromServer(user.preferredLanguage);
+        syncPreferencesFromServer(user);
       } catch (error) {
         const appError = toAppError(error);
         if (appError.status === 401) {
@@ -149,6 +155,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       if (seq !== sessionSeq) return { status: "authenticated", user };
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
       syncLanguageFromServer(user.preferredLanguage);
+      syncPreferencesFromServer(user);
       return { status: "authenticated", user };
     } catch (error) {
       endSession();
@@ -167,6 +174,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       if (seq !== sessionSeq) return user;
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
       syncLanguageFromServer(user.preferredLanguage);
+      syncPreferencesFromServer(user);
       return user;
     } catch (error) {
       endSession();
@@ -183,6 +191,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       if (seq !== sessionSeq) return user;
       set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
       syncLanguageFromServer(user.preferredLanguage);
+      syncPreferencesFromServer(user);
       return user;
     } catch (error) {
       endSession();
@@ -205,6 +214,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     beginSession(tokens, persistent);
     set({ user, status: AUTH_STATUS.AUTHENTICATED, error: null });
     syncLanguageFromServer(user.preferredLanguage);
+    syncPreferencesFromServer(user);
     return user;
   },
 

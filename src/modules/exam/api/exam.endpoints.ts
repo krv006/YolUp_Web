@@ -11,6 +11,9 @@ export const examEndpoints = Object.freeze({
   results: (id: string) => `/api/v1/exams/${id}/results/`,
   shareResults: (id: string) => `/api/v1/exams/${id}/share-results/`,
   studentResult: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/`,
+  resultPdf: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/pdf/`,
+  reminder: (id: string) => `/api/v1/exams/${id}/reminder/`,
+  mistakesPractice: (id: string) => `/api/v1/exams/${id}/mistakes-practice/`,
   writingAi: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/writing-ai/`,
   manualScores: (id: string, studentId: string) => `/api/v1/exams/${id}/results/${studentId}/manual/`,
 });

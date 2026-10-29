@@ -4,25 +4,33 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
-import { useCourses } from "@/modules/course";
-import { useLessons } from "@/modules/lesson";
-import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
+import { useQuizzes } from "@/modules/quiz";
+import { useGlobalSearch, type SearchType } from "@/modules/search";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 
-type Filter = "all" | "groups" | "lessons" | "quizzes" | "messages";
+type Filter = "all" | SearchType;
 
 interface Hit {
   key: string;
-  section: Filter;
+  section: SearchType;
   title: string;
   meta: string;
   avatar?: string;
+  avatarUrl?: string | null;
   icon?: string;
   to: string;
 }
+
+const SECTION_ICONS: Record<SearchType, string> = {
+  groups: "person",
+  lessons: "nav-calendar",
+  quizzes: "assign",
+  messages: "chat",
+  people: "person",
+};
 
 function highlight(text: string, query: string): ReactNode {
   if (!query) return text;
@@ -55,82 +63,62 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
   const inputRef = useRef<HTMLInputElement>(null);
 
   const query = term.trim().toLowerCase();
-  const enabled = open && query.length >= 2;
+  const search = useGlobalSearch(term, filter, open);
+  const enabled = search.active;
 
-  const courses = useCourses();
-  const lessons = useLessons({ page_size: 200 }, open);
-  const quizzes = useQuizzes(null, open);
+  const quizzes = useQuizzes(null, open && !isStudent);
   const conversations = useConversations(isStudent ? "student" : "teacher");
   const months = tl("list.months", { returnObjects: true }) as string[];
 
   const hits = useMemo<Hit[]>(() => {
-    if (!enabled) return [];
-    const matches = (value: string | null | undefined) =>
-      Boolean(value && value.toLowerCase().includes(query));
-
-    function moment(value: string): string {
+    function moment(value: string | null): string {
+      if (!value) return "";
       const date = new Date(value);
       if (Number.isNaN(date.getTime())) return "";
       const time = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
       return `${date.getDate()}-${(months[date.getMonth()] ?? "").toLowerCase()}, ${time}`;
     }
 
-    return [
-      ...(courses.data ?? [])
-        .filter((item) => matches(item.title))
-        .map((item) => ({
-          key: `group-${item.id}`,
-          section: "groups" as const,
-          title: item.title,
-          meta: [t("groupMeta", { count: item.studentCount ?? 0 }), item.subjectLabel || item.subject]
-            .filter(Boolean)
-            .join(" · "),
-          avatar: item.title,
-          to: (() => {
-            const room = conversations.data?.find((conversation) => conversation.courseId === item.id);
-            return room ? routes.chat(room.id) : routes.chats;
-          })(),
-        })),
-      ...(lessons.data ?? [])
-        .filter((item) => matches(item.title))
-        .map((item) => ({
-          key: `lesson-${item.id}`,
-          section: "lessons" as const,
-          title: item.title,
-          meta: [item.courseTitle, moment(item.startsAt)].filter(Boolean).join(" · "),
-          icon: "nav-calendar",
-          to: routes.schedule,
-        })),
-      ...(quizzes.data ?? [])
-        .filter((item) => matches(quizDisplayTitle(item)))
-        .map((item) => ({
-          key: `quiz-${item.id}`,
-          section: "quizzes" as const,
-          title: quizDisplayTitle(item),
-          meta: `${item.status === "draft" ? t("draft") : t("published")} · ${t("quizQuestions", {
-            count: item.questionCount,
-          })}`,
-          icon: "assign",
+    return search.items.map((item) => {
+      const base = { key: `${item.type}-${item.id}`, section: item.type, title: item.title, icon: SECTION_ICONS[item.type] };
+      if (item.type === "groups") {
+        const room = conversations.data?.find((conversation) => conversation.courseId === item.id);
+        return { ...base, meta: item.subtitle, avatar: item.title, to: room ? routes.chat(room.id) : routes.chats };
+      }
+      if (item.type === "lessons")
+        return { ...base, meta: [item.subtitle, moment(item.startsAt)].filter(Boolean).join(" · "), to: routes.schedule };
+      if (item.type === "quizzes") {
+        const quiz = quizzes.data?.find((entry) => entry.id === item.id);
+        return {
+          ...base,
+          meta: item.subtitle,
           to: isStudent
             ? ROUTES.student.test(item.id)
-            : item.status === "draft"
-              ? ROUTES.teacher.test(item.id)
-              : ROUTES.teacher.testResults(item.id),
-        })),
-      ...(conversations.data ?? [])
-        .filter((item) => matches(item.title) || matches(item.lastMessage))
-        .map((item) => ({
-          key: `room-${item.id}`,
-          section: "messages" as const,
-          title: item.title,
-          meta: item.lastMessage,
-          avatar: item.title,
-          to: routes.chat(item.id),
-        })),
-    ];
-  }, [enabled, query, courses.data, lessons.data, quizzes.data, conversations.data, routes, isStudent, months, t]);
+            : quiz && quiz.status !== "draft"
+              ? ROUTES.teacher.testResults(item.id)
+              : ROUTES.teacher.test(item.id),
+        };
+      }
+      if (item.type === "messages")
+        return {
+          ...base,
+          meta: [item.subtitle, item.sender].filter(Boolean).join(" · "),
+          avatar: item.subtitle || item.title,
+          to: item.roomId ? routes.chat(item.roomId) : routes.chats,
+        };
+      return {
+        ...base,
+        meta: item.subtitle,
+        avatar: item.title,
+        avatarUrl: item.avatarUrl,
+        to: item.roomId ? routes.chat(item.roomId) : routes.chats,
+      };
+    });
+  }, [search.items, conversations.data, quizzes.data, routes, isStudent, months]);
 
-  const visible = hits.filter((hit) => filter === "all" || hit.section === filter);
+  const visible = hits;
+  const countOf = (section: SearchType) => search.counts[section] ?? 0;
+  const total = (Object.values(search.counts) as number[]).reduce((sum, value) => sum + value, 0);
 
   const resetKey = `${open}|${query}|${filter}`;
   const [syncedKey, setSyncedKey] = useState(resetKey);
@@ -145,11 +133,12 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
     navigate(hit.to);
   }
 
-  const sections: Array<{ id: Filter; label: string }> = [
-    { id: "groups", label: t("sectionGroups", { count: hits.filter((h) => h.section === "groups").length }) },
-    { id: "lessons", label: t("sectionLessons", { count: hits.filter((h) => h.section === "lessons").length }) },
-    { id: "quizzes", label: t("sectionQuizzes", { count: hits.filter((h) => h.section === "quizzes").length }) },
-    { id: "messages", label: t("sectionMessages", { count: hits.filter((h) => h.section === "messages").length }) },
+  const sections: Array<{ id: SearchType; label: string }> = [
+    { id: "groups", label: t("sectionGroups", { count: countOf("groups") }) },
+    { id: "lessons", label: t("sectionLessons", { count: countOf("lessons") }) },
+    { id: "quizzes", label: t("sectionQuizzes", { count: countOf("quizzes") }) },
+    { id: "messages", label: t("sectionMessages", { count: countOf("messages") }) },
+    { id: "people", label: t("sectionPeople", { count: countOf("people") }) },
   ];
 
   const isCompact = useIsCompact();
@@ -201,7 +190,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
         <div className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:px-0 [&::-webkit-scrollbar]:hidden">
           {(
             [
-              { id: "all" as const, label: t("filterAll", { count: hits.length }) },
+              { id: "all" as const, label: t("filterAll", { count: total }) },
               ...sections.map((item) => ({ id: item.id, label: item.label.split(" · ")[0] })),
             ]
           ).map((item) => (
@@ -223,6 +212,12 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
         <div className="flex max-h-[380px] flex-col gap-4 overflow-y-auto">
           {!enabled ? (
             <p className="px-1 text-body-sm text-ink-tertiary">{t("searchHint")}</p>
+          ) : !visible.length && search.loading ? (
+            <div className="flex flex-col gap-2" aria-hidden="true">
+              {Array.from({ length: 4 }, (_, index) => (
+                <i key={index} className="h-16 rounded-xl bg-skeleton" />
+              ))}
+            </div>
           ) : !visible.length ? (
             <p className="px-1 text-body-sm text-ink-tertiary">{t("searchEmpty", { query: term })}</p>
           ) : (
@@ -248,7 +243,7 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
                           onClick={() => go(hit)}
                         >
                           {hit.avatar ? (
-                            <Avatar name={hit.avatar} size="sm" />
+                            <Avatar name={hit.avatar} src={hit.avatarUrl ?? undefined} size="sm" />
                           ) : (
                             <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-action text-on-action">
                               <Icon name={hit.icon ?? "assign"} size={18} />
@@ -373,6 +368,18 @@ export function GlobalSearchDialog({ open, onOpenChange }: GlobalSearchDialogPro
               <p className="px-6 py-10 text-center text-body-sm text-ink-tertiary">
                 {t("searchHint")}
               </p>
+            ) : !visible.length && search.loading ? (
+              <div className="flex flex-col gap-1 px-6 py-2" aria-hidden="true">
+                {Array.from({ length: 5 }, (_, index) => (
+                  <span key={index} className="flex h-14 items-center gap-3.5">
+                    <i className="size-9 shrink-0 rounded-lg bg-skeleton" />
+                    <span className="flex min-w-0 flex-1 flex-col gap-2">
+                      <i className="h-3.5 w-48 max-w-full rounded-full bg-skeleton" />
+                      <i className="h-3 w-32 max-w-full rounded-full bg-skeleton" />
+                    </span>
+                  </span>
+                ))}
+              </div>
             ) : !visible.length ? (
               <div className="flex flex-col items-center gap-2 px-6 py-12 text-center">
                 <span className="grid size-14 place-items-center rounded-2xl bg-brand-subtle text-brand">

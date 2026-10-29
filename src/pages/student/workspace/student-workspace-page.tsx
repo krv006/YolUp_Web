@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { useMaterials } from "@/modules/material";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -21,9 +21,9 @@ const MODULES = [
   { id: "tests", icon: "quiz", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.tests },
   { id: "assignments", icon: "assign", tone: "bg-accent-saffron-bg text-accent-saffron-fg", to: ROUTES.student.homework },
   { id: "mock", icon: "emoji-events", tone: "bg-accent-red-bg text-accent-red-fg", to: ROUTES.student.mockExams },
-  { id: "ai", icon: "auto-awesome", tone: "bg-accent-violet-bg text-accent-violet-fg", to: null },
+  { id: "ai", icon: "auto-awesome", tone: "bg-accent-violet-bg text-accent-violet-fg", to: ROUTES.student.ai },
   { id: "analytics", icon: "bar-chart", tone: "bg-accent-green-bg text-accent-green-fg", to: ROUTES.student.workspaceAnalytics },
-  { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: null },
+  { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.materials },
 ] as const;
 
 export function StudentWorkspacePage() {
@@ -32,6 +32,7 @@ export function StudentWorkspacePage() {
   const navigate = useNavigate();
   const isCompact = useIsCompact();
   const data = useStudentWorkspace();
+  const materials = useMaterials({});
   const { now } = data;
 
   const fresh = data.quizzes.filter((quiz) => !data.attemptByQuiz.has(quiz.id));
@@ -53,12 +54,11 @@ export function StudentWorkspacePage() {
     mock: examLabel,
     ai: t("workspace.counts.ai"),
     analytics: t("workspace.counts.analytics", { value: average }),
-    materials: t("workspace.counts.materials"),
+    materials: t("workspace.counts.materials", { count: materials.data?.length ?? 0 }),
   };
 
   function openModule(module: (typeof MODULES)[number]) {
-    if (module.to) navigate(module.to);
-    else toast.info(t("workspace.soon"));
+    navigate(module.to);
   }
 
   if (isCompact)

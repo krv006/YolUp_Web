@@ -45,6 +45,9 @@ function applyEvent(state: BoardState | undefined, event: BoardSocketEvent): Boa
             ],
           };
 
+    case "current_sheet":
+      return state.currentSheet === event.sheet ? state : { ...state, currentSheet: event.sheet };
+
     case "sheet_renamed":
       return {
         ...state,

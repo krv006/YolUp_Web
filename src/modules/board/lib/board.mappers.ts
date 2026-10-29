@@ -38,6 +38,7 @@ export function mapBoardDto(dto: BoardStateDto): BoardState {
     mathEnabled: Boolean(dto.math_enabled),
     chemistryEnabled: Boolean(dto.chemistry_enabled),
     permissionMode: dto.permission_mode ?? "teacher",
+    currentSheet: dto.current_sheet ?? null,
     awayStudents: (dto.away_students ?? []).map((item) => ({
       id: String(item.student_id),
       name: item.name || "O‘quvchi",
@@ -66,6 +67,7 @@ export function mapPeriodicElementDto(dto: PeriodicElementDto): PeriodicElement 
     z: Number(dto.z),
     symbol: dto.symbol,
     name: dto.name,
+    latinName: dto.latin_name && dto.latin_name !== dto.name ? dto.latin_name : "",
     mass: formatMass(dto.mass),
     shells: (dto.shells ?? []).map(Number).filter((count) => Number.isFinite(count) && count > 0),
     valence: valence == null ? "" : String(valence),

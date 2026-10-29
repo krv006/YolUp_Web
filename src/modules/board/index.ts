@@ -25,6 +25,7 @@ export {
   useBoard,
   useEraseStrokes,
   useRenameSheet,
+  useSetCurrentSheet,
   useGrantDraw,
   useRevokeDraw,
   useSendBoardToChat,

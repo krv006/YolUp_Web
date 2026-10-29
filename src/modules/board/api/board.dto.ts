@@ -101,12 +101,14 @@ export interface BoardStateDto {
   pending_mic_requests?: Array<{ student_id: string | number; name: string }>;
   pending_camera_requests?: Array<{ student_id: string | number; name: string }>;
   permission_mode?: BoardPermissionMode | null;
+  current_sheet?: number | null;
 }
 
 export interface PeriodicElementDto {
   z: number;
   symbol: string;
   name: string;
+  latin_name?: string | null;
   mass?: number | string | null;
   shells?: number[] | null;
   valence?: number | number[] | string | null;
@@ -120,6 +122,7 @@ export interface PeriodicElement {
   z: number;
   symbol: string;
   name: string;
+  latinName: string;
   mass: string;
   shells: number[];
   valence: string;
@@ -180,6 +183,7 @@ export interface BoardState {
   mathEnabled: boolean;
   chemistryEnabled: boolean;
   permissionMode: BoardPermissionMode;
+  currentSheet: number | null;
   awayStudents: AwayStudent[];
   pendingMicRequests: PendingMicRequest[];
   pendingCameraRequests: PendingCameraRequest[];

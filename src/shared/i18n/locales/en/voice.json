@@ -60,6 +60,12 @@
     "raiseTitle": "To turn on your mic",
     "raiseHint": "Raise your hand",
     "raiseHand": "Raise hand",
-    "soon": "Coming soon"
+    "lowerHand": "Lower hand",
+    "handSent": "The room owner can see your raised hand",
+    "handsTitle": "Raised hands · {{count}}",
+    "handAllowed": "Allowed to speak",
+    "handWaiting": "Waiting to speak",
+    "handAllow": "Let speak",
+    "handDismiss": "Lower hand"
   }
 }

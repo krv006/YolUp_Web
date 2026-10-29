@@ -454,7 +454,6 @@
     },
     "emptyTitle": "No tests yet",
     "emptyHint": "Create your first test — grading happens automatically.",
-    "soon": "Coming soon",
     "importedTopic": "Imported test",
     "mobile": {
       "back": "Back",
@@ -517,7 +516,15 @@
       "attempt": "attempt {{count}}",
       "minutes": "{{count}} min",
       "notSolved": "Not solved"
-    }
+    },
+    "shareTitle": "Share results",
+    "shareHint": "A results table is posted to the group chat (each student's best attempt).",
+    "shareParents": "Notify parents too",
+    "shareParentsHint": "Approved parents get a notification",
+    "shareConfirm": "Send",
+    "shareCancel": "Cancel",
+    "shareDone": "Results posted to the group chat",
+    "shareDoneParents": "Results posted · {{count}} parents notified"
   },
   "newTest": {
     "title": "New test",
@@ -578,7 +585,8 @@
       "simple": "Plain test (A-B-C-D)",
       "uzbmb": "Milliy sertifikat",
       "ielts": "IELTS",
-      "sat": "SAT"
+      "sat": "SAT",
+      "bank": "From question bank"
     },
     "pickFiles": "Add material (optional)",
     "filesPicked": "{{count}} files picked",
@@ -606,8 +614,6 @@
         "rules": "With rules",
         "bank": "From bank"
       },
-      "bankTitle": "Question bank is coming soon",
-      "bankHint": "We are working on building new tests from questions in your previous tests.",
       "pickFiles": "Upload material (PDF, DOCX, image)",
       "filesHint": "Up to 5 files · 20 MB total",
       "filesTooBig": "Files must not exceed {{size}} MB in total",
@@ -622,7 +628,9 @@
       "queued": "Queued",
       "open": "Open",
       "retry": "Retry"
-    }
+    },
+    "bankHint": "No AI call: a draft quiz is assembled on the topic from questions in your earlier AI-made quizzes.",
+    "bankSubmit": "Build from bank"
   },
   "details": {
     "title": "Edit test",

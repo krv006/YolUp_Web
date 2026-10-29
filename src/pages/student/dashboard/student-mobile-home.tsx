@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { notificationLines } from "@/modules/notification";
+import { notificationContent } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
 import { useOnline } from "@/shared/hooks/use-online";
 import type { Lesson } from "@/shared/types";
@@ -190,7 +190,7 @@ export function StudentMobileHome({
                 <h2 className="font-heading text-title text-ink">{t("home.grades.title")}</h2>
                 <MobileListCard>
                   {home.recentGrades.slice(0, 3).map((item) => {
-                    const { title, body } = notificationLines(item.html);
+                    const { title, body } = notificationContent(item);
                     return (
                       <MobileListRow
                         key={item.id}

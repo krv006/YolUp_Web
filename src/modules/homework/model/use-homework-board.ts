@@ -89,6 +89,7 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
       height: init.height,
       subject: "",
       permissionMode: "everyone" as const,
+      currentSheet: null,
       // Doska fanga bog'lanmagan: hamma fanda bir xil umumiy asboblar (yechuvchi/davriy jadval yo'q)
       mathEnabled: false,
       chemistryEnabled: false,

@@ -42,6 +42,8 @@ export function mapInboxNotificationDto(dto: NotificationRecipientDto): InboxNot
     notificationId: String(dto.notification?.id ?? dto.id),
     sender: mapSender(dto.notification?.sender),
     html: sanitizeHtml(dto.notification?.description ?? ""),
+    title: dto.title ?? dto.notification?.title ?? "",
+    body: dto.body ?? dto.notification?.body ?? "",
     targetType: dto.notification?.target_type ?? "user",
     kind: dto.notification?.kind ?? null,
     isRead: Boolean(dto.is_read),

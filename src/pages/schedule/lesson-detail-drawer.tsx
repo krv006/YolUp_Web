@@ -144,11 +144,18 @@ export function LessonDetailDrawer({
         ) : lesson.status === "cancelled" ? null : (
           <button
             type="button"
-            className="mt-1 flex h-[42px] items-center justify-center gap-2 rounded-full border border-line-strong bg-surface text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
+            className={`mt-1 flex h-[42px] items-center justify-center gap-2 rounded-full text-body-sm font-semibold transition-colors ${
+              lesson.hasReminder
+                ? "bg-brand-subtle text-brand hover:bg-tint"
+                : "border border-line-strong bg-surface text-ink hover:bg-subtle"
+            }`}
+            aria-pressed={lesson.hasReminder}
             onClick={() => onRemind?.(lesson)}
           >
-            <Icon name="notifications" size={18} />
-            {t("schedule.remind")}
+            <Icon name={lesson.hasReminder ? "notifications-off" : "notifications"} size={18} />
+            {lesson.hasReminder
+              ? t("schedule.reminderOn", { count: lesson.reminderMinutes ?? 15 })
+              : t("schedule.remind")}
           </button>
         )}
       </div>

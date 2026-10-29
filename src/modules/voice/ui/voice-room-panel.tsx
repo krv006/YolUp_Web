@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
@@ -13,7 +13,13 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { VoiceRoom, VoiceToken } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
-import { useAnswerVoiceJoinRequest, useVoiceJoinRequests } from "../model/voice.queries";
+import {
+  useAnswerVoiceHand,
+  useAnswerVoiceJoinRequest,
+  useToggleVoiceHand,
+  useVoiceHands,
+  useVoiceJoinRequests,
+} from "../model/voice.queries";
 
 export interface VoiceRoomPanelProps {
   room: VoiceRoom;
@@ -74,6 +80,9 @@ export interface MobileVoiceRoomViewProps {
   micOn: boolean;
   isModerator: boolean;
   closing?: boolean;
+  handRaised?: boolean;
+  handPending?: boolean;
+  onToggleHand?: () => void;
   onToggleMic: () => void;
   onLeave: () => void;
   onClose: () => void;
@@ -88,6 +97,9 @@ export function MobileVoiceRoomView({
   micOn,
   isModerator,
   closing,
+  handRaised = false,
+  handPending = false,
+  onToggleHand,
   onToggleMic,
   onLeave,
   onClose,
@@ -168,11 +180,15 @@ export function MobileVoiceRoomView({
             </span>
             <button
               type="button"
-              className="flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-brand px-3.5 text-button text-on-action"
-              onClick={() => toast.info(t("room.soon"))}
+              aria-pressed={handRaised}
+              className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-button disabled:opacity-60 ${
+                handRaised ? "bg-surface-inverse text-ink-inverse" : "bg-brand text-on-action"
+              }`}
+              disabled={handPending || !onToggleHand}
+              onClick={onToggleHand}
             >
               <span aria-hidden="true">✋</span>
-              {t("room.raiseHand")}
+              {handRaised ? t("room.lowerHand") : t("room.raiseHand")}
             </button>
           </div>
         )}
@@ -234,6 +250,18 @@ function MobileVoiceRoomBody({
   const connection = useConnectionState();
   const { localParticipant, isMicrophoneEnabled } = useLocalParticipant();
   const hostIdentity = room.hostIdentity ?? `user-${room.createdById}`;
+  const hand = useToggleVoiceHand(room.id);
+  const [handRaised, setHandRaised] = useState(false);
+
+  function toggleHand() {
+    const next = !handRaised;
+    hand.mutate(next, {
+      onSuccess: () => {
+        setHandRaised(next);
+        if (next) toast.success(t("room.handSent"));
+      },
+    });
+  }
 
   return (
     <MobileVoiceRoomView
@@ -250,14 +278,72 @@ function MobileVoiceRoomBody({
         owner: participant.identity === hostIdentity,
       }))}
       connecting={connection !== ConnectionState.Connected}
-      requests={isModerator ? <MobileVoiceJoinRequests roomId={room.id} /> : null}
+      requests={
+        isModerator ? (
+          <>
+            <MobileVoiceHands roomId={room.id} />
+            <MobileVoiceJoinRequests roomId={room.id} />
+          </>
+        ) : null
+      }
       micOn={isMicrophoneEnabled}
       isModerator={isModerator}
       closing={closing}
+      handRaised={handRaised}
+      handPending={hand.isPending}
+      onToggleHand={toggleHand}
       onToggleMic={() => void localParticipant?.setMicrophoneEnabled(!isMicrophoneEnabled)}
       onLeave={onLeave}
       onClose={onClose}
     />
+  );
+}
+
+export function MobileVoiceHands({ roomId }: { roomId: string }) {
+  const { t } = useTranslation("voice");
+  const hands = useVoiceHands(roomId);
+  const answer = useAnswerVoiceHand(roomId);
+  const items = hands.data ?? [];
+
+  if (!items.length) return null;
+
+  return (
+    <div className="mt-10.5 flex flex-col gap-2.5">
+      <strong className="px-1 text-title-sm font-semibold">{t("room.handsTitle", { count: items.length })}</strong>
+      {items.map((item) => (
+        <article key={item.userId} className="flex h-16.5 items-center gap-3 rounded-xl bg-subtle/40 px-4">
+          <Avatar name={item.name} size="sm" />
+          <span className="flex min-w-0 flex-1 flex-col">
+            <strong className="truncate text-title-sm font-semibold">
+              <span aria-hidden="true">✋ </span>
+              {item.name}
+            </strong>
+            <small className={`truncate text-caption ${item.status === "allowed" ? "text-success" : "text-ink-secondary"}`}>
+              {item.status === "allowed" ? t("room.handAllowed") : t("room.handWaiting")}
+            </small>
+          </span>
+          <button
+            type="button"
+            className="grid size-9 shrink-0 place-items-center rounded-full text-ink-secondary disabled:opacity-50"
+            aria-label={t("room.handDismiss")}
+            disabled={answer.isPending}
+            onClick={() => answer.mutate({ userId: item.userId, allow: false })}
+          >
+            <Icon name="close" size={18} />
+          </button>
+          {item.status === "raised" ? (
+            <button
+              type="button"
+              className="flex h-11 shrink-0 items-center rounded-full bg-brand px-3.5 text-button text-on-action disabled:opacity-50"
+              disabled={answer.isPending}
+              onClick={() => answer.mutate({ userId: item.userId, allow: true })}
+            >
+              {t("room.handAllow")}
+            </button>
+          ) : null}
+        </article>
+      ))}
+    </div>
   );
 }
 

@@ -27,14 +27,19 @@ function CertificateUploadSheet({
   open: boolean;
   pending: boolean;
   onOpenChange: (open: boolean) => void;
-  onUpload: (file: File, title: string) => void;
+  onUpload: (values: { file: File; title: string; issuer: string; issuedYear: number | null }) => void;
 }) {
   const { t } = useTranslation("account");
   const isCompact = useIsCompact();
   const fileRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState("");
+  const [issuer, setIssuer] = useState("");
+  const [year, setYear] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const thisYear = new Date().getFullYear();
+  const yearValue = Number(year);
+  const yearValid = !year || (Number.isInteger(yearValue) && yearValue >= 1950 && yearValue <= thisYear);
 
   function pick(next: File | null) {
     if (next && next.size > MAX_CERTIFICATE_MB * 1024 * 1024) {
@@ -50,6 +55,8 @@ function CertificateUploadSheet({
     if (!next) {
       setFile(null);
       setTitle("");
+      setIssuer("");
+      setYear("");
       setError(null);
     }
     onOpenChange(next);
@@ -80,8 +87,16 @@ function CertificateUploadSheet({
           <button
             type="button"
             className={`${dialogButton.primary} text-title font-semibold disabled:bg-muted disabled:text-ink-secondary disabled:opacity-100`}
-            disabled={pending || !file}
-            onClick={() => file && onUpload(file, title.trim() || file.name)}
+            disabled={pending || !file || !yearValid}
+            onClick={() =>
+              file &&
+              onUpload({
+                file,
+                title: title.trim() || file.name,
+                issuer: issuer.trim(),
+                issuedYear: year ? yearValue : null,
+              })
+            }
           >
             <Icon name="upload" size={20} />
             {t("page.mobile.upload")}
@@ -155,6 +170,26 @@ function CertificateUploadSheet({
             onChange={(event) => setTitle(event.target.value)}
           />
         </MobileFieldLabel>
+        <div className="grid grid-cols-[minmax(0,1fr)_120px] gap-3">
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.certificateIssuer")}>
+            <input
+              className={MOBILE_INPUT}
+              value={issuer}
+              placeholder={t("page.certificateIssuerPlaceholder")}
+              onChange={(event) => setIssuer(event.target.value)}
+            />
+          </MobileFieldLabel>
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.certificateYear")}>
+            <input
+              className={`${MOBILE_INPUT} ${yearValid ? "" : "border-error-text"}`}
+              value={year}
+              inputMode="numeric"
+              maxLength={4}
+              placeholder={String(thisYear)}
+              onChange={(event) => setYear(event.target.value.replace(/\D/g, ""))}
+            />
+          </MobileFieldLabel>
+        </div>
       </div>
     </AppDialog>
   );
@@ -162,6 +197,13 @@ function CertificateUploadSheet({
 
 function StatusChip({ item }: { item: Certificate }) {
   const { t } = useTranslation("account");
+  if (item.status === "rejected")
+    return (
+      <span className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-danger-bg px-2 text-caption-strong text-error-text">
+        <Icon name="cancel" size={14} />
+        {t("page.certificateRejected")}
+      </span>
+    );
   return item.verified ? (
     <span className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-success-bg px-2 text-caption-strong text-success-fg">
       <Icon name="check-circle" size={14} />
@@ -208,8 +250,18 @@ function CertificateList({
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-title text-ink">{item.title || "—"}</strong>
                   <small className="truncate text-body-sm leading-[22px] text-ink-secondary">
-                    {[item.issuer, formatWhen(item.createdAt, t("page.mobile.today"))].filter(Boolean).join(" · ")}
+                    {[
+                      item.issuer,
+                      item.issuedYear ? String(item.issuedYear) : formatWhen(item.createdAt, t("page.mobile.today")),
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </small>
+                  {item.status === "rejected" && item.rejectReason ? (
+                    <small className="mt-0.5 line-clamp-2 text-body-xs text-error-text">
+                      {t("page.certificateRejectReason", { reason: item.rejectReason })}
+                    </small>
+                  ) : null}
                 </span>
                 <StatusChip item={item} />
               </button>
@@ -273,7 +325,7 @@ export function CertificatesPage() {
           open={sheetOpen}
           pending={upload.isPending}
           onOpenChange={setSheetOpen}
-          onUpload={(file, title) => upload.mutate({ file, title }, { onSuccess: () => setSheetOpen(false) })}
+          onUpload={(values) => upload.mutate(values, { onSuccess: () => setSheetOpen(false) })}
         />
       </ProfileSubPage>
     );
@@ -294,7 +346,7 @@ export function CertificatesPage() {
         open={sheetOpen}
         pending={upload.isPending}
         onOpenChange={setSheetOpen}
-        onUpload={(file, title) => upload.mutate({ file, title }, { onSuccess: () => setSheetOpen(false) })}
+        onUpload={(values) => upload.mutate(values, { onSuccess: () => setSheetOpen(false) })}
       />
     </ProfileSubPage>
   );

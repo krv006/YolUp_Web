@@ -82,6 +82,20 @@ export function useRequestMic(lessonId: string) {
   });
 }
 
+export function useCancelMicRequest(lessonId: string) {
+  return useMutation({
+    mutationFn: () => liveApi.cancelMicRequest(lessonId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useCancelCameraRequest(lessonId: string) {
+  return useMutation({
+    mutationFn: () => liveApi.cancelCameraRequest(lessonId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useGrantMic(lessonId: string) {
   return useMutation({
     mutationFn: (studentId: string) => liveApi.grantMic(lessonId, studentId),

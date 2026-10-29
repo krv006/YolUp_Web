@@ -60,6 +60,12 @@
     "raiseTitle": "Чтобы включить микрофон",
     "raiseHint": "Поднимите руку",
     "raiseHand": "Поднять руку",
-    "soon": "Скоро"
+    "lowerHand": "Опустить руку",
+    "handSent": "Владелец комнаты видит, что вы подняли руку",
+    "handsTitle": "Подняли руку · {{count}}",
+    "handAllowed": "Слово дано",
+    "handWaiting": "Ждёт слова",
+    "handAllow": "Дать слово",
+    "handDismiss": "Опустить руку"
   }
 }

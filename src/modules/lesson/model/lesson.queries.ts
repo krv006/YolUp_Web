@@ -59,11 +59,12 @@ export function useLessonPage(params: QueryParams = {}) {
   });
 }
 
-export function useLesson(id: string | null) {
+export function useLesson(id: string | null, refetchInterval: number | false = false) {
   return useQuery({
     queryKey: lessonKeys.detail(id ?? ""),
     queryFn: ({ signal }) => lessonApi.getById(id as string, { signal }),
     enabled: Boolean(id),
+    refetchInterval,
   });
 }
 
@@ -252,6 +253,20 @@ export function useLessonRatings(lessonId: string | null, enabled = true) {
     queryFn: ({ signal }) => lessonApi.getRatings(lessonId as string, { signal }),
     enabled: Boolean(lessonId) && enabled,
     retry: false,
+  });
+}
+
+export function useLessonReminder() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, enabled, minutes }: { id: string; enabled: boolean; minutes?: number }) => {
+      if (!enabled) {
+        await lessonApi.clearReminder(id);
+        return null;
+      }
+      return (await lessonApi.setReminder(id, minutes)).minutes_before;
+    },
+    onSuccess: () => client.invalidateQueries({ queryKey: lessonKeys.all }),
   });
 }
 

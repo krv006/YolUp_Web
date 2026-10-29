@@ -170,7 +170,9 @@
     "shareParent": "Ota-onaga ham ko‘rsatish",
     "shareParentHint": "Baho va izoh ota-ona ilovasida chiqadi",
     "resubmit": "Qayta topshirish",
-    "confirm": "Tasdiqlash"
+    "confirm": "Tasdiqlash",
+    "studentComment": "O‘quvchi izohi",
+    "files": "Fayllar · {{count}}"
   },
   "workspace": {
     "emptyTitle": "Hali vazifa berilmagan",

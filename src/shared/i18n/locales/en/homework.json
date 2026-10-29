@@ -170,7 +170,9 @@
     "shareParent": "Show the parent",
     "shareParentHint": "The grade and comment appear in the parent app",
     "resubmit": "Return",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "studentComment": "Student's note",
+    "files": "Files · {{count}}"
   },
   "workspace": {
     "emptyTitle": "No homework yet",

@@ -13,4 +13,5 @@ export const messageEndpoints = Object.freeze({
   forward: "/api/v1/chat/messages/forward/",
   reactions: (messageId: string) => `/api/v1/chat/messages/${messageId}/reactions/`,
   file: (messageId: string) => `/api/v1/chat/files/${messageId}/`,
+  attachments: (roomId: string) => `/api/v1/chat/rooms/${roomId}/attachments/`,
 });

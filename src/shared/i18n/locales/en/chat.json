@@ -87,7 +87,6 @@
     "tabMedia": "Media",
     "filesEmpty": "No files",
     "mediaEmpty": "No media",
-    "sectionPending": "Will appear once the backend is ready",
     "online": "online",
     "onlineCount": "{{count}} online",
     "teacherBadge": "Teacher",

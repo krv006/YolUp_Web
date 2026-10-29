@@ -137,8 +137,7 @@
     "recordingStudent": "Идёт запись — аудио и видео",
     "queueTitle": "Вы в очереди ({{count}})",
     "handRaised": "рука поднята",
-    "cancelRequest": "Отменить",
-    "soon": "Скоро"
+    "cancelRequest": "Отменить"
   },
   "mic": {
     "label": "Микрофон",

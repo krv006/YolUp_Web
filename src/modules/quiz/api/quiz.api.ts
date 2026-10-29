@@ -187,7 +187,39 @@ export const quizApi = {
   async getAttempts(quizId: string, options?: RequestOptions) {
     const dto = await apiClient.get<unknown>(quizEndpoints.attempts(quizId), options);
     return normalizePagination<QuizAttemptSummaryDto & Partial<QuizAttemptResultDto>>(dto).items.map((item) =>
-      mapQuizAttemptResultDto({ ...item, answers: item.answers ?? [] })
+      mapQuizAttemptResultDto({
+        ...item,
+        answers: [...(item.answers ?? [])].sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+      })
+    );
+  },
+  async getDraft(quizId: string, options?: RequestOptions) {
+    const dto = await apiClient.get<{ answers?: unknown[] | null; elapsed_seconds?: number | null; updated_at?: string | null }>(
+      quizEndpoints.draft(quizId),
+      options
+    );
+    return { answers: dto?.answers ?? [], elapsedSeconds: Number(dto?.elapsed_seconds ?? 0), updatedAt: dto?.updated_at ?? null };
+  },
+  async saveDraft(quizId: string, answers: unknown[], elapsedSeconds: number) {
+    await apiClient.put(quizEndpoints.draft(quizId), { answers, elapsed_seconds: Math.max(0, Math.round(elapsedSeconds)) });
+  },
+  async deleteDraft(quizId: string) {
+    await apiClient.delete(quizEndpoints.draft(quizId));
+  },
+  shareResults(quizId: string, parents: boolean) {
+    return apiClient.post<{ ok?: boolean; message_id?: string | null; students?: number; parents_notified?: number }>(
+      quizEndpoints.shareResults(quizId),
+      { to: "group_chat", parents }
+    );
+  },
+  async generateFromBank(input: { topic: string; count?: number; courseId?: string | null; title?: string }) {
+    return mapQuizDto(
+      await apiClient.post<QuizDto>(quizEndpoints.aiGenerateBank, {
+        topic: input.topic,
+        count: input.count,
+        course: input.courseId || undefined,
+        title: input.title || undefined,
+      })
     );
   },
 

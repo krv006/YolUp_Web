@@ -2,7 +2,6 @@
   "eyebrow": "ISH MAYDONI",
   "title": "Workspace",
   "subtitle": "Kundalik ishingiz uchun bo'limlar shu yerda to'planadi.",
-  "soon": "Tez orada",
   "cards": {
     "quizzes": {
       "title": "Test",
@@ -88,7 +87,7 @@
   "searchAria": "Qidirish",
   "notificationsAria": "Bildirishnomalar",
   "searchTitle": "Qidirish",
-  "searchPlaceholder": "Guruh, dars, test yoki xabar",
+  "searchPlaceholder": "Guruh, dars, test, xabar yoki odam",
   "searchHint": "Qidirish uchun kamida 2 ta belgi yozing.",
   "searchEmpty": "“{{query}}” bo‘yicha hech narsa topilmadi.",
   "filterAll": "Hammasi · {{count}}",
@@ -232,6 +231,45 @@
     "tomorrow": "Ertaga",
     "emptyTitle": "Hech narsa topilmadi",
     "emptyHint": "“{{query}}” bo‘yicha guruh, dars, test yoki xabar topilmadi. Boshqa so‘z bilan urinib ko‘ring.",
-    "clear": "Tozalash"
+    "clear": "Tozalash",
+    "people": "Odamlar · {{count}}"
+  },
+  "filterPeople": "Odamlar",
+  "sectionPeople": "ODAMLAR · {{count}}",
+  "materials": {
+    "eyebrow": "{{count}} ta fayl",
+    "title": "Materiallar",
+    "allGroups": "Barcha guruhlar",
+    "group": "Guruh",
+    "searchPlaceholder": "Material nomi bo‘yicha qidirish",
+    "kinds": {
+      "all": "Hammasi",
+      "pdf": "PDF",
+      "doc": "Hujjatlar",
+      "video": "Video",
+      "audio": "Audio",
+      "image": "Rasmlar",
+      "other": "Boshqa"
+    },
+    "download": "Yuklab olish",
+    "downloadFailed": "Faylni yuklab bo‘lmadi",
+    "delete": "O‘chirish",
+    "deleteTitle": "Materialni o‘chirasizmi?",
+    "deleted": "Material o‘chirildi",
+    "cancel": "Bekor qilish",
+    "emptyTitle": "Hali material yo‘q",
+    "emptyFiltered": "Hech narsa topilmadi",
+    "emptyHintTeacher": "Darslik, audio yoki videoni yuklang — guruh o‘quvchilari ko‘ra oladi.",
+    "emptyHintStudent": "O‘qituvchingiz material yuklasa, shu yerda ko‘rinadi.",
+    "upload": "Yuklash",
+    "uploading": "Yuklanmoqda…",
+    "uploadTitle": "Material yuklash",
+    "uploadHint": "PDF, Office, audio, video, rasm yoki ZIP · 50 MB gacha",
+    "pickFile": "Faylni tanlang",
+    "fileHint": "Bosing va kompyuterdan tanlang",
+    "name": "Nomi",
+    "namePlaceholder": "Masalan, 3-bob konspekti",
+    "tooLarge": "Fayl 50 MB dan katta",
+    "uploaded": "Material yuklandi"
   }
 }

@@ -1,4 +1,4 @@
-import { useRef, useState, type DragEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,6 +9,8 @@ import {
   useAssignment,
   useDownloadAssignmentFile,
   useDownloadSubmissionFile,
+  useHomeworkDraft,
+  useSaveHomeworkDraft,
   useSubmission,
   useSubmitHomework,
 } from "@/modules/homework";
@@ -27,24 +29,7 @@ const GRADES = [1, 2, 3, 4, 5];
 const ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.docx";
 const ACCEPT_SPEAKING = ".mp3,.wav,.m4a,.ogg";
 
-const draftKey = (id: string) => `yolup.homework-draft.${id}`;
-
-function readDraft(id: string): string {
-  try {
-    return window.localStorage.getItem(draftKey(id)) ?? "";
-  } catch {
-    return "";
-  }
-}
-
-function writeDraft(id: string, value: string) {
-  try {
-    if (value.trim()) window.localStorage.setItem(draftKey(id), value);
-    else window.localStorage.removeItem(draftKey(id));
-  } catch {
-    return;
-  }
-}
+const MAX_FILES = 5;
 
 function fileSize(bytes: number): string {
   if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -104,9 +89,12 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
   const course = useCourse(assignment.courseId || null);
   const submit = useSubmitHomework();
   const downloadTask = useDownloadAssignmentFile();
+  const draft = useHomeworkDraft(assignment.id);
+  const saveDraftMutation = useSaveHomeworkDraft(assignment.id);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [comment, setComment] = useState(() => readDraft(assignment.id));
+  const [files, setFiles] = useState<File[]>([]);
+  const [comment, setComment] = useState("");
+  const touched = useRef(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [now] = useState(() => Date.now());
@@ -124,30 +112,44 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           ? t("workspace.hwItem.today")
           : t("workspace.hwItem.daysLeft", { count: left });
   const html = assignment.body ? sanitizeHtml(assignment.body) : "";
+  const serverDraft = draft.data?.comment ?? "";
 
-  function pick(next: File | null | undefined) {
-    if (!next) return;
-    setFile(next);
+  useEffect(() => {
+    if (serverDraft && !touched.current) setComment(serverDraft);
+  }, [serverDraft]);
+
+  function pick(list: FileList | null | undefined) {
+    const incoming = Array.from(list ?? []);
+    if (!incoming.length) return;
     setError(null);
+    setFiles((current) => {
+      const next = [...current, ...incoming];
+      if (next.length > MAX_FILES) toast.error(t("workspace.hwItem.tooManyFiles", { count: MAX_FILES }));
+      return next.slice(0, MAX_FILES);
+    });
   }
 
   function onDrop(event: DragEvent<HTMLButtonElement>) {
     event.preventDefault();
     setDragging(false);
-    pick(event.dataTransfer.files?.[0]);
+    pick(event.dataTransfer.files);
   }
 
   function send() {
     setError(null);
     submit
-      .mutateAsync({ assignmentId: assignment.id, file, skillKey: assignment.skillKey, comment })
-      .then(() => writeDraft(assignment.id, ""))
+      .mutateAsync({ assignmentId: assignment.id, files, skillKey: assignment.skillKey, comment })
+      .then(() => {
+        if (serverDraft) saveDraftMutation.mutate("");
+      })
       .catch((reason: unknown) => setError(homeworkFieldError(reason, "file")));
   }
 
   function saveDraft() {
-    writeDraft(assignment.id, comment);
-    toast.success(t("workspace.hwItem.draftSaved"));
+    saveDraftMutation.mutate(comment, {
+      onSuccess: () => toast.success(t("workspace.hwItem.draftSaved")),
+      onError: (reason) => toast.error(reason.message),
+    });
   }
 
   const task = (
@@ -163,9 +165,11 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
             {leftLabel}
           </span>
         ) : null}
-        <span className="flex h-[22px] items-center rounded-full bg-accent-violet-bg px-2 text-caption-strong text-accent-violet-fg">
-          {t("workspace.hwItem.aiCheck")}
-        </span>
+        {assignment.aiCheck ? (
+          <span className="flex h-[22px] items-center rounded-full bg-accent-violet-bg px-2 text-caption-strong text-accent-violet-fg">
+            {t("workspace.hwItem.aiCheck")}
+          </span>
+        ) : null}
       </span>
       {assignment.description ? <p className="text-[15px]/5 whitespace-pre-line text-ink">{assignment.description}</p> : null}
       {html ? <div className="homework-board-task-body text-body-sm text-ink" dangerouslySetInnerHTML={{ __html: html }} /> : null}
@@ -179,9 +183,14 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface text-error-text">
             <Icon name="description-fill" size={20} />
           </span>
-          <strong className="min-w-0 flex-1 truncate text-body-sm font-semibold text-ink">
-            {assignment.attachmentName || th("detailDialog.defaultFile")}
-          </strong>
+          <span className="flex min-w-0 flex-1 flex-col">
+            <strong className="truncate text-body-sm font-semibold text-ink">
+              {assignment.attachmentName || th("detailDialog.defaultFile")}
+            </strong>
+            {assignment.attachmentSize ? (
+              <small className="text-caption text-ink-secondary">{fileSize(assignment.attachmentSize)}</small>
+            ) : null}
+          </span>
           <Icon name="download" size={20} className="shrink-0 text-icon-secondary" />
         </button>
       ) : null}
@@ -212,9 +221,10 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
         ref={inputRef}
         type="file"
         hidden
+        multiple
         accept={speaking ? ACCEPT_SPEAKING : ACCEPT}
         onChange={(event) => {
-          pick(event.target.files?.[0]);
+          pick(event.target.files);
           event.target.value = "";
         }}
       />
@@ -223,7 +233,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
         className={`mt-6 flex min-h-[158px] flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-5 text-center transition-colors ${
           dragging ? "border-brand bg-brand-subtle" : "border-brand/70 bg-brand-subtle/40 hover:bg-brand-subtle"
         } disabled:opacity-50`}
-        disabled={locked}
+        disabled={locked || files.length >= MAX_FILES}
         onClick={() => inputRef.current?.click()}
         onDragOver={(event) => {
           event.preventDefault();
@@ -241,26 +251,33 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
         </small>
       </button>
 
-      {file ? (
-        <span className="mt-4 flex min-h-14 items-center gap-3 rounded-xl bg-subtle px-3 py-2.5">
-          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface text-error-text">
-            <Icon name="description-fill" size={20} />
-          </span>
-          <span className="flex min-w-0 flex-1 flex-col">
-            <strong className="truncate text-body-sm font-semibold text-ink">{file.name}</strong>
-            <small className="text-caption text-ink-secondary">
-              {t("workspace.hwItem.fileReady", { size: fileSize(file.size) })}
-            </small>
-          </span>
-          <button
-            type="button"
-            className="grid size-8 shrink-0 place-items-center rounded-full text-icon-secondary transition-colors hover:bg-surface"
-            aria-label={t("workspace.hwItem.remove")}
-            onClick={() => setFile(null)}
-          >
-            <Icon name="close" size={18} />
-          </button>
-        </span>
+      {files.length ? (
+        <div className="mt-4 flex flex-col gap-2">
+          {files.map((item, index) => (
+            <span key={`${item.name}-${index}`} className="flex min-h-14 items-center gap-3 rounded-xl bg-subtle px-3 py-2.5">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-surface text-error-text">
+                <Icon name="description-fill" size={20} />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-body-sm font-semibold text-ink">{item.name}</strong>
+                <small className="text-caption text-ink-secondary">
+                  {t("workspace.hwItem.fileReady", { size: fileSize(item.size) })}
+                </small>
+              </span>
+              <button
+                type="button"
+                className="grid size-8 shrink-0 place-items-center rounded-full text-icon-secondary transition-colors hover:bg-surface"
+                aria-label={t("workspace.hwItem.remove")}
+                onClick={() => setFiles((current) => current.filter((_, position) => position !== index))}
+              >
+                <Icon name="close" size={18} />
+              </button>
+            </span>
+          ))}
+          <small className="text-caption text-ink-tertiary">
+            {t("workspace.hwItem.filesCount", { count: files.length, max: MAX_FILES })}
+          </small>
+        </div>
       ) : null}
       {error ? <small className="mt-2 text-body-xs text-error-text">{error}</small> : null}
 
@@ -269,8 +286,12 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
         <textarea
           className="min-h-28 resize-y rounded-xl border border-line-strong bg-surface px-4 py-3 text-body-sm text-ink outline-none placeholder:text-ink-tertiary focus:border-focus"
           value={comment}
+          maxLength={2000}
           placeholder={t("workspace.hwItem.commentPlaceholder")}
-          onChange={(event) => setComment(event.target.value)}
+          onChange={(event) => {
+            touched.current = true;
+            setComment(event.target.value);
+          }}
         />
       </label>
 
@@ -302,7 +323,8 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           </button>
           <button
             type="button"
-            className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-[15px] text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
+            className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-[15px] text-body-sm font-semibold text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+            disabled={saveDraftMutation.isPending}
             onClick={saveDraft}
           >
             {t("workspace.hwItem.draft")}
@@ -310,7 +332,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <button
             type="button"
             className="flex h-11 items-center gap-2 rounded-full bg-brand px-[15px] text-body-sm font-semibold text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-50"
-            disabled={!file || locked || submit.isPending}
+            disabled={!files.length || locked || submit.isPending}
             onClick={send}
           >
             <Icon name="send" size={18} />
@@ -341,7 +363,8 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
         <MobileActionBar>
           <button
             type="button"
-            className="flex h-13 min-w-0 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-3 text-body-sm font-semibold text-ink"
+            className="flex h-13 min-w-0 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-3 text-body-sm font-semibold text-ink disabled:opacity-50"
+            disabled={saveDraftMutation.isPending}
             onClick={saveDraft}
           >
             {t("workspace.hwItem.draft")}
@@ -349,7 +372,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <button
             type="button"
             className="flex h-13 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand px-3 text-body-sm font-semibold text-on-action disabled:opacity-50"
-            disabled={!file || locked || submit.isPending}
+            disabled={!files.length || locked || submit.isPending}
             onClick={send}
           >
             <Icon name="send" size={18} />
@@ -414,7 +437,7 @@ function HomeworkResult({
 
   const panel = (
     <div className="flex flex-col gap-4">
-      {checking ? (
+      {!assignment.aiCheck ? null : checking ? (
         <section className="flex flex-col gap-3 rounded-2xl bg-brand-subtle p-4">
           <span className="flex items-center gap-3">
             <span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-accent-violet-fg text-ink-inverse">
@@ -489,12 +512,52 @@ function HomeworkResult({
         )}
       </div>
 
+      {current.teacherComment ? (
+        <div className="flex flex-col gap-2">
+          <span className="text-body-sm font-medium text-ink">{t("workspace.hwItem.teacherComment")}</span>
+          <p className="rounded-2xl bg-subtle px-4 py-2.5 text-title font-normal whitespace-pre-line text-ink">
+            {current.teacherComment}
+          </p>
+        </div>
+      ) : null}
+
       {current.resubmitComment ? (
         <div className="flex flex-col gap-2">
           <span className="text-body-sm font-medium text-ink">
             {current.status === "resubmit_requested" ? t("workspace.hwItem.resubmitAsked") : t("workspace.hwItem.teacherComment")}
           </span>
           <p className="rounded-2xl bg-subtle px-4 py-2.5 text-title font-normal text-ink">{current.resubmitComment}</p>
+        </div>
+      ) : null}
+
+      {current.comment ? (
+        <div className="flex flex-col gap-2">
+          <span className="text-body-sm font-medium text-ink">{t("workspace.hwItem.myComment")}</span>
+          <p className="rounded-2xl border border-line px-4 py-2.5 text-body-sm whitespace-pre-line text-ink">{current.comment}</p>
+        </div>
+      ) : null}
+
+      {current.files.length > 1 ? (
+        <div className="flex flex-col gap-2">
+          <span className="text-body-sm font-medium text-ink">
+            {t("workspace.hwItem.filesTitle", { count: current.files.length })}
+          </span>
+          {current.files.map((item) => (
+            <button
+              key={item.index}
+              type="button"
+              className="flex min-h-12 items-center gap-3 rounded-xl bg-subtle px-3 py-2 text-left transition-colors hover:bg-tint disabled:opacity-60"
+              disabled={download.isPending}
+              onClick={() => download.mutate({ id: current.id, fileName: item.name, index: item.index })}
+            >
+              <Icon name="description-fill" size={18} className="shrink-0 text-error-text" />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-body-sm font-semibold text-ink">{item.name}</strong>
+                {item.size ? <small className="text-caption text-ink-secondary">{fileSize(item.size)}</small> : null}
+              </span>
+              <Icon name="download" size={18} className="shrink-0 text-icon-secondary" />
+            </button>
+          ))}
         </div>
       ) : null}
     </div>

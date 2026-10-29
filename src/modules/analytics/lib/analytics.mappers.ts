@@ -113,6 +113,23 @@ export function mapMyAnalytics(dto: unknown): MyAnalytics {
       percentage: num(item.percentage),
       takenAt: item.taken_at ?? "",
     })),
+    overview:
+      "grades_count" in raw || "lessons_attended" in raw
+        ? {
+            avgGrade: num(raw.avg_grade),
+            gradesCount: Number(raw.grades_count ?? 0),
+            attendanceRateMonth: num(raw.attendance_rate_month),
+            lessonsAttended: Number(raw.lessons_attended ?? 0),
+            lessonsMissed: Number(raw.lessons_missed ?? 0),
+            homeworkOnTimeRate: num(raw.homework_on_time_rate),
+            courses: ((raw.courses as Array<Record<string, unknown>>) ?? []).map((item) => ({
+              courseId: String(item.course_id ?? ""),
+              courseTitle: String(item.course_title ?? ""),
+              testAvg: num(item.test_avg),
+              gradeAvg: num(item.grade_avg),
+            })),
+          }
+        : null,
   };
 }
 

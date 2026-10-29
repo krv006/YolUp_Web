@@ -1,16 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
-import { useCourses } from "@/modules/course";
-import { useLessons } from "@/modules/lesson";
-import { quizDisplayTitle, useQuizzes } from "@/modules/quiz";
+import { useQuizzes } from "@/modules/quiz";
+import { useGlobalSearch, type SearchHit, type SearchType } from "@/modules/search";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
+import { Avatar } from "@/shared/ui/legacy";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
 
-type Filter = "all" | "groups" | "lessons" | "quizzes" | "messages";
+type Filter = "all" | SearchType;
 
 export function WorkspaceSearchPage() {
   const { t } = useTranslation("workspace");
@@ -21,44 +21,21 @@ export function WorkspaceSearchPage() {
 
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
-  const query = term.trim().toLowerCase();
-  const enabled = query.length >= 2;
+  const search = useGlobalSearch(term, filter);
+  const enabled = search.active;
 
-  const courses = useCourses();
-  const lessons = useLessons({ page_size: 200 });
-  const quizzes = useQuizzes(null);
+  const quizzes = useQuizzes(null, !isStudent);
   const conversations = useConversations(isStudent ? "student" : "teacher");
   const months = tl("list.months", { returnObjects: true }) as string[];
 
-  function matches(value: string | null | undefined): boolean {
-    return Boolean(value && value.toLowerCase().includes(query));
-  }
-
-  const groups = useMemo(
-    () => (enabled ? (courses.data ?? []).filter((item) => matches(item.title)) : []),
-    [courses.data, query, enabled]
-  );
-  const lessonHits = useMemo(
-    () => (enabled
-        ? (lessons.data ?? []).filter((item) => matches(item.title) || matches(item.courseTitle))
-        : []),
-    [lessons.data, query, enabled]
-  );
-  const quizHits = useMemo(
-    () => (enabled ? (quizzes.data ?? []).filter((item) => matches(quizDisplayTitle(item))) : []),
-    [quizzes.data, query, enabled]
-  );
-  const messageHits = useMemo(
-    () =>
-      enabled
-        ? (conversations.data ?? []).filter(
-            (item) => matches(item.title) || matches(item.lastMessage)
-          )
-        : [],
-    [conversations.data, query, enabled]
-  );
-
-  const total = groups.length + lessonHits.length + quizHits.length + messageHits.length;
+  const byType = (type: SearchType) => search.items.filter((item) => item.type === type);
+  const groups = byType("groups");
+  const lessonHits = byType("lessons");
+  const quizHits = byType("quizzes");
+  const messageHits = byType("messages");
+  const people = byType("people");
+  const countOf = (type: SearchType) => search.counts[type] ?? 0;
+  const total = (Object.values(search.counts) as number[]).reduce((sum, value) => sum + value, 0);
 
   const FILTERS: Array<{ id: Filter; label: string }> = [
     { id: "all", label: t("filterAll", { count: total }) },
@@ -66,11 +43,24 @@ export function WorkspaceSearchPage() {
     { id: "lessons", label: t("filterLessons") },
     { id: "quizzes", label: t("filterQuizzes") },
     { id: "messages", label: t("filterMessages") },
+    { id: "people", label: t("filterPeople") },
   ];
 
   const show = (id: Filter) => filter === "all" || filter === id;
 
-  function lessonMoment(value: string): string {
+  function openQuiz(hit: SearchHit) {
+    const quiz = quizzes.data?.find((entry) => entry.id === hit.id);
+    navigate(
+      isStudent
+        ? ROUTES.student.test(hit.id)
+        : quiz && quiz.status !== "draft"
+          ? ROUTES.teacher.testResults(hit.id)
+          : ROUTES.teacher.test(hit.id)
+    );
+  }
+
+  function lessonMoment(value: string | null): string {
+    if (!value) return "";
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return "";
     const time = `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
@@ -113,7 +103,7 @@ export function WorkspaceSearchPage() {
           ) : null}
         </label>
 
-        {enabled && total > 0 ? (
+        {enabled && (total > 0 || filter !== "all") ? (
           <div className="mt-5">
             <MobileSegment
               scroll
@@ -126,7 +116,19 @@ export function WorkspaceSearchPage() {
 
         {!enabled ? (
           <p className="mt-5 px-1 text-body-sm text-ink-secondary">{t("searchHint")}</p>
-        ) : total === 0 ? (
+        ) : search.loading && !search.items.length ? (
+          <div className="mt-5 flex flex-col overflow-hidden rounded-xl bg-surface" aria-hidden="true">
+            {Array.from({ length: 4 }, (_, index) => (
+              <span key={index} className="flex items-center gap-3 border-b border-line px-4 py-3.75 last:border-b-0">
+                <i className="size-10 shrink-0 rounded-lg bg-skeleton" />
+                <span className="flex min-w-0 flex-1 flex-col gap-2">
+                  <i className="h-3.5 w-44 max-w-full rounded-full bg-skeleton" />
+                  <i className="h-3 w-28 max-w-full rounded-full bg-skeleton" />
+                </span>
+              </span>
+            ))}
+          </div>
+        ) : !search.items.length ? (
           <div className="mt-5">
             <MobileEmptyCard
               icon="search"
@@ -137,16 +139,16 @@ export function WorkspaceSearchPage() {
         ) : null}
 
         {show("groups") && groups.length ? (
-          <ResultSection title={t("mobileSearch.groups", { count: groups.length })}>
-            {groups.map((course) => (
+          <ResultSection title={t("mobileSearch.groups", { count: countOf("groups") })}>
+            {groups.map((hit) => (
               <ResultRow
-                key={course.id}
+                key={hit.id}
                 icon="person"
                 tone="bg-brand-subtle text-ink"
-                title={course.title}
-                hint={`${t("groupMeta", { count: course.studentCount ?? 0 })} · ${course.subjectLabel || course.subject}`}
+                title={hit.title}
+                hint={hit.subtitle}
                 onClick={() => {
-                  const room = conversations.data?.find((item) => item.courseId === course.id);
+                  const room = conversations.data?.find((item) => item.courseId === hit.id);
                   navigate(room ? routes.chat(room.id) : routes.chats);
                 }}
               />
@@ -155,14 +157,14 @@ export function WorkspaceSearchPage() {
         ) : null}
 
         {show("lessons") && lessonHits.length ? (
-          <ResultSection title={t("mobileSearch.lessons", { count: lessonHits.length })}>
-            {lessonHits.map((item) => (
+          <ResultSection title={t("mobileSearch.lessons", { count: countOf("lessons") })}>
+            {lessonHits.map((hit) => (
               <ResultRow
-                key={item.id}
+                key={hit.id}
                 icon="clock"
                 tone="bg-accent-teal-bg text-accent-teal-fg"
-                title={item.title ? `${item.courseTitle} — ${item.title}` : item.courseTitle}
-                hint={lessonMoment(item.startsAt)}
+                title={hit.subtitle && hit.subtitle !== hit.title ? `${hit.subtitle} — ${hit.title}` : hit.title}
+                hint={lessonMoment(hit.startsAt)}
                 onClick={() => navigate(routes.schedule)}
               />
             ))}
@@ -170,38 +172,44 @@ export function WorkspaceSearchPage() {
         ) : null}
 
         {show("quizzes") && quizHits.length ? (
-          <ResultSection title={t("mobileSearch.quizzes", { count: quizHits.length })}>
-            {quizHits.map((quiz) => (
+          <ResultSection title={t("mobileSearch.quizzes", { count: countOf("quizzes") })}>
+            {quizHits.map((hit) => (
               <ResultRow
-                key={quiz.id}
+                key={hit.id}
                 icon="quiz"
                 tone="bg-accent-violet-bg text-accent-violet-fg"
-                title={quizDisplayTitle(quiz)}
-                hint={`${quiz.status === "draft" ? t("draft") : t("published")} · ${t("quizQuestions", { count: quiz.questionCount })}`}
-                onClick={() =>
-                  navigate(
-                    isStudent
-                      ? ROUTES.student.test(quiz.id)
-                      : quiz.status === "draft"
-                        ? ROUTES.teacher.test(quiz.id)
-                        : ROUTES.teacher.testResults(quiz.id)
-                  )
-                }
+                title={hit.title}
+                hint={hit.subtitle}
+                onClick={() => openQuiz(hit)}
               />
             ))}
           </ResultSection>
         ) : null}
 
         {show("messages") && messageHits.length ? (
-          <ResultSection title={t("mobileSearch.messages", { count: messageHits.length })}>
-            {messageHits.map((room) => (
+          <ResultSection title={t("mobileSearch.messages", { count: countOf("messages") })}>
+            {messageHits.map((hit) => (
               <ResultRow
-                key={room.id}
+                key={hit.id}
                 icon="chat"
                 tone="bg-success-bg text-success-fg"
-                title={room.title}
-                hint={room.lastMessage}
-                onClick={() => navigate(routes.chat(room.id))}
+                title={hit.title}
+                hint={[hit.subtitle, hit.sender].filter(Boolean).join(" · ")}
+                onClick={() => navigate(hit.roomId ? routes.chat(hit.roomId) : routes.chats)}
+              />
+            ))}
+          </ResultSection>
+        ) : null}
+
+        {show("people") && people.length ? (
+          <ResultSection title={t("mobileSearch.people", { count: countOf("people") })}>
+            {people.map((hit) => (
+              <ResultRow
+                key={hit.id}
+                avatar={{ name: hit.title, src: hit.avatarUrl }}
+                title={hit.title}
+                hint={hit.subtitle}
+                onClick={() => navigate(hit.roomId ? routes.chat(hit.roomId) : routes.chats)}
               />
             ))}
           </ResultSection>
@@ -223,12 +231,14 @@ function ResultSection({ title, children }: { title: string; children: React.Rea
 function ResultRow({
   icon,
   tone,
+  avatar,
   title,
   hint,
   onClick,
 }: {
-  icon: string;
-  tone: string;
+  icon?: string;
+  tone?: string;
+  avatar?: { name: string; src: string | null };
   title: string;
   hint: string;
   onClick?: () => void;
@@ -239,9 +249,13 @@ function ResultRow({
       className="flex items-center gap-3 border-b border-line px-4 py-3.75 text-left transition-colors last:border-b-0 hover:bg-subtle"
       onClick={onClick}
     >
-      <span className={`grid size-10 shrink-0 place-items-center rounded-lg ${tone}`}>
-        <Icon name={icon} size={20} />
-      </span>
+      {avatar ? (
+        <Avatar name={avatar.name} src={avatar.src ?? undefined} size="sm" className="[&_.avatar]:size-10" />
+      ) : (
+        <span className={`grid size-10 shrink-0 place-items-center rounded-lg ${tone ?? ""}`}>
+          <Icon name={icon ?? "search"} size={20} />
+        </span>
+      )}
       <span className="flex min-w-0 flex-1 flex-col">
         <strong className="truncate text-title text-ink">{title}</strong>
         <small className="truncate text-body-sm text-ink-secondary">{hint}</small>

@@ -180,7 +180,6 @@
     "textLarge": "Katta",
     "clearCache": "Keshni tozalash",
     "cacheCleared": "Kesh tozalandi",
-    "notAvailable": "The backend does not support this action yet",
     "loginsDescription": "Hisobingizga qaysi qurilma va IP manzildan kirilgani. Notanish kirishni ko‘rsangiz, parolni darhol o‘zgartiring.",
     "ratingsDescription": "O‘quvchilar har darsdan keyin baho qo‘yadi. Ism faqat sizga ko‘rinadi.",
     "ratingsCount": "{{count}} ta baho",
@@ -279,7 +278,17 @@
     "studentNoRatingsHint": "Grades appear here once your teacher marks your work.",
     "pagination": "Pages",
     "prevPage": "Previous page",
-    "nextPage": "Next page"
+    "nextPage": "Next page",
+    "notVerified": "Not verified",
+    "noPhone": "Not added",
+    "usernameTitle": "Change username",
+    "usernameHint": "Use Latin letters, digits and underscores.",
+    "usernameSaved": "Username changed",
+    "certificateIssuer": "Issued by",
+    "certificateIssuerPlaceholder": "E.g. British Council",
+    "certificateYear": "Year",
+    "certificateRejected": "Rejected",
+    "certificateRejectReason": "Reason: {{reason}}"
   },
   "help": {
     "search": "Search a question or topic…",
@@ -331,6 +340,33 @@
         "title": "How do I take a test?",
         "hint": "Workspace → Tests → “Start”"
       }
-    }
+    },
+    "videoHint": "Open video"
+  },
+  "support": {
+    "title": "Support",
+    "subtitle": "Your requests and replies live here",
+    "new": "New request",
+    "newTitle": "New request",
+    "threadTitle": "Request",
+    "empty": "No requests yet",
+    "subject": "Subject",
+    "subjectPlaceholder": "e.g. I can't join the lesson",
+    "message": "Message",
+    "messagePlaceholder": "Describe the problem in detail",
+    "send": "Send",
+    "back": "Back",
+    "sent": "Request sent",
+    "staff": "Support",
+    "you": "You",
+    "replyPlaceholder": "Write a reply…",
+    "close": "Close request",
+    "closedNote": "This request is closed",
+    "status": {
+      "open": "Open",
+      "answered": "Answered",
+      "closed": "Closed"
+    },
+    "user": "User"
   }
 }

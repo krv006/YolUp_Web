@@ -21,7 +21,11 @@ export const certificateDtoSchema = z.object({
   title: z.string().nullable().default(""),
   created_at: z.string(),
   issuer: z.string().nullable().optional(),
+  issued_year: z.number().nullable().optional(),
+  status: z.enum(["pending", "verified", "rejected"]).nullable().optional(),
+  reject_reason: z.string().nullable().optional(),
   verified: z.boolean().nullable().optional(),
+  verified_at: z.string().nullable().optional(),
 });
 
 export const linkedAccountDtoSchema = z.object({
@@ -39,6 +43,8 @@ export const userDtoSchema = z.object({
   last_name: z.string().default(""),
   role: z.string(),
   phone: z.string().nullable().optional(),
+  phone_verified: z.boolean().nullable().optional(),
+  phone_verified_at: z.string().nullable().optional(),
   invite_code: z.string().nullable().optional(),
   avatar: z.string().nullable().optional(),
   avg_rating: z.number().nullable().optional(),
@@ -60,6 +66,9 @@ export const userDtoSchema = z.object({
   two_factor_enabled: z.boolean().nullable().optional(),
   notify_messages: z.boolean().nullable().optional(),
   notify_email: z.boolean().nullable().optional(),
+  theme: z.enum(["light", "dark", "system"]).nullable().optional(),
+  text_size: z.enum(["small", "medium", "large"]).nullable().optional(),
+  target_band: z.number().nullable().optional(),
 });
 
 export const loginRecordDtoSchema = z.object({
@@ -68,6 +77,8 @@ export const loginRecordDtoSchema = z.object({
   user_agent: z.string().nullable().default(null),
   new_ip: z.boolean().default(false),
   new_device: z.boolean().default(false),
+  is_current: z.boolean().nullable().optional(),
+  location: z.string().nullable().optional(),
 });
 
 export const lessonRatingDtoSchema = z.object({
@@ -77,6 +88,8 @@ export const lessonRatingDtoSchema = z.object({
   stars: z.number(),
   description: z.string().nullable().optional(),
   created_at: z.string(),
+  course_title: z.string().nullable().optional(),
+  lesson_title: z.string().nullable().optional(),
 });
 
 export type LessonRatingDto = z.infer<typeof lessonRatingDtoSchema>;
@@ -92,6 +105,11 @@ export type AuthUserDto = z.infer<typeof userDtoSchema>;
 export type LinkedAccountDto = z.infer<typeof linkedAccountDtoSchema>;
 export type LoginRecordDto = z.infer<typeof loginRecordDtoSchema>;
 export type CertificateDto = z.infer<typeof certificateDtoSchema>;
+
+export interface AdminCertificateDto extends CertificateDto {
+  owner?: { id: string | number; name?: string; username?: string; first_name?: string; last_name?: string; role?: string; avatar?: string | null } | null;
+  user?: { id: string | number; name?: string; username?: string; first_name?: string; last_name?: string; role?: string; avatar?: string | null } | null;
+}
 export type SwitchAccountResponseDto = z.infer<typeof switchAccountResponseDtoSchema>;
 
 export interface LoginRecord {
@@ -102,6 +120,8 @@ export interface LoginRecord {
   userAgent: string;
   isNewIp: boolean;
   isNewDevice: boolean;
+  isCurrent: boolean;
+  location: string;
 }
 
 export interface LoginRequestDto {
@@ -125,6 +145,7 @@ export interface RegisterRequestDto {
   last_name: string;
   role: string;
   phone: string;
+  phone_token?: string;
 }
 
 export interface CreateChildRequestDto {
@@ -150,6 +171,7 @@ export interface RegisterFormValues {
   firstName: string;
   lastName: string;
   phone?: string;
+  phoneToken?: string;
   role: "teacher" | "parent" | "student";
 }
 

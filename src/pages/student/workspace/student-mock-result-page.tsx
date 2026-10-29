@@ -1,12 +1,23 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import { useCurrentUser } from "@/modules/auth";
+import { useCurrentUser, useUpdateSettingsMutation } from "@/modules/auth";
 import { useConversations } from "@/modules/conversation";
-import { useExam, useExamResults, useExamStudentResult } from "@/modules/exam";
+import {
+  useExam,
+  useExamMistakesPractice,
+  useExamResultPdf,
+  useExamResults,
+  useExamStudentResult,
+} from "@/modules/exam";
+import { PracticeSession } from "@/modules/tutor";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import type { ExamSectionResult, ExamWritingAiItem } from "@/shared/types";
+import { downloadBlob } from "@/shared/lib";
+import type { ExamSectionResult, ExamWritingAiItem, PracticeSet } from "@/shared/types";
+import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
+import { Icon } from "@/shared/ui/icon";
 import { MobileActionBar, MobileEmptyCard, MobilePageHeader } from "@/shared/ui/mobile-page";
 import { WorkspaceShell, workspaceGhostAction } from "@/widgets/workspace-shell";
 import { shortDate } from "../lib/format";
@@ -45,6 +56,12 @@ export function StudentMockResultPage() {
   const result = useExamStudentResult(examId || null, me?.id ?? null);
   const group = useExamResults(examId || null);
   const conversations = useConversations("student");
+  const pdf = useExamResultPdf();
+  const mistakes = useExamMistakesPractice(examId);
+  const settings = useUpdateSettingsMutation();
+  const [practiceSet, setPracticeSet] = useState<PracticeSet | null>(null);
+  const [targetOpen, setTargetOpen] = useState(false);
+  const [targetDraft, setTargetDraft] = useState("");
 
   const data = result.data;
   const ready = Boolean(data?.participated && (data.total || data.sections.length));
@@ -57,23 +74,74 @@ export function StudentMockResultPage() {
   const room = conversations.data?.find((item) => item.courseId === exam.data?.courseId);
 
   const askTeacher = () => navigate(room ? ROUTES.student.chat(room.id) : ROUTES.student.chats);
-  const practice = () => toast.info(t("workspace.soon"));
+  const practice = () =>
+    mistakes.mutate(undefined, {
+      onSuccess: (set) => setPracticeSet(set),
+    });
+  const downloadPdf = () => {
+    if (!me) return;
+    pdf.mutate(
+      { examId, studentId: me.id },
+      { onSuccess: (blob) => downloadBlob(blob, `${exam.data?.title || "natija"}.pdf`) }
+    );
+  };
+  const groupAverage = group.data?.groupAverage ?? null;
+  const target = me?.targetBand ?? null;
+
+  function openTarget() {
+    setTargetDraft(target === null ? "" : String(target));
+    setTargetOpen(true);
+  }
+
+  function saveTarget() {
+    const value = targetDraft.trim() ? Number(targetDraft.replace(",", ".")) : null;
+    if (value !== null && (!Number.isFinite(value) || value < 0 || value > 1600)) {
+      toast.error(t("workspace.mockResult.targetInvalid"));
+      return;
+    }
+    settings.mutate(
+      { target_band: value },
+      {
+        onSuccess: () => setTargetOpen(false),
+        onError: (error) => toast.error(error.message),
+      }
+    );
+  }
 
   const stats = [
     { id: "overall", value: data?.total?.label || band(data?.total?.score), tone: "text-ink" },
-    { id: "group", value: band(groupAvg), tone: "text-brand" },
-    { id: "target", value: "—", tone: "text-success-fg" },
+    {
+      id: "group",
+      value: groupAverage !== null ? `${Math.round(groupAverage)}%` : band(groupAvg),
+      tone: "text-brand",
+    },
+    { id: "target", value: band(target), tone: "text-success-fg", onClick: openTarget },
   ];
 
   const main = data ? (
     <div className="flex min-w-0 flex-col gap-5">
       <div className="grid grid-cols-3 gap-3">
-        {stats.map((stat) => (
-          <div key={stat.id} className="flex min-w-0 flex-col gap-1 rounded-2xl bg-surface p-4 lg:px-[18px]">
-            <small className="truncate text-caption text-ink-secondary lg:text-body-xs">{t(`workspace.mockResult.stats.${stat.id}`)}</small>
-            <strong className={`truncate font-heading text-[26px]/9 font-semibold lg:text-[32px]/10 ${stat.tone}`}>{stat.value}</strong>
-          </div>
-        ))}
+        {stats.map((stat) =>
+          stat.onClick ? (
+            <button
+              key={stat.id}
+              type="button"
+              className="flex min-w-0 flex-col gap-1 rounded-2xl bg-surface p-4 text-left transition-colors hover:bg-subtle lg:px-[18px]"
+              onClick={stat.onClick}
+            >
+              <small className="flex items-center gap-1 truncate text-caption text-ink-secondary lg:text-body-xs">
+                {t(`workspace.mockResult.stats.${stat.id}`)}
+                <Icon name="edit" size={14} className="shrink-0 text-icon-secondary" />
+              </small>
+              <strong className={`truncate font-heading text-[26px]/9 font-semibold lg:text-[32px]/10 ${stat.tone}`}>{stat.value}</strong>
+            </button>
+          ) : (
+            <div key={stat.id} className="flex min-w-0 flex-col gap-1 rounded-2xl bg-surface p-4 lg:px-[18px]">
+              <small className="truncate text-caption text-ink-secondary lg:text-body-xs">{t(`workspace.mockResult.stats.${stat.id}`)}</small>
+              <strong className={`truncate font-heading text-[26px]/9 font-semibold lg:text-[32px]/10 ${stat.tone}`}>{stat.value}</strong>
+            </div>
+          )
+        )}
       </div>
 
       <section className="flex flex-col gap-3 rounded-2xl bg-surface p-4 lg:px-[18px]">
@@ -180,7 +248,8 @@ export function StudentMockResultPage() {
           </button>
           <button
             type="button"
-            className="flex h-[42px] items-center justify-center rounded-full bg-brand text-body-sm font-semibold text-ink-inverse transition-colors hover:bg-brand-strong"
+            className="flex h-[42px] items-center justify-center rounded-full bg-brand text-body-sm font-semibold text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-60"
+            disabled={mistakes.isPending}
             onClick={practice}
           >
             {t("workspace.mockResult.practice")}
@@ -189,6 +258,57 @@ export function StudentMockResultPage() {
       )}
     </div>
   ) : null;
+
+  const dialogs = (
+    <>
+      <AppDialog
+        open={Boolean(practiceSet)}
+        onOpenChange={(open) => !open && setPracticeSet(null)}
+        variant="panel"
+        width="lg:w-[560px]"
+        title={t("workspace.mockResult.practiceTitle")}
+        description={exam.data?.title ?? ""}
+      >
+        {practiceSet ? (
+          <PracticeSession
+            key={practiceSet.questions.map((question) => question.text).join("|")}
+            set={practiceSet}
+            restarting={mistakes.isPending}
+            onRestart={practice}
+          />
+        ) : null}
+      </AppDialog>
+      <AppDialog
+        open={targetOpen}
+        onOpenChange={setTargetOpen}
+        variant={isCompact ? "adaptive" : "confirm"}
+        width="lg:w-120"
+        title={t("workspace.mockResult.targetTitle")}
+        description={t("workspace.mockResult.targetHint")}
+        footer={
+          <>
+            <button type="button" className={dialogButton.secondary} onClick={() => setTargetOpen(false)}>
+              {t("workspace.mockResult.targetCancel")}
+            </button>
+            <button type="button" className={dialogButton.primary} disabled={settings.isPending} onClick={saveTarget}>
+              {t("workspace.mockResult.targetSave")}
+            </button>
+          </>
+        }
+      >
+        <input
+          className="h-13 w-full rounded-md border border-transparent bg-subtle px-4 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
+          inputMode="decimal"
+          autoFocus
+          value={targetDraft}
+          placeholder={t("workspace.mockResult.targetPlaceholder")}
+          aria-label={t("workspace.mockResult.targetTitle")}
+          onChange={(event) => setTargetDraft(event.target.value)}
+          onKeyDown={(event) => event.key === "Enter" && saveTarget()}
+        />
+      </AppDialog>
+    </>
+  );
 
   const pending = result.isLoading || exam.isLoading;
   const content = pending ? (
@@ -217,6 +337,19 @@ export function StudentMockResultPage() {
             title={exam.data?.title ?? ""}
             backLabel={t("workspace.back")}
             onBack={() => navigate(ROUTES.student.mockExams)}
+            action={
+              ready ? (
+                <button
+                  type="button"
+                  className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink disabled:opacity-60"
+                  aria-label={t("workspace.mockResult.pdf")}
+                  disabled={pdf.isPending}
+                  onClick={downloadPdf}
+                >
+                  <Icon name="download" size={22} />
+                </button>
+              ) : undefined
+            }
           />
           {content ?? (
             <>
@@ -236,13 +369,15 @@ export function StudentMockResultPage() {
             </button>
             <button
               type="button"
-              className="flex h-13 min-w-0 flex-1 items-center justify-center rounded-full bg-brand px-3 text-body-sm font-semibold text-on-action"
+              className="flex h-13 min-w-0 flex-1 items-center justify-center rounded-full bg-brand px-3 text-body-sm font-semibold text-on-action disabled:opacity-60"
+              disabled={mistakes.isPending}
               onClick={practice}
             >
               {t("workspace.mockResult.practice")}
             </button>
           </MobileActionBar>
         ) : null}
+        {dialogs}
       </div>
     );
 
@@ -255,7 +390,8 @@ export function StudentMockResultPage() {
           <button
             type="button"
             className={`${workspaceGhostAction} border-transparent text-brand`}
-            onClick={() => toast.info(t("workspace.soon"))}
+            disabled={pdf.isPending}
+            onClick={downloadPdf}
           >
             {t("workspace.mockResult.pdf")}
           </button>
@@ -268,6 +404,7 @@ export function StudentMockResultPage() {
           {side}
         </div>
       )}
+      {dialogs}
     </WorkspaceShell>
   );
 }

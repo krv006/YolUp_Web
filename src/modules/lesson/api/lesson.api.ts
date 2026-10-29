@@ -195,6 +195,15 @@ export const lessonApi = {
   async finalizeRecordingVideo(id: string) {
     await apiClient.post<void>(lessonEndpoints.finalizeRecordingVideo(id));
   },
+  async setReminder(id: string, minutes?: number) {
+    return apiClient.post<{ has_reminder: boolean; minutes_before: number }>(
+      lessonEndpoints.reminder(id),
+      minutes ? { minutes_before: minutes } : {}
+    );
+  },
+  async clearReminder(id: string) {
+    await apiClient.delete(lessonEndpoints.reminder(id));
+  },
   async rate(id: string, input: LessonRatingInput) {
     try {
       const dto = await apiClient.post<LessonRatingDto | null>(

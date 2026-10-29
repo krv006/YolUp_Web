@@ -37,6 +37,8 @@ export const boardApi = {
     apiClient.post(boardEndpoints.sheet(lessonId), title ? { title } : {}),
   renameSheet: (lessonId: string, index: number, title: string) =>
     apiClient.patch(boardEndpoints.renameSheet(lessonId, index), { title }),
+  setCurrentSheet: (lessonId: string, sheet: number) =>
+    apiClient.post(boardEndpoints.currentSheet(lessonId), { sheet }),
   erase: (lessonId: string, sheet: number, strokeIds: string[], reason: string) =>
     apiClient.post(boardEndpoints.erase(lessonId), { sheet, stroke_ids: strokeIds, reason }),
   grant: (lessonId: string, studentId: string) =>

@@ -1,5 +1,5 @@
-import { apiClient, type RequestOptions } from "@/shared/api";
-import type { ChatMember, ChatMessage, PinnedChatMessage, SendMessagePayload } from "@/shared/types";
+import { apiClient, normalizeMediaUrl, normalizePagination, type RequestOptions } from "@/shared/api";
+import type { ChatMember, ChatMessage, PinnedChatMessage, RoomAttachment, SendMessagePayload } from "@/shared/types";
 import { messageEndpoints } from "./message.endpoints";
 import type {
   ChatMemberDto,
@@ -8,6 +8,7 @@ import type {
   MessageReactionDto,
   MessageSearchDto,
   PinnedMessageDto,
+  RoomAttachmentDto,
 } from "./message.dto";
 import { mapChatMemberDto, mapMessageDto, mapPinnedDto } from "../lib/message.mappers";
 
@@ -196,6 +197,21 @@ export const messageApi = {
     return (items ?? []).map(mapChatMemberDto);
   },
 
+  async getAttachments(roomId: string, type: "file" | "media", options?: RequestOptions): Promise<RoomAttachment[]> {
+    const page = normalizePagination<RoomAttachmentDto>(
+      await apiClient.get(messageEndpoints.attachments(roomId), { ...options, query: { type, page_size: 100 } })
+    );
+    return page.items.map((item) => ({
+      messageId: String(item.message_id ?? item.id ?? ""),
+      name: item.name || item.file_name || "",
+      mimeType: item.mime || item.mime_type || "",
+      size: item.size ?? null,
+      url: normalizeMediaUrl(item.url ?? item.file_url ?? null),
+      thumbnailUrl: normalizeMediaUrl(item.thumbnail_url ?? null),
+      senderName: item.sender?.name ?? "",
+      createdAt: item.created_at ?? "",
+    }));
+  },
   downloadFile(messageId: string, options?: RequestOptions) {
     return apiClient.get<Blob>(messageEndpoints.file(messageId), {
       ...options,

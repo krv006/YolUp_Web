@@ -17,6 +17,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { MobileTestResults } from "./mobile-test-results";
+import { ShareResultsDialog } from "./share-results-dialog";
 
 interface Row {
   id: string;
@@ -44,6 +45,7 @@ export function TestResultsPage() {
   const navigate = useNavigate();
   const isCompact = useIsCompact();
   const [attemptsOpen, setAttemptsOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const quiz = useQuiz(quizId);
   const courses = useCourses();
   const attempts = useQuizAttempts(quizId, Boolean(quizId));
@@ -139,7 +141,9 @@ export function TestResultsPage() {
           loading={attempts.isLoading || students.isLoading}
           onBack={() => navigate(ROUTES.teacher.tests)}
           onAttempts={() => setAttemptsOpen(true)}
+          onShare={() => setShareOpen(true)}
         />
+        {quizId ? <ShareResultsDialog quizId={quizId} open={shareOpen} onOpenChange={setShareOpen} /> : null}
         <QuizAttemptsDrawer
           open={attemptsOpen}
           onOpenChange={setAttemptsOpen}
@@ -164,12 +168,14 @@ export function TestResultsPage() {
         <button
           type="button"
           className={workspaceAction}
-          onClick={() => toast.info(t("tests.soon"))}
+          disabled={!quizId}
+          onClick={() => setShareOpen(true)}
         >
           {t("results.share")}
         </button>
       }
     >
+      {quizId ? <ShareResultsDialog quizId={quizId} open={shareOpen} onOpenChange={setShareOpen} /> : null}
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label={t("results.solved")}

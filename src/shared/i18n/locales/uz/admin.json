@@ -57,7 +57,9 @@
       "colReliability": "Faollik",
       "noCourses": "Faol kurs topilmadi.",
       "noTeachers": "Faol o'qituvchi topilmadi."
-    }
+    },
+    "certificatesLink": "Sertifikatlar",
+    "supportLink": "Murojaatlar"
   },
   "stats": {
     "title": "{{name}} — statistika",
@@ -117,5 +119,49 @@
     "hours": "{{count}} soat",
     "peakLabel": "Eng band vaqt",
     "pointNote": "{{count}} ta nuqta"
+  },
+  "certificates": {
+    "eyebrow": "Tekshiruv",
+    "title": "Sertifikatlar",
+    "subtitle": "Foydalanuvchilar yuklagan sertifikatlarni tekshiring va tasdiqlang.",
+    "listTitle": "Sertifikatlar ro‘yxati",
+    "filterLabel": "Holat",
+    "status": {
+      "pending": "Tekshiruvda",
+      "verified": "Tasdiqlangan",
+      "rejected": "Rad etilgan"
+    },
+    "empty": {
+      "pending": "Tekshiruvni kutayotgan sertifikat yo‘q.",
+      "verified": "Tasdiqlangan sertifikat yo‘q.",
+      "rejected": "Rad etilgan sertifikat yo‘q."
+    },
+    "loading": "Sertifikatlar yuklanmoqda",
+    "openFile": "Faylni ochish",
+    "verify": "Tasdiqlash",
+    "reject": "Rad etish",
+    "reason": "Sabab: {{reason}}",
+    "rejectTitle": "Sertifikatni rad etish",
+    "reasonLabel": "Rad etish sababi",
+    "reasonPlaceholder": "Masalan: hujjat o‘qilmaydi yoki boshqa odamga tegishli",
+    "cancel": "Bekor qilish",
+    "verifiedToast": "Sertifikat tasdiqlandi",
+    "rejectedToast": "Sertifikat rad etildi"
+  },
+  "support": {
+    "eyebrow": "Qo‘llab-quvvatlash",
+    "title": "Murojaatlar",
+    "subtitle": "Foydalanuvchilar yozgan murojaatlarga javob bering",
+    "listTitle": "Murojaatlar ro‘yxati",
+    "filterLabel": "Holat",
+    "loading": "Murojaatlar yuklanmoqda",
+    "empty": "Bu holatda murojaat yo‘q",
+    "threadTitle": "Murojaat",
+    "status": {
+      "open": "Ochiq",
+      "answered": "Javob berilgan",
+      "closed": "Yopilgan",
+      "all": "Hammasi"
+    }
   }
 }

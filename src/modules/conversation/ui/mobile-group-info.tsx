@@ -10,6 +10,7 @@ import {
   useUnenrollStudent,
 } from "@/modules/course";
 import { useAuth } from "@/modules/auth";
+import { RoomAttachments } from "@/modules/message";
 import { formatRelativeShort } from "@/shared/lib";
 import type { ChatMember, Conversation, DomainUser } from "@/shared/types";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -289,7 +290,11 @@ export function MobileGroupInfo({
                         ) : (
                           <small className="truncate text-body-sm text-ink-secondary">
                             @{member.username}
-                            {member.isOnline ? ` · ${t("info.online")}` : ""}
+                            {member.isOnline
+                              ? ` · ${t("info.online")}`
+                              : member.lastSeenAt
+                                ? ` · ${formatRelativeShort(member.lastSeenAt)}`
+                                : ""}
                           </small>
                         )}
                       </span>
@@ -357,10 +362,16 @@ export function MobileGroupInfo({
             })}
           </ul>
         ) : (
-          <MobileEmptyCard
-            icon={tab === "files" ? "folder" : "photo-camera-fill"}
-            title={tab === "files" ? t("info.filesEmpty") : t("info.mediaEmpty")}
-            description={tab === "files" ? t("info.filesEmptyHint") : t("info.mediaEmptyHint")}
+          <RoomAttachments
+            roomId={conversation.id}
+            type={tab === "files" ? "file" : "media"}
+            empty={
+              <MobileEmptyCard
+                icon={tab === "files" ? "folder" : "photo-camera-fill"}
+                title={tab === "files" ? t("info.filesEmpty") : t("info.mediaEmpty")}
+                description={tab === "files" ? t("info.filesEmptyHint") : t("info.mediaEmptyHint")}
+              />
+            }
           />
         )}
       </div>

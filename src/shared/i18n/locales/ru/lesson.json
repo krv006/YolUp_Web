@@ -332,7 +332,6 @@
     "attendanceStat": "Посещаемость",
     "emptyStudentHint": "Уроки появятся здесь, когда преподаватель их добавит.",
     "remind": "Напомнить",
-    "soon": "Скоро",
     "recording": "Запись",
     "rate": "Оценить",
     "myRating": "Ваша оценка · {{value}}",
@@ -344,7 +343,10 @@
       "cancelled": "Отменён"
     },
     "dayToday": "Сегодня",
-    "dayTomorrow": "Завтра"
+    "dayTomorrow": "Завтра",
+    "reminderOn": "Напоминание · за {{count}} мин",
+    "reminderSet": "Напомним за {{count}} минут до начала занятия",
+    "reminderCleared": "Напоминание отменено"
   },
   "scheduleDialog": {
     "title": "Новый урок",

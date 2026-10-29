@@ -57,7 +57,7 @@ function ExamResultRow({ exam, result }: { exam: ExamDetail; result: ExamStudent
 
   return (
     <article className={`exam-result-row ${result.participated ? "" : "is-absent"}`}>
-      <Avatar name={result.studentName} size="sm" />
+      <Avatar name={result.studentName} src={result.avatarUrl ?? undefined} size="sm" />
       <div className="exam-result-row-main">
         <strong>{result.studentName || result.username}</strong>
         <small>

@@ -12,7 +12,7 @@ import {
   notificationActionKey,
   notificationGroupKey,
   notificationIcon,
-  notificationLines,
+  notificationContent,
   type NotificationGroupKey,
 } from "../lib/notification-display";
 
@@ -142,7 +142,7 @@ export function NotificationInboxPanel({
                 {group.items.map((item) => {
                   const { icon, tone } = notificationIcon(item);
                   const action = notificationActionKey(item.link);
-                  const { title, body } = notificationLines(item.html);
+                  const { title, body } = notificationContent(item);
                   return (
                     <button
                       key={item.id}

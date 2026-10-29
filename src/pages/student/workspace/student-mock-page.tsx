@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { formatClock, secondsUntil, syncServerTime, useExamCurrent } from "@/modules/exam";
+import { formatClock, secondsUntil, syncServerTime, useExamCurrent, useExamReminder } from "@/modules/exam";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { ExamSummary } from "@/shared/types";
@@ -27,6 +27,22 @@ export function StudentMockPage() {
   const isCompact = useIsCompact();
   const data = useStudentWorkspace();
   const [filter, setFilter] = useState("all");
+  const reminder = useExamReminder();
+
+  function toggleReminder(exam: ExamSummary) {
+    const enabled = !exam.hasReminder;
+    reminder.mutate(
+      { id: exam.id, enabled },
+      {
+        onSuccess: (minutes) =>
+          toast.success(
+            enabled
+              ? t("workspace.mock.reminderSet", { count: minutes ?? 15 })
+              : t("workspace.mock.reminderCleared")
+          ),
+      }
+    );
+  }
 
   const items = [...data.exams].sort((a, b) => {
     const rank = { running: 0, upcoming: 1, finished: 2 };
@@ -92,15 +108,35 @@ export function StudentMockPage() {
             >
               {t("workspace.mock.continue")}
             </button>
+          ) : exam.state === "finished" ? (
+            <button
+              type="button"
+              className="col-span-2 flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface px-3.5 text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
+              onClick={() => navigate(ROUTES.student.mockResults(exam.id))}
+            >
+              {t("workspace.mock.result")}
+              {exam.myTotal?.label || exam.myTotal?.score != null ? (
+                <span className="rounded-full bg-success-bg px-2 py-0.5 text-caption-strong text-success-fg">
+                  {exam.myTotal.label || exam.myTotal.score}
+                </span>
+              ) : null}
+            </button>
           ) : (
             <button
               type="button"
-              className="col-span-2 flex h-[42px] shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface px-3.5 text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
-              onClick={() =>
-                exam.state === "finished" ? navigate(ROUTES.student.mockResults(exam.id)) : toast.info(t("workspace.soon"))
-              }
+              aria-pressed={exam.hasReminder}
+              disabled={reminder.isPending && reminder.variables?.id === exam.id}
+              className={`col-span-2 flex h-[42px] shrink-0 items-center justify-center gap-2 rounded-full px-3.5 text-body-sm font-semibold transition-colors ${
+                exam.hasReminder
+                  ? "bg-brand-subtle text-brand hover:bg-tint"
+                  : "border border-line-strong bg-surface text-ink hover:bg-subtle"
+              }`}
+              onClick={() => toggleReminder(exam)}
             >
-              {exam.state === "finished" ? t("workspace.mock.result") : t("workspace.mock.remind")}
+              <Icon name={exam.hasReminder ? "notifications-off" : "notifications"} size={18} />
+              {exam.hasReminder
+                ? t("workspace.mock.reminderOn", { count: exam.reminderMinutes ?? 15 })
+                : t("workspace.mock.remind")}
             </button>
           )}
         </article>

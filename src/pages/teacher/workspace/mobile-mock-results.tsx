@@ -104,7 +104,7 @@ export function MobileMockLive({ title, sectionTitle, sectionIndex, sectionCount
               : 0;
           return (
             <div key={row.studentId} className="flex items-center gap-3">
-              <Avatar name={row.studentName} size="sm" className="[&_.avatar]:size-9" />
+              <Avatar name={row.studentName} src={row.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-9" />
               <span className="flex min-w-0 flex-1 flex-col">
                 <span className="flex min-w-0 items-center gap-2">
                   <strong className="truncate text-title-sm text-ink">{row.studentName}</strong>
@@ -237,7 +237,7 @@ export function MobileMockResults(props: MobileMockResultsProps) {
                 <MobileListRow
                   key={row.studentId}
                   chevron={false}
-                  leading={<Avatar name={row.studentName} size="sm" className="[&_.avatar]:size-11" />}
+                  leading={<Avatar name={row.studentName} src={row.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-11" />}
                   title={row.studentName}
                   subtitle={row.participated ? null : t("results.notJoined")}
                   trailing={

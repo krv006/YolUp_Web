@@ -2,7 +2,6 @@
   "eyebrow": "WORKSPACE",
   "title": "Workspace",
   "subtitle": "Everything you work with day to day, in one place.",
-  "soon": "Coming soon",
   "cards": {
     "quizzes": {
       "title": "Quiz",
@@ -88,7 +87,7 @@
   "searchAria": "Search",
   "notificationsAria": "Notifications",
   "searchTitle": "Search",
-  "searchPlaceholder": "Group, lesson, quiz or message",
+  "searchPlaceholder": "Group, lesson, quiz, message or person",
   "searchHint": "Type at least 2 characters.",
   "searchEmpty": "Nothing found for “{{query}}”.",
   "filterAll": "All · {{count}}",
@@ -232,6 +231,45 @@
     "tomorrow": "Tomorrow",
     "emptyTitle": "Nothing found",
     "emptyHint": "No groups, lessons, quizzes or messages match “{{query}}”. Try another word.",
-    "clear": "Clear"
+    "clear": "Clear",
+    "people": "People · {{count}}"
+  },
+  "filterPeople": "People",
+  "sectionPeople": "PEOPLE · {{count}}",
+  "materials": {
+    "eyebrow": "{{count}} files",
+    "title": "Materials",
+    "allGroups": "All groups",
+    "group": "Group",
+    "searchPlaceholder": "Search by material name",
+    "kinds": {
+      "all": "All",
+      "pdf": "PDF",
+      "doc": "Documents",
+      "video": "Video",
+      "audio": "Audio",
+      "image": "Images",
+      "other": "Other"
+    },
+    "download": "Download",
+    "downloadFailed": "Couldn't download the file",
+    "delete": "Delete",
+    "deleteTitle": "Delete this material?",
+    "deleted": "Material deleted",
+    "cancel": "Cancel",
+    "emptyTitle": "No materials yet",
+    "emptyFiltered": "Nothing found",
+    "emptyHintTeacher": "Upload a textbook, audio or video — your group's students will see it.",
+    "emptyHintStudent": "Materials your teacher uploads will appear here.",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "uploadTitle": "Upload material",
+    "uploadHint": "PDF, Office, audio, video, image or ZIP · up to 50 MB",
+    "pickFile": "Choose a file",
+    "fileHint": "Click to pick from your computer",
+    "name": "Name",
+    "namePlaceholder": "e.g. Chapter 3 notes",
+    "tooLarge": "File is larger than 50 MB",
+    "uploaded": "Material uploaded"
   }
 }

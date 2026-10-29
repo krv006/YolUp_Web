@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import { useMyAnalytics } from "@/modules/analytics";
+import { useMaterials } from "@/modules/material";
 import { useCourses } from "@/modules/course";
 import { useExams } from "@/modules/exam";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
@@ -18,7 +18,7 @@ interface ModuleCard {
   id: string;
   icon: string;
   tone: string;
-  to?: string;
+  to: string;
 }
 
 const MODULES: ModuleCard[] = [
@@ -47,7 +47,7 @@ const MODULES: ModuleCard[] = [
     tone: "bg-accent-green-bg text-accent-green-fg",
     to: ROUTES.teacher.workspaceAnalytics,
   },
-  { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg" },
+  { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.teacher.materials },
 ];
 
 export function WorkspaceHomePage() {
@@ -58,6 +58,7 @@ export function WorkspaceHomePage() {
   const quizzes = useQuizzes(null);
   const exams = useExams(null);
   const analytics = useMyAnalytics();
+  const materials = useMaterials({}, !isCompact);
 
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
 
@@ -103,7 +104,7 @@ export function WorkspaceHomePage() {
     analytics: t("home.moduleCounts.analytics", {
       value: rating === null ? "—" : rating.toFixed(1).replace(".", ","),
     }),
-    materials: t("home.moduleCounts.materials", { count: 0 }),
+    materials: t("home.moduleCounts.materials", { count: materials.data?.length ?? 0 }),
   };
 
   return (
@@ -153,7 +154,7 @@ export function WorkspaceHomePage() {
             key={module.id}
             type="button"
             className="flex h-45 flex-col items-start gap-3 rounded-lg bg-surface p-6 text-left transition-colors hover:bg-subtle"
-            onClick={() => (module.to ? navigate(module.to) : toast.info(t("soon")))}
+            onClick={() => navigate(module.to)}
           >
             <span className={`grid size-11 shrink-0 place-items-center rounded-md ${module.tone}`}>
               <Icon name={module.icon} size={22} />

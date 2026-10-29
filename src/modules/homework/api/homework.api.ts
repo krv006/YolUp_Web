@@ -50,10 +50,11 @@ export const homeworkApi = {
   async downloadAssignment(id: string, options?: RequestOptions) {
     return apiClient.get<Blob>(homeworkEndpoints.assignmentFile(id), { ...options, responseType: "blob" });
   },
-  async submit(assignmentId: string, file: File | null, skillKey?: string, comment?: string): Promise<Submission | null> {
-    validateHomeworkFile(file, { speaking: skillKey === "speaking" });
+  async submit(assignmentId: string, files: File[], skillKey?: string, comment?: string): Promise<Submission | null> {
+    if (!files.length) validateHomeworkFile(null, { speaking: skillKey === "speaking" });
+    files.forEach((file) => validateHomeworkFile(file, { speaking: skillKey === "speaking" }));
     const body = new FormData();
-    body.set("file", file as File);
+    files.forEach((file, index) => body.append(index ? "files" : "file", file));
     if (comment?.trim()) body.set("comment", comment.trim());
     return mapSubmissionDto(
       await apiClient.post<SubmissionDto>(homeworkEndpoints.submit(assignmentId), body)
@@ -76,8 +77,25 @@ export const homeworkApi = {
   async getSubmission(id: string, options?: RequestOptions) {
     return mapSubmissionDto(await apiClient.get<SubmissionDto>(homeworkEndpoints.submission(id), options));
   },
-  async downloadSubmission(id: string, options?: RequestOptions) {
-    return apiClient.get<Blob>(homeworkEndpoints.submissionFile(id), { ...options, responseType: "blob" });
+  async downloadSubmission(id: string, options?: RequestOptions, index = 0) {
+    return apiClient.get<Blob>(homeworkEndpoints.submissionFile(id), {
+      ...options,
+      query: index ? { ...options?.query, index } : options?.query,
+      responseType: "blob",
+    });
+  },
+  async getDraft(assignmentId: string, options?: RequestOptions) {
+    const dto = await apiClient.get<{ comment?: string | null; updated_at?: string | null }>(
+      homeworkEndpoints.draft(assignmentId),
+      options
+    );
+    return { comment: dto?.comment ?? "", updatedAt: dto?.updated_at ?? null };
+  },
+  async saveDraft(assignmentId: string, comment: string) {
+    await apiClient.put(homeworkEndpoints.draft(assignmentId), { comment });
+  },
+  async deleteDraft(assignmentId: string) {
+    await apiClient.delete(homeworkEndpoints.draft(assignmentId));
   },
   async recheck(id: string) {
     return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.recheck(id), {}));
@@ -88,6 +106,7 @@ export const homeworkApi = {
     else if (input.overallScore !== undefined) body.overall_score = input.overallScore;
     if (input.shareWithParent !== undefined) body.share_with_parent = input.shareWithParent;
     if (input.result !== undefined) body.result = input.result;
+    if (input.teacherComment !== undefined) body.teacher_comment = input.teacherComment;
     return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.review(id), body));
   },
   async requestResubmit(id: string, comment: string) {

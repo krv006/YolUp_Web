@@ -332,7 +332,6 @@
     "attendanceStat": "Attendance",
     "emptyStudentHint": "Lessons appear here once your teacher schedules them.",
     "remind": "Set reminder",
-    "soon": "Coming soon",
     "recording": "Recording",
     "rate": "Rate",
     "myRating": "Your rating · {{value}}",
@@ -344,7 +343,10 @@
       "cancelled": "Cancelled"
     },
     "dayToday": "Today",
-    "dayTomorrow": "Tomorrow"
+    "dayTomorrow": "Tomorrow",
+    "reminderOn": "Reminder · {{count}} min before",
+    "reminderSet": "We'll remind you {{count}} minutes before the lesson",
+    "reminderCleared": "Reminder removed"
   },
   "scheduleDialog": {
     "title": "New lesson",

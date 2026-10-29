@@ -52,6 +52,11 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     joinedCount: dto.joined_count ?? null,
     myRating: dto.my_rating ?? null,
     attended: dto.attended ?? null,
+    recordingActive: Boolean(dto.recording_active),
+    recordingStartedAt: dto.recording_started_at ?? null,
+    attendanceOpensAt: dto.attendance_opens_at ?? null,
+    hasReminder: Boolean(dto.has_reminder),
+    reminderMinutes: dto.reminder_minutes ?? null,
     assignment: dto.assignment
       ? { id: String(dto.assignment.id), title: dto.assignment.title ?? "" }
       : null,
@@ -100,6 +105,7 @@ export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording 
       }))
       .filter((item) => Boolean(item.imageUrl)),
     pdfUrl: dto.pdf_url ?? null,
+    thumbnailUrl: normalizeMediaUrl(dto.thumbnail_url) ?? null,
   };
 }
 

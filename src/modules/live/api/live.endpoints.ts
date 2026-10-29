@@ -15,4 +15,6 @@ export const liveEndpoints = Object.freeze({
   unban: "/api/v1/live/unban/",
   muteAll: "/api/v1/live/mute-all/",
   presence: (lessonId: string) => `/api/v1/live/lesson/${lessonId}/presence/`,
+  micRequest: (lessonId: string) => `/api/v1/live/lesson/${lessonId}/mic-request/`,
+  cameraRequest: (lessonId: string) => `/api/v1/live/lesson/${lessonId}/camera-request/`,
 });

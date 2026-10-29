@@ -27,6 +27,7 @@ export interface AssignmentFormDialogProps {
     dueAt: string | null;
     grading: GradingScale;
     announceInChat: boolean;
+    aiCheck?: boolean;
   } | null;
   onSubmit: (values: AssignmentFormInput) => void;
 }
@@ -68,7 +69,7 @@ export function AssignmentFormDialog({
   const [date, setDate] = useState(() => initial?.dueAt?.slice(0, 10) ?? today());
   const [time, setTime] = useState(() => initial?.dueAt?.slice(11, 16) ?? "18:00");
   const [grading, setGrading] = useState<GradingScale>(initial?.grading ?? "five");
-  const [aiCheck, setAiCheck] = useState(true);
+  const [aiCheck, setAiCheck] = useState(initial?.aiCheck ?? true);
   const [announce, setAnnounce] = useState(initial?.announceInChat ?? true);
   const [touched, setTouched] = useState(false);
 
@@ -90,8 +91,8 @@ export function AssignmentFormDialog({
       status,
       announceInChat: announce,
       allowLate: true,
+      aiCheck,
       grading,
-      extraInstructions: aiCheck ? "" : undefined,
     });
   }
 

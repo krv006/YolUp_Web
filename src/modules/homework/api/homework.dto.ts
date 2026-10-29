@@ -54,6 +54,9 @@ export interface SubmissionDto {
   grade_value?: number | null;
   share_with_parent?: boolean;
   resubmit_comment?: string | null;
+  comment?: string | null;
+  teacher_comment?: string | null;
+  files?: Array<{ name?: string | null; size?: number | null; mime?: string | null; index?: number | null }> | null;
 }
 
 export interface SubmissionReviewInput {
@@ -62,6 +65,7 @@ export interface SubmissionReviewInput {
   gradeValue?: number | null;
   shareWithParent?: boolean;
   result?: Record<string, unknown> | null;
+  teacherComment?: string;
 }
 
 export interface ResubmitRequestInput {
@@ -114,6 +118,9 @@ export interface AssignmentDto {
     created_at?: string | null;
   } | null;
   allow_late?: boolean;
+  ai_check?: boolean;
+  attachment_size?: number | null;
+  lesson_starts_at?: string | null;
   grading?: GradingScale;
   max_score?: number | null;
 }
@@ -156,6 +163,7 @@ export interface AssignmentFormInput {
   status?: AssignmentStatus;
   announceInChat?: boolean;
   allowLate?: boolean;
+  aiCheck?: boolean;
   grading?: GradingScale;
   maxScore?: number;
 }

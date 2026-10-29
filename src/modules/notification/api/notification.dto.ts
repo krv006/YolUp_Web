@@ -6,6 +6,8 @@ export interface NotificationDto {
   id: string;
   sender?: UserDto | null;
   description: string;
+  title?: string | null;
+  body?: string | null;
   target_type: NotificationTarget;
   kind?: string | null;
   link_type?: string | null;
@@ -16,6 +18,8 @@ export interface NotificationDto {
 export interface NotificationRecipientDto {
   id: string;
   notification: NotificationDto;
+  title?: string | null;
+  body?: string | null;
   is_read: boolean;
   read_at: string | null;
   created_at: string;
@@ -63,6 +67,8 @@ export interface InboxNotification {
   notificationId: string;
   sender: NotificationSender | null;
   html: string;
+  title: string;
+  body: string;
   targetType: NotificationTarget;
   kind: string | null;
   isRead: boolean;

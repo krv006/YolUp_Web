@@ -139,6 +139,7 @@ export function mapChatMemberDto(dto: ChatMemberDto): ChatMember {
     username: dto.username ?? "",
     role: dto.role ?? "student",
     isOnline: Boolean(dto.is_online),
+    lastSeenAt: dto.last_seen_at ?? null,
     avatarUrl: normalizeMediaUrl(dto.avatar_url ?? null),
   };
 }

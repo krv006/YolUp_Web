@@ -454,7 +454,6 @@
     },
     "emptyTitle": "Hali test yaratilmagan",
     "emptyHint": "Birinchi testni yarating — baholash avtomatik bo‘ladi.",
-    "soon": "Tez orada",
     "importedTopic": "Import qilingan test",
     "mobile": {
       "back": "Orqaga",
@@ -517,7 +516,15 @@
       "attempt": "{{count}}-urinish",
       "minutes": "{{count}} daq",
       "notSolved": "Yechilmagan"
-    }
+    },
+    "shareTitle": "Natijalarni ulashish",
+    "shareHint": "Natijalar jadvali guruh chatiga yuboriladi (har bir o‘quvchining eng yaxshi urinishi).",
+    "shareParents": "Ota-onalarga ham xabar berish",
+    "shareParentsHint": "Tasdiqlangan ota-onalarga bildirishnoma boradi",
+    "shareConfirm": "Yuborish",
+    "shareCancel": "Bekor qilish",
+    "shareDone": "Natijalar guruh chatiga yuborildi",
+    "shareDoneParents": "Natijalar yuborildi · {{count}} ta ota-onaga xabar berildi"
   },
   "newTest": {
     "title": "Yangi test",
@@ -578,7 +585,8 @@
       "simple": "Oddiy test (A-B-C-D)",
       "uzbmb": "Milliy sertifikat",
       "ielts": "IELTS",
-      "sat": "SAT"
+      "sat": "SAT",
+      "bank": "Savollar bankidan"
     },
     "pickFiles": "Material tanlash (ixtiyoriy)",
     "filesPicked": "{{count}} ta fayl tanlandi",
@@ -606,8 +614,6 @@
         "rules": "Qoidalar bilan",
         "bank": "Bankdan"
       },
-      "bankTitle": "Savollar banki tez orada",
-      "bankHint": "Oldingi testlaringizdagi savollardan yangi test tuzish imkoniyati ustida ishlayapmiz.",
       "pickFiles": "Material yuklang (PDF, DOCX, rasm)",
       "filesHint": "5 tagacha fayl · jami 20 MB",
       "filesTooBig": "Fayllar jami {{size}} MB dan oshmasligi kerak",
@@ -622,7 +628,9 @@
       "queued": "Navbatda",
       "open": "Ochish",
       "retry": "Qayta"
-    }
+    },
+    "bankHint": "AI chaqirilmaydi: avval AI bilan yaratgan testlaringizdagi savollardan mavzu bo‘yicha qoralama test yig‘iladi.",
+    "bankSubmit": "Bankdan yig‘ish"
   },
   "details": {
     "title": "Testni tahrirlash",
