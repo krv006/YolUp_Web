@@ -1,3 +1,4 @@
+import "@livekit/components-styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 import { DisconnectReason, type RoomOptions } from "livekit-client";

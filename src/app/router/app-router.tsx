@@ -1,9 +1,7 @@
 import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useParams, type Params } from "react-router-dom";
 import { AuthLayout } from "@/app/layouts/auth-layout";
-import { AppShellLayout } from "@/app/layouts/app-shell";
 import { RootLayout } from "@/app/layouts/root-layout";
-import { ProfileIndexRoute, ProfileLayout } from "@/pages/profile/profile-layout";
 import { useCurrentUser } from "@/modules/auth";
 import { ROLES, type Role } from "@/shared/constants";
 import { PageSkeleton } from "@/shared/ui/page-skeleton";
@@ -12,8 +10,8 @@ import { ProtectedRoute } from "./protected-route";
 import { PublicRoute } from "./public-route";
 import { RoleRoute } from "./role-route";
 import { RouteErrorBoundary } from "./route-error-boundary";
-import { ForbiddenPage, NotFoundPage } from "./route-status-pages";
 import { ROUTES } from "@/shared/config";
+import { prefetchTranslations } from "@/shared/i18n";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 
 const LoginPage = lazy(() =>
@@ -57,6 +55,17 @@ const WorkspaceSearchPage = lazy(() =>
   import("@/pages/workspace/workspace-search-page").then((module) => ({
     default: module.WorkspaceSearchPage,
   }))
+);
+const ForbiddenPage = lazy(() => import("./route-status-pages").then((module) => ({ default: module.ForbiddenPage })));
+const NotFoundPage = lazy(() => import("./route-status-pages").then((module) => ({ default: module.NotFoundPage })));
+const AppShellLayout = lazy(() =>
+  import("@/app/layouts/app-shell").then((module) => ({ default: module.AppShellLayout }))
+);
+const ProfileLayout = lazy(() =>
+  import("@/pages/profile/profile-layout").then((module) => ({ default: module.ProfileLayout }))
+);
+const ProfileIndexRoute = lazy(() =>
+  import("@/pages/profile/profile-layout").then((module) => ({ default: module.ProfileIndexRoute }))
 );
 const PersonalInfoPage = lazy(() =>
   import("@/pages/profile/personal-info-page").then((module) => ({
@@ -192,9 +201,10 @@ function scheduleIdle(task: () => void): () => void {
 
 function usePrefetchRoutes(role: Role | undefined) {
   useEffect(() => {
-    const loaders = role ? PREFETCH_BY_ROLE[role] : undefined;
-    if (!loaders) return undefined;
+    if (!role) return undefined;
+    const loaders = PREFETCH_BY_ROLE[role] ?? [];
     return scheduleIdle(() => {
+      void prefetchTranslations();
       for (const load of loaders) void load().catch(() => undefined);
     });
   }, [role]);

@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 import { Icon } from "@/shared/ui/icon";
+import { MobileActionBar } from "./mobile-action-bar";
+
+export { MobileActionBar };
 
 export interface MobilePageHeaderProps {
   title: ReactNode;
@@ -39,13 +42,6 @@ export const mobileButton = {
     "flex h-13 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-danger-bg px-5 text-title font-semibold text-danger transition-opacity hover:opacity-85 disabled:opacity-40",
 };
 
-export function MobileActionBar({ children, className = "" }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`flex shrink-0 gap-3 rounded-t-2xl bg-surface px-4 pt-3 pb-8.5 shadow-nav-top ${className}`}>
-      {children}
-    </div>
-  );
-}
 
 export interface MobileScreenProps {
   title: ReactNode;

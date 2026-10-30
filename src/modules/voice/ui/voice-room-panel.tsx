@@ -1,3 +1,4 @@
+import "@livekit/components-styles";
 import { useState, type ReactNode } from "react";
 import {
   LiveKitRoom,

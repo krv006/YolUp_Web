@@ -3,6 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "sideEffects": [
+    "*.css",
+    "./src/main.tsx",
+    "./src/shared/i18n/i18n.ts",
+    "./src/shared/lib/zod.ts"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

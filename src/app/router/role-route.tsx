@@ -1,10 +1,12 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { resolveHomeRoute, useAuth } from "@/modules/auth";
 import { RealtimeHubContext } from "@/modules/notification";
 import { hasRole } from "@/modules/permission";
 import { ROLES, type Role } from "@/shared/constants";
 import { ROUTES } from "@/shared/config";
-import { RealtimeSync } from "./realtime-sync";
+
+const RealtimeSync = lazy(() => import("./realtime-sync").then((module) => ({ default: module.RealtimeSync })));
 
 export function RoleRoute({ allowedRoles }: { allowedRoles: Role[] }) {
   const { user } = useAuth();
@@ -20,7 +22,9 @@ export function RoleRoute({ allowedRoles }: { allowedRoles: Role[] }) {
   if (allowed) {
     return chatRole ? (
       <RealtimeHubContext.Provider value>
-        <RealtimeSync role={chatRole} />
+        <Suspense fallback={null}>
+          <RealtimeSync role={chatRole} />
+        </Suspense>
         <Outlet />
       </RealtimeHubContext.Provider>
     ) : (

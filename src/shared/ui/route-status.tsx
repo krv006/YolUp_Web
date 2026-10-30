@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { MobileActionBar } from "@/shared/ui/mobile-page";
+import { MobileActionBar } from "@/shared/ui/mobile-action-bar";
 
 export type RouteStatusTone = "error" | "info" | "warning";
 

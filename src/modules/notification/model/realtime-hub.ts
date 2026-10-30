@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -11,12 +11,6 @@ import {
   type SocketState,
 } from "../lib/notification-socket-manager";
 import { notificationKeys } from "./notification.queries";
-
-export const RealtimeHubContext = createContext(false);
-
-export function useRealtimeHubActive(): boolean {
-  return useContext(RealtimeHubContext);
-}
 
 export function useShowLiveNotification(onOpenLink?: OpenNotificationLink) {
   const { t } = useTranslation("notification");
