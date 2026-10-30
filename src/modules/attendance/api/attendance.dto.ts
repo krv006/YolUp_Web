@@ -28,3 +28,16 @@ export interface AttendanceDto {
   focus?: FocusJournalDto | null;
   focus_alert?: boolean | null;
 }
+
+export interface AttendanceSummaryDto {
+  attendance_percent?: number;
+  focus_percent?: number | null;
+  lesson_count?: number;
+  students?: Array<{
+    id: string | number;
+    name?: string;
+    attendance_percent?: number;
+    focus_percent?: number | null;
+    attended_count?: number;
+  }>;
+}
