@@ -112,7 +112,10 @@
     "forbiddenDescription": "This page belongs to another role. Switch account or ask the group owner for access.",
     "forbiddenAction": "Switch account",
     "back": "Back",
-    "help": "Help"
+    "help": "Help",
+    "connectionEyebrow": "CONNECTION ERROR",
+    "sessionCheckFailed": "Could not check the session",
+    "sessionRestoreFailed": "Could not restore the session"
   },
   "relative": {
     "now": "just now",
@@ -133,6 +136,16 @@
     "more": "More",
     "sidebar": "Sidebar",
     "sidebarDescription": "Displays the mobile sidebar.",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "loading": "Loading",
+    "online": "Online",
+    "theme": "Theme",
+    "toLightTheme": "Switch to light mode",
+    "toDarkTheme": "Switch to dark mode"
+  },
+  "themeModes": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

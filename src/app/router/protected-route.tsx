@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { RouteState } from "@/shared/ui/legacy";
@@ -5,16 +6,17 @@ import { ROUTES } from "@/shared/config";
 import { BootSkeleton } from "./boot-skeleton";
 
 export function ProtectedRoute() {
+  const { t } = useTranslation("common");
   const { user, isInitializing, initializationError, retrySession } = useAuth();
   const location = useLocation();
   if (isInitializing) return <BootSkeleton />;
   if (initializationError) {
     return (
       <RouteState
-        eyebrow="ALOQA XATOSI"
-        title="Sessiyani tekshirib bo‘lmadi"
+        eyebrow={t("routeState.connectionEyebrow")}
+        title={t("routeState.sessionCheckFailed")}
         description={initializationError.message}
-        actionLabel="Qayta urinish"
+        actionLabel={t("actions.retry")}
         onAction={retrySession}
       />
     );

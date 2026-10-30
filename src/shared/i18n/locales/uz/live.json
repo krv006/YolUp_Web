@@ -229,6 +229,7 @@
     "joinFailedDescription": "Internet uzildi — darsga ulanib bo'lmadi. Dars davom etmoqda.",
     "mobileJoinFailedTitle": "Darsga ulanib bo‘lmadi",
     "mobileJoinFailedDescription": "Internet aloqasini tekshiring. Dars hali davom etmoqda — qayta urinib ko‘ring.",
-    "mobileBackToChat": "Chatga qaytish"
+    "mobileBackToChat": "Chatga qaytish",
+    "joiningRoom": "Dars xonasiga ulanmoqda"
   }
 }

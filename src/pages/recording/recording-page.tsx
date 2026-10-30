@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { LessonRatingForm, useLesson, useLessonRecording } from "@/modules/lesson";
@@ -8,6 +9,7 @@ import { RecordingDesktop } from "./recording-desktop";
 import { RecordingMobile } from "./recording-mobile";
 
 export function RecordingPage() {
+  const { t } = useTranslation("lesson");
   const { lessonId } = useParams();
   const { user } = useAuth();
   const lesson = useLesson(lessonId ?? null);
@@ -19,10 +21,10 @@ export function RecordingPage() {
   if (lesson.isError)
     return (
       <RouteState
-        eyebrow="DARS YOZUVI"
-        title="Darsni topib bo‘lmadi"
+        eyebrow={t("recording.notFoundEyebrow")}
+        title={t("recording.notFoundTitle")}
         description={lesson.error?.message}
-        actionLabel="Qayta urinish"
+        actionLabel={t("recording.retry")}
         onAction={lesson.refetch}
       />
     );

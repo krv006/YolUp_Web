@@ -217,7 +217,10 @@
     "joinedYou": "You attended",
     "minutesShort": "{{count}} min",
     "download": "Download",
-    "volume": "Volume"
+    "volume": "Volume",
+    "notFoundEyebrow": "LESSON RECORDING",
+    "notFoundTitle": "Lesson not found",
+    "retry": "Try again"
   },
   "schedule": {
     "now": "NOW",
