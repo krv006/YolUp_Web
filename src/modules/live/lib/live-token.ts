@@ -6,8 +6,8 @@ interface VideoGrant {
   canPublishSources?: string[];
 }
 
-function readVideoGrant(token: string): VideoGrant | null {
-  const payload = token.split(".")[1];
+function readVideoGrant(token: string | undefined): VideoGrant | null {
+  const payload = token?.split(".")[1];
   if (!payload) return null;
   try {
     const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
@@ -21,7 +21,7 @@ function readVideoGrant(token: string): VideoGrant | null {
   }
 }
 
-export function tokenAllowsTrack(token: string, source: string): boolean {
+export function tokenAllowsTrack(token: string | undefined, source: string): boolean {
   const grant = readVideoGrant(token);
   if (!grant) return true;
   if (grant.canPublish === false) return false;
