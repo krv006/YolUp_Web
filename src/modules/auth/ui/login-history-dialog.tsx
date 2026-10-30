@@ -1,4 +1,5 @@
 import { Globe, MonitorSmartphone, ShieldAlert } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { formatDateTime } from "@/shared/lib";
 import { Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 import { useLoginHistory } from "../model/auth.queries";
@@ -15,28 +16,29 @@ export function LoginHistoryDialog({
   open,
   onOpenChange,
   studentId = null,
-  title = "Kirishlar tarixi",
-  description = "Hisobingizga qaysi qurilma va IP’dan kirilgani.",
+  title,
+  description,
 }: LoginHistoryDialogProps) {
+  const { t } = useTranslation("account");
   const query = useLoginHistory(studentId, open);
   const records = query.data ?? [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {open ? (
-        <DialogContent title={title} description={description}>
-          {query.isLoading ? <LoadingFallback label="Tarix yuklanmoqda" /> : null}
+        <DialogContent title={title ?? t("loginHistory.title")} description={description ?? t("loginHistory.description")}>
+          {query.isLoading ? <LoadingFallback label={t("loginHistory.loading")} /> : null}
 
           {query.isError ? (
             <RouteState
-              title="Tarixni yuklab bo‘lmadi"
-              actionLabel="Qayta urinish"
+              title={t("loginHistory.loadError")}
+              actionLabel={t("loginHistory.retry")}
               onAction={query.refetch}
             />
           ) : null}
 
           {query.isSuccess && !records.length ? (
-            <p className="portal-muted">Kirishlar hali qayd etilmagan.</p>
+            <p className="portal-muted">{t("loginHistory.empty")}</p>
           ) : null}
 
           {records.length ? (
@@ -57,8 +59,8 @@ export function LoginHistoryDialog({
                     </small>
                   </div>
                   <div className="login-history-flags">
-                    {record.isNewDevice ? <span>Yangi qurilma</span> : null}
-                    {record.isNewIp ? <span>Yangi IP</span> : null}
+                    {record.isNewDevice ? <span>{t("loginHistory.newDevice")}</span> : null}
+                    {record.isNewIp ? <span>{t("loginHistory.newIp")}</span> : null}
                   </div>
                 </li>
               ))}
