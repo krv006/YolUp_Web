@@ -117,5 +117,32 @@
     "loadError": "Reytingni yuklab bo'lmadi",
     "retry": "Qayta urinish",
     "subtitle": "Har bir fan bo'yicha vazifalar va baholar."
+  },
+  "attendanceTable": {
+    "empty": "Davomat yozuvi topilmadi.",
+    "students": "{{count}} o‘quvchi",
+    "parentNotified": "Ota-onaga xabar",
+    "exits": "{{count}} chiqish",
+    "focused": "Chalg‘imagan",
+    "student": "O‘quvchi",
+    "joined": "Kirdi",
+    "left": "Chiqdi",
+    "duration": "Davomiyligi",
+    "attention": "Diqqat",
+    "focus": "Fokus",
+    "inLesson": "Darsda",
+    "minutes": "{{count}} daqiqa"
+  },
+  "focusJournal": {
+    "noExits": "Chiqmagan",
+    "alertTitle": "Chegaradan oshgan — ota-onaga xabar berilgan",
+    "exits": "{{count}} chiqish",
+    "title": "Fokus jurnali",
+    "alert": "Chiqishlar soni chegaradan oshgan — ota-onaga xabar yuborilgan.",
+    "exitsLabel": "chiqish",
+    "awayLabel": "jami yo‘q",
+    "longestLabel": "eng uzun",
+    "notReturned": "Qaytmagan",
+    "noTimeline": "Chiqishlar soni qayd etilgan, lekin batafsil vaqt jurnali mavjud emas."
   }
 }

@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { CalendarDays, Clock3, Eye, ShieldAlert, UsersRound } from "lucide-react";
 import { formatDateTime, formatDuration } from "@/shared/lib";
 import type { AttendanceRow } from "@/shared/types";
@@ -27,15 +28,16 @@ const TONE = {
 export function AttendanceAccordion({
   rows,
   defaultOpenCount = 1,
-  emptyLabel = "Davomat yozuvi topilmadi.",
+  emptyLabel,
 }: AttendanceAccordionProps) {
+  const { t } = useTranslation("parent");
   const groups = useMemo(() => groupAttendanceByLesson(rows), [rows]);
   const defaultOpen = useMemo(
     () => groups.slice(0, defaultOpenCount).map((group) => group.lessonId),
     [groups, defaultOpenCount]
   );
 
-  if (!groups.length) return <p className="portal-muted">{emptyLabel}</p>;
+  if (!groups.length) return <p className="portal-muted">{emptyLabel ?? t("attendanceTable.empty")}</p>;
 
   return (
     <Accordion
@@ -61,7 +63,7 @@ export function AttendanceAccordion({
                     </span>
                   ) : null}
                   <span className="inline-flex items-center gap-1">
-                    <UsersRound size={12} /> {group.studentsCount} o‘quvchi
+                    <UsersRound size={12} /> {t("attendanceTable.students", { count: group.studentsCount })}
                   </span>
                 </small>
               </span>
@@ -76,16 +78,16 @@ export function AttendanceAccordion({
                 ) : null}
                 {group.hasAlert ? (
                   <i className={`${BADGE} ${TONE.bad} not-italic`}>
-                    <ShieldAlert size={11} /> Ota-onaga xabar
+                    <ShieldAlert size={11} /> {t("attendanceTable.parentNotified")}
                   </i>
                 ) : null}
                 {group.focusExits ? (
                   <i className={`${BADGE} ${TONE.bad} not-italic`}>
-                    <Clock3 size={11} /> {group.focusExits} chiqish
+                    <Clock3 size={11} /> {t("attendanceTable.exits", { count: group.focusExits })}
                     {group.awaySeconds ? ` · ${formatDuration(group.awaySeconds)}` : ""}
                   </i>
                 ) : (
-                  <i className={`${BADGE} ${TONE.good} not-italic`}>Chalg‘imagan</i>
+                  <i className={`${BADGE} ${TONE.good} not-italic`}>{t("attendanceTable.focused")}</i>
                 )}
               </span>
             </AccordionTrigger>
@@ -95,12 +97,12 @@ export function AttendanceAccordion({
                 <table className="attendance-table attendance-table--nested">
                   <thead>
                     <tr>
-                      <th>O‘quvchi</th>
-                      <th>Kirdi</th>
-                      <th>Chiqdi</th>
-                      <th>Davomiyligi</th>
-                      <th>Diqqat</th>
-                      <th>Fokus</th>
+                      <th>{t("attendanceTable.student")}</th>
+                      <th>{t("attendanceTable.joined")}</th>
+                      <th>{t("attendanceTable.left")}</th>
+                      <th>{t("attendanceTable.duration")}</th>
+                      <th>{t("attendanceTable.attention")}</th>
+                      <th>{t("attendanceTable.focus")}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -114,7 +116,11 @@ export function AttendanceAccordion({
                         </td>
                         <td>{row.entered}</td>
                         <td>{row.exited}</td>
-                        <td>{row.duration}</td>
+                        <td>
+                          {row.minutes === null
+                            ? t("attendanceTable.inLesson")
+                            : t("attendanceTable.minutes", { count: row.minutes })}
+                        </td>
                         <td>
                           {row.attentionAnswered}/{row.attentionTotal}
                         </td>
