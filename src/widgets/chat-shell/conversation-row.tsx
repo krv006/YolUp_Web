@@ -1,6 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useCurrentUser } from "@/modules/auth";
-import { isDirectLocked, isOwnLastMessage, lastMessageBody, useDirectStatusLabel } from "@/modules/conversation";
+import {
+  isDirectLocked,
+  isOwnLastMessage,
+  lastMessageBody,
+  useDirectStatusLabel,
+  useRoomTyping,
+} from "@/modules/conversation";
 import { formatMessageTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
@@ -31,6 +37,7 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
   const user = useCurrentUser();
   const weekdays = t("listTime.weekdays", { returnObjects: true }) as string[];
   const directStatusLabel = useDirectStatusLabel();
+  const typing = useRoomTyping(conversation.id);
   const mine = isOwnLastMessage(conversation, user);
   const body = lastMessageBody(conversation, {
     voice: t("panel.voiceMessage"),
@@ -62,11 +69,11 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
       <strong className="truncate text-title text-ink">
         {conversation.title}
       </strong>
-      {conversation.typing ? (
+      {typing ? (
         <small className="truncate text-body-sm text-brand">
-          {conversation.typingKind === "voice"
-            ? t("panel.recordingVoice", { name: conversation.typingName ?? "" })
-            : t("panel.typing", { name: conversation.typingName ?? "" })}
+          {typing.kind === "voice"
+            ? t("panel.recordingVoice", { name: typing.name })
+            : t("panel.typing", { name: typing.name })}
         </small>
       ) : isDirectLocked(conversation) ? (
         <small

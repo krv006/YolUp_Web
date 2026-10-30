@@ -23,8 +23,14 @@ export {
 export {
   NotificationSocketManager,
   parseNotificationEvent,
+  parseRealtimeEvent,
 } from "./lib/notification-socket-manager";
-export type { LiveNotification } from "./lib/notification-socket-manager";
+export type { LiveNotification, RealtimeEvent, SocketState } from "./lib/notification-socket-manager";
+export {
+  RealtimeHubContext,
+  useRealtimeSocket,
+  useShowLiveNotification,
+} from "./model/realtime-hub";
 export {
   notificationKeys,
   useMarkAllNotificationsRead,

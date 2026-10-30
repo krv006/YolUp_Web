@@ -8,12 +8,12 @@ import { conversationKeys } from "./conversation.keys";
 
 const LIST_SYNC_MS = 10_000;
 
-export function useConversationSync(role: ConversationRole | null) {
+export function useConversationSync(role: ConversationRole | null, live = false) {
   useQuery({
     queryKey: conversationKeys.list(role ?? "teacher"),
     queryFn: ({ signal }) => conversationApi.getAll({ signal }),
     enabled: role !== null,
-    refetchInterval: LIST_SYNC_MS,
+    refetchInterval: live ? false : LIST_SYNC_MS,
   });
 }
 

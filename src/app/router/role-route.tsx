@@ -1,23 +1,32 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { resolveHomeRoute, useAuth } from "@/modules/auth";
-import { useConversationSync } from "@/modules/conversation";
+import { RealtimeHubContext } from "@/modules/notification";
 import { hasRole } from "@/modules/permission";
 import { ROLES, type Role } from "@/shared/constants";
 import { ROUTES } from "@/shared/config";
+import { RealtimeSync } from "./realtime-sync";
 
 export function RoleRoute({ allowedRoles }: { allowedRoles: Role[] }) {
   const { user } = useAuth();
   const allowed = hasRole(user, allowedRoles);
-  useConversationSync(
-    !allowed
-      ? null
-      : allowedRoles.includes(ROLES.TEACHER)
-        ? "teacher"
-        : allowedRoles.includes(ROLES.STUDENT)
-          ? "student"
-          : null
-  );
-  if (allowed) return <Outlet />;
+  const chatRole = !allowed
+    ? null
+    : allowedRoles.includes(ROLES.TEACHER)
+      ? "teacher"
+      : allowedRoles.includes(ROLES.STUDENT)
+        ? "student"
+        : null;
+
+  if (allowed) {
+    return chatRole ? (
+      <RealtimeHubContext.Provider value>
+        <RealtimeSync role={chatRole} />
+        <Outlet />
+      </RealtimeHubContext.Provider>
+    ) : (
+      <Outlet />
+    );
+  }
 
   const home = user ? resolveHomeRoute(user) : null;
 

@@ -7,6 +7,7 @@ import { formatConversationTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
 import { isDirectLocked, useDirectStatusLabel } from "../constants/direct-status";
 import { lastMessageBody } from "../lib/last-message";
+import { useRoomTyping } from "../model/typing.store";
 
 export interface ConversationItemProps {
   conversation: Conversation;
@@ -31,6 +32,7 @@ export function ConversationItem({
 }: ConversationItemProps) {
   const { t } = useTranslation("chat");
   const directStatusLabel = useDirectStatusLabel();
+  const typing = useRoomTyping(conversation.id);
   const unread = conversation.unreadCount > 0;
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -100,7 +102,7 @@ export function ConversationItem({
           ) : (
             <span
               className={`flex min-w-0 flex-1 items-center gap-1.5 truncate text-body-sm ${
-                conversation.typing ? "text-action" : "text-ink-secondary"
+                typing ? "text-action" : "text-ink-secondary"
               }`}
             >
               {conversation.type === "group" && (
@@ -109,8 +111,8 @@ export function ConversationItem({
               <span className="truncate">
                 {isDirectLocked(conversation)
                   ? directStatusLabel(conversation.directStatus)
-                  : conversation.typing
-                  ? conversation.typingKind === "voice"
+                  : typing
+                  ? typing.kind === "voice"
                     ? t("item.recordingVoice")
                     : t("item.typing")
                   : lastMessageBody(conversation, {
