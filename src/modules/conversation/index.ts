@@ -33,6 +33,14 @@ export { ChatEmptyState } from "./ui/chat-empty-state";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";
 export { DirectRequestBar } from "./ui/direct-request-bar";
+export {
+  applyChatActivity,
+  applyChatTyping,
+  CHAT_TYPING_TTL_MS,
+  setActiveConversation,
+} from "./model/chat-realtime";
+export { clearRoomTyping, markRoomTyping, useRoomTyping } from "./model/typing.store";
+export type { RoomTyping } from "./model/typing.store";
 export { ConversationActionsSheet } from "./ui/conversation-actions-sheet";
 export type { ConversationActionsFocus } from "./ui/conversation-actions-sheet";
 export { ConversationItem } from "./ui/conversation-item";

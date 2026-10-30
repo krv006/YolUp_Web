@@ -1,0 +1,67 @@
+import { createContext, useCallback, useContext, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { htmlToPlainText } from "@/shared/lib";
+import type { OpenNotificationLink } from "../api/notification.dto";
+import {
+  NotificationSocketManager,
+  type LiveNotification,
+  type RealtimeEvent,
+  type SocketState,
+} from "../lib/notification-socket-manager";
+import { notificationKeys } from "./notification.queries";
+
+export const RealtimeHubContext = createContext(false);
+
+export function useRealtimeHubActive(): boolean {
+  return useContext(RealtimeHubContext);
+}
+
+export function useShowLiveNotification(onOpenLink?: OpenNotificationLink) {
+  const queryClient = useQueryClient();
+  const openLink = useRef(onOpenLink);
+  useEffect(() => {
+    openLink.current = onOpenLink;
+  }, [onOpenLink]);
+
+  return useCallback(
+    (notification: LiveNotification) => {
+      queryClient.invalidateQueries({ queryKey: notificationKeys.all });
+      const preview = htmlToPlainText(notification.html, 90);
+      const link = notification.link;
+      const open = openLink.current;
+      toast.info(preview || "Yangi xabar", {
+        description: notification.senderName,
+        action: link && open ? { label: "Ochish", onClick: () => open(link, notification.kind) } : undefined,
+      });
+    },
+    [queryClient]
+  );
+}
+
+export function useRealtimeSocket(
+  enabled: boolean,
+  onEvent: (event: RealtimeEvent) => void,
+  onState?: (state: SocketState) => void
+) {
+  const eventRef = useRef(onEvent);
+  const stateRef = useRef(onState);
+  useEffect(() => {
+    eventRef.current = onEvent;
+    stateRef.current = onState;
+  });
+
+  useEffect(() => {
+    if (!enabled) return undefined;
+    let current = true;
+    const socket = new NotificationSocketManager({
+      onEvent: (event) => current && eventRef.current(event),
+      onState: (state) => current && stateRef.current?.(state),
+    });
+    socket.start();
+    return () => {
+      current = false;
+      socket.stop();
+    };
+  }, [enabled]);
+}
