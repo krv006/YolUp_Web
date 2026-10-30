@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Megaphone, Search, UserRound } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import type { NotificationTarget } from "../api/notification.dto";
 import { useSendNotification, useUserSearch } from "../model/notification.queries";
@@ -9,12 +10,13 @@ export interface SendNotificationDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const TARGETS: Array<{ id: NotificationTarget; label: string; hint: string; icon: typeof UserRound }> = [
-  { id: "user", label: "Bitta foydalanuvchi", hint: "Qidirib tanlang", icon: UserRound },
-  { id: "all", label: "Hammaga", hint: "Barcha foydalanuvchilar", icon: Megaphone },
+const TARGETS: Array<{ id: NotificationTarget; icon: typeof UserRound }> = [
+  { id: "user", icon: UserRound },
+  { id: "all", icon: Megaphone },
 ];
 
 export function SendNotificationDialog({ open, onOpenChange }: SendNotificationDialogProps) {
+  const { t } = useTranslation("notification");
   const [target, setTarget] = useState<NotificationTarget>("user");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
@@ -64,10 +66,10 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
       }}
     >
       {open ? (
-        <DialogContent title="Yangi xabar yuborish" description="Xabar tanlangan foydalanuvchilarga darhol yetadi.">
+        <DialogContent title={t("sendDialog.title")} description={t("sendDialog.description")}>
           <form className="dialog-form" onSubmit={submit}>
             <div className="notification-target">
-              {TARGETS.map(({ id, label, hint, icon: Icon }) => (
+              {TARGETS.map(({ id, icon: Icon }) => (
                 <button
                   key={id}
                   type="button"
@@ -80,8 +82,8 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
                 >
                   <Icon size={17} />
                   <span>
-                    <strong>{label}</strong>
-                    <small>{hint}</small>
+                    <strong>{t(`sendDialog.target.${id}.label`)}</strong>
+                    <small>{t(`sendDialog.target.${id}.hint`)}</small>
                   </span>
                 </button>
               ))}
@@ -89,12 +91,12 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
 
             {target === "user" ? (
               <label className="field-group">
-                <span>Foydalanuvchi</span>
+                <span>{t("sendDialog.user")}</span>
                 <div className="input-shell">
                   <Search size={16} />
                   <input
                     value={selected ? selected.name : query}
-                    placeholder="Ism yoki username (2+ belgi)"
+                    placeholder={t("sendDialog.userPlaceholder")}
                     onChange={(event) => {
                       setSelected(null);
                       setQuery(event.target.value);
@@ -104,7 +106,7 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
 
                 {!selected && query.trim().length >= 2 ? (
                   <div className="notification-user-list">
-                    {search.isLoading ? <p className="portal-muted">Qidirilmoqda…</p> : null}
+                    {search.isLoading ? <p className="portal-muted">{t("sendDialog.searching")}</p> : null}
                     {search.data?.map((user) => (
                       <button
                         key={user.id}
@@ -122,7 +124,7 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
                       </button>
                     ))}
                     {search.isSuccess && !search.data.length ? (
-                      <p className="portal-muted">Foydalanuvchi topilmadi.</p>
+                      <p className="portal-muted">{t("sendDialog.userNotFound")}</p>
                     ) : null}
                   </div>
                 ) : null}
@@ -130,12 +132,12 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
             ) : null}
 
             <label className="field-group">
-              <span>Xabar matni</span>
+              <span>{t("sendDialog.text")}</span>
               <div className="input-shell">
                 <textarea
                   rows={5}
                   value={text}
-                  placeholder="Ertaga nazorat ishi bo‘ladi…"
+                  placeholder={t("sendDialog.textPlaceholder")}
                   onChange={(event) => setText(event.target.value)}
                   required
                 />
@@ -144,10 +146,10 @@ export function SendNotificationDialog({ open, onOpenChange }: SendNotificationD
 
             <div className="dialog-actions">
               <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-                Bekor
+                {t("sendDialog.cancel")}
               </Button>
               <Button type="submit" loading={send.isPending} disabled={!canSubmit}>
-                Yuborish
+                {t("sendDialog.submit")}
               </Button>
             </div>
           </form>
