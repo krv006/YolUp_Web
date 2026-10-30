@@ -48,11 +48,38 @@ src/
   shared/     api klient, i18n, ui, hooks, uslublar, konfiguratsiya
 ```
 
+Har bir modul bir xil tuzilgan: `api/` (endpoint, DTO, so'rovlar), `lib/` (mapper va sof funksiyalar), `model/`
+(TanStack Query hook'lari, Zustand store'lar), `ui/` (komponentlar) va tashqariga ochiq `index.ts`. Boshqa qatlamlar
+modulning faqat `index.ts` idan import qiladi.
+
+Qatlamlar tartibi: `app → pages → widgets → modules → shared`. Pastki qatlam yuqoridagisini import qilmaydi
+(ESLint `no-restricted-imports` tekshiradi).
+
 Qoidalar:
 - `any`, `@ts-ignore`, `console.log` ishlatilmaydi.
+- `zod` faqat `@/shared/lib/zod` orqali import qilinadi: u `jitless` rejimini yoqadi (CSP `unsafe-eval` siz ishlashi uchun).
+  ESLint to'g'ridan-to'g'ri `import ... from "zod"` ni taqiqlaydi.
+- Yangi mantiq (mapper, hook, yordamchi funksiya) yoniga `*.test.ts` qo'shiladi. Mapperlar bo'sh yoki chala javobda
+  yiqilmasligi `src/test/mappers-robustness.test.ts` da tekshiriladi: yangi mapper qo'shsangiz shu ro'yxatga qo'shing.
 - Serverdan kelgan HTML faqat `sanitizeHtml` (DOMPurify) orqali ko'rsatiladi (`shared/lib/sanitize-html.ts`).
-- Yangi matnlar `src/shared/i18n/locales/{uz,ru,en}/*.json` ga **uch tilda** qo'shiladi.
+- Yangi matnlar `src/shared/i18n/locales/{uz,ru,en}/*.json` ga **uch tilda** qo'shiladi (uch tildagi kalitlar bir xil bo'lishi kerak).
 - Dizayn-tizim sahifasi (`/design-system`) faqat `npm run dev` da ochiladi, production'ga kirmaydi.
+
+## Tarjimalar va birinchi yuklanish
+
+- Darhol faqat o'zbekcha `common`, `auth`, `nav` yuklanadi. Qolgan namespace'lar (`chat`, `lesson`, ...) va boshqa tillar
+  talab bo'yicha (`src/shared/i18n/i18n.ts` dagi backend), foydalanuvchi kirgandan keyin esa fonda oldindan yuklanadi.
+  `useTranslation("chat")` namespace hali kelmagan bo'lsa eng yaqin `Suspense` skeletini ko'rsatadi.
+- Komponentdan tashqarida `i18n.t("ns:key")` ishlatsangiz, o'sha namespace komponent ichida ham ishlatilganiga ishonch hosil qiling.
+- `package.json` dagi `sideEffects` ro'yxati bundler'ga ishlatilmagan modullarni tashlab ketishga ruxsat beradi. Faqat
+  import qilinishining o'zi ish bajaradigan (side effect) yangi fayl qo'shsangiz, uni shu ro'yxatga yozing.
+- Login sahifasida yuklanadigan JS ~200 KB (gzip). Login'dan keyin kerak bo'ladigan narsalarni `lazy()` / dinamik `import()` bilan yuklang.
+
+## Real vaqt
+
+- Har bir ochiq chat o'z `ws/chat/<room>/` ulanishiga ega (`modules/message/lib/chat-socket-manager.ts`).
+- O'qituvchi va o'quvchida butun ilova uchun bitta `ws/notifications/` ulanishi (`app/router/realtime-sync.tsx`):
+  bildirishnomalar, chat ro'yxati uchun `chat_activity` va `chat_typing`. Ulanish yo'q paytda chat ro'yxati 10 soniyada qayta so'raladi.
 
 ## Dars yozuvi (o'qituvchi brauzerida)
 
@@ -67,6 +94,7 @@ Yozuv serverda emas, o'qituvchining brauzerida olinadi: ekran (video) va barcha 
 
 ## Xavfsizlik
 
-- Tokenlar `localStorage`/`sessionStorage` da. `vercel.json` da `Content-Security-Policy-Report-Only` sarlavhasi bor:
-  brauzer konsolida buzilishlar ko'rinadi; ularni tuzatgach `Report-Only` ni olib tashlab qat'iy (enforce) rejimga o'tkazing.
-- `docs/` papkasi backend hujjatlarining nusxasi (eskirgan bo'lishi mumkin). Asosiy manba: backend repo.
+- Tokenlar `localStorage`/`sessionStorage` da. `vercel.json` da `Content-Security-Policy-Report-Only` sarlavhasi bor.
+  Production build'da hamma rollar va asosiy sahifalar (doska formulasi, PDF, jonli dars ham) shu siyosat bilan
+  tekshirilgan: buzilish yo'q. Bir kun report-only'da kuzatilgach qat'iy (enforce) rejimga o'tkaziladi.
+- Backend hujjatlari backend repo'da (`krv006/Education-Tech-Platform`).
