@@ -112,12 +112,40 @@
     "forbiddenDescription": "This page belongs to another role. Switch account or ask the group owner for access.",
     "forbiddenAction": "Switch account",
     "back": "Back",
-    "help": "Help"
+    "help": "Help",
+    "connectionEyebrow": "CONNECTION ERROR",
+    "sessionCheckFailed": "Could not check the session",
+    "sessionRestoreFailed": "Could not restore the session"
   },
   "relative": {
     "now": "just now",
     "minutes": "{{count}} min ago",
     "hours": "{{count}} h ago",
     "yesterday": "Yesterday"
+  },
+  "a11y": {
+    "pagination": "Pagination",
+    "previousPage": "Go to previous page",
+    "nextPage": "Go to next page",
+    "previous": "Previous",
+    "next": "Next",
+    "morePages": "More pages",
+    "previousSlide": "Previous slide",
+    "nextSlide": "Next slide",
+    "breadcrumb": "Breadcrumb",
+    "more": "More",
+    "sidebar": "Sidebar",
+    "sidebarDescription": "Displays the mobile sidebar.",
+    "toggleSidebar": "Toggle sidebar",
+    "loading": "Loading",
+    "online": "Online",
+    "theme": "Theme",
+    "toLightTheme": "Switch to light mode",
+    "toDarkTheme": "Switch to dark mode"
+  },
+  "themeModes": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }

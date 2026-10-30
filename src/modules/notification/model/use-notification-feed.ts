@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import type { OpenNotificationLink } from "../api/notification.dto";
 import { NotificationSocketManager } from "../lib/notification-socket-manager";
 import { useUnreadNotificationCount } from "./notification.queries";
-import { useRealtimeHubActive, useShowLiveNotification } from "./realtime-hub";
+import { useShowLiveNotification } from "./realtime-hub";
+import { useRealtimeHubActive } from "./realtime-hub-context";
 
 export function useNotificationFeed(
   enabled = true,

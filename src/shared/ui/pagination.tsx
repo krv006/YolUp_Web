@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useTranslation } from "react-i18next"
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -9,10 +10,11 @@ import { cn } from "@/shared/lib/utils"
 import { buttonVariants, type Button } from "@/shared/ui/button"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+  const { t } = useTranslation("common")
   return (
     <nav
       role="navigation"
-      aria-label="pagination"
+      aria-label={t("a11y.pagination")}
       data-slot="pagination"
       className={cn("mx-auto flex w-full justify-center", className)}
       {...props}
@@ -69,15 +71,16 @@ function PaginationPrevious({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
+  const { t } = useTranslation("common")
   return (
     <PaginationLink
-      aria-label="Go to previous page"
+      aria-label={t("a11y.previousPage")}
       size="default"
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="hidden sm:block">Previous</span>
+      <span className="hidden sm:block">{t("a11y.previous")}</span>
     </PaginationLink>
   )
 }
@@ -86,14 +89,15 @@ function PaginationNext({
   className,
   ...props
 }: React.ComponentProps<typeof PaginationLink>) {
+  const { t } = useTranslation("common")
   return (
     <PaginationLink
-      aria-label="Go to next page"
+      aria-label={t("a11y.nextPage")}
       size="default"
       className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span className="hidden sm:block">Next</span>
+      <span className="hidden sm:block">{t("a11y.next")}</span>
       <ChevronRightIcon />
     </PaginationLink>
   )
@@ -103,6 +107,7 @@ function PaginationEllipsis({
   className,
   ...props
 }: React.ComponentProps<"span">) {
+  const { t } = useTranslation("common")
   return (
     <span
       aria-hidden
@@ -111,7 +116,7 @@ function PaginationEllipsis({
       {...props}
     >
       <MoreHorizontalIcon className="size-4" />
-      <span className="sr-only">More pages</span>
+      <span className="sr-only">{t("a11y.morePages")}</span>
     </span>
   )
 }

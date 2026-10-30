@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ArrowLeftRight, Eye, LogIn, LogOut, ShieldAlert, Timer } from "lucide-react";
 import { formatDateTime, formatDuration } from "@/shared/lib";
 import type { FocusJournal } from "@/shared/types";
@@ -11,49 +12,50 @@ export interface FocusJournalCellProps {
 }
 
 export function FocusJournalCell({ focus, student, lesson }: FocusJournalCellProps) {
+  const { t } = useTranslation("parent");
   const [open, setOpen] = useState(false);
 
-  if (!focus.exits) return <span className="focus-cell focus-cell--clean">Chiqmagan</span>;
+  if (!focus.exits) return <span className="focus-cell focus-cell--clean">{t("focusJournal.noExits")}</span>;
 
   return (
     <>
       <button
         className={`focus-cell ${focus.alert ? "is-alert" : ""}`}
         type="button"
-        title={focus.alert ? "Chegaradan oshgan — ota-onaga xabar berilgan" : undefined}
+        title={focus.alert ? t("focusJournal.alertTitle") : undefined}
         onClick={() => setOpen(true)}
       >
         {focus.alert ? <ShieldAlert size={13} aria-hidden="true" /> : null}
-        <strong>{focus.exits} chiqish</strong>
+        <strong>{t("focusJournal.exits", { count: focus.exits })}</strong>
         {focus.awaySeconds ? <small>{formatDuration(focus.awaySeconds)}</small> : null}
         <Eye size={14} aria-hidden="true" />
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         {open ? (
-          <DialogContent title="Fokus jurnali" description={`${student} · ${lesson}`}>
+          <DialogContent title={t("focusJournal.title")} description={`${student} · ${lesson}`}>
             <div className="focus-journal">
               {focus.alert ? (
                 <p className="focus-alert">
                   <ShieldAlert size={15} />
-                  Chiqishlar soni chegaradan oshgan — ota-onaga xabar yuborilgan.
+                  {t("focusJournal.alert")}
                 </p>
               ) : null}
               <div className="focus-stats">
                 <span>
                   <ArrowLeftRight size={15} />
                   <strong>{focus.exits}</strong>
-                  <small>chiqish</small>
+                  <small>{t("focusJournal.exitsLabel")}</small>
                 </span>
                 <span>
                   <Timer size={15} />
                   <strong>{formatDuration(focus.awaySeconds)}</strong>
-                  <small>jami yo‘q</small>
+                  <small>{t("focusJournal.awayLabel")}</small>
                 </span>
                 <span>
                   <Timer size={15} />
                   <strong>{formatDuration(focus.longestSeconds)}</strong>
-                  <small>eng uzun</small>
+                  <small>{t("focusJournal.longestLabel")}</small>
                 </span>
               </div>
 
@@ -68,7 +70,7 @@ export function FocusJournalCell({ focus, student, lesson }: FocusJournalCellPro
                         </p>
                         <p>
                           <LogIn size={13} />{" "}
-                          {exit.returnedAt ? formatDateTime(exit.returnedAt) : "Qaytmagan"}
+                          {exit.returnedAt ? formatDateTime(exit.returnedAt) : t("focusJournal.notReturned")}
                         </p>
                       </div>
                       <strong className="focus-timeline-duration">
@@ -79,7 +81,7 @@ export function FocusJournalCell({ focus, student, lesson }: FocusJournalCellPro
                 </ol>
               ) : (
                 <p className="portal-muted">
-                  Chiqishlar soni qayd etilgan, lekin batafsil vaqt jurnali mavjud emas.
+                  {t("focusJournal.noTimeline")}
                 </p>
               )}
             </div>

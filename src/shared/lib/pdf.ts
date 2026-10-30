@@ -17,7 +17,7 @@ function loadPdfjs(): Promise<PdfModule> {
 
 export async function openPdfDocument(url: string): Promise<PDFDocumentProxy> {
   const pdfjs = await loadPdfjs();
-  return pdfjs.getDocument({ url }).promise;
+  return pdfjs.getDocument({ url, isEvalSupported: false }).promise;
 }
 
 export type { PDFDocumentProxy };

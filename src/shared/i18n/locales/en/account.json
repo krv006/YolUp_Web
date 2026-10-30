@@ -345,5 +345,15 @@
       "closed": "Closed"
     },
     "user": "User"
+  },
+  "loginHistory": {
+    "title": "Login history",
+    "description": "Devices and IP addresses used to sign in to your account.",
+    "loading": "Loading history",
+    "loadError": "Could not load the history",
+    "retry": "Try again",
+    "empty": "No sign-ins recorded yet.",
+    "newDevice": "New device",
+    "newIp": "New IP"
   }
 }

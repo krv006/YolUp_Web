@@ -229,6 +229,7 @@
     "joinFailedDescription": "The connection dropped — we could not join the lesson. The lesson is still running.",
     "mobileJoinFailedTitle": "Couldn't connect to the lesson",
     "mobileJoinFailedDescription": "Check your internet connection. The lesson is still going — try again.",
-    "mobileBackToChat": "Back to chat"
+    "mobileBackToChat": "Back to chat",
+    "joiningRoom": "Joining the lesson room"
   }
 }

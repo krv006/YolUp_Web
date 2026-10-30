@@ -26,11 +26,8 @@ export {
   parseRealtimeEvent,
 } from "./lib/notification-socket-manager";
 export type { LiveNotification, RealtimeEvent, SocketState } from "./lib/notification-socket-manager";
-export {
-  RealtimeHubContext,
-  useRealtimeSocket,
-  useShowLiveNotification,
-} from "./model/realtime-hub";
+export { useRealtimeSocket, useShowLiveNotification } from "./model/realtime-hub";
+export { RealtimeHubContext } from "./model/realtime-hub-context";
 export {
   notificationKeys,
   useMarkAllNotificationsRead,

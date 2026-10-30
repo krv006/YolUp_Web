@@ -217,7 +217,10 @@
     "joinedYou": "Qatnashdingiz",
     "minutesShort": "{{count}} daq",
     "download": "Yuklab olish",
-    "volume": "Ovoz balandligi"
+    "volume": "Ovoz balandligi",
+    "notFoundEyebrow": "DARS YOZUVI",
+    "notFoundTitle": "Darsni topib bo‘lmadi",
+    "retry": "Qayta urinish"
   },
   "schedule": {
     "now": "HOZIR",

@@ -1,3 +1,4 @@
+import "@livekit/components-styles";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 import { DisconnectReason, type RoomOptions } from "livekit-client";
@@ -85,7 +86,7 @@ export function LiveLessonPage() {
   if (lesson.isLoading || token.isLoading) {
     return (
       <main className="live-page">
-        <LoadingFallback label="Dars xonasiga ulanmoqda" />
+        <LoadingFallback label={t("state.joiningRoom")} />
       </main>
     );
   }
@@ -184,7 +185,7 @@ export function LiveLessonPage() {
   if (!readyToConnect && token.data.joinDelayMs > 0) {
     return (
       <main className="live-page">
-        <LoadingFallback label="Dars xonasiga ulanmoqda" />
+        <LoadingFallback label={t("state.joiningRoom")} />
       </main>
     );
   }

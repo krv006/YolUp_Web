@@ -112,12 +112,40 @@
     "forbiddenDescription": "Страница для другой роли. Смените аккаунт или попросите доступ у владельца группы.",
     "forbiddenAction": "Сменить аккаунт",
     "back": "Назад",
-    "help": "Помощь"
+    "help": "Помощь",
+    "connectionEyebrow": "ОШИБКА СОЕДИНЕНИЯ",
+    "sessionCheckFailed": "Не удалось проверить сессию",
+    "sessionRestoreFailed": "Не удалось восстановить сессию"
   },
   "relative": {
     "now": "только что",
     "minutes": "{{count}} мин назад",
     "hours": "{{count}} ч назад",
     "yesterday": "Вчера"
+  },
+  "a11y": {
+    "pagination": "Страницы",
+    "previousPage": "Предыдущая страница",
+    "nextPage": "Следующая страница",
+    "previous": "Назад",
+    "next": "Далее",
+    "morePages": "Ещё страницы",
+    "previousSlide": "Предыдущий слайд",
+    "nextSlide": "Следующий слайд",
+    "breadcrumb": "Навигационная цепочка",
+    "more": "Ещё",
+    "sidebar": "Боковая панель",
+    "sidebarDescription": "Мобильная боковая панель",
+    "toggleSidebar": "Показать или скрыть боковую панель",
+    "loading": "Загрузка",
+    "online": "В сети",
+    "theme": "Тема",
+    "toLightTheme": "Включить светлую тему",
+    "toDarkTheme": "Включить тёмную тему"
+  },
+  "themeModes": {
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная"
   }
 }

@@ -37,5 +37,44 @@
     "open": "Ochish"
   },
   "back": "Orqaga",
-  "openFailed": "Bildirishnomani ochib bo‘lmadi"
+  "openFailed": "Bildirishnomani ochib bo‘lmadi",
+  "sendDialog": {
+    "title": "Yangi xabar yuborish",
+    "description": "Xabar tanlangan foydalanuvchilarga darhol yetadi.",
+    "target": {
+      "user": {
+        "label": "Bitta foydalanuvchi",
+        "hint": "Qidirib tanlang"
+      },
+      "all": {
+        "label": "Hammaga",
+        "hint": "Barcha foydalanuvchilar"
+      }
+    },
+    "user": "Foydalanuvchi",
+    "userPlaceholder": "Ism yoki username (2+ belgi)",
+    "searching": "Qidirilmoqda…",
+    "userNotFound": "Foydalanuvchi topilmadi.",
+    "text": "Xabar matni",
+    "textPlaceholder": "Ertaga nazorat ishi bo‘ladi…",
+    "cancel": "Bekor",
+    "submit": "Yuborish"
+  },
+  "sentPanel": {
+    "eyebrow": "BILDIRISHNOMALAR",
+    "title": "Yuborilgan xabarlar",
+    "compose": "Yangi xabar",
+    "loading": "Xabarlar yuklanmoqda",
+    "empty": "Hali xabar yuborilmagan.",
+    "readRate": "{{rate}}% o‘qigan",
+    "readersTitle": "Kim o‘qidi",
+    "readersDescription": "Xabar yuborilgan foydalanuvchilar ro‘yxati.",
+    "readersLoading": "Yuklanmoqda",
+    "unread": "O‘qimagan",
+    "noRecipients": "Qabul qiluvchi topilmadi."
+  },
+  "liveToast": {
+    "fallback": "Yangi xabar",
+    "open": "Ochish"
+  }
 }

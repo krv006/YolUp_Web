@@ -112,12 +112,40 @@
     "forbiddenDescription": "Sahifa boshqa rol uchun. Akkauntni almashtiring yoki guruh egasidan ruxsat so‘rang.",
     "forbiddenAction": "Akkauntni almashtirish",
     "back": "Orqaga",
-    "help": "Yordam"
+    "help": "Yordam",
+    "connectionEyebrow": "ALOQA XATOSI",
+    "sessionCheckFailed": "Sessiyani tekshirib bo‘lmadi",
+    "sessionRestoreFailed": "Sessiyani tiklab bo‘lmadi"
   },
   "relative": {
     "now": "hozir",
     "minutes": "{{count}} daqiqa oldin",
     "hours": "{{count}} soat oldin",
     "yesterday": "Kecha"
+  },
+  "a11y": {
+    "pagination": "Sahifalar",
+    "previousPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa",
+    "previous": "Oldingi",
+    "next": "Keyingi",
+    "morePages": "Yana sahifalar",
+    "previousSlide": "Oldingi slayd",
+    "nextSlide": "Keyingi slayd",
+    "breadcrumb": "Yo‘l",
+    "more": "Yana",
+    "sidebar": "Yon panel",
+    "sidebarDescription": "Mobil yon panel",
+    "toggleSidebar": "Yon panelni ochish yoki yopish",
+    "loading": "Yuklanmoqda",
+    "online": "Onlayn",
+    "theme": "Mavzu",
+    "toLightTheme": "Yorug‘ rejimga o‘tish",
+    "toDarkTheme": "Qorong‘i rejimga o‘tish"
+  },
+  "themeModes": {
+    "light": "Yorug‘",
+    "dark": "Qorong‘i",
+    "system": "Tizim"
   }
 }

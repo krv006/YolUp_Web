@@ -345,5 +345,15 @@
       "closed": "Yopilgan"
     },
     "user": "Foydalanuvchi"
+  },
+  "loginHistory": {
+    "title": "Kirishlar tarixi",
+    "description": "Hisobingizga qaysi qurilma va IP’dan kirilgani.",
+    "loading": "Tarix yuklanmoqda",
+    "loadError": "Tarixni yuklab bo‘lmadi",
+    "retry": "Qayta urinish",
+    "empty": "Kirishlar hali qayd etilmagan.",
+    "newDevice": "Yangi qurilma",
+    "newIp": "Yangi IP"
   }
 }

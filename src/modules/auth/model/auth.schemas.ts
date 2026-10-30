@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/shared/lib/zod";
 import type { TFunction } from "i18next";
 
 export function createLoginSchema(t: TFunction<"auth">) {

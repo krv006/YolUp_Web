@@ -6,6 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 const SOURCE = '**/*.{js,jsx,ts,tsx}'
+const ZOD = { name: 'zod', message: "zod'ni '@/shared/lib/zod' orqali import qiling: u jitless rejimini yoqadi (CSP unsafe-eval)." }
 
 export default defineConfig([
   globalIgnores(['dist', 'src/shared/ui/*.tsx', 'src/shared/hooks/use-mobile.ts']),
@@ -34,6 +35,7 @@ export default defineConfig([
           group: ['@/app/**', '@/pages/**', '@/widgets/**', '@/modules/**'],
           message: 'Shared qatlam yuqoridagi hech bir qatlamga bog‘lanmasligi kerak.',
         }],
+        paths: [ZOD],
       }],
     },
   },
@@ -45,6 +47,7 @@ export default defineConfig([
           group: ['@/app/**', '@/pages/**', '@/widgets/**'],
           message: 'Domain modul app, page yoki widget qatlamini import qilmasligi kerak.',
         }],
+        paths: [ZOD],
       }],
     },
   },
@@ -56,7 +59,20 @@ export default defineConfig([
           group: ['@/app/**', '@/pages/**'],
           message: 'Widget app yoki page qatlamini import qilmasligi kerak.',
         }],
+        paths: [ZOD],
       }],
+    },
+  },
+  {
+    files: [`src/app/${SOURCE}`, `src/pages/${SOURCE}`],
+    rules: {
+      'no-restricted-imports': ['error', { paths: [ZOD] }],
+    },
+  },
+  {
+    files: ['src/shared/lib/zod.ts'],
+    rules: {
+      'no-restricted-imports': 'off',
     },
   },
 ])

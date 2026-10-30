@@ -2,8 +2,13 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 import { useLocation } from "react-router-dom";
 import { env } from "@/shared/config";
 import { i18n } from "@/shared/i18n";
-import { Icon } from "@/shared/ui/icon";
+import errorSvg from "@/shared/assets/icons/error.svg?raw";
+import warningSvg from "@/shared/assets/icons/warning-fill.svg?raw";
+import { normalizeSvg, SvgIcon } from "@/shared/ui/svg-icon";
 import { RouteStatus, routeStatusButton, routeStatusGhostButton } from "@/shared/ui/route-status";
+
+const ERROR_ICON = normalizeSvg(errorSvg);
+const WARNING_ICON = normalizeSvg(warningSvg);
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -42,8 +47,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
     return (
       <RouteStatus
         tone="error"
-        icon={<Icon name="error" size={28} />}
-        mobileIcon={<Icon name="warning-fill" size={48} />}
+        icon={<SvgIcon icon={ERROR_ICON} size={28} />}
+        mobileIcon={<SvgIcon icon={WARNING_ICON} size={48} />}
         title={i18n.t("common:routeState.errorTitle")}
         description={i18n.t("common:routeState.errorDescription")}
         action={

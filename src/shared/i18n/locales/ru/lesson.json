@@ -217,7 +217,10 @@
     "joinedYou": "Вы были",
     "minutesShort": "{{count}} мин",
     "download": "Скачать",
-    "volume": "Громкость"
+    "volume": "Громкость",
+    "notFoundEyebrow": "ЗАПИСЬ УРОКА",
+    "notFoundTitle": "Урок не найден",
+    "retry": "Повторить"
   },
   "schedule": {
     "now": "СЕЙЧАС",

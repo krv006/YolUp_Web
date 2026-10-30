@@ -1,6 +1,6 @@
 import { normalizeMediaUrl, normalizePagination, type Page, type PaginationOptions } from "@/shared/api";
 import type { AttendanceRow, DomainUser, FocusJournal } from "@/shared/types";
-import type { AttendanceDto, FocusJournalDto } from "../api/attendance.dto";
+import type { AttendanceDto, AttendanceSummaryDto, FocusJournalDto } from "../api/attendance.dto";
 
 const TONES = ["violet", "blue", "emerald", "amber", "rose"] as const;
 
@@ -70,4 +70,19 @@ export function mapAttendanceDto(dto: AttendanceDto): AttendanceRow {
 export function mapAttendancePage(dto: unknown, options?: PaginationOptions): Page<AttendanceRow> {
   const page = normalizePagination<AttendanceDto>(dto, options);
   return { ...page, items: page.items.map(mapAttendanceDto) };
+}
+
+export function mapAttendanceSummary(dto: AttendanceSummaryDto | null | undefined) {
+  return {
+    attendancePercent: dto?.attendance_percent ?? 0,
+    focusPercent: dto?.focus_percent ?? null,
+    lessonCount: dto?.lesson_count ?? 0,
+    students: (dto?.students ?? []).map((item) => ({
+      id: String(item.id),
+      name: item.name ?? "",
+      attendancePercent: item.attendance_percent ?? 0,
+      focusPercent: item.focus_percent ?? null,
+      attendedCount: item.attended_count ?? 0,
+    })),
+  };
 }

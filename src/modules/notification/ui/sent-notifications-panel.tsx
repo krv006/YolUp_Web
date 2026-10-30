@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Check, Clock3, Megaphone, Plus, UserRound } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { formatDateTime } from "@/shared/lib";
 import { Button, Dialog, DialogContent, LoadingFallback } from "@/shared/ui/legacy";
 import {
@@ -10,6 +11,7 @@ import { NotificationHtml } from "./notification-html";
 import { SendNotificationDialog } from "./send-notification-dialog";
 
 export function SentNotificationsPanel() {
+  const { t } = useTranslation("notification");
   const [composeOpen, setComposeOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
 
@@ -23,18 +25,18 @@ export function SentNotificationsPanel() {
     <section className="portal-panel">
       <div className="portal-section-heading">
         <div>
-          <span className="portal-eyebrow">BILDIRISHNOMALAR</span>
-          <h2>Yuborilgan xabarlar</h2>
+          <span className="portal-eyebrow">{t("sentPanel.eyebrow")}</span>
+          <h2>{t("sentPanel.title")}</h2>
         </div>
         <Button onClick={() => setComposeOpen(true)}>
-          <Plus size={17} /> Yangi xabar
+          <Plus size={17} /> {t("sentPanel.compose")}
         </Button>
       </div>
 
-      {sent.isLoading ? <LoadingFallback label="Xabarlar yuklanmoqda" /> : null}
+      {sent.isLoading ? <LoadingFallback label={t("sentPanel.loading")} /> : null}
 
       {sent.isSuccess && !items.length ? (
-        <p className="portal-muted">Hali xabar yuborilmagan.</p>
+        <p className="portal-muted">{t("sentPanel.empty")}</p>
       ) : null}
 
       {items.length ? (
@@ -58,7 +60,7 @@ export function SentNotificationsPanel() {
                   <strong>
                     {item.readCount}/{item.totalCount}
                   </strong>
-                  <i>{rate}% o‘qigan</i>
+                  <i>{t("sentPanel.readRate", { rate })}</i>
                 </span>
               </button>
             );
@@ -70,8 +72,8 @@ export function SentNotificationsPanel() {
 
       <Dialog open={Boolean(detailId)} onOpenChange={(open) => !open && setDetailId(null)}>
         {detailId ? (
-          <DialogContent title="Kim o‘qidi" description="Xabar yuborilgan foydalanuvchilar ro‘yxati.">
-            {recipients.isLoading ? <LoadingFallback label="Yuklanmoqda" /> : null}
+          <DialogContent title={t("sentPanel.readersTitle")} description={t("sentPanel.readersDescription")}>
+            {recipients.isLoading ? <LoadingFallback label={t("sentPanel.readersLoading")} /> : null}
             {recipients.data?.length ? (
               <ul className="notification-recipients">
                 {recipients.data.map((row) => (
@@ -85,14 +87,14 @@ export function SentNotificationsPanel() {
                         <Check size={13} /> {formatDateTime(row.readAt)}
                       </em>
                     ) : (
-                      <em className="is-pending">O‘qimagan</em>
+                      <em className="is-pending">{t("sentPanel.unread")}</em>
                     )}
                   </li>
                 ))}
               </ul>
             ) : null}
             {recipients.isSuccess && !recipients.data.length ? (
-              <p className="portal-muted">Qabul qiluvchi topilmadi.</p>
+              <p className="portal-muted">{t("sentPanel.noRecipients")}</p>
             ) : null}
           </DialogContent>
         ) : null}

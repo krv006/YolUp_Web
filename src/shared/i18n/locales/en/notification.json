@@ -37,5 +37,44 @@
     "open": "Open"
   },
   "back": "Back",
-  "openFailed": "Couldn’t open the notification"
+  "openFailed": "Couldn’t open the notification",
+  "sendDialog": {
+    "title": "Send a new message",
+    "description": "The message reaches the selected users right away.",
+    "target": {
+      "user": {
+        "label": "One user",
+        "hint": "Search and pick"
+      },
+      "all": {
+        "label": "Everyone",
+        "hint": "All users"
+      }
+    },
+    "user": "User",
+    "userPlaceholder": "Name or username (2+ characters)",
+    "searching": "Searching…",
+    "userNotFound": "No user found.",
+    "text": "Message",
+    "textPlaceholder": "There is a test tomorrow…",
+    "cancel": "Cancel",
+    "submit": "Send"
+  },
+  "sentPanel": {
+    "eyebrow": "NOTIFICATIONS",
+    "title": "Sent messages",
+    "compose": "New message",
+    "loading": "Loading messages",
+    "empty": "No messages sent yet.",
+    "readRate": "{{rate}}% read",
+    "readersTitle": "Who read it",
+    "readersDescription": "Users the message was sent to.",
+    "readersLoading": "Loading",
+    "unread": "Unread",
+    "noRecipients": "No recipients found."
+  },
+  "liveToast": {
+    "fallback": "New message",
+    "open": "Open"
+  }
 }

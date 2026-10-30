@@ -117,5 +117,32 @@
     "loadError": "Couldn't load the rating",
     "retry": "Retry",
     "subtitle": "Assignments and grades per subject."
+  },
+  "attendanceTable": {
+    "empty": "No attendance records found.",
+    "students": "{{count}} students",
+    "parentNotified": "Parent notified",
+    "exits": "{{count}} exits",
+    "focused": "Stayed focused",
+    "student": "Student",
+    "joined": "Joined",
+    "left": "Left",
+    "duration": "Duration",
+    "attention": "Attention",
+    "focus": "Focus",
+    "inLesson": "In lesson",
+    "minutes": "{{count}} min"
+  },
+  "focusJournal": {
+    "noExits": "No exits",
+    "alertTitle": "Over the limit — the parent was notified",
+    "exits": "{{count}} exits",
+    "title": "Focus journal",
+    "alert": "Too many exits — the parent was notified.",
+    "exitsLabel": "exits",
+    "awayLabel": "total away",
+    "longestLabel": "longest",
+    "notReturned": "Did not return",
+    "noTimeline": "Exits were counted, but no detailed time log is available."
   }
 }

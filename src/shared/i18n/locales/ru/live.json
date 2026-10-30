@@ -229,6 +229,7 @@
     "joinFailedDescription": "Соединение прервано — не удалось подключиться к уроку. Урок продолжается.",
     "mobileJoinFailedTitle": "Не удалось подключиться к уроку",
     "mobileJoinFailedDescription": "Проверьте подключение к интернету. Урок ещё идёт — попробуйте снова.",
-    "mobileBackToChat": "Вернуться в чат"
+    "mobileBackToChat": "Вернуться в чат",
+    "joiningRoom": "Подключение к уроку"
   }
 }
