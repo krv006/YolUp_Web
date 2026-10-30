@@ -119,5 +119,20 @@
     "minutes": "{{count}} daqiqa oldin",
     "hours": "{{count}} soat oldin",
     "yesterday": "Kecha"
+  },
+  "a11y": {
+    "pagination": "Sahifalar",
+    "previousPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa",
+    "previous": "Oldingi",
+    "next": "Keyingi",
+    "morePages": "Yana sahifalar",
+    "previousSlide": "Oldingi slayd",
+    "nextSlide": "Keyingi slayd",
+    "breadcrumb": "Yo‘l",
+    "more": "Yana",
+    "sidebar": "Yon panel",
+    "sidebarDescription": "Mobil yon panel",
+    "toggleSidebar": "Yon panelni ochish yoki yopish"
   }
 }

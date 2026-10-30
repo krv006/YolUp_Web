@@ -72,5 +72,9 @@
     "readersLoading": "Loading",
     "unread": "Unread",
     "noRecipients": "No recipients found."
+  },
+  "liveToast": {
+    "fallback": "New message",
+    "open": "Open"
   }
 }

@@ -72,5 +72,9 @@
     "readersLoading": "Загрузка",
     "unread": "Не прочитано",
     "noRecipients": "Получатели не найдены."
+  },
+  "liveToast": {
+    "fallback": "Новое сообщение",
+    "open": "Открыть"
   }
 }

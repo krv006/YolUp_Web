@@ -72,5 +72,9 @@
     "readersLoading": "Yuklanmoqda",
     "unread": "O‘qimagan",
     "noRecipients": "Qabul qiluvchi topilmadi."
+  },
+  "liveToast": {
+    "fallback": "Yangi xabar",
+    "open": "Ochish"
   }
 }

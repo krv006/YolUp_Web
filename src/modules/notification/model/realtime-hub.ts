@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { htmlToPlainText } from "@/shared/lib";
 import type { OpenNotificationLink } from "../api/notification.dto";
@@ -18,6 +19,7 @@ export function useRealtimeHubActive(): boolean {
 }
 
 export function useShowLiveNotification(onOpenLink?: OpenNotificationLink) {
+  const { t } = useTranslation("notification");
   const queryClient = useQueryClient();
   const openLink = useRef(onOpenLink);
   useEffect(() => {
@@ -30,12 +32,12 @@ export function useShowLiveNotification(onOpenLink?: OpenNotificationLink) {
       const preview = htmlToPlainText(notification.html, 90);
       const link = notification.link;
       const open = openLink.current;
-      toast.info(preview || "Yangi xabar", {
+      toast.info(preview || t("liveToast.fallback"), {
         description: notification.senderName,
-        action: link && open ? { label: "Ochish", onClick: () => open(link, notification.kind) } : undefined,
+        action: link && open ? { label: t("liveToast.open"), onClick: () => open(link, notification.kind) } : undefined,
       });
     },
-    [queryClient]
+    [queryClient, t]
   );
 }
 

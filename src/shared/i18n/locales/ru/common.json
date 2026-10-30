@@ -119,5 +119,20 @@
     "minutes": "{{count}} мин назад",
     "hours": "{{count}} ч назад",
     "yesterday": "Вчера"
+  },
+  "a11y": {
+    "pagination": "Страницы",
+    "previousPage": "Предыдущая страница",
+    "nextPage": "Следующая страница",
+    "previous": "Назад",
+    "next": "Далее",
+    "morePages": "Ещё страницы",
+    "previousSlide": "Предыдущий слайд",
+    "nextSlide": "Следующий слайд",
+    "breadcrumb": "Навигационная цепочка",
+    "more": "Ещё",
+    "sidebar": "Боковая панель",
+    "sidebarDescription": "Мобильная боковая панель",
+    "toggleSidebar": "Показать или скрыть боковую панель"
   }
 }
