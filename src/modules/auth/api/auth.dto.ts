@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/shared/lib/zod";
 
 export const tokenPairDtoSchema = z.object({
   access: z.string().min(1),

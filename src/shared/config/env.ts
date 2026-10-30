@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/shared/lib/zod";
 
 const envSchema = z.object({
   VITE_APP_NAME: z.string().trim().min(1).default("Fokus"),
