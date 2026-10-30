@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
       environment: "jsdom",
       include: ["src/**/*.test.{ts,tsx}"],
       setupFiles: ["./src/test/setup.ts"],
+      env: { VITE_API_URL: "/", VITE_WS_URL: "wss://edu.thesofmebel.uz" },
     },
     server: {
       proxy: {
