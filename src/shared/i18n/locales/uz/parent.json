@@ -629,6 +629,11 @@
     "filtered": {
       "title": "Kirish topilmadi",
       "text": "Tanlangan davr va filtr bo‘yicha kirish yo‘q."
+    },
+    "mobile": {
+      "today": "Bugun",
+      "yesterday": "Kecha",
+      "filterHint": "Kirishlar tarixini saralash"
     }
   },
   "homeworkView": {

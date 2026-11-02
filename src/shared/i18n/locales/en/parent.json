@@ -629,6 +629,11 @@
     "filtered": {
       "title": "No sign-ins found",
       "text": "There are no sign-ins for the selected period and filter."
+    },
+    "mobile": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "filterHint": "Narrow down the sign-in history"
     }
   },
   "homeworkView": {
