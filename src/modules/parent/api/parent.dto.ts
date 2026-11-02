@@ -27,6 +27,7 @@ export interface ParentLinkPerson {
   username: string;
   phone?: string | null;
   inviteCode?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface ParentLink {
@@ -51,6 +52,7 @@ export interface ParentChild {
   lastActivity: string;
   status: string;
   avatarTone: string;
+  avatarUrl: string | null;
 }
 
 export interface ParentMetric {

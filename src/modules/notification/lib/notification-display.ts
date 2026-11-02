@@ -4,16 +4,32 @@ const LESSON_REMINDER_KIND = "lesson_reminder";
 
 export type NotificationGroupKey = "today" | "yesterday" | "earlier";
 
+export type NotificationCategory = "attendance" | "homework" | "security";
+
+export const NOTIFICATION_CATEGORIES: NotificationCategory[] = ["attendance", "homework", "security"];
+
 export const NOTIFICATION_TONES = {
   lesson: "bg-accent-saffron-bg text-accent-saffron-fg",
   people: "bg-accent-green-bg text-accent-green-fg",
   action: "bg-accent-blue-bg text-accent-blue-fg",
   quiz: "bg-accent-violet-bg text-accent-violet-fg",
   neutral: "bg-brand-subtle text-brand",
+  danger: "bg-danger-bg text-error-text",
 };
+
+export function notificationCategory(item: Pick<InboxNotification, "kind" | "link">): NotificationCategory | null {
+  const kind = item.kind ?? "";
+  const link = item.link?.type ?? "";
+  if (/login|device|session|security|password/.test(kind)) return "security";
+  if (/homework|assignment|submission/.test(kind) || ["assignment", "submission", "homework"].includes(link)) return "homework";
+  if (/lesson|attendance|focus|recording/.test(kind) || ["lesson", "recording"].includes(link)) return "attendance";
+  return null;
+}
 
 export function notificationIcon(item: InboxNotification) {
   if (item.kind === LESSON_REMINDER_KIND) return { icon: "clock", tone: NOTIFICATION_TONES.lesson };
+  if (/login|device|security/.test(item.kind ?? "")) return { icon: "shield", tone: NOTIFICATION_TONES.danger };
+  if (/attendance/.test(item.kind ?? "")) return { icon: "how-to-reg", tone: NOTIFICATION_TONES.people };
   if (item.kind?.includes("rating") || item.kind?.includes("grade"))
     return { icon: "star", tone: NOTIFICATION_TONES.people };
   if (item.link?.type === "submission") return { icon: "check-circle", tone: NOTIFICATION_TONES.people };

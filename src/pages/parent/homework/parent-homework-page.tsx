@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { HomeworkResultDialog } from "@/modules/homework";
 import type { Submission } from "@/shared/types";
 import { useParentHomework, useSelectedChild } from "@/modules/parent";
-import { toIntlLocale } from "@/shared/i18n";
+import { formatDayTime } from "@/shared/lib";
 import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
 function SubmissionPill({
@@ -36,7 +36,7 @@ function SubmissionPill({
 }
 
 export function ParentHomeworkPage() {
-  const { t, i18n } = useTranslation("parent");
+  const { t } = useTranslation("parent");
   const { selectedChild, selectedChildId } = useSelectedChild();
   const homework = useParentHomework(selectedChildId);
   const [resultOf, setResultOf] = useState<Submission | null>(null);
@@ -69,7 +69,7 @@ export function ParentHomeworkPage() {
           <p>{t("homework.subtitle")}</p>
         </div>
       </div>
-      <section className="portal-card parent-homework-list">
+      <section className="portal-card parent-homework-list px-5">
         {(homework.data ?? []).map((item) => (
           <article key={item.id}>
             <span className="workspace-list-icon"><ListChecks size={19} /></span>
@@ -77,9 +77,7 @@ export function ParentHomeworkPage() {
               <strong>{item.title}</strong>
               <small>
                 {item.courseTitle} ·{" "}
-                {item.dueAt
-                  ? new Intl.DateTimeFormat(toIntlLocale(i18n.language), { dateStyle: "medium", timeStyle: "short" }).format(new Date(item.dueAt))
-                  : t("homework.noDue")}
+                {item.dueAt ? formatDayTime(item.dueAt) : t("homework.noDue")}
               </small>
             </div>
             <SubmissionPill submission={item.mySubmission} onOpen={setResultOf} />

@@ -144,5 +144,169 @@
     "longestLabel": "самый долгий",
     "notReturned": "Не вернулся",
     "noTimeline": "Выходы учтены, но подробного журнала времени нет."
+  },
+  "shell": {
+    "nav": {
+      "dashboard": "Главная",
+      "children": "Дети",
+      "attendance": "Посещаемость",
+      "homework": "Задания",
+      "results": "Результаты"
+    },
+    "role": "Родитель",
+    "openAccount": "Профиль и настройки",
+    "navLabel": "Разделы родителя",
+    "resultsTabs": {
+      "grades": "По заданиям",
+      "exams": "Пробные тесты"
+    }
+  },
+  "switcher": {
+    "eyebrow": "РЕБЁНОК",
+    "groups": "Групп: {{count}}",
+    "others": "+{{count}} детей",
+    "menuTitle": "ВЫБЕРИТЕ РЕБЁНКА",
+    "pending": "Ожидает",
+    "requestSent": "запрос отправлен",
+    "add": "Добавить ребёнка",
+    "manage": "Управление детьми",
+    "open": "Выбрать ребёнка"
+  },
+  "home": {
+    "datePattern": "EEEE, d MMMM",
+    "monthPattern": "LLLL",
+    "dayPattern": "EEEEEE",
+    "todayLessons": "У {{name}} сегодня уроков: {{count}}",
+    "noLessonsToday": "У {{name}} сегодня нет уроков",
+    "greeting": {
+      "morning": "Доброе утро, {{name}}!",
+      "day": "Добрый день, {{name}}!",
+      "evening": "Добрый вечер, {{name}}!",
+      "night": "Доброй ночи, {{name}}!"
+    },
+    "welcome": "Добро пожаловать, {{name}}!",
+    "connectSubtitle": "Чтобы начать, подключите ребёнка",
+    "hero": {
+      "todayChip": "Сегодня · {{time}}",
+      "todayTitle": "У {{name}} сегодня уроков: {{count}}",
+      "liveChip": "Идёт урок · {{count}} мин",
+      "liveTitle": "{{name}} сейчас на уроке",
+      "liveNotJoined": "{{name}} ещё не вошёл на урок",
+      "joinedAt": "вошёл в {{time}}",
+      "freeChip": "Сегодня нет уроков",
+      "freeTitle": "У {{name}} сегодня нет уроков",
+      "nextLesson": "Следующий урок: {{day}}, {{time}} · {{course}}",
+      "noUpcoming": "В ближайшие дни уроков нет",
+      "viewAttendance": "Посещаемость",
+      "lessonDetails": "Подробнее об уроке",
+      "focusTitle": "Уровень фокуса",
+      "focusMeta": "Вошёл {{time}} · проверки внимания {{answered}}/{{total}}",
+      "focusMetaNoChecks": "Вошёл {{time}}",
+      "focusPending": "Фокус будет рассчитан через минуту",
+      "weekSummary": "На этой неделе: {{attended}} / {{total}} уроков",
+      "weekLate": " · опозданий: {{count}}",
+      "weekdays": [
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб",
+        "Вс"
+      ],
+      "dayState": {
+        "attended": "был",
+        "late": "опоздал",
+        "missed": "не пришёл",
+        "today": "сегодня",
+        "none": "нет урока"
+      }
+    },
+    "stats": {
+      "attendance": "Посещаемость",
+      "attendanceSub": "{{month}} · {{attended}}/{{total}} уроков",
+      "attendanceEmpty": "В этом месяце уроков ещё не было",
+      "score": "Средний балл",
+      "scoreSub": "Последние 30 дней",
+      "scoreEmpty": "Нет оценённых заданий",
+      "homework": "Задания",
+      "homeworkLeft": "Осталось {{count}}",
+      "homeworkDue": "Скоро срок: {{count}}",
+      "homeworkNoDue": "Срочных заданий нет",
+      "homeworkEmpty": "Заданий нет",
+      "time": "На уроках",
+      "timeSub": "На этой неделе"
+    },
+    "duration": {
+      "hours": "{{h}} ч {{m}} м",
+      "minutes": "{{m}} м"
+    },
+    "recent": {
+      "title": "Последняя посещаемость",
+      "all": "Все",
+      "today": "Сегодня · {{from}} – {{to}}",
+      "liveSince": "с {{time}} · {{minutes}} мин",
+      "liveNotJoined": "Идёт урок · ещё не вошёл",
+      "stay": "{{from}} → {{to}} · {{duration}}",
+      "missed": "{{from}} – {{to}} · не пришёл",
+      "chipLive": "Идёт",
+      "chipAttended": "Был",
+      "chipLate": "+{{count}} мин",
+      "chipMissed": "Не пришёл",
+      "empty": "Уроков ещё не было",
+      "durationHours": "{{h}} ч {{m}} мин",
+      "durationMinutes": "{{m}} мин"
+    },
+    "attention": {
+      "title": "Требует внимания",
+      "homeworkToday": "Срок задания сегодня",
+      "homeworkTomorrow": "Срок задания завтра",
+      "homeworkSoon": "Скоро срок задания",
+      "login": "Вход с нового устройства",
+      "exam": "Готовы результаты пробного теста",
+      "examMeta": "{{title}} · посмотрите результат",
+      "empty": "Пока ничего не требует внимания"
+    },
+    "score": {
+      "title": "Динамика баллов",
+      "week": "{{n}}-н",
+      "empty": "Оценённых заданий пока нет"
+    },
+    "offline": "Нет интернета. Последние данные: {{time}} — не обновляются",
+    "serverError": "Нет связи с сервером — данные не загрузились.",
+    "connect": {
+      "title": "Подключите ребёнка",
+      "description": "Подключите аккаунт ребёнка или создайте новый, чтобы следить за посещаемостью, заданиями, пробными тестами и безопасностью в одном месте.",
+      "link": "Подключить ученика",
+      "create": "Новый аккаунт ребёнка",
+      "step": "Шаг {{n}}",
+      "steps": [
+        {
+          "title": "Отправьте запрос",
+          "description": "Введите логин или FK-код ребёнка"
+        },
+        {
+          "title": "Ребёнок подтверждает",
+          "description": "Запрос появится в его приложении"
+        },
+        {
+          "title": "Начните наблюдение",
+          "description": "Посещаемость и результаты — здесь"
+        }
+      ]
+    },
+    "pending": {
+      "chip": "Ожидает · {{time}}",
+      "title": "Запрос отправлен: {{name}}",
+      "description": "Как только @{{username}} подтвердит запрос в приложении, здесь появятся посещаемость и результаты.",
+      "howTitle": "Как ребёнок подтверждает?",
+      "how": [
+        "Входит в YolUp под своим логином",
+        "Чаты → «+» → Запросы родителей",
+        "Нажимает «Подтвердить»"
+      ],
+      "addAnother": "Добавить ещё ребёнка",
+      "addAnotherHint": "Подключите другой аккаунт ребёнка"
+    }
   }
 }

@@ -144,5 +144,169 @@
     "longestLabel": "longest",
     "notReturned": "Did not return",
     "noTimeline": "Exits were counted, but no detailed time log is available."
+  },
+  "shell": {
+    "nav": {
+      "dashboard": "Home",
+      "children": "Children",
+      "attendance": "Attendance",
+      "homework": "Homework",
+      "results": "Results"
+    },
+    "role": "Parent",
+    "openAccount": "Profile and settings",
+    "navLabel": "Parent sections",
+    "resultsTabs": {
+      "grades": "By homework",
+      "exams": "Mock tests"
+    }
+  },
+  "switcher": {
+    "eyebrow": "CHILD",
+    "groups": "{{count}} groups",
+    "others": "+{{count}} children",
+    "menuTitle": "CHOOSE A CHILD",
+    "pending": "Pending",
+    "requestSent": "request sent",
+    "add": "Add a child",
+    "manage": "Manage children",
+    "open": "Choose a child"
+  },
+  "home": {
+    "datePattern": "EEEE, MMMM d",
+    "monthPattern": "LLLL",
+    "dayPattern": "EEE",
+    "todayLessons": "{{name}} has {{count}} lessons today",
+    "noLessonsToday": "{{name}} has no lessons today",
+    "greeting": {
+      "morning": "Good morning, {{name}}!",
+      "day": "Good afternoon, {{name}}!",
+      "evening": "Good evening, {{name}}!",
+      "night": "Good night, {{name}}!"
+    },
+    "welcome": "Welcome, {{name}}!",
+    "connectSubtitle": "Connect your child to get started",
+    "hero": {
+      "todayChip": "Today · {{time}}",
+      "todayTitle": "{{name}} has {{count}} lessons today",
+      "liveChip": "Live lesson · {{count}} min",
+      "liveTitle": "{{name}} is in a lesson now",
+      "liveNotJoined": "{{name}} has not joined yet",
+      "joinedAt": "joined at {{time}}",
+      "freeChip": "No lessons today",
+      "freeTitle": "{{name}} has no lessons today",
+      "nextLesson": "Next lesson: {{day}}, {{time}} · {{course}}",
+      "noUpcoming": "No lessons planned for the coming days",
+      "viewAttendance": "View attendance",
+      "lessonDetails": "Lesson details",
+      "focusTitle": "Focus level",
+      "focusMeta": "Joined {{time}} · attention checks {{answered}}/{{total}}",
+      "focusMetaNoChecks": "Joined {{time}}",
+      "focusPending": "Focus is calculated after a minute",
+      "weekSummary": "This week: {{attended}} / {{total}} lessons",
+      "weekLate": " · {{count}} late",
+      "weekdays": [
+        "Mo",
+        "Tu",
+        "We",
+        "Th",
+        "Fr",
+        "Sa",
+        "Su"
+      ],
+      "dayState": {
+        "attended": "attended",
+        "late": "late",
+        "missed": "absent",
+        "today": "today",
+        "none": "no lesson"
+      }
+    },
+    "stats": {
+      "attendance": "Attendance",
+      "attendanceSub": "{{month}} · {{attended}}/{{total}} lessons",
+      "attendanceEmpty": "No finished lessons this month",
+      "score": "Average score",
+      "scoreSub": "Last 30 days",
+      "scoreEmpty": "No graded homework",
+      "homework": "Homework",
+      "homeworkLeft": "{{count}} left",
+      "homeworkDue": "{{count}} due soon",
+      "homeworkNoDue": "Nothing due soon",
+      "homeworkEmpty": "No homework yet",
+      "time": "In lessons",
+      "timeSub": "This week"
+    },
+    "duration": {
+      "hours": "{{h}}h {{m}}m",
+      "minutes": "{{m}}m"
+    },
+    "recent": {
+      "title": "Recent attendance",
+      "all": "View all",
+      "today": "Today · {{from}} – {{to}}",
+      "liveSince": "since {{time}} · {{minutes}} min",
+      "liveNotJoined": "Lesson in progress · not joined",
+      "stay": "{{from}} → {{to}} · {{duration}}",
+      "missed": "{{from}} – {{to}} · absent",
+      "chipLive": "Live",
+      "chipAttended": "Attended",
+      "chipLate": "+{{count}} min",
+      "chipMissed": "Absent",
+      "empty": "No lessons yet",
+      "durationHours": "{{h}}h {{m}}m",
+      "durationMinutes": "{{m}} min"
+    },
+    "attention": {
+      "title": "Needs attention",
+      "homeworkToday": "Homework due today",
+      "homeworkTomorrow": "Homework due tomorrow",
+      "homeworkSoon": "Homework due soon",
+      "login": "Sign-in from a new device",
+      "exam": "Mock test results are out",
+      "examMeta": "{{title}} · see the result",
+      "empty": "Nothing needs your attention right now"
+    },
+    "score": {
+      "title": "Score trend",
+      "week": "W{{n}}",
+      "empty": "No graded homework yet"
+    },
+    "offline": "No internet. Last data: {{time}} — not updating",
+    "serverError": "Can’t reach the server — data didn’t load.",
+    "connect": {
+      "title": "Connect your child",
+      "description": "Connect your child’s account or create a new one to follow attendance, homework, mock results and safety in one place.",
+      "link": "Connect a student",
+      "create": "New child account",
+      "step": "Step {{n}}",
+      "steps": [
+        {
+          "title": "Send a request",
+          "description": "Enter your child’s login or FK code"
+        },
+        {
+          "title": "Your child approves",
+          "description": "The request appears in their app"
+        },
+        {
+          "title": "Start following",
+          "description": "Attendance and results show up here"
+        }
+      ]
+    },
+    "pending": {
+      "chip": "Pending · {{time}}",
+      "title": "Request sent to {{name}}",
+      "description": "As soon as @{{username}} approves the request in the app, attendance and results will appear here.",
+      "howTitle": "How does my child approve?",
+      "how": [
+        "Signs in to YolUp with their own login",
+        "Chats → “+” → Parent requests",
+        "Taps “Approve”"
+      ],
+      "addAnother": "Add another child",
+      "addAnotherHint": "Connect another child account"
+    }
   }
 }

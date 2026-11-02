@@ -3,12 +3,12 @@ import { ClipboardCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { ExamResultCard, useExamResults, useExams } from "@/modules/exam";
 import { useSelectedChild } from "@/modules/parent";
-import { toIntlLocale } from "@/shared/i18n";
+import { formatDayTime } from "@/shared/lib";
 import type { ExamSummary } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
 export function ParentExamsPage() {
-  const { t, i18n } = useTranslation("exam");
+  const { t } = useTranslation("exam");
   const { selectedChild } = useSelectedChild();
   const exams = useExams(null);
   const [resultOf, setResultOf] = useState<ExamSummary | null>(null);
@@ -59,7 +59,7 @@ export function ParentExamsPage() {
                 </strong>
                 <small>
                   {exam.courseTitle ? `${exam.courseTitle} · ` : ""}
-                  {formatStart(exam, i18n.language)} · {t("list.minutes", { count: exam.totalMinutes })}
+                  {formatDayTime(exam.startsAt)} · {t("list.minutes", { count: exam.totalMinutes })}
                 </small>
               </div>
               {exam.state === "finished" ? (
@@ -109,11 +109,4 @@ function ChildExamResult({ examId, childId }: { examId: string; childId: string 
   if (!result.participated) return <p className="exam-result-loading">{t("result.absent")}</p>;
 
   return <ExamResultCard result={result} />;
-}
-
-function formatStart(exam: ExamSummary, language: string): string {
-  return new Intl.DateTimeFormat(toIntlLocale(language), {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(new Date(exam.startsAt));
 }

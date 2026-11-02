@@ -76,5 +76,11 @@
   "liveToast": {
     "fallback": "Новое сообщение",
     "open": "Открыть"
+  },
+  "categories": {
+    "all": "Все",
+    "attendance": "Посещаемость",
+    "homework": "Задания",
+    "security": "Безопасность"
   }
 }

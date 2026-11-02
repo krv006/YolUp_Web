@@ -1,3 +1,4 @@
+import { normalizeMediaUrl } from "@/shared/api";
 import type { AttendanceRow, UserDto } from "@/shared/types";
 import type {
   ParentChild,
@@ -21,13 +22,19 @@ export function mapParentLinkDto(dto: ParentLinkDto): ParentLink {
     status: dto.status,
     createdAt: dto.created_at,
     respondedAt: dto.responded_at ?? null,
-    parent: { id: String(parent.id), name: fullName(parent), username: parent.username },
+    parent: {
+      id: String(parent.id),
+      name: fullName(parent),
+      username: parent.username,
+      avatarUrl: normalizeMediaUrl(parent.avatar ?? null),
+    },
     student: {
       id: String(student.id),
       name: fullName(student),
       username: student.username,
       phone: student.phone ?? null,
       inviteCode: student.invite_code ?? null,
+      avatarUrl: normalizeMediaUrl(student.avatar ?? null),
     },
   };
 }
@@ -46,6 +53,7 @@ export function mapChildFromLink(link: ParentLink, attendance: AttendanceRow[] =
     lastActivity: rows[0]?.lesson ?? "Faollik yo‘q",
     status: link.status === "approved" ? "verified" : link.status,
     avatarTone: TONES[Math.abs(link.studentId.charCodeAt(0) || 0) % TONES.length],
+    avatarUrl: link.student.avatarUrl ?? null,
   };
 }
 

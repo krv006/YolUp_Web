@@ -10,6 +10,7 @@ import type {
   ParentLinkDto,
   SetConsentInput,
 } from "./parent.dto";
+import { isInviteCode } from "../lib/parent-home";
 import { createParentDashboard, mapChildFromLink, mapParentLinkDto } from "../lib/parent.mappers";
 
 export interface ParentDashboardOptions extends RequestOptions {
@@ -59,9 +60,13 @@ export const parentApi = {
     return apiClient.post(authEndpoints.children, dto);
   },
 
-  async requestLink(inviteCode: string) {
+  async requestLink(loginOrCode: string) {
+    const value = loginOrCode.trim();
     return mapParentLinkDto(
-      await apiClient.post<ParentLinkDto>(authEndpoints.requestLink, { invite_code: inviteCode })
+      await apiClient.post<ParentLinkDto>(
+        authEndpoints.requestLink,
+        isInviteCode(value) ? { invite_code: value.toUpperCase() } : { username: value.replace(/^@/, "") }
+      )
     );
   },
 
