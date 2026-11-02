@@ -23,13 +23,15 @@ function endOf(lesson: Lesson): Date {
 export function StudentMobileHome({
   home,
   joinedCount,
+  emptyTitle,
   emptyHint,
 }: {
   home: Home;
   joinedCount: number | null;
+  emptyTitle: string;
   emptyHint: string;
 }) {
-  const { t } = useTranslation("student");
+  const { t } = useTranslation(["student", "dashboard", "common"]);
   const navigate = useNavigate();
   const online = useOnline();
   const { now, heroLesson, todayLessons } = home;
@@ -59,6 +61,18 @@ export function StudentMobileHome({
             <Icon name="wifi" size={20} className="shrink-0" />
             <span className="truncate">{t("home.offline")}</span>
           </p>
+        ) : home.failed ? (
+          <div className="flex h-11 items-center gap-3 rounded-xl bg-surface-inverse pr-1.5 pl-4 text-body-sm text-ink-inverse">
+            <Icon name="warning" size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1 truncate">{t("dashboard:mobile.serverError")}</span>
+            <button
+              type="button"
+              className="flex h-8 shrink-0 items-center rounded-full bg-surface px-3 text-button text-ink"
+              onClick={home.retry}
+            >
+              {t("common:actions.retry")}
+            </button>
+          </div>
         ) : null}
 
         {home.loading ? (
@@ -170,7 +184,7 @@ export function StudentMobileHome({
                     <Icon name="event-fill" size={22} />
                   </span>
                   <span className="flex min-w-0 flex-1 flex-col">
-                    <strong className="truncate text-title text-ink">{t("home.today.emptyTitle")}</strong>
+                    <strong className="truncate text-title text-ink">{emptyTitle}</strong>
                     <small className="line-clamp-2 text-body-sm text-ink-secondary">{emptyHint}</small>
                   </span>
                 </span>

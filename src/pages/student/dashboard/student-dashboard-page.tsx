@@ -83,17 +83,21 @@ export function StudentDashboardPage() {
   }
 
   const upcoming = home.heroLesson && home.heroLesson.status === "scheduled" && !home.todayLessons.length ? home.heroLesson : null;
-  const emptyHint = upcoming
-    ? new Date(upcoming.startsAt).toDateString() === new Date(now.getTime() + DAY_MS).toDateString()
-      ? t("home.today.emptyNext", { time: lessonClock(new Date(upcoming.startsAt)), title: upcoming.courseTitle })
-      : t("home.today.emptyLater", { date: dayLabel(new Date(upcoming.startsAt)), title: upcoming.courseTitle })
-    : t("home.today.emptyNone");
+  const emptyTitle = home.lessonsFailed ? td("today.loadError") : t("home.today.emptyTitle");
+  const emptyHint = home.lessonsFailed
+    ? td("banner.serverError")
+    : upcoming
+      ? new Date(upcoming.startsAt).toDateString() === new Date(now.getTime() + DAY_MS).toDateString()
+        ? t("home.today.emptyNext", { time: lessonClock(new Date(upcoming.startsAt)), title: upcoming.courseTitle })
+        : t("home.today.emptyLater", { date: dayLabel(new Date(upcoming.startsAt)), title: upcoming.courseTitle })
+      : t("home.today.emptyNone");
 
   if (isCompact)
     return (
       <StudentMobileHome
         home={home}
         joinedCount={home.liveLesson ? (presence.data?.count ?? null) : null}
+        emptyTitle={emptyTitle}
         emptyHint={emptyHint}
       />
     );
@@ -101,11 +105,15 @@ export function StudentDashboardPage() {
   return (
     <DashboardShell
       user={user?.name ?? ""}
-      dateLine={`${weekdays[(now.getDay() + 6) % 7] ?? ""}, ${dayLabel(now)} · ${
-        home.todayLessons.length ? t("home.lessonCount", { count: home.todayLessons.length }) : t("home.noLessons")
+      dateLine={`${weekdays[(now.getDay() + 6) % 7] ?? ""}, ${dayLabel(now)}${
+        home.lessonsFailed
+          ? ""
+          : ` · ${home.todayLessons.length ? t("home.lessonCount", { count: home.todayLessons.length }) : t("home.noLessons")}`
       }`}
       online={online}
       approved
+      failed={home.failed}
+      onRetry={home.retry}
     >
       {home.loading ? (
         <div className="max-w-[728px]">
@@ -127,9 +135,15 @@ export function StudentDashboardPage() {
 
             <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
               <Stat
-                value={String(home.todayLessons.length)}
+                value={home.lessonsFailed ? "—" : String(home.todayLessons.length)}
                 label={t("home.stats.lessons")}
-                hint={home.todayLessons.length ? t("home.stats.lessonsDone", { count: home.finishedToday }) : t("home.stats.dayOff")}
+                hint={
+                  home.lessonsFailed
+                    ? ""
+                    : home.todayLessons.length
+                      ? t("home.stats.lessonsDone", { count: home.finishedToday })
+                      : t("home.stats.dayOff")
+                }
               />
               <Stat
                 value={String(home.tasks.length)}
@@ -210,7 +224,7 @@ export function StudentDashboardPage() {
                 <span className="grid size-16 place-items-center rounded-xl bg-success-bg text-success">
                   <Icon name="event-fill" size={28} />
                 </span>
-                <strong className="mt-3 font-heading text-h2 font-semibold text-ink">{t("home.today.emptyTitle")}</strong>
+                <strong className="mt-3 font-heading text-h2 font-semibold text-ink">{emptyTitle}</strong>
                 <p className="mt-2 text-body-sm text-ink-secondary">{emptyHint}</p>
                 <button
                   type="button"

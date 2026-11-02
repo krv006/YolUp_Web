@@ -24,6 +24,8 @@ export interface MobileDashboardProps {
   online: boolean;
   approved: boolean;
   loading: boolean;
+  failed: boolean;
+  onRetry: () => void;
   hasGroups: boolean;
   heroLesson: Lesson | null;
   live: boolean;
@@ -45,12 +47,14 @@ export interface MobileDashboardProps {
 }
 
 export function MobileDashboard(props: MobileDashboardProps) {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
   const {
     userId,
     online,
     approved,
     loading,
+    failed,
+    onRetry,
     hasGroups,
     heroLesson,
     todayLessons,
@@ -72,6 +76,18 @@ export function MobileDashboard(props: MobileDashboardProps) {
             <Icon name="wifi" size={20} className="shrink-0" />
             <span className="truncate">{t("mobile.offline")}</span>
           </p>
+        ) : failed ? (
+          <div className="flex h-11 items-center gap-3 rounded-xl bg-surface-inverse pr-1.5 pl-4 text-body-sm text-ink-inverse">
+            <Icon name="warning" size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1 truncate">{t("mobile.serverError")}</span>
+            <button
+              type="button"
+              className="flex h-8 shrink-0 items-center rounded-full bg-surface px-3 text-button text-ink"
+              onClick={onRetry}
+            >
+              {t("common:actions.retry")}
+            </button>
+          </div>
         ) : null}
 
         {!approved ? <MobileWarningNote>{t("banner.notApproved")}</MobileWarningNote> : null}
@@ -84,7 +100,7 @@ export function MobileDashboard(props: MobileDashboardProps) {
           <>
             {heroLesson ? (
               <Hero {...props} lesson={heroLesson} />
-            ) : !todayLessons.length ? (
+            ) : !todayLessons.length && !failed ? (
               <NoLessons next={props.nextLesson} onAdd={onSchedule} />
             ) : null}
 

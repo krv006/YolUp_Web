@@ -16,12 +16,12 @@ export default defineConfig(({ mode }) => {
       environment: "jsdom",
       include: ["src/**/*.test.{ts,tsx}"],
       setupFiles: ["./src/test/setup.ts"],
-      env: { VITE_API_URL: "/", VITE_WS_URL: "wss://edu.thesofmebel.uz" },
+      env: { VITE_API_URL: "/", VITE_WS_URL: "wss://backend.yolup.uz" },
     },
     server: {
       proxy: {
         "/api": {
-          target: env.VITE_API_PROXY_TARGET || "https://edu.thesofmebel.uz",
+          target: env.VITE_API_PROXY_TARGET || "https://backend.yolup.uz",
           changeOrigin: true,
           secure: true,
         },

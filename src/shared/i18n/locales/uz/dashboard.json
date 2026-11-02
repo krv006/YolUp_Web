@@ -6,7 +6,8 @@
   },
   "banner": {
     "offline": "Internet aloqasi yo‘q. Oxirgi saqlangan ma’lumotlar ko‘rsatilmoqda",
-    "notApproved": "Hisobingiz hali administrator tomonidan tasdiqlanmagan — kurs va dars yaratish vaqtincha yopiq."
+    "notApproved": "Hisobingiz hali administrator tomonidan tasdiqlanmagan — kurs va dars yaratish vaqtincha yopiq.",
+    "serverError": "Server bilan aloqa yo‘q — ma’lumotlar yuklanmadi."
   },
   "hero": {
     "startsIn": "{{count}} daqiqadan so‘ng",
@@ -38,7 +39,8 @@
     "emptyNext": "Ertangi birinchi dars: {{time}} · {{title}}",
     "emptyHint": "Jadvalga birinchi darsni qo‘shing.",
     "openSchedule": "Jadvalni ochish",
-    "addLesson": "Dars qo‘shish"
+    "addLesson": "Dars qo‘shish",
+    "loadError": "Darslar yuklanmadi"
   },
   "review": {
     "title": "Tekshirish kerak",
@@ -146,6 +148,7 @@
         "title": "Workspace — ish maydoningiz",
         "text": "Testlar, uy vazifalari, mock imtihonlar va AI yordamchi shu bo‘limda. Pastki menyudan istalgan vaqtda oching."
       }
-    }
+    },
+    "serverError": "Server bilan aloqa yo‘q"
   }
 }
