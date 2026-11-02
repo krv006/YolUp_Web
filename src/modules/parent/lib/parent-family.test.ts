@@ -8,6 +8,7 @@ import {
   newDeviceCount,
   overallScore,
   periodRange,
+  recentUnlink,
   suggestUsername,
   tempPassword,
   usernameAlternatives,
@@ -133,5 +134,21 @@ describe("child account helpers", () => {
     expect(tempPassword("Al", sequence(0.1))).toBe("Al-11111");
     expect(tempPassword("", sequence(0.3))).toBe("Yolup-3333");
     for (const name of ["A", "Ali", "Toshmat", "Ёқубжон", ""]) expect(tempPassword(name).length).toBeGreaterThanOrEqual(8);
+  });
+});
+
+describe("recentUnlink", () => {
+  const link = (id: string, status: string, studentId: string, respondedAt: string | null) => ({ id, status, studentId, respondedAt });
+
+  it("returns the newest recent decline that was not seen yet", () => {
+    const links = [
+      link("old", "declined", "s3", at(10, 9)),
+      link("new", "declined", "s2", at(28, 9)),
+      link("ok", "approved", "s1", at(1, 9)),
+      link("again", "declined", "s1", at(29, 9)),
+    ];
+    expect(recentUnlink(links, new Set(["s1"]), new Set(), NOW)?.id).toBe("new");
+    expect(recentUnlink(links, new Set(["s1"]), new Set(["new"]), NOW)).toBeNull();
+    expect(recentUnlink([link("pending", "declined", "s4", null)], new Set(), new Set(), NOW)).toBeNull();
   });
 });

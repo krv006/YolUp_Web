@@ -894,5 +894,23 @@
     "logoutText": "Qayta kirish uchun login va parolingiz kerak bo‘ladi.",
     "logoutConfirm": "Chiqish",
     "cancel": "Bekor qilish"
+  },
+  "states": {
+    "home": "Asosiyga qaytish",
+    "notFound": {
+      "title": "Sahifa topilmadi",
+      "text": "Manzil noto‘g‘ri yoki sahifa ko‘chirilgan. Asosiy sahifaga qayting."
+    },
+    "offline": {
+      "title": "Internet yo‘q",
+      "text": "Ulanishni tekshiring. Internet qaytgach ma’lumotlar o‘zi yangilanadi.",
+      "retry": "Qayta ulanish"
+    },
+    "unlinked": {
+      "title": "{{name}} ulanishni uzdi",
+      "text": "{{name}} sizni ota-ona sifatida olib tashladi. Qayta ulash uchun yangi so‘rov yuboring.",
+      "ok": "Tushunarli",
+      "again": "Qayta so‘rov yuborish"
+    }
   }
 }

@@ -894,5 +894,23 @@
     "logoutText": "You’ll need your login and password to sign in again.",
     "logoutConfirm": "Sign out",
     "cancel": "Cancel"
+  },
+  "states": {
+    "home": "Back to home",
+    "notFound": {
+      "title": "Page not found",
+      "text": "The address is wrong or the page has moved. Go back to the home page."
+    },
+    "offline": {
+      "title": "No internet",
+      "text": "Check your connection. The data will refresh once you’re back online.",
+      "retry": "Reconnect"
+    },
+    "unlinked": {
+      "title": "{{name}} unlinked you",
+      "text": "{{name}} removed you as a parent. Send a new request to link again.",
+      "ok": "Got it",
+      "again": "Send a new request"
+    }
   }
 }
