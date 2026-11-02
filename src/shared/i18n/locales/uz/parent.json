@@ -155,11 +155,7 @@
     },
     "role": "Ota-ona",
     "openAccount": "Profil va sozlamalar",
-    "navLabel": "Ota-ona bo‘limlari",
-    "resultsTabs": {
-      "grades": "Vazifalar bo‘yicha",
-      "exams": "Mock testlar"
-    }
+    "navLabel": "Ota-ona bo‘limlari"
   },
   "switcher": {
     "eyebrow": "FARZAND",
@@ -719,5 +715,88 @@
     },
     "delta": "Oldingisidan {{value}}",
     "task": "Topshiriq"
+  },
+  "results": {
+    "eyebrow": "Reyting",
+    "title": "Natijalar",
+    "tabs": {
+      "rating": "Reyting",
+      "mock": "Mock testlar"
+    },
+    "month": "Oy",
+    "stats": {
+      "given": "Berilgan vazifa",
+      "submitted": "Topshirilgan",
+      "average": "O‘rtacha ball",
+      "subjects": "Fanlar",
+      "scale": "10 ballik"
+    },
+    "chart": "Ball dinamikasi · haftalar kesimida",
+    "thisMonth": "bu oy",
+    "recent": "So‘nggi baholar",
+    "all": "Barchasi",
+    "subjects": "Fanlar bo‘yicha",
+    "average": "o‘rtacha",
+    "noSubjects": "Hozircha fanlar yo‘q",
+    "empty": {
+      "title": "Hali statistika yo‘q",
+      "text": "Kursga yozilib, vazifa topshirgach ball dinamikasi va fanlar bo‘yicha natijalar shu yerda ko‘rinadi."
+    },
+    "panel": {
+      "close": "Yopish",
+      "attendance": "Davomatni ko‘rish",
+      "average": "O‘rtacha ball",
+      "counts": "{{submitted}}/{{total}} vazifa topshirilgan · {{graded}} ta baholangan",
+      "grades": "Baholar",
+      "noGrades": "Hali baho yo‘q"
+    }
+  },
+  "mock": {
+    "eyebrow": "Mock testlar",
+    "next": "Keyingi: {{title}} — {{date}}",
+    "nextPattern": "d-MMMM, HH:mm",
+    "minutes": "{{count}} daqiqa",
+    "minutesShort": "{{count}} daq",
+    "resultAfter": "natija imtihon tugagach ochiladi",
+    "remind": "Eslatib qo‘yish",
+    "reminderSet": "Eslatma qo‘yilgan",
+    "columns": {
+      "exam": "Imtihon",
+      "date": "Sana",
+      "duration": "Davomiyligi",
+      "sections": "Bo‘limlar",
+      "overall": "Overall"
+    },
+    "state": {
+      "upcoming": "Rejada",
+      "running": "Davom etmoqda",
+      "pending": "Kutilmoqda",
+      "absent": "Qatnashmagan"
+    },
+    "open": "Natija",
+    "empty": {
+      "title": "Mock testlar yo‘q",
+      "text": "O‘qituvchi imtihon belgilaganda sana, bo‘limlar va natijalar shu yerda chiqadi."
+    },
+    "locked": {
+      "title": "Natija hali ochilmagan",
+      "text": "{{exam}} {{date}} da tugagach, natija shu yerda chiqadi.",
+      "ok": "Tushunarli",
+      "close": "Yopish"
+    },
+    "result": {
+      "title": "{{name}} — {{exam}} natijasi",
+      "datePattern": "d-MMMM",
+      "close": "Yopish",
+      "pdf": "PDF yuklab olish",
+      "overall": "Overall band",
+      "level": "{{level}} darajaga yaqin",
+      "delta": "Oldingi mockdan {{value}}",
+      "groupAverage": "guruh o‘rtachasi {{value}}",
+      "notReady": "Overall band hali hisoblanmagan",
+      "waitingTeacher": "O‘qituvchi bahosi kutilmoqda",
+      "sectionWaiting": "kutilmoqda",
+      "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi."
+    }
   }
 }

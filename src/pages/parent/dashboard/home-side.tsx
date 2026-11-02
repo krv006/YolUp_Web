@@ -85,11 +85,24 @@ export function AttentionCard({
   );
 }
 
-const W = 320;
 const H = 120;
 const PAD = 8;
 
-export function ScoreCard({ trend, delta }: { trend: Array<number | null>; delta: number | null }) {
+export function ScoreCard({
+  trend,
+  delta,
+  title,
+  deltaLabel,
+  width: W = 320,
+  gradientId = "parent-score-fill",
+}: {
+  trend: Array<number | null>;
+  delta: number | null;
+  title?: string;
+  deltaLabel?: string;
+  width?: number;
+  gradientId?: string;
+}) {
   const { t } = useTranslation("parent");
   const points = trend
     .map((value, index) => ({ value, index }))
@@ -108,7 +121,7 @@ export function ScoreCard({ trend, delta }: { trend: Array<number | null>; delta
   return (
     <section className="flex flex-col gap-4 rounded-[20px] bg-surface p-5">
       <span className="flex items-center gap-2">
-        <strong className="flex-1 text-title text-ink">{t("home.score.title")}</strong>
+        <strong className="flex-1 text-title text-ink">{title ?? t("home.score.title")}</strong>
         {delta !== null && delta !== 0 ? (
           <span
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-caption-strong ${
@@ -118,14 +131,15 @@ export function ScoreCard({ trend, delta }: { trend: Array<number | null>; delta
             <Icon name="trending-up" size={14} />
             {delta > 0 ? "+" : ""}
             {delta}
+            {deltaLabel ? ` ${deltaLabel}` : ""}
           </span>
         ) : null}
       </span>
       {points.length ? (
         <div className="flex flex-col gap-2">
-          <svg viewBox={`0 0 ${W} ${H}`} className="h-[120px] w-full overflow-visible" role="img" aria-label={t("home.score.title")}>
+          <svg viewBox={`0 0 ${W} ${H}`} className="h-[120px] w-full overflow-visible" role="img" aria-label={title ?? t("home.score.title")}>
             <defs>
-              <linearGradient id="parent-score-fill" x1="0" x2="0" y1="0" y2="1">
+              <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
                 <stop offset="0%" stopColor="var(--color-brand)" stopOpacity="0.22" />
                 <stop offset="100%" stopColor="var(--color-brand)" stopOpacity="0" />
               </linearGradient>
@@ -133,7 +147,7 @@ export function ScoreCard({ trend, delta }: { trend: Array<number | null>; delta
             {[0.25, 0.5, 0.75].map((ratio) => (
               <line key={ratio} x1={PAD} x2={W - PAD} y1={H * ratio} y2={H * ratio} stroke="var(--color-line)" strokeWidth="1" />
             ))}
-            {points.length > 1 ? <path d={area} fill="url(#parent-score-fill)" /> : null}
+            {points.length > 1 ? <path d={area} fill={`url(#${gradientId})`} /> : null}
             <path d={line} fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
             {points.map((point) => (
               <circle key={point.index} cx={x(point.index)} cy={y(point.value)} r={point === last ? 5 : 3.5} fill="var(--color-brand)" stroke="var(--color-surface)" strokeWidth="2" />

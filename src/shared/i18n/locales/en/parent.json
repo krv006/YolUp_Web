@@ -155,11 +155,7 @@
     },
     "role": "Parent",
     "openAccount": "Profile and settings",
-    "navLabel": "Parent sections",
-    "resultsTabs": {
-      "grades": "By homework",
-      "exams": "Mock tests"
-    }
+    "navLabel": "Parent sections"
   },
   "switcher": {
     "eyebrow": "CHILD",
@@ -719,5 +715,88 @@
     },
     "delta": "vs previous {{value}}",
     "task": "Task"
+  },
+  "results": {
+    "eyebrow": "Rating",
+    "title": "Results",
+    "tabs": {
+      "rating": "Rating",
+      "mock": "Mock tests"
+    },
+    "month": "Month",
+    "stats": {
+      "given": "Homework given",
+      "submitted": "Submitted",
+      "average": "Average score",
+      "subjects": "Subjects",
+      "scale": "out of 10"
+    },
+    "chart": "Score trend · by week",
+    "thisMonth": "this month",
+    "recent": "Latest grades",
+    "all": "All",
+    "subjects": "By subject",
+    "average": "average",
+    "noSubjects": "No subjects yet",
+    "empty": {
+      "title": "No statistics yet",
+      "text": "Once your child starts submitting homework, the score trend and results by subject will appear here."
+    },
+    "panel": {
+      "close": "Close",
+      "attendance": "View attendance",
+      "average": "Average score",
+      "counts": "{{submitted}}/{{total}} submitted · {{graded}} graded",
+      "grades": "Grades",
+      "noGrades": "No grades yet"
+    }
+  },
+  "mock": {
+    "eyebrow": "Mock tests",
+    "next": "Next: {{title}} — {{date}}",
+    "nextPattern": "MMMM d, HH:mm",
+    "minutes": "{{count}} minutes",
+    "minutesShort": "{{count}} min",
+    "resultAfter": "results open after the exam",
+    "remind": "Remind me",
+    "reminderSet": "Reminder set",
+    "columns": {
+      "exam": "Exam",
+      "date": "Date",
+      "duration": "Duration",
+      "sections": "Sections",
+      "overall": "Overall"
+    },
+    "state": {
+      "upcoming": "Scheduled",
+      "running": "In progress",
+      "pending": "Pending",
+      "absent": "Didn’t take it"
+    },
+    "open": "Result",
+    "empty": {
+      "title": "No mock tests",
+      "text": "When the teacher schedules an exam, its date, sections and results will appear here."
+    },
+    "locked": {
+      "title": "Result not available yet",
+      "text": "The result of {{exam}} will appear here after it ends ({{date}}).",
+      "ok": "Got it",
+      "close": "Close"
+    },
+    "result": {
+      "title": "{{name}} — {{exam}} result",
+      "datePattern": "MMMM d",
+      "close": "Close",
+      "pdf": "Download PDF",
+      "overall": "Overall band",
+      "level": "Close to {{level}}",
+      "delta": "vs previous mock {{value}}",
+      "groupAverage": "group average {{value}}",
+      "notReady": "Overall band not calculated yet",
+      "waitingTeacher": "Waiting for the teacher’s grade",
+      "sectionWaiting": "pending",
+      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready."
+    }
   }
 }
