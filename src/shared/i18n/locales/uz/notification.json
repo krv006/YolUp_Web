@@ -76,5 +76,11 @@
   "liveToast": {
     "fallback": "Yangi xabar",
     "open": "Ochish"
+  },
+  "categories": {
+    "all": "Barchasi",
+    "attendance": "Davomat",
+    "homework": "Vazifalar",
+    "security": "Xavfsizlik"
   }
 }

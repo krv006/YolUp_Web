@@ -13,6 +13,7 @@ export interface NotificationBellProps {
   /** Phones open this route instead of the popover. */
   pageHref?: string;
   onOpenLink?: OpenNotificationLink;
+  filters?: "read" | "category";
 }
 
 export function NotificationBell({
@@ -20,6 +21,7 @@ export function NotificationBell({
   className = "notification-bell",
   pageHref,
   onOpenLink,
+  filters = "read",
 }: NotificationBellProps) {
   const { t } = useTranslation("notification");
   const navigate = useNavigate();
@@ -58,7 +60,7 @@ export function NotificationBell({
         className="w-auto rounded-2xl border border-line bg-surface p-0 text-ink shadow-xl"
       >
         {open ? (
-          <NotificationInboxPanel onOpenLink={onOpenLink} onClose={() => setOpen(false)} />
+          <NotificationInboxPanel onOpenLink={onOpenLink} onClose={() => setOpen(false)} filters={filters} />
         ) : null}
       </PopoverContent>
     </Popover>

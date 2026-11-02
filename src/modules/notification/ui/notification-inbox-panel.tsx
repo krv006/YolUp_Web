@@ -9,10 +9,13 @@ import {
 } from "../model/notification.queries";
 import type { InboxNotification, OpenNotificationLink } from "../api/notification.dto";
 import {
+  NOTIFICATION_CATEGORIES,
   notificationActionKey,
+  notificationCategory,
   notificationGroupKey,
   notificationIcon,
   notificationContent,
+  type NotificationCategory,
   type NotificationGroupKey,
 } from "../lib/notification-display";
 
@@ -24,6 +27,8 @@ export interface NotificationInboxPanelProps {
   /** Fills the available width instead of the popover's fixed one. */
   fullWidth?: boolean;
   unreadOnly?: boolean;
+  /** "category": Barchasi / Davomat / Vazifalar / Xavfsizlik tab'lari (ota-ona). */
+  filters?: "read" | "category";
 }
 
 export function NotificationInboxPanel({
@@ -32,16 +37,25 @@ export function NotificationInboxPanel({
   embedded = false,
   fullWidth = false,
   unreadOnly = false,
+  filters = "read",
 }: NotificationInboxPanelProps) {
   const { t } = useTranslation("notification");
   const inbox = useNotificationInbox({ page_size: 30 });
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
   const [tab, setTab] = useState<"all" | "unread">(unreadOnly ? "unread" : "all");
+  const [category, setCategory] = useState<NotificationCategory | "all">("all");
 
   const all = inbox.data?.items ?? [];
   const unreadCount = all.filter((item) => !item.isRead).length;
-  const items = tab === "unread" ? all.filter((item) => !item.isRead) : all;
+  const items =
+    filters === "category"
+      ? category === "all"
+        ? all
+        : all.filter((item) => notificationCategory(item) === category)
+      : tab === "unread"
+        ? all.filter((item) => !item.isRead)
+        : all;
 
   const groups = (["today", "yesterday", "earlier"] as NotificationGroupKey[])
     .map((key) => ({ key, items: items.filter((item) => notificationGroupKey(item.createdAt) === key) }))
@@ -78,7 +92,26 @@ export function NotificationInboxPanel({
         ) : null}
       </div>
 
-      {inbox.isSuccess && all.length ? (
+      {inbox.isSuccess && filters === "category" ? (
+        <div className="flex gap-2 overflow-x-auto px-[18px] pb-3 [scrollbar-width:none]">
+          {(["all", ...NOTIFICATION_CATEGORIES] as const).map((id) => (
+            <button
+              key={id}
+              type="button"
+              className={`flex h-9 shrink-0 items-center justify-center rounded-full border px-3.5 text-body-sm transition-colors ${
+                category === id
+                  ? "border-brand bg-brand text-ink-inverse"
+                  : "border-line-strong bg-surface text-ink hover:bg-subtle"
+              }`}
+              onClick={() => setCategory(id)}
+            >
+              {t(`categories.${id}`)}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {inbox.isSuccess && all.length && filters === "read" ? (
         <div className="grid grid-cols-2 gap-2 px-[18px] pb-3">
           {(["all", "unread"] as const).map((id) => (
             <button
