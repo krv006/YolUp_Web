@@ -7,8 +7,8 @@ import { useParentHomework, useSelectedChild } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
-import { AccountMenu } from "@/widgets/account-menu";
 import { ChildSwitcher } from "./child-switcher";
+import { ParentAccountMenu } from "./parent-account-menu";
 
 const LINK_BASE = "flex h-11 items-center gap-3 rounded-xl px-3 text-label-lg transition-colors";
 const LINK_IDLE = "text-ink-secondary hover:bg-subtle hover:text-ink";
@@ -29,7 +29,6 @@ export function ParentSidebar() {
   const { selectedChildId } = useSelectedChild();
   const homework = useParentHomework(selectedChildId);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [now] = useState(() => Date.now());
   const open = (homework.data ?? []).filter(
     (item) => !item.mySubmission && (!item.dueAt || Date.parse(item.dueAt) >= now)
@@ -67,11 +66,12 @@ export function ParentSidebar() {
 
       <span className="min-h-0 flex-1" aria-hidden="true" />
 
+      <ParentAccountMenu open={accountOpen} onOpenChange={setAccountOpen}>
       <button
         type="button"
         aria-label={t("shell.openAccount")}
         className="flex items-center gap-2.5 rounded-2xl bg-subtle py-2.5 pr-[9px] pl-2.5 text-left transition-colors hover:bg-muted"
-        onClick={() => setAccountOpen(true)}
+        onClick={() => setAccountOpen((current) => !current)}
       >
         <Avatar name={user?.name} src={user?.avatarUrl ?? undefined} size="sm" className="[&_.avatar]:size-[38px]" />
         <span className="flex min-w-0 flex-1 flex-col">
@@ -80,14 +80,7 @@ export function ParentSidebar() {
         </span>
         <Icon name="settings" size={18} className="-ml-1.5 shrink-0 text-icon-secondary" />
       </button>
-
-      <AccountMenu
-        open={accountOpen}
-        onOpenChange={setAccountOpen}
-        profileOpen={profileOpen}
-        onProfileOpenChange={setProfileOpen}
-        roleLabel={t("shell.role")}
-      />
+      </ParentAccountMenu>
     </aside>
   );
 }

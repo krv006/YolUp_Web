@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useAuth, useIsStudent } from "@/modules/auth";
 import { SupportDialog, useHelpFaq, useHelpVideos, type FaqItem } from "@/modules/support";
 import { ROUTES } from "@/shared/config";
+import { ROLES } from "@/shared/constants";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { storage } from "@/shared/lib";
 import { AppDialog } from "@/shared/ui/app-dialog";
@@ -51,7 +52,10 @@ export function HelpCenterPage() {
     action,
   });
 
-  const guides: HelpItem[] = student
+  const parent = user?.role === ROLES.PARENT;
+  const guides: HelpItem[] = parent
+    ? []
+    : student
     ? [
         item("joinLesson", "help", FAQ_TONE, () => navigate(ROUTES.student.schedule)),
         item("joinGroup", "person-add", FAQ_TONE, () => navigate(ROUTES.student.chats)),
@@ -89,7 +93,7 @@ export function HelpCenterPage() {
       id: "contact",
       items: [
         item("support", "forum", SETTINGS_TONES.success, () => setSupportOpen(true)),
-        ...(student
+        ...(student || parent
           ? []
           : [
               item("tour", "school", SETTINGS_TONES.success, () => {

@@ -79,6 +79,8 @@ export const ROUTES = Object.freeze({
     grades: "/parent/grades",
     payments: "/parent/payments",
     chats: "/parent/chats",
+    settings: (section?: string) => (section ? `/parent/settings/${segment(section)}` : "/parent/settings"),
+    help: "/parent/help",
   }),
   admin: Object.freeze({
     root: "/admin",

@@ -137,6 +137,16 @@ const ParentChildrenPage = lazy(() =>
     default: module.ParentChildrenPage,
   }))
 );
+const ParentHelpPage = lazy(() =>
+  import("@/pages/parent/settings/parent-help-page").then((module) => ({
+    default: module.ParentHelpPage,
+  }))
+);
+const ParentSettingsPage = lazy(() =>
+  import("@/pages/parent/settings/parent-settings-page").then((module) => ({
+    default: module.ParentSettingsPage,
+  }))
+);
 const ParentChildLoginsPage = lazy(() =>
   import("@/pages/parent/children/parent-child-logins-page").then((module) => ({
     default: module.ParentChildLoginsPage,
@@ -422,6 +432,9 @@ export function AppRouter() {
                     <Route path="homework" element={<ParentHomeworkPage />} />
                     <Route path="exams" element={<ParentExamsPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
+                    <Route path="settings" element={<ParentSettingsPage />} />
+                    <Route path="settings/:section" element={<ParentSettingsPage />} />
+                    <Route path="help" element={<ParentHelpPage />} />
                   </Route>
                 </Route>
 

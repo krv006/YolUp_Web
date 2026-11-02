@@ -798,5 +798,101 @@
       "sectionWaiting": "kutilmoqda",
       "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi."
     }
+  },
+  "settings": {
+    "eyebrow": "Hisob",
+    "title": "Sozlamalar",
+    "nav": {
+      "profile": "Profil",
+      "notifications": "Bildirishnomalar",
+      "interface": "Interfeys",
+      "security": "Xavfsizlik",
+      "children": "Farzandlar"
+    },
+    "profile": {
+      "children": "{{count}} farzand",
+      "edit": "Tahrirlash",
+      "photo": "Rasmni o‘zgartirish",
+      "photoMenu": {
+        "upload": "Yangi rasm yuklash",
+        "camera": "Kamerada suratga olish",
+        "remove": "Rasmni o‘chirish"
+      },
+      "photoSaved": "Rasm yangilandi",
+      "photoRemoved": "Rasm o‘chirildi",
+      "firstName": "Ism",
+      "lastName": "Familiya",
+      "username": "Login",
+      "phone": "Telefon",
+      "usernameHint": "O‘zgartirsangiz, keyingi safar shu login bilan kirasiz",
+      "required": "Maydonni to‘ldiring",
+      "phoneInvalid": "Raqam to‘liq emas: +998 XX XXX XX XX",
+      "errors": "{{count}} ta maydonda xato bor — tuzatib qayta saqlang",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "saved": "Profil ma’lumotlari saqlandi"
+    },
+    "notifications": {
+      "title": "Bildirishnomalar",
+      "subtitle": "Qayerga va qachon xabar yuborishimizni tanlang",
+      "channels": "Kanallar",
+      "push": "Brauzer bildirishnomalari",
+      "pushText": "Bu qurilmada push",
+      "pushBlocked": "Brauzer sozlamalarida bloklangan",
+      "pushUnsupported": "Bu brauzer qo‘llab-quvvatlamaydi",
+      "email": "Email xabarnomalar",
+      "emailText": "Har bir bildirishnoma nusxasi emailga",
+      "reminder": "Dars eslatmasi",
+      "reminderText": "Farzand darsidan oldin sizga xabar beramiz",
+      "when": "Qachon",
+      "minutes": "{{count}} daqiqa oldin",
+      "hours": "{{count}} soat oldin",
+      "never": "Eslatmasin",
+      "reminderSaved": "Eslatma vaqti saqlandi",
+      "askTitle": "Bildirishnomalarni yoqing",
+      "askText": "Dars eslatmalari, vazifa muddatlari va o‘qituvchi xabarlari darhol kelib turadi.",
+      "allow": "Ruxsat berish",
+      "later": "Keyinroq"
+    },
+    "interface": {
+      "title": "Interfeys",
+      "language": "Til",
+      "theme": "Mavzu",
+      "themes": {
+        "light": "Yorug‘",
+        "dark": "Qorong‘i",
+        "system": "Tizim"
+      }
+    },
+    "security": {
+      "title": "Xavfsizlik",
+      "password": "Parolni almashtirish",
+      "current": "Joriy",
+      "next": "Yangi parol",
+      "repeat": "Yangi parolni takrorlang",
+      "rule": "Kamida 8 belgi, 1 ta raqam",
+      "weak": "Parol kamida 8 belgi va 1 ta raqamdan iborat bo‘lsin",
+      "mismatch": "Parollar bir xil emas",
+      "update": "Parolni yangilash",
+      "changed": "Parol yangilandi",
+      "sessions": "Faol sessiyalar",
+      "unknownDevice": "Noma’lum qurilma",
+      "now": "hozir",
+      "end": "Sessiyani tugatish",
+      "ended": "Sessiya tugatildi",
+      "endOthers": "Boshqa seanslardan chiqish",
+      "othersEnded": "Boshqa seanslar tugatildi"
+    }
+  },
+  "account": {
+    "profile": "Profil",
+    "settings": "Sozlamalar",
+    "logins": "Kirishlar tarixi",
+    "help": "Yordam",
+    "logout": "Tizimdan chiqish",
+    "logoutTitle": "Hisobdan chiqasizmi?",
+    "logoutText": "Qayta kirish uchun login va parolingiz kerak bo‘ladi.",
+    "logoutConfirm": "Chiqish",
+    "cancel": "Bekor qilish"
   }
 }

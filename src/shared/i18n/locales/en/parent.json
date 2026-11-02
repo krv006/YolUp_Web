@@ -798,5 +798,101 @@
       "sectionWaiting": "pending",
       "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready."
     }
+  },
+  "settings": {
+    "eyebrow": "Account",
+    "title": "Settings",
+    "nav": {
+      "profile": "Profile",
+      "notifications": "Notifications",
+      "interface": "Interface",
+      "security": "Security",
+      "children": "Children"
+    },
+    "profile": {
+      "children": "{{count}} children",
+      "edit": "Edit",
+      "photo": "Change photo",
+      "photoMenu": {
+        "upload": "Upload a new photo",
+        "camera": "Take a photo",
+        "remove": "Remove photo"
+      },
+      "photoSaved": "Photo updated",
+      "photoRemoved": "Photo removed",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "username": "Login",
+      "phone": "Phone",
+      "usernameHint": "If you change it, sign in with the new login next time",
+      "required": "Fill in this field",
+      "phoneInvalid": "Incomplete number: +998 XX XXX XX XX",
+      "errors": "{{count}} fields have errors — fix them and save again",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saved": "Profile saved"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Choose where and when we notify you",
+      "channels": "Channels",
+      "push": "Browser notifications",
+      "pushText": "Push on this device",
+      "pushBlocked": "Blocked in browser settings",
+      "pushUnsupported": "Not supported by this browser",
+      "email": "Email notifications",
+      "emailText": "A copy of every notification by email",
+      "reminder": "Lesson reminder",
+      "reminderText": "We’ll notify you before your child’s lesson",
+      "when": "When",
+      "minutes": "{{count}} min before",
+      "hours": "{{count}} h before",
+      "never": "Don’t remind",
+      "reminderSaved": "Reminder time saved",
+      "askTitle": "Turn on notifications",
+      "askText": "Lesson reminders, homework deadlines and teacher messages will arrive right away.",
+      "allow": "Allow",
+      "later": "Later"
+    },
+    "interface": {
+      "title": "Interface",
+      "language": "Language",
+      "theme": "Theme",
+      "themes": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      }
+    },
+    "security": {
+      "title": "Security",
+      "password": "Change password",
+      "current": "Current",
+      "next": "New password",
+      "repeat": "Repeat the new password",
+      "rule": "At least 8 characters, 1 digit",
+      "weak": "Use at least 8 characters and 1 digit",
+      "mismatch": "Passwords don’t match",
+      "update": "Update password",
+      "changed": "Password updated",
+      "sessions": "Active sessions",
+      "unknownDevice": "Unknown device",
+      "now": "now",
+      "end": "End session",
+      "ended": "Session ended",
+      "endOthers": "Sign out of other sessions",
+      "othersEnded": "Other sessions ended"
+    }
+  },
+  "account": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logins": "Sign-in history",
+    "help": "Help",
+    "logout": "Sign out",
+    "logoutTitle": "Sign out?",
+    "logoutText": "You’ll need your login and password to sign in again.",
+    "logoutConfirm": "Sign out",
+    "cancel": "Cancel"
   }
 }
