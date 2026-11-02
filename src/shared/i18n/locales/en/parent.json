@@ -432,7 +432,8 @@
     "done": "Done",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp account: {{name}}",
-    "printSubtitle": "Your child signs in with this login and password."
+    "printSubtitle": "Your child signs in with this login and password.",
+    "share": "Share the details"
   },
   "attendanceView": {
     "eyebrow": "Tracking",
@@ -954,6 +955,13 @@
     "notifications": {
       "empty": "Messages about attendance, homework and security will appear here.",
       "settings": "Open settings"
+    },
+    "profile": {
+      "privacy": "Privacy and security",
+      "permissionsText": "Lesson recording, camera, activity analysis",
+      "attendanceText": "Join/leave times and focus",
+      "permissionsFor": "Permissions for {{name}}",
+      "permissionsHint": "Lesson recording, camera and activity analysis"
     }
   }
 }

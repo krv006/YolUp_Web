@@ -432,7 +432,8 @@
     "done": "Tayyor",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
-    "printSubtitle": "Farzandingiz shu login va parol bilan kiradi."
+    "printSubtitle": "Farzandingiz shu login va parol bilan kiradi.",
+    "share": "Ma’lumotlarni ulashish"
   },
   "attendanceView": {
     "eyebrow": "Kuzatuv",
@@ -954,6 +955,13 @@
     "notifications": {
       "empty": "Davomat, vazifalar va xavfsizlik haqidagi xabarlar shu yerda chiqadi.",
       "settings": "Sozlamalarni ochish"
+    },
+    "profile": {
+      "privacy": "Maxfiylik va xavfsizlik",
+      "permissionsText": "Dars yozuvi, kamera, faollik tahlili",
+      "attendanceText": "Kirish-chiqish va fokus",
+      "permissionsFor": "{{name}} uchun ruxsatlar",
+      "permissionsHint": "Dars yozuvi, kamera va faollik tahlili"
     }
   }
 }

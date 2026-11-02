@@ -1,23 +1,13 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { useSetParentConsent, type ConsentKind } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
-import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Avatar } from "@/shared/ui/legacy";
-import { Switch } from "@/shared/ui/switch";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
 import { HomeRecent } from "../dashboard/home-recent";
+import { ConsentSwitches } from "./consent-switches";
 import { useChildProfile, type ChildGroup } from "./use-child-profile";
-
-const CONSENTS: Array<{ kind: ConsentKind; icon: string; tone: string }> = [
-  { kind: "recording", icon: "videocam-fill", tone: "bg-accent-blue-bg text-accent-blue-fg" },
-  { kind: "camera", icon: "photo-camera-fill", tone: "bg-accent-violet-bg text-accent-violet-fg" },
-  { kind: "analytics", icon: "trending-up", tone: "bg-accent-green-bg text-accent-green-fg" },
-];
 
 function groupLook(group: ChildGroup): { icon: string; tone: string } {
   if (group.language || /ingliz|english|ielts|rus|nemis|german|fransuz|french|arab|koreys|korean|turk/i.test(group.subject)) {
@@ -48,21 +38,11 @@ export function ChildProfile({ childId }: { childId: string }) {
   const navigate = useNavigate();
   const online = useOnlineStatus();
   const profile = useChildProfile(childId);
-  const setConsent = useSetParentConsent({ notify: false });
-  const [turningOff, setTurningOff] = useState<ConsentKind | null>(null);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
 
   if (!profile.loading && !child && !profile.failed) return <Navigate to={ROUTES.parent.children} replace />;
 
-  function applyConsent(kind: ConsentKind, granted: boolean) {
-    if (!child) return;
-    const label = t(`children.consentKinds.${kind}.label`);
-    setConsent.mutate(
-      { studentId: child.id, kind, granted },
-      { onSuccess: () => toast.success(t(granted ? "profile.consentOn" : "profile.consentOff", { label })) }
-    );
-  }
 
   function openAttendance() {
     profile.select();
@@ -182,32 +162,7 @@ export function ChildProfile({ childId }: { childId: string }) {
           <div className="flex min-w-0 flex-col gap-5">
             <section className="flex flex-col gap-3">
               <h3 className="text-title text-ink">{t("profile.permissions")}</h3>
-              <ul className="flex flex-col overflow-hidden rounded-[20px] bg-surface">
-                {CONSENTS.map((item) => {
-                  const checked = profile.isGranted(item.kind);
-                  return (
-                    <li key={item.kind} className="flex items-center gap-4 border-b border-line px-5 py-4 last:border-b-0">
-                      <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${item.tone}`}>
-                        <Icon name={item.icon} size={22} />
-                      </span>
-                      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <strong className="text-title-sm text-ink">{t(`children.consentKinds.${item.kind}.label`)}</strong>
-                        <small className="text-body-xs text-ink-secondary">
-                          {t(`children.consentKinds.${item.kind}.description`)}
-                        </small>
-                      </span>
-                      <Switch
-                        size="lg"
-                        checked={checked}
-                        disabled={profile.consentsLoading || setConsent.isPending}
-                        aria-label={t(`children.consentKinds.${item.kind}.label`)}
-                        className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong"
-                        onCheckedChange={(next) => (next ? applyConsent(item.kind, true) : setTurningOff(item.kind))}
-                      />
-                    </li>
-                  );
-                })}
-              </ul>
+              <ConsentSwitches childId={child.id} childName={child.name} />
             </section>
 
             <section className="flex flex-col gap-3">
@@ -235,23 +190,6 @@ export function ChildProfile({ childId }: { childId: string }) {
         </div>
       )}
 
-      <ConfirmDialog
-        alert
-        open={Boolean(turningOff)}
-        onOpenChange={(open) => {
-          if (!open) setTurningOff(null);
-        }}
-        icon={CONSENTS.find((item) => item.kind === turningOff)?.icon ?? "lock"}
-        title={turningOff ? t(`profile.consentOffDialog.${turningOff}.title`) : ""}
-        description={turningOff ? t(`profile.consentOffDialog.${turningOff}.description`, { name: child?.name.split(" ")[0] ?? "" }) : ""}
-        confirmLabel={t("profile.consentOffDialog.confirm")}
-        cancelLabel={t("profile.consentOffDialog.cancel")}
-        pending={setConsent.isPending}
-        onConfirm={() => {
-          if (turningOff) applyConsent(turningOff, false);
-          setTurningOff(null);
-        }}
-      />
 
     </div>
   );

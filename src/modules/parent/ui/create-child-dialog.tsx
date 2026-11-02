@@ -2,6 +2,7 @@ import { useId, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { AppError } from "@/shared/api";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { suggestUsername, tempPassword, usernameAlternatives } from "../lib/parent-family";
@@ -49,6 +50,7 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
   const [error, setError] = useState<{ field: "username" | "password" | "form"; message: string } | null>(null);
   const [ready, setReady] = useState<Credentials | null>(null);
   const id = useId();
+  const compact = useIsCompact();
 
   const username = usernameEdited ? form.username : suggestUsername(form.firstName, form.lastName);
   const password = customPassword ?? tempPassword(form.firstName, fromPool(pool));
@@ -129,11 +131,12 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="confirm"
+        variant="fullscreen"
         width="lg:w-130"
         title={<span className="sr-only">{t("createChild.readyTitle")}</span>}
       >
-        <div className="flex flex-col items-center gap-4 px-3 pb-6 text-center">
+        <div className="flex flex-1 flex-col items-center gap-4 px-3 pb-6 text-center">
+          {compact ? <span className="flex-1" /> : null}
           <Celebration icon="how-to-reg" tone="green" />
           <h2 className="font-heading text-[22px]/8 font-semibold text-ink">{t("createChild.readyTitle")}</h2>
           <p className="text-body-sm text-ink-secondary">{t("createChild.readyText", { name: firstName })}</p>
@@ -162,12 +165,17 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
             <Icon name="warning" size={20} className="shrink-0" />
             {t("createChild.warning")}
           </p>
-          <div className="mt-1 flex w-full gap-3">
+          {compact ? <span className="flex-1" /> : null}
+          <div className={`mt-1 flex w-full gap-3 ${compact ? "flex-col" : ""}`}>
             <button
               type="button"
-              className={`${CHILD_BUTTON.secondary} ${CHILD_BUTTON.wide}`}
+              className={compact ? "flex h-11 items-center justify-center gap-2 text-title-sm font-semibold text-brand" : `${CHILD_BUTTON.secondary} ${CHILD_BUTTON.wide}`}
               onClick={() =>
-                printCredentials({
+                compact && typeof navigator.share === "function"
+                  ? void navigator
+                      .share({ title: t("createChild.printHeading", { name: ready.name || ready.username }), text: rows.map((row) => `${row.label}: ${row.value}`).join("\n") })
+                      .catch(() => undefined)
+                  : printCredentials({
                   documentTitle: t("createChild.printTitle", { username: ready.username }),
                   heading: t("createChild.printHeading", { name: ready.name || ready.username }),
                   subtitle: t("createChild.printSubtitle"),
@@ -176,10 +184,10 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
                 })
               }
             >
-              <Icon name="download" size={20} />
-              {t("createChild.pdf")}
+              {compact ? null : <Icon name="download" size={20} />}
+              {compact && typeof navigator.share === "function" ? t("createChild.share") : t("createChild.pdf")}
             </button>
-            <button type="button" className={`${CHILD_BUTTON.primary} ${CHILD_BUTTON.wide}`} onClick={() => close(false)}>
+            <button type="button" className={`${CHILD_BUTTON.primary} ${compact ? "h-13 w-full text-title-sm" : CHILD_BUTTON.wide}`} onClick={() => close(false)}>
               {t("createChild.done")}
             </button>
           </div>
@@ -194,19 +202,19 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
     <AppDialog
       open={open}
       onOpenChange={close}
-      variant="confirm"
+      variant="sheet"
       width="lg:w-150"
-      icon={<IconTile icon="person-add" tone="green" />}
+      icon={compact ? undefined : <IconTile icon="person-add" tone="green" />}
       title={t("createChild.title")}
       description={t("createChild.description")}
       titleClassName={DIALOG_TITLE}
-      footerClassName="justify-end px-6 pt-5 pb-6"
+      footerClassName={compact ? "px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]" : "justify-end px-6 pt-5 pb-6"}
       footer={
         <>
-          <button type="button" className={CHILD_BUTTON.secondary} onClick={() => close(false)}>
+          <button type="button" className={`${CHILD_BUTTON.secondary} ${compact ? CHILD_BUTTON.wide : ""}`} onClick={() => close(false)}>
             {t("createChild.cancel")}
           </button>
-          <button type="submit" form={FORM_ID} className={CHILD_BUTTON.primary} disabled={!canSubmit || create.isPending}>
+          <button type="submit" form={FORM_ID} className={`${CHILD_BUTTON.primary} ${compact ? CHILD_BUTTON.wide : ""}`} disabled={!canSubmit || create.isPending}>
             {t("createChild.submit")}
           </button>
         </>

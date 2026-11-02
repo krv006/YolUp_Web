@@ -117,7 +117,7 @@ function MobileSkeleton() {
   );
 }
 
-function MobileConnect() {
+export function MobileConnect() {
   const { t } = useTranslation("parent");
   const [dialog, setDialog] = useState<"link" | "create" | null>(null);
   const steps = t("home.connect.steps", { returnObjects: true }) as Array<{ title: string; description: string }>;

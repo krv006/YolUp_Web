@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { CHILD_BUTTON, DIALOG_TITLE } from "./child-dialog-styles";
@@ -22,6 +23,7 @@ export function AddChildDialog({ open, onOpenChange }: AddChildDialogProps) {
   const { t } = useTranslation("parent");
   const [method, setMethod] = useState<Method>("link");
   const [next, setNext] = useState<Method | null>(null);
+  const compact = useIsCompact();
 
   function close(value: boolean) {
     onOpenChange(value);
@@ -33,14 +35,14 @@ export function AddChildDialog({ open, onOpenChange }: AddChildDialogProps) {
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="confirm"
+        variant="sheet"
         width="lg:w-140"
         title={t("addChild.title")}
         description={t("addChild.description")}
         titleClassName={DIALOG_TITLE}
         footerClassName="justify-end px-6 pt-5 pb-6"
         footer={
-          <>
+          compact ? undefined : <>
             <button type="button" className={CHILD_BUTTON.secondary} onClick={() => close(false)}>
               {t("addChild.cancel")}
             </button>
@@ -67,9 +69,13 @@ export function AddChildDialog({ open, onOpenChange }: AddChildDialogProps) {
                 role="radio"
                 aria-checked={active}
                 className={`flex items-center gap-4 rounded-2xl border-2 px-5 py-4 text-left transition-colors ${
-                  active ? "border-brand bg-brand-subtle" : "border-transparent bg-subtle hover:bg-muted"
+                  active && !compact ? "border-brand bg-brand-subtle" : "border-transparent bg-subtle hover:bg-muted"
                 }`}
-                onClick={() => setMethod(item.id)}
+                onClick={() => {
+                  if (!compact) return setMethod(item.id);
+                  setNext(item.id);
+                  close(false);
+                }}
                 onDoubleClick={() => {
                   setNext(item.id);
                   close(false);
