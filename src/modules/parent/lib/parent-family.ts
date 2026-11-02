@@ -145,3 +145,24 @@ export function tempPassword(firstName: string, random: () => number = Math.rand
   const prefix = letters ? letters[0].toUpperCase() + letters.slice(1) : "Yolup";
   return `${prefix}-${digits(Math.max(4, 7 - prefix.length), random)}`;
 }
+
+export function recentUnlink<T extends { id: string; status: string; studentId: string; respondedAt: string | null }>(
+  links: T[],
+  activeChildIds: ReadonlySet<string>,
+  seen: ReadonlySet<string>,
+  now: number,
+  days = 7
+): T | null {
+  return (
+    links
+      .filter(
+        (link) =>
+          link.status === "declined" &&
+          link.respondedAt !== null &&
+          Date.parse(link.respondedAt) > now - days * DAY_MS &&
+          !activeChildIds.has(link.studentId) &&
+          !seen.has(link.id)
+      )
+      .sort((a, b) => (b.respondedAt ?? "").localeCompare(a.respondedAt ?? ""))[0] ?? null
+  );
+}

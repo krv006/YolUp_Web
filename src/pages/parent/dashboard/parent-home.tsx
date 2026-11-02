@@ -74,7 +74,7 @@ export function ParentHome() {
               <HomeRecent items={view.recent} now={now} />
             </div>
             <div className="flex min-w-0 flex-col gap-5">
-              <AttentionCard items={view.attention} childId={child.id} childName={child.name} now={now} />
+              <AttentionCard items={view.attention} childId={child.id} now={now} />
               <ScoreCard trend={view.trend} delta={view.score.delta} />
             </div>
           </div>

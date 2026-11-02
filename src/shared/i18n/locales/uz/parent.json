@@ -155,11 +155,7 @@
     },
     "role": "Ota-ona",
     "openAccount": "Profil va sozlamalar",
-    "navLabel": "Ota-ona bo‘limlari",
-    "resultsTabs": {
-      "grades": "Vazifalar bo‘yicha",
-      "exams": "Mock testlar"
-    }
+    "navLabel": "Ota-ona bo‘limlari"
   },
   "switcher": {
     "eyebrow": "FARZAND",
@@ -365,7 +361,24 @@
     "logins": "Kirishlar tarixi",
     "newDevices": "{{count}} ta yangi qurilma",
     "noNewDevices": "Oxirgi 30 kunda yangi qurilma yo‘q",
-    "loginsDescription": "{{name}} hisobiga kirishlar"
+    "consentOn": "{{label}} ruxsati yoqildi",
+    "consentOff": "{{label}} ruxsati o‘chirildi",
+    "consentOffDialog": {
+      "recording": {
+        "title": "Dars yozuvini o‘chirasizmi?",
+        "description": "{{name}} qatnashgan darslarni yozib olishga ruxsat bekor qilinadi."
+      },
+      "camera": {
+        "title": "Kamerani o‘chirasizmi?",
+        "description": "{{name}} jonli darslarda kamerani yoqa olmaydi."
+      },
+      "analytics": {
+        "title": "Faollik tahlilini o‘chirasizmi?",
+        "description": "{{name}}ning davomat, diqqat va fokus tahlili sizga ko‘rinmay qoladi."
+      },
+      "confirm": "O‘chirish",
+      "cancel": "Bekor qilish"
+    }
   },
   "addChild": {
     "title": "Farzand qo‘shish",
@@ -420,5 +433,484 @@
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
     "printSubtitle": "Farzandingiz shu login va parol bilan kiradi."
+  },
+  "attendanceView": {
+    "eyebrow": "Kuzatuv",
+    "title": "Davomat",
+    "reportButton": "Hisobot",
+    "search": "Dars yoki guruhni qidirish",
+    "clearSearch": "Qidiruvni tozalash",
+    "periods": {
+      "week": "Hafta",
+      "month": "Oy",
+      "all": "Hammasi"
+    },
+    "columns": {
+      "lesson": "Dars",
+      "in": "Kirdi",
+      "out": "Chiqdi",
+      "duration": "Davomiylik",
+      "focus": "Fokus",
+      "status": "Holat"
+    },
+    "status": {
+      "live": "Jonli",
+      "attended": "Qatnashdi",
+      "late": "+{{minutes}} daq",
+      "missed": "Kelmadi",
+      "upcoming": "Rejada"
+    },
+    "legend": {
+      "attended": "Qatnashdi",
+      "late": "Kechikdi",
+      "missed": "Kelmadi",
+      "upcoming": "Rejada"
+    },
+    "summary": {
+      "label": "davomat",
+      "insight": "O‘rtacha fokus {{focus}}% — eng yaxshi kun: {{day}}",
+      "insightNoDay": "O‘rtacha fokus {{focus}}%",
+      "empty": "Statistika hali yo‘q"
+    },
+    "calendar": {
+      "prev": "Oldingi oy",
+      "next": "Keyingi oy",
+      "weekdays": [
+        "Dush",
+        "Sesh",
+        "Chor",
+        "Pay",
+        "Jum",
+        "Shan",
+        "Yak"
+      ],
+      "list": "Jadval",
+      "calendar": "Kalendar",
+      "summary": "{{month}} xulosasi",
+      "lessons": "Darslar",
+      "attended": "Qatnashdi",
+      "late": "Kechikdi",
+      "missed": "Kelmadi",
+      "noLessons": "Bu kunda dars yo‘q"
+    },
+    "detail": {
+      "datePattern": "d-MMMM, EEEE",
+      "in": "Kirdi",
+      "out": "Chiqdi",
+      "duration": "Davomiylik",
+      "focused": "Fokusda",
+      "away": "Ilovadan chiqdi",
+      "focus": "Fokus",
+      "attention": "Diqqat",
+      "exits": "Chalg‘ish",
+      "close": "Yopish",
+      "notJoined": "Farzandingiz bu darsga kirmagan.",
+      "upcoming": "Dars {{time}} da boshlanadi."
+    },
+    "filter": {
+      "title": "Filtr",
+      "period": "Davr",
+      "periods": {
+        "week": "Bu hafta",
+        "month": "Bu oy",
+        "quarter": "3 oy"
+      },
+      "group": "Guruh",
+      "allGroups": "Barcha guruhlar",
+      "status": "Holat",
+      "clear": "Tozalash",
+      "apply": "Qo‘llash"
+    },
+    "empty": {
+      "title": "Hali darslar bo‘lmagan",
+      "text": "Farzandingiz birinchi darsga qatnashgach, kirish-chiqish vaqtlari va fokus shu yerda chiqadi."
+    },
+    "notFound": {
+      "title": "Hech narsa topilmadi",
+      "text": "“{{query}}” bo‘yicha dars yoki guruh yo‘q. Boshqa nom bilan qidirib ko‘ring."
+    },
+    "filtered": {
+      "title": "Dars topilmadi",
+      "text": "Tanlangan davr va filtr bo‘yicha dars yo‘q."
+    },
+    "report": {
+      "title": "Davomat hisoboti",
+      "subtitle": "{{name}} · barcha guruhlar",
+      "period": "Davr",
+      "periodOption": "{{month}} · {{count}} ta dars",
+      "pdf": "PDF",
+      "pdfText": "Chop etish va ulashish uchun",
+      "excel": "Excel",
+      "excelText": "Jadval ko‘rinishida tahlil",
+      "focus": "Fokus tahlilini qo‘shish",
+      "focusText": "Har dars bo‘yicha fokus foizi",
+      "cancel": "Bekor qilish",
+      "download": "Hisobotni yuklash",
+      "done": "Hisobot yuklandi — {{file}}",
+      "heading": "Davomat hisoboti — {{name}}",
+      "filePrefix": "davomat",
+      "datePattern": "d-MMMM, EEEEEE",
+      "columns": {
+        "date": "Sana",
+        "teacher": "O‘qituvchi"
+      }
+    }
+  },
+  "logins": {
+    "title": "Kirishlar tarixi",
+    "tabs": {
+      "all": "Barchasi",
+      "phone": "Telefon",
+      "computer": "Kompyuter",
+      "suspicious": "Shubhali"
+    },
+    "periods": {
+      "today": "Bugun",
+      "week": "Oxirgi 7 kun",
+      "month": "Oxirgi 30 kun"
+    },
+    "filter": {
+      "title": "Filtr",
+      "period": "Davr",
+      "periodShort": {
+        "today": "Bugun",
+        "week": "7 kun",
+        "month": "30 kun"
+      },
+      "kinds": "Qurilma turi",
+      "kind": {
+        "phone": "Telefon",
+        "computer": "Kompyuter",
+        "tablet": "Planshet"
+      },
+      "clear": "Tozalash",
+      "apply": "Qo‘llash"
+    },
+    "columns": {
+      "device": "Qurilma",
+      "ip": "IP manzil",
+      "location": "Joylashuv",
+      "time": "Vaqt",
+      "status": "Holat"
+    },
+    "status": {
+      "newDevice": "Yangi qurilma",
+      "newIp": "Yangi IP",
+      "known": "Tanish"
+    },
+    "summary": {
+      "suspicious": "{{count}} ta shubhali kirish",
+      "ok": "Hammasi joyida",
+      "stats": "{{period}}: {{count}} ta kirish, {{devices}} qurilma",
+      "show": "Shubhalini ko‘rish"
+    },
+    "tip": {
+      "title": "Xavfsizlik maslahati",
+      "text": "Notanish qurilma ko‘rsangiz, farzandingiz bilan gaplashing va parolini almashtiring."
+    },
+    "detail": {
+      "newTitle": "Yangi qurilmadan kirish",
+      "title": "Kirish tafsiloti",
+      "subtitle": "{{name}} hisobiga · {{when}}",
+      "device": "Qurilma",
+      "browser": "Brauzer",
+      "ip": "IP manzil",
+      "location": "Joylashuv",
+      "time": "Vaqt",
+      "unknownLocation": "Joylashuv aniqlanmagan",
+      "warning": "Bu {{name}} bo‘lmasa, farzandingiz bilan gaplashib, parolini almashtiring",
+      "close": "Yopish"
+    },
+    "empty": {
+      "title": "Hali kirishlar yo‘q",
+      "text": "Farzandingiz ilovaga kirganda qurilma, IP va vaqt shu yerda ko‘rinadi."
+    },
+    "filtered": {
+      "title": "Kirish topilmadi",
+      "text": "Tanlangan davr va filtr bo‘yicha kirish yo‘q."
+    }
+  },
+  "homeworkView": {
+    "eyebrow": "Topshiriqlar",
+    "title": "Vazifalar",
+    "stats": {
+      "waiting": "Kutilmoqda",
+      "checking": "Tekshirilmoqda",
+      "average": "O‘rtacha"
+    },
+    "filters": {
+      "all": "Hammasi",
+      "waiting": "Kutilmoqda",
+      "submitted": "Topshirilgan",
+      "graded": "Baholangan"
+    },
+    "sections": {
+      "waiting": "Muddati yaqin",
+      "submitted": "Topshirilgan"
+    },
+    "state": {
+      "pending": "Kutilmoqda",
+      "overdue": "Kechikdi",
+      "resubmit": "Qayta topshirish",
+      "checking": "Tekshirilmoqda",
+      "error": "Xatolik",
+      "graded": "Baholandi",
+      "done": "Topshirildi"
+    },
+    "daysLeft": "{{count}} kun qoldi",
+    "hoursLeft": "{{count}} soat qoldi",
+    "noDue": "Muddat yo‘q",
+    "shortPattern": "d-MMM",
+    "fullPattern": "d-MMMM, HH:mm",
+    "gradedOn": "{{date}} baholandi",
+    "submittedOn": "{{date}} topshirdi",
+    "dueWas": "{{date}} edi",
+    "givenOn": "{{date}} berildi",
+    "filteredEmpty": "Bu filtr bo‘yicha vazifa yo‘q",
+    "empty": {
+      "title": "Hozircha vazifa yo‘q",
+      "text": "O‘qituvchi vazifa berganda, muddati, holati va natijasi shu yerda ko‘rinadi."
+    },
+    "downloadError": "Faylni yuklab bo‘lmadi",
+    "view": "Ko‘rish",
+    "download": "Yuklab olish",
+    "attachment": "Topshiriq fayli",
+    "fromTeacher": "o‘qituvchi biriktirgan",
+    "uploadedBy": "{{name}} yukladi",
+    "steps": {
+      "given": "Berildi",
+      "submitted": "Topshirildi",
+      "early": "muddatidan {{count}} kun oldin",
+      "late": "kechikib topshirilgan",
+      "checking": "Tekshirilmoqda",
+      "checkingMeta": "O‘qituvchi javobni ko‘rib chiqmoqda",
+      "graded": "Baholanadi",
+      "aiFailed": "Avtomatik tekshiruv",
+      "aiFailedMeta": "Faylni avtomatik tekshirib bo‘lmadi",
+      "teacherCheck": "O‘qituvchi tekshiruvi",
+      "teacherCheckMeta": "Navbatda",
+      "notSubmitted": "Topshirilmadi",
+      "dueEnded": "Muddat {{date}} da tugadi",
+      "lateAllowed": "Kechikkan topshiriq",
+      "lateAllowedMeta": "O‘qituvchi kechikkan javobni qabul qiladi",
+      "resubmit": "Qayta topshirish so‘raldi",
+      "accepted": "Qabul qilindi"
+    },
+    "errorBanner": "Avtomatik tekshiruvda xatolik. O‘qituvchi qo‘lda tekshiradi — qayta topshirish shart emas.",
+    "overdueBanner": "Muddat {{count}} kun oldin tugagan.",
+    "lateAccepted": "Kechikkan topshiriq qabul qilinadi.",
+    "lateRejected": "Kechikkan topshiriq qabul qilinmaydi.",
+    "timeLeft": "Topshirishga qoldi",
+    "dueOn": "Muddat: {{date}}",
+    "units": {
+      "days": "kun",
+      "hours": "soat",
+      "minutes": "daqiqa"
+    },
+    "result": {
+      "excellent": "A’lo natija!",
+      "good": "Yaxshi natija",
+      "fair": "Qoniqarli natija",
+      "low": "Yaxshilash kerak"
+    },
+    "delta": "Oldingisidan {{value}}",
+    "task": "Topshiriq"
+  },
+  "results": {
+    "eyebrow": "Reyting",
+    "title": "Natijalar",
+    "tabs": {
+      "rating": "Reyting",
+      "mock": "Mock testlar"
+    },
+    "month": "Oy",
+    "stats": {
+      "given": "Berilgan vazifa",
+      "submitted": "Topshirilgan",
+      "average": "O‘rtacha ball",
+      "subjects": "Fanlar",
+      "scale": "10 ballik"
+    },
+    "chart": "Ball dinamikasi · haftalar kesimida",
+    "thisMonth": "bu oy",
+    "recent": "So‘nggi baholar",
+    "all": "Barchasi",
+    "subjects": "Fanlar bo‘yicha",
+    "average": "o‘rtacha",
+    "noSubjects": "Hozircha fanlar yo‘q",
+    "empty": {
+      "title": "Hali statistika yo‘q",
+      "text": "Kursga yozilib, vazifa topshirgach ball dinamikasi va fanlar bo‘yicha natijalar shu yerda ko‘rinadi."
+    },
+    "panel": {
+      "close": "Yopish",
+      "attendance": "Davomatni ko‘rish",
+      "average": "O‘rtacha ball",
+      "counts": "{{submitted}}/{{total}} vazifa topshirilgan · {{graded}} ta baholangan",
+      "grades": "Baholar",
+      "noGrades": "Hali baho yo‘q"
+    }
+  },
+  "mock": {
+    "eyebrow": "Mock testlar",
+    "next": "Keyingi: {{title}} — {{date}}",
+    "nextPattern": "d-MMMM, HH:mm",
+    "minutes": "{{count}} daqiqa",
+    "minutesShort": "{{count}} daq",
+    "resultAfter": "natija imtihon tugagach ochiladi",
+    "remind": "Eslatib qo‘yish",
+    "reminderSet": "Eslatma qo‘yilgan",
+    "columns": {
+      "exam": "Imtihon",
+      "date": "Sana",
+      "duration": "Davomiyligi",
+      "sections": "Bo‘limlar",
+      "overall": "Overall"
+    },
+    "state": {
+      "upcoming": "Rejada",
+      "running": "Davom etmoqda",
+      "pending": "Kutilmoqda",
+      "absent": "Qatnashmagan"
+    },
+    "open": "Natija",
+    "empty": {
+      "title": "Mock testlar yo‘q",
+      "text": "O‘qituvchi imtihon belgilaganda sana, bo‘limlar va natijalar shu yerda chiqadi."
+    },
+    "locked": {
+      "title": "Natija hali ochilmagan",
+      "text": "{{exam}} {{date}} da tugagach, natija shu yerda chiqadi.",
+      "ok": "Tushunarli",
+      "close": "Yopish"
+    },
+    "result": {
+      "title": "{{name}} — {{exam}} natijasi",
+      "datePattern": "d-MMMM",
+      "close": "Yopish",
+      "pdf": "PDF yuklab olish",
+      "overall": "Overall band",
+      "level": "{{level}} darajaga yaqin",
+      "delta": "Oldingi mockdan {{value}}",
+      "groupAverage": "guruh o‘rtachasi {{value}}",
+      "notReady": "Overall band hali hisoblanmagan",
+      "waitingTeacher": "O‘qituvchi bahosi kutilmoqda",
+      "sectionWaiting": "kutilmoqda",
+      "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi."
+    }
+  },
+  "settings": {
+    "eyebrow": "Hisob",
+    "title": "Sozlamalar",
+    "nav": {
+      "profile": "Profil",
+      "notifications": "Bildirishnomalar",
+      "interface": "Interfeys",
+      "security": "Xavfsizlik",
+      "children": "Farzandlar"
+    },
+    "profile": {
+      "children": "{{count}} farzand",
+      "edit": "Tahrirlash",
+      "photo": "Rasmni o‘zgartirish",
+      "photoMenu": {
+        "upload": "Yangi rasm yuklash",
+        "camera": "Kamerada suratga olish",
+        "remove": "Rasmni o‘chirish"
+      },
+      "photoSaved": "Rasm yangilandi",
+      "photoRemoved": "Rasm o‘chirildi",
+      "firstName": "Ism",
+      "lastName": "Familiya",
+      "username": "Login",
+      "phone": "Telefon",
+      "usernameHint": "O‘zgartirsangiz, keyingi safar shu login bilan kirasiz",
+      "required": "Maydonni to‘ldiring",
+      "phoneInvalid": "Raqam to‘liq emas: +998 XX XXX XX XX",
+      "errors": "{{count}} ta maydonda xato bor — tuzatib qayta saqlang",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "saved": "Profil ma’lumotlari saqlandi"
+    },
+    "notifications": {
+      "title": "Bildirishnomalar",
+      "subtitle": "Qayerga va qachon xabar yuborishimizni tanlang",
+      "channels": "Kanallar",
+      "push": "Brauzer bildirishnomalari",
+      "pushText": "Bu qurilmada push",
+      "pushBlocked": "Brauzer sozlamalarida bloklangan",
+      "pushUnsupported": "Bu brauzer qo‘llab-quvvatlamaydi",
+      "email": "Email xabarnomalar",
+      "emailText": "Har bir bildirishnoma nusxasi emailga",
+      "reminder": "Dars eslatmasi",
+      "reminderText": "Farzand darsidan oldin sizga xabar beramiz",
+      "when": "Qachon",
+      "minutes": "{{count}} daqiqa oldin",
+      "hours": "{{count}} soat oldin",
+      "never": "Eslatmasin",
+      "reminderSaved": "Eslatma vaqti saqlandi",
+      "askTitle": "Bildirishnomalarni yoqing",
+      "askText": "Dars eslatmalari, vazifa muddatlari va o‘qituvchi xabarlari darhol kelib turadi.",
+      "allow": "Ruxsat berish",
+      "later": "Keyinroq"
+    },
+    "interface": {
+      "title": "Interfeys",
+      "language": "Til",
+      "theme": "Mavzu",
+      "themes": {
+        "light": "Yorug‘",
+        "dark": "Qorong‘i",
+        "system": "Tizim"
+      }
+    },
+    "security": {
+      "title": "Xavfsizlik",
+      "password": "Parolni almashtirish",
+      "current": "Joriy",
+      "next": "Yangi parol",
+      "repeat": "Yangi parolni takrorlang",
+      "rule": "Kamida 8 belgi, 1 ta raqam",
+      "weak": "Parol kamida 8 belgi va 1 ta raqamdan iborat bo‘lsin",
+      "mismatch": "Parollar bir xil emas",
+      "update": "Parolni yangilash",
+      "changed": "Parol yangilandi",
+      "sessions": "Faol sessiyalar",
+      "unknownDevice": "Noma’lum qurilma",
+      "now": "hozir",
+      "end": "Sessiyani tugatish",
+      "ended": "Sessiya tugatildi",
+      "endOthers": "Boshqa seanslardan chiqish",
+      "othersEnded": "Boshqa seanslar tugatildi"
+    }
+  },
+  "account": {
+    "profile": "Profil",
+    "settings": "Sozlamalar",
+    "logins": "Kirishlar tarixi",
+    "help": "Yordam",
+    "logout": "Tizimdan chiqish",
+    "logoutTitle": "Hisobdan chiqasizmi?",
+    "logoutText": "Qayta kirish uchun login va parolingiz kerak bo‘ladi.",
+    "logoutConfirm": "Chiqish",
+    "cancel": "Bekor qilish"
+  },
+  "states": {
+    "home": "Asosiyga qaytish",
+    "notFound": {
+      "title": "Sahifa topilmadi",
+      "text": "Manzil noto‘g‘ri yoki sahifa ko‘chirilgan. Asosiy sahifaga qayting."
+    },
+    "offline": {
+      "title": "Internet yo‘q",
+      "text": "Ulanishni tekshiring. Internet qaytgach ma’lumotlar o‘zi yangilanadi.",
+      "retry": "Qayta ulanish"
+    },
+    "unlinked": {
+      "title": "{{name}} ulanishni uzdi",
+      "text": "{{name}} sizni ota-ona sifatida olib tashladi. Qayta ulash uchun yangi so‘rov yuboring.",
+      "ok": "Tushunarli",
+      "again": "Qayta so‘rov yuborish"
+    }
   }
 }

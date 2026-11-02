@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { LoginHistoryDialog } from "@/modules/auth";
+import { toast } from "sonner";
 import { useSetParentConsent, type ConsentKind } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { Switch } from "@/shared/ui/switch";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
@@ -47,12 +48,21 @@ export function ChildProfile({ childId }: { childId: string }) {
   const navigate = useNavigate();
   const online = useOnlineStatus();
   const profile = useChildProfile(childId);
-  const setConsent = useSetParentConsent();
-  const [loginsOpen, setLoginsOpen] = useState(false);
+  const setConsent = useSetParentConsent({ notify: false });
+  const [turningOff, setTurningOff] = useState<ConsentKind | null>(null);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
 
   if (!profile.loading && !child && !profile.failed) return <Navigate to={ROUTES.parent.children} replace />;
+
+  function applyConsent(kind: ConsentKind, granted: boolean) {
+    if (!child) return;
+    const label = t(`children.consentKinds.${kind}.label`);
+    setConsent.mutate(
+      { studentId: child.id, kind, granted },
+      { onSuccess: () => toast.success(t(granted ? "profile.consentOn" : "profile.consentOff", { label })) }
+    );
+  }
 
   function openAttendance() {
     profile.select();
@@ -192,7 +202,7 @@ export function ChildProfile({ childId }: { childId: string }) {
                         disabled={profile.consentsLoading || setConsent.isPending}
                         aria-label={t(`children.consentKinds.${item.kind}.label`)}
                         className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong"
-                        onCheckedChange={(next) => setConsent.mutate({ studentId: child.id, kind: item.kind, granted: next })}
+                        onCheckedChange={(next) => (next ? applyConsent(item.kind, true) : setTurningOff(item.kind))}
                       />
                     </li>
                   );
@@ -205,7 +215,7 @@ export function ChildProfile({ childId }: { childId: string }) {
               <button
                 type="button"
                 className="flex items-center gap-4 rounded-[20px] bg-surface px-5 py-4 text-left transition-colors hover:bg-subtle"
-                onClick={() => setLoginsOpen(true)}
+                onClick={() => navigate(ROUTES.parent.childLogins(child.id))}
               >
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-subtle text-brand">
                   <Icon name="history" size={22} />
@@ -225,15 +235,24 @@ export function ChildProfile({ childId }: { childId: string }) {
         </div>
       )}
 
-      {child ? (
-        <LoginHistoryDialog
-          open={loginsOpen}
-          onOpenChange={setLoginsOpen}
-          studentId={child.id}
-          title={t("profile.logins")}
-          description={t("profile.loginsDescription", { name: child.name })}
-        />
-      ) : null}
+      <ConfirmDialog
+        alert
+        open={Boolean(turningOff)}
+        onOpenChange={(open) => {
+          if (!open) setTurningOff(null);
+        }}
+        icon={CONSENTS.find((item) => item.kind === turningOff)?.icon ?? "lock"}
+        title={turningOff ? t(`profile.consentOffDialog.${turningOff}.title`) : ""}
+        description={turningOff ? t(`profile.consentOffDialog.${turningOff}.description`, { name: child?.name.split(" ")[0] ?? "" }) : ""}
+        confirmLabel={t("profile.consentOffDialog.confirm")}
+        cancelLabel={t("profile.consentOffDialog.cancel")}
+        pending={setConsent.isPending}
+        onConfirm={() => {
+          if (turningOff) applyConsent(turningOff, false);
+          setTurningOff(null);
+        }}
+      />
+
     </div>
   );
 }

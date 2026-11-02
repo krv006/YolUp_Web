@@ -137,6 +137,26 @@ const ParentChildrenPage = lazy(() =>
     default: module.ParentChildrenPage,
   }))
 );
+const ParentNotFoundPage = lazy(() =>
+  import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
+    default: module.ParentNotFoundPage,
+  }))
+);
+const ParentHelpPage = lazy(() =>
+  import("@/pages/parent/settings/parent-help-page").then((module) => ({
+    default: module.ParentHelpPage,
+  }))
+);
+const ParentSettingsPage = lazy(() =>
+  import("@/pages/parent/settings/parent-settings-page").then((module) => ({
+    default: module.ParentSettingsPage,
+  }))
+);
+const ParentChildLoginsPage = lazy(() =>
+  import("@/pages/parent/children/parent-child-logins-page").then((module) => ({
+    default: module.ParentChildLoginsPage,
+  }))
+);
 const ParentChildProfilePage = lazy(() =>
   import("@/pages/parent/children/parent-child-profile-page").then((module) => ({
     default: module.ParentChildProfilePage,
@@ -409,6 +429,7 @@ export function AppRouter() {
                     <Route path="dashboard" element={<ParentDashboardPage />} />
                     <Route path="children" element={<ParentChildrenPage />} />
                     <Route path="children/:childId" element={<ParentChildProfilePage />} />
+                    <Route path="children/:childId/logins" element={<ParentChildLoginsPage />} />
                     <Route
                       path="attendance"
                       element={<ParentAttendancePage />}
@@ -416,6 +437,10 @@ export function AppRouter() {
                     <Route path="homework" element={<ParentHomeworkPage />} />
                     <Route path="exams" element={<ParentExamsPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
+                    <Route path="settings" element={<ParentSettingsPage />} />
+                    <Route path="settings/:section" element={<ParentSettingsPage />} />
+                    <Route path="help" element={<ParentHelpPage />} />
+                    <Route path="*" element={<ParentNotFoundPage />} />
                   </Route>
                 </Route>
 
