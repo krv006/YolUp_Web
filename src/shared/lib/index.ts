@@ -17,6 +17,7 @@ export {
   formatDateTime,
   formatDayTime,
   formatDuration,
+  formatLocalized,
   formatMessageTime,
   formatRelativeShort,
 } from "./date";

@@ -144,5 +144,169 @@
     "longestLabel": "eng uzun",
     "notReturned": "Qaytmagan",
     "noTimeline": "Chiqishlar soni qayd etilgan, lekin batafsil vaqt jurnali mavjud emas."
+  },
+  "shell": {
+    "nav": {
+      "dashboard": "Asosiy",
+      "children": "Farzandlar",
+      "attendance": "Davomat",
+      "homework": "Vazifalar",
+      "results": "Natijalar"
+    },
+    "role": "Ota-ona",
+    "openAccount": "Profil va sozlamalar",
+    "navLabel": "Ota-ona bo‘limlari",
+    "resultsTabs": {
+      "grades": "Vazifalar bo‘yicha",
+      "exams": "Mock testlar"
+    }
+  },
+  "switcher": {
+    "eyebrow": "FARZAND",
+    "groups": "{{count}} guruh",
+    "others": "+{{count}} farzand",
+    "menuTitle": "FARZANDNI TANLANG",
+    "pending": "Kutilmoqda",
+    "requestSent": "so‘rov yuborilgan",
+    "add": "Farzand qo‘shish",
+    "manage": "Farzandlarni boshqarish",
+    "open": "Farzandni tanlash"
+  },
+  "home": {
+    "datePattern": "EEEE, d-MMMM",
+    "monthPattern": "LLLL",
+    "dayPattern": "EEEEEE",
+    "todayLessons": "{{name}}da bugun {{count}} ta dars",
+    "noLessonsToday": "{{name}}da bugun dars yo‘q",
+    "greeting": {
+      "morning": "Xayrli tong, {{name}}!",
+      "day": "Xayrli kun, {{name}}!",
+      "evening": "Xayrli kech, {{name}}!",
+      "night": "Xayrli tun, {{name}}!"
+    },
+    "welcome": "Xush kelibsiz, {{name}}!",
+    "connectSubtitle": "Boshlash uchun farzandingizni ulang",
+    "hero": {
+      "todayChip": "Bugun · {{time}}",
+      "todayTitle": "{{name}} bugun {{count}} ta darsda",
+      "liveChip": "Jonli dars · {{count}} daqiqa",
+      "liveTitle": "{{name}} hozir darsda",
+      "liveNotJoined": "{{name}} hali darsga kirmagan",
+      "joinedAt": "{{time}} da kirdi",
+      "freeChip": "Bugun dars yo‘q",
+      "freeTitle": "{{name}}da bugun dars yo‘q",
+      "nextLesson": "Keyingi dars: {{day}}, {{time}} · {{course}}",
+      "noUpcoming": "Yaqin kunlarda dars rejalashtirilmagan",
+      "viewAttendance": "Davomatni ko‘rish",
+      "lessonDetails": "Dars tafsiloti",
+      "focusTitle": "Fokus darajasi",
+      "focusMeta": "Kirdi {{time}} · {{answered}}/{{total}} diqqat tekshiruvi",
+      "focusMetaNoChecks": "Kirdi {{time}}",
+      "focusPending": "Fokus bir daqiqadan keyin hisoblanadi",
+      "weekSummary": "Bu hafta: {{attended}} / {{total}} dars",
+      "weekLate": " · {{count}} kechikish",
+      "weekdays": [
+        "Du",
+        "Se",
+        "Ch",
+        "Pa",
+        "Ju",
+        "Sh",
+        "Ya"
+      ],
+      "dayState": {
+        "attended": "qatnashdi",
+        "late": "kechikdi",
+        "missed": "kelmadi",
+        "today": "bugun",
+        "none": "dars yo‘q"
+      }
+    },
+    "stats": {
+      "attendance": "Davomat",
+      "attendanceSub": "{{month}} · {{attended}}/{{total}} dars",
+      "attendanceEmpty": "Bu oy tugagan dars yo‘q",
+      "score": "O‘rtacha ball",
+      "scoreSub": "Oxirgi 30 kun",
+      "scoreEmpty": "Baholangan vazifa yo‘q",
+      "homework": "Vazifalar",
+      "homeworkLeft": "{{count}} qoldi",
+      "homeworkDue": "{{count}} tasi muddati yaqin",
+      "homeworkNoDue": "Muddati yaqin vazifa yo‘q",
+      "homeworkEmpty": "Vazifa berilmagan",
+      "time": "Darsda",
+      "timeSub": "Bu hafta"
+    },
+    "duration": {
+      "hours": "{{h}} s {{m}} d",
+      "minutes": "{{m}} d"
+    },
+    "recent": {
+      "title": "So‘nggi davomat",
+      "all": "Barchasi",
+      "today": "Bugun · {{from}} – {{to}}",
+      "liveSince": "{{time}} dan beri · {{minutes}} daq",
+      "liveNotJoined": "Dars ketmoqda · hali kirmagan",
+      "stay": "{{from}} → {{to}} · {{duration}}",
+      "missed": "{{from}} – {{to}} · kelmadi",
+      "chipLive": "Jonli",
+      "chipAttended": "Qatnashdi",
+      "chipLate": "+{{count}} daq",
+      "chipMissed": "Kelmadi",
+      "empty": "Hali dars bo‘lmagan",
+      "durationHours": "{{h}} s {{m}} daq",
+      "durationMinutes": "{{m}} daq"
+    },
+    "attention": {
+      "title": "Diqqat talab",
+      "homeworkToday": "Vazifa muddati bugun",
+      "homeworkTomorrow": "Vazifa muddati ertaga",
+      "homeworkSoon": "Vazifa muddati yaqin",
+      "login": "Yangi qurilmadan kirish",
+      "exam": "Mock natijasi chiqdi",
+      "examMeta": "{{title}} · natijani ko‘ring",
+      "empty": "Hozircha diqqat talab qiladigan narsa yo‘q"
+    },
+    "score": {
+      "title": "Ball dinamikasi",
+      "week": "{{n}}-h",
+      "empty": "Baholangan vazifalar hali yo‘q"
+    },
+    "offline": "Internet yo‘q. Oxirgi ma’lumotlar: {{time}} — yangilanmaydi",
+    "serverError": "Server bilan aloqa yo‘q — ma’lumotlar yuklanmadi.",
+    "connect": {
+      "title": "Farzandingizni ulang",
+      "description": "Davomat, vazifalar, mock natijalar va xavfsizlikni bir joyda kuzatish uchun farzand hisobini ulang yoki yangisini yarating.",
+      "link": "Mavjud o‘quvchini ulash",
+      "create": "Yangi bola hisobi",
+      "step": "{{n}}-qadam",
+      "steps": [
+        {
+          "title": "So‘rov yuboring",
+          "description": "Farzand login yoki FK-kodini kiriting"
+        },
+        {
+          "title": "Farzand tasdiqlaydi",
+          "description": "So‘rov uning ilovasida chiqadi"
+        },
+        {
+          "title": "Kuzatishni boshlang",
+          "description": "Davomat va natijalar shu yerda"
+        }
+      ]
+    },
+    "pending": {
+      "chip": "Kutilmoqda · {{time}}",
+      "title": "So‘rov {{name}}ga yuborildi",
+      "description": "@{{username}} so‘rovni ilovada tasdiqlashi bilan davomat va natijalar shu yerda chiqadi.",
+      "howTitle": "Farzand qanday tasdiqlaydi?",
+      "how": [
+        "YolUp’ga o‘z logini bilan kiradi",
+        "Suhbatlar → «+» → Ota-ona so‘rovlari",
+        "«Tasdiqlash» tugmasini bosadi"
+      ],
+      "addAnother": "Yana farzand qo‘shish",
+      "addAnotherHint": "Boshqa farzand hisobini ulang"
+    }
   }
 }

@@ -9,7 +9,7 @@ import { useParentDashboard, useSelectedChild } from "@/modules/parent";
 import { LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
 const metricIcons: Record<string, typeof UsersRound> = { children: UsersRound, requests: Hourglass, lessons: CheckCircle2, minutes: Timer };
-export function ParentDashboardPage() {
+export function ParentDashboardLegacy() {
   const { t } = useTranslation("parent");
   const { user } = useAuth(); const { selectedChildId, selectedChild, children, childrenQuery } = useSelectedChild(); const dashboard = useParentDashboard(selectedChildId);
   const attendance = useAttendance(selectedChildId ? { student: selectedChildId } : {}, Boolean(selectedChildId));

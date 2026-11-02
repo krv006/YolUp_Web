@@ -23,6 +23,12 @@ export function formatDateTime(value: string | number | Date): string {
   return format(new Date(value), "dd MMM, HH:mm", { locale: currentDateFnsLocale() });
 }
 
+export function formatLocalized(value: string | number | Date, pattern: string): string {
+  const raw = format(new Date(value), pattern, { locale: currentDateFnsLocale() });
+  const text = i18n.language === "uz" ? raw.toLowerCase() : raw;
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export function formatDayTime(value: string | number | Date): string {
   const date = new Date(value);
   const pattern =
