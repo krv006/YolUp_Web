@@ -7,7 +7,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://edu.thesofmebel.uz/api/$1"
+      "destination": "https://backend.yolup.uz/api/$1"
     },
     {
       "source": "/((?!api(?:/|$)).*)",
