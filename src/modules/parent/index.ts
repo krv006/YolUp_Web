@@ -28,5 +28,8 @@ export type { UseSelectedChildResult } from "./model/selected-child.store";
 export { SelectedChildSelector } from "./ui/selected-child-selector";
 export { LinkChildDialog } from "./ui/link-child-dialog";
 export { CreateChildDialog } from "./ui/create-child-dialog";
+export { AddChildDialog } from "./ui/add-child-dialog";
 export * as parentHome from "./lib/parent-home";
 export type { AttentionItem, HeroState, LessonOutcome, WeekSummary } from "./lib/parent-home";
+export * as parentFamily from "./lib/parent-family";
+export type { ChildPeriodSummary, CourseSchedule, FamilyPeriod } from "./lib/parent-family";

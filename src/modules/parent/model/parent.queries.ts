@@ -50,24 +50,24 @@ export function useParentHomework(selectedChildId: string | null) {
   });
 }
 
-export function useRequestChildLink() {
+export function useRequestChildLink({ notify = true }: { notify?: boolean } = {}) {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (inviteCode: string) => parentApi.requestLink(inviteCode),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: parentKeys.all });
-      toast.success("Bog‘lash so‘rovi yuborildi");
+      if (notify) toast.success("Bog‘lash so‘rovi yuborildi");
     },
   });
 }
 
-export function useCreateChild() {
+export function useCreateChild({ notify = true }: { notify?: boolean } = {}) {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (dto: CreateChildRequestDto) => parentApi.createChild(dto),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: parentKeys.all });
-      toast.success("Bola hisobi yaratildi");
+      if (notify) toast.success("Bola hisobi yaratildi");
     },
   });
 }
