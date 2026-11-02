@@ -1,7 +1,7 @@
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { ParentAttendance } from "./parent-attendance";
-import { ParentAttendanceLegacy } from "./parent-attendance-legacy";
+import { AttendanceMobile } from "./attendance-mobile";
 
 export function ParentAttendancePage() {
-  return useIsCompact() ? <ParentAttendanceLegacy /> : <ParentAttendance />;
+  return useIsCompact() ? <AttendanceMobile /> : <ParentAttendance />;
 }

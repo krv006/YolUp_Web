@@ -967,6 +967,15 @@
       "attendanceText": "Join/leave times and focus",
       "permissionsFor": "Permissions for {{name}}",
       "permissionsHint": "Lesson recording, camera and activity analysis"
+    },
+    "attendance": {
+      "since": "since {{time}} · {{duration}}",
+      "absent": "no reason",
+      "failedTitle": "Attendance didn’t load",
+      "failedText": "The server isn’t responding right now. It’s not your internet — try again in a moment.",
+      "reload": "Reload",
+      "filterHint": "Narrow down attendance",
+      "searchTitle": "Search"
     }
   }
 }

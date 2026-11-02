@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { downloadFile, parentAttendance, parentFamily, printTable, type AttendanceEntry } from "@/modules/parent";
 import { formatLocalized, formatMessageTime } from "@/shared/lib";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
@@ -35,6 +36,7 @@ export function AttendanceReport({
   const [monthKey, setMonthKey] = useState<string | null>(null);
   const [format, setFormat] = useState<Format>("pdf");
   const [withFocus, setWithFocus] = useState(true);
+  const compact = useIsCompact();
   const selected = months.find((item) => `${item.year}-${item.month}` === monthKey) ?? months[0] ?? null;
 
   function monthLabel(year: number, month: number): string {
@@ -100,29 +102,31 @@ export function AttendanceReport({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      variant="confirm"
+      variant="sheet"
       width="lg:w-140"
       icon={
-        <span className="grid size-12 place-items-center rounded-2xl bg-brand-subtle text-brand">
-          <Icon name="download" size={24} />
-        </span>
+        compact ? undefined : (
+          <span className="grid size-12 place-items-center rounded-2xl bg-brand-subtle text-brand">
+            <Icon name="download" size={24} />
+          </span>
+        )
       }
       title={t("attendanceView.report.title")}
       description={t("attendanceView.report.subtitle", { name: childName })}
       titleClassName="font-heading text-[20px]/7 font-semibold"
-      footerClassName="justify-end px-6 pt-5 pb-6"
+      footerClassName={compact ? "px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]" : "justify-end px-6 pt-5 pb-6"}
       footer={
         <>
-          <button
+          {compact ? null : <button
             type="button"
             className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
             onClick={() => onOpenChange(false)}
           >
             {t("attendanceView.report.cancel")}
-          </button>
+          </button>}
           <button
             type="button"
-            className="flex h-11 items-center gap-2 rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-40"
+            className={`flex items-center justify-center gap-2 rounded-full bg-brand px-5 text-on-action transition-colors hover:bg-brand-strong disabled:opacity-40 ${compact ? "h-13 flex-1 text-title-sm font-semibold" : "h-11 text-button"}`}
             disabled={!selected}
             onClick={generate}
           >

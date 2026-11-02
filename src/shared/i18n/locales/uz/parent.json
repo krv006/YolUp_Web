@@ -967,6 +967,15 @@
       "attendanceText": "Kirish-chiqish va fokus",
       "permissionsFor": "{{name}} uchun ruxsatlar",
       "permissionsHint": "Dars yozuvi, kamera va faollik tahlili"
+    },
+    "attendance": {
+      "since": "{{time}} dan beri · {{duration}}",
+      "absent": "sababsiz",
+      "failedTitle": "Davomat yuklanmadi",
+      "failedText": "Server hozir javob bermayapti. Bu sizning internetingiz bilan bog‘liq emas — birozdan so‘ng qayta urinib ko‘ring.",
+      "reload": "Qayta yuklash",
+      "filterHint": "Davomatni saralash",
+      "searchTitle": "Qidiruv"
     }
   }
 }

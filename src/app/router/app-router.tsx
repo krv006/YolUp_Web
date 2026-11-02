@@ -147,6 +147,16 @@ const ParentChildPermissionsPage = lazy(() =>
     default: module.ParentChildPermissionsPage,
   }))
 );
+const AttendanceCalendarPage = lazy(() =>
+  import("@/pages/parent/attendance/attendance-calendar-page").then((module) => ({
+    default: module.AttendanceCalendarPage,
+  }))
+);
+const AttendanceSearchPage = lazy(() =>
+  import("@/pages/parent/attendance/attendance-search-page").then((module) => ({
+    default: module.AttendanceSearchPage,
+  }))
+);
 const ParentNotFoundPage = lazy(() =>
   import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
     default: module.ParentNotFoundPage,
@@ -445,6 +455,8 @@ export function AppRouter() {
                       path="attendance"
                       element={<ParentAttendancePage />}
                     />
+                    <Route path="attendance/calendar" element={<AttendanceCalendarPage />} />
+                    <Route path="attendance/search" element={<AttendanceSearchPage />} />
                     <Route path="homework" element={<ParentHomeworkPage />} />
                     <Route path="exams" element={<ParentExamsPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
