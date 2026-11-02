@@ -188,7 +188,7 @@ export function HomeworkDetail({
   const left = assignment.dueAt ? parentHomework.countdown(assignment.dueAt, now) : null;
 
   return (
-    <section className="flex min-h-[560px] flex-col gap-5 rounded-[24px] bg-surface p-6">
+    <section className="flex flex-col gap-5 rounded-[24px] bg-surface p-5 lg:min-h-[560px] lg:p-6">
       <div className="flex flex-col gap-3">
         <span className="flex flex-wrap items-center gap-2">
           <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-caption-strong ${look.tone}`}>
@@ -219,7 +219,7 @@ export function HomeworkDetail({
       ) : null}
 
       {state === "pending" && left && assignment.dueAt ? (
-        <div className="flex items-center gap-4 rounded-2xl bg-warning-bg px-5 py-4">
+        <div className="flex flex-col gap-3 rounded-2xl bg-warning-bg px-4 py-4 lg:flex-row lg:items-center lg:gap-4 lg:px-5">
           <span className="flex min-w-0 flex-1 flex-col gap-1 text-warning-text">
             <strong className="flex items-center gap-2 text-title-sm">
               <Icon name="timer" size={18} />
@@ -227,12 +227,14 @@ export function HomeworkDetail({
             </strong>
             <small className="text-body-xs">{t("homeworkView.dueOn", { date: full(assignment.dueAt) })}</small>
           </span>
+          <span className="grid grid-cols-3 gap-2 lg:flex lg:gap-4">
           {(["days", "hours", "minutes"] as const).map((unit) => (
-            <span key={unit} className="flex w-[76px] flex-col items-center rounded-2xl bg-surface py-2.5">
+            <span key={unit} className="flex flex-col items-center rounded-2xl bg-surface py-2.5 lg:w-[76px]">
               <strong className="font-heading text-[26px]/8 font-semibold text-warning-text">{String(left[unit]).padStart(2, "0")}</strong>
               <small className="text-caption text-ink-secondary">{t(`homeworkView.units.${unit}`)}</small>
             </span>
           ))}
+          </span>
         </div>
       ) : null}
 
