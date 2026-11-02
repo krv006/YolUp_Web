@@ -633,5 +633,91 @@
       "title": "Kirish topilmadi",
       "text": "Tanlangan davr va filtr bo‘yicha kirish yo‘q."
     }
+  },
+  "homeworkView": {
+    "eyebrow": "Topshiriqlar",
+    "title": "Vazifalar",
+    "stats": {
+      "waiting": "Kutilmoqda",
+      "checking": "Tekshirilmoqda",
+      "average": "O‘rtacha"
+    },
+    "filters": {
+      "all": "Hammasi",
+      "waiting": "Kutilmoqda",
+      "submitted": "Topshirilgan",
+      "graded": "Baholangan"
+    },
+    "sections": {
+      "waiting": "Muddati yaqin",
+      "submitted": "Topshirilgan"
+    },
+    "state": {
+      "pending": "Kutilmoqda",
+      "overdue": "Kechikdi",
+      "resubmit": "Qayta topshirish",
+      "checking": "Tekshirilmoqda",
+      "error": "Xatolik",
+      "graded": "Baholandi",
+      "done": "Topshirildi"
+    },
+    "daysLeft": "{{count}} kun qoldi",
+    "hoursLeft": "{{count}} soat qoldi",
+    "noDue": "Muddat yo‘q",
+    "shortPattern": "d-MMM",
+    "fullPattern": "d-MMMM, HH:mm",
+    "gradedOn": "{{date}} baholandi",
+    "submittedOn": "{{date}} topshirdi",
+    "dueWas": "{{date}} edi",
+    "givenOn": "{{date}} berildi",
+    "filteredEmpty": "Bu filtr bo‘yicha vazifa yo‘q",
+    "empty": {
+      "title": "Hozircha vazifa yo‘q",
+      "text": "O‘qituvchi vazifa berganda, muddati, holati va natijasi shu yerda ko‘rinadi."
+    },
+    "downloadError": "Faylni yuklab bo‘lmadi",
+    "view": "Ko‘rish",
+    "download": "Yuklab olish",
+    "attachment": "Topshiriq fayli",
+    "fromTeacher": "o‘qituvchi biriktirgan",
+    "uploadedBy": "{{name}} yukladi",
+    "steps": {
+      "given": "Berildi",
+      "submitted": "Topshirildi",
+      "early": "muddatidan {{count}} kun oldin",
+      "late": "kechikib topshirilgan",
+      "checking": "Tekshirilmoqda",
+      "checkingMeta": "O‘qituvchi javobni ko‘rib chiqmoqda",
+      "graded": "Baholanadi",
+      "aiFailed": "Avtomatik tekshiruv",
+      "aiFailedMeta": "Faylni avtomatik tekshirib bo‘lmadi",
+      "teacherCheck": "O‘qituvchi tekshiruvi",
+      "teacherCheckMeta": "Navbatda",
+      "notSubmitted": "Topshirilmadi",
+      "dueEnded": "Muddat {{date}} da tugadi",
+      "lateAllowed": "Kechikkan topshiriq",
+      "lateAllowedMeta": "O‘qituvchi kechikkan javobni qabul qiladi",
+      "resubmit": "Qayta topshirish so‘raldi",
+      "accepted": "Qabul qilindi"
+    },
+    "errorBanner": "Avtomatik tekshiruvda xatolik. O‘qituvchi qo‘lda tekshiradi — qayta topshirish shart emas.",
+    "overdueBanner": "Muddat {{count}} kun oldin tugagan.",
+    "lateAccepted": "Kechikkan topshiriq qabul qilinadi.",
+    "lateRejected": "Kechikkan topshiriq qabul qilinmaydi.",
+    "timeLeft": "Topshirishga qoldi",
+    "dueOn": "Muddat: {{date}}",
+    "units": {
+      "days": "kun",
+      "hours": "soat",
+      "minutes": "daqiqa"
+    },
+    "result": {
+      "excellent": "A’lo natija!",
+      "good": "Yaxshi natija",
+      "fair": "Qoniqarli natija",
+      "low": "Yaxshilash kerak"
+    },
+    "delta": "Oldingisidan {{value}}",
+    "task": "Topshiriq"
   }
 }

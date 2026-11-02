@@ -633,5 +633,91 @@
       "title": "No sign-ins found",
       "text": "There are no sign-ins for the selected period and filter."
     }
+  },
+  "homeworkView": {
+    "eyebrow": "Assignments",
+    "title": "Homework",
+    "stats": {
+      "waiting": "Waiting",
+      "checking": "Being checked",
+      "average": "Average"
+    },
+    "filters": {
+      "all": "All",
+      "waiting": "Waiting",
+      "submitted": "Submitted",
+      "graded": "Graded"
+    },
+    "sections": {
+      "waiting": "Due soon",
+      "submitted": "Submitted"
+    },
+    "state": {
+      "pending": "Waiting",
+      "overdue": "Overdue",
+      "resubmit": "Resubmit",
+      "checking": "Being checked",
+      "error": "Error",
+      "graded": "Graded",
+      "done": "Submitted"
+    },
+    "daysLeft": "{{count}} days left",
+    "hoursLeft": "{{count}} hours left",
+    "noDue": "No deadline",
+    "shortPattern": "MMM d",
+    "fullPattern": "MMMM d, HH:mm",
+    "gradedOn": "graded {{date}}",
+    "submittedOn": "submitted {{date}}",
+    "dueWas": "was due {{date}}",
+    "givenOn": "assigned {{date}}",
+    "filteredEmpty": "No homework for this filter",
+    "empty": {
+      "title": "No homework yet",
+      "text": "When the teacher assigns homework, its deadline, status and result will appear here."
+    },
+    "downloadError": "Couldn’t download the file",
+    "view": "View",
+    "download": "Download",
+    "attachment": "Assignment file",
+    "fromTeacher": "attached by the teacher",
+    "uploadedBy": "uploaded by {{name}}",
+    "steps": {
+      "given": "Assigned",
+      "submitted": "Submitted",
+      "early": "{{count}} days before the deadline",
+      "late": "submitted late",
+      "checking": "Being checked",
+      "checkingMeta": "The teacher is reviewing the answer",
+      "graded": "Grading",
+      "aiFailed": "Automatic check",
+      "aiFailedMeta": "The file couldn’t be checked automatically",
+      "teacherCheck": "Teacher review",
+      "teacherCheckMeta": "In the queue",
+      "notSubmitted": "Not submitted",
+      "dueEnded": "The deadline passed on {{date}}",
+      "lateAllowed": "Late submission",
+      "lateAllowedMeta": "The teacher accepts late answers",
+      "resubmit": "Resubmission requested",
+      "accepted": "Accepted"
+    },
+    "errorBanner": "The automatic check failed. The teacher will check it manually — no need to resubmit.",
+    "overdueBanner": "The deadline passed {{count}} days ago.",
+    "lateAccepted": "Late submissions are accepted.",
+    "lateRejected": "Late submissions are not accepted.",
+    "timeLeft": "Time left to submit",
+    "dueOn": "Deadline: {{date}}",
+    "units": {
+      "days": "days",
+      "hours": "hours",
+      "minutes": "min"
+    },
+    "result": {
+      "excellent": "Excellent result!",
+      "good": "Good result",
+      "fair": "Fair result",
+      "low": "Needs work"
+    },
+    "delta": "vs previous {{value}}",
+    "task": "Task"
   }
 }

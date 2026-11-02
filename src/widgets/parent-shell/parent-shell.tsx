@@ -7,7 +7,7 @@ import { ParentBell } from "./parent-bell";
 import { ParentSidebar } from "./parent-sidebar";
 
 const RESULTS = [ROUTES.parent.grades, ROUTES.parent.exams];
-const OWN_HEADER = [ROUTES.parent.children, ROUTES.parent.attendance];
+const OWN_HEADER = [ROUTES.parent.children, ROUTES.parent.attendance, ROUTES.parent.homework];
 
 export function ParentShell() {
   const { t } = useTranslation("parent");
