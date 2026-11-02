@@ -137,6 +137,11 @@ const ParentChildrenPage = lazy(() =>
     default: module.ParentChildrenPage,
   }))
 );
+const ParentNotificationsPage = lazy(() =>
+  import("@/pages/parent/notifications/parent-notifications-page").then((module) => ({
+    default: module.ParentNotificationsPage,
+  }))
+);
 const ParentNotFoundPage = lazy(() =>
   import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
     default: module.ParentNotFoundPage,
@@ -440,6 +445,7 @@ export function AppRouter() {
                     <Route path="settings" element={<ParentSettingsPage />} />
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
                     <Route path="help" element={<ParentHelpPage />} />
+                    <Route path="notifications" element={<ParentNotificationsPage />} />
                     <Route path="*" element={<ParentNotFoundPage />} />
                   </Route>
                 </Route>

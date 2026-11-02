@@ -5,18 +5,21 @@ import { AddChildDialog, parentFamily, useParentLinks, useSelectedChild } from "
 import { ROUTES } from "@/shared/config";
 import { storage } from "@/shared/lib";
 import { ParentStateScreen } from "./parent-state-screen";
-import { STATE_BUTTON } from "./parent-state-styles";
 
 export function ParentNotFound() {
   const { t } = useTranslation("parent");
   const navigate = useNavigate();
   const [now] = useState(() => Date.now());
   return (
-    <ParentStateScreen icon="search" tone="brand" code="404" title={t("states.notFound.title")} text={t("states.notFound.text")} now={now}>
-      <button type="button" className={STATE_BUTTON.primary} onClick={() => navigate(ROUTES.parent.dashboard)}>
-        {t("states.home")}
-      </button>
-    </ParentStateScreen>
+    <ParentStateScreen
+      icon="search"
+      tone="brand"
+      code="404"
+      title={t("states.notFound.title")}
+      text={t("states.notFound.text")}
+      now={now}
+      primary={{ label: t("states.home"), onClick: () => navigate(ROUTES.parent.dashboard) }}
+    />
   );
 }
 
@@ -24,11 +27,14 @@ export function ParentOffline({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation("parent");
   const [now] = useState(() => Date.now());
   return (
-    <ParentStateScreen icon="wifi" tone="teal" title={t("states.offline.title")} text={t("states.offline.text")} now={now}>
-      <button type="button" className={STATE_BUTTON.primary} onClick={onRetry}>
-        {t("states.offline.retry")}
-      </button>
-    </ParentStateScreen>
+    <ParentStateScreen
+      icon="wifi"
+      tone="teal"
+      title={t("states.offline.title")}
+      text={t("states.offline.text")}
+      now={now}
+      primary={{ label: t("states.offline.retry"), onClick: onRetry }}
+    />
   );
 }
 
@@ -62,14 +68,9 @@ export function ParentUnlinked({ children: content }: { children: ReactNode }) {
         title={t("states.unlinked.title", { name: first })}
         text={t("states.unlinked.text", { name: declined.student.name })}
         now={now}
-      >
-        <button type="button" className={STATE_BUTTON.secondary} onClick={() => dismiss(() => navigate(ROUTES.parent.children))}>
-          {t("states.unlinked.ok")}
-        </button>
-        <button type="button" className={STATE_BUTTON.primary} onClick={() => dismiss(() => setAdding(true))}>
-          {t("states.unlinked.again")}
-        </button>
-      </ParentStateScreen>
+        secondary={{ label: t("states.unlinked.ok"), onClick: () => dismiss(() => navigate(ROUTES.parent.children)) }}
+        primary={{ label: t("states.unlinked.again"), onClick: () => dismiss(() => setAdding(true)) }}
+      />
       <AddChildDialog open={adding} onOpenChange={setAdding} />
     </>
   );

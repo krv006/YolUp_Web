@@ -912,5 +912,48 @@
       "ok": "Tushunarli",
       "again": "Qayta so‘rov yuborish"
     }
+  },
+  "mobile": {
+    "tabs": {
+      "children": "Farzandlar",
+      "attendance": "Davomat",
+      "home": "Asosiy",
+      "homework": "Vazifalar",
+      "results": "Natijalar"
+    },
+    "greeting": {
+      "morning": "Xayrli tong 👋",
+      "day": "Xayrli kun 👋",
+      "evening": "Xayrli kech 👋",
+      "night": "Xayrli tun 👋"
+    },
+    "switcher": {
+      "title": "Farzandni tanlang",
+      "subtitle": "Ko‘rsatkichlar shu farzand bo‘yicha",
+      "selected": "{{name}} tanlandi — barcha bo‘limlar yangilandi",
+      "requested": "@{{username}} · so‘rov yuborilgan"
+    },
+    "hero": {
+      "joined": "Kirdi {{time}} · Chiqish hali yo‘q",
+      "watch": "Kuzatish",
+      "details": "Batafsil"
+    },
+    "stats": {
+      "lessons": "{{attended}} / {{total}} dars"
+    },
+    "connect": {
+      "link": "Login yoki FK-… taklif kodi orqali",
+      "create": "Farzandingiz uchun login yarating",
+      "how": "Qanday ishlaydi?"
+    },
+    "pending": {
+      "title": "So‘rov yuborildi",
+      "text": "@{{username}} ({{name}}) so‘rovingizni tasdiqlashi kerak. Tasdiqlangach ma’lumotlar shu yerda chiqadi."
+    },
+    "offline": "Internet yo‘q. Oxirgi ma’lumotlar: {{time}}",
+    "notifications": {
+      "empty": "Davomat, vazifalar va xavfsizlik haqidagi xabarlar shu yerda chiqadi.",
+      "settings": "Sozlamalarni ochish"
+    }
   }
 }

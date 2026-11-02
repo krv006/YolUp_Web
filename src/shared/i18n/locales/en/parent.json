@@ -912,5 +912,48 @@
       "ok": "Got it",
       "again": "Send a new request"
     }
+  },
+  "mobile": {
+    "tabs": {
+      "children": "Children",
+      "attendance": "Attendance",
+      "home": "Home",
+      "homework": "Homework",
+      "results": "Results"
+    },
+    "greeting": {
+      "morning": "Good morning 👋",
+      "day": "Good afternoon 👋",
+      "evening": "Good evening 👋",
+      "night": "Good night 👋"
+    },
+    "switcher": {
+      "title": "Choose a child",
+      "subtitle": "Figures are shown for this child",
+      "selected": "{{name}} selected — all sections updated",
+      "requested": "@{{username}} · request sent"
+    },
+    "hero": {
+      "joined": "Joined {{time}} · still in class",
+      "watch": "Watch",
+      "details": "Details"
+    },
+    "stats": {
+      "lessons": "{{attended}} / {{total}} lessons"
+    },
+    "connect": {
+      "link": "By login or FK-… invite code",
+      "create": "Create a login for your child",
+      "how": "How it works"
+    },
+    "pending": {
+      "title": "Request sent",
+      "text": "@{{username}} ({{name}}) needs to approve your request. Their data will appear here afterwards."
+    },
+    "offline": "No internet. Last data: {{time}}",
+    "notifications": {
+      "empty": "Messages about attendance, homework and security will appear here.",
+      "settings": "Open settings"
+    }
   }
 }

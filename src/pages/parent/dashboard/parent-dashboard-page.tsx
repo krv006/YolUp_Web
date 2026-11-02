@@ -1,7 +1,7 @@
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { ParentDashboardLegacy } from "./parent-dashboard-legacy";
 import { ParentHome } from "./parent-home";
+import { ParentHomeMobile } from "./parent-home-mobile";
 
 export function ParentDashboardPage() {
-  return useIsCompact() ? <ParentDashboardLegacy /> : <ParentHome />;
+  return useIsCompact() ? <ParentHomeMobile /> : <ParentHome />;
 }
