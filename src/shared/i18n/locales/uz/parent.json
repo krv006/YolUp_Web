@@ -365,7 +365,25 @@
     "logins": "Kirishlar tarixi",
     "newDevices": "{{count}} ta yangi qurilma",
     "noNewDevices": "Oxirgi 30 kunda yangi qurilma yo‘q",
-    "loginsDescription": "{{name}} hisobiga kirishlar"
+    "loginsDescription": "{{name}} hisobiga kirishlar",
+    "consentOn": "{{label}} ruxsati yoqildi",
+    "consentOff": "{{label}} ruxsati o‘chirildi",
+    "consentOffDialog": {
+      "recording": {
+        "title": "Dars yozuvini o‘chirasizmi?",
+        "description": "{{name}} qatnashgan darslarni yozib olishga ruxsat bekor qilinadi."
+      },
+      "camera": {
+        "title": "Kamerani o‘chirasizmi?",
+        "description": "{{name}} jonli darslarda kamerani yoqa olmaydi."
+      },
+      "analytics": {
+        "title": "Faollik tahlilini o‘chirasizmi?",
+        "description": "{{name}}ning davomat, diqqat va fokus tahlili sizga ko‘rinmay qoladi."
+      },
+      "confirm": "O‘chirish",
+      "cancel": "Bekor qilish"
+    }
   },
   "addChild": {
     "title": "Farzand qo‘shish",

@@ -17,6 +17,8 @@ export interface ConfirmDialogProps {
   confirmIcon?: string;
   onConfirm: () => void;
   onCancel?: () => void;
+  /** Desktopda ham telefondagi markaziy ogohlantirish ko'rinishi. */
+  alert?: boolean;
   children?: ReactNode;
 }
 
@@ -38,6 +40,7 @@ export function ConfirmDialog({
   confirmIcon,
   onConfirm,
   onCancel,
+  alert = false,
   children,
 }: ConfirmDialogProps) {
   const isCompact = useIsCompact();
@@ -47,12 +50,12 @@ export function ConfirmDialog({
     onCancel?.();
   }
 
-  if (isCompact)
+  if (isCompact || alert)
     return (
       <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
         <DialogPrimitive.Portal>
           <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
-          <DialogPrimitive.Content className="fixed top-[calc(50%-22px)] left-1/2 z-50 flex max-h-[86dvh] w-[calc(100%-32px)] max-w-82.5 -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto rounded-2xl bg-surface px-6 pt-6 pb-6.5 text-center text-ink shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95">
+          <DialogPrimitive.Content className={`fixed top-[calc(50%-22px)] left-1/2 z-50 flex max-h-[86dvh] w-[calc(100%-32px)] max-w-82.5 -translate-x-1/2 -translate-y-1/2 flex-col items-center overflow-y-auto rounded-2xl bg-surface px-6 pt-6 pb-6.5 ${isCompact ? "" : "lg:top-1/2 lg:max-w-95 lg:rounded-3xl"} text-center text-ink shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95`}>
             <span className={`grid size-14 shrink-0 place-items-center rounded-full ${TONES[tone].icon}`}>
               <Icon name={icon} size={24} />
             </span>

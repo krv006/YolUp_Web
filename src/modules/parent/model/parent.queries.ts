@@ -84,13 +84,13 @@ export function useRespondParentLink() {
   });
 }
 
-export function useSetParentConsent() {
+export function useSetParentConsent({ notify = true }: { notify?: boolean } = {}) {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (dto: SetConsentInput) => parentApi.setConsent(dto),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: parentKeys.consents });
-      toast.success("Maxfiylik ruxsati saqlandi");
+      if (notify) toast.success("Maxfiylik ruxsati saqlandi");
     },
   });
 }

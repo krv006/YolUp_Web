@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { LoginHistoryDialog } from "@/modules/auth";
 import { useSetParentConsent, type ConsentKind } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
+import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Avatar } from "@/shared/ui/legacy";
 import { Switch } from "@/shared/ui/switch";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
@@ -47,12 +49,22 @@ export function ChildProfile({ childId }: { childId: string }) {
   const navigate = useNavigate();
   const online = useOnlineStatus();
   const profile = useChildProfile(childId);
-  const setConsent = useSetParentConsent();
+  const setConsent = useSetParentConsent({ notify: false });
   const [loginsOpen, setLoginsOpen] = useState(false);
+  const [turningOff, setTurningOff] = useState<ConsentKind | null>(null);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
 
   if (!profile.loading && !child && !profile.failed) return <Navigate to={ROUTES.parent.children} replace />;
+
+  function applyConsent(kind: ConsentKind, granted: boolean) {
+    if (!child) return;
+    const label = t(`children.consentKinds.${kind}.label`);
+    setConsent.mutate(
+      { studentId: child.id, kind, granted },
+      { onSuccess: () => toast.success(t(granted ? "profile.consentOn" : "profile.consentOff", { label })) }
+    );
+  }
 
   function openAttendance() {
     profile.select();
@@ -192,7 +204,7 @@ export function ChildProfile({ childId }: { childId: string }) {
                         disabled={profile.consentsLoading || setConsent.isPending}
                         aria-label={t(`children.consentKinds.${item.kind}.label`)}
                         className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong"
-                        onCheckedChange={(next) => setConsent.mutate({ studentId: child.id, kind: item.kind, granted: next })}
+                        onCheckedChange={(next) => (next ? applyConsent(item.kind, true) : setTurningOff(item.kind))}
                       />
                     </li>
                   );
@@ -224,6 +236,24 @@ export function ChildProfile({ childId }: { childId: string }) {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        alert
+        open={Boolean(turningOff)}
+        onOpenChange={(open) => {
+          if (!open) setTurningOff(null);
+        }}
+        icon={CONSENTS.find((item) => item.kind === turningOff)?.icon ?? "lock"}
+        title={turningOff ? t(`profile.consentOffDialog.${turningOff}.title`) : ""}
+        description={turningOff ? t(`profile.consentOffDialog.${turningOff}.description`, { name: child?.name.split(" ")[0] ?? "" }) : ""}
+        confirmLabel={t("profile.consentOffDialog.confirm")}
+        cancelLabel={t("profile.consentOffDialog.cancel")}
+        pending={setConsent.isPending}
+        onConfirm={() => {
+          if (turningOff) applyConsent(turningOff, false);
+          setTurningOff(null);
+        }}
+      />
 
       {child ? (
         <LoginHistoryDialog

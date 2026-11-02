@@ -365,7 +365,25 @@
     "logins": "Sign-in history",
     "newDevices": "{{count}} new devices",
     "noNewDevices": "No new devices in the last 30 days",
-    "loginsDescription": "Sign-ins to {{name}}’s account"
+    "loginsDescription": "Sign-ins to {{name}}’s account",
+    "consentOn": "{{label}} permission turned on",
+    "consentOff": "{{label}} permission turned off",
+    "consentOffDialog": {
+      "recording": {
+        "title": "Turn off lesson recording?",
+        "description": "Permission to record lessons with {{name}} will be revoked."
+      },
+      "camera": {
+        "title": "Turn off the camera?",
+        "description": "{{name}} won’t be able to turn on the camera in live lessons."
+      },
+      "analytics": {
+        "title": "Turn off activity analysis?",
+        "description": "{{name}}’s attendance, attention and focus analysis will be hidden from you."
+      },
+      "confirm": "Turn off",
+      "cancel": "Cancel"
+    }
   },
   "addChild": {
     "title": "Add a child",
