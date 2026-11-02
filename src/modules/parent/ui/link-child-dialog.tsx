@@ -59,7 +59,7 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="fullscreen"
+        variant={compact ? "fullscreen" : "confirm"}
         width="lg:w-130"
         title={<span className="sr-only">{t(linked ? "linkChild.linkedTitle" : "linkChild.sentTitle")}</span>}
       >
@@ -112,7 +112,7 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
     <AppDialog
       open={open}
       onOpenChange={close}
-      variant="sheet"
+      variant={compact ? "sheet" : "confirm"}
       width="lg:w-140"
       icon={compact ? undefined : <IconTile icon="link" />}
       title={t("linkChild.title")}

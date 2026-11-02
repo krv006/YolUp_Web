@@ -65,7 +65,7 @@ export function ParentStateScreen({
 
   if (compact)
     return (
-      <div className="flex min-h-full flex-col bg-canvas px-4 pt-10 pb-[max(24px,env(safe-area-inset-bottom))] text-center">
+      <div className="fixed inset-0 z-40 flex flex-col overflow-y-auto bg-canvas px-4 pt-10 pb-[max(24px,env(safe-area-inset-bottom))] text-center">
         <div className="flex flex-1 flex-col items-center justify-center gap-4">{art}</div>
         {secondary ? (
           <button type="button" className="mx-auto mb-4 h-11 px-4 text-title-sm font-semibold text-brand" onClick={secondary.onClick}>

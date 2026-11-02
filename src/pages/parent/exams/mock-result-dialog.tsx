@@ -3,6 +3,7 @@ import { useExamResultPdf } from "@/modules/exam";
 import { downloadBlob, parentResults } from "@/modules/parent";
 import { formatLocalized } from "@/shared/lib";
 import type { ExamStudentResult, ExamSummary } from "@/shared/types";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
@@ -36,6 +37,7 @@ export function MockResultDialog({
   onClose: () => void;
 }) {
   const { t } = useTranslation("parent");
+  const compact = useIsCompact();
   const pdf = useExamResultPdf();
   const first = childName.split(" ")[0] || childName;
   const band = result?.total?.score ?? null;
@@ -55,7 +57,7 @@ export function MockResultDialog({
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
-      variant="sheet"
+      variant={compact ? "sheet" : "confirm"}
       width="lg:w-180"
       icon={<Avatar name={childName} src={childAvatar ?? undefined} size="md" className="[&_.avatar]:size-12" />}
       title={exam ? t("mock.result.title", { name: first, exam: exam.title }) : ""}

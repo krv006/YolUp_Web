@@ -131,7 +131,7 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="fullscreen"
+        variant={compact ? "fullscreen" : "confirm"}
         width="lg:w-130"
         title={<span className="sr-only">{t("createChild.readyTitle")}</span>}
       >
@@ -202,7 +202,7 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
     <AppDialog
       open={open}
       onOpenChange={close}
-      variant="sheet"
+      variant={compact ? "sheet" : "confirm"}
       width="lg:w-150"
       icon={compact ? undefined : <IconTile icon="person-add" tone="green" />}
       title={t("createChild.title")}

@@ -102,7 +102,7 @@ export function AttendanceReport({
     <AppDialog
       open={open}
       onOpenChange={onOpenChange}
-      variant="sheet"
+      variant={compact ? "sheet" : "confirm"}
       width="lg:w-140"
       icon={
         compact ? undefined : (

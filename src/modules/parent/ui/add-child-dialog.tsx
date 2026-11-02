@@ -35,7 +35,7 @@ export function AddChildDialog({ open, onOpenChange }: AddChildDialogProps) {
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="sheet"
+        variant={compact ? "sheet" : "confirm"}
         width="lg:w-140"
         title={t("addChild.title")}
         description={t("addChild.description")}
