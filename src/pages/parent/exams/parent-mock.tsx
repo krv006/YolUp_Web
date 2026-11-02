@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { examApi, examKeys, useExamReminder, useExams } from "@/modules/exam";
-import { useHomeworkReport } from "@/modules/homework";
-import { parentResults, useSelectedChild } from "@/modules/parent";
+import { parentResults } from "@/modules/parent";
 import { formatLocalized } from "@/shared/lib";
 import { useOnlineStatus } from "@/shared/model";
-import type { ExamStudentResult, ExamSummary } from "@/shared/types";
+import type { ExamSummary } from "@/shared/types";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
@@ -14,53 +11,21 @@ import { ConnectChild } from "../dashboard/home-empty";
 import { ResultsTabs } from "../report/results-parts";
 import { MockResultDialog } from "./mock-result-dialog";
 import { band, bandTone, sectionIcon } from "./mock-styles";
+import { useMockView } from "./use-mock-view";
 
 const HEAD = "px-3 pb-3 text-left text-caption-strong tracking-wide text-ink-tertiary uppercase first:pl-5";
 
 export function ParentMock() {
   const { t } = useTranslation("parent");
   const online = useOnlineStatus();
-  const [now] = useState(() => Date.now());
-  const { children, childrenQuery, selectedChild, selectedChildId } = useSelectedChild();
-  const enabled = Boolean(selectedChildId);
-  const exams = useExams(null, enabled);
-  const report = useHomeworkReport(selectedChildId, enabled);
-  const reminder = useExamReminder();
+  const view = useMockView();
+  const { exams, list, byExam, hidden, groupAverage, next, reminder, toggleReminder } = view;
+  const selectedChild = view.child;
+  const selectedChildId = view.childId;
   const [opened, setOpened] = useState<ExamSummary | null>(null);
   const [locked, setLocked] = useState<ExamSummary | null>(null);
-
-  const courseIds = report.data
-    ? new Set(report.data.courses.map((course) => course.courseId))
-    : children.length <= 1
-      ? null
-      : new Set<string>();
-  const list = (exams.data ?? [])
-    .filter((exam) => !courseIds || courseIds.has(exam.courseId))
-    .sort((a, b) => b.startsAt.localeCompare(a.startsAt));
-  const finished = list.filter((exam) => exam.state === "finished");
-  const results = useQueries({
-    queries: finished.map((exam) => ({
-      queryKey: examKeys.results(exam.id),
-      queryFn: ({ signal }: { signal: AbortSignal }) => examApi.getResults(exam.id, { signal }),
-    })),
-  });
-  const byExam = new Map<string, ExamStudentResult | null>();
-  const hidden = new Set<string>();
-  const groupAverage = new Map<string, number | null>();
-  finished.forEach((exam, index) => {
-    const data = results[index]?.data;
-    if (!data) return;
-    if (data.hidden) hidden.add(exam.id);
-    groupAverage.set(exam.id, data.groupAverage);
-    byExam.set(exam.id, data.results.find((row) => row.studentId === selectedChildId) ?? null);
-  });
-  const next = parentResults.nextExam(list, now);
   const childName = selectedChild?.name ?? "";
   const first = childName.split(" ")[0] || childName;
-
-  function toggleReminder(exam: ExamSummary) {
-    reminder.mutate({ id: exam.id, enabled: !exam.hasReminder });
-  }
 
   function overall(exam: ExamSummary) {
     if (exam.state !== "finished")
@@ -97,7 +62,7 @@ export function ParentMock() {
       />
       {online && exams.isError ? <ParentErrorBanner onRetry={() => void exams.refetch()} /> : null}
 
-      {!childrenQuery.isLoading && !selectedChild ? (
+      {!view.childrenLoading && !selectedChild ? (
         <ConnectChild />
       ) : (
         <div className="flex flex-col gap-5">

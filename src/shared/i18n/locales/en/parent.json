@@ -979,6 +979,14 @@
     },
     "homework": {
       "title": "Assignment"
+    },
+    "results": {
+      "submitted": "{{submitted}} / {{total}} submitted"
+    },
+    "mock": {
+      "finished": "Finished exams",
+      "dayPattern": "MMMM d",
+      "resultTitle": "Mock result"
     }
   }
 }

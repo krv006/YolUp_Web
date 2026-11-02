@@ -979,6 +979,14 @@
     },
     "homework": {
       "title": "Vazifa"
+    },
+    "results": {
+      "submitted": "{{submitted}} / {{total}} topshirildi"
+    },
+    "mock": {
+      "finished": "Tugagan imtihonlar",
+      "dayPattern": "d-MMMM",
+      "resultTitle": "Mock natija"
     }
   }
 }

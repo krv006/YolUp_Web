@@ -979,6 +979,14 @@
     },
     "homework": {
       "title": "Задание"
+    },
+    "results": {
+      "submitted": "Сдано {{submitted}} / {{total}}"
+    },
+    "mock": {
+      "finished": "Завершённые экзамены",
+      "dayPattern": "d MMMM",
+      "resultTitle": "Результат теста"
     }
   }
 }

@@ -5,10 +5,10 @@ import { formatLocalized } from "@/shared/lib";
 import type { Assignment } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 
-export function ResultsTabs() {
+export function ResultsTabs({ wide = false }: { wide?: boolean }) {
   const { t } = useTranslation("parent");
   return (
-    <nav className="flex shrink-0 items-center gap-1 rounded-full bg-surface p-1">
+    <nav className={`flex shrink-0 items-center gap-1 rounded-full bg-surface p-1 ${wide ? "w-full" : ""}`}>
       {[
         { to: ROUTES.parent.grades, label: t("results.tabs.rating") },
         { to: ROUTES.parent.exams, label: t("results.tabs.mock") },
@@ -17,7 +17,7 @@ export function ResultsTabs() {
           key={tab.to}
           to={tab.to}
           className={({ isActive }) =>
-            `flex h-10 items-center rounded-full px-6 text-button transition-colors ${
+            `flex items-center justify-center rounded-full px-6 transition-colors ${wide ? "h-11 flex-1 text-title-sm font-medium" : "h-10 text-button"} ${
               isActive ? "bg-brand text-on-action" : "text-ink hover:bg-subtle"
             }`
           }

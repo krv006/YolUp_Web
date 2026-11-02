@@ -162,6 +162,16 @@ const ParentHomeworkItemPage = lazy(() =>
     default: module.ParentHomeworkItemPage,
   }))
 );
+const ParentCoursePage = lazy(() =>
+  import("@/pages/parent/report/parent-course-page").then((module) => ({
+    default: module.ParentCoursePage,
+  }))
+);
+const ParentExamResultPage = lazy(() =>
+  import("@/pages/parent/exams/parent-exam-result-page").then((module) => ({
+    default: module.ParentExamResultPage,
+  }))
+);
 const ParentNotFoundPage = lazy(() =>
   import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
     default: module.ParentNotFoundPage,
@@ -465,7 +475,9 @@ export function AppRouter() {
                     <Route path="homework" element={<ParentHomeworkPage />} />
                     <Route path="homework/:assignmentId" element={<ParentHomeworkItemPage />} />
                     <Route path="exams" element={<ParentExamsPage />} />
+                    <Route path="exams/:examId" element={<ParentExamResultPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
+                    <Route path="grades/:courseId" element={<ParentCoursePage />} />
                     <Route path="settings" element={<ParentSettingsPage />} />
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
                     <Route path="help" element={<ParentHelpPage />} />
