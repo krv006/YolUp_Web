@@ -3,3 +3,7 @@ export { ParentBell } from "./parent-bell";
 export { ParentPageHeader } from "./parent-page-header";
 export { ParentErrorBanner } from "./parent-error-banner";
 export { ParentNotFound } from "./parent-states";
+export { ParentMobileShell } from "./parent-mobile-shell";
+export { ParentMobileHeader } from "./parent-mobile-header";
+export { ChildChips } from "./child-chips";
+export { useParentNotificationLink } from "./use-parent-notification-link";

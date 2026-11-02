@@ -1,7 +1,7 @@
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { ParentReportLegacy } from "./parent-report-legacy";
+import { ResultsMobile } from "./results-mobile";
 import { ParentResults } from "./parent-results";
 
 export function ParentReportPage() {
-  return useIsCompact() ? <ParentReportLegacy /> : <ParentResults />;
+  return useIsCompact() ? <ResultsMobile /> : <ParentResults />;
 }

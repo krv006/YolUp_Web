@@ -25,7 +25,6 @@ export {
 } from "./model/parent.queries";
 export { useSelectedChild, useSelectedChildStore } from "./model/selected-child.store";
 export type { UseSelectedChildResult } from "./model/selected-child.store";
-export { SelectedChildSelector } from "./ui/selected-child-selector";
 export { LinkChildDialog } from "./ui/link-child-dialog";
 export { CreateChildDialog } from "./ui/create-child-dialog";
 export { AddChildDialog } from "./ui/add-child-dialog";
@@ -43,3 +42,4 @@ export * as parentHomework from "./lib/parent-homework";
 export type { HomeworkFilter, HomeworkState } from "./lib/parent-homework";
 export * as parentResults from "./lib/parent-results";
 export type { MonthHomework, SubjectRow } from "./lib/parent-results";
+export { passwordStrength } from "./lib/password-strength";

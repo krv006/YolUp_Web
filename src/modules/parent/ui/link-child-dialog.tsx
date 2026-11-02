@@ -1,6 +1,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { AppError } from "@/shared/api";
+import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
@@ -23,6 +24,7 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
   const [error, setError] = useState<{ message: string; notFound: boolean } | null>(null);
   const [sent, setSent] = useState<ParentLink | null>(null);
   const inputId = useId();
+  const compact = useIsCompact();
 
   function reset() {
     setValue("");
@@ -57,11 +59,12 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
       <AppDialog
         open={open}
         onOpenChange={close}
-        variant="confirm"
+        variant={compact ? "fullscreen" : "confirm"}
         width="lg:w-130"
         title={<span className="sr-only">{t(linked ? "linkChild.linkedTitle" : "linkChild.sentTitle")}</span>}
       >
-        <div className="flex flex-col items-center gap-4 px-3 pb-2 text-center">
+        <div className="flex flex-1 flex-col items-center gap-4 px-3 pb-2 text-center">
+          {compact ? <span className="flex-1" /> : null}
           <Celebration icon={linked ? "how-to-reg" : "send"} tone={linked ? "green" : "teal"} />
           <h2 className="font-heading text-[22px]/8 font-semibold text-ink">
             {t(linked ? "linkChild.linkedTitle" : "linkChild.sentTitle")}
@@ -87,11 +90,16 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
               {t(linked ? "linkChild.chipLinked" : "linkChild.chipPending")}
             </span>
           </div>
-          <div className="mt-2 flex w-full gap-3 pb-4">
-            <button type="button" className={`${CHILD_BUTTON.secondary} ${CHILD_BUTTON.wide}`} onClick={reset}>
+          {compact ? <span className="flex-1" /> : null}
+          <div className={`mt-2 flex w-full gap-3 pb-4 ${compact ? "flex-col" : ""}`}>
+            <button
+              type="button"
+              className={compact ? "h-11 text-title-sm font-semibold text-brand" : `${CHILD_BUTTON.secondary} ${CHILD_BUTTON.wide}`}
+              onClick={reset}
+            >
               {t("linkChild.more")}
             </button>
-            <button type="button" className={`${CHILD_BUTTON.primary} ${CHILD_BUTTON.wide}`} onClick={() => close(false)}>
+            <button type="button" className={`${CHILD_BUTTON.primary} ${compact ? "h-13 w-full text-title-sm" : CHILD_BUTTON.wide}`} onClick={() => close(false)}>
               {t("linkChild.done")}
             </button>
           </div>
@@ -104,19 +112,19 @@ export function LinkChildDialog({ open, onOpenChange }: LinkChildDialogProps) {
     <AppDialog
       open={open}
       onOpenChange={close}
-      variant="confirm"
+      variant={compact ? "sheet" : "confirm"}
       width="lg:w-140"
-      icon={<IconTile icon="link" />}
+      icon={compact ? undefined : <IconTile icon="link" />}
       title={t("linkChild.title")}
       description={t("linkChild.description")}
       titleClassName={DIALOG_TITLE}
-      footerClassName="justify-end px-6 pt-5 pb-6"
+      footerClassName={compact ? "px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]" : "justify-end px-6 pt-5 pb-6"}
       footer={
         <>
-          <button type="button" className={CHILD_BUTTON.secondary} onClick={() => close(false)}>
+          <button type="button" className={`${CHILD_BUTTON.secondary} ${compact ? CHILD_BUTTON.wide : ""}`} onClick={() => close(false)}>
             {t("linkChild.cancel")}
           </button>
-          <button type="submit" form={FORM_ID} className={CHILD_BUTTON.primary} disabled={!value.trim() || request.isPending}>
+          <button type="submit" form={FORM_ID} className={`${CHILD_BUTTON.primary} ${compact ? CHILD_BUTTON.wide : ""}`} disabled={!value.trim() || request.isPending}>
             {error ? t("linkChild.retry") : t("linkChild.submit")}
           </button>
         </>

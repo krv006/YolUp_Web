@@ -45,7 +45,7 @@ export function AttendanceDetail({
       footer={
         <button
           type="button"
-          className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+          className="flex h-13 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-5 text-title-sm font-semibold text-ink transition-colors hover:bg-subtle lg:h-11 lg:flex-none lg:text-button"
           onClick={onClose}
         >
           {t("attendanceView.detail.close")}

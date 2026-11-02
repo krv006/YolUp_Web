@@ -1,7 +1,7 @@
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { ParentChildrenLegacy } from "./parent-children-legacy";
+import { FamilyMobile } from "./family-mobile";
 import { ParentFamily } from "./parent-family";
 
 export function ParentChildrenPage() {
-  return useIsCompact() ? <ParentChildrenLegacy /> : <ParentFamily />;
+  return useIsCompact() ? <FamilyMobile /> : <ParentFamily />;
 }

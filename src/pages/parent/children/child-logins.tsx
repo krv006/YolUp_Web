@@ -18,6 +18,7 @@ import { Icon } from "@/shared/ui/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
 import { visitWhen } from "./family-format";
+import { kindIcon } from "./login-format";
 
 const TABS: LoginTab[] = ["all", "phone", "computer", "suspicious"];
 const PERIODS: LoginPeriod[] = ["today", "week", "month"];
@@ -25,10 +26,6 @@ const KINDS: DeviceKind[] = ["phone", "computer", "tablet"];
 const HEAD = "px-3 pb-3 text-left text-caption-strong tracking-wide text-ink-tertiary uppercase first:pl-5";
 const RADIUS = 40;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-function kindIcon(entry: LoginEntry): string {
-  return parentLogins.deviceKind(entry.userAgent) === "computer" ? "laptop" : "smartphone";
-}
 
 function StatusCell({ entry }: { entry: LoginEntry }) {
   const { t } = useTranslation("parent");
@@ -168,7 +165,7 @@ function FilterPopover({
   );
 }
 
-function LoginDetail({ entry, childName, onClose }: { entry: LoginEntry | null; childName: string; onClose: () => void }) {
+export function LoginDetail({ entry, childName, onClose }: { entry: LoginEntry | null; childName: string; onClose: () => void }) {
   const { t } = useTranslation("parent");
   const [browser, system] = (entry?.device ?? "").split(" · ");
   const first = childName.split(" ")[0] || childName;
@@ -206,7 +203,7 @@ function LoginDetail({ entry, childName, onClose }: { entry: LoginEntry | null; 
       footer={
         <button
           type="button"
-          className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+          className="flex h-13 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-5 text-title-sm font-semibold text-ink transition-colors hover:bg-subtle lg:h-11 lg:flex-none lg:text-button"
           onClick={onClose}
         >
           {t("logins.detail.close")}

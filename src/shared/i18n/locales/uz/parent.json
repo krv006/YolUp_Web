@@ -432,7 +432,8 @@
     "done": "Tayyor",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
-    "printSubtitle": "Farzandingiz shu login va parol bilan kiradi."
+    "printSubtitle": "Farzandingiz shu login va parol bilan kiradi.",
+    "share": "Ma’lumotlarni ulashish"
   },
   "attendanceView": {
     "eyebrow": "Kuzatuv",
@@ -628,6 +629,11 @@
     "filtered": {
       "title": "Kirish topilmadi",
       "text": "Tanlangan davr va filtr bo‘yicha kirish yo‘q."
+    },
+    "mobile": {
+      "today": "Bugun",
+      "yesterday": "Kecha",
+      "filterHint": "Kirishlar tarixini saralash"
     }
   },
   "homeworkView": {
@@ -911,6 +917,118 @@
       "text": "{{name}} sizni ota-ona sifatida olib tashladi. Qayta ulash uchun yangi so‘rov yuboring.",
       "ok": "Tushunarli",
       "again": "Qayta so‘rov yuborish"
+    }
+  },
+  "mobile": {
+    "tabs": {
+      "children": "Farzandlar",
+      "attendance": "Davomat",
+      "home": "Asosiy",
+      "homework": "Vazifalar",
+      "results": "Natijalar"
+    },
+    "greeting": {
+      "morning": "Xayrli tong 👋",
+      "day": "Xayrli kun 👋",
+      "evening": "Xayrli kech 👋",
+      "night": "Xayrli tun 👋"
+    },
+    "switcher": {
+      "title": "Farzandni tanlang",
+      "subtitle": "Ko‘rsatkichlar shu farzand bo‘yicha",
+      "selected": "{{name}} tanlandi — barcha bo‘limlar yangilandi",
+      "requested": "@{{username}} · so‘rov yuborilgan"
+    },
+    "hero": {
+      "joined": "Kirdi {{time}} · Chiqish hali yo‘q",
+      "watch": "Kuzatish",
+      "details": "Batafsil"
+    },
+    "stats": {
+      "lessons": "{{attended}} / {{total}} dars"
+    },
+    "connect": {
+      "link": "Login yoki FK-… taklif kodi orqali",
+      "create": "Farzandingiz uchun login yarating",
+      "how": "Qanday ishlaydi?"
+    },
+    "pending": {
+      "title": "So‘rov yuborildi",
+      "text": "@{{username}} ({{name}}) so‘rovingizni tasdiqlashi kerak. Tasdiqlangach ma’lumotlar shu yerda chiqadi."
+    },
+    "offline": "Internet yo‘q. Oxirgi ma’lumotlar: {{time}}",
+    "notifications": {
+      "empty": "Davomat, vazifalar va xavfsizlik haqidagi xabarlar shu yerda chiqadi.",
+      "settings": "Sozlamalarni ochish"
+    },
+    "profile": {
+      "privacy": "Maxfiylik va xavfsizlik",
+      "permissionsText": "Dars yozuvi, kamera, faollik tahlili",
+      "attendanceText": "Kirish-chiqish va fokus",
+      "permissionsFor": "{{name}} uchun ruxsatlar",
+      "permissionsHint": "Dars yozuvi, kamera va faollik tahlili"
+    },
+    "attendance": {
+      "since": "{{time}} dan beri · {{duration}}",
+      "absent": "sababsiz",
+      "failedTitle": "Davomat yuklanmadi",
+      "failedText": "Server hozir javob bermayapti. Bu sizning internetingiz bilan bog‘liq emas — birozdan so‘ng qayta urinib ko‘ring.",
+      "reload": "Qayta yuklash",
+      "filterHint": "Davomatni saralash",
+      "searchTitle": "Qidiruv"
+    },
+    "homework": {
+      "title": "Vazifa"
+    },
+    "results": {
+      "submitted": "{{submitted}} / {{total}} topshirildi"
+    },
+    "mock": {
+      "finished": "Tugagan imtihonlar",
+      "dayPattern": "d-MMMM",
+      "resultTitle": "Mock natija"
+    },
+    "settings": {
+      "role": "Ota-ona · {{count}} farzand",
+      "securityTitle": "Xavfsizlik — himoyalangan",
+      "securityText": "Parol, faol sessiyalar · {{count}} qurilma",
+      "info": "Profil ma’lumotlari",
+      "infoText": "Shaxsiy ma’lumotlarni ko‘rish",
+      "children": "{{count}} ta ulangan",
+      "childrenPending": "{{linked}} ta ulangan, {{pending}} ta kutilmoqda",
+      "loginsText": "Qurilma va IP bo‘yicha jurnal",
+      "notificationsText": "Xabarlar va eslatmalar",
+      "settingsText": "Til, mavzu, eslatmalar",
+      "username": "Username",
+      "roleLabel": "Rol",
+      "edit": "Profilni tahrirlash",
+      "photoTitle": "Profil rasmi",
+      "photoHint": "JPG yoki PNG",
+      "gallery": "Galereyadan tanlash",
+      "editTitle": "Tahrirlash",
+      "protected": "Hisobingiz himoyalangan · {{count}} ta faol qurilma",
+      "password": "Parol",
+      "changedAt": "Oxirgi marta {{when}}",
+      "sessions": "Faol sessiyalar · {{count}}",
+      "signOut": "Chiqarish",
+      "endOthersTitle": "Boshqa seanslardan chiqasizmi?",
+      "endOthersText": "{{count}} ta boshqa seans yopiladi. Shu qurilma ulangan holda qoladi.",
+      "endOthersConfirm": "Ha, chiqarish",
+      "fixFields": "{{count}} ta maydonni tuzating",
+      "currentPassword": "Joriy parol",
+      "secret": "Parolni hech kimga aytmang",
+      "strength": "Parol kuchi",
+      "levels": {
+        "weak": "Zaif",
+        "medium": "O‘rtacha",
+        "strong": "Kuchli"
+      },
+      "rules": {
+        "length": "Kamida 8 ta belgi",
+        "digit": "Kamida 1 ta raqam",
+        "cases": "Katta va kichik harf (tavsiya)"
+      },
+      "update": "Yangilash"
     }
   }
 }

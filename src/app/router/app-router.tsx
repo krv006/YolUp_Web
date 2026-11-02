@@ -137,6 +137,46 @@ const ParentChildrenPage = lazy(() =>
     default: module.ParentChildrenPage,
   }))
 );
+const ParentNotificationsPage = lazy(() =>
+  import("@/pages/parent/notifications/parent-notifications-page").then((module) => ({
+    default: module.ParentNotificationsPage,
+  }))
+);
+const ParentChildPermissionsPage = lazy(() =>
+  import("@/pages/parent/children/parent-child-permissions-page").then((module) => ({
+    default: module.ParentChildPermissionsPage,
+  }))
+);
+const AttendanceCalendarPage = lazy(() =>
+  import("@/pages/parent/attendance/attendance-calendar-page").then((module) => ({
+    default: module.AttendanceCalendarPage,
+  }))
+);
+const AttendanceSearchPage = lazy(() =>
+  import("@/pages/parent/attendance/attendance-search-page").then((module) => ({
+    default: module.AttendanceSearchPage,
+  }))
+);
+const ParentHomeworkItemPage = lazy(() =>
+  import("@/pages/parent/homework/parent-homework-item-page").then((module) => ({
+    default: module.ParentHomeworkItemPage,
+  }))
+);
+const ParentCoursePage = lazy(() =>
+  import("@/pages/parent/report/parent-course-page").then((module) => ({
+    default: module.ParentCoursePage,
+  }))
+);
+const ParentExamResultPage = lazy(() =>
+  import("@/pages/parent/exams/parent-exam-result-page").then((module) => ({
+    default: module.ParentExamResultPage,
+  }))
+);
+const ParentProfilePage = lazy(() =>
+  import("@/pages/parent/settings/parent-profile-page").then((module) => ({
+    default: module.ParentProfilePage,
+  }))
+);
 const ParentNotFoundPage = lazy(() =>
   import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
     default: module.ParentNotFoundPage,
@@ -430,16 +470,24 @@ export function AppRouter() {
                     <Route path="children" element={<ParentChildrenPage />} />
                     <Route path="children/:childId" element={<ParentChildProfilePage />} />
                     <Route path="children/:childId/logins" element={<ParentChildLoginsPage />} />
+                    <Route path="children/:childId/permissions" element={<ParentChildPermissionsPage />} />
                     <Route
                       path="attendance"
                       element={<ParentAttendancePage />}
                     />
+                    <Route path="attendance/calendar" element={<AttendanceCalendarPage />} />
+                    <Route path="attendance/search" element={<AttendanceSearchPage />} />
                     <Route path="homework" element={<ParentHomeworkPage />} />
+                    <Route path="homework/:assignmentId" element={<ParentHomeworkItemPage />} />
                     <Route path="exams" element={<ParentExamsPage />} />
+                    <Route path="exams/:examId" element={<ParentExamResultPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
+                    <Route path="grades/:courseId" element={<ParentCoursePage />} />
+                    <Route path="profile" element={<ParentProfilePage />} />
                     <Route path="settings" element={<ParentSettingsPage />} />
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
                     <Route path="help" element={<ParentHelpPage />} />
+                    <Route path="notifications" element={<ParentNotificationsPage />} />
                     <Route path="*" element={<ParentNotFoundPage />} />
                   </Route>
                 </Route>

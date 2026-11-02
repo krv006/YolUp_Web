@@ -14,9 +14,10 @@ export interface HomeHeroProps {
   todayCount: number;
   teachers: Map<string, string>;
   now: number;
+  compact?: boolean;
 }
 
-export function HomeHero({ childName, hero, week, todayCount, teachers, now }: HomeHeroProps) {
+export function HomeHero({ childName, hero, week, todayCount, teachers, now, compact = false }: HomeHeroProps) {
   const { t } = useTranslation("parent");
   const navigate = useNavigate();
   const first = childName.split(" ")[0] || childName;
@@ -65,19 +66,52 @@ export function HomeHero({ childName, hero, week, todayCount, teachers, now }: H
   }
 
   const focus = liveRow ? parentHome.liveFocusPercent(liveRow, now) : null;
+  const chipNode = (
+    <span
+      className={`flex h-6 w-fit items-center gap-1.5 rounded-full px-2.5 text-caption-strong ${
+        chip.live ? "bg-surface text-error-text" : "bg-on-brand-subtle"
+      }`}
+    >
+      {chip.live ? <span className="size-2 rounded-full bg-danger" /> : <Icon name="schedule" size={14} />}
+      {chip.label}
+    </span>
+  );
+
+  if (compact)
+    return (
+      <section className="relative flex flex-col gap-4 overflow-hidden rounded-3xl bg-brand px-5 py-5 text-on-action">
+        <span className="pointer-events-none absolute -top-20 -right-16 size-56 rounded-full bg-on-brand-subtle" aria-hidden="true" />
+        <span className="pointer-events-none absolute -bottom-10 -left-12 size-28 rounded-full bg-on-brand-subtle" aria-hidden="true" />
+        <div className="relative flex flex-col gap-2">
+          {chipNode}
+          <h2 className="font-heading text-[20px]/7 font-semibold text-balance">{title}</h2>
+          <p className="text-body-sm opacity-85">{meta}</p>
+        </div>
+        <div className="relative">
+          {liveRow ? <LiveFocus row={liveRow} focus={focus} compact /> : <WeekStrip week={week} now={now} compact />}
+        </div>
+        <div className="relative flex items-center gap-3">
+          <small className="min-w-0 flex-1 text-body-sm opacity-90">
+            {liveRow?.joinedAt
+              ? t("mobile.hero.joined", { time: clock(liveRow.joinedAt) })
+              : t("home.hero.weekSummary", { attended: week.attended, total: week.total })}
+          </small>
+          <button
+            type="button"
+            className="flex h-11 shrink-0 items-center rounded-full bg-surface px-4 text-button text-ink transition-opacity hover:opacity-90"
+            onClick={() => navigate(ROUTES.parent.attendance)}
+          >
+            {liveRow ? t("mobile.hero.watch") : t("mobile.hero.details")}
+          </button>
+        </div>
+      </section>
+    );
 
   return (
     <section className="relative flex min-h-48 overflow-hidden rounded-3xl bg-brand px-7 py-6 text-on-action">
       <span className="pointer-events-none absolute -bottom-36 -left-16 size-72 rounded-full bg-on-brand-subtle" aria-hidden="true" />
       <div className="relative flex min-w-0 flex-1 flex-col items-start gap-2">
-        <span
-          className={`flex h-6 items-center gap-1.5 rounded-full px-2.5 text-caption-strong ${
-            chip.live ? "bg-surface text-error-text" : "bg-on-brand-subtle"
-          }`}
-        >
-          {chip.live ? <span className="size-2 rounded-full bg-danger" /> : <Icon name="schedule" size={14} />}
-          {chip.label}
-        </span>
+        {chipNode}
         <h2 className="mt-1 font-heading text-[20px]/7 font-semibold text-balance">{title}</h2>
         <p className="text-body-sm opacity-85">{meta}</p>
         <button
@@ -96,7 +130,7 @@ export function HomeHero({ childName, hero, week, todayCount, teachers, now }: H
   );
 }
 
-function LiveFocus({ row, focus }: { row: AttendanceRow; focus: number | null }) {
+function LiveFocus({ row, focus, compact = false }: { row: AttendanceRow; focus: number | null; compact?: boolean }) {
   const { t } = useTranslation("parent");
   return (
     <div className="flex flex-col gap-3 rounded-2xl bg-on-brand-subtle px-4 py-4">
@@ -107,13 +141,13 @@ function LiveFocus({ row, focus }: { row: AttendanceRow; focus: number | null })
       <span className="h-2 overflow-hidden rounded-full bg-on-brand-subtle">
         <span className="block h-full rounded-full bg-success" style={{ width: `${focus ?? 0}%` }} />
       </span>
-      <small className="text-caption opacity-85">
+      {compact ? null : <small className="text-caption opacity-85">
         {focus === null && !row.attentionTotal
           ? t("home.hero.focusPending")
           : row.attentionTotal
             ? t("home.hero.focusMeta", { time: clock(row.joinedAt ?? ""), answered: row.attentionAnswered, total: row.attentionTotal })
             : t("home.hero.focusMetaNoChecks", { time: clock(row.joinedAt ?? "") })}
-      </small>
+      </small>}
     </div>
   );
 }
@@ -126,7 +160,7 @@ const DOT: Record<string, string> = {
   none: "bg-on-brand-subtle",
 };
 
-function WeekStrip({ week, now }: { week: WeekSummary; now: number }) {
+function WeekStrip({ week, now, compact = false }: { week: WeekSummary; now: number; compact?: boolean }) {
   const { t } = useTranslation("parent");
   const labels = t("home.hero.weekdays", { returnObjects: true }) as string[];
   const today = new Date(now).toDateString();
@@ -150,10 +184,12 @@ function WeekStrip({ week, now }: { week: WeekSummary; now: number }) {
           </span>
         ))}
       </div>
-      <small className="text-right text-caption opacity-85">
-        {t("home.hero.weekSummary", { attended: week.attended, total: week.total })}
-        {week.late ? t("home.hero.weekLate", { count: week.late }) : ""}
-      </small>
+      {compact ? null : (
+        <small className="text-right text-caption opacity-85">
+          {t("home.hero.weekSummary", { attended: week.attended, total: week.total })}
+          {week.late ? t("home.hero.weekLate", { count: week.late }) : ""}
+        </small>
+      )}
     </>
   );
 }

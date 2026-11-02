@@ -46,7 +46,8 @@ export {
   notificationContent,
   notificationLines,
 } from "./lib/notification-display";
-export type { NotificationGroupKey } from "./lib/notification-display";
+export type { NotificationCategory, NotificationGroupKey } from "./lib/notification-display";
+export { NOTIFICATION_CATEGORIES, notificationCategory } from "./lib/notification-display";
 export { useNotificationFeed } from "./model/use-notification-feed";
 export { usePushNotifications } from "./model/use-push-notifications";
 export type { PushNotificationsState } from "./model/use-push-notifications";

@@ -66,14 +66,14 @@ export function ResultsCoursePanel({
         <>
           <button
             type="button"
-            className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+            className="flex h-13 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-5 text-title-sm font-semibold text-ink transition-colors hover:bg-subtle lg:h-11 lg:flex-none lg:text-button"
             onClick={onClose}
           >
             {t("results.panel.close")}
           </button>
           <button
             type="button"
-            className="flex h-11 items-center rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong"
+            className="flex h-13 flex-1 items-center justify-center rounded-full bg-brand px-5 text-title-sm font-semibold text-on-action transition-colors hover:bg-brand-strong lg:h-11 lg:flex-none lg:text-button"
             onClick={() => navigate(ROUTES.parent.attendance)}
           >
             {t("results.panel.attendance")}
