@@ -137,6 +137,11 @@ const ParentChildrenPage = lazy(() =>
     default: module.ParentChildrenPage,
   }))
 );
+const ParentChildLoginsPage = lazy(() =>
+  import("@/pages/parent/children/parent-child-logins-page").then((module) => ({
+    default: module.ParentChildLoginsPage,
+  }))
+);
 const ParentChildProfilePage = lazy(() =>
   import("@/pages/parent/children/parent-child-profile-page").then((module) => ({
     default: module.ParentChildProfilePage,
@@ -409,6 +414,7 @@ export function AppRouter() {
                     <Route path="dashboard" element={<ParentDashboardPage />} />
                     <Route path="children" element={<ParentChildrenPage />} />
                     <Route path="children/:childId" element={<ParentChildProfilePage />} />
+                    <Route path="children/:childId/logins" element={<ParentChildLoginsPage />} />
                     <Route
                       path="attendance"
                       element={<ParentAttendancePage />}

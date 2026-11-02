@@ -1,7 +1,5 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { LoginHistoryDialog } from "@/modules/auth";
 import type { AttentionItem } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { formatDayTime } from "@/shared/lib";
@@ -12,17 +10,14 @@ const DAY_MS = 86_400_000;
 export function AttentionCard({
   items,
   childId,
-  childName,
   now,
 }: {
   items: AttentionItem[];
   childId: string;
-  childName: string;
   now: number;
 }) {
   const { t } = useTranslation("parent");
   const navigate = useNavigate();
-  const [loginsOpen, setLoginsOpen] = useState(false);
   const today = new Date(now).toDateString();
   const tomorrow = new Date(now + DAY_MS).toDateString();
 
@@ -55,7 +50,7 @@ export function AttentionCard({
               tone = "bg-danger-bg text-error-text";
               title = t("home.attention.login");
               meta = `${item.device} · ${formatDayTime(item.at)}`;
-              open = () => setLoginsOpen(true);
+              open = () => navigate(ROUTES.parent.childLogins(childId));
             } else {
               icon = "emoji-events";
               tone = "bg-accent-blue-bg text-accent-blue-fg";
@@ -86,13 +81,6 @@ export function AttentionCard({
           <li className="px-4 py-7 text-center text-body-sm text-ink-secondary">{t("home.attention.empty")}</li>
         )}
       </ul>
-      <LoginHistoryDialog
-        open={loginsOpen}
-        onOpenChange={setLoginsOpen}
-        studentId={childId}
-        title={t("children.loginHistoryTitle", { name: childName })}
-        description={t("children.loginHistoryDescription")}
-      />
     </section>
   );
 }

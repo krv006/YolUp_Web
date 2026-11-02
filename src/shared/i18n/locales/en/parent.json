@@ -365,7 +365,6 @@
     "logins": "Sign-in history",
     "newDevices": "{{count}} new devices",
     "noNewDevices": "No new devices in the last 30 days",
-    "loginsDescription": "Sign-ins to {{name}}’s account",
     "consentOn": "{{label}} permission turned on",
     "consentOff": "{{label}} permission turned off",
     "consentOffDialog": {
@@ -559,6 +558,80 @@
         "date": "Date",
         "teacher": "Teacher"
       }
+    }
+  },
+  "logins": {
+    "title": "Sign-in history",
+    "tabs": {
+      "all": "All",
+      "phone": "Phone",
+      "computer": "Computer",
+      "suspicious": "Suspicious"
+    },
+    "periods": {
+      "today": "Today",
+      "week": "Last 7 days",
+      "month": "Last 30 days"
+    },
+    "filter": {
+      "title": "Filter",
+      "period": "Period",
+      "periodShort": {
+        "today": "Today",
+        "week": "7 days",
+        "month": "30 days"
+      },
+      "kinds": "Device type",
+      "kind": {
+        "phone": "Phone",
+        "computer": "Computer",
+        "tablet": "Tablet"
+      },
+      "clear": "Reset",
+      "apply": "Apply"
+    },
+    "columns": {
+      "device": "Device",
+      "ip": "IP address",
+      "location": "Location",
+      "time": "Time",
+      "status": "Status"
+    },
+    "status": {
+      "newDevice": "New device",
+      "newIp": "New IP",
+      "known": "Known"
+    },
+    "summary": {
+      "suspicious": "{{count}} suspicious sign-ins",
+      "ok": "All good",
+      "stats": "{{period}}: {{count}} sign-ins, {{devices}} devices",
+      "show": "Show suspicious"
+    },
+    "tip": {
+      "title": "Security tip",
+      "text": "If you see an unfamiliar device, talk to your child and change their password."
+    },
+    "detail": {
+      "newTitle": "Sign-in from a new device",
+      "title": "Sign-in details",
+      "subtitle": "{{name}}’s account · {{when}}",
+      "device": "Device",
+      "browser": "Browser",
+      "ip": "IP address",
+      "location": "Location",
+      "time": "Time",
+      "unknownLocation": "Location unknown",
+      "warning": "If this wasn’t {{name}}, talk to your child and change the password",
+      "close": "Close"
+    },
+    "empty": {
+      "title": "No sign-ins yet",
+      "text": "When your child signs in, the device, IP and time will appear here."
+    },
+    "filtered": {
+      "title": "No sign-ins found",
+      "text": "There are no sign-ins for the selected period and filter."
     }
   }
 }

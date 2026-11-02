@@ -365,7 +365,6 @@
     "logins": "Kirishlar tarixi",
     "newDevices": "{{count}} ta yangi qurilma",
     "noNewDevices": "Oxirgi 30 kunda yangi qurilma yo‘q",
-    "loginsDescription": "{{name}} hisobiga kirishlar",
     "consentOn": "{{label}} ruxsati yoqildi",
     "consentOff": "{{label}} ruxsati o‘chirildi",
     "consentOffDialog": {
@@ -559,6 +558,80 @@
         "date": "Sana",
         "teacher": "O‘qituvchi"
       }
+    }
+  },
+  "logins": {
+    "title": "Kirishlar tarixi",
+    "tabs": {
+      "all": "Barchasi",
+      "phone": "Telefon",
+      "computer": "Kompyuter",
+      "suspicious": "Shubhali"
+    },
+    "periods": {
+      "today": "Bugun",
+      "week": "Oxirgi 7 kun",
+      "month": "Oxirgi 30 kun"
+    },
+    "filter": {
+      "title": "Filtr",
+      "period": "Davr",
+      "periodShort": {
+        "today": "Bugun",
+        "week": "7 kun",
+        "month": "30 kun"
+      },
+      "kinds": "Qurilma turi",
+      "kind": {
+        "phone": "Telefon",
+        "computer": "Kompyuter",
+        "tablet": "Planshet"
+      },
+      "clear": "Tozalash",
+      "apply": "Qo‘llash"
+    },
+    "columns": {
+      "device": "Qurilma",
+      "ip": "IP manzil",
+      "location": "Joylashuv",
+      "time": "Vaqt",
+      "status": "Holat"
+    },
+    "status": {
+      "newDevice": "Yangi qurilma",
+      "newIp": "Yangi IP",
+      "known": "Tanish"
+    },
+    "summary": {
+      "suspicious": "{{count}} ta shubhali kirish",
+      "ok": "Hammasi joyida",
+      "stats": "{{period}}: {{count}} ta kirish, {{devices}} qurilma",
+      "show": "Shubhalini ko‘rish"
+    },
+    "tip": {
+      "title": "Xavfsizlik maslahati",
+      "text": "Notanish qurilma ko‘rsangiz, farzandingiz bilan gaplashing va parolini almashtiring."
+    },
+    "detail": {
+      "newTitle": "Yangi qurilmadan kirish",
+      "title": "Kirish tafsiloti",
+      "subtitle": "{{name}} hisobiga · {{when}}",
+      "device": "Qurilma",
+      "browser": "Brauzer",
+      "ip": "IP manzil",
+      "location": "Joylashuv",
+      "time": "Vaqt",
+      "unknownLocation": "Joylashuv aniqlanmagan",
+      "warning": "Bu {{name}} bo‘lmasa, farzandingiz bilan gaplashib, parolini almashtiring",
+      "close": "Yopish"
+    },
+    "empty": {
+      "title": "Hali kirishlar yo‘q",
+      "text": "Farzandingiz ilovaga kirganda qurilma, IP va vaqt shu yerda ko‘rinadi."
+    },
+    "filtered": {
+      "title": "Kirish topilmadi",
+      "text": "Tanlangan davr va filtr bo‘yicha kirish yo‘q."
     }
   }
 }

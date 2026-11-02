@@ -72,6 +72,7 @@ export const ROUTES = Object.freeze({
     dashboard: "/parent/dashboard",
     children: "/parent/children",
     child: (childId: string) => `/parent/children/${segment(childId)}`,
+    childLogins: (childId: string) => `/parent/children/${segment(childId)}/logins`,
     attendance: "/parent/attendance",
     homework: "/parent/homework",
     exams: "/parent/exams",

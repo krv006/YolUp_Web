@@ -37,3 +37,5 @@ export * as parentAttendance from "./lib/parent-attendance";
 export type { AttendanceEntry, AttendancePeriod, AttendanceStats, AttendanceStatus } from "./lib/parent-attendance";
 export { printTable } from "./lib/print-table";
 export { downloadFile } from "./lib/download-file";
+export * as parentLogins from "./lib/parent-logins";
+export type { DeviceKind, LoginEntry, LoginPeriod, LoginTab } from "./lib/parent-logins";

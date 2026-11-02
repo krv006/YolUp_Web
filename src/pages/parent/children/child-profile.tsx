@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { LoginHistoryDialog } from "@/modules/auth";
 import { useSetParentConsent, type ConsentKind } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { useOnlineStatus } from "@/shared/model";
@@ -50,7 +49,6 @@ export function ChildProfile({ childId }: { childId: string }) {
   const online = useOnlineStatus();
   const profile = useChildProfile(childId);
   const setConsent = useSetParentConsent({ notify: false });
-  const [loginsOpen, setLoginsOpen] = useState(false);
   const [turningOff, setTurningOff] = useState<ConsentKind | null>(null);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
@@ -217,7 +215,7 @@ export function ChildProfile({ childId }: { childId: string }) {
               <button
                 type="button"
                 className="flex items-center gap-4 rounded-[20px] bg-surface px-5 py-4 text-left transition-colors hover:bg-subtle"
-                onClick={() => setLoginsOpen(true)}
+                onClick={() => navigate(ROUTES.parent.childLogins(child.id))}
               >
                 <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-subtle text-brand">
                   <Icon name="history" size={22} />
@@ -255,15 +253,6 @@ export function ChildProfile({ childId }: { childId: string }) {
         }}
       />
 
-      {child ? (
-        <LoginHistoryDialog
-          open={loginsOpen}
-          onOpenChange={setLoginsOpen}
-          studentId={child.id}
-          title={t("profile.logins")}
-          description={t("profile.loginsDescription", { name: child.name })}
-        />
-      ) : null}
     </div>
   );
 }
