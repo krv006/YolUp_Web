@@ -15,13 +15,21 @@ const TILE: Record<string, string> = {
   missed: "bg-danger-bg text-error-text",
 };
 
-export function HomeRecent({ items, now }: { items: Array<{ lesson: Lesson; outcome: LessonOutcome }>; now: number }) {
+export function HomeRecent({
+  items,
+  now,
+  onAll,
+}: {
+  items: Array<{ lesson: Lesson; outcome: LessonOutcome }>;
+  now: number;
+  onAll?: () => void;
+}) {
   const { t } = useTranslation("parent");
   return (
     <section className="flex flex-col gap-3">
       <div className="flex items-center gap-3">
         <strong className="flex-1 text-title text-ink">{t("home.recent.title")}</strong>
-        <Link to={ROUTES.parent.attendance} className="text-body-sm font-medium text-brand hover:opacity-80">
+        <Link to={ROUTES.parent.attendance} onClick={onAll} className="text-body-sm font-medium text-brand hover:opacity-80">
           {t("home.recent.all")}
         </Link>
       </div>

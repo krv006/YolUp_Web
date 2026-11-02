@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CreateChildDialog, LinkChildDialog, type ParentLink } from "@/modules/parent";
+import { AddChildDialog, CreateChildDialog, LinkChildDialog, type ParentLink } from "@/modules/parent";
 import { formatRelativeShort } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
@@ -123,7 +123,7 @@ export function PendingLink({ link }: { link: ParentLink }) {
           <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
         </button>
       </div>
-      <LinkChildDialog open={linkOpen} onOpenChange={setLinkOpen} />
+      <AddChildDialog open={linkOpen} onOpenChange={setLinkOpen} />
     </div>
   );
 }

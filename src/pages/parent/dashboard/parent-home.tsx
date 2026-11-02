@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { formatDayTime, formatLocalized } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
+import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
 import { greetingKey } from "./home-format";
-import { HomeHeader } from "./home-header";
 import { HomeHero } from "./home-hero";
 import { HomeRecent } from "./home-recent";
 import { AttentionCard, ScoreCard } from "./home-side";
@@ -12,7 +12,7 @@ import { ConnectChild, PendingLink } from "./home-empty";
 import { useParentHome } from "./use-parent-home";
 
 export function ParentHome() {
-  const { t } = useTranslation(["parent", "common"]);
+  const { t } = useTranslation("parent");
   const home = useParentHome();
   const { status, child, view, now } = home;
   const date = formatLocalized(now, t("home.datePattern"));
@@ -36,20 +36,10 @@ export function ParentHome() {
 
   return (
     <div className="flex flex-col gap-6 px-8 py-7">
-      <HomeHeader eyebrow={eyebrow} title={title} />
+      <ParentPageHeader eyebrow={eyebrow} title={title} />
 
       {home.online && home.failed && (status === "ready" || status === "error") ? (
-        <div className="-mb-1 flex items-center gap-3 rounded-2xl bg-surface-inverse px-5 py-3 text-body-sm text-ink-inverse">
-          <Icon name="warning" size={20} className="shrink-0" />
-          <span className="min-w-0 flex-1">{t("home.serverError")}</span>
-          <button
-            type="button"
-            className="flex h-9 shrink-0 items-center rounded-full bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle"
-            onClick={home.retry}
-          >
-            {t("common:actions.retry")}
-          </button>
-        </div>
+        <ParentErrorBanner onRetry={home.retry} />
       ) : null}
 
       {status === "connect" ? <ConnectChild /> : null}

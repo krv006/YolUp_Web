@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useHomeworkReport } from "@/modules/homework";
-import { LinkChildDialog, useParentLinks, useSelectedChild } from "@/modules/parent";
+import { AddChildDialog, useParentLinks, useSelectedChild } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
@@ -154,7 +154,7 @@ export function ChildSwitcher() {
         ) : null}
       </div>
 
-      <LinkChildDialog open={linkOpen} onOpenChange={setLinkOpen} />
+      <AddChildDialog open={linkOpen} onOpenChange={setLinkOpen} />
     </div>
   );
 }
