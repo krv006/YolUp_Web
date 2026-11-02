@@ -43,3 +43,4 @@ export * as parentHomework from "./lib/parent-homework";
 export type { HomeworkFilter, HomeworkState } from "./lib/parent-homework";
 export * as parentResults from "./lib/parent-results";
 export type { MonthHomework, SubjectRow } from "./lib/parent-results";
+export { passwordStrength } from "./lib/password-strength";

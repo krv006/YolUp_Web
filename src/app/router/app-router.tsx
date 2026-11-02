@@ -172,6 +172,11 @@ const ParentExamResultPage = lazy(() =>
     default: module.ParentExamResultPage,
   }))
 );
+const ParentProfilePage = lazy(() =>
+  import("@/pages/parent/settings/parent-profile-page").then((module) => ({
+    default: module.ParentProfilePage,
+  }))
+);
 const ParentNotFoundPage = lazy(() =>
   import("@/pages/parent/settings/parent-not-found-page").then((module) => ({
     default: module.ParentNotFoundPage,
@@ -478,6 +483,7 @@ export function AppRouter() {
                     <Route path="exams/:examId" element={<ParentExamResultPage />} />
                     <Route path="grades" element={<ParentReportPage />} />
                     <Route path="grades/:courseId" element={<ParentCoursePage />} />
+                    <Route path="profile" element={<ParentProfilePage />} />
                     <Route path="settings" element={<ParentSettingsPage />} />
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
                     <Route path="help" element={<ParentHelpPage />} />

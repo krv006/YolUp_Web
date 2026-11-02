@@ -987,6 +987,48 @@
       "finished": "Finished exams",
       "dayPattern": "MMMM d",
       "resultTitle": "Mock result"
+    },
+    "settings": {
+      "role": "Parent · {{count}} children",
+      "securityTitle": "Security — protected",
+      "securityText": "Password, active sessions · {{count}} devices",
+      "info": "Profile details",
+      "infoText": "View personal details",
+      "children": "{{count}} linked",
+      "childrenPending": "{{linked}} linked, {{pending}} pending",
+      "loginsText": "Log by device and IP",
+      "notificationsText": "Messages and reminders",
+      "settingsText": "Language, theme, reminders",
+      "username": "Username",
+      "roleLabel": "Role",
+      "edit": "Edit profile",
+      "photoTitle": "Profile photo",
+      "photoHint": "JPG or PNG",
+      "gallery": "Choose from gallery",
+      "editTitle": "Edit",
+      "protected": "Your account is protected · {{count}} active devices",
+      "password": "Password",
+      "changedAt": "Last changed {{when}}",
+      "sessions": "Active sessions · {{count}}",
+      "signOut": "Sign out",
+      "endOthersTitle": "Sign out of other sessions?",
+      "endOthersText": "{{count}} other sessions will be closed. This device stays signed in.",
+      "endOthersConfirm": "Yes, sign out",
+      "fixFields": "Fix {{count}} fields",
+      "currentPassword": "Current password",
+      "secret": "Never share your password",
+      "strength": "Password strength",
+      "levels": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+      },
+      "rules": {
+        "length": "At least 8 characters",
+        "digit": "At least 1 digit",
+        "cases": "Upper and lower case (recommended)"
+      },
+      "update": "Update"
     }
   }
 }

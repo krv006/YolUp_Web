@@ -20,7 +20,8 @@ type Section = (typeof SECTIONS)[number]["id"];
 export function ParentSettings() {
   const { t } = useTranslation("parent");
   const { section = "profile" } = useParams();
-  if (!SECTIONS.some((item) => item.id === section)) return <Navigate to={ROUTES.parent.settings()} replace />;
+  if (section === "password") return <Navigate to={ROUTES.parent.settings("security")} replace />;
+  if (!SECTIONS.some((item) => item.id === section)) return <Navigate to={ROUTES.parent.settings("profile")} replace />;
   const active = section as Section;
 
   return (

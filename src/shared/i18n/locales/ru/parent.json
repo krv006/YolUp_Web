@@ -987,6 +987,48 @@
       "finished": "Завершённые экзамены",
       "dayPattern": "d MMMM",
       "resultTitle": "Результат теста"
+    },
+    "settings": {
+      "role": "Родитель · детей: {{count}}",
+      "securityTitle": "Безопасность — защищено",
+      "securityText": "Пароль, активные сеансы · устройств: {{count}}",
+      "info": "Данные профиля",
+      "infoText": "Личные данные",
+      "children": "Подключено: {{count}}",
+      "childrenPending": "Подключено: {{linked}}, ожидает: {{pending}}",
+      "loginsText": "Журнал по устройствам и IP",
+      "notificationsText": "Сообщения и напоминания",
+      "settingsText": "Язык, тема, напоминания",
+      "username": "Логин",
+      "roleLabel": "Роль",
+      "edit": "Изменить профиль",
+      "photoTitle": "Фото профиля",
+      "photoHint": "JPG или PNG",
+      "gallery": "Выбрать из галереи",
+      "editTitle": "Редактирование",
+      "protected": "Аккаунт защищён · активных устройств: {{count}}",
+      "password": "Пароль",
+      "changedAt": "Последний раз {{when}}",
+      "sessions": "Активные сеансы · {{count}}",
+      "signOut": "Выйти",
+      "endOthersTitle": "Выйти из других сеансов?",
+      "endOthersText": "Будет закрыто сеансов: {{count}}. Это устройство останется подключённым.",
+      "endOthersConfirm": "Да, выйти",
+      "fixFields": "Исправьте полей: {{count}}",
+      "currentPassword": "Текущий пароль",
+      "secret": "Никому не сообщайте пароль",
+      "strength": "Надёжность пароля",
+      "levels": {
+        "weak": "Слабый",
+        "medium": "Средний",
+        "strong": "Надёжный"
+      },
+      "rules": {
+        "length": "Минимум 8 символов",
+        "digit": "Минимум 1 цифра",
+        "cases": "Заглавные и строчные буквы (желательно)"
+      },
+      "update": "Обновить"
     }
   }
 }
