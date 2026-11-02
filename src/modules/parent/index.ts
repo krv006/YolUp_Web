@@ -33,3 +33,7 @@ export * as parentHome from "./lib/parent-home";
 export type { AttentionItem, HeroState, LessonOutcome, WeekSummary } from "./lib/parent-home";
 export * as parentFamily from "./lib/parent-family";
 export type { ChildPeriodSummary, CourseSchedule, FamilyPeriod } from "./lib/parent-family";
+export * as parentAttendance from "./lib/parent-attendance";
+export type { AttendanceEntry, AttendancePeriod, AttendanceStats, AttendanceStatus } from "./lib/parent-attendance";
+export { printTable } from "./lib/print-table";
+export { downloadFile } from "./lib/download-file";

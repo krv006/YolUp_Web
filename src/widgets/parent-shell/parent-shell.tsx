@@ -7,12 +7,13 @@ import { ParentBell } from "./parent-bell";
 import { ParentSidebar } from "./parent-sidebar";
 
 const RESULTS = [ROUTES.parent.grades, ROUTES.parent.exams];
+const OWN_HEADER = [ROUTES.parent.children, ROUTES.parent.attendance];
 
 export function ParentShell() {
   const { t } = useTranslation("parent");
   const { pathname } = useLocation();
   const ownHeader =
-    pathname.replace(/\/$/, "") === ROUTES.parent.dashboard || pathname.startsWith(ROUTES.parent.children);
+    pathname.replace(/\/$/, "") === ROUTES.parent.dashboard || OWN_HEADER.some((path) => pathname.startsWith(path));
   const results = RESULTS.some((path) => pathname.startsWith(path));
 
   return (

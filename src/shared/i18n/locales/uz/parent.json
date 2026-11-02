@@ -438,5 +438,127 @@
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
     "printSubtitle": "Farzandingiz shu login va parol bilan kiradi."
+  },
+  "attendanceView": {
+    "eyebrow": "Kuzatuv",
+    "title": "Davomat",
+    "reportButton": "Hisobot",
+    "search": "Dars yoki guruhni qidirish",
+    "clearSearch": "Qidiruvni tozalash",
+    "periods": {
+      "week": "Hafta",
+      "month": "Oy",
+      "all": "Hammasi"
+    },
+    "columns": {
+      "lesson": "Dars",
+      "in": "Kirdi",
+      "out": "Chiqdi",
+      "duration": "Davomiylik",
+      "focus": "Fokus",
+      "status": "Holat"
+    },
+    "status": {
+      "live": "Jonli",
+      "attended": "Qatnashdi",
+      "late": "+{{minutes}} daq",
+      "missed": "Kelmadi",
+      "upcoming": "Rejada"
+    },
+    "legend": {
+      "attended": "Qatnashdi",
+      "late": "Kechikdi",
+      "missed": "Kelmadi",
+      "upcoming": "Rejada"
+    },
+    "summary": {
+      "label": "davomat",
+      "insight": "O‘rtacha fokus {{focus}}% — eng yaxshi kun: {{day}}",
+      "insightNoDay": "O‘rtacha fokus {{focus}}%",
+      "empty": "Statistika hali yo‘q"
+    },
+    "calendar": {
+      "prev": "Oldingi oy",
+      "next": "Keyingi oy",
+      "weekdays": [
+        "Dush",
+        "Sesh",
+        "Chor",
+        "Pay",
+        "Jum",
+        "Shan",
+        "Yak"
+      ],
+      "list": "Jadval",
+      "calendar": "Kalendar",
+      "summary": "{{month}} xulosasi",
+      "lessons": "Darslar",
+      "attended": "Qatnashdi",
+      "late": "Kechikdi",
+      "missed": "Kelmadi",
+      "noLessons": "Bu kunda dars yo‘q"
+    },
+    "detail": {
+      "datePattern": "d-MMMM, EEEE",
+      "in": "Kirdi",
+      "out": "Chiqdi",
+      "duration": "Davomiylik",
+      "focused": "Fokusda",
+      "away": "Ilovadan chiqdi",
+      "focus": "Fokus",
+      "attention": "Diqqat",
+      "exits": "Chalg‘ish",
+      "close": "Yopish",
+      "notJoined": "Farzandingiz bu darsga kirmagan.",
+      "upcoming": "Dars {{time}} da boshlanadi."
+    },
+    "filter": {
+      "title": "Filtr",
+      "period": "Davr",
+      "periods": {
+        "week": "Bu hafta",
+        "month": "Bu oy",
+        "quarter": "3 oy"
+      },
+      "group": "Guruh",
+      "allGroups": "Barcha guruhlar",
+      "status": "Holat",
+      "clear": "Tozalash",
+      "apply": "Qo‘llash"
+    },
+    "empty": {
+      "title": "Hali darslar bo‘lmagan",
+      "text": "Farzandingiz birinchi darsga qatnashgach, kirish-chiqish vaqtlari va fokus shu yerda chiqadi."
+    },
+    "notFound": {
+      "title": "Hech narsa topilmadi",
+      "text": "“{{query}}” bo‘yicha dars yoki guruh yo‘q. Boshqa nom bilan qidirib ko‘ring."
+    },
+    "filtered": {
+      "title": "Dars topilmadi",
+      "text": "Tanlangan davr va filtr bo‘yicha dars yo‘q."
+    },
+    "report": {
+      "title": "Davomat hisoboti",
+      "subtitle": "{{name}} · barcha guruhlar",
+      "period": "Davr",
+      "periodOption": "{{month}} · {{count}} ta dars",
+      "pdf": "PDF",
+      "pdfText": "Chop etish va ulashish uchun",
+      "excel": "Excel",
+      "excelText": "Jadval ko‘rinishida tahlil",
+      "focus": "Fokus tahlilini qo‘shish",
+      "focusText": "Har dars bo‘yicha fokus foizi",
+      "cancel": "Bekor qilish",
+      "download": "Hisobotni yuklash",
+      "done": "Hisobot yuklandi — {{file}}",
+      "heading": "Davomat hisoboti — {{name}}",
+      "filePrefix": "davomat",
+      "datePattern": "d-MMMM, EEEEEE",
+      "columns": {
+        "date": "Sana",
+        "teacher": "O‘qituvchi"
+      }
+    }
   }
 }

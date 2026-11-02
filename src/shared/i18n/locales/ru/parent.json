@@ -438,5 +438,127 @@
     "printTitle": "YolUp — {{username}}",
     "printHeading": "Аккаунт YolUp: {{name}}",
     "printSubtitle": "Ребёнок входит с этим логином и паролем."
+  },
+  "attendanceView": {
+    "eyebrow": "Наблюдение",
+    "title": "Посещаемость",
+    "reportButton": "Отчёт",
+    "search": "Поиск урока или группы",
+    "clearSearch": "Очистить поиск",
+    "periods": {
+      "week": "Неделя",
+      "month": "Месяц",
+      "all": "Все"
+    },
+    "columns": {
+      "lesson": "Урок",
+      "in": "Вход",
+      "out": "Выход",
+      "duration": "Длительность",
+      "focus": "Фокус",
+      "status": "Статус"
+    },
+    "status": {
+      "live": "В эфире",
+      "attended": "Был",
+      "late": "+{{minutes}} мин",
+      "missed": "Не был",
+      "upcoming": "Запланирован"
+    },
+    "legend": {
+      "attended": "Был",
+      "late": "Опоздал",
+      "missed": "Не был",
+      "upcoming": "Запланирован"
+    },
+    "summary": {
+      "label": "посещаемость",
+      "insight": "Средний фокус {{focus}}% — лучший день: {{day}}",
+      "insightNoDay": "Средний фокус {{focus}}%",
+      "empty": "Статистики пока нет"
+    },
+    "calendar": {
+      "prev": "Предыдущий месяц",
+      "next": "Следующий месяц",
+      "weekdays": [
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб",
+        "Вс"
+      ],
+      "list": "Таблица",
+      "calendar": "Календарь",
+      "summary": "Итоги: {{month}}",
+      "lessons": "Уроки",
+      "attended": "Был",
+      "late": "Опоздал",
+      "missed": "Не был",
+      "noLessons": "В этот день уроков нет"
+    },
+    "detail": {
+      "datePattern": "d MMMM, EEEE",
+      "in": "Вход",
+      "out": "Выход",
+      "duration": "Длительность",
+      "focused": "В фокусе",
+      "away": "Выходил из приложения",
+      "focus": "Фокус",
+      "attention": "Внимание",
+      "exits": "Отвлечения",
+      "close": "Закрыть",
+      "notJoined": "Ребёнок не заходил на этот урок.",
+      "upcoming": "Урок начнётся в {{time}}."
+    },
+    "filter": {
+      "title": "Фильтр",
+      "period": "Период",
+      "periods": {
+        "week": "Эта неделя",
+        "month": "Этот месяц",
+        "quarter": "3 месяца"
+      },
+      "group": "Группа",
+      "allGroups": "Все группы",
+      "status": "Статус",
+      "clear": "Сбросить",
+      "apply": "Применить"
+    },
+    "empty": {
+      "title": "Уроков пока не было",
+      "text": "Когда ребёнок посетит первый урок, здесь появятся время входа и выхода и фокус."
+    },
+    "notFound": {
+      "title": "Ничего не найдено",
+      "text": "По запросу «{{query}}» нет уроков или групп. Попробуйте другое название."
+    },
+    "filtered": {
+      "title": "Уроков нет",
+      "text": "Нет уроков за выбранный период и по фильтру."
+    },
+    "report": {
+      "title": "Отчёт о посещаемости",
+      "subtitle": "{{name}} · все группы",
+      "period": "Период",
+      "periodOption": "{{month}} · уроков: {{count}}",
+      "pdf": "PDF",
+      "pdfText": "Для печати и отправки",
+      "excel": "Excel",
+      "excelText": "Анализ в виде таблицы",
+      "focus": "Добавить анализ фокуса",
+      "focusText": "Процент фокуса по каждому уроку",
+      "cancel": "Отмена",
+      "download": "Скачать отчёт",
+      "done": "Отчёт скачан — {{file}}",
+      "heading": "Отчёт о посещаемости — {{name}}",
+      "filePrefix": "poseshaemost",
+      "datePattern": "d MMMM, EEEEEE",
+      "columns": {
+        "date": "Дата",
+        "teacher": "Учитель"
+      }
+    }
   }
 }

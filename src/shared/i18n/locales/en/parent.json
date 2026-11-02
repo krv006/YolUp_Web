@@ -438,5 +438,127 @@
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp account: {{name}}",
     "printSubtitle": "Your child signs in with this login and password."
+  },
+  "attendanceView": {
+    "eyebrow": "Tracking",
+    "title": "Attendance",
+    "reportButton": "Report",
+    "search": "Search a lesson or group",
+    "clearSearch": "Clear search",
+    "periods": {
+      "week": "Week",
+      "month": "Month",
+      "all": "All"
+    },
+    "columns": {
+      "lesson": "Lesson",
+      "in": "Joined",
+      "out": "Left",
+      "duration": "Duration",
+      "focus": "Focus",
+      "status": "Status"
+    },
+    "status": {
+      "live": "Live",
+      "attended": "Attended",
+      "late": "+{{minutes}} min",
+      "missed": "Missed",
+      "upcoming": "Scheduled"
+    },
+    "legend": {
+      "attended": "Attended",
+      "late": "Late",
+      "missed": "Missed",
+      "upcoming": "Scheduled"
+    },
+    "summary": {
+      "label": "attendance",
+      "insight": "Average focus {{focus}}% — best day: {{day}}",
+      "insightNoDay": "Average focus {{focus}}%",
+      "empty": "No statistics yet"
+    },
+    "calendar": {
+      "prev": "Previous month",
+      "next": "Next month",
+      "weekdays": [
+        "Mon",
+        "Tue",
+        "Wed",
+        "Thu",
+        "Fri",
+        "Sat",
+        "Sun"
+      ],
+      "list": "Table",
+      "calendar": "Calendar",
+      "summary": "{{month}} summary",
+      "lessons": "Lessons",
+      "attended": "Attended",
+      "late": "Late",
+      "missed": "Missed",
+      "noLessons": "No lessons on this day"
+    },
+    "detail": {
+      "datePattern": "EEEE, MMMM d",
+      "in": "Joined",
+      "out": "Left",
+      "duration": "Duration",
+      "focused": "Focused",
+      "away": "Left the app",
+      "focus": "Focus",
+      "attention": "Attention",
+      "exits": "Distractions",
+      "close": "Close",
+      "notJoined": "Your child didn’t join this lesson.",
+      "upcoming": "The lesson starts at {{time}}."
+    },
+    "filter": {
+      "title": "Filter",
+      "period": "Period",
+      "periods": {
+        "week": "This week",
+        "month": "This month",
+        "quarter": "3 months"
+      },
+      "group": "Group",
+      "allGroups": "All groups",
+      "status": "Status",
+      "clear": "Reset",
+      "apply": "Apply"
+    },
+    "empty": {
+      "title": "No lessons yet",
+      "text": "Once your child attends a first lesson, join and leave times and focus will appear here."
+    },
+    "notFound": {
+      "title": "Nothing found",
+      "text": "No lesson or group matches “{{query}}”. Try another name."
+    },
+    "filtered": {
+      "title": "No lessons",
+      "text": "There are no lessons for the selected period and filter."
+    },
+    "report": {
+      "title": "Attendance report",
+      "subtitle": "{{name}} · all groups",
+      "period": "Period",
+      "periodOption": "{{month}} · {{count}} lessons",
+      "pdf": "PDF",
+      "pdfText": "For printing and sharing",
+      "excel": "Excel",
+      "excelText": "Analyse as a spreadsheet",
+      "focus": "Include focus analysis",
+      "focusText": "Focus percentage per lesson",
+      "cancel": "Cancel",
+      "download": "Download report",
+      "done": "Report downloaded — {{file}}",
+      "heading": "Attendance report — {{name}}",
+      "filePrefix": "attendance",
+      "datePattern": "EEE, MMMM d",
+      "columns": {
+        "date": "Date",
+        "teacher": "Teacher"
+      }
+    }
   }
 }
