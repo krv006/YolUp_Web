@@ -133,9 +133,11 @@ export interface HomeworkCourseReportDto {
   course_name?: string;
   assigned_count?: number | null;
   assignments_count?: number | null;
+  assignments_total?: number | null;
   total_assignments?: number | null;
   submitted_count?: number | null;
   submissions_count?: number | null;
+  assignments_submitted?: number | null;
   avg_score?: number | null;
   average_score?: number | null;
 }
@@ -144,6 +146,7 @@ export type HomeworkReportDto =
   | HomeworkCourseReportDto[]
   | {
       courses?: HomeworkCourseReportDto[];
+      subjects?: HomeworkCourseReportDto[];
       results?: HomeworkCourseReportDto[];
       overall?: HomeworkCourseReportDto;
       summary?: HomeworkCourseReportDto;
