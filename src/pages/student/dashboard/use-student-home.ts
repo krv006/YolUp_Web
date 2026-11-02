@@ -115,6 +115,14 @@ export function useStudentHome() {
   return {
     now,
     loading: lessons.isLoading || courses.isLoading,
+    failed: lessons.isError || courses.isError,
+    lessonsFailed: lessons.isError && !lessons.data,
+    retry: () => {
+      void lessons.refetch();
+      void courses.refetch();
+      void quizzes.refetch();
+      void analytics.refetch();
+    },
     todayLessons,
     liveLesson,
     heroLesson,

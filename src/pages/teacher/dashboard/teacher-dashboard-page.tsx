@@ -45,7 +45,7 @@ function endClock(startsAt: string, durationMinutes: number): string {
 }
 
 export function TeacherDashboardPage() {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
   const months = t("months", { returnObjects: true }) as string[];
   const weekdays = useTranslation("lesson").t("list.weekdaysLong", {
     returnObjects: true,
@@ -140,10 +140,23 @@ export function TeacherDashboardPage() {
     .map((course) => course.attendanceRate)
     .filter((value): value is number => typeof value === "number");
 
+  const lessonsFailed = lessons.isError && !lessons.data;
+  const coursesFailed = courses.isError && !courses.data;
+  const failed = courses.isError || lessons.isError;
+  function retry() {
+    void courses.refetch();
+    void lessons.refetch();
+    void stats.refetch();
+    void dashboard.refetch();
+    void activity.refetch();
+  }
+
   const pendingTotal =
-    dashboard.data?.submissionsPending ?? toReview.reduce((sum, row) => sum + row.pending, 0);
+    dashboard.data?.submissionsPending ??
+    (coursesFailed ? null : toReview.reduce((sum, row) => sum + row.pending, 0));
   const studentTotal =
-    dashboard.data?.studentsTotal ?? groups.reduce((sum, course) => sum + (course.studentCount || 0), 0);
+    dashboard.data?.studentsTotal ??
+    (coursesFailed ? null : groups.reduce((sum, course) => sum + (course.studentCount || 0), 0));
   const attendance =
     dashboard.data?.attendanceRateWeek ??
     (attendanceRates.length
@@ -180,12 +193,14 @@ export function TeacherDashboardPage() {
         online={online}
         approved={user?.isApproved !== false}
         loading={loading}
-        hasGroups={groups.length > 0}
+        failed={failed}
+        onRetry={retry}
+        hasGroups={!courses.isSuccess || groups.length > 0}
         heroLesson={heroLesson}
         live={Boolean(liveLesson)}
         heroStudents={heroLesson ? (studentsByCourse.get(heroLesson.courseId) ?? 0) : 0}
         joinedCount={liveLesson ? (presence.data?.count ?? null) : null}
-        pendingWorks={pendingTotal}
+        pendingWorks={pendingTotal ?? 0}
         pendingTasks={toReview.length}
         todayLessons={todayLessons}
         tomorrowLessons={tomorrowLessons}
@@ -205,7 +220,7 @@ export function TeacherDashboardPage() {
     );
   }
 
-  if (!loading && !groups.length)
+  if (courses.isSuccess && !groups.length)
     return (
       <DashboardShell
         user={user?.name ?? ""}
@@ -224,9 +239,11 @@ export function TeacherDashboardPage() {
       user={user?.name ?? ""}
       dateLine={`${weekdays[(today.getDay() + 6) % 7] ?? ""}, ${today.getDate()}-${(
         months[today.getMonth()] ?? ""
-      ).toLowerCase()} · ${t("header.lessonCount", { count: todayLessons.length })}`}
+      ).toLowerCase()}${lessonsFailed ? "" : ` · ${t("header.lessonCount", { count: todayLessons.length })}`}`}
       online={online}
       approved={user?.isApproved !== false}
+      failed={failed}
+      onRetry={retry}
     >
       {loading ? (
         <DashboardSkeleton />
@@ -250,20 +267,20 @@ export function TeacherDashboardPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <StatCard
-                value={String(todayLessons.length)}
+                value={lessonsFailed ? "—" : String(todayLessons.length)}
                 label={t("stats.lessons")}
-                hint={t("stats.lessonsHint", { count: finishedCount })}
+                hint={lessonsFailed ? "" : t("stats.lessonsHint", { count: finishedCount })}
               />
               <StatCard
-                value={String(pendingTotal)}
+                value={pendingTotal === null ? "—" : String(pendingTotal)}
                 tone="text-brand"
                 label={t("stats.review")}
-                hint={t("stats.reviewHint", { count: toReview.length })}
+                hint={pendingTotal === null ? "" : t("stats.reviewHint", { count: toReview.length })}
               />
               <StatCard
-                value={String(studentTotal)}
+                value={studentTotal === null ? "—" : String(studentTotal)}
                 label={t("stats.students")}
-                hint={t("stats.studentsHint", { count: groups.length })}
+                hint={coursesFailed ? "" : t("stats.studentsHint", { count: groups.length })}
               />
               <StatCard
                 value={attendance === null ? "—" : `${attendance}%`}
@@ -325,14 +342,18 @@ export function TeacherDashboardPage() {
                   <span className="grid size-14 place-items-center rounded-2xl bg-accent-green-bg text-accent-green-fg">
                     <Icon name="nav-calendar" size={26} />
                   </span>
-                  <strong className="font-heading text-h2 text-ink">{t("today.emptyTitle")}</strong>
+                  <strong className="font-heading text-h2 text-ink">
+                    {lessonsFailed ? t("today.loadError") : t("today.emptyTitle")}
+                  </strong>
                   <p className="text-body-sm text-ink-secondary">
-                    {lessons.data?.length
-                      ? t("today.emptyNext", {
-                          time: clock(upcoming(lessons.data)?.startsAt ?? ""),
-                          title: upcoming(lessons.data)?.courseTitle ?? "",
-                        })
-                      : t("today.emptyHint")}
+                    {lessonsFailed
+                      ? t("banner.serverError")
+                      : lessons.data?.length
+                        ? t("today.emptyNext", {
+                            time: clock(upcoming(lessons.data)?.startsAt ?? ""),
+                            title: upcoming(lessons.data)?.courseTitle ?? "",
+                          })
+                        : t("today.emptyHint")}
                   </p>
                   <span className="mt-1 flex flex-wrap items-center justify-center gap-2">
                     <button
@@ -345,9 +366,9 @@ export function TeacherDashboardPage() {
                     <button
                       type="button"
                       className="flex h-11 items-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-                      onClick={() => navigate(ROUTES.teacher.schedule)}
+                      onClick={lessonsFailed ? retry : () => navigate(ROUTES.teacher.schedule)}
                     >
-                      {t("today.addLesson")}
+                      {lessonsFailed ? t("common:actions.retry") : t("today.addLesson")}
                     </button>
                   </span>
                 </div>

@@ -9,6 +9,8 @@ export interface DashboardShellProps {
   dateLine: string;
   online: boolean;
   approved: boolean;
+  failed?: boolean;
+  onRetry?: () => void;
   children: ReactNode;
 }
 
@@ -17,9 +19,11 @@ export function DashboardShell({
   dateLine,
   online,
   approved,
+  failed = false,
+  onRetry,
   children,
 }: DashboardShellProps) {
-  const { t } = useTranslation("dashboard");
+  const { t } = useTranslation(["dashboard", "common"]);
   const openLink = useOpenNotificationLink();
 
   return (
@@ -41,6 +45,20 @@ export function DashboardShell({
             <Icon name="wifi" size={20} className="shrink-0" />
             {t("banner.offline")}
           </p>
+        ) : failed ? (
+          <div className="flex items-center gap-3 rounded-2xl bg-surface-inverse px-5 py-3 text-body-sm text-ink-inverse">
+            <Icon name="warning" size={20} className="shrink-0" />
+            <span className="min-w-0 flex-1">{t("banner.serverError")}</span>
+            {onRetry ? (
+              <button
+                type="button"
+                className="flex h-9 shrink-0 items-center rounded-full bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle"
+                onClick={onRetry}
+              >
+                {t("common:actions.retry")}
+              </button>
+            ) : null}
+          </div>
         ) : null}
 
         {!approved ? (

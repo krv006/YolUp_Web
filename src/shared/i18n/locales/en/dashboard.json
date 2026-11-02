@@ -6,7 +6,8 @@
   },
   "banner": {
     "offline": "No connection. Showing the last saved data",
-    "notApproved": "Your account has not been approved by an administrator yet — creating courses and lessons is closed for now."
+    "notApproved": "Your account has not been approved by an administrator yet — creating courses and lessons is closed for now.",
+    "serverError": "Can’t reach the server — data didn’t load."
   },
   "hero": {
     "startsIn": "in {{count}} min",
@@ -38,7 +39,8 @@
     "emptyNext": "Next lesson: {{time}} · {{title}}",
     "emptyHint": "Add your first lesson to the schedule.",
     "openSchedule": "Open the schedule",
-    "addLesson": "Add a lesson"
+    "addLesson": "Add a lesson",
+    "loadError": "Lessons didn’t load"
   },
   "review": {
     "title": "Needs review",
@@ -146,6 +148,7 @@
         "title": "Workspace — your tools",
         "text": "Tests, homework, mock exams and the AI assistant live here. Open it any time from the bottom menu."
       }
-    }
+    },
+    "serverError": "Can’t reach the server"
   }
 }
