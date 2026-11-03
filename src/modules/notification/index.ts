@@ -31,6 +31,8 @@ export { RealtimeHubContext } from "./model/realtime-hub-context";
 export {
   notificationKeys,
   useMarkAllNotificationsRead,
+  useDeleteNotification,
+  useMarkNotificationsUnread,
   useMarkNotificationRead,
   useNotificationInbox,
   useNotificationRecipients,

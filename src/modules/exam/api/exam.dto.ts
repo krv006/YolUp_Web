@@ -58,6 +58,14 @@ export interface ExamSummaryDto {
   has_reminder?: boolean | null;
   reminder_minutes?: number | null;
   my_total?: { score?: number | null; max?: number | null; label?: string | null } | null;
+  child_result?: {
+    participated: boolean;
+    score?: number | null;
+    max?: number | null;
+    band?: number | null;
+    label?: string | null;
+    teacher_comment?: string | null;
+  } | null;
 }
 
 export interface ExamDetailDto extends ExamSummaryDto {
@@ -142,6 +150,7 @@ export interface ExamTotalResultDto {
 
 export interface ExamStudentResultDto {
   student: { id: string | number; username?: string | null; name?: string | null; avatar?: string | null };
+  teacher_comment?: string | null;
   participated: boolean;
   finished_at?: string | null;
   engine?: string | null;

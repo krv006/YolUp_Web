@@ -33,6 +33,17 @@ describe("handleApiResponse", () => {
     expect(error).toMatchObject({ code: "permission_denied", status: 403, message: "Chat hali ochiq emas", requestId: "srv-id" });
   });
 
+  it("keeps the consent code and the throttle wait time", async () => {
+    const consent = await failure(
+      json({ success: false, error: { code: "consent_required", message: "Bu ma'lumot yopiq", details: { kind: "analytics" } } }, 403)
+    );
+    expect(consent).toMatchObject({ code: "consent_required", status: 403, retryAfter: null });
+    const throttled = await failure(
+      json({ success: false, error: { code: "throttled", message: "Kuting", details: {}, retry_after: 3600 } }, 429)
+    );
+    expect(throttled).toMatchObject({ code: "throttled", retryAfter: 3600 });
+  });
+
   it("collects field errors for forms from the envelope details", async () => {
     const error = await failure(
       json({ success: false, error: { code: "invalid", message: "Bu login band.", details: { username: ["Bu login band."], detail: "x" } } }, 400)

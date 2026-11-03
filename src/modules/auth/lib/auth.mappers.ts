@@ -160,15 +160,25 @@ export function mapLoginRecords(dto: unknown): LoginRecord[] {
     .array()
     .parse(Array.isArray(dto) ? dto : ((dto as { results?: unknown[] } | null)?.results ?? []))
     .map((item) => ({
-      id: `${item.at}-${item.ip ?? ""}`,
+      id: item.id ?? `${item.at}-${item.ip ?? ""}`,
       at: item.at,
       ip: item.ip ?? "—",
-      device: describeUserAgent(item.user_agent),
+      device:
+        item.browser && item.os ? `${item.browser} · ${item.os}` : item.device || describeUserAgent(item.user_agent),
       userAgent: item.user_agent ?? "",
       isNewIp: item.new_ip,
-      isNewDevice: item.new_device,
+      isNewDevice: item.new_device && item.recognized !== true,
       isCurrent: item.is_current === true,
-      location: item.location ?? "",
+      location: [item.location, item.country].filter(Boolean).join(", "),
+      loginId: item.id ?? null,
+      browser: item.browser ?? "",
+      os: item.os ?? "",
+      deviceType: item.device_type ?? null,
+      country: item.country ?? "",
+      recognized: item.recognized === true,
+      sessionId: item.session_id ?? null,
+      sessionActive: item.session_active ?? null,
+      durationSeconds: item.duration_seconds ?? null,
     }));
 }
 

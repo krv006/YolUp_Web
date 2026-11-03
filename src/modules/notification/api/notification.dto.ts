@@ -12,6 +12,8 @@ export interface NotificationDto {
   kind?: string | null;
   link_type?: string | null;
   link_id?: string | null;
+  link?: { kind?: string | null; id?: string | null } | null;
+  data?: Record<string, unknown> | null;
   created_at: string;
 }
 
@@ -74,6 +76,7 @@ export interface InboxNotification {
   isRead: boolean;
   readAt: string | null;
   link: NotificationLink | null;
+  data: Record<string, unknown>;
   createdAt: string;
 }
 

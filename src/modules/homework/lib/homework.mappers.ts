@@ -119,6 +119,9 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     lessonStartsAt: dto.lesson_starts_at ?? null,
     grading: dto.grading ?? "five",
     maxScore: dto.max_score ?? defaultMaxScore(dto.grading ?? "five"),
+    groupStats: dto.group_stats
+      ? { average: dto.group_stats.average ?? null, rank: dto.group_stats.rank ?? null, total: dto.group_stats.total ?? null }
+      : null,
     aiGroupSummary: dto.ai_group_summary
       ? {
           text: dto.ai_group_summary.text ?? "",

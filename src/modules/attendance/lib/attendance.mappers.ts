@@ -63,6 +63,8 @@ export function mapAttendanceDto(dto: AttendanceDto): AttendanceRow {
     attentionAnswered: Number(dto.attention_answered ?? 0),
     focus: mapFocusJournal(dto.focus, Number(dto.focus_exits ?? 0), Boolean(dto.focus_alert)),
     focusPercent: dto.focus_percent ?? null,
+    teacherNote: dto.teacher_note || "",
+    lateReason: dto.late_reason || "",
     status: dto.left_at ? "completed" : "active",
   };
 }

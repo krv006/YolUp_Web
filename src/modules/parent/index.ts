@@ -22,6 +22,19 @@ export {
   useCreateChild,
   useRespondParentLink,
   useSetParentConsent,
+  useCancelLink,
+  useChildExams,
+  useChildRank,
+  useChildSessions,
+  useChildSummary,
+  useChildrenSummary,
+  useEndAllChildSessions,
+  useEndChildSession,
+  useRecognizeLogin,
+  useRemindChildHomework,
+  useRemindLink,
+  useUnlinkChild,
+  useUsernameAvailability,
 } from "./model/parent.queries";
 export { useSelectedChild, useSelectedChildStore } from "./model/selected-child.store";
 export type { UseSelectedChildResult } from "./model/selected-child.store";
@@ -43,3 +56,5 @@ export type { HomeworkFilter, HomeworkState } from "./lib/parent-homework";
 export * as parentResults from "./lib/parent-results";
 export type { MonthHomework, SubjectRow } from "./lib/parent-results";
 export { passwordStrength } from "./lib/password-strength";
+export { isConsentRequired, retryMinutes } from "./lib/parent-errors";
+export type { ChildRankDto, ChildSessionDto, ChildSummaryDto, ChildrenSummaryDto, UsernameAvailability } from "./api/parent.dto";

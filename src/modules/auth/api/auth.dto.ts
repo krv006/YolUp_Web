@@ -76,7 +76,17 @@ export const userDtoSchema = z.object({
 });
 
 export const loginRecordDtoSchema = z.object({
+  id: z.string().nullable().optional(),
   at: z.string(),
+  device: z.string().nullable().optional(),
+  browser: z.string().nullable().optional(),
+  os: z.string().nullable().optional(),
+  device_type: z.enum(["phone", "tablet", "computer"]).nullable().optional(),
+  country: z.string().nullable().optional(),
+  recognized: z.boolean().nullable().optional(),
+  session_id: z.string().nullable().optional(),
+  session_active: z.boolean().nullable().optional(),
+  duration_seconds: z.number().nullable().optional(),
   ip: z.string().nullable().default(null),
   user_agent: z.string().nullable().default(null),
   new_ip: z.boolean().default(false),
@@ -126,6 +136,15 @@ export interface LoginRecord {
   isNewDevice: boolean;
   isCurrent: boolean;
   location: string;
+  loginId: string | null;
+  browser: string;
+  os: string;
+  deviceType: "phone" | "tablet" | "computer" | null;
+  country: string;
+  recognized: boolean;
+  sessionId: string | null;
+  sessionActive: boolean | null;
+  durationSeconds: number | null;
 }
 
 export interface LoginRequestDto {
@@ -158,6 +177,7 @@ export interface CreateChildRequestDto {
   last_name: string;
   parent_phone?: string;
   course_id?: string;
+  grade?: string;
 }
 
 export interface ConsentRequestDto {
