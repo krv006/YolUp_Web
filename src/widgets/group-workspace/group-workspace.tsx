@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, CalendarDays, CheckCircle2, ClipboardList } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, TrendingUp } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -52,6 +52,7 @@ import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { AddQuizMenu } from "./add-quiz-menu";
 import { MobileAssignmentList } from "./mobile-assignment-list";
 import { PanelHeading } from "./panel-heading";
+import { ProgressPanel } from "./progress-panel";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
 import type {
   Assignment,
@@ -65,6 +66,7 @@ import type {
 import type { ChatController } from "@/modules/message";
 import { Avatar, Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { ROUTES } from "@/shared/config";
+import { ROLES } from "@/shared/constants";
 import { Icon } from "@/shared/ui/icon";
 import {
   AddAssignmentDialog,
@@ -77,16 +79,19 @@ import { LessonBoard } from "./lesson-board";
 import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
 import { formatMessageTime } from "@/shared/lib";
 
-type TabId = "chat" | "lessons" | "assignments" | "attendance";
+type TabId = "chat" | "lessons" | "assignments" | "attendance" | "progress";
 
-function useTabs(): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
+function useTabs(isTeacher: boolean): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
   const { t } = useTranslation("group");
-  return [
+  const tabs: Array<{ id: TabId; label: string; icon: typeof BookOpen }> = [
     { id: "chat", label: t("tabs.chat"), icon: BookOpen },
     { id: "lessons", label: t("tabs.lessons"), icon: CalendarDays },
     { id: "assignments", label: t("tabs.assignments"), icon: ClipboardList },
     { id: "attendance", label: t("tabs.attendance"), icon: CheckCircle2 },
   ];
+  // To'lov, davomat va vazifalar umumiy progressi faqat o'qituvchiga ko'rinadi
+  if (isTeacher) tabs.push({ id: "progress", label: t("tabs.progress"), icon: TrendingUp });
+  return tabs;
 }
 
 
@@ -108,8 +113,8 @@ export function GroupWorkspace({
   retryMessage,
 }: GroupWorkspaceProps) {
   const { t } = useTranslation("group");
-  const TABS = useTabs();
   const { user } = useAuth();
+  const TABS = useTabs(user?.role === ROLES.TEACHER);
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
   const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
@@ -176,7 +181,7 @@ export function GroupWorkspace({
       </div>
       <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle />
       <nav
-        className={`grid shrink-0 grid-cols-4 gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
+        className={`grid shrink-0 ${TABS.length > 4 ? "grid-cols-5" : "grid-cols-4"} gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
           selectionMode ? "pt-1" : "pt-4"
         }`}
       >
@@ -268,6 +273,7 @@ export function GroupWorkspace({
           {activeTab === "attendance" ? (
             <AttendancePanel courseId={courseId} lessons={lessons.data} />
           ) : null}
+          {activeTab === "progress" ? <ProgressPanel courseId={courseId} /> : null}
         </motion.div>
       </AnimatePresence>
 
