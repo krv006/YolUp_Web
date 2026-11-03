@@ -522,7 +522,11 @@
       "exits": "Chalg‘ish",
       "close": "Yopish",
       "notJoined": "Farzandingiz bu darsga kirmagan.",
-      "upcoming": "Dars {{time}} da boshlanadi."
+      "upcoming": "Dars {{time}} da boshlanadi.",
+      "lateReason": "Kechikish sababi",
+      "missedReason": "Qolish sababi",
+      "teacherNote": "O‘qituvchi izohi",
+      "teacherNoteBy": "O‘qituvchi izohi · {{teacher}}"
     },
     "filter": {
       "title": "Filtr",

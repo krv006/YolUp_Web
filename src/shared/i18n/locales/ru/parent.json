@@ -522,7 +522,11 @@
       "exits": "Отвлечения",
       "close": "Закрыть",
       "notJoined": "Ребёнок не заходил на этот урок.",
-      "upcoming": "Урок начнётся в {{time}}."
+      "upcoming": "Урок начнётся в {{time}}.",
+      "lateReason": "Причина опоздания",
+      "missedReason": "Причина пропуска",
+      "teacherNote": "Комментарий учителя",
+      "teacherNoteBy": "Комментарий учителя · {{teacher}}"
     },
     "filter": {
       "title": "Фильтр",

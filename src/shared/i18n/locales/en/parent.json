@@ -522,7 +522,11 @@
       "exits": "Distractions",
       "close": "Close",
       "notJoined": "Your child didn’t join this lesson.",
-      "upcoming": "The lesson starts at {{time}}."
+      "upcoming": "The lesson starts at {{time}}.",
+      "lateReason": "Reason for being late",
+      "missedReason": "Reason for absence",
+      "teacherNote": "Teacher’s note",
+      "teacherNoteBy": "Teacher’s note · {{teacher}}"
     },
     "filter": {
       "title": "Filter",
