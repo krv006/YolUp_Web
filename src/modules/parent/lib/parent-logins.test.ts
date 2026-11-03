@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { deviceKind, filterLogins, loginSummary, type DeviceKind, type LoginEntry } from "./parent-logins";
+import { deviceKind, filterLogins, loginKind, loginSummary, type DeviceKind, type LoginEntry } from "./parent-logins";
 
 const NOW = new Date(2026, 9, 29, 17, 40).getTime();
 const at = (day: number, hour: number, minute = 0) => new Date(2026, 9, day, hour, minute).toISOString();
@@ -53,5 +53,18 @@ describe("loginSummary", () => {
   it("counts logins, distinct devices and new devices in the period", () => {
     expect(loginSummary(logins, "week", NOW)).toEqual({ count: 5, devices: 4, suspicious: 1 });
     expect(loginSummary([], "week", NOW)).toEqual({ count: 0, devices: 0, suspicious: 0 });
+  });
+});
+
+describe("loginKind", () => {
+  it("prefers the server device type over the user agent", () => {
+    expect(loginKind({ userAgent: MAC, device: "", deviceType: "phone" })).toBe("phone");
+    expect(loginKind({ userAgent: "", device: "Chrome · Android", deviceType: "tablet" })).toBe("tablet");
+  });
+
+  it("falls back to the user agent, then to the device label", () => {
+    expect(loginKind({ userAgent: IPHONE, device: "", deviceType: null })).toBe("phone");
+    expect(loginKind({ userAgent: "", device: "YolUp · iOS" })).toBe("phone");
+    expect(loginKind({ userAgent: "", device: "Chrome · macOS" })).toBe("computer");
   });
 });

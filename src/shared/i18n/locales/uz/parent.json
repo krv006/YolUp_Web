@@ -636,7 +636,16 @@
       "time": "Vaqt",
       "unknownLocation": "Joylashuv aniqlanmagan",
       "warning": "Bu {{name}} bo‘lmasa, farzandingiz bilan gaplashib, parolini almashtiring",
-      "close": "Yopish"
+      "close": "Yopish",
+      "duration": "Davomiyligi",
+      "session": "Sessiya",
+      "sessionActive": "Faol",
+      "sessionEnded": "Tugagan",
+      "recognize": "Bu {{name}}",
+      "recognized": "Qurilma tanish deb belgilandi",
+      "endSession": "Sessiyani tugatish",
+      "ended": "Sessiya tugatildi",
+      "failed": "Amalni bajarib bo‘lmadi. Qayta urinib ko‘ring"
     },
     "empty": {
       "title": "Hali kirishlar yo‘q",
@@ -650,6 +659,17 @@
       "today": "Bugun",
       "yesterday": "Kecha",
       "filterHint": "Kirishlar tarixini saralash"
+    },
+    "sessions": {
+      "title": "Faol sessiyalar · {{count}}",
+      "text": "{{name}} hisobi hozir ochiq turgan qurilmalar",
+      "end": "Sessiyani tugatish",
+      "endAll": "Barcha qurilmalardan chiqarish",
+      "confirmTitle": "Barcha qurilmalardan chiqarasizmi?",
+      "confirmText": "{{name}} barcha qurilmalarda hisobidan chiqariladi va qayta kirishi kerak bo‘ladi.",
+      "confirm": "Chiqarish",
+      "cancel": "Bekor qilish",
+      "endedAll": "{{count}} ta sessiya tugatildi"
     }
   },
   "homeworkView": {

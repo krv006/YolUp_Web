@@ -636,7 +636,16 @@
       "time": "Time",
       "unknownLocation": "Location unknown",
       "warning": "If this wasn’t {{name}}, talk to your child and change the password",
-      "close": "Close"
+      "close": "Close",
+      "duration": "Duration",
+      "session": "Session",
+      "sessionActive": "Active",
+      "sessionEnded": "Ended",
+      "recognize": "This is {{name}}",
+      "recognized": "Device marked as known",
+      "endSession": "End session",
+      "ended": "Session ended",
+      "failed": "Something went wrong. Please try again"
     },
     "empty": {
       "title": "No sign-ins yet",
@@ -650,6 +659,17 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "filterHint": "Narrow down the sign-in history"
+    },
+    "sessions": {
+      "title": "Active sessions · {{count}}",
+      "text": "Devices where {{name}}’s account is open right now",
+      "end": "End session",
+      "endAll": "Sign out of all devices",
+      "confirmTitle": "Sign out of all devices?",
+      "confirmText": "{{name}} will be signed out on every device and will need to sign in again.",
+      "confirm": "Sign out",
+      "cancel": "Cancel",
+      "endedAll": "Sessions ended: {{count}}"
     }
   },
   "homeworkView": {

@@ -161,7 +161,7 @@ export function useUsernameAvailability(username: string) {
   });
 }
 
-function useParentMutation<T>(mutationFn: (input: T) => Promise<unknown>, keys: ReadonlyArray<readonly unknown[]> = [parentKeys.all]) {
+function useParentMutation<T, R>(mutationFn: (input: T) => Promise<R>, keys: ReadonlyArray<readonly unknown[]> = [parentKeys.all]) {
   const client = useQueryClient();
   return useMutation({
     mutationFn,

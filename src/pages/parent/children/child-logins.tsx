@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate } from "react-router-dom";
+import { toast } from "sonner";
 import { useLoginHistory } from "@/modules/auth";
 import {
+  isConsentRequired,
   parentLogins,
+  useEndChildSession,
+  useRecognizeLogin,
   useSelectedChild,
   type DeviceKind,
   type LoginEntry,
@@ -16,7 +20,8 @@ import { useOnlineStatus } from "@/shared/model";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
-import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
+import { ParentErrorBanner, ParentLockedCard, ParentPageHeader } from "@/widgets/parent-shell";
+import { ChildSessions } from "./child-sessions";
 import { visitWhen } from "./family-format";
 import { kindIcon } from "./login-format";
 
@@ -165,19 +170,45 @@ function FilterPopover({
   );
 }
 
-export function LoginDetail({ entry, childName, onClose }: { entry: LoginEntry | null; childName: string; onClose: () => void }) {
+function durationLabel(seconds: number, t: (key: string, options?: Record<string, unknown>) => string): string {
+  const minutes = Math.max(1, Math.round(seconds / 60));
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return h ? t("home.recent.durationHours", { h, m }) : t("home.recent.durationMinutes", { m });
+}
+
+export function LoginDetail({
+  entry,
+  childId,
+  childName,
+  onClose,
+}: {
+  entry: LoginEntry | null;
+  childId: string;
+  childName: string;
+  onClose: () => void;
+}) {
   const { t } = useTranslation("parent");
+  const recognize = useRecognizeLogin();
+  const endSession = useEndChildSession(childId);
   const [browser, system] = (entry?.device ?? "").split(" · ");
   const first = childName.split(" ")[0] || childName;
   const rows = entry
     ? [
-        { label: t("logins.detail.device"), value: system || entry.device },
-        { label: t("logins.detail.browser"), value: system ? browser : "—" },
+        { label: t("logins.detail.device"), value: entry.os || system || entry.device },
+        { label: t("logins.detail.browser"), value: entry.browser || (system ? browser : "—") },
         { label: t("logins.detail.ip"), value: entry.ip || "—" },
         { label: t("logins.detail.location"), value: entry.location || "—" },
         { label: t("logins.detail.time"), value: formatDayTime(entry.at) },
+        ...(entry.durationSeconds ? [{ label: t("logins.detail.duration"), value: durationLabel(entry.durationSeconds, t) }] : []),
+        ...(entry.sessionActive !== null && entry.sessionActive !== undefined
+          ? [{ label: t("logins.detail.session"), value: t(entry.sessionActive ? "logins.detail.sessionActive" : "logins.detail.sessionEnded") }]
+          : []),
       ]
     : [];
+  const canRecognize = Boolean(entry?.isNewDevice && entry.loginId);
+  const canEnd = Boolean(entry?.sessionActive && entry.sessionId);
+  const pending = recognize.isPending || endSession.isPending;
 
   return (
     <AppDialog
@@ -199,15 +230,60 @@ export function LoginDetail({ entry, childName, onClose }: { entry: LoginEntry |
       title={entry?.isNewDevice ? t("logins.detail.newTitle") : t("logins.detail.title")}
       description={entry ? t("logins.detail.subtitle", { name: first, when: formatDayTime(entry.at) }) : ""}
       titleClassName="font-heading text-[20px]/7 font-semibold"
-      footerClassName="justify-end px-5 pt-4 pb-5"
+      footerClassName="flex-col-reverse px-5 pt-4 pb-5 lg:flex-row lg:justify-end"
       footer={
-        <button
-          type="button"
-          className="flex h-13 flex-1 items-center justify-center rounded-full border border-line-strong bg-surface px-5 text-title-sm font-semibold text-ink transition-colors hover:bg-subtle lg:h-11 lg:flex-none lg:text-button"
-          onClick={onClose}
-        >
-          {t("logins.detail.close")}
-        </button>
+        canRecognize || canEnd ? (
+          <>
+            {canEnd ? (
+              <button
+                type="button"
+                disabled={pending}
+                className="flex h-13 w-full shrink-0 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-title-sm font-semibold text-error-text lg:w-auto lg:flex-1 transition-colors hover:bg-danger-bg disabled:opacity-50 lg:h-11 lg:text-button"
+                onClick={() =>
+                  entry?.sessionId &&
+                  endSession.mutate(entry.sessionId, {
+                    onSuccess: () => {
+                      toast.success(t("logins.detail.ended"));
+                      onClose();
+                    },
+                    onError: () => toast.error(t("logins.detail.failed")),
+                  })
+                }
+              >
+                <Icon name="logout" size={18} />
+                {t("logins.detail.endSession")}
+              </button>
+            ) : null}
+            {canRecognize ? (
+              <button
+                type="button"
+                disabled={pending}
+                className="flex h-13 w-full shrink-0 items-center justify-center gap-2 rounded-full bg-brand px-4 lg:w-auto lg:flex-1 text-title-sm font-semibold text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50 lg:h-11 lg:text-button"
+                onClick={() =>
+                  entry?.loginId &&
+                  recognize.mutate(entry.loginId, {
+                    onSuccess: () => {
+                      toast.success(t("logins.detail.recognized"));
+                      onClose();
+                    },
+                    onError: () => toast.error(t("logins.detail.failed")),
+                  })
+                }
+              >
+                <Icon name="check" size={18} />
+                {t("logins.detail.recognize", { name: first })}
+              </button>
+            ) : null}
+          </>
+        ) : (
+          <button
+            type="button"
+            className="flex h-13 w-full shrink-0 items-center justify-center rounded-full border border-line-strong bg-surface px-5 text-title-sm font-semibold text-ink transition-colors hover:bg-subtle lg:h-11 lg:w-auto lg:text-button"
+            onClick={onClose}
+          >
+            {t("logins.detail.close")}
+          </button>
+        )
       }
     >
       {entry ? (
@@ -253,6 +329,7 @@ export function ChildLogins({ childId }: { childId: string }) {
   if (!childrenQuery.isLoading && !child && !childrenQuery.isError) return <Navigate to={ROUTES.parent.children} replace />;
 
   const logins: LoginEntry[] = history.data ?? [];
+  const locked = isConsentRequired(history.error);
   const visible = parentLogins.filterLogins(logins, { period, tab, kinds }, now);
   const summary = parentLogins.loginSummary(logins, period, now);
   const ok = summary.suspicious === 0;
@@ -279,161 +356,166 @@ export function ChildLogins({ childId }: { childId: string }) {
         title={t("logins.title")}
       />
 
-      {online && history.isError ? <ParentErrorBanner onRetry={() => void history.refetch()} /> : null}
+      {online && history.isError && !locked ? <ParentErrorBanner onRetry={() => void history.refetch()} /> : null}
 
-      <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex min-w-0 flex-col gap-4">
-          <div className="flex items-center gap-2">
-            {TABS.map((item) => (
-              <button
-                key={item}
-                type="button"
-                className={`flex h-11 shrink-0 items-center rounded-full border px-5 text-button transition-colors ${
-                  tab === item ? "border-brand bg-brand text-on-action" : "border-line-strong bg-surface text-ink hover:bg-subtle"
-                }`}
-                onClick={() => setTab(item)}
-              >
-                {t(`logins.tabs.${item}`)}
-              </button>
-            ))}
-            <span className="flex-1" />
-            <span className="flex h-11 shrink-0 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-button text-ink">
-              <Icon name="calendar-month" size={18} />
-              {t(`logins.periods.${period}`)}
-            </span>
-            <FilterPopover
-              period={period}
-              kinds={kinds}
-              onApply={(nextPeriod, nextKinds) => {
-                setPeriod(nextPeriod);
-                setKinds(nextKinds);
-              }}
-            />
+      {locked && child ? (
+        <ParentLockedCard childId={child.id} childName={child.name} />
+      ) : (
+        <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="flex min-w-0 flex-col gap-4">
+            <div className="flex items-center gap-2">
+              {TABS.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  className={`flex h-11 shrink-0 items-center rounded-full border px-5 text-button transition-colors ${
+                    tab === item ? "border-brand bg-brand text-on-action" : "border-line-strong bg-surface text-ink hover:bg-subtle"
+                  }`}
+                  onClick={() => setTab(item)}
+                >
+                  {t(`logins.tabs.${item}`)}
+                </button>
+              ))}
+              <span className="flex-1" />
+              <span className="flex h-11 shrink-0 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-button text-ink">
+                <Icon name="calendar-month" size={18} />
+                {t(`logins.periods.${period}`)}
+              </span>
+              <FilterPopover
+                period={period}
+                kinds={kinds}
+                onApply={(nextPeriod, nextKinds) => {
+                  setPeriod(nextPeriod);
+                  setKinds(nextKinds);
+                }}
+              />
+            </div>
+
+            <section className={`overflow-hidden rounded-[20px] bg-surface pt-5 ${history.isLoading ? "animate-pulse" : ""}`}>
+              <table className="w-full table-fixed border-collapse">
+                <colgroup>
+                  <col className="w-[29%]" />
+                  <col className="w-[17%]" />
+                  <col className="w-[15%]" />
+                  <col className="w-[21%]" />
+                  <col />
+                </colgroup>
+                <thead>
+                  <tr className="border-b border-line">
+                    {(["device", "ip", "location", "time", "status"] as const).map((column) => (
+                      <th key={column} className={HEAD}>
+                        {t(`logins.columns.${column}`)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {visible.map((entry) => (
+                    <tr
+                      key={entry.id}
+                      tabIndex={0}
+                      className={`cursor-pointer border-b border-line transition-colors last:border-b-0 focus-visible:outline-none ${
+                        entry.isNewDevice ? "bg-danger-bg hover:opacity-90" : "hover:bg-subtle focus-visible:bg-subtle"
+                      }`}
+                      onClick={() => setOpened(entry)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setOpened(entry);
+                        }
+                      }}
+                    >
+                      <td className="py-3.5 pr-3 pl-5">
+                        <span className="flex min-w-0 items-center gap-3">
+                          <span
+                            className={`grid size-9 shrink-0 place-items-center rounded-lg ${
+                              entry.isNewDevice ? "text-error-text" : "bg-subtle text-icon-secondary"
+                            }`}
+                          >
+                            <Icon name={kindIcon(entry)} size={20} />
+                          </span>
+                          <strong className="truncate text-title-sm text-ink">{entry.device}</strong>
+                        </span>
+                      </td>
+                      <td className="truncate px-3 text-body-sm text-ink">{entry.ip || "—"}</td>
+                      <td className="truncate px-3 text-body-sm text-ink">{entry.location || "—"}</td>
+                      <td className="truncate px-3 text-body-sm text-ink">{visitWhen(entry.at, now, t, true)}</td>
+                      <td className="px-3">
+                        <StatusCell entry={entry} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {!history.isLoading && !visible.length ? (
+                <div className="flex flex-col items-center gap-3 px-6 pt-8 pb-12 text-center">
+                  <span className="grid size-16 place-items-center rounded-full bg-brand-subtle text-brand">
+                    <Icon name="devices" size={30} />
+                  </span>
+                  <strong className="font-heading text-[18px]/6 font-semibold text-ink">
+                    {logins.length ? t("logins.filtered.title") : t("logins.empty.title")}
+                  </strong>
+                  <p className="max-w-[300px] text-body-sm text-ink-secondary">
+                    {logins.length ? t("logins.filtered.text") : t("logins.empty.text")}
+                  </p>
+                </div>
+              ) : null}
+            </section>
           </div>
 
-          <section className={`overflow-hidden rounded-[20px] bg-surface pt-5 ${history.isLoading ? "animate-pulse" : ""}`}>
-            <table className="w-full table-fixed border-collapse">
-              <colgroup>
-                <col className="w-[29%]" />
-                <col className="w-[17%]" />
-                <col className="w-[15%]" />
-                <col className="w-[21%]" />
-                <col />
-              </colgroup>
-              <thead>
-                <tr className="border-b border-line">
-                  {(["device", "ip", "location", "time", "status"] as const).map((column) => (
-                    <th key={column} className={HEAD}>
-                      {t(`logins.columns.${column}`)}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((entry) => (
-                  <tr
-                    key={entry.id}
-                    tabIndex={0}
-                    className={`cursor-pointer border-b border-line transition-colors last:border-b-0 focus-visible:outline-none ${
-                      entry.isNewDevice ? "bg-danger-bg hover:opacity-90" : "hover:bg-subtle focus-visible:bg-subtle"
-                    }`}
-                    onClick={() => setOpened(entry)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        setOpened(entry);
-                      }
-                    }}
-                  >
-                    <td className="py-3.5 pr-3 pl-5">
-                      <span className="flex min-w-0 items-center gap-3">
-                        <span
-                          className={`grid size-9 shrink-0 place-items-center rounded-lg ${
-                            entry.isNewDevice ? "text-error-text" : "bg-subtle text-icon-secondary"
-                          }`}
-                        >
-                          <Icon name={kindIcon(entry)} size={20} />
-                        </span>
-                        <strong className="truncate text-title-sm text-ink">{entry.device}</strong>
-                      </span>
-                    </td>
-                    <td className="truncate px-3 text-body-sm text-ink">{entry.ip || "—"}</td>
-                    <td className="truncate px-3 text-body-sm text-ink">{entry.location || "—"}</td>
-                    <td className="truncate px-3 text-body-sm text-ink">{visitWhen(entry.at, now, t, true)}</td>
-                    <td className="px-3">
-                      <StatusCell entry={entry} />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {!history.isLoading && !visible.length ? (
-              <div className="flex flex-col items-center gap-3 px-6 pt-8 pb-12 text-center">
-                <span className="grid size-16 place-items-center rounded-full bg-brand-subtle text-brand">
-                  <Icon name="devices" size={30} />
-                </span>
-                <strong className="font-heading text-[18px]/6 font-semibold text-ink">
-                  {logins.length ? t("logins.filtered.title") : t("logins.empty.title")}
+          <div className="flex min-w-0 flex-col gap-5">
+            <section className="flex flex-col items-center gap-3 rounded-[20px] bg-surface p-6 text-center">
+              <span className="relative grid size-24 place-items-center">
+                <svg viewBox="0 0 96 96" className="absolute inset-0 -rotate-90" aria-hidden="true">
+                  <circle cx="48" cy="48" r={RADIUS} fill="none" strokeWidth="8" className={ok ? "stroke-success" : "stroke-danger-bg"} />
+                  {ok ? null : (
+                    <circle
+                      cx="48"
+                      cy="48"
+                      r={RADIUS}
+                      fill="none"
+                      strokeWidth="8"
+                      strokeLinecap="round"
+                      className="stroke-danger"
+                      strokeDasharray={`${ring * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+                    />
+                  )}
+                </svg>
+                <strong className={`font-heading text-[26px]/8 font-semibold ${ok ? "text-success-text" : "text-error-text"}`}>
+                  {summary.suspicious}
                 </strong>
-                <p className="max-w-[300px] text-body-sm text-ink-secondary">
-                  {logins.length ? t("logins.filtered.text") : t("logins.empty.text")}
-                </p>
-              </div>
-            ) : null}
-          </section>
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-5">
-          <section className="flex flex-col items-center gap-3 rounded-[20px] bg-surface p-6 text-center">
-            <span className="relative grid size-24 place-items-center">
-              <svg viewBox="0 0 96 96" className="absolute inset-0 -rotate-90" aria-hidden="true">
-                <circle cx="48" cy="48" r={RADIUS} fill="none" strokeWidth="8" className={ok ? "stroke-success" : "stroke-danger-bg"} />
-                {ok ? null : (
-                  <circle
-                    cx="48"
-                    cy="48"
-                    r={RADIUS}
-                    fill="none"
-                    strokeWidth="8"
-                    strokeLinecap="round"
-                    className="stroke-danger"
-                    strokeDasharray={`${ring * CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-                  />
-                )}
-              </svg>
-              <strong className={`font-heading text-[26px]/8 font-semibold ${ok ? "text-success-text" : "text-error-text"}`}>
-                {summary.suspicious}
+              </span>
+              <strong className="text-title text-ink">
+                {ok ? t("logins.summary.ok") : t("logins.summary.suspicious", { count: summary.suspicious })}
               </strong>
-            </span>
-            <strong className="text-title text-ink">
-              {ok ? t("logins.summary.ok") : t("logins.summary.suspicious", { count: summary.suspicious })}
-            </strong>
-            <small className="text-body-sm text-ink-secondary">
-              {t("logins.summary.stats", {
-                period: t(`logins.periods.${period}`),
-                count: summary.count,
-                devices: summary.devices,
-              })}
-            </small>
-            {ok ? null : (
-              <button
-                type="button"
-                className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-error-text transition-opacity hover:opacity-85"
-                onClick={() => setTab("suspicious")}
-              >
-                <Icon name="shield" size={18} />
-                {t("logins.summary.show")}
-              </button>
-            )}
-          </section>
-          <section className="flex flex-col gap-1 rounded-[20px] bg-brand-subtle px-5 py-4">
-            <strong className="text-title-sm text-brand">{t("logins.tip.title")}</strong>
-            <small className="text-body-sm text-brand">{t("logins.tip.text")}</small>
-          </section>
+              <small className="text-body-sm text-ink-secondary">
+                {t("logins.summary.stats", {
+                  period: t(`logins.periods.${period}`),
+                  count: summary.count,
+                  devices: summary.devices,
+                })}
+              </small>
+              {ok ? null : (
+                <button
+                  type="button"
+                  className="mt-1 flex h-11 w-full items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-error-text transition-opacity hover:opacity-85"
+                  onClick={() => setTab("suspicious")}
+                >
+                  <Icon name="shield" size={18} />
+                  {t("logins.summary.show")}
+                </button>
+              )}
+            </section>
+            {child ? <ChildSessions childId={child.id} childName={child.name} enabled={!locked} /> : null}
+            <section className="flex flex-col gap-1 rounded-[20px] bg-brand-subtle px-5 py-4">
+              <strong className="text-title-sm text-brand">{t("logins.tip.title")}</strong>
+              <small className="text-body-sm text-brand">{t("logins.tip.text")}</small>
+            </section>
+          </div>
         </div>
-      </div>
+      )}
 
-      <LoginDetail entry={opened} childName={child?.name ?? ""} onClose={() => setOpened(null)} />
+      <LoginDetail entry={opened} childId={childId} childName={child?.name ?? ""} onClose={() => setOpened(null)} />
     </div>
   );
 }

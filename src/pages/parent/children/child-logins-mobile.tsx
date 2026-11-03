@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useLoginHistory } from "@/modules/auth";
-import { parentLogins, useSelectedChild, type DeviceKind, type LoginEntry, type LoginPeriod, type LoginTab } from "@/modules/parent";
+import { isConsentRequired, parentLogins, useSelectedChild, type DeviceKind, type LoginEntry, type LoginPeriod, type LoginTab } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { formatLocalized, formatMessageTime } from "@/shared/lib";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { MobileChoiceChips } from "@/shared/ui/mobile-fields";
 import { MobilePageHeader, mobileButton, mobileRoundButton } from "@/shared/ui/mobile-page";
+import { ParentLockedCard } from "@/widgets/parent-shell";
 import { LoginDetail } from "./child-logins";
+import { ChildSessions } from "./child-sessions";
 import { kindIcon } from "./login-format";
 
 type Device = "all" | "phone" | "computer";
@@ -32,6 +34,7 @@ export function ChildLoginsMobile({ childId }: { childId: string }) {
   if (!childrenQuery.isLoading && !child && !childrenQuery.isError) return <Navigate to={ROUTES.parent.children} replace />;
 
   const logins: LoginEntry[] = history.data ?? [];
+  const locked = isConsentRequired(history.error);
   const tab: LoginTab = filter.status === "suspicious" ? "suspicious" : filter.device === "all" ? "all" : filter.device;
   const visible = parentLogins.filterLogins(logins, { period: filter.period, tab, kinds: new Set(KINDS[filter.device]) }, now);
   const summary = parentLogins.loginSummary(logins, filter.period, now);
@@ -69,7 +72,9 @@ export function ChildLoginsMobile({ childId }: { childId: string }) {
 
       {history.isLoading ? <span className="h-64 animate-pulse rounded-[20px] bg-surface" aria-hidden="true" /> : null}
 
-      {!history.isLoading && !logins.length ? (
+      {locked && child ? <ParentLockedCard childId={child.id} childName={child.name} /> : null}
+
+      {!history.isLoading && !logins.length && !locked ? (
         <div className="flex flex-col items-center gap-3 px-6 pt-24 text-center">
           <span className="grid size-18 place-items-center rounded-full bg-brand-subtle text-brand">
             <Icon name="devices" size={30} />
@@ -109,6 +114,8 @@ export function ChildLoginsMobile({ childId }: { childId: string }) {
               </small>
             </span>
           </section>
+
+          {child ? <ChildSessions childId={child.id} childName={child.name} enabled={!locked} /> : null}
 
           {[...groups.entries()].map(([key, entries]) => (
             <section key={key} className="flex flex-col gap-2">
@@ -204,7 +211,7 @@ export function ChildLoginsMobile({ childId }: { childId: string }) {
           </section>
         </div>
       </AppDialog>
-      <LoginDetail entry={opened} childName={child?.name ?? ""} onClose={() => setOpened(null)} />
+      <LoginDetail entry={opened} childId={childId} childName={child?.name ?? ""} onClose={() => setOpened(null)} />
     </div>
   );
 }
