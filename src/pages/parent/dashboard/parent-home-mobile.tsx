@@ -6,7 +6,7 @@ import { ROUTES } from "@/shared/config";
 import { formatDayTime, formatLocalized, formatRelativeShort } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
-import { ChildChips, ParentErrorBanner, ParentMobileHeader } from "@/widgets/parent-shell";
+import { ChildChips, ParentErrorBanner, ParentLockedCard, ParentMobileHeader } from "@/widgets/parent-shell";
 import { HomeHero } from "./home-hero";
 import { HomeRecent } from "./home-recent";
 import { AttentionCard } from "./home-side";
@@ -227,10 +227,16 @@ export function ParentHomeMobile() {
       {status === "loading" || status === "error" || (status === "ready" && home.sectionsLoading) ? <MobileSkeleton /> : null}
       {ready ? (
         <div className={`flex flex-col gap-4 ${home.online ? "" : "pointer-events-none opacity-55"}`}>
-          <HomeHero childName={child.name} hero={view.hero} week={view.week} todayCount={view.todayCount} teachers={home.teachers} now={now} compact />
-          <MobileStats view={view} now={now} />
+          {home.locked ? (
+            <ParentLockedCard childId={child.id} childName={child.name} />
+          ) : (
+            <>
+              <HomeHero childName={child.name} hero={view.hero} week={view.week} todayCount={view.todayCount} teachers={home.teachers} now={now} compact />
+              <MobileStats view={view} now={now} />
+            </>
+          )}
           <AttentionCard items={view.attention} childId={child.id} now={now} />
-          <HomeRecent items={view.recent} now={now} />
+          {home.locked ? null : <HomeRecent items={view.recent} now={now} />}
         </div>
       ) : null}
     </div>

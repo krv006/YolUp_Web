@@ -888,6 +888,21 @@
       "ended": "Session ended",
       "endOthers": "Sign out of other sessions",
       "othersEnded": "Other sessions ended"
+    },
+    "alerts": {
+      "title": "Alerts about your child",
+      "notifyChildAbsent": {
+        "title": "Missed or late for a lesson",
+        "text": "10 minutes after the lesson starts"
+      },
+      "notifyChildNewDevice": {
+        "title": "Sign-in from a new device",
+        "text": "Security alert"
+      },
+      "notifyHomeworkDue": {
+        "title": "Homework due soon",
+        "text": "24 hours before the deadline"
+      }
     }
   },
   "account": {
@@ -1030,5 +1045,10 @@
       },
       "update": "Update"
     }
+  },
+  "locked": {
+    "title": "This data is hidden",
+    "text": "“Activity analysis” is turned off for {{name}}. Turn it on to see attendance, attention and focus.",
+    "action": "Open permissions"
   }
 }

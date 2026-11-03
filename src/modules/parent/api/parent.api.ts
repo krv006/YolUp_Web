@@ -43,9 +43,7 @@ export const parentApi = {
   async getChildren(options?: RequestOptions) {
     const links = await this.getLinks(options);
     const approved = links.filter((item) => item.status === "approved");
-    if (!approved.length) return [];
-    const attendancePage = await attendanceApi.getAll({ ...options, query: { page_size: 100 } });
-    return approved.map((link) => mapChildFromLink(link, attendancePage.items));
+    return approved.map((link) => mapChildFromLink(link));
   },
 
   async getDashboard(options: ParentDashboardOptions = {}) {

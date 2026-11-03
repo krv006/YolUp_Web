@@ -888,6 +888,21 @@
       "ended": "Sessiya tugatildi",
       "endOthers": "Boshqa seanslardan chiqish",
       "othersEnded": "Boshqa seanslar tugatildi"
+    },
+    "alerts": {
+      "title": "Farzand haqida ogohlantirish",
+      "notifyChildAbsent": {
+        "title": "Darsga kelmasa yoki kechiksa",
+        "text": "Dars boshlanib 10 daqiqa o‘tsa"
+      },
+      "notifyChildNewDevice": {
+        "title": "Yangi qurilmadan kirsa",
+        "text": "Xavfsizlik ogohlantirishi"
+      },
+      "notifyHomeworkDue": {
+        "title": "Vazifa muddati yaqinlashsa",
+        "text": "24 soat qolganda"
+      }
     }
   },
   "account": {
@@ -1030,5 +1045,10 @@
       },
       "update": "Yangilash"
     }
+  },
+  "locked": {
+    "title": "Bu ma’lumot yopiq",
+    "text": "{{name}} uchun «Faollik tahlili» ruxsati o‘chirilgan. Davomat, diqqat va fokusni ko‘rish uchun ruxsatni yoqing.",
+    "action": "Ruxsatlarni ochish"
   }
 }
