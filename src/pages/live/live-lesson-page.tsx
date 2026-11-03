@@ -1,7 +1,8 @@
 import "@livekit/components-styles";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
 import { DisconnectReason, type RoomOptions } from "livekit-client";
+import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -26,6 +27,24 @@ import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
 // dynacast: hech kim ko'rmayotgan qatlam yuborilmaydi (o'qituvchi yuklashi kamayadi). Modul darajasida — Room qayta yaratilmasin.
 const ROOM_OPTIONS: RoomOptions = { adaptiveStream: true, dynacast: true };
 
+// LiveKit o'zi qayta ulana olmay (~1 daqiqa) uzilsa ham foydalanuvchini darsdan chiqarib yubormaymiz: yangi token olib qayta kiramiz.
+// Kutish oraliqlari kengayib boradi (jami ~1,5 daqiqa); hammasi muvaffaqiyatsiz bo'lsagina eski xatti-harakat (darsdan chiqish).
+const REJOIN_DELAYS_MS = [1_500, 3_000, 5_000, 8_000, 10_000, 15_000, 15_000, 20_000];
+const REJOIN_CONNECT_TIMEOUT_MS = 20_000;
+// Dars/xona ataylab yopilgan yoki o'quvchi chetlashtirilgan holatlar — qayta kirilmaydi.
+// CLIENT_INITIATED bu yerda YO'Q: kutubxona qayta ulanish bekor bo'lganda ham shu sababni beradi; foydalanuvchining o'z chiqishi
+// `leaving` belgisi bilan ajratiladi.
+const FINAL_DISCONNECT_REASONS = new Set<DisconnectReason | undefined>([
+  DisconnectReason.DUPLICATE_IDENTITY,
+  DisconnectReason.PARTICIPANT_REMOVED,
+  DisconnectReason.ROOM_DELETED,
+  DisconnectReason.ROOM_CLOSED,
+  DisconnectReason.USER_REJECTED,
+  DisconnectReason.USER_UNAVAILABLE,
+]);
+
+type LiveToken = Awaited<ReturnType<typeof liveApi.getToken>>;
+
 export function LiveLessonPage() {
   const { t } = useTranslation("live");
   const { lessonId } = useParams();
@@ -41,6 +60,22 @@ export function LiveLessonPage() {
   const waiting = useLessonWaiting(lessonId ?? null, !choices);
   const [readyToConnect, setReadyToConnect] = useState(false);
   const isCompact = useIsCompact();
+  // Avtomatik qayta kirish: `session` o'zgarsa LiveKitRoom yangidan yaratiladi, `rejoinAttempt` > 0 bo'lsa banner ko'rinadi.
+  const [session, setSession] = useState(0);
+  const [freshToken, setFreshToken] = useState<LiveToken | null>(null);
+  const [rejoinAttempt, setRejoinAttempt] = useState(0);
+  const rejoining = useRef(false);
+  const rejoinAttempts = useRef(0);
+  const rejoinTimer = useRef<ReturnType<typeof globalThis.setTimeout> | undefined>(undefined);
+  const rejoinStep = useRef<() => void>(() => undefined);
+  // Foydalanuvchi chiqayotgan (yoki sahifa yopilayotgan) paytda LiveKit'ning CLIENT_INITIATED uzilishi qayta kirishni boshlamasin.
+  const leaving = useRef(false);
+  useLayoutEffect(() => {
+    leaving.current = false;
+    return () => {
+      leaving.current = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (!choices || !token.data || token.data.joinDelayMs <= 0) return;
@@ -71,6 +106,7 @@ export function LiveLessonPage() {
   const refetchLesson = lesson.refetch;
 
   const handleLeave = useCallback(() => {
+    leaving.current = true;
     if (isTeacher.current) {
       navigate(-1);
       return;
@@ -82,6 +118,77 @@ export function LiveLessonPage() {
       })
       .catch(() => navigate(-1));
   }, [navigate, refetchLesson]);
+
+  const stopRejoin = useCallback(() => {
+    globalThis.clearTimeout(rejoinTimer.current);
+    rejoining.current = false;
+    rejoinAttempts.current = 0;
+    setRejoinAttempt(0);
+  }, []);
+
+  // Har chaqiruvda keyingi urinishni rejalashtiradi: kutadi -> dars tugamaganini tekshiradi -> yangi token oladi -> xonani qayta yaratadi.
+  // Ulanmasa (yoki yana uzilsa) shu funksiya qayta chaqiriladi; urinishlar tugasa eski xatti-harakat: darsdan chiqish.
+  useEffect(() => {
+    rejoinStep.current = () => {
+      globalThis.clearTimeout(rejoinTimer.current);
+      const attempt = rejoinAttempts.current;
+      if (attempt >= REJOIN_DELAYS_MS.length) {
+        stopRejoin();
+        toast.error("Aloqa tiklanmadi — darsga qaytadan kiring");
+        handleLeave();
+        return;
+      }
+      rejoinAttempts.current = attempt + 1;
+      setRejoinAttempt(attempt + 1);
+      rejoinTimer.current = globalThis.setTimeout(() => {
+        void (async () => {
+          try {
+            if (!navigator.onLine) throw new Error("offline");
+            const latest = await refetchLesson();
+            if (latest.data?.status === "finished") {
+              stopRejoin();
+              handleLeave();
+              return;
+            }
+            const next = await liveApi.getToken(lessonId as string);
+            setFreshToken(next);
+            setSession((current) => current + 1);
+            // Yangi xona REJOIN_CONNECT_TIMEOUT_MS ichida ulanmasa — yana urinamiz (onConnected bu taymerni to'xtatadi)
+            rejoinTimer.current = globalThis.setTimeout(() => rejoinStep.current(), REJOIN_CONNECT_TIMEOUT_MS);
+          } catch {
+            rejoinStep.current();
+          }
+        })();
+      }, REJOIN_DELAYS_MS[attempt]);
+    };
+  }, [handleLeave, lessonId, refetchLesson, stopRejoin]);
+
+  useEffect(() => () => globalThis.clearTimeout(rejoinTimer.current), []);
+
+  const handleDisconnected = useCallback(
+    (reason?: DisconnectReason) => {
+      if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
+        toast.error("Siz darsdan chetlashtirildingiz");
+        stopRejoin();
+        handleLeave();
+        return;
+      }
+      // Foydalanuvchi o'zi chiqyapti (handleLeave allaqachon ishlagan) yoki qayta kirishda eski xona yangisi bilan almashyapti
+      if (reason === DisconnectReason.CLIENT_INITIATED && (leaving.current || rejoining.current)) return;
+      if (FINAL_DISCONNECT_REASONS.has(reason)) {
+        stopRejoin();
+        handleLeave();
+        return;
+      }
+      rejoining.current = true;
+      rejoinStep.current();
+    },
+    [handleLeave, stopRejoin]
+  );
+
+  const handleConnected = useCallback(() => {
+    if (rejoining.current) stopRejoin();
+  }, [stopRejoin]);
 
   if (lesson.isLoading || token.isLoading) {
     return (
@@ -192,19 +299,27 @@ export function LiveLessonPage() {
 
   return (
     <main className="live-page">
+      {rejoinAttempt > 0 && (
+        <div role="status" className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-4">
+          <span className="flex items-center gap-2.5 rounded-xl bg-saffron-subtle px-4 py-3 text-body-sm text-ink-inverse shadow-lg">
+            <Info size={17} className="shrink-0 text-saffron-strong" />
+            {t(isCompact ? "room.reconnectingMobile" : "room.reconnecting", {
+              attempt: rejoinAttempt,
+              total: REJOIN_DELAYS_MS.length,
+            })}
+          </span>
+        </div>
+      )}
       <LiveKitRoom
-        token={token.data.token}
-        serverUrl={token.data.serverUrl}
+        key={session}
+        token={(freshToken ?? token.data).token}
+        serverUrl={(freshToken ?? token.data).serverUrl}
         options={ROOM_OPTIONS}
         connect
         audio={choices.micOn}
         video={choices.cameraOn}
-        onDisconnected={(reason) => {
-          if (reason === DisconnectReason.PARTICIPANT_REMOVED) {
-            toast.error("Siz darsdan chetlashtirildingiz");
-          }
-          handleLeave();
-        }}
+        onConnected={handleConnected}
+        onDisconnected={handleDisconnected}
         onMediaDeviceFailure={(_failure, kind) =>
           toast.error(
             kind === "audioinput"

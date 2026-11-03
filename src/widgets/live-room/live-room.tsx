@@ -917,7 +917,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
           onBack={onLeave}
           onBoard={(open) => setPanel(open ? "board" : null)}
           onPeople={() => setPanel("people")}
-          onEnd={() => (isTeacher ? setFinishOpen(true) : void room.disconnect())}
+          onEnd={() => (isTeacher ? setFinishOpen(true) : onLeave())}
         />
         {dialogs}
       </div>
