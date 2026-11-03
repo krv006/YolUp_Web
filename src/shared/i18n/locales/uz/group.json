@@ -344,8 +344,6 @@
     "filterPaid": "To'lagan",
     "filterEmpty": "Bu filtrga mos o'quvchi yo'q.",
     "joined": "Qo'shilgan: {{date}}",
-    "rowStats": "Davomat {{attendance}} · Vazifa {{submitted}}/{{total}}",
-    "average": "o'rt. {{value}}",
     "missed_one": "{{count}} ta vazifa bajarilmagan",
     "missed_other": "{{count}} ta vazifa bajarilmagan",
     "unpaidMonths_one": "{{count}} oy to'lanmagan",
@@ -353,7 +351,6 @@
     "paid": "To'langan",
     "unpaid": "To'lanmagan",
     "markPaid": "To'landi deb belgilash",
-    "markPaidShort": "To'landi",
     "undoPaid": "To'lov belgisini olib tashlash",
     "markedPaid": "{{name}} — to'lov belgilandi",
     "unmarked": "{{name}} — to'lov belgisi olib tashlandi",
@@ -386,6 +383,7 @@
         "missed": "Bajarilmagan",
         "not_submitted": "Topshirilmagan"
       }
-    }
+    },
+    "gradeLabel": "O'rt. baho"
   }
 }

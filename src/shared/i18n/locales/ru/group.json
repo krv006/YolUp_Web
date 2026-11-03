@@ -344,8 +344,6 @@
     "filterPaid": "Оплатили",
     "filterEmpty": "Нет учеников по этому фильтру.",
     "joined": "Присоединился: {{date}}",
-    "rowStats": "Посещ. {{attendance}} · Задания {{submitted}}/{{total}}",
-    "average": "ср. {{value}}",
     "missed_one": "Не выполнено заданий: {{count}}",
     "missed_few": "Не выполнено заданий: {{count}}",
     "missed_many": "Не выполнено заданий: {{count}}",
@@ -357,7 +355,6 @@
     "paid": "Оплачено",
     "unpaid": "Не оплачено",
     "markPaid": "Отметить как оплачено",
-    "markPaidShort": "Оплачено",
     "undoPaid": "Снять отметку об оплате",
     "markedPaid": "{{name}} — оплата отмечена",
     "unmarked": "{{name}} — отметка об оплате снята",
@@ -390,6 +387,7 @@
         "missed": "Не выполнено",
         "not_submitted": "Не сдано"
       }
-    }
+    },
+    "gradeLabel": "Ср. балл"
   }
 }

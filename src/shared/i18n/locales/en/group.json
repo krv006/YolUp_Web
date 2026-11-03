@@ -344,8 +344,6 @@
     "filterPaid": "Paid",
     "filterEmpty": "No students match this filter.",
     "joined": "Joined: {{date}}",
-    "rowStats": "Attendance {{attendance}} · Homework {{submitted}}/{{total}}",
-    "average": "avg. {{value}}",
     "missed_one": "{{count}} assignment missed",
     "missed_other": "{{count}} assignments missed",
     "unpaidMonths_one": "{{count}} month unpaid",
@@ -353,7 +351,6 @@
     "paid": "Paid",
     "unpaid": "Unpaid",
     "markPaid": "Mark as paid",
-    "markPaidShort": "Mark paid",
     "undoPaid": "Remove paid mark",
     "markedPaid": "{{name}} — payment recorded",
     "unmarked": "{{name}} — payment mark removed",
@@ -386,6 +383,7 @@
         "missed": "Missed",
         "not_submitted": "Not submitted"
       }
-    }
+    },
+    "gradeLabel": "Avg. grade"
   }
 }

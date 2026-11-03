@@ -164,56 +164,80 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
           </div>
 
           {students.length ? (
-            <ul className="flex shrink-0 flex-col overflow-hidden rounded-xl bg-surface">
+            <ul className="flex shrink-0 flex-col gap-3">
               {students.map((student) => {
                 const paid = student.payment.status === "paid";
                 const { homework, attendance } = student;
+                const busy = markPaid.isPending || unmarkPaid.isPending;
+                const warnings = [
+                  homework.missed > 0 ? t("progress.missed", { count: homework.missed }) : null,
+                  !paid && student.payment.unpaidMonths > 1
+                    ? t("progress.unpaidMonths", { count: student.payment.unpaidMonths })
+                    : null,
+                ].filter(Boolean);
                 return (
-                  <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
+                  <li key={student.id} className="flex flex-col gap-3 rounded-xl bg-surface p-4">
                     <button
                       type="button"
-                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                      className="flex items-center gap-3 text-left"
                       onClick={() => setOpenStudent(student)}
                     >
                       <Avatar name={student.name} size="sm" className="[&_.avatar]:size-11" />
-                      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span className="flex min-w-0 flex-1 flex-col">
                         <strong className="truncate text-title text-ink">{student.name}</strong>
                         <small className="truncate text-body-xs text-ink-secondary">
                           {t("progress.joined", { date: formatDate(student.joinedAt) })}
                         </small>
-                        <small className="truncate font-numeric text-caption text-ink-secondary">
-                          {t("progress.rowStats", {
-                            attendance: attendance.percent === null ? "—" : `${attendance.percent}%`,
-                            submitted: homework.submitted,
-                            total: homework.total,
-                          })}
-                          {homework.average !== null ? ` · ${t("progress.average", { value: homework.average })}` : ""}
-                        </small>
-                        {homework.missed > 0 || (!paid && student.payment.unpaidMonths > 1) ? (
-                          <small className="text-caption text-danger">
-                            {[
-                              homework.missed > 0 ? t("progress.missed", { count: homework.missed }) : null,
-                              !paid && student.payment.unpaidMonths > 1
-                                ? t("progress.unpaidMonths", { count: student.payment.unpaidMonths })
-                                : null,
-                            ]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </small>
-                        ) : null}
+                      </span>
+                      <span
+                        className={`flex h-7 shrink-0 items-center rounded-full px-3 text-caption-strong ${
+                          paid ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"
+                        }`}
+                      >
+                        {paid ? t("progress.paid") : t("progress.unpaid")}
                       </span>
                     </button>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <ProgressStat
+                        label={t("progress.statAttendance")}
+                        value={attendance.percent === null ? "—" : `${attendance.percent}%`}
+                        percent={attendance.percent}
+                      />
+                      <ProgressStat
+                        label={t("progress.statHomework")}
+                        value={`${homework.submitted}/${homework.total}`}
+                        percent={homework.completionPercent}
+                      />
+                      <ProgressStat
+                        label={t("progress.gradeLabel")}
+                        value={homework.average === null ? "—" : String(homework.average)}
+                      />
+                    </div>
+
+                    {warnings.length ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {warnings.map((warning) => (
+                          <span
+                            key={warning}
+                            className="flex h-6 items-center rounded-full bg-danger-bg px-2.5 text-caption-strong text-danger"
+                          >
+                            {warning}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+
                     <button
                       type="button"
-                      disabled={markPaid.isPending || unmarkPaid.isPending}
-                      className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-caption-strong transition-colors disabled:opacity-60 ${
-                        paid ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"
+                      disabled={busy}
+                      className={`flex h-10 items-center justify-center gap-2 rounded-full text-body-sm font-medium transition-colors disabled:opacity-60 ${
+                        paid ? "bg-subtle text-ink-secondary" : "bg-brand text-on-action"
                       }`}
-                      aria-label={paid ? t("progress.undoPaid") : t("progress.markPaid")}
                       onClick={() => (paid ? setUnmarkTarget(student) : mark(student))}
                     >
-                      <Icon name={paid ? "check-circle" : "add"} size={16} />
-                      {paid ? t("progress.paid") : t("progress.markPaidShort")}
+                      <Icon name={paid ? "close" : "check-circle"} size={16} />
+                      {paid ? t("progress.undoPaid") : t("progress.markPaid")}
                     </button>
                   </li>
                 );
@@ -250,5 +274,22 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
         onConfirm={confirmUnmark}
       />
     </div>
+  );
+}
+
+function ProgressStat({ label, value, percent }: { label: string; value: string; percent?: number | null }) {
+  return (
+    <span className="flex flex-col gap-1.5 rounded-xl bg-subtle px-3 py-2.5">
+      <small className="text-caption text-ink-secondary">{label}</small>
+      <strong className="font-numeric text-title leading-5 text-ink">{value}</strong>
+      <span className="h-1 overflow-hidden rounded-full bg-line">
+        {percent !== null && percent !== undefined ? (
+          <span
+            className={`block h-full rounded-full ${percent >= 50 ? "bg-brand" : "bg-danger"}`}
+            style={{ width: `${percent}%` }}
+          />
+        ) : null}
+      </span>
+    </span>
   );
 }
