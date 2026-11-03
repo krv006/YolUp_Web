@@ -4,7 +4,7 @@ import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 
-export function ParentLockedCard({ childId, childName }: { childId: string; childName: string }) {
+export function ParentLockedCard({ childId, childName, action = true }: { childId: string; childName: string; action?: boolean }) {
   const { t } = useTranslation("parent");
   const navigate = useNavigate();
   const compact = useIsCompact();
@@ -17,14 +17,16 @@ export function ParentLockedCard({ childId, childName }: { childId: string; chil
       </span>
       <strong className="font-heading text-[20px]/7 font-semibold text-ink">{t("locked.title")}</strong>
       <p className="max-w-[420px] text-body-sm text-ink-secondary">{t("locked.text", { name: childName.split(" ")[0] || childName })}</p>
-      <button
-        type="button"
-        className="mt-1 flex h-11 items-center gap-2 rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong"
-        onClick={() => navigate(compact ? ROUTES.parent.childPermissions(childId) : ROUTES.parent.child(childId))}
-      >
-        <Icon name="shield" size={18} />
-        {t("locked.action")}
-      </button>
+      {action ? (
+        <button
+          type="button"
+          className="mt-1 flex h-11 items-center gap-2 rounded-full bg-brand px-5 text-button text-on-action transition-colors hover:bg-brand-strong"
+          onClick={() => navigate(compact ? ROUTES.parent.childPermissions(childId) : ROUTES.parent.child(childId))}
+        >
+          <Icon name="shield" size={18} />
+          {t("locked.action")}
+        </button>
+      ) : null}
     </section>
   );
 }

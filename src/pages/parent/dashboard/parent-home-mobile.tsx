@@ -10,6 +10,7 @@ import { ChildChips, ParentErrorBanner, ParentLockedCard, ParentMobileHeader } f
 import { HomeHero } from "./home-hero";
 import { HomeRecent } from "./home-recent";
 import { AttentionCard } from "./home-side";
+import { PendingLinkActions } from "./pending-link-actions";
 import { useParentHome } from "./use-parent-home";
 
 const RADIUS = 52;
@@ -189,6 +190,9 @@ function MobilePending({ link }: { link: ParentLink }) {
           <Icon name="schedule" size={14} />
           {t("home.pending.chip", { time: formatRelativeShort(link.createdAt) })}
         </span>
+        <div className="mt-1 w-full text-left">
+          <PendingLinkActions link={link} />
+        </div>
       </section>
       <button type="button" className="flex items-center gap-3 rounded-[20px] bg-surface px-4 py-4 text-left" onClick={() => setAdding(true)}>
         <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-accent-green-bg text-accent-green-fg">

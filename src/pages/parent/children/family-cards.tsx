@@ -5,6 +5,8 @@ import { ROUTES } from "@/shared/config";
 import { formatRelativeShort } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
+import { PendingLinkActions } from "../dashboard/pending-link-actions";
+import { ChildAvatar } from "./child-avatar";
 import { visitWhen } from "./family-format";
 import type { FamilyChild } from "./use-parent-family";
 
@@ -46,18 +48,11 @@ export function ChildCard({
       className={`flex flex-col gap-4 rounded-[20px] border-2 bg-surface p-5 ${selected ? "border-brand" : "border-transparent"}`}
     >
       <div className="flex items-center gap-3">
-        <Avatar
-          name={child.name}
-          src={child.avatarUrl ?? undefined}
-          tone={child.avatarTone}
-          size="md"
-          className="shrink-0 [&_.avatar]:size-14"
-        />
+        <ChildAvatar child={child} />
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <strong className="truncate text-title text-ink">{child.name}</strong>
           <small className="truncate text-body-xs text-ink-secondary">
-            {child.username}
-            {row.groups !== null ? ` · ${t("family.groups", { count: row.groups })}` : ""}
+            {[child.username, child.grade, row.groups !== null ? t("family.groups", { count: row.groups }) : ""].filter(Boolean).join(" · ")}
           </small>
         </div>
         {selected ? (
@@ -122,6 +117,9 @@ export function PendingCard({ link }: { link: ParentLink }) {
       <span className="mt-1 flex items-center gap-1 rounded-full bg-accent-teal-bg px-2.5 py-1 text-caption-strong text-accent-teal-fg">
         <Icon name="schedule" size={14} />
         {t("home.pending.chip", { time: formatRelativeShort(link.createdAt) })}
+      </span>
+      <span className="mt-2">
+        <PendingLinkActions link={link} layout="inline" />
       </span>
     </article>
   );

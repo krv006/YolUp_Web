@@ -1,4 +1,4 @@
-import { useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { AppError } from "@/shared/api";
@@ -7,7 +7,7 @@ import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { suggestUsername, tempPassword, usernameAlternatives } from "../lib/parent-family";
 import { printCredentials } from "../lib/print-credentials";
-import { useCreateChild } from "../model/parent.queries";
+import { useCreateChild, useUsernameAvailability } from "../model/parent.queries";
 import { Celebration, IconTile } from "./child-dialog-parts";
 import { CHILD_BUTTON, CHILD_INPUT, CHILD_INPUT_ERROR, DIALOG_TITLE } from "./child-dialog-styles";
 
@@ -23,7 +23,8 @@ interface Credentials {
 }
 
 const FORM_ID = "parent-create-child";
-const EMPTY = { firstName: "", lastName: "", username: "" };
+const EMPTY = { firstName: "", lastName: "", username: "", grade: "" };
+const CHECK_DELAY_MS = 400;
 
 function randomPool(): number[] {
   return Array.from({ length: 8 }, () => Math.random());
@@ -54,7 +55,34 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
 
   const username = usernameEdited ? form.username : suggestUsername(form.firstName, form.lastName);
   const password = customPassword ?? tempPassword(form.firstName, fromPool(pool));
-  const usernameError = error?.field === "username";
+  const [checked, setChecked] = useState("");
+  const availability = useUsernameAvailability(open && !ready ? checked : "");
+  const live =
+    availability.data && availability.data.username.toLowerCase() === username.trim().toLowerCase() ? availability.data : null;
+  const liveState = !live ? null : !live.valid ? "invalid" : live.available ? "free" : "taken";
+  const usernameError = error?.field === "username" || liveState === "taken" || liveState === "invalid";
+  const usernameMessage =
+    error?.field === "username"
+      ? error.message
+      : liveState === "taken"
+        ? t("createChild.taken")
+        : liveState === "invalid"
+          ? t("createChild.invalid")
+          : liveState === "free"
+            ? t("createChild.free")
+            : t("createChild.usernameHint");
+  const shownSuggestions =
+    suggestions ??
+    (liveState === "taken" && live
+      ? live.suggestions.length
+        ? live.suggestions
+        : usernameAlternatives(form.firstName, form.lastName, username)
+      : null);
+
+  useEffect(() => {
+    const timer = globalThis.setTimeout(() => setChecked(username.trim()), CHECK_DELAY_MS);
+    return () => globalThis.clearTimeout(timer);
+  }, [username]);
 
   function reset() {
     setForm(EMPTY);
@@ -64,6 +92,7 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
     setSuggestions(null);
     setError(null);
     setReady(null);
+    setChecked("");
   }
 
   function close(next: boolean) {
@@ -101,7 +130,13 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
     const name = `${form.firstName.trim()} ${form.lastName.trim()}`.trim();
     setError(null);
     create.mutate(
-      { first_name: form.firstName.trim(), last_name: form.lastName.trim(), username: username.trim(), password },
+      {
+        first_name: form.firstName.trim(),
+        last_name: form.lastName.trim(),
+        username: username.trim(),
+        password,
+        ...(form.grade.trim() ? { grade: form.grade.trim() } : {}),
+      },
       {
         onSuccess: () => setReady({ name, username: username.trim(), password }),
         onError: (cause: Error) => {
@@ -110,7 +145,7 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
           const passwordError = firstError(fields, "password");
           if (loginError) {
             setError({ field: "username", message: t("createChild.taken") });
-            setSuggestions(usernameAlternatives(form.firstName, form.lastName, username));
+            setSuggestions(live?.suggestions.length ? live.suggestions : usernameAlternatives(form.firstName, form.lastName, username));
           } else if (passwordError) {
             setError({ field: "password", message: passwordError });
           } else {
@@ -196,7 +231,8 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
     );
   }
 
-  const canSubmit = form.firstName.trim() && form.lastName.trim() && username.trim() && password.length >= 8;
+  const canSubmit =
+    form.firstName.trim() && form.lastName.trim() && username.trim() && password.length >= 8 && liveState !== "taken" && liveState !== "invalid";
 
   return (
     <AppDialog
@@ -263,14 +299,18 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
               <Icon name="warning-fill" size={20} className="absolute top-1/2 right-4 -translate-y-1/2 text-error-text" />
             ) : null}
           </span>
-          <small id={`${id}-username-hint`} className={`text-body-xs ${usernameError ? "text-error-text" : "text-ink-tertiary"}`}>
-            {usernameError ? error?.message : t("createChild.usernameHint")}
+          <small
+            id={`${id}-username-hint`}
+            className={`flex items-center gap-1.5 text-body-xs ${usernameError ? "text-error-text" : liveState === "free" ? "text-success-text" : "text-ink-tertiary"}`}
+          >
+            {liveState === "free" && !usernameError ? <Icon name="check-circle" size={16} className="shrink-0" /> : null}
+            {usernameMessage}
           </small>
         </div>
 
-        {suggestions?.length ? (
+        {shownSuggestions?.length ? (
           <div className="-mt-1 flex flex-wrap gap-2">
-            {suggestions.map((option) => (
+            {shownSuggestions.map((option) => (
               <button
                 key={option}
                 type="button"
@@ -282,6 +322,20 @@ export function CreateChildDialog({ open, onOpenChange }: CreateChildDialogProps
             ))}
           </div>
         ) : null}
+
+        <label className="flex flex-col gap-2">
+          <span className="text-body-sm font-medium text-ink">
+            {t("createChild.grade")} <span className="font-normal text-ink-tertiary">{t("createChild.optional")}</span>
+          </span>
+          <input
+            className={CHILD_INPUT}
+            value={form.grade}
+            maxLength={20}
+            autoComplete="off"
+            placeholder={t("createChild.gradePlaceholder")}
+            onChange={(event) => update("grade", event.target.value)}
+          />
+        </label>
 
         <div className="flex flex-col gap-2">
           <label htmlFor={`${id}-password`} className="text-body-sm font-medium text-ink">

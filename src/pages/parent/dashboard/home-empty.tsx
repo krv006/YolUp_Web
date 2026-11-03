@@ -4,6 +4,7 @@ import { AddChildDialog, CreateChildDialog, LinkChildDialog, type ParentLink } f
 import { formatRelativeShort } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
+import { PendingLinkActions } from "./pending-link-actions";
 
 const STEP_ICONS = ["send", "how-to-reg", "trending-up"];
 
@@ -92,6 +93,9 @@ export function PendingLink({ link }: { link: ParentLink }) {
           </span>
           <h2 className="font-heading text-[22px]/8 font-semibold text-ink">{t("home.pending.title", { name: first })}</h2>
           <p className="text-body-sm text-ink-secondary">{t("home.pending.description", { username: link.student.username })}</p>
+          <div className="mt-2 w-full max-w-[460px]">
+            <PendingLinkActions link={link} />
+          </div>
         </div>
       </section>
       <div className="flex flex-col gap-4">

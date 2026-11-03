@@ -1,91 +1,24 @@
 import { describe, expect, it } from "vitest";
-import type { Assignment, AttendanceRow, Lesson } from "@/shared/types";
+import type { Lesson } from "@/shared/types";
 import {
-  attendedCount,
-  childPeriodSummary,
+  consentGranted,
   courseSchedule,
-  latestVisit,
   newDeviceCount,
-  overallScore,
-  periodRange,
   recentUnlink,
+  remindedRecently,
   suggestUsername,
   tempPassword,
   usernameAlternatives,
 } from "./parent-family";
-import { rowsByLesson } from "./parent-home";
 
 const NOW = new Date(2026, 9, 29, 14, 39).getTime();
 const at = (day: number, hour: number, minute = 0, month = 9) => new Date(2026, month, day, hour, minute).toISOString();
 const lesson = (id: string, startsAt: string, status: Lesson["status"], courseId = "c1") =>
   ({ id, startsAt, status, courseId, courseTitle: "Ingliz tili A1", durationMinutes: 90 }) as Lesson;
-const row = (lessonId: string, joinedAt: string | null) => ({ id: `a-${lessonId}`, lessonId, joinedAt }) as AttendanceRow;
-const assignment = (id: string, patch: Partial<Assignment>) =>
-  ({ id, title: id, maxScore: 10, dueAt: null, mySubmission: null, status: "published", courseId: "c1", ...patch }) as Assignment;
-const graded = (day: number, value: number) => ({ createdAt: at(day, 12), gradeValue: value }) as Assignment["mySubmission"];
 const sequence = (...values: number[]) => {
   let index = 0;
   return () => values[index++ % values.length];
 };
-
-describe("periodRange", () => {
-  it("covers Monday to Monday for a week and the calendar month", () => {
-    expect(periodRange(NOW, "week")).toEqual({ from: new Date(2026, 9, 26).getTime(), to: new Date(2026, 10, 2).getTime() });
-    expect(periodRange(NOW, "month")).toEqual({ from: new Date(2026, 9, 1).getTime(), to: new Date(2026, 10, 1).getTime() });
-  });
-});
-
-describe("childPeriodSummary", () => {
-  const lessons = [
-    lesson("mon", at(26, 16), "finished"),
-    lesson("tue", at(27, 16), "finished"),
-    lesson("wed", at(28, 18), "finished"),
-    lesson("fri", at(30, 16), "scheduled"),
-    lesson("early", at(5, 16), "finished"),
-  ];
-  const rows = rowsByLesson([row("mon", at(26, 16)), row("wed", at(28, 18, 3)), row("early", at(5, 16))]);
-  const assignments = [
-    assignment("done", { dueAt: at(28, 23), mySubmission: graded(27, 9) }),
-    assignment("open", { dueAt: at(31, 23) }),
-    assignment("old", { dueAt: at(10, 23), mySubmission: graded(9, 7) }),
-    assignment("draft", { dueAt: at(29, 23), status: "draft" }),
-  ];
-
-  it("summarises this week", () => {
-    expect(childPeriodSummary({ lessons, rows, assignments, now: NOW, period: "week" })).toEqual({
-      attendance: 67,
-      homework: { submitted: 1, total: 2 },
-      score: 9,
-    });
-  });
-
-  it("summarises this month", () => {
-    expect(childPeriodSummary({ lessons, rows, assignments, now: NOW, period: "month" })).toEqual({
-      attendance: 75,
-      homework: { submitted: 2, total: 3 },
-      score: 8,
-    });
-  });
-
-  it("reports nothing for an empty period", () => {
-    expect(childPeriodSummary({ lessons: [], rows: new Map(), assignments: [], now: NOW, period: "week" })).toEqual({
-      attendance: null,
-      homework: { submitted: 0, total: 0 },
-      score: null,
-    });
-  });
-});
-
-describe("card figures", () => {
-  it("counts attended lessons once, averages all grades and finds the latest visit", () => {
-    const rows = [row("a", at(26, 16)), row("a", at(26, 16, 30)), row("b", null), row("c", at(28, 18))];
-    expect(attendedCount(rows)).toBe(2);
-    expect(latestVisit(rows)?.lessonId).toBe("c");
-    expect(latestVisit([row("x", null)])).toBeNull();
-    expect(overallScore([assignment("a", { mySubmission: graded(1, 9) }), assignment("b", { mySubmission: graded(2, 16), maxScore: 20 })])).toBe(8.5);
-    expect(overallScore([])).toBeNull();
-  });
-});
 
 describe("courseSchedule", () => {
   it("collects weekdays and the usual start time of upcoming lessons", () => {
@@ -150,5 +83,37 @@ describe("recentUnlink", () => {
     expect(recentUnlink(links, new Set(["s1"]), new Set(), NOW)?.id).toBe("new");
     expect(recentUnlink(links, new Set(["s1"]), new Set(["new"]), NOW)).toBeNull();
     expect(recentUnlink([link("pending", "declined", "s4", null)], new Set(), new Set(), NOW)).toBeNull();
+  });
+});
+
+describe("consentGranted", () => {
+  const consents = [
+    { studentId: "s1", kind: "analytics", granted: false },
+    { studentId: "s1", kind: "camera", granted: true },
+    { studentId: "s2", kind: "recording", granted: false },
+  ];
+
+  it("treats a missing record as granted, like the server", () => {
+    expect(consentGranted(consents, "s1", "recording")).toBe(true);
+    expect(consentGranted([], "s1", "analytics")).toBe(true);
+  });
+
+  it("is off only for an explicit false record of that child", () => {
+    expect(consentGranted(consents, "s1", "analytics")).toBe(false);
+    expect(consentGranted(consents, "s1", "camera")).toBe(true);
+    expect(consentGranted(consents, "s2", "recording")).toBe(false);
+    expect(consentGranted(consents, "s2", "analytics")).toBe(true);
+  });
+});
+
+describe("remindedRecently", () => {
+  it("blocks a second reminder within 24 hours", () => {
+    expect(remindedRecently(new Date(NOW - 3_600_000).toISOString(), NOW)).toBe(true);
+    expect(remindedRecently(new Date(NOW - 86_400_000 - 1).toISOString(), NOW)).toBe(false);
+  });
+
+  it("allows reminding when there is no valid timestamp", () => {
+    expect(remindedRecently(null, NOW)).toBe(false);
+    expect(remindedRecently("not-a-date", NOW)).toBe(false);
   });
 });

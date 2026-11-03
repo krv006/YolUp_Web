@@ -378,6 +378,17 @@
       },
       "confirm": "Turn off",
       "cancel": "Cancel"
+    },
+    "online": "Online",
+    "unlink": {
+      "action": "Unlink child",
+      "text": "The account stays, it is only disconnected from you",
+      "title": "Unlink {{name}}?",
+      "description": "You will no longer see {{name}}’s attendance, results or notifications. Your permissions will be removed too. To reconnect, you will need to send a new request.",
+      "confirm": "Unlink",
+      "cancel": "Cancel",
+      "done": "{{name}} was unlinked",
+      "failed": "Couldn’t unlink. Please try again"
     }
   },
   "addChild": {
@@ -422,18 +433,23 @@
     "regenerate": "New password",
     "copy": "Copy",
     "copied": "Copied",
-    "info": "After signing in, your child can change the password in account settings",
+    "info": "Your child will change the password on first sign-in",
     "cancel": "Cancel",
     "submit": "Create account",
     "readyTitle": "Account ready!",
-    "readyText": "{{name}} can now sign in with these details.",
+    "readyText": "{{name}} will sign in with these details and set a new password on first sign-in.",
     "warning": "You’ll only see the password now — save or print it",
     "pdf": "Download PDF",
     "done": "Done",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp account: {{name}}",
     "printSubtitle": "Your child signs in with this login and password.",
-    "share": "Share the details"
+    "share": "Share the details",
+    "free": "Login is available",
+    "invalid": "Only Latin letters, digits and _ . are allowed",
+    "grade": "Grade",
+    "optional": "(optional)",
+    "gradePlaceholder": "e.g. 7-B"
   },
   "attendanceView": {
     "eyebrow": "Tracking",
@@ -1050,5 +1066,21 @@
     "title": "This data is hidden",
     "text": "“Activity analysis” is turned off for {{name}}. Turn it on to see attendance, attention and focus.",
     "action": "Open permissions"
+  },
+  "pendingActions": {
+    "remind": "Remind",
+    "reminded": "Reminder sent",
+    "remindDone": "Reminder sent to {{name}}",
+    "remindLimit": "You can remind again in {{time}}",
+    "retryHours": "{{count}} h",
+    "retryMinutes": "{{count}} min",
+    "cancel": "Cancel",
+    "cancelTitle": "Cancel the request?",
+    "cancelText": "The request sent to {{name}} will be deleted. You can send a new one later.",
+    "cancelConfirm": "Cancel request",
+    "cancelKeep": "Keep",
+    "cancelDone": "Request cancelled",
+    "failed": "Something went wrong. Please try again",
+    "expires": "The request is valid until {{date}} — it expires if not approved"
   }
 }

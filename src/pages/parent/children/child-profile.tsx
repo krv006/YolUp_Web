@@ -1,12 +1,14 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/config";
 import { useOnlineStatus } from "@/shared/model";
 import { Icon } from "@/shared/ui/icon";
-import { Avatar } from "@/shared/ui/legacy";
-import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
+import { ParentErrorBanner, ParentLockedCard, ParentPageHeader } from "@/widgets/parent-shell";
 import { HomeRecent } from "../dashboard/home-recent";
+import { ChildAvatar } from "./child-avatar";
 import { ConsentSwitches } from "./consent-switches";
+import { UnlinkChildDialog } from "./unlink-child-dialog";
 import { useChildProfile, type ChildGroup } from "./use-child-profile";
 
 function groupLook(group: ChildGroup): { icon: string; tone: string } {
@@ -40,9 +42,9 @@ export function ChildProfile({ childId }: { childId: string }) {
   const profile = useChildProfile(childId);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
+  const [unlinking, setUnlinking] = useState(false);
 
   if (!profile.loading && !child && !profile.failed) return <Navigate to={ROUTES.parent.children} replace />;
-
 
   function openAttendance() {
     profile.select();
@@ -76,19 +78,19 @@ export function ChildProfile({ childId }: { childId: string }) {
         <div className="grid grid-cols-[minmax(0,1fr)_340px] items-start gap-5 xl:grid-cols-[minmax(0,1fr)_400px]">
           <div className="flex min-w-0 flex-col gap-5">
             <section className="flex items-center gap-5 rounded-[20px] bg-surface p-6">
-              <Avatar
-                name={child.name}
-                src={child.avatarUrl ?? undefined}
-                tone={child.avatarTone}
-                size="xl"
-                className="shrink-0 [&_.avatar]:size-22"
-              />
+              <ChildAvatar child={child} size="xl" />
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <h2 className="truncate font-heading text-[22px]/8 font-semibold text-ink">{child.name}</h2>
                 <small className="truncate text-body-sm text-ink-secondary">
-                  {child.username} · {t("profile.role")}
+                  {[child.username, child.grade || t("profile.role")].join(" · ")}
                 </small>
                 <span className="mt-1 flex flex-wrap gap-2">
+                  {child.isOnline ? (
+                    <span className="flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-caption-strong text-success-text">
+                      <span className="size-2 rounded-full bg-success" />
+                      {t("profile.online")}
+                    </span>
+                  ) : null}
                   {profile.groups.length ? (
                     <span className="flex items-center gap-1 rounded-full bg-accent-blue-bg px-2.5 py-1 text-caption-strong text-accent-blue-fg">
                       <Icon name="groups" size={14} />
@@ -156,7 +158,11 @@ export function ChildProfile({ childId }: { childId: string }) {
               </ul>
             </section>
 
-            <HomeRecent items={profile.recent} now={profile.now} onAll={profile.select} />
+            {profile.locked ? (
+              <ParentLockedCard childId={child.id} childName={child.name} action={false} />
+            ) : (
+              <HomeRecent items={profile.recent} now={profile.now} onAll={profile.select} />
+            )}
           </div>
 
           <div className="flex min-w-0 flex-col gap-5">
@@ -185,12 +191,24 @@ export function ChildProfile({ childId }: { childId: string }) {
                 </span>
                 <Icon name="chevron-right" size={20} className="shrink-0 text-icon-tertiary" />
               </button>
+              <button
+                type="button"
+                className="flex items-center gap-4 rounded-[20px] bg-surface px-5 py-4 text-left transition-colors hover:bg-danger-bg"
+                onClick={() => setUnlinking(true)}
+              >
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-danger-bg text-error-text">
+                  <Icon name="link-off" size={22} />
+                </span>
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <strong className="text-title-sm text-error-text">{t("profile.unlink.action")}</strong>
+                  <small className="text-body-xs text-ink-secondary">{t("profile.unlink.text")}</small>
+                </span>
+              </button>
             </section>
           </div>
         </div>
       )}
-
-
+      {child ? <UnlinkChildDialog child={child} open={unlinking} onOpenChange={setUnlinking} /> : null}
     </div>
   );
 }

@@ -378,6 +378,17 @@
       },
       "confirm": "O‘chirish",
       "cancel": "Bekor qilish"
+    },
+    "online": "Onlayn",
+    "unlink": {
+      "action": "Farzandni uzish",
+      "text": "Hisob o‘chmaydi, faqat sizdan ajratiladi",
+      "title": "{{name}}ni uzasizmi?",
+      "description": "{{name}}ning davomati, natijalari va bildirishnomalari sizga ko‘rinmay qoladi. Bergan ruxsatlaringiz ham o‘chadi. Qayta ulash uchun yangi so‘rov yuborish kerak bo‘ladi.",
+      "confirm": "Uzish",
+      "cancel": "Bekor qilish",
+      "done": "{{name}} sizdan uzildi",
+      "failed": "Uzib bo‘lmadi. Qayta urinib ko‘ring"
     }
   },
   "addChild": {
@@ -422,18 +433,23 @@
     "regenerate": "Yangi parol",
     "copy": "Nusxa olish",
     "copied": "Nusxa olindi",
-    "info": "Farzand kirgach parolni hisob sozlamalarida o‘zi almashtirishi mumkin",
+    "info": "Farzand birinchi kirishda parolni o‘zi almashtiradi",
     "cancel": "Bekor qilish",
     "submit": "Hisob yaratish",
     "readyTitle": "Hisob tayyor!",
-    "readyText": "{{name}} endi shu ma’lumotlar bilan kira oladi.",
+    "readyText": "{{name}} shu ma’lumotlar bilan kiradi va birinchi kirishda yangi parol o‘rnatadi.",
     "warning": "Parolni faqat hozir ko‘rasiz — saqlab oling yoki chop eting",
     "pdf": "PDF yuklab olish",
     "done": "Tayyor",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
     "printSubtitle": "Farzandingiz shu login va parol bilan kiradi.",
-    "share": "Ma’lumotlarni ulashish"
+    "share": "Ma’lumotlarni ulashish",
+    "free": "Login bo‘sh — ishlatish mumkin",
+    "invalid": "Faqat lotin harflari, raqamlar va _ . belgilari",
+    "grade": "Sinf",
+    "optional": "(ixtiyoriy)",
+    "gradePlaceholder": "Masalan: 7-B"
   },
   "attendanceView": {
     "eyebrow": "Kuzatuv",
@@ -1050,5 +1066,21 @@
     "title": "Bu ma’lumot yopiq",
     "text": "{{name}} uchun «Faollik tahlili» ruxsati o‘chirilgan. Davomat, diqqat va fokusni ko‘rish uchun ruxsatni yoqing.",
     "action": "Ruxsatlarni ochish"
+  },
+  "pendingActions": {
+    "remind": "Qayta eslatish",
+    "reminded": "Eslatma yuborildi",
+    "remindDone": "{{name}}ga eslatma yuborildi",
+    "remindLimit": "Eslatmani {{time}}dan keyin qayta yuborish mumkin",
+    "retryHours": "{{count}} soat",
+    "retryMinutes": "{{count}} daqiqa",
+    "cancel": "Bekor qilish",
+    "cancelTitle": "So‘rovni bekor qilasizmi?",
+    "cancelText": "{{name}}ga yuborilgan so‘rov o‘chiriladi. Keyinroq yangi so‘rov yuborishingiz mumkin.",
+    "cancelConfirm": "Bekor qilish",
+    "cancelKeep": "Qoldirish",
+    "cancelDone": "So‘rov bekor qilindi",
+    "failed": "Amalni bajarib bo‘lmadi. Qayta urinib ko‘ring",
+    "expires": "So‘rov {{date}}gacha amal qiladi — tasdiqlanmasa bekor bo‘ladi"
   }
 }
