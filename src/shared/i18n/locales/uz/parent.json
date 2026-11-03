@@ -806,6 +806,10 @@
       "counts": "{{submitted}}/{{total}} vazifa topshirilgan · {{graded}} ta baholangan",
       "grades": "Baholar",
       "noGrades": "Hali baho yo‘q"
+    },
+    "rank": {
+      "place": "Guruhda {{rank}}-o‘rin",
+      "top": "Top {{value}}%"
     }
   },
   "mock": {
@@ -853,7 +857,8 @@
       "notReady": "Overall band hali hisoblanmagan",
       "waitingTeacher": "O‘qituvchi bahosi kutilmoqda",
       "sectionWaiting": "kutilmoqda",
-      "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi."
+      "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi.",
+      "teacherComment": "O‘qituvchi izohi"
     }
   },
   "settings": {

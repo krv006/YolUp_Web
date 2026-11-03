@@ -200,6 +200,16 @@ export function MockResultBody({
         })}
       </div>
 
+      {result.teacherComment ? (
+        <section className="flex items-start gap-3 rounded-2xl bg-accent-violet-bg px-4 py-3">
+          <Icon name="chat-outline" size={20} className="mt-px shrink-0 text-accent-violet-fg" />
+          <span className="flex min-w-0 flex-col gap-0.5">
+            <small className="text-caption-strong text-accent-violet-fg">{t("mock.result.teacherComment")}</small>
+            <span className="text-body-sm break-words text-ink">{result.teacherComment}</span>
+          </span>
+        </section>
+      ) : null}
+
       {pending ? (
         <p className="flex items-center gap-3 rounded-2xl bg-info-bg px-4 py-3 text-body-sm text-info-text">
           <Icon name="info" size={20} className="shrink-0" />

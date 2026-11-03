@@ -200,6 +200,7 @@ export function ParentResults() {
       <ResultsCoursePanel
         row={opened}
         course={opened ? view.courseById.get(opened.courseId) : undefined}
+        childId={view.child?.id ?? null}
         assignments={opened ? assignments.filter((item) => item.courseId === opened.courseId) : []}
         now={view.now}
         onClose={() => setOpened(null)}

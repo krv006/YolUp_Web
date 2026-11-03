@@ -806,6 +806,10 @@
       "counts": "{{submitted}}/{{total}} submitted · {{graded}} graded",
       "grades": "Grades",
       "noGrades": "No grades yet"
+    },
+    "rank": {
+      "place": "#{{rank}} in group",
+      "top": "Top {{value}}%"
     }
   },
   "mock": {
@@ -853,7 +857,8 @@
       "notReady": "Overall band not calculated yet",
       "waitingTeacher": "Waiting for the teacher’s grade",
       "sectionWaiting": "pending",
-      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready."
+      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready.",
+      "teacherComment": "Teacher’s note"
     }
   },
   "settings": {

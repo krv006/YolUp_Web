@@ -8,7 +8,7 @@ import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { subjectLook } from "../attendance/attendance-styles";
 import { ScoreCard } from "../dashboard/home-side";
-import { GradeRow } from "./results-parts";
+import { CourseRank, GradeRow } from "./results-parts";
 
 const RADIUS = 38;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
@@ -16,19 +16,21 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 export function ResultsCoursePanel({
   row,
   course,
+  childId,
   assignments,
   now,
   onClose,
 }: {
   row: SubjectRow | null;
   course: Course | undefined;
+  childId: string | null;
   assignments: Assignment[];
   now: number;
   onClose: () => void;
 }) {
   const { t } = useTranslation("parent");
   const navigate = useNavigate();
-  const scheduled = useLessons({ status: "scheduled", ordering: "starts_at", page_size: 50 }, Boolean(row));
+  const scheduled = useLessons({ student: childId ?? "", status: "scheduled", ordering: "starts_at", page_size: 50 }, Boolean(row && childId));
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
   const look = subjectLook(`${course?.subject ?? ""} ${course?.subjectLabel ?? ""} ${row?.title ?? ""}`);
   const schedule = row ? parentFamily.courseSchedule(scheduled.data ?? [], row.courseId, now) : null;
@@ -107,6 +109,7 @@ export function ResultsCoursePanel({
               <small className="text-body-sm text-ink-secondary">
                 {t("results.panel.counts", { submitted: row.submitted, total: row.total, graded: points.length })}
               </small>
+              <CourseRank childId={childId} courseId={row.courseId} now={now} />
             </span>
           </section>
 
