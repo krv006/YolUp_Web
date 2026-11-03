@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { homeworkApi } from "@/modules/homework";
-import { downloadBlob, parentHomework, type HomeworkState } from "@/modules/parent";
+import { downloadBlob, parentHomework, retryMinutes, useRemindChildHomework, type HomeworkState } from "@/modules/parent";
 import { formatLocalized, htmlToPlainText } from "@/shared/lib";
 import type { Assignment, Course } from "@/shared/types";
 import { FileViewer } from "@/shared/ui/file-viewer";
@@ -102,16 +102,44 @@ function FileCard({ file, onView }: { file: Viewable; onView: (file: Viewable) =
   );
 }
 
+function RemindChild({ assignmentId, childId, name }: { assignmentId: string; childId: string; name: string }) {
+  const { t } = useTranslation("parent");
+  const remind = useRemindChildHomework(childId);
+  const sent = remind.isSuccess && remind.variables === assignmentId;
+
+  return (
+    <button
+      type="button"
+      disabled={sent || remind.isPending}
+      className="flex h-11 items-center justify-center gap-2 self-start rounded-full bg-brand-subtle px-4 text-button text-brand transition-opacity hover:opacity-85 disabled:opacity-60"
+      onClick={() =>
+        remind.mutate(assignmentId, {
+          onSuccess: () => toast.success(t("homeworkView.remind.done", { name })),
+          onError: (error) => {
+            const minutes = retryMinutes(error);
+            toast.error(minutes === null ? t("homeworkView.remind.failed") : t("homeworkView.remind.limit", { count: minutes }));
+          },
+        })
+      }
+    >
+      <Icon name={sent ? "check" : "notifications-active"} size={18} />
+      {sent ? t("homeworkView.remind.sent") : t("homeworkView.remind.action", { name })}
+    </button>
+  );
+}
+
 export function HomeworkDetail({
   assignment,
   assignments,
   course,
+  childId,
   childName,
   now,
 }: {
   assignment: Assignment;
   assignments: Assignment[];
   course: Course | undefined;
+  childId: string | null;
   childName: string;
   now: number;
 }) {
@@ -186,6 +214,8 @@ export function HomeworkDetail({
   const percent = submission?.gradeValue != null && assignment.maxScore ? (submission.gradeValue / assignment.maxScore) * 100 : 0;
   const delta = state === "graded" ? parentHomework.scoreDelta(assignment, assignments) : null;
   const left = assignment.dueAt ? parentHomework.countdown(assignment.dueAt, now) : null;
+  const group = state === "graded" ? assignment.groupStats : null;
+  const canRemind = Boolean(childId) && (state === "pending" || state === "resubmit" || (state === "overdue" && assignment.allowLate));
 
   return (
     <section className="flex flex-col gap-5 rounded-[24px] bg-surface p-5 lg:min-h-[560px] lg:p-6">
@@ -268,9 +298,21 @@ export function HomeworkDetail({
                 {t("homeworkView.delta", { value: `${delta > 0 ? "+" : ""}${delta}` })}
               </span>
             ) : null}
+            {group && (group.average !== null || group.rank !== null) ? (
+              <small className="text-body-xs text-ink-secondary">
+                {[
+                  group.average !== null ? t("homeworkView.group.average", { value: group.average }) : "",
+                  group.rank !== null ? t("homeworkView.group.rank", { name: first, rank: group.rank, total: group.total ?? "—" }) : "",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </small>
+            ) : null}
           </span>
         </div>
       ) : null}
+
+      {canRemind && childId ? <RemindChild assignmentId={assignment.id} childId={childId} name={first} /> : null}
 
       {steps.length ? <Timeline steps={steps} /> : null}
 

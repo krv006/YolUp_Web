@@ -760,7 +760,18 @@
       "low": "Yaxshilash kerak"
     },
     "delta": "Oldingisidan {{value}}",
-    "task": "Topshiriq"
+    "task": "Topshiriq",
+    "remind": {
+      "action": "{{name}}ga eslatish",
+      "sent": "Eslatma yuborildi",
+      "done": "{{name}}ga eslatma yuborildi",
+      "limit": "Eslatmani {{count}} daqiqadan keyin qayta yuborish mumkin",
+      "failed": "Eslatma yuborilmadi. Qayta urinib ko‘ring"
+    },
+    "group": {
+      "average": "Guruhda o‘rtacha {{value}}",
+      "rank": "{{name}} {{rank}}-o‘rinda ({{total}} tadan)"
+    }
   },
   "results": {
     "eyebrow": "Reyting",

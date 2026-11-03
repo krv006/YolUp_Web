@@ -760,7 +760,18 @@
       "low": "Needs work"
     },
     "delta": "vs previous {{value}}",
-    "task": "Task"
+    "task": "Task",
+    "remind": {
+      "action": "Remind {{name}}",
+      "sent": "Reminder sent",
+      "done": "Reminder sent to {{name}}",
+      "limit": "You can remind again in {{count}} min",
+      "failed": "Couldn’t send the reminder. Please try again"
+    },
+    "group": {
+      "average": "Group average {{value}}",
+      "rank": "{{name}} is #{{rank}} of {{total}}"
+    }
   },
   "results": {
     "eyebrow": "Rating",

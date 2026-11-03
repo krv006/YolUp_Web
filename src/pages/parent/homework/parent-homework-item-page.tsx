@@ -24,6 +24,7 @@ export function ParentHomeworkItemPage() {
           assignment={assignment}
           assignments={view.assignments}
           course={view.courseById.get(assignment.courseId)}
+          childId={view.child?.id ?? null}
           childName={view.child?.name ?? ""}
           now={view.now}
         />
