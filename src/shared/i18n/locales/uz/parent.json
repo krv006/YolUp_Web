@@ -958,6 +958,12 @@
       "notifyHomeworkDue": {
         "title": "Vazifa muddati yaqinlashsa",
         "text": "24 soat qolganda"
+      },
+      "muted": {
+        "title": "O‘chirilgan xabar turlari",
+        "text": "{{count}} tur o‘chirilgan",
+        "reset": "Hammasini yoqish",
+        "done": "Barcha xabar turlari yoqildi"
       }
     }
   },
@@ -1030,7 +1036,20 @@
     "offline": "Internet yo‘q. Oxirgi ma’lumotlar: {{time}}",
     "notifications": {
       "empty": "Davomat, vazifalar va xavfsizlik haqidagi xabarlar shu yerda chiqadi.",
-      "settings": "Sozlamalarni ochish"
+      "settings": "Sozlamalarni ochish",
+      "actions": {
+        "title": "Bildirishnoma amallari",
+        "open": "Ochish",
+        "read": "O‘qilgan deb belgilash",
+        "unread": "O‘qilmagan deb belgilash",
+        "mute": "Bunday xabarlarni o‘chirish",
+        "muted": "Bu turdagi xabarlar endi kelmaydi",
+        "delete": "O‘chirish",
+        "deleted": "Bildirishnoma o‘chirildi",
+        "failed": "Amalni bajarib bo‘lmadi",
+        "undo": "Qaytarish",
+        "allRead": "{{count}} ta xabar o‘qilgan deb belgilandi"
+      }
     },
     "profile": {
       "privacy": "Maxfiylik va xavfsizlik",

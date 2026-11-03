@@ -152,6 +152,23 @@ export function SettingsNotifications() {
             />
           </Row>
         ))}
+        {user?.mutedKinds.length ? (
+          <Row
+            icon="notifications-off"
+            tone="bg-subtle text-icon-secondary"
+            title={t("settings.alerts.muted.title")}
+            text={t("settings.alerts.muted.text", { count: user.mutedKinds.length })}
+          >
+            <button
+              type="button"
+              disabled={prefs.isPending}
+              className="flex h-10 shrink-0 items-center rounded-full border border-line-strong bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+              onClick={() => prefs.mutate({ mutedKinds: [] }, { onSuccess: () => toast.success(t("settings.alerts.muted.done")) })}
+            >
+              {t("settings.alerts.muted.reset")}
+            </button>
+          </Row>
+        ) : null}
       </div>
     </section>
   );

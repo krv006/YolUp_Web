@@ -12,6 +12,9 @@ describe("notificationCategory", () => {
     expect(notificationCategory(item("recording_ready", "recording"))).toBe("attendance");
     expect(notificationCategory(item("new_device_login"))).toBe("security");
     expect(notificationCategory(item("announcement"))).toBeNull();
+    expect(notificationCategory(item("attendance.missed", "lesson"))).toBe("attendance");
+    expect(notificationCategory(item("security.new_device", "login"))).toBe("security");
+    expect(notificationCategory(item("homework_due_soon", "assignment"))).toBe("homework");
   });
 });
 
@@ -21,5 +24,10 @@ describe("notificationIcon", () => {
     expect(icon("new_device_login")).toBe("shield");
     expect(icon("attendance_joined")).toBe("how-to-reg");
     expect(icon("member_joined")).not.toBe("how-to-reg");
+    expect(icon("attendance.missed")).toBe("cancel");
+    expect(icon("attendance.late")).toBe("schedule");
+    expect(icon("security.new_device")).toBe("shield");
+    expect(icon("homework_due_soon")).toBe("hourglass-empty");
+    expect(icon("link.revoked")).toBe("link");
   });
 });

@@ -958,6 +958,12 @@
       "notifyHomeworkDue": {
         "title": "Homework due soon",
         "text": "24 hours before the deadline"
+      },
+      "muted": {
+        "title": "Turned-off kinds",
+        "text": "Kinds turned off: {{count}}",
+        "reset": "Turn all on",
+        "done": "All notification kinds are on"
       }
     }
   },
@@ -1030,7 +1036,20 @@
     "offline": "No internet. Last data: {{time}}",
     "notifications": {
       "empty": "Messages about attendance, homework and security will appear here.",
-      "settings": "Open settings"
+      "settings": "Open settings",
+      "actions": {
+        "title": "Notification actions",
+        "open": "Open",
+        "read": "Mark as read",
+        "unread": "Mark as unread",
+        "mute": "Turn off this kind",
+        "muted": "You won’t get this kind of notification any more",
+        "delete": "Delete",
+        "deleted": "Notification deleted",
+        "failed": "Something went wrong",
+        "undo": "Undo",
+        "allRead": "Marked {{count}} as read"
+      }
     },
     "profile": {
       "privacy": "Privacy and security",

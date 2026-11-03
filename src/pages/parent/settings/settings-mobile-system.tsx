@@ -165,6 +165,23 @@ export function SettingsMobile() {
             />
           </Row>
         ))}
+        {user?.mutedKinds.length ? (
+          <Row
+            icon="notifications-off"
+            tone="bg-subtle text-icon-secondary"
+            title={t("settings.alerts.muted.title")}
+            text={t("settings.alerts.muted.text", { count: user.mutedKinds.length })}
+          >
+            <button
+              type="button"
+              disabled={prefs.isPending}
+              className="flex h-9 shrink-0 items-center rounded-full bg-brand-subtle px-3.5 text-button text-brand disabled:opacity-50"
+              onClick={() => prefs.mutate({ mutedKinds: [] }, { onSuccess: () => toast.success(t("settings.alerts.muted.done")) })}
+            >
+              {t("settings.alerts.muted.reset")}
+            </button>
+          </Row>
+        ) : null}
       </ul>
 
       <AppDialog

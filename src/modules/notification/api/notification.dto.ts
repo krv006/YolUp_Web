@@ -62,7 +62,7 @@ export interface NotificationLink {
   id: string;
 }
 
-export type OpenNotificationLink = (link: NotificationLink, kind?: string | null) => void;
+export type OpenNotificationLink = (link: NotificationLink, kind?: string | null, data?: Record<string, unknown>) => void;
 
 export interface InboxNotification {
   id: string;
