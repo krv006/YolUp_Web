@@ -6,6 +6,35 @@ import { Icon } from "@/shared/ui/icon";
 import { stayLabel } from "./attendance-format";
 import { subjectLook } from "./attendance-styles";
 
+function LessonNotes({ entry, teacher }: { entry: AttendanceEntry; teacher: string }) {
+  const { t } = useTranslation("parent");
+  const reason = entry.row?.lateReason ?? "";
+  const note = entry.row?.teacherNote ?? "";
+  if (!reason && !note) return null;
+  return (
+    <>
+      {reason ? (
+        <p className="flex items-start gap-3 rounded-2xl bg-warning-bg px-4 py-3 text-body-sm text-warning-text">
+          <Icon name={entry.status === "missed" ? "cancel" : "schedule"} size={20} className="mt-px shrink-0" />
+          <span className="flex min-w-0 flex-col gap-0.5">
+            <strong className="text-caption-strong">{t(entry.status === "missed" ? "attendanceView.detail.missedReason" : "attendanceView.detail.lateReason")}</strong>
+            <span className="break-words">{reason}</span>
+          </span>
+        </p>
+      ) : null}
+      {note ? (
+        <section className="flex flex-col gap-2 rounded-2xl border border-line p-4">
+          <span className="flex items-center gap-2 text-caption-strong text-ink-secondary">
+            <Icon name="chat-outline" size={16} className="shrink-0" />
+            {teacher ? t("attendanceView.detail.teacherNoteBy", { teacher }) : t("attendanceView.detail.teacherNote")}
+          </span>
+          <p className="text-body-sm break-words text-ink">{note}</p>
+        </section>
+      ) : null}
+    </>
+  );
+}
+
 export function AttendanceDetail({
   entry,
   teacher,
@@ -106,14 +135,18 @@ export function AttendanceDetail({
                 </span>
               ))}
             </div>
+            <LessonNotes entry={entry} teacher={teacher} />
           </div>
         ) : (
-          <p className="flex items-center gap-3 rounded-2xl bg-subtle px-4 py-4 text-body-sm text-ink-secondary">
-            <Icon name={entry.status === "upcoming" ? "schedule" : "cancel"} size={20} className="shrink-0" />
-            {entry.status === "upcoming"
-              ? t("attendanceView.detail.upcoming", { time: formatMessageTime(entry.lesson.startsAt) })
-              : t("attendanceView.detail.notJoined")}
-          </p>
+          <div className="flex flex-col gap-4 pb-2">
+            <p className="flex items-center gap-3 rounded-2xl bg-subtle px-4 py-4 text-body-sm text-ink-secondary">
+              <Icon name={entry.status === "upcoming" ? "schedule" : "cancel"} size={20} className="shrink-0" />
+              {entry.status === "upcoming"
+                ? t("attendanceView.detail.upcoming", { time: formatMessageTime(entry.lesson.startsAt) })
+                : t("attendanceView.detail.notJoined")}
+            </p>
+            <LessonNotes entry={entry} teacher={teacher} />
+          </div>
         )
       ) : null}
     </AppDialog>

@@ -47,6 +47,12 @@ export interface AuthUser {
   lessonReminderMinutes: number | null;
   notifyMessages: boolean;
   notifyEmail: boolean;
+  notifyChildAbsent: boolean;
+  notifyChildNewDevice: boolean;
+  notifyHomeworkDue: boolean;
+  mutedKinds: string[];
+  mustChangePassword: boolean;
+  grade: string | null;
   linkedAccounts: LinkedAccount[];
   middleName: string | null;
   birthDate: string | null;

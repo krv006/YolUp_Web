@@ -396,6 +396,7 @@ export interface Assignment {
   grading: GradingScale;
   maxScore: number;
   aiGroupSummary: AiGroupSummary | null;
+  groupStats?: { average: number | null; rank: number | null; total: number | null } | null;
 }
 
 export interface AiGroupSummary {
@@ -583,6 +584,14 @@ export interface ExamSummary {
   hasReminder: boolean;
   reminderMinutes: number | null;
   myTotal: { score: number | null; max: number | null; label: string } | null;
+  childResult: {
+    participated: boolean;
+    score: number | null;
+    max: number | null;
+    band: number | null;
+    label: string;
+    teacherComment: string;
+  } | null;
 }
 
 export interface ExamDetail extends ExamSummary {
@@ -654,6 +663,7 @@ export interface ExamStudentResult {
   pending: string[];
   /** Halollik jurnali (faqat o'qituvchiga): oynadan chiqish va tashqaridan nusxa qo'yish soni. */
   integrity: { away: number; paste: number } | null;
+  teacherComment?: string;
 }
 
 export interface ExamManualAnswer {
@@ -969,6 +979,8 @@ export interface AttendanceRow {
   focus: FocusJournal;
   /** Backend hisoblagan fokus foizi (0…100) — bo'lmasa null. */
   focusPercent: number | null;
+  teacherNote?: string;
+  lateReason?: string;
   status: "completed" | "active";
 }
 

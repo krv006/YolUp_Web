@@ -378,6 +378,17 @@
       },
       "confirm": "Turn off",
       "cancel": "Cancel"
+    },
+    "online": "Online",
+    "unlink": {
+      "action": "Unlink child",
+      "text": "The account stays, it is only disconnected from you",
+      "title": "Unlink {{name}}?",
+      "description": "You will no longer see {{name}}’s attendance, results or notifications. Your permissions will be removed too. To reconnect, you will need to send a new request.",
+      "confirm": "Unlink",
+      "cancel": "Cancel",
+      "done": "{{name}} was unlinked",
+      "failed": "Couldn’t unlink. Please try again"
     }
   },
   "addChild": {
@@ -422,18 +433,23 @@
     "regenerate": "New password",
     "copy": "Copy",
     "copied": "Copied",
-    "info": "After signing in, your child can change the password in account settings",
+    "info": "Your child will change the password on first sign-in",
     "cancel": "Cancel",
     "submit": "Create account",
     "readyTitle": "Account ready!",
-    "readyText": "{{name}} can now sign in with these details.",
+    "readyText": "{{name}} will sign in with these details and set a new password on first sign-in.",
     "warning": "You’ll only see the password now — save or print it",
     "pdf": "Download PDF",
     "done": "Done",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp account: {{name}}",
     "printSubtitle": "Your child signs in with this login and password.",
-    "share": "Share the details"
+    "share": "Share the details",
+    "free": "Login is available",
+    "invalid": "Only Latin letters, digits and _ . are allowed",
+    "grade": "Grade",
+    "optional": "(optional)",
+    "gradePlaceholder": "e.g. 7-B"
   },
   "attendanceView": {
     "eyebrow": "Tracking",
@@ -506,7 +522,11 @@
       "exits": "Distractions",
       "close": "Close",
       "notJoined": "Your child didn’t join this lesson.",
-      "upcoming": "The lesson starts at {{time}}."
+      "upcoming": "The lesson starts at {{time}}.",
+      "lateReason": "Reason for being late",
+      "missedReason": "Reason for absence",
+      "teacherNote": "Teacher’s note",
+      "teacherNoteBy": "Teacher’s note · {{teacher}}"
     },
     "filter": {
       "title": "Filter",
@@ -620,7 +640,16 @@
       "time": "Time",
       "unknownLocation": "Location unknown",
       "warning": "If this wasn’t {{name}}, talk to your child and change the password",
-      "close": "Close"
+      "close": "Close",
+      "duration": "Duration",
+      "session": "Session",
+      "sessionActive": "Active",
+      "sessionEnded": "Ended",
+      "recognize": "This is {{name}}",
+      "recognized": "Device marked as known",
+      "endSession": "End session",
+      "ended": "Session ended",
+      "failed": "Something went wrong. Please try again"
     },
     "empty": {
       "title": "No sign-ins yet",
@@ -634,6 +663,17 @@
       "today": "Today",
       "yesterday": "Yesterday",
       "filterHint": "Narrow down the sign-in history"
+    },
+    "sessions": {
+      "title": "Active sessions · {{count}}",
+      "text": "Devices where {{name}}’s account is open right now",
+      "end": "End session",
+      "endAll": "Sign out of all devices",
+      "confirmTitle": "Sign out of all devices?",
+      "confirmText": "{{name}} will be signed out on every device and will need to sign in again.",
+      "confirm": "Sign out",
+      "cancel": "Cancel",
+      "endedAll": "Sessions ended: {{count}}"
     }
   },
   "homeworkView": {
@@ -720,7 +760,18 @@
       "low": "Needs work"
     },
     "delta": "vs previous {{value}}",
-    "task": "Task"
+    "task": "Task",
+    "remind": {
+      "action": "Remind {{name}}",
+      "sent": "Reminder sent",
+      "done": "Reminder sent to {{name}}",
+      "limit": "You can remind again in {{count}} min",
+      "failed": "Couldn’t send the reminder. Please try again"
+    },
+    "group": {
+      "average": "Group average {{value}}",
+      "rank": "{{name}} is #{{rank}} of {{total}}"
+    }
   },
   "results": {
     "eyebrow": "Rating",
@@ -755,6 +806,10 @@
       "counts": "{{submitted}}/{{total}} submitted · {{graded}} graded",
       "grades": "Grades",
       "noGrades": "No grades yet"
+    },
+    "rank": {
+      "place": "#{{rank}} in group",
+      "top": "Top {{value}}%"
     }
   },
   "mock": {
@@ -802,7 +857,8 @@
       "notReady": "Overall band not calculated yet",
       "waitingTeacher": "Waiting for the teacher’s grade",
       "sectionWaiting": "pending",
-      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready."
+      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready.",
+      "teacherComment": "Teacher’s note"
     }
   },
   "settings": {
@@ -888,6 +944,27 @@
       "ended": "Session ended",
       "endOthers": "Sign out of other sessions",
       "othersEnded": "Other sessions ended"
+    },
+    "alerts": {
+      "title": "Alerts about your child",
+      "notifyChildAbsent": {
+        "title": "Missed or late for a lesson",
+        "text": "10 minutes after the lesson starts"
+      },
+      "notifyChildNewDevice": {
+        "title": "Sign-in from a new device",
+        "text": "Security alert"
+      },
+      "notifyHomeworkDue": {
+        "title": "Homework due soon",
+        "text": "24 hours before the deadline"
+      },
+      "muted": {
+        "title": "Turned-off kinds",
+        "text": "Kinds turned off: {{count}}",
+        "reset": "Turn all on",
+        "done": "All notification kinds are on"
+      }
     }
   },
   "account": {
@@ -959,7 +1036,20 @@
     "offline": "No internet. Last data: {{time}}",
     "notifications": {
       "empty": "Messages about attendance, homework and security will appear here.",
-      "settings": "Open settings"
+      "settings": "Open settings",
+      "actions": {
+        "title": "Notification actions",
+        "open": "Open",
+        "read": "Mark as read",
+        "unread": "Mark as unread",
+        "mute": "Turn off this kind",
+        "muted": "You won’t get this kind of notification any more",
+        "delete": "Delete",
+        "deleted": "Notification deleted",
+        "failed": "Something went wrong",
+        "undo": "Undo",
+        "allRead": "Marked {{count}} as read"
+      }
     },
     "profile": {
       "privacy": "Privacy and security",
@@ -1030,5 +1120,26 @@
       },
       "update": "Update"
     }
+  },
+  "locked": {
+    "title": "This data is hidden",
+    "text": "“Activity analysis” is turned off for {{name}}. Turn it on to see attendance, attention and focus.",
+    "action": "Open permissions"
+  },
+  "pendingActions": {
+    "remind": "Remind",
+    "reminded": "Reminder sent",
+    "remindDone": "Reminder sent to {{name}}",
+    "remindLimit": "You can remind again in {{time}}",
+    "retryHours": "{{count}} h",
+    "retryMinutes": "{{count}} min",
+    "cancel": "Cancel",
+    "cancelTitle": "Cancel the request?",
+    "cancelText": "The request sent to {{name}} will be deleted. You can send a new one later.",
+    "cancelConfirm": "Cancel request",
+    "cancelKeep": "Keep",
+    "cancelDone": "Request cancelled",
+    "failed": "Something went wrong. Please try again",
+    "expires": "The request is valid until {{date}} — it expires if not approved"
   }
 }

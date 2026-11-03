@@ -99,6 +99,16 @@ export function mapExamSummaryDto(dto: ExamSummaryDto): ExamSummary {
     myTotal: dto.my_total
       ? { score: dto.my_total.score ?? null, max: dto.my_total.max ?? null, label: dto.my_total.label || "" }
       : null,
+    childResult: dto.child_result
+      ? {
+          participated: Boolean(dto.child_result.participated),
+          score: dto.child_result.score ?? null,
+          max: dto.child_result.max ?? null,
+          band: dto.child_result.band ?? null,
+          label: dto.child_result.label || "",
+          teacherComment: dto.child_result.teacher_comment || "",
+        }
+      : null,
   };
 }
 
@@ -280,6 +290,7 @@ export function mapExamStudentResultDto(dto: ExamStudentResultDto): ExamStudentR
       : null,
     pending: dto.pending ?? [],
     integrity: dto.integrity ? { away: dto.integrity.away, paste: dto.integrity.paste } : null,
+    teacherComment: dto.teacher_comment || "",
     answered: dto.answered ?? dto.progress?.answered ?? null,
     questionsTotal: dto.questions_total ?? dto.progress?.total ?? null,
   };

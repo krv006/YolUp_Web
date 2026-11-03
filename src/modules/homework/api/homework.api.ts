@@ -28,6 +28,18 @@ export const homeworkApi = {
     });
     return items.map(mapAssignmentDto);
   },
+  async getChildAssignments(studentId: string, options: RequestOptions = {}) {
+    const items = await apiClient.get<AssignmentDto[]>(homeworkEndpoints.assignments, {
+      ...options,
+      query: { ...options.query, student: studentId },
+    });
+    return (items ?? []).map(mapAssignmentDto);
+  },
+  remindChild(assignmentId: string, studentId: string) {
+    return apiClient.post<{ last_reminded_at: string | null; sent: boolean }>(homeworkEndpoints.remindChild(assignmentId), {
+      student: studentId,
+    });
+  },
   async getAssignment(id: string, options?: RequestOptions) {
     return mapAssignmentDto(await apiClient.get<AssignmentDto>(homeworkEndpoints.assignment(id), options));
   },

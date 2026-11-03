@@ -39,6 +39,14 @@ export const notificationApi = {
     return notificationId;
   },
 
+  async remove(notificationId: string) {
+    await apiClient.delete(notificationEndpoints.item(notificationId));
+  },
+
+  async markUnread(notificationIds: string[]) {
+    return apiClient.post<{ updated?: number }>(notificationEndpoints.markUnread, { ids: notificationIds });
+  },
+
   async markAllRead() {
     const response = await apiClient.post<{ updated?: number }>(
       notificationEndpoints.readAll,

@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { resolveHomeRoute, useAuth } from "@/modules/auth";
+import { ForcePasswordDialog, resolveHomeRoute, useAuth } from "@/modules/auth";
 import { RealtimeHubContext } from "@/modules/notification";
 import { hasRole } from "@/modules/permission";
 import { ROLES, type Role } from "@/shared/constants";
@@ -26,9 +26,13 @@ export function RoleRoute({ allowedRoles }: { allowedRoles: Role[] }) {
           <RealtimeSync role={chatRole} />
         </Suspense>
         <Outlet />
+        <ForcePasswordDialog />
       </RealtimeHubContext.Provider>
     ) : (
-      <Outlet />
+      <>
+        <Outlet />
+        <ForcePasswordDialog />
+      </>
     );
   }
 

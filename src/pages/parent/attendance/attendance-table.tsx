@@ -72,6 +72,11 @@ export function AttendanceTable({
                 </td>
                 <td className="px-3">
                   <StatusChip status={entry.status} lateMinutes={entry.lateMinutes} />
+                  {row?.lateReason ? (
+                    <small className="mt-1 block truncate text-caption text-ink-tertiary" title={row.lateReason}>
+                      {row.lateReason}
+                    </small>
+                  ) : null}
                 </td>
               </tr>
             );

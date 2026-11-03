@@ -29,7 +29,12 @@ export function notificationCategory(item: Pick<InboxNotification, "kind" | "lin
 export function notificationIcon(item: InboxNotification) {
   if (item.kind === LESSON_REMINDER_KIND) return { icon: "clock", tone: NOTIFICATION_TONES.lesson };
   if (/login|device|security/.test(item.kind ?? "")) return { icon: "shield", tone: NOTIFICATION_TONES.danger };
+  if (item.kind === "attendance.missed") return { icon: "cancel", tone: NOTIFICATION_TONES.danger };
+  if (item.kind === "attendance.late") return { icon: "schedule", tone: NOTIFICATION_TONES.lesson };
   if (/attendance/.test(item.kind ?? "")) return { icon: "how-to-reg", tone: NOTIFICATION_TONES.people };
+  if (item.kind === "homework_due_soon") return { icon: "hourglass-empty", tone: NOTIFICATION_TONES.lesson };
+  if (item.kind?.startsWith("link.")) return { icon: "link", tone: NOTIFICATION_TONES.danger };
+  if (item.kind === "consent.changed") return { icon: "shield", tone: NOTIFICATION_TONES.quiz };
   if (item.kind?.includes("rating") || item.kind?.includes("grade"))
     return { icon: "star", tone: NOTIFICATION_TONES.people };
   if (item.link?.type === "submission") return { icon: "check-circle", tone: NOTIFICATION_TONES.people };

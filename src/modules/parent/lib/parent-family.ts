@@ -1,5 +1,5 @@
-import type { Assignment, AttendanceRow, Lesson } from "@/shared/types";
-import { gradedScores, startOfDay, startOfWeek, type LoginLike } from "./parent-home";
+import type { Lesson } from "@/shared/types";
+import type { LoginLike } from "./parent-home";
 
 const DAY_MS = 86_400_000;
 const GOOD_ATTENDANCE = 80;
@@ -15,69 +15,6 @@ export interface ChildPeriodSummary {
 export interface CourseSchedule {
   days: number[];
   time: string;
-}
-
-function average(values: number[]): number | null {
-  return values.length ? Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 10) / 10 : null;
-}
-
-export function periodRange(now: number, period: FamilyPeriod): { from: number; to: number } {
-  if (period === "week") {
-    const from = startOfWeek(now).getTime();
-    return { from, to: from + 7 * DAY_MS };
-  }
-  const start = startOfDay(now);
-  start.setDate(1);
-  const end = new Date(start);
-  end.setMonth(end.getMonth() + 1);
-  return { from: start.getTime(), to: end.getTime() };
-}
-
-export function childPeriodSummary({
-  lessons,
-  rows,
-  assignments,
-  now,
-  period,
-}: {
-  lessons: Lesson[];
-  rows: Map<string, AttendanceRow>;
-  assignments: Assignment[];
-  now: number;
-  period: FamilyPeriod;
-}): ChildPeriodSummary {
-  const { from, to } = periodRange(now, period);
-  const finished = lessons.filter((lesson) => {
-    const at = Date.parse(lesson.startsAt);
-    return lesson.status === "finished" && at >= from && at <= now;
-  });
-  const attended = finished.filter((lesson) => rows.get(lesson.id)?.joinedAt).length;
-  const due = assignments.filter((item) => {
-    if (item.status === "draft" || !item.dueAt) return false;
-    const at = Date.parse(item.dueAt);
-    return at >= from && at < to;
-  });
-  const scores = gradedScores(assignments).filter((point) => point.at >= from && point.at <= now);
-  return {
-    attendance: finished.length ? Math.round((attended / finished.length) * 100) : null,
-    homework: { submitted: due.filter((item) => item.mySubmission).length, total: due.length },
-    score: average(scores.map((point) => point.score)),
-  };
-}
-
-export function attendedCount(rows: AttendanceRow[]): number {
-  return new Set(rows.filter((row) => row.joinedAt).map((row) => row.lessonId)).size;
-}
-
-export function overallScore(assignments: Assignment[]): number | null {
-  return average(gradedScores(assignments).map((point) => point.score));
-}
-
-export function latestVisit(rows: AttendanceRow[]): AttendanceRow | null {
-  return rows.reduce<AttendanceRow | null>(
-    (latest, row) => (row.joinedAt && (!latest?.joinedAt || row.joinedAt > latest.joinedAt) ? row : latest),
-    null
-  );
 }
 
 export function isGoodAttendance(percent: number): boolean {
@@ -165,4 +102,18 @@ export function recentUnlink<T extends { id: string; status: string; studentId: 
       )
       .sort((a, b) => (b.respondedAt ?? "").localeCompare(a.respondedAt ?? ""))[0] ?? null
   );
+}
+
+export function consentGranted(
+  consents: ReadonlyArray<{ studentId: string; kind: string; granted: boolean }>,
+  childId: string,
+  kind: string
+): boolean {
+  return !consents.some((item) => item.studentId === childId && item.kind === kind && !item.granted);
+}
+
+export function remindedRecently(remindedAt: string | null, now: number): boolean {
+  if (!remindedAt) return false;
+  const at = new Date(remindedAt).getTime();
+  return Number.isFinite(at) && now - at < DAY_MS;
 }

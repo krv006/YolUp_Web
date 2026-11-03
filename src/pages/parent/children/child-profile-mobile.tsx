@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
-import { Avatar } from "@/shared/ui/legacy";
 import { MobilePageHeader } from "@/shared/ui/mobile-page";
 import { subjectLook } from "../attendance/attendance-styles";
+import { ChildAvatar } from "./child-avatar";
+import { UnlinkChildDialog } from "./unlink-child-dialog";
 import { useChildProfile } from "./use-child-profile";
 
 export function ChildProfileMobile({ childId }: { childId: string }) {
@@ -13,6 +15,7 @@ export function ChildProfileMobile({ childId }: { childId: string }) {
   const profile = useChildProfile(childId);
   const { child } = profile;
   const weekdays = t("home.hero.weekdays", { returnObjects: true }) as string[];
+  const [unlinking, setUnlinking] = useState(false);
   if (!profile.loading && !child && !profile.failed) return <Navigate to={ROUTES.parent.children} replace />;
 
   return (
@@ -27,12 +30,18 @@ export function ChildProfileMobile({ childId }: { childId: string }) {
       ) : (
         <>
           <section className="flex flex-col items-center gap-2 rounded-[20px] bg-surface px-4 py-5 text-center">
-            <Avatar name={child.name} src={child.avatarUrl ?? undefined} tone={child.avatarTone} size="xl" className="[&_.avatar]:size-20" />
+            <ChildAvatar child={child} size="lg" />
             <h2 className="mt-1 font-heading text-[20px]/7 font-semibold text-ink">{child.name}</h2>
             <small className="text-body-sm text-ink-secondary">
-              {child.username} · {t("profile.role")}
+              {[child.username, child.grade || t("profile.role")].join(" · ")}
             </small>
             <span className="mt-1 flex flex-wrap justify-center gap-2">
+              {child.isOnline ? (
+                <span className="flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-1 text-caption-strong text-success-text">
+                  <span className="size-2 rounded-full bg-success" />
+                  {t("profile.online")}
+                </span>
+              ) : null}
               {profile.groups.length ? (
                 <span className="flex items-center gap-1 rounded-full bg-accent-blue-bg px-2.5 py-1 text-caption-strong text-accent-blue-fg">
                   <Icon name="groups" size={14} />
@@ -116,6 +125,16 @@ export function ChildProfileMobile({ childId }: { childId: string }) {
               ))}
             </ul>
           </section>
+
+          <button
+            type="button"
+            className="flex h-13 items-center justify-center gap-2 rounded-[20px] bg-surface text-button text-error-text"
+            onClick={() => setUnlinking(true)}
+          >
+            <Icon name="link-off" size={20} />
+            {t("profile.unlink.action")}
+          </button>
+          <UnlinkChildDialog child={child} open={unlinking} onOpenChange={setUnlinking} />
         </>
       )}
     </div>

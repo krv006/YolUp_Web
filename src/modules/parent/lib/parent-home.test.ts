@@ -98,9 +98,10 @@ describe("time and hero", () => {
   });
 
   it("estimates live focus from time spent away", () => {
-    const live = row("l", at(29, 14, 15), { focus: { exits: 1, awaySeconds: 200, longestSeconds: 200, timeline: [], alert: false } });
+    const live = row("l", at(29, 14, 15), { focusPercent: null, focus: { exits: 1, awaySeconds: 200, longestSeconds: 200, timeline: [], alert: false } });
     expect(liveFocusPercent(live, NOW)).toBe(86);
     expect(liveFocusPercent(row("l", null), NOW)).toBeNull();
+    expect(liveFocusPercent(row("l", at(29, 14, 15), { focusPercent: 72.4 }), NOW)).toBe(72);
   });
 
   it("lists today's and past lessons newest first", () => {

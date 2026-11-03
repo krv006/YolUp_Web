@@ -5,11 +5,11 @@ import { useCourses } from "@/modules/course";
 import { useHomeworkReport } from "@/modules/homework";
 import { useLessons } from "@/modules/lesson";
 import {
+  isConsentRequired,
   parentFamily,
   parentHome,
-  useParentConsents,
+  useChildSummary,
   useSelectedChild,
-  type ConsentKind,
   type CourseSchedule,
 } from "@/modules/parent";
 import type { Lesson } from "@/shared/types";
@@ -33,19 +33,14 @@ export function useChildProfile(childId: string) {
   const report = useHomeworkReport(childId, enabled);
   const attendance = useAttendance({ student: childId, page_size: 100 }, enabled);
   const logins = useLoginHistory(childId, enabled);
-  const consents = useParentConsents();
+  const summary = useChildSummary(enabled ? childId : null);
   const courses = useCourses();
-  const finished = useLessons({ status: "finished", ordering: "-starts_at", page_size: 100 }, enabled);
-  const scheduled = useLessons({ status: "scheduled", ordering: "starts_at", page_size: 50 }, enabled);
-  const live = useLessons({ status: "live", page_size: 20 }, enabled);
+  const finished = useLessons({ student: childId, status: "finished", ordering: "-starts_at", page_size: 100 }, enabled);
+  const scheduled = useLessons({ student: childId, status: "scheduled", ordering: "starts_at", page_size: 50 }, enabled);
+  const live = useLessons({ student: childId, status: "live", page_size: 20 }, enabled);
 
   const allLessons: Lesson[] = [...(finished.data ?? []), ...(scheduled.data ?? []), ...(live.data ?? [])];
-  const courseIds = report.data
-    ? new Set(report.data.courses.map((course) => course.courseId))
-    : children.length <= 1
-      ? null
-      : new Set<string>();
-  const lessons = parentHome.childLessons(allLessons, courseIds);
+  const lessons = parentHome.childLessons(allLessons, null);
   const byLesson = parentHome.rowsByLesson(attendance.data ?? []);
   const courseById = new Map((courses.data ?? []).map((course) => [course.id, course]));
 
@@ -62,17 +57,14 @@ export function useChildProfile(childId: string) {
     };
   });
 
-  const granted = new Set(
-    (consents.data ?? [])
-      .filter((consent) => consent.studentId === childId && consent.granted)
-      .map((consent) => consent.kind)
-  );
-
+  const locked = isConsentRequired(summary.error) || isConsentRequired(attendance.error);
   const failed =
-    [report, attendance, finished].some((query) => query.isError) || (childrenQuery.isError && !childrenQuery.data);
+    [report, finished].some((query) => query.isError) ||
+    (attendance.isError && !locked) ||
+    (childrenQuery.isError && !childrenQuery.data);
 
   function retry() {
-    for (const query of [childrenQuery, report, attendance, finished, scheduled, live, logins, consents, courses]) {
+    for (const query of [childrenQuery, report, attendance, summary, finished, scheduled, live, logins, courses]) {
       void query.refetch();
     }
   }
@@ -87,10 +79,11 @@ export function useChildProfile(childId: string) {
     selected: selectedChildId === childId,
     select: () => selectChild(childId),
     groups,
-    attendancePercent: parentHome.monthAttendance(lessons, byLesson, now).percent,
+    locked,
+    attendancePercent: locked
+      ? null
+      : (summary.data?.attendance.month_percent ?? parentHome.monthAttendance(lessons, byLesson, now).percent),
     recent: parentHome.recentLessons(lessons, byLesson, now),
     newDevices: parentFamily.newDeviceCount(logins.data ?? [], now),
-    consentsLoading: consents.isLoading,
-    isGranted: (kind: ConsentKind) => granted.has(kind),
   };
 }

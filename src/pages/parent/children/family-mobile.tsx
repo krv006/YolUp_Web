@@ -10,6 +10,8 @@ import { Avatar } from "@/shared/ui/legacy";
 import { MobileTitleHeader, mobileRoundButton } from "@/shared/ui/mobile-page";
 import { ParentErrorBanner } from "@/widgets/parent-shell";
 import { MobileConnect } from "../dashboard/parent-home-mobile";
+import { PendingLinkActions } from "../dashboard/pending-link-actions";
+import { ChildAvatar } from "./child-avatar";
 import { visitWhen } from "./family-format";
 import { useParentFamily } from "./use-parent-family";
 
@@ -55,10 +57,10 @@ export function FamilyMobile() {
                 onClick={() => navigate(ROUTES.parent.child(row.child.id))}
               >
                 <span className="flex items-center gap-3">
-                  <Avatar name={row.child.name} src={row.child.avatarUrl ?? undefined} tone={row.child.avatarTone} size="md" className="shrink-0 [&_.avatar]:size-13" />
+                  <ChildAvatar child={row.child} size="sm" />
                   <span className="flex min-w-0 flex-1 flex-col">
                     <strong className="truncate text-title text-ink">{row.child.name}</strong>
-                    <small className="truncate text-body-xs text-ink-secondary">{row.child.username}</small>
+                    <small className="truncate text-body-xs text-ink-secondary">{[row.child.username, row.child.grade].filter(Boolean).join(" · ")}</small>
                   </span>
                   {selected ? (
                     <span className="flex shrink-0 items-center gap-1 rounded-full bg-success-bg px-2.5 py-1 text-caption-strong text-success-text">
@@ -95,16 +97,19 @@ export function FamilyMobile() {
             );
           })}
           {family.pending.map((link) => (
-            <span key={link.id} className="flex items-center gap-3 rounded-[20px] border-2 border-dashed border-line-strong px-4 py-4">
-              <Avatar name={link.student.name} src={link.student.avatarUrl ?? undefined} size="md" className="shrink-0 [&_.avatar]:size-11" />
-              <span className="flex min-w-0 flex-1 flex-col">
-                <strong className="truncate text-title-sm text-ink">{link.student.name}</strong>
-                <small className="truncate text-body-xs text-ink-secondary">{t("family.pending", { username: link.student.username })}</small>
+            <span key={link.id} className="flex flex-col gap-3 rounded-[20px] border-2 border-dashed border-line-strong px-4 py-4">
+              <span className="flex items-center gap-3">
+                <Avatar name={link.student.name} src={link.student.avatarUrl ?? undefined} size="md" className="shrink-0 [&_.avatar]:size-11" />
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <strong className="truncate text-title-sm text-ink">{link.student.name}</strong>
+                  <small className="truncate text-body-xs text-ink-secondary">{t("family.pending", { username: link.student.username })}</small>
+                </span>
+                <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent-teal-bg px-2.5 py-1 text-caption-strong text-accent-teal-fg" title={formatRelativeShort(link.createdAt)}>
+                  <Icon name="schedule" size={14} />
+                  {t("switcher.pending")}
+                </span>
               </span>
-              <span className="flex shrink-0 items-center gap-1 rounded-full bg-accent-teal-bg px-2.5 py-1 text-caption-strong text-accent-teal-fg" title={formatRelativeShort(link.createdAt)}>
-                <Icon name="schedule" size={14} />
-                {t("switcher.pending")}
-              </span>
+              <PendingLinkActions link={link} />
             </span>
           ))}
         </>

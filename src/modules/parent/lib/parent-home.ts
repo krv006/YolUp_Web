@@ -187,6 +187,7 @@ export function heroState(lessons: Lesson[], rows: Map<string, AttendanceRow>, n
 
 export function liveFocusPercent(row: AttendanceRow, now: number): number | null {
   if (!row.joinedAt) return null;
+  if (row.focusPercent !== null && row.focusPercent !== undefined) return Math.round(row.focusPercent);
   const elapsed = (now - Date.parse(row.joinedAt)) / 1000;
   if (elapsed < 60) return null;
   return Math.max(0, Math.min(100, Math.round(100 - (row.focus.awaySeconds * 100) / elapsed)));

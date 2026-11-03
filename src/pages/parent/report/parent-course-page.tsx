@@ -6,7 +6,7 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MobilePageHeader } from "@/shared/ui/mobile-page";
 import { ScoreCard } from "../dashboard/home-side";
 import { useHomeworkView } from "../homework/use-homework-view";
-import { GradeRow } from "./results-parts";
+import { CourseRank, GradeRow } from "./results-parts";
 
 const RADIUS = 38;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
@@ -51,6 +51,7 @@ export function ParentCoursePage() {
               <small className="text-body-xs text-ink-secondary">
                 {[course?.teacher, row ? t("results.panel.counts", { submitted: row.submitted, total: row.total, graded: points.length }) : ""].filter(Boolean).join(" · ")}
               </small>
+              <CourseRank childId={view.child?.id ?? null} courseId={courseId} now={view.now} />
             </span>
           </section>
           {points.length ? <ScoreCard trend={parentHome.scoreTrend(points, view.now, 6)} delta={null} width={340} gradientId="course-mobile-fill" /> : null}

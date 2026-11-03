@@ -105,6 +105,12 @@ export function mapUserDto(dto: unknown): AuthUser {
     lessonReminderMinutes: parsed.lesson_reminder_minutes ?? null,
     notifyMessages: parsed.notify_messages !== false,
     notifyEmail: parsed.notify_email === true,
+    notifyChildAbsent: parsed.notify_child_absent !== false,
+    notifyChildNewDevice: parsed.notify_child_new_device !== false,
+    notifyHomeworkDue: parsed.notify_homework_due !== false,
+    mutedKinds: parsed.muted_kinds ?? [],
+    mustChangePassword: parsed.must_change_password === true,
+    grade: parsed.grade || null,
     linkedAccounts: parsed.linked_accounts.map(mapLinkedAccountDto),
     middleName: parsed.middle_name ?? null,
     birthDate: parsed.birth_date ?? null,
@@ -154,15 +160,25 @@ export function mapLoginRecords(dto: unknown): LoginRecord[] {
     .array()
     .parse(Array.isArray(dto) ? dto : ((dto as { results?: unknown[] } | null)?.results ?? []))
     .map((item) => ({
-      id: `${item.at}-${item.ip ?? ""}`,
+      id: item.id ?? `${item.at}-${item.ip ?? ""}`,
       at: item.at,
       ip: item.ip ?? "—",
-      device: describeUserAgent(item.user_agent),
+      device:
+        item.browser && item.os ? `${item.browser} · ${item.os}` : item.device || describeUserAgent(item.user_agent),
       userAgent: item.user_agent ?? "",
       isNewIp: item.new_ip,
-      isNewDevice: item.new_device,
+      isNewDevice: item.new_device && item.recognized !== true,
       isCurrent: item.is_current === true,
-      location: item.location ?? "",
+      location: [item.location, item.country].filter(Boolean).join(", "),
+      loginId: item.id ?? null,
+      browser: item.browser ?? "",
+      os: item.os ?? "",
+      deviceType: item.device_type ?? null,
+      country: item.country ?? "",
+      recognized: item.recognized === true,
+      sessionId: item.session_id ?? null,
+      sessionActive: item.session_active ?? null,
+      durationSeconds: item.duration_seconds ?? null,
     }));
 }
 

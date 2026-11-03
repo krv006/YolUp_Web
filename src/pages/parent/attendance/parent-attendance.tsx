@@ -4,7 +4,7 @@ import { parentAttendance, type AttendanceEntry, type AttendancePeriod } from "@
 import { useOnlineStatus } from "@/shared/model";
 import { formatLocalized } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
-import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
+import { ParentErrorBanner, ParentLockedCard, ParentPageHeader } from "@/widgets/parent-shell";
 import { ConnectChild } from "../dashboard/home-empty";
 import { AttendanceCalendar, CalendarSide } from "./attendance-calendar";
 import { AttendanceDetail } from "./attendance-detail";
@@ -104,6 +104,8 @@ export function ParentAttendance() {
         <ListSkeleton />
       ) : !view.child ? (
         <ConnectChild />
+      ) : view.locked ? (
+        <ParentLockedCard childId={view.child.id} childName={view.child.name} />
       ) : mode === "calendar" ? (
         <div className="flex flex-col gap-5">
           <div className="flex items-center gap-3">

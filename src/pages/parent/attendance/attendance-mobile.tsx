@@ -9,7 +9,7 @@ import { AppDialog } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { MobileChoiceChips } from "@/shared/ui/mobile-fields";
 import { MobileEmptyCard, MobileSegment, MobileTitleHeader, mobileButton, mobileRoundButton } from "@/shared/ui/mobile-page";
-import { ParentErrorBanner } from "@/widgets/parent-shell";
+import { ParentErrorBanner, ParentLockedCard } from "@/widgets/parent-shell";
 import { MobileConnect } from "../dashboard/parent-home-mobile";
 import { lessonEnd } from "../dashboard/home-format";
 import { AttendanceDetail } from "./attendance-detail";
@@ -70,9 +70,11 @@ export function AttendanceMobile() {
         title={t("attendanceView.title")}
         action={
           <span className="flex shrink-0 gap-2">
-            <button type="button" className={`${mobileRoundButton} bg-surface`} aria-label={t("attendanceView.search")} onClick={() => navigate(ROUTES.parent.attendanceSearch)}>
-              <Icon name="search" size={22} />
-            </button>
+            {view.locked ? null : (
+              <button type="button" className={`${mobileRoundButton} bg-surface`} aria-label={t("attendanceView.search")} onClick={() => navigate(ROUTES.parent.attendanceSearch)}>
+                <Icon name="search" size={22} />
+              </button>
+            )}
             {view.entries.length ? (
               <>
                 <button
@@ -94,11 +96,13 @@ export function AttendanceMobile() {
           </span>
         }
       />
-      <MobileSegment
-        items={(["week", "month", "all"] as const).map((id) => ({ id, label: t(`attendanceView.periods.${id}`) }))}
-        value={period === "quarter" ? "all" : period}
-        onChange={setPeriod}
-      />
+      {view.locked ? null : (
+        <MobileSegment
+          items={(["week", "month", "all"] as const).map((id) => ({ id, label: t(`attendanceView.periods.${id}`) }))}
+          value={period === "quarter" ? "all" : period}
+          onChange={setPeriod}
+        />
+      )}
       {online && view.failed ? <ParentErrorBanner onRetry={view.retry} /> : null}
 
       {view.loading ? (
@@ -108,6 +112,8 @@ export function AttendanceMobile() {
         </div>
       ) : !view.child ? (
         <MobileConnect />
+      ) : view.locked ? (
+        <ParentLockedCard childId={view.child.id} childName={view.child.name} />
       ) : !view.entries.length ? (
         view.failed ? (
           <MobileEmptyCard

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useParentConsents, useSetParentConsent, type ConsentKind } from "@/modules/parent";
+import { parentFamily, useParentConsents, useSetParentConsent, type ConsentKind } from "@/modules/parent";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
@@ -17,9 +17,6 @@ export function ConsentSwitches({ childId, childName }: { childId: string; child
   const consents = useParentConsents();
   const setConsent = useSetParentConsent({ notify: false });
   const [turningOff, setTurningOff] = useState<ConsentKind | null>(null);
-  const granted = new Set(
-    (consents.data ?? []).filter((item) => item.studentId === childId && item.granted).map((item) => item.kind)
-  );
 
   function apply(kind: ConsentKind, value: boolean) {
     const label = t(`children.consentKinds.${kind}.label`);
@@ -45,7 +42,7 @@ export function ConsentSwitches({ childId, childName }: { childId: string; child
             </span>
             <Switch
               size="lg"
-              checked={granted.has(item.kind)}
+              checked={parentFamily.consentGranted(consents.data ?? [], childId, item.kind)}
               disabled={consents.isLoading || setConsent.isPending}
               aria-label={t(`children.consentKinds.${item.kind}.label`)}
               className="data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong"

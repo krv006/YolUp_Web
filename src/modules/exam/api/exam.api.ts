@@ -43,7 +43,7 @@ export const examApi = {
   async getAll(courseId: string | null, options: RequestOptions = {}) {
     const dto = await apiClient.get<unknown>(examEndpoints.list, {
       ...options,
-      query: courseId ? { course: courseId } : undefined,
+      query: { ...(courseId ? { course: courseId } : {}), ...options.query },
     });
     const items = normalizePagination<ExamSummaryDto>(dto).items.map(mapExamSummaryDto);
     syncServerTime(items[0]?.serverNow);

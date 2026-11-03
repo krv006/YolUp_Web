@@ -87,6 +87,7 @@ export interface AssignmentStatsDto {
 }
 
 export interface AssignmentDto {
+  group_stats?: { average?: number | null; rank?: number | null; total?: number | null } | null;
   id: string | number;
   course_id: string | number;
   course_title: string;

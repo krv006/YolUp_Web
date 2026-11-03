@@ -64,7 +64,7 @@ export function NotificationInboxPanel({
   function openItem(item: InboxNotification) {
     if (!item.isRead) markRead.mutate(item.notificationId);
     if (item.link && onOpenLink) {
-      onOpenLink(item.link, item.kind);
+      onOpenLink(item.link, item.kind, item.data);
       onClose();
     }
   }

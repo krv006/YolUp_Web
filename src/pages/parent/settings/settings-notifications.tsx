@@ -8,6 +8,11 @@ import { Icon } from "@/shared/ui/icon";
 import { Switch } from "@/shared/ui/switch";
 
 const REMINDERS = [5, 10, 15, 30, 60, 0];
+const CHILD_ALERTS = [
+  { key: "notifyChildAbsent", icon: "cancel", tone: "bg-danger-bg text-error-text" },
+  { key: "notifyChildNewDevice", icon: "shield", tone: "bg-accent-violet-bg text-accent-violet-fg" },
+  { key: "notifyHomeworkDue", icon: "hourglass-empty", tone: "bg-accent-saffron-bg text-accent-saffron-fg" },
+] as const;
 const SWITCH = "data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong";
 
 function Row({
@@ -133,6 +138,38 @@ export function SettingsNotifications() {
           push.toggle(true);
         }}
       />
+      <div className="flex flex-col">
+        <small className="text-caption-strong tracking-wide text-ink-tertiary uppercase">{t("settings.alerts.title")}</small>
+        {CHILD_ALERTS.map((alert) => (
+          <Row key={alert.key} icon={alert.icon} tone={alert.tone} title={t(`settings.alerts.${alert.key}.title`)} text={t(`settings.alerts.${alert.key}.text`)}>
+            <Switch
+              size="lg"
+              className={SWITCH}
+              checked={Boolean(user?.[alert.key])}
+              disabled={prefs.isPending}
+              aria-label={t(`settings.alerts.${alert.key}.title`)}
+              onCheckedChange={(next) => prefs.mutate({ [alert.key]: next })}
+            />
+          </Row>
+        ))}
+        {user?.mutedKinds.length ? (
+          <Row
+            icon="notifications-off"
+            tone="bg-subtle text-icon-secondary"
+            title={t("settings.alerts.muted.title")}
+            text={t("settings.alerts.muted.text", { count: user.mutedKinds.length })}
+          >
+            <button
+              type="button"
+              disabled={prefs.isPending}
+              className="flex h-10 shrink-0 items-center rounded-full border border-line-strong bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+              onClick={() => prefs.mutate({ mutedKinds: [] }, { onSuccess: () => toast.success(t("settings.alerts.muted.done")) })}
+            >
+              {t("settings.alerts.muted.reset")}
+            </button>
+          </Row>
+        ) : null}
+      </div>
     </section>
   );
 }

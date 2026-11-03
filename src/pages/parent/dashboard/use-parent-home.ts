@@ -2,10 +2,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useAttendance } from "@/modules/attendance";
 import { useAuth, useLoginHistory } from "@/modules/auth";
 import { useCourses } from "@/modules/course";
-import { useExams } from "@/modules/exam";
-import { useHomeworkReport } from "@/modules/homework";
 import { useLessons } from "@/modules/lesson";
-import { parentHome, useParentHomework, useParentLinks, useSelectedChild } from "@/modules/parent";
+import {
+  isConsentRequired,
+  parentHome,
+  useChildExams,
+  useChildSummary,
+  useParentHomework,
+  useParentLinks,
+  useSelectedChild,
+} from "@/modules/parent";
 import { useOnlineStatus } from "@/shared/model";
 
 const TICK_MS = 60_000;
@@ -21,14 +27,15 @@ export function useParentHome() {
   const childId = selectedChildId;
   const enabled = Boolean(childId);
 
-  const report = useHomeworkReport(childId, enabled);
-  const finished = useLessons({ status: "finished", ordering: "-starts_at", page_size: 100 }, enabled);
-  const scheduled = useLessons({ status: "scheduled", ordering: "starts_at", page_size: 50 }, enabled);
-  const live = useLessons({ status: "live", page_size: 20 }, enabled);
+  const student = childId ?? "";
+  const finished = useLessons({ student, status: "finished", ordering: "-starts_at", page_size: 100 }, enabled);
+  const scheduled = useLessons({ student, status: "scheduled", ordering: "starts_at", page_size: 50 }, enabled);
+  const live = useLessons({ student, status: "live", page_size: 20 }, enabled);
+  const summary = useChildSummary(childId);
   const attendance = useAttendance({ student: childId ?? "", page_size: 100 }, enabled);
   const homework = useParentHomework(childId);
   const logins = useLoginHistory(childId, enabled);
-  const exams = useExams(null, enabled);
+  const exams = useChildExams(childId);
   const courses = useCourses();
 
   useEffect(() => {
@@ -48,17 +55,11 @@ export function useParentHome() {
     return () => globalThis.clearInterval(timer);
   }, [liveNow, refetchLive, refetchAttendance]);
 
-  const courseIds = useMemo(() => {
-    if (report.data) return new Set(report.data.courses.map((course) => course.courseId));
-    return children.length <= 1 ? null : undefined;
-  }, [report.data, children.length]);
+  const locked = isConsentRequired(summary.error) || isConsentRequired(attendance.error);
 
   const view = useMemo(() => {
-    if (courseIds === undefined) return null;
-    const lessons = parentHome.childLessons(
-      [...(finished.data ?? []), ...(scheduled.data ?? []), ...(live.data ?? [])],
-      courseIds
-    );
+    const lessons = parentHome.childLessons([...(finished.data ?? []), ...(scheduled.data ?? []), ...(live.data ?? [])], null);
+    const server = summary.data;
     const rows = attendance.data ?? [];
     const byLesson = parentHome.rowsByLesson(rows);
     const assignments = homework.data ?? [];
@@ -67,22 +68,29 @@ export function useParentHome() {
     return {
       hero: parentHome.heroState(lessons, byLesson, now),
       week: parentHome.weekSummary(lessons, byLesson, now),
-      month: parentHome.monthAttendance(lessons, byLesson, now),
-      minutes: parentHome.weekMinutes(rows, now),
+      month: server
+        ? {
+            percent: server.attendance.month_percent,
+            attended: server.attendance.attended,
+            total: server.attendance.total,
+            delta: server.attendance.delta_percent,
+          }
+        : parentHome.monthAttendance(lessons, byLesson, now),
+      minutes: server ? server.week_minutes : parentHome.weekMinutes(rows, now),
       recent: parentHome.recentLessons(lessons, byLesson, now),
       todayCount: lessons.filter((lesson) => new Date(lesson.startsAt).toDateString() === new Date(now).toDateString()).length,
       homework: homeworkSummary,
-      score: parentHome.scoreSummary(points, now),
-      trend: parentHome.scoreTrend(points, now),
+      score: server ? { average: server.score.average, delta: server.score.delta } : parentHome.scoreSummary(points, now),
+      trend: server ? server.score_trend.map((week) => week.average) : parentHome.scoreTrend(points, now),
       attention: parentHome.attentionItems({
         dueSoon: homeworkSummary.dueSoon,
         logins: logins.data ?? [],
         exams: exams.data ?? [],
-        courseIds,
+        courseIds: null,
         now,
       }),
     };
-  }, [courseIds, finished.data, scheduled.data, live.data, attendance.data, homework.data, logins.data, exams.data, now]);
+  }, [finished.data, scheduled.data, live.data, attendance.data, homework.data, logins.data, exams.data, summary.data, now]);
 
   const teachers = useMemo(
     () => new Map((courses.data ?? []).map((course) => [course.id, course.teacher])),
@@ -103,16 +111,15 @@ export function useParentHome() {
             ? "pending"
             : "connect";
   const failed =
-    coreFailed ||
-    [report, finished, scheduled, live, attendance, homework].some((query) => query.isError);
+    coreFailed || [finished, scheduled, live, homework].some((query) => query.isError) || (attendance.isError && !locked);
   const retry = () => {
-    for (const query of [childrenQuery, links, report, finished, scheduled, live, attendance, homework, logins, exams]) {
+    for (const query of [childrenQuery, links, finished, scheduled, live, attendance, homework, logins, exams, summary]) {
       void query.refetch();
     }
   };
   const sectionsLoading =
     status === "ready" &&
-    (!view || finished.isLoading || scheduled.isLoading || attendance.isLoading || report.isLoading);
+    (finished.isLoading || scheduled.isLoading || attendance.isLoading);
   const lastUpdated = Math.max(
     finished.dataUpdatedAt,
     attendance.dataUpdatedAt,
@@ -128,6 +135,7 @@ export function useParentHome() {
     child: selectedChild,
     pendingLink,
     online,
+    locked,
     failed,
     retry,
     lastUpdated,

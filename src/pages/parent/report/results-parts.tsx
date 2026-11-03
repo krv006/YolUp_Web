@@ -1,9 +1,30 @@
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
+import { useChildRank } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { formatLocalized } from "@/shared/lib";
 import type { Assignment } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
+
+export function CourseRank({ childId, courseId, now }: { childId: string | null; courseId: string; now: number }) {
+  const { t } = useTranslation("parent");
+  const date = new Date(now);
+  const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+  const rank = useChildRank(childId, courseId, month);
+  const data = rank.data;
+  if (!data || data.rank === null || !data.total) return null;
+  return (
+    <span
+      className="inline-flex items-center gap-1 self-start rounded-full bg-accent-violet-bg px-2.5 py-1 text-caption-strong whitespace-nowrap text-accent-violet-fg"
+      title={`${data.rank} / ${data.total}`}
+    >
+      <Icon name="emoji-events" size={14} />
+      {[t("results.rank.place", { rank: data.rank }), data.top_percent !== null ? t("results.rank.top", { value: data.top_percent }) : ""]
+        .filter(Boolean)
+        .join(" · ")}
+    </span>
+  );
+}
 
 export function ResultsTabs({ wide = false }: { wide?: boolean }) {
   const { t } = useTranslation("parent");

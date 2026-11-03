@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   NOTIFICATION_CATEGORIES,
   NotificationHtml,
@@ -9,7 +10,9 @@ import {
   notificationIcon,
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
+  useMarkNotificationsUnread,
   useNotificationInbox,
+  type InboxNotification,
   type NotificationCategory,
   type NotificationGroupKey,
 } from "@/modules/notification";
@@ -19,6 +22,7 @@ import { formatMessageTime } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { MobilePageHeader, mobileRoundButton } from "@/shared/ui/mobile-page";
 import { useParentNotificationLink } from "@/widgets/parent-shell";
+import { NotificationActions } from "./notification-actions";
 
 const GROUPS: NotificationGroupKey[] = ["today", "yesterday", "earlier"];
 
@@ -30,13 +34,30 @@ export function ParentNotificationsPage() {
   const inbox = useNotificationInbox({ page_size: 30 }, compact);
   const markRead = useMarkNotificationRead();
   const markAll = useMarkAllNotificationsRead();
+  const markUnread = useMarkNotificationsUnread();
   const openLink = useParentNotificationLink();
   const [category, setCategory] = useState<NotificationCategory | "all">("all");
+  const [acting, setActing] = useState<InboxNotification | null>(null);
   if (!compact) return <Navigate to={ROUTES.parent.dashboard} replace />;
 
   const all = inbox.data?.items ?? [];
   const items = category === "all" ? all : all.filter((item) => notificationCategory(item) === category);
   const unread = all.filter((item) => !item.isRead).length;
+  function open(item: InboxNotification) {
+    if (!item.isRead) markRead.mutate(item.notificationId);
+    if (item.link) openLink(item.link, item.kind, item.data);
+  }
+
+  function readAll() {
+    const ids = all.filter((item) => !item.isRead).map((item) => item.notificationId);
+    markAll.mutate(undefined, {
+      onSuccess: () =>
+        toast.success(tp("mobile.notifications.actions.allRead", { count: ids.length }), {
+          action: { label: tp("mobile.notifications.actions.undo"), onClick: () => markUnread.mutate(ids) },
+        }),
+    });
+  }
+
   const groups = GROUPS.map((key) => ({ key, items: items.filter((item) => notificationGroupKey(item.createdAt) === key) })).filter(
     (group) => group.items.length
   );
@@ -49,7 +70,7 @@ export function ParentNotificationsPage() {
         onBack={() => navigate(-1)}
         action={
           unread ? (
-            <button type="button" className={mobileRoundButton} aria-label={t("markAllRead")} disabled={markAll.isPending} onClick={() => markAll.mutate()}>
+            <button type="button" className={mobileRoundButton} aria-label={t("markAllRead")} disabled={markAll.isPending} onClick={readAll}>
               <Icon name="done-all" size={22} />
             </button>
           ) : undefined
@@ -97,38 +118,45 @@ export function ParentNotificationsPage() {
             {group.items.map((item) => {
               const { icon, tone } = notificationIcon(item);
               return (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={`flex items-start gap-3 border-b border-line px-4 py-3.5 text-left last:border-b-0 ${item.isRead ? "" : "bg-brand-subtle"}`}
-                  onClick={() => {
-                    if (!item.isRead) markRead.mutate(item.notificationId);
-                    if (item.link) openLink(item.link, item.kind);
-                  }}
-                >
-                  <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${tone}`}>
-                    <Icon name={icon} size={22} />
-                  </span>
-                  <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    {item.title ? (
-                      <>
-                        <strong className="line-clamp-2 text-title-sm text-ink">{item.title}</strong>
-                        {item.body ? <span className="line-clamp-2 text-body-xs text-ink-secondary">{item.body}</span> : null}
-                      </>
-                    ) : (
-                      <NotificationHtml className="line-clamp-3 text-body-xs text-ink-secondary [&_b]:block [&_b]:text-title-sm [&_b]:text-ink" html={item.html} />
-                    )}
-                  </span>
-                  <span className="flex shrink-0 flex-col items-end gap-2">
-                    <small className="text-caption text-ink-secondary">{item.createdAt ? formatMessageTime(item.createdAt) : ""}</small>
-                    {item.isRead ? null : <i className="size-2 rounded-full bg-brand not-italic" />}
-                  </span>
-                </button>
+                <div key={item.id} className={`flex items-start border-b border-line last:border-b-0 ${item.isRead ? "" : "bg-brand-subtle"}`}>
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-start gap-3 py-3.5 pl-4 text-left"
+                    onClick={() => open(item)}
+                  >
+                    <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${tone}`}>
+                      <Icon name={icon} size={22} />
+                    </span>
+                    <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                      {item.title ? (
+                        <>
+                          <strong className="line-clamp-2 text-title-sm text-ink">{item.title}</strong>
+                          {item.body ? <span className="line-clamp-2 text-body-xs text-ink-secondary">{item.body}</span> : null}
+                        </>
+                      ) : (
+                        <NotificationHtml className="line-clamp-3 text-body-xs text-ink-secondary [&_b]:block [&_b]:text-title-sm [&_b]:text-ink" html={item.html} />
+                      )}
+                    </span>
+                    <span className="flex shrink-0 flex-col items-end gap-2">
+                      <small className="text-caption text-ink-secondary">{item.createdAt ? formatMessageTime(item.createdAt) : ""}</small>
+                      {item.isRead ? null : <i className="size-2 rounded-full bg-brand not-italic" />}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className="grid h-12 w-11 shrink-0 place-items-center text-icon-tertiary"
+                    aria-label={tp("mobile.notifications.actions.title")}
+                    onClick={() => setActing(item)}
+                  >
+                    <Icon name="more-horiz" size={20} />
+                  </button>
+                </div>
               );
             })}
           </div>
         </section>
       ))}
+      <NotificationActions item={acting} onOpen={open} onClose={() => setActing(null)} />
     </div>
   );
 }

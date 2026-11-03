@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { AuthUser } from "@/shared/types";
-import { authApi } from "../api/auth.api";
+import { authApi, type NotificationPrefs } from "../api/auth.api";
 import type { ProfileFormValues, RegisterFormValues } from "../api/auth.dto";
 import { mapCertificateDto, mapUserDto } from "../lib/auth.mappers";
 import { useAuthStore } from "./auth.store";
@@ -109,6 +109,15 @@ export function useChangePasswordMutation() {
       currentPassword: string;
       newPassword: string;
     }) => authApi.changePassword(currentPassword, newPassword),
+    onSuccess: (response) => {
+      const user = useAuthStore.getState().user;
+      if (user)
+        useAuthStore.getState().setUser({
+          ...user,
+          mustChangePassword: false,
+          passwordChangedAt: response?.password_changed_at ?? user.passwordChangedAt,
+        });
+    },
   });
 }
 
@@ -144,10 +153,7 @@ export function useUpdateLessonReminderMutation() {
 
 export function useUpdateNotificationPrefsMutation() {
   return useMutation({
-    mutationFn: async (prefs: {
-      notifyMessages?: boolean;
-      notifyEmail?: boolean;
-    }): Promise<AuthUser> => mapUserDto(await authApi.updateNotificationPrefs(prefs)),
+    mutationFn: async (prefs: NotificationPrefs): Promise<AuthUser> => mapUserDto(await authApi.updateNotificationPrefs(prefs)),
     onSuccess: (user) => useAuthStore.getState().setUser(user),
     onError: (error: Error) => toast.error(error.message),
   });

@@ -48,7 +48,10 @@ export function mapInboxNotificationDto(dto: NotificationRecipientDto): InboxNot
     kind: dto.notification?.kind ?? null,
     isRead: Boolean(dto.is_read),
     readAt: dto.read_at ?? null,
-    link: mapNotificationLink(dto.notification?.link_type, dto.notification?.link_id),
+    link: dto.notification?.link?.kind
+      ? { type: dto.notification.link.kind, id: String(dto.notification.link.id ?? "") }
+      : mapNotificationLink(dto.notification?.link_type, dto.notification?.link_id),
+    data: dto.notification?.data ?? {},
     createdAt: dto.created_at ?? dto.notification?.created_at ?? "",
   };
 }

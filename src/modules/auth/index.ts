@@ -34,6 +34,7 @@ export {
   useRejectCertificate,
 } from "./model/auth.queries";
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
+export { ForcePasswordDialog } from "./ui/force-password-dialog";
 export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
 export { describeUserAgent } from "./lib/describe-user-agent";
 export { useAuth, useCurrentUser, useIsAuthenticated } from "./model/use-auth";

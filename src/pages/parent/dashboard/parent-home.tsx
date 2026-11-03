@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { formatDayTime, formatLocalized } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
-import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
+import { ParentErrorBanner, ParentLockedCard, ParentPageHeader } from "@/widgets/parent-shell";
 import { greetingKey } from "./home-format";
 import { HomeHero } from "./home-hero";
 import { HomeRecent } from "./home-recent";
@@ -62,16 +62,22 @@ export function ParentHome() {
             }`}
           >
             <div className="flex min-w-0 flex-col gap-5">
-              <HomeHero
-                childName={child.name}
-                hero={view.hero}
-                week={view.week}
-                todayCount={view.todayCount}
-                teachers={home.teachers}
-                now={now}
-              />
-              <HomeStats now={now} month={view.month} score={view.score} homework={view.homework} minutes={view.minutes} />
-              <HomeRecent items={view.recent} now={now} />
+              {home.locked ? (
+                <ParentLockedCard childId={child.id} childName={child.name} />
+              ) : (
+                <>
+                  <HomeHero
+                    childName={child.name}
+                    hero={view.hero}
+                    week={view.week}
+                    todayCount={view.todayCount}
+                    teachers={home.teachers}
+                    now={now}
+                  />
+                  <HomeStats now={now} month={view.month} score={view.score} homework={view.homework} minutes={view.minutes} />
+                  <HomeRecent items={view.recent} now={now} />
+                </>
+              )}
             </div>
             <div className="flex min-w-0 flex-col gap-5">
               <AttentionCard items={view.attention} childId={child.id} now={now} />

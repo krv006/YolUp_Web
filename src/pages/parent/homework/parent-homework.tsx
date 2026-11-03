@@ -97,6 +97,7 @@ export function ParentHomework() {
               assignment={selected}
               assignments={view.assignments}
               course={view.courseById.get(selected.courseId)}
+              childId={view.child?.id ?? null}
               childName={childName}
               now={view.now}
             />
