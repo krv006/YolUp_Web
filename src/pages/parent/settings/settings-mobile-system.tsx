@@ -26,6 +26,11 @@ import { MOBILE_INPUT_SURFACE } from "@/shared/ui/mobile-fields";
 import { MobilePageHeader, mobileButton } from "@/shared/ui/mobile-page";
 import { Switch } from "@/shared/ui/switch";
 
+const CHILD_ALERTS = [
+  { key: "notifyChildAbsent", icon: "cancel", tone: "bg-danger-bg text-error-text" },
+  { key: "notifyChildNewDevice", icon: "shield", tone: "bg-accent-violet-bg text-accent-violet-fg" },
+  { key: "notifyHomeworkDue", icon: "hourglass-empty", tone: "bg-accent-saffron-bg text-accent-saffron-fg" },
+] as const;
 const SWITCH = "data-[state=checked]:bg-brand data-[state=unchecked]:bg-line-strong";
 const REMINDERS = [5, 10, 15, 30, 60, 0];
 const THEMES = [
@@ -145,6 +150,21 @@ export function SettingsMobile() {
           <small className="shrink-0 text-body-sm text-ink-secondary">{label(minutes)}</small>
           <Icon name="chevron-right" size={20} className="shrink-0 text-icon-tertiary" />
         </Row>
+      </ul>
+      <small className="px-1 text-body-sm text-ink-secondary">{t("settings.alerts.title")}</small>
+      <ul className="flex flex-col overflow-hidden rounded-[20px] bg-surface">
+        {CHILD_ALERTS.map((alert) => (
+          <Row key={alert.key} icon={alert.icon} tone={alert.tone} title={t(`settings.alerts.${alert.key}.title`)} text={t(`settings.alerts.${alert.key}.text`)}>
+            <Switch
+              size="lg"
+              className={SWITCH}
+              checked={Boolean(user?.[alert.key])}
+              disabled={prefs.isPending}
+              aria-label={t(`settings.alerts.${alert.key}.title`)}
+              onCheckedChange={(next) => prefs.mutate({ [alert.key]: next })}
+            />
+          </Row>
+        ))}
       </ul>
 
       <AppDialog
