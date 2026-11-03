@@ -17,6 +17,15 @@ import type {
   TwoFactorLoginRequestDto,
 } from "./auth.dto";
 
+export interface NotificationPrefs {
+  notifyMessages?: boolean;
+  notifyEmail?: boolean;
+  notifyChildAbsent?: boolean;
+  notifyChildNewDevice?: boolean;
+  notifyHomeworkDue?: boolean;
+  mutedKinds?: string[];
+}
+
 export const authApi = {
   logout(refreshToken: string | null) {
     return apiClient.post(
@@ -55,10 +64,14 @@ export const authApi = {
       new_password: newPassword,
     });
   },
-  updateNotificationPrefs(prefs: { notifyMessages?: boolean; notifyEmail?: boolean }) {
+  updateNotificationPrefs(prefs: NotificationPrefs) {
     return apiClient.patch<AuthUserDto>(authEndpoints.me, {
       ...(prefs.notifyMessages === undefined ? {} : { notify_messages: prefs.notifyMessages }),
       ...(prefs.notifyEmail === undefined ? {} : { notify_email: prefs.notifyEmail }),
+      ...(prefs.notifyChildAbsent === undefined ? {} : { notify_child_absent: prefs.notifyChildAbsent }),
+      ...(prefs.notifyChildNewDevice === undefined ? {} : { notify_child_new_device: prefs.notifyChildNewDevice }),
+      ...(prefs.notifyHomeworkDue === undefined ? {} : { notify_homework_due: prefs.notifyHomeworkDue }),
+      ...(prefs.mutedKinds === undefined ? {} : { muted_kinds: prefs.mutedKinds }),
     });
   },
   getTwoFactor(options?: RequestOptions) {
