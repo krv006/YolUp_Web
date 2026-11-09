@@ -1,14 +1,19 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import {
   averageFocus,
   buildLessonRoster,
   LATE_AFTER_MINUTES,
   useAttendance,
+  useUpdateAttendanceNote,
   type RosterEntry,
   type RosterStatus,
 } from "@/modules/attendance";
+import { useAuth } from "@/modules/auth";
 import { useCourseStudents } from "@/modules/course";
+import { ROLES } from "@/shared/constants";
+import type { AttendanceRow } from "@/shared/types";
 import { formatDayTime, formatDuration, formatMessageTime } from "@/shared/lib";
 import type { Lesson } from "@/shared/types";
 import { AppDialog } from "@/shared/ui/app-dialog";
@@ -37,6 +42,9 @@ export function LessonAttendanceDialog({ lesson, open, onOpenChange }: LessonAtt
   const attendance = useAttendance({ lesson: lesson?.id ?? "", page_size: 100 }, enabled);
   const students = useCourseStudents(lesson?.courseId ?? null, { page_size: 100 }, enabled);
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [editing, setEditing] = useState<string | null>(null);
+  const { user } = useAuth();
+  const canEdit = user?.role === ROLES.TEACHER;
 
   const roster = useMemo(
     () =>
@@ -103,6 +111,9 @@ export function LessonAttendanceDialog({ lesson, open, onOpenChange }: LessonAtt
                 entry={entry}
                 expanded={expanded === entry.student.id}
                 onToggle={() => setExpanded((current) => (current === entry.student.id ? null : entry.student.id))}
+                editing={editing === entry.student.id}
+                onEdit={canEdit && entry.row ? () => setEditing(entry.student.id) : undefined}
+                onEditDone={() => setEditing(null)}
               />
             ))}
           </ul>
@@ -120,9 +131,81 @@ interface RosterRowProps {
   entry: RosterEntry;
   expanded: boolean;
   onToggle: () => void;
+  editing: boolean;
+  onEdit?: () => void;
+  onEditDone: () => void;
 }
 
-function RosterRow({ entry, expanded, onToggle }: RosterRowProps) {
+const FIELD =
+  "w-full rounded-md border border-transparent bg-surface px-3 text-body-sm text-ink outline-none placeholder:text-ink-tertiary focus:border-focus";
+
+function NoteEditor({ row, onDone }: { row: AttendanceRow; onDone: () => void }) {
+  const { t } = useTranslation("lesson");
+  const save = useUpdateAttendanceNote();
+  const [lateReason, setLateReason] = useState(row.lateReason ?? "");
+  const [teacherNote, setTeacherNote] = useState(row.teacherNote ?? "");
+
+  return (
+    <form
+      className="flex flex-col gap-2.5 bg-subtle px-3.5 py-3"
+      onSubmit={(event) => {
+        event.preventDefault();
+        save.mutate(
+          { id: row.id, lateReason: lateReason.trim(), teacherNote: teacherNote.trim() },
+          {
+            onSuccess: () => {
+              toast.success(t("attendanceDetail.noteSaved"));
+              onDone();
+            },
+            onError: (error) => toast.error(error.message || t("attendanceDetail.noteFailed")),
+          }
+        );
+      }}
+    >
+      <label className="flex flex-col gap-1">
+        <small className="text-caption-strong text-ink-secondary">{t("attendanceDetail.reasonLabel")}</small>
+        <input
+          autoFocus
+          className={`${FIELD} h-10`}
+          maxLength={200}
+          value={lateReason}
+          placeholder={t("attendanceDetail.reasonPlaceholder")}
+          onChange={(event) => setLateReason(event.target.value)}
+        />
+      </label>
+      <label className="flex flex-col gap-1">
+        <small className="text-caption-strong text-ink-secondary">{t("attendanceDetail.noteLabel")}</small>
+        <textarea
+          rows={2}
+          className={`${FIELD} resize-y py-2`}
+          maxLength={2000}
+          value={teacherNote}
+          placeholder={t("attendanceDetail.notePlaceholder")}
+          onChange={(event) => setTeacherNote(event.target.value)}
+        />
+      </label>
+      <small className="text-caption text-ink-tertiary">{t("attendanceDetail.noteHint")}</small>
+      <span className="flex items-center justify-end gap-2">
+        <button
+          type="button"
+          className="flex h-9 shrink-0 items-center rounded-full px-3.5 text-button text-ink transition-colors hover:bg-surface"
+          onClick={onDone}
+        >
+          {t("attendanceDetail.noteCancel")}
+        </button>
+        <button
+          type="submit"
+          disabled={save.isPending}
+          className="flex h-9 shrink-0 items-center rounded-full bg-brand px-4 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-60"
+        >
+          {t("attendanceDetail.noteSave")}
+        </button>
+      </span>
+    </form>
+  );
+}
+
+function RosterRow({ entry, expanded, onToggle, editing, onEdit, onEditDone }: RosterRowProps) {
   const { t } = useTranslation("lesson");
   const { row, status } = entry;
   const exits = row?.focus.exits ?? 0;
@@ -174,6 +257,16 @@ function RosterRow({ entry, expanded, onToggle }: RosterRowProps) {
             <Icon name="warning" size={14} /> {t("attendanceDetail.alert")}
           </small>
         ) : null}
+        {row?.lateReason ? (
+          <small className="text-caption break-words text-warning-text">
+            {t("attendanceDetail.reasonLine", { text: row.lateReason })}
+          </small>
+        ) : null}
+        {row?.teacherNote ? (
+          <small className="text-caption break-words text-ink-secondary">
+            {t("attendanceDetail.noteLine", { text: row.teacherNote })}
+          </small>
+        ) : null}
       </span>
       {exits ? (
         <Icon
@@ -187,18 +280,32 @@ function RosterRow({ entry, expanded, onToggle }: RosterRowProps) {
 
   return (
     <li className="border-b border-line last:border-b-0">
-      {exits ? (
-        <button
-          type="button"
-          className={`${ROW} transition-colors hover:bg-subtle`}
-          aria-expanded={expanded}
-          onClick={onToggle}
-        >
-          {content}
-        </button>
-      ) : (
-        <div className={ROW}>{content}</div>
-      )}
+      <div className="flex items-start">
+        {exits ? (
+          <button
+            type="button"
+            className={`${ROW} min-w-0 flex-1 transition-colors hover:bg-subtle`}
+            aria-expanded={expanded}
+            onClick={onToggle}
+          >
+            {content}
+          </button>
+        ) : (
+          <div className={`${ROW} min-w-0 flex-1`}>{content}</div>
+        )}
+        {onEdit && !editing ? (
+          <button
+            type="button"
+            className="mt-2 mr-2 grid size-9 shrink-0 place-items-center rounded-full text-icon-secondary transition-colors hover:bg-subtle hover:text-brand"
+            aria-label={row?.teacherNote || row?.lateReason ? t("attendanceDetail.noteEdit") : t("attendanceDetail.noteAdd")}
+            title={row?.teacherNote || row?.lateReason ? t("attendanceDetail.noteEdit") : t("attendanceDetail.noteAdd")}
+            onClick={onEdit}
+          >
+            <Icon name="edit-note" size={20} />
+          </button>
+        ) : null}
+      </div>
+      {editing && row ? <NoteEditor row={row} onDone={onEditDone} /> : null}
 
       {expanded && row ? (
         <div className="flex flex-col gap-2 bg-subtle px-3.5 py-3">

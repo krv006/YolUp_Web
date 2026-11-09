@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { QueryParams } from "@/shared/api";
 import { attendanceApi } from "../api/attendance.api";
 
@@ -34,5 +34,14 @@ export function useAttendancePage(params: QueryParams = {}) {
   return useQuery({
     queryKey: attendanceKeys.list(params),
     queryFn: ({ signal }) => attendanceApi.getAll({ signal, query: params }),
+  });
+}
+
+export function useUpdateAttendanceNote() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, teacherNote, lateReason }: { id: string; teacherNote?: string; lateReason?: string }) =>
+      attendanceApi.updateNote(id, { teacherNote, lateReason }),
+    onSuccess: () => client.invalidateQueries({ queryKey: attendanceKeys.all }),
   });
 }

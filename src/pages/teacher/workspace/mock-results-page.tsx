@@ -109,9 +109,9 @@ export function MockResultsPage() {
         scoringDetail?.writingAi?.suggestedBand != null ? { [scoringKey]: scoringDetail.writingAi.suggestedBand } : {}
       }
       pending={saveScores.isPending}
-      onSave={(scores) =>
+      onSave={(scores, comment) =>
         scoringRow &&
-        saveScores.mutate({ studentId: scoringRow.studentId, scores }, { onSuccess: () => setScoring(null) })
+        saveScores.mutate({ studentId: scoringRow.studentId, scores, comment }, { onSuccess: () => setScoring(null) })
       }
     />
   );
@@ -338,6 +338,13 @@ export function MockResultsPage() {
               </span>
 
               <p className="text-body-xs text-ink-secondary">{t("results.aiHint")}</p>
+
+              {activeRow.teacherComment ? (
+                <p className="flex flex-col gap-0.5 rounded-md bg-surface px-3.5 py-2.5">
+                  <small className="text-caption-strong text-ink-secondary">{t("results.teacherComment")}</small>
+                  <span className="text-body-sm break-words whitespace-pre-line text-ink">{activeRow.teacherComment}</span>
+                </p>
+              ) : null}
 
               <div className="grid grid-cols-2 gap-3">
                 <button

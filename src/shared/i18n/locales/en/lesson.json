@@ -410,6 +410,19 @@
     "awayTotal": "Total away: {{duration}}",
     "longest": "Longest: {{duration}}",
     "notReturned": "did not return",
-    "empty": "No attendance data for this lesson."
+    "empty": "No attendance data for this lesson.",
+    "noteAdd": "Add a note",
+    "noteEdit": "Edit the note",
+    "reasonLabel": "Reason for being late",
+    "reasonPlaceholder": "e.g. transport",
+    "noteLabel": "Teacher's note",
+    "notePlaceholder": "e.g. Very active in class",
+    "noteHint": "Parents see this in their child's attendance",
+    "noteCancel": "Cancel",
+    "noteSave": "Save",
+    "noteSaved": "Note saved",
+    "noteFailed": "Couldn't save the note",
+    "reasonLine": "Reason: {{text}}",
+    "noteLine": "Note: {{text}}"
   }
 }

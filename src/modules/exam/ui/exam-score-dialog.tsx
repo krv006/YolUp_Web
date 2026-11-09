@@ -28,11 +28,13 @@ export function ExamScoreDialog({
   const { t } = useTranslation("exam");
   const isCompact = useIsCompact();
   const [scores, setScores] = useState<Record<string, string>>({});
+  const [comment, setComment] = useState("");
   const [syncedId, setSyncedId] = useState<string | null>(null);
   const syncKey = result ? `${result.studentId}:${JSON.stringify(prefill ?? {})}:${open}` : null;
 
   if (result && syncedId !== syncKey) {
     setSyncedId(syncKey);
+    setComment(result.teacherComment ?? "");
     setScores(
       Object.fromEntries(
         result.sections
@@ -62,14 +64,31 @@ export function ExamScoreDialog({
     ? (Math.round((values.reduce((sum, value) => sum + value, 0) / values.length) * 2) / 2).toFixed(1)
     : "—";
 
-  function save() {
-    const payload: Record<string, number> = {};
-    for (const [key, value] of Object.entries(scores)) {
-      const score = Number(value.replace(",", "."));
-      if (value.trim() && Number.isFinite(score)) payload[key] = score;
-    }
-    onSave(payload, "");
+  const payload: Record<string, number> = {};
+  for (const [key, value] of Object.entries(scores)) {
+    const score = Number(value.replace(",", "."));
+    if (value.trim() && Number.isFinite(score)) payload[key] = score;
   }
+  const canSave = Object.keys(payload).length > 0;
+
+  function save() {
+    if (canSave) onSave(payload, comment.trim());
+  }
+
+  const commentField = (
+    <label className="flex flex-col gap-1.5 pt-1">
+      <span className="text-body-sm font-medium text-ink">{t("mock.comment")}</span>
+      <textarea
+        rows={3}
+        maxLength={2000}
+        value={comment}
+        placeholder={t("mock.commentPlaceholder")}
+        className="min-h-24 w-full resize-y rounded-md border border-transparent bg-subtle px-4 py-3 text-body-sm text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
+        onChange={(event) => setComment(event.target.value)}
+      />
+      <small className="text-caption text-ink-tertiary">{canSave ? t("mock.commentHint") : t("mock.commentNeedsScore")}</small>
+    </label>
+  );
 
   if (isCompact)
     return (
@@ -92,7 +111,7 @@ export function ExamScoreDialog({
             <button
               type="button"
               className={`${dialogButton.primary} h-13 text-title font-semibold`}
-              disabled={pending}
+              disabled={pending || !canSave}
               onClick={save}
             >
               {t("mock.scoreSave")}
@@ -146,6 +165,7 @@ export function ExamScoreDialog({
             <small className="min-w-0 flex-1 truncate text-body-sm text-ink-secondary">{t("mock.overallBand")}</small>
             <strong className="shrink-0 font-heading text-h2 text-brand">{overall}</strong>
           </span>
+          {commentField}
         </div>
       </AppDialog>
     );
@@ -170,7 +190,7 @@ export function ExamScoreDialog({
           <button
             type="button"
             className={dialogButton.primary}
-            disabled={pending}
+            disabled={pending || !canSave}
             onClick={save}
           >
             {t("mock.scoreSave")}
@@ -226,6 +246,7 @@ export function ExamScoreDialog({
           </small>
           <strong className="shrink-0 font-heading text-h2 text-brand">{overall}</strong>
         </span>
+        {commentField}
       </div>
     </AppDialog>
   );

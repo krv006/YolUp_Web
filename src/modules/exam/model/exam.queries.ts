@@ -148,8 +148,8 @@ export function useSaveManualScores(examId: string) {
   const { t } = useTranslation("exam");
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ studentId, scores }: { studentId: string; scores: Record<string, number> }) =>
-      examApi.saveManualScores(examId, studentId, scores),
+    mutationFn: ({ studentId, scores, comment }: { studentId: string; scores: Record<string, number>; comment?: string }) =>
+      examApi.saveManualScores(examId, studentId, scores, comment),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: examKeys.results(examId) });
       toast.success(t("toast.scoresSaved"));
