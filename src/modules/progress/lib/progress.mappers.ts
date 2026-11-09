@@ -66,6 +66,7 @@ export interface StudentProgressDetail extends StudentProgress {
     dueAt: string | null;
     state: AssignmentState;
     submittedAt: string | null;
+    submissionId: string | null;
     score: number | null;
   }>;
   payments: Payment[];
@@ -147,6 +148,7 @@ export function mapStudentProgressDetail(dto: StudentProgressDetailDto): Student
       dueAt: item.due_at ?? null,
       state: item.state,
       submittedAt: item.submitted_at ?? null,
+      submissionId: item.submission_id ? String(item.submission_id) : null,
       score: item.score ?? null,
     })),
     payments: (dto.payments ?? []).map(mapPayment),

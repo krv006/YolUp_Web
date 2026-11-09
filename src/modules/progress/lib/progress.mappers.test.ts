@@ -88,6 +88,7 @@ describe("mapStudentProgressDetail", () => {
       ],
       assignments: [
         { assignment_id: "a1", title: "Essay", due_at: null, state: "missed", submitted_at: null, submission_id: null, score: null },
+        { assignment_id: "a2", title: "Test", due_at: null, state: "done", submitted_at: "2026-11-03T09:00:00Z", submission_id: "sub2", score: 8.5 },
       ],
       payments: [
         { period: "2026-11", status: "paid", amount: 450000, paid_at: "2026-11-01T10:00:00Z", note: "", },
@@ -95,7 +96,8 @@ describe("mapStudentProgressDetail", () => {
       ],
     } satisfies StudentProgressDetailDto);
     expect(detail.lessons[0]).toMatchObject({ lessonId: "l1", attended: true, minutes: 49, teacherNote: "Faol" });
-    expect(detail.assignments[0]).toMatchObject({ assignmentId: "a1", state: "missed", dueAt: null, score: null });
+    expect(detail.assignments[0]).toMatchObject({ assignmentId: "a1", state: "missed", dueAt: null, score: null, submissionId: null });
+    expect(detail.assignments[1]).toMatchObject({ submissionId: "sub2", score: 8.5 });
     expect(detail.payments.map((item) => item.status)).toEqual(["paid", "unpaid"]);
   });
 });

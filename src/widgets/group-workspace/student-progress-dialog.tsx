@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { describeCreateError } from "@/modules/auth";
 import {
@@ -11,6 +12,7 @@ import {
   type StudentProgress,
 } from "@/modules/progress";
 import { AppDialog } from "@/shared/ui/app-dialog";
+import { ROUTES } from "@/shared/config";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
@@ -37,6 +39,7 @@ const STATE_TONE: Record<AssignmentState, string> = {
 
 export function StudentProgressDialog({ courseId, student, monthlyFee, range, onOpenChange }: StudentProgressDialogProps) {
   const { t, i18n } = useTranslation("group");
+  const navigate = useNavigate();
   const [tab, setTab] = useState<DetailTab>("lessons");
   const detail = useStudentProgress(courseId, student?.id ?? null, range);
   const unmarkPaid = useUnmarkPaid();
@@ -123,25 +126,38 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
               data.assignments.length ? (
                 <ul className="flex flex-col overflow-hidden rounded-xl border border-line">
                   {data.assignments.map((assignment) => (
-                    <li key={assignment.assignmentId} className="flex items-center gap-3 border-b border-line px-4 py-3 last:border-b-0">
-                      <span className="flex min-w-0 flex-1 flex-col">
-                        <strong className="truncate text-title-sm text-ink">{assignment.title}</strong>
-                        <small className="text-body-xs text-ink-secondary">
-                          {assignment.dueAt
-                            ? t("progress.detail.due", { date: date(assignment.dueAt) })
-                            : t("progress.detail.noDeadline")}
-                        </small>
-                      </span>
-                      <span className="flex shrink-0 flex-col items-end">
-                        <strong className={`text-title-sm ${STATE_TONE[assignment.state]}`}>
-                          {t(`progress.detail.state.${assignment.state}`)}
-                        </strong>
-                        {assignment.score !== null ? (
-                          <small className="font-numeric text-caption text-ink-secondary">
-                            {t("progress.detail.score", { value: assignment.score })}
+                    <li key={assignment.assignmentId} className="border-b border-line last:border-b-0">
+                      <button
+                        type="button"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-subtle"
+                        onClick={() =>
+                          navigate(
+                            assignment.submissionId
+                              ? `${ROUTES.teacher.homeworkReview(assignment.assignmentId)}?s=${encodeURIComponent(assignment.submissionId)}`
+                              : ROUTES.teacher.homeworkReview(assignment.assignmentId)
+                          )
+                        }
+                      >
+                        <span className="flex min-w-0 flex-1 flex-col">
+                          <strong className="truncate text-title-sm text-ink">{assignment.title}</strong>
+                          <small className="text-body-xs text-ink-secondary">
+                            {assignment.dueAt
+                              ? t("progress.detail.due", { date: date(assignment.dueAt) })
+                              : t("progress.detail.noDeadline")}
                           </small>
-                        ) : null}
-                      </span>
+                        </span>
+                        <span className="flex shrink-0 flex-col items-end">
+                          <strong className={`text-title-sm ${STATE_TONE[assignment.state]}`}>
+                            {t(`progress.detail.state.${assignment.state}`)}
+                          </strong>
+                          {assignment.score !== null ? (
+                            <small className="font-numeric text-caption text-ink-secondary">
+                              {t("progress.detail.score", { value: assignment.score })}
+                            </small>
+                          ) : null}
+                        </span>
+                        <Icon name="chevron-right" size={18} className="shrink-0 text-icon-tertiary" />
+                      </button>
                     </li>
                   ))}
                 </ul>
