@@ -382,8 +382,54 @@
         "resubmit": "Qayta topshirish",
         "missed": "Bajarilmagan",
         "not_submitted": "Topshirilmagan"
-      }
+      },
+      "lateReason": "Kechikish sababi: {{reason}}",
+      "absentReason": "Kelmaslik sababi: {{reason}}",
+      "teacherNote": "Izoh: {{note}}"
     },
-    "gradeLabel": "O'rt. baho"
+    "gradeLabel": "O'rt. baho",
+    "rangeLabel": "Davomat davri",
+    "payment": {
+      "title": "To'lovni belgilash",
+      "editTitle": "To'lovni tahrirlash",
+      "amount": "Summa",
+      "currency": "so'm",
+      "note": "Izoh (ixtiyoriy)",
+      "notePlaceholder": "Masalan: naqd, chek raqami",
+      "notes": {
+        "cash": "Naqd",
+        "card": "Karta",
+        "transfer": "O'tkazma"
+      },
+      "save": "Saqlash",
+      "updated": "{{name}} — to'lov yangilandi",
+      "edit": "Tahrirlash",
+      "sum": "{{amount}} so'm",
+      "markShort": "To'landi"
+    },
+    "noFee": "Kurs narxi kiritilmagan — to'lovlar hisoblanmaydi",
+    "currentMonth": "Joriy oyga qaytish",
+    "notJoinedYet": "Hali qo'shilmagan",
+    "search": "O'quvchini qidirish",
+    "sort": {
+      "label": "Saralash",
+      "name": "Ism (A–Z)",
+      "attendance": "Kam davomat",
+      "homework": "Kam vazifa",
+      "debt": "Ko'p qarz"
+    },
+    "searchShort": "Qidirish",
+    "resubmit_one": "{{count}} ta qayta topshirish kerak",
+    "resubmit_other": "{{count}} ta qayta topshirish kerak",
+    "neverVisited": "Darsga hali kirmagan",
+    "inactive_one": "{{count}} kundan beri darsga kelmagan",
+    "inactive_other": "{{count}} kundan beri darsga kelmagan",
+    "focusHint": "Fokus {{value}}%",
+    "awaitingHint_one": "{{count}} tekshiruvda",
+    "awaitingHint_other": "{{count}} tekshiruvda",
+    "statFocus": "Fokus",
+    "statAttendanceLessons": "Davomat · {{count}} dars",
+    "lastVisit": "Oxirgi tashrif: {{date}}",
+    "noVisit": "Darsga hali kirmagan"
   }
 }

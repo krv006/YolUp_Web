@@ -382,8 +382,54 @@
         "resubmit": "Resubmit",
         "missed": "Missed",
         "not_submitted": "Not submitted"
-      }
+      },
+      "lateReason": "Late because: {{reason}}",
+      "absentReason": "Absent because: {{reason}}",
+      "teacherNote": "Note: {{note}}"
     },
-    "gradeLabel": "Avg. grade"
+    "gradeLabel": "Avg. grade",
+    "rangeLabel": "Attendance period",
+    "payment": {
+      "title": "Record payment",
+      "editTitle": "Edit payment",
+      "amount": "Amount",
+      "currency": "UZS",
+      "note": "Note (optional)",
+      "notePlaceholder": "e.g. cash, receipt number",
+      "notes": {
+        "cash": "Cash",
+        "card": "Card",
+        "transfer": "Transfer"
+      },
+      "save": "Save",
+      "updated": "{{name}} — payment updated",
+      "edit": "Edit",
+      "sum": "{{amount}} UZS",
+      "markShort": "Paid"
+    },
+    "noFee": "No course fee set — payments aren't tracked",
+    "currentMonth": "Back to the current month",
+    "notJoinedYet": "Not joined yet",
+    "search": "Search students",
+    "sort": {
+      "label": "Sort",
+      "name": "Name (A–Z)",
+      "attendance": "Low attendance",
+      "homework": "Low homework",
+      "debt": "Most debt"
+    },
+    "searchShort": "Search",
+    "resubmit_one": "{{count}} resubmission requested",
+    "resubmit_other": "{{count}} resubmissions requested",
+    "neverVisited": "Hasn't joined a lesson yet",
+    "inactive_one": "No lessons for {{count}} day",
+    "inactive_other": "No lessons for {{count}} days",
+    "focusHint": "Focus {{value}}%",
+    "awaitingHint_one": "{{count}} awaiting review",
+    "awaitingHint_other": "{{count}} awaiting review",
+    "statFocus": "Focus",
+    "statAttendanceLessons": "Attendance · {{count}} lessons",
+    "lastVisit": "Last visit: {{date}}",
+    "noVisit": "Hasn't joined a lesson yet"
   }
 }

@@ -56,6 +56,8 @@ export interface StudentProgressDetail extends StudentProgress {
     title: string;
     startsAt: string;
     attended: boolean;
+    joinedAt: string | null;
+    leftAt: string | null;
     minutes: number | null;
     lateReason: string;
     teacherNote: string;
@@ -66,6 +68,7 @@ export interface StudentProgressDetail extends StudentProgress {
     dueAt: string | null;
     state: AssignmentState;
     submittedAt: string | null;
+    submissionId: string | null;
     score: number | null;
   }>;
   payments: Payment[];
@@ -137,6 +140,8 @@ export function mapStudentProgressDetail(dto: StudentProgressDetailDto): Student
       title: item.title,
       startsAt: item.starts_at,
       attended: item.attended,
+      joinedAt: item.joined_at ?? null,
+      leftAt: item.left_at ?? null,
       minutes: item.minutes ?? null,
       lateReason: item.late_reason ?? "",
       teacherNote: item.teacher_note ?? "",
@@ -147,6 +152,7 @@ export function mapStudentProgressDetail(dto: StudentProgressDetailDto): Student
       dueAt: item.due_at ?? null,
       state: item.state,
       submittedAt: item.submitted_at ?? null,
+      submissionId: item.submission_id ? String(item.submission_id) : null,
       score: item.score ?? null,
     })),
     payments: (dto.payments ?? []).map(mapPayment),
@@ -158,4 +164,55 @@ export function shiftMonth(month: string, delta: number): string {
   const [year, mon] = month.split("-").map(Number);
   const index = year * 12 + (mon - 1) + delta;
   return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, "0")}`;
+}
+
+export const MAX_MONTHS_AHEAD = 12;
+
+export function monthKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function paymentMonthBounds(joinedDates: string[], now: Date): { min: string; max: string; current: string } {
+  const current = monthKey(now);
+  const joined = joinedDates
+    .map((value) => new Date(value))
+    .filter((date) => Number.isFinite(date.getTime()))
+    .map(monthKey)
+    .sort();
+  const earliest = joined[0] && joined[0] < current ? joined[0] : current;
+  return { min: earliest < "2020-01" ? "2020-01" : earliest, max: shiftMonth(current, MAX_MONTHS_AHEAD), current };
+}
+
+export type ProgressSort = "name" | "attendance" | "debt" | "homework";
+
+function normalize(value: string): string {
+  return value.toLowerCase().replace(/[‘’ʼ`]/g, "'").trim();
+}
+
+export function matchesStudent(student: Pick<StudentProgress, "name" | "username">, query: string): boolean {
+  const needle = normalize(query);
+  return !needle || normalize(student.name).includes(needle) || normalize(student.username).includes(needle);
+}
+
+function lowFirst(a: number | null, b: number | null): number {
+  return (a ?? Number.POSITIVE_INFINITY) - (b ?? Number.POSITIVE_INFINITY);
+}
+
+export function sortStudents(students: StudentProgress[], sort: ProgressSort): StudentProgress[] {
+  const byName = (a: StudentProgress, b: StudentProgress) => a.name.localeCompare(b.name);
+  const compare: Record<ProgressSort, (a: StudentProgress, b: StudentProgress) => number> = {
+    name: byName,
+    attendance: (a, b) => lowFirst(a.attendance.percent, b.attendance.percent) || byName(a, b),
+    debt: (a, b) => b.payment.unpaidMonths - a.payment.unpaidMonths || byName(a, b),
+    homework: (a, b) => lowFirst(a.homework.completionPercent, b.homework.completionPercent) || byName(a, b),
+  };
+  return [...students].sort(compare[sort]);
+}
+
+export const INACTIVE_DAYS = 14;
+
+export function daysSinceVisit(lastVisitAt: string | null, now: Date): number | null {
+  if (!lastVisitAt) return null;
+  const at = new Date(lastVisitAt).getTime();
+  return Number.isFinite(at) ? Math.max(0, Math.floor((now.getTime() - at) / 86_400_000)) : null;
 }
