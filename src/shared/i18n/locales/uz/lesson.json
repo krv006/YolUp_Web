@@ -410,6 +410,19 @@
     "awayTotal": "Jami chetda: {{duration}}",
     "longest": "Eng uzuni: {{duration}}",
     "notReturned": "qaytmagan",
-    "empty": "Bu dars bo‘yicha davomat ma’lumoti yo‘q."
+    "empty": "Bu dars bo‘yicha davomat ma’lumoti yo‘q.",
+    "noteAdd": "Izoh qo'shish",
+    "noteEdit": "Izohni tahrirlash",
+    "reasonLabel": "Kechikish sababi",
+    "reasonPlaceholder": "Masalan: transport",
+    "noteLabel": "O'qituvchi izohi",
+    "notePlaceholder": "Masalan: darsda faol qatnashdi",
+    "noteHint": "Ota-ona farzandining davomatida ko'radi",
+    "noteCancel": "Bekor qilish",
+    "noteSave": "Saqlash",
+    "noteSaved": "Izoh saqlandi",
+    "noteFailed": "Izohni saqlab bo'lmadi",
+    "reasonLine": "Sabab: {{text}}",
+    "noteLine": "Izoh: {{text}}"
   }
 }
