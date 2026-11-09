@@ -7,6 +7,7 @@ import {
   useCourseProgress,
   useMarkPaid,
   useUnmarkPaid,
+  type ProgressRange,
   type StudentProgress,
 } from "@/modules/progress";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -28,9 +29,10 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const { t, i18n } = useTranslation("group");
   const [month, setMonth] = useState<string | undefined>(undefined);
   const [filter, setFilter] = useState<PaymentFilter>("all");
+  const [range, setRange] = useState<ProgressRange>("all");
   const [openStudent, setOpenStudent] = useState<StudentProgress | null>(null);
   const [unmarkTarget, setUnmarkTarget] = useState<StudentProgress | null>(null);
-  const progress = useCourseProgress(courseId, month);
+  const progress = useCourseProgress(courseId, month, range);
   const markPaid = useMarkPaid();
   const unmarkPaid = useUnmarkPaid();
 
@@ -69,6 +71,12 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
       }
     );
   }
+
+  const RANGES: Array<{ id: ProgressRange; label: string }> = [
+    { id: "all", label: t("attendance.filterAllShort") },
+    { id: "30d", label: t("attendance.filterMonthShort") },
+    { id: "month", label: t("attendance.filterCurrent") },
+  ];
 
   const FILTERS: Array<{ id: PaymentFilter; label: string }> = [
     { id: "all", label: t("progress.filterAll") },
@@ -125,6 +133,24 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
       ) : data && data.students.length ? (
         <>
           <section className="flex shrink-0 flex-col gap-3 rounded-xl bg-brand p-4 text-on-action">
+            <div className="flex items-center gap-3">
+              <small className="shrink-0 text-caption-strong">{t("progress.rangeLabel")}</small>
+              <div className="flex min-w-0 flex-1 gap-1 rounded-full bg-on-brand-subtle p-1">
+                {RANGES.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    aria-pressed={range === item.id}
+                    className={`flex h-8 min-w-0 flex-1 items-center justify-center truncate rounded-full px-2 text-caption-strong transition-colors ${
+                      range === item.id ? "bg-surface text-brand" : "text-on-action"
+                    }`}
+                    onClick={() => setRange(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { value: `${data.summary.paid}/${data.summary.students}`, label: t("progress.statPaid") },
@@ -259,6 +285,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
         courseId={courseId}
         student={openStudent}
         monthlyFee={data?.monthlyFee ?? null}
+        range={range}
         onOpenChange={(open) => !open && setOpenStudent(null)}
       />
 

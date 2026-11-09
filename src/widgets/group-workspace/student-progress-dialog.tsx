@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useStudentProgress, type AssignmentState, type StudentProgress } from "@/modules/progress";
+import { useStudentProgress, type AssignmentState, type ProgressRange, type StudentProgress } from "@/modules/progress";
 import { Dialog, DialogContent } from "@/shared/ui/legacy";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { formatProgressDate, formatProgressMoney, formatProgressMonth } from "./progress-format";
@@ -11,6 +11,7 @@ interface StudentProgressDialogProps {
   courseId: string | null;
   student: StudentProgress | null;
   monthlyFee: number | null;
+  range: ProgressRange;
   onOpenChange: (open: boolean) => void;
 }
 
@@ -22,10 +23,10 @@ const STATE_TONE: Record<AssignmentState, string> = {
   not_submitted: "text-ink-secondary",
 };
 
-export function StudentProgressDialog({ courseId, student, monthlyFee, onOpenChange }: StudentProgressDialogProps) {
+export function StudentProgressDialog({ courseId, student, monthlyFee, range, onOpenChange }: StudentProgressDialogProps) {
   const { t, i18n } = useTranslation("group");
   const [tab, setTab] = useState<DetailTab>("lessons");
-  const detail = useStudentProgress(courseId, student?.id ?? null);
+  const detail = useStudentProgress(courseId, student?.id ?? null, range);
   const date = (value: string) => formatProgressDate(value, i18n.language);
   const month = (value: string) => formatProgressMonth(value, i18n.language);
   const money = (value: number) => formatProgressMoney(value, i18n.language);

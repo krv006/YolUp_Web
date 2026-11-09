@@ -388,6 +388,7 @@
         "not_submitted": "Не сдано"
       }
     },
-    "gradeLabel": "Ср. балл"
+    "gradeLabel": "Ср. балл",
+    "rangeLabel": "Период посещаемости"
   }
 }

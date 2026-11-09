@@ -384,6 +384,7 @@
         "not_submitted": "Not submitted"
       }
     },
-    "gradeLabel": "Avg. grade"
+    "gradeLabel": "Avg. grade",
+    "rangeLabel": "Attendance period"
   }
 }

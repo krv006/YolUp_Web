@@ -1,3 +1,5 @@
+export type ProgressRange = "all" | "30d" | "month";
+
 export interface PaymentDto {
   period: string;
   status: "paid" | "unpaid";
