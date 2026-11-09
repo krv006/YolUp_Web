@@ -382,7 +382,10 @@
         "resubmit": "Resubmit",
         "missed": "Missed",
         "not_submitted": "Not submitted"
-      }
+      },
+      "lateReason": "Late because: {{reason}}",
+      "absentReason": "Absent because: {{reason}}",
+      "teacherNote": "Note: {{note}}"
     },
     "gradeLabel": "Avg. grade",
     "rangeLabel": "Attendance period",

@@ -56,6 +56,8 @@ export interface StudentProgressDetail extends StudentProgress {
     title: string;
     startsAt: string;
     attended: boolean;
+    joinedAt: string | null;
+    leftAt: string | null;
     minutes: number | null;
     lateReason: string;
     teacherNote: string;
@@ -138,6 +140,8 @@ export function mapStudentProgressDetail(dto: StudentProgressDetailDto): Student
       title: item.title,
       startsAt: item.starts_at,
       attended: item.attended,
+      joinedAt: item.joined_at ?? null,
+      leftAt: item.left_at ?? null,
       minutes: item.minutes ?? null,
       lateReason: item.late_reason ?? "",
       teacherNote: item.teacher_note ?? "",

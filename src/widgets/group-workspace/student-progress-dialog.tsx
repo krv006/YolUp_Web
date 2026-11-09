@@ -13,6 +13,7 @@ import {
 } from "@/modules/progress";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { ROUTES } from "@/shared/config";
+import { formatMessageTime } from "@/shared/lib";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
@@ -107,16 +108,28 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
               data.lessons.length ? (
                 <ul className="flex flex-col overflow-hidden rounded-xl border border-line">
                   {data.lessons.map((lesson) => (
-                    <li key={lesson.lessonId} className="flex items-center gap-3 border-b border-line px-4 py-3 last:border-b-0">
-                      <span className="flex min-w-0 flex-1 flex-col">
+                    <li key={lesson.lessonId} className="flex items-start gap-3 border-b border-line px-4 py-3 last:border-b-0">
+                      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <strong className="truncate text-title-sm text-ink">{lesson.title}</strong>
                         <small className="text-body-xs text-ink-secondary">
-                          {date(lesson.startsAt)}
-                          {lesson.minutes !== null ? ` · ${t("progress.detail.minutes", { count: lesson.minutes })}` : ""}
+                          {[
+                            date(lesson.startsAt),
+                            lesson.joinedAt
+                              ? `${formatMessageTime(lesson.joinedAt)} → ${lesson.leftAt ? formatMessageTime(lesson.leftAt) : "…"}`
+                              : "",
+                            lesson.minutes !== null ? t("progress.detail.minutes", { count: lesson.minutes }) : "",
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
                         </small>
-                        {lesson.lateReason || lesson.teacherNote ? (
-                          <small className="truncate text-caption text-ink-secondary">
-                            {[lesson.lateReason, lesson.teacherNote].filter(Boolean).join(" · ")}
+                        {lesson.lateReason ? (
+                          <small className="text-caption break-words text-warning-text">
+                            {t(lesson.attended ? "progress.detail.lateReason" : "progress.detail.absentReason", { reason: lesson.lateReason })}
+                          </small>
+                        ) : null}
+                        {lesson.teacherNote ? (
+                          <small className="text-caption break-words text-ink-secondary">
+                            {t("progress.detail.teacherNote", { note: lesson.teacherNote })}
                           </small>
                         ) : null}
                       </span>

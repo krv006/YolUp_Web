@@ -104,7 +104,14 @@ describe("mapStudentProgressDetail", () => {
         { period: "2026-10", status: "unpaid", amount: null, paid_at: null, note: "" },
       ],
     } satisfies StudentProgressDetailDto);
-    expect(detail.lessons[0]).toMatchObject({ lessonId: "l1", attended: true, minutes: 49, teacherNote: "Faol" });
+    expect(detail.lessons[0]).toMatchObject({
+      lessonId: "l1",
+      attended: true,
+      joinedAt: "2026-11-02T10:01:00Z",
+      leftAt: "2026-11-02T10:50:00Z",
+      minutes: 49,
+      teacherNote: "Faol",
+    });
     expect(detail.assignments[0]).toMatchObject({ assignmentId: "a1", state: "missed", dueAt: null, score: null, submissionId: null });
     expect(detail.assignments[1]).toMatchObject({ submissionId: "sub2", score: 8.5 });
     expect(detail.payments.map((item) => item.status)).toEqual(["paid", "unpaid"]);

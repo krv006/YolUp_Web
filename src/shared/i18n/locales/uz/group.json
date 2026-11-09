@@ -382,7 +382,10 @@
         "resubmit": "Qayta topshirish",
         "missed": "Bajarilmagan",
         "not_submitted": "Topshirilmagan"
-      }
+      },
+      "lateReason": "Kechikish sababi: {{reason}}",
+      "absentReason": "Kelmaslik sababi: {{reason}}",
+      "teacherNote": "Izoh: {{note}}"
     },
     "gradeLabel": "O'rt. baho",
     "rangeLabel": "Davomat davri",

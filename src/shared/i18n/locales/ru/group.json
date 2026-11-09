@@ -386,7 +386,10 @@
         "resubmit": "Сдать повторно",
         "missed": "Не выполнено",
         "not_submitted": "Не сдано"
-      }
+      },
+      "lateReason": "Причина опоздания: {{reason}}",
+      "absentReason": "Причина пропуска: {{reason}}",
+      "teacherNote": "Комментарий: {{note}}"
     },
     "gradeLabel": "Ср. балл",
     "rangeLabel": "Период посещаемости",
