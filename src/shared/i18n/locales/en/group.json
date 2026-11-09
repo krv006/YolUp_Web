@@ -404,6 +404,8 @@
       "sum": "{{amount}} UZS"
     },
     "noFee": "No course fee set — payments aren't tracked",
-    "statLessons": "Lessons"
+    "statLessons": "Lessons",
+    "currentMonth": "Back to the current month",
+    "notJoinedYet": "Not joined yet"
   }
 }

@@ -1,6 +1,6 @@
 export { progressApi } from "./api/progress.api";
 export type { ProgressRange } from "./api/progress.dto";
-export { shiftMonth } from "./lib/progress.mappers";
+export { monthKey, paymentMonthBounds, shiftMonth } from "./lib/progress.mappers";
 export type {
   AssignmentState,
   CourseProgress,

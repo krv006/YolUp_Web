@@ -404,6 +404,8 @@
       "sum": "{{amount}} so'm"
     },
     "noFee": "Kurs narxi kiritilmagan — to'lovlar hisoblanmaydi",
-    "statLessons": "Dars"
+    "statLessons": "Dars",
+    "currentMonth": "Joriy oyga qaytish",
+    "notJoinedYet": "Hali qo'shilmagan"
   }
 }

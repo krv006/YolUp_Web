@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { CourseProgressDto, StudentProgressDetailDto } from "../api/progress.dto";
-import { mapCourseProgress, mapStudentProgressDetail, shiftMonth } from "./progress.mappers";
+import { mapCourseProgress, mapStudentProgressDetail, paymentMonthBounds, shiftMonth } from "./progress.mappers";
 
 const student = {
   id: "s1",
@@ -106,5 +106,22 @@ describe("shiftMonth", () => {
     expect(shiftMonth("2026-12", 1)).toBe("2027-01");
     expect(shiftMonth("2026-01", -1)).toBe("2025-12");
     expect(shiftMonth("2026-03", -3)).toBe("2025-12");
+  });
+});
+
+describe("paymentMonthBounds", () => {
+  const now = new Date(2026, 10, 9, 12);
+
+  it("starts at the earliest join month and allows a year of advance payments", () => {
+    expect(paymentMonthBounds(["2026-09-03T10:00:00Z", "2026-08-01T09:00:00Z"], now)).toEqual({
+      min: "2026-08",
+      max: "2027-11",
+      current: "2026-11",
+    });
+  });
+
+  it("falls back to the current month and never goes before 2020", () => {
+    expect(paymentMonthBounds([], now).min).toBe("2026-11");
+    expect(paymentMonthBounds(["2019-05-01T00:00:00Z", "bad"], now).min).toBe("2020-01");
   });
 });

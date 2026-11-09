@@ -159,3 +159,20 @@ export function shiftMonth(month: string, delta: number): string {
   const index = year * 12 + (mon - 1) + delta;
   return `${Math.floor(index / 12)}-${String((index % 12) + 1).padStart(2, "0")}`;
 }
+
+export const MAX_MONTHS_AHEAD = 12;
+
+export function monthKey(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function paymentMonthBounds(joinedDates: string[], now: Date): { min: string; max: string; current: string } {
+  const current = monthKey(now);
+  const joined = joinedDates
+    .map((value) => new Date(value))
+    .filter((date) => Number.isFinite(date.getTime()))
+    .map(monthKey)
+    .sort();
+  const earliest = joined[0] && joined[0] < current ? joined[0] : current;
+  return { min: earliest < "2020-01" ? "2020-01" : earliest, max: shiftMonth(current, MAX_MONTHS_AHEAD), current };
+}
