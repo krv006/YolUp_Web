@@ -82,9 +82,12 @@ export const examApi = {
       await apiClient.post<ExamStudentResultDetailDto>(examEndpoints.writingAi(id, studentId), {})
     );
   },
-  async saveManualScores(id: string, studentId: string, scores: Record<string, number>) {
+  async saveManualScores(id: string, studentId: string, scores: Record<string, number>, comment?: string) {
     return mapExamStudentResultDto(
-      await apiClient.put<ExamStudentResultDto>(examEndpoints.manualScores(id, studentId), { scores })
+      await apiClient.put<ExamStudentResultDto>(
+        examEndpoints.manualScores(id, studentId),
+        comment === undefined ? { scores } : { scores, comment }
+      )
     );
   },
   async getCurrent(id: string, options?: RequestOptions) {

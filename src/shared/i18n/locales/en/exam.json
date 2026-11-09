@@ -316,7 +316,11 @@
       "shared": "Results were sent to the group chat ({{count}} students)",
       "averageLabel": "Average",
       "bySection": "Section averages"
-    }
+    },
+    "comment": "Teacher's note (optional)",
+    "commentPlaceholder": "e.g. Develop your ideas more in Writing Task 2",
+    "commentHint": "The student and parent will see it with the result",
+    "commentNeedsScore": "Enter a band for at least one section to save the note"
   },
   "results": {
     "eyebrow": "Mock exams / Results · {{title}} · {{label}}",
@@ -334,6 +338,7 @@
     "aiTitle": "AI review · by criteria",
     "aiHint": "Criterion scores come from the AI review — re-run it or grade manually.",
     "aiRetry": "Ask AI again",
-    "grade": "Grade"
+    "grade": "Grade",
+    "teacherComment": "Teacher's note"
   }
 }

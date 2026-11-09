@@ -316,7 +316,11 @@
       "shared": "Natijalar guruh chatiga yuborildi ({{count}} ta o‘quvchi)",
       "averageLabel": "O‘rtacha",
       "bySection": "Bo‘limlar o‘rtachasi"
-    }
+    },
+    "comment": "O'qituvchi izohi (ixtiyoriy)",
+    "commentPlaceholder": "Masalan: Writing Task 2 da fikrni rivojlantirish kerak",
+    "commentHint": "O'quvchi va ota-ona natijada ko'radi",
+    "commentNeedsScore": "Izohni saqlash uchun kamida bitta bo'limga band kiriting"
   },
   "results": {
     "eyebrow": "Mock testlar / Natijalar · {{title}} · {{label}}",
@@ -334,6 +338,7 @@
     "aiTitle": "AI tahlili · mezonlar bo‘yicha",
     "aiHint": "Mezonlar bo‘yicha baholar AI tahlilidan olinadi — kerak bo‘lsa qayta so‘rang yoki o‘zingiz ball qo‘ying.",
     "aiRetry": "AI qayta so‘rash",
-    "grade": "Ball qo‘yish"
+    "grade": "Ball qo‘yish",
+    "teacherComment": "O'qituvchi izohi"
   }
 }
