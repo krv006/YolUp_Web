@@ -401,7 +401,8 @@
       "save": "Save",
       "updated": "{{name}} — payment updated",
       "edit": "Edit",
-      "sum": "{{amount}} UZS"
+      "sum": "{{amount}} UZS",
+      "markShort": "Paid"
     },
     "noFee": "No course fee set — payments aren't tracked",
     "statLessons": "Lessons",

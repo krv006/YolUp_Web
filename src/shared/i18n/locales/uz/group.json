@@ -401,7 +401,8 @@
       "save": "Saqlash",
       "updated": "{{name}} — to'lov yangilandi",
       "edit": "Tahrirlash",
-      "sum": "{{amount}} so'm"
+      "sum": "{{amount}} so'm",
+      "markShort": "To'landi"
     },
     "noFee": "Kurs narxi kiritilmagan — to'lovlar hisoblanmaydi",
     "statLessons": "Dars",
