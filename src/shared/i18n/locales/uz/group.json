@@ -402,6 +402,8 @@
       "updated": "{{name}} — to'lov yangilandi",
       "edit": "Tahrirlash",
       "sum": "{{amount}} so'm"
-    }
+    },
+    "noFee": "Kurs narxi kiritilmagan — to'lovlar hisoblanmaydi",
+    "statLessons": "Dars"
   }
 }

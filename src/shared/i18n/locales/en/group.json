@@ -402,6 +402,8 @@
       "updated": "{{name}} — payment updated",
       "edit": "Edit",
       "sum": "{{amount}} UZS"
-    }
+    },
+    "noFee": "No course fee set — payments aren't tracked",
+    "statLessons": "Lessons"
   }
 }

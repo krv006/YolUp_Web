@@ -34,8 +34,9 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
   const TABS: Array<{ id: DetailTab; label: string }> = [
     { id: "lessons", label: t("progress.detail.lessons") },
     { id: "assignments", label: t("progress.detail.assignments") },
-    { id: "payments", label: t("progress.detail.payments") },
+    ...(monthlyFee ? [{ id: "payments" as const, label: t("progress.detail.payments") }] : []),
   ];
+  const activeTab = TABS.some((item) => item.id === tab) ? tab : "lessons";
   const data = detail.data;
 
   return (
@@ -46,15 +47,15 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
           description={t("progress.joined", { date: date(student.joinedAt) })}
           className="student-progress-dialog"
         >
-          <div className="mt-3 grid grid-cols-3 gap-2" role="tablist">
+          <div className={`mt-3 grid gap-2 ${TABS.length === 3 ? "grid-cols-3" : "grid-cols-2"}`} role="tablist">
             {TABS.map((item) => (
               <button
                 key={item.id}
                 type="button"
                 role="tab"
-                aria-selected={tab === item.id}
+                aria-selected={activeTab === item.id}
                 className={`flex h-10 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
-                  tab === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
+                  activeTab === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
                 }`}
                 onClick={() => setTab(item.id)}
               >
@@ -74,7 +75,7 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
               </ul>
             ) : detail.isError || !data ? (
               <p className="py-6 text-center text-body-sm text-ink-secondary">{t("progress.errorDescription")}</p>
-            ) : tab === "lessons" ? (
+            ) : activeTab === "lessons" ? (
               data.lessons.length ? (
                 <ul className="flex flex-col overflow-hidden rounded-xl bg-surface">
                   {data.lessons.map((lesson) => (
@@ -100,7 +101,7 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
               ) : (
                 <p className="py-6 text-center text-body-sm text-ink-secondary">{t("progress.detail.noLessons")}</p>
               )
-            ) : tab === "assignments" ? (
+            ) : activeTab === "assignments" ? (
               data.assignments.length ? (
                 <ul className="flex flex-col overflow-hidden rounded-xl bg-surface">
                   {data.assignments.map((assignment) => (

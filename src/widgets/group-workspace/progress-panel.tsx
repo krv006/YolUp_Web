@@ -38,9 +38,11 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
 
   const data = progress.data;
   const shownMonth = data?.month ?? month;
+  const withPayments = !data || Boolean(data.monthlyFee);
   const students = useMemo(
-    () => (data?.students ?? []).filter((item) => filter === "all" || item.payment.status === filter),
-    [data, filter]
+    () =>
+      (data?.students ?? []).filter((item) => !withPayments || filter === "all" || item.payment.status === filter),
+    [data, filter, withPayments]
   );
 
   const monthLabel = shownMonth ? formatProgressMonth(shownMonth, i18n.language) : "";
@@ -88,31 +90,39 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
       <PanelHeading
         eyebrow={t("progress.eyebrow")}
         title={t("progress.title")}
-        subtitle={data?.monthlyFee ? t("progress.fee", { amount: formatMoney(data.monthlyFee) }) : undefined}
+        subtitle={
+          data?.monthlyFee
+            ? t("progress.fee", { amount: formatMoney(data.monthlyFee) })
+            : data
+              ? t("progress.noFee")
+              : undefined
+        }
         className="mb-1 shrink-0"
       />
 
-      <div className="flex h-11 shrink-0 items-center justify-between rounded-full bg-surface px-2">
-        <button
-          type="button"
-          className="flex size-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-subtle"
-          aria-label={t("progress.prevMonth")}
-          disabled={!shownMonth}
-          onClick={() => shownMonth && setMonth(shiftMonth(shownMonth, -1))}
-        >
-          <Icon name="chevron-left" size={20} />
-        </button>
-        <strong className="text-body-sm font-medium text-ink capitalize">{monthLabel}</strong>
-        <button
-          type="button"
-          className="flex size-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-subtle"
-          aria-label={t("progress.nextMonth")}
-          disabled={!shownMonth}
-          onClick={() => shownMonth && setMonth(shiftMonth(shownMonth, 1))}
-        >
-          <Icon name="chevron-right" size={20} />
-        </button>
-      </div>
+      {withPayments ? (
+        <div className="flex h-11 shrink-0 items-center justify-between rounded-full bg-surface px-2">
+          <button
+            type="button"
+            className="flex size-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-subtle"
+            aria-label={t("progress.prevMonth")}
+            disabled={!shownMonth}
+            onClick={() => shownMonth && setMonth(shiftMonth(shownMonth, -1))}
+          >
+            <Icon name="chevron-left" size={20} />
+          </button>
+          <strong className="text-body-sm font-medium text-ink capitalize">{monthLabel}</strong>
+          <button
+            type="button"
+            className="flex size-9 items-center justify-center rounded-full text-ink transition-colors hover:bg-subtle"
+            aria-label={t("progress.nextMonth")}
+            disabled={!shownMonth}
+            onClick={() => shownMonth && setMonth(shiftMonth(shownMonth, 1))}
+          >
+            <Icon name="chevron-right" size={20} />
+          </button>
+        </div>
+      ) : null}
 
       {progress.isLoading ? (
         <ul className="flex flex-col overflow-hidden rounded-xl bg-surface" aria-hidden="true">
@@ -152,7 +162,9 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
             </div>
             <div className="grid grid-cols-3 gap-2">
               {[
-                { value: `${data.summary.paid}/${data.summary.students}`, label: t("progress.statPaid") },
+                withPayments
+                  ? { value: `${data.summary.paid}/${data.summary.students}`, label: t("progress.statPaid") }
+                  : { value: String(data.lessonCount), label: t("progress.statLessons") },
                 {
                   value: data.summary.attendancePercent === null ? "—" : `${data.summary.attendancePercent}%`,
                   label: t("progress.statAttendance"),
@@ -173,20 +185,22 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
             </div>
           </section>
 
-          <div className="grid shrink-0 grid-cols-3 gap-2">
-            {FILTERS.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
-                  filter === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
-                }`}
-                onClick={() => setFilter(item.id)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+          {withPayments ? (
+            <div className="grid shrink-0 grid-cols-3 gap-2">
+              {FILTERS.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium transition-colors ${
+                    filter === item.id ? "bg-brand text-on-action" : "bg-surface text-ink"
+                  }`}
+                  onClick={() => setFilter(item.id)}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          ) : null}
 
           {students.length ? (
             <ul className="flex shrink-0 flex-col gap-3">
@@ -196,7 +210,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                 const busy = unmarkPaid.isPending;
                 const warnings = [
                   homework.missed > 0 ? t("progress.missed", { count: homework.missed }) : null,
-                  !paid && student.payment.unpaidMonths > 1
+                  withPayments && !paid && student.payment.unpaidMonths > 1
                     ? t("progress.unpaidMonths", { count: student.payment.unpaidMonths })
                     : null,
                 ].filter(Boolean);
@@ -214,13 +228,15 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                           {t("progress.joined", { date: formatDate(student.joinedAt) })}
                         </small>
                       </span>
-                      <span
-                        className={`flex h-7 shrink-0 items-center rounded-full px-3 text-caption-strong ${
-                          paid ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"
-                        }`}
-                      >
-                        {paid ? t("progress.paid") : t("progress.unpaid")}
-                      </span>
+                      {withPayments ? (
+                        <span
+                          className={`flex h-7 shrink-0 items-center rounded-full px-3 text-caption-strong ${
+                            paid ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"
+                          }`}
+                        >
+                          {paid ? t("progress.paid") : t("progress.unpaid")}
+                        </span>
+                      ) : null}
                     </button>
 
                     <div className="grid grid-cols-3 gap-2">
@@ -253,7 +269,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                       </div>
                     ) : null}
 
-                    {paid ? (
+                    {!withPayments ? null : paid ? (
                       <div className="flex items-center gap-2">
                         <small className="min-w-0 flex-1 truncate text-body-xs text-ink-secondary">
                           {[
