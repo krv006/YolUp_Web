@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { CourseProgressDto, StudentProgressDetailDto } from "../api/progress.dto";
 import {
+  daysSinceVisit,
   mapCourseProgress,
   mapStudentProgress,
   mapStudentProgressDetail,
@@ -164,5 +165,19 @@ describe("student search and sorting", () => {
     expect(sortStudents(list, "debt").map((item) => item.id)).toEqual(["b", "c", "a"]);
     expect(sortStudents(list, "name").map((item) => item.id)).toEqual(["c", "b", "a"]);
     expect(list.map((item) => item.id)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("daysSinceVisit", () => {
+  const now = new Date("2026-11-09T12:00:00Z");
+
+  it("counts whole days since the last lesson visit", () => {
+    expect(daysSinceVisit("2026-11-09T08:00:00Z", now)).toBe(0);
+    expect(daysSinceVisit("2026-10-26T12:00:00Z", now)).toBe(14);
+  });
+
+  it("returns null when the student never joined a lesson", () => {
+    expect(daysSinceVisit(null, now)).toBeNull();
+    expect(daysSinceVisit("bad", now)).toBeNull();
   });
 });

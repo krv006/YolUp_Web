@@ -409,7 +409,6 @@
       "markShort": "Оплачено"
     },
     "noFee": "Цена курса не указана — оплаты не учитываются",
-    "statLessons": "Занятия",
     "currentMonth": "Вернуться к текущему месяцу",
     "notJoinedYet": "Ещё не в группе",
     "search": "Поиск ученика",
@@ -420,6 +419,24 @@
       "homework": "Мало заданий",
       "debt": "Больше долг"
     },
-    "searchShort": "Поиск"
+    "searchShort": "Поиск",
+    "resubmit_one": "На пересдачу: {{count}}",
+    "resubmit_few": "На пересдачу: {{count}}",
+    "resubmit_many": "На пересдачу: {{count}}",
+    "resubmit_other": "На пересдачу: {{count}}",
+    "neverVisited": "Ещё не был на занятии",
+    "inactive_one": "Не был на занятиях {{count}} день",
+    "inactive_few": "Не был на занятиях {{count}} дня",
+    "inactive_many": "Не был на занятиях {{count}} дней",
+    "inactive_other": "Не был на занятиях {{count}} дня",
+    "focusHint": "Фокус {{value}}%",
+    "awaitingHint_one": "На проверке: {{count}}",
+    "awaitingHint_few": "На проверке: {{count}}",
+    "awaitingHint_many": "На проверке: {{count}}",
+    "awaitingHint_other": "На проверке: {{count}}",
+    "statFocus": "Фокус",
+    "statAttendanceLessons": "Посещаемость · занятий: {{count}}",
+    "lastVisit": "Последнее посещение: {{date}}",
+    "noVisit": "Ещё не был на занятии"
   }
 }

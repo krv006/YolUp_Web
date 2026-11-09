@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { StudentProgress } from "@/modules/progress";
+import { INACTIVE_DAYS, daysSinceVisit, type StudentProgress } from "@/modules/progress";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 
@@ -8,6 +8,7 @@ export function ProgressStudentCard({
   withPayments,
   beforeJoin,
   busy,
+  now,
   formatDate,
   formatMoney,
   onOpen,
@@ -18,6 +19,7 @@ export function ProgressStudentCard({
   withPayments: boolean;
   beforeJoin: boolean;
   busy: boolean;
+  now: Date;
   formatDate: (value: string) => string;
   formatMoney: (value: number) => string;
   onOpen: () => void;
@@ -28,12 +30,23 @@ export function ProgressStudentCard({
   const paid = student.payment.status === "paid";
   const payable = withPayments && !beforeJoin;
   const { homework, attendance } = student;
+  const idle = daysSinceVisit(student.lastVisitAt, now);
   const warnings = [
-    homework.missed > 0 ? t("progress.missed", { count: homework.missed }) : null,
+    homework.missed > 0 ? { text: t("progress.missed", { count: homework.missed }), danger: true } : null,
     withPayments && !paid && student.payment.unpaidMonths > 1
-      ? t("progress.unpaidMonths", { count: student.payment.unpaidMonths })
+      ? { text: t("progress.unpaidMonths", { count: student.payment.unpaidMonths }), danger: true }
       : null,
-  ].filter(Boolean);
+    homework.resubmitRequested > 0
+      ? { text: t("progress.resubmit", { count: homework.resubmitRequested }), danger: false }
+      : null,
+    idle === null
+      ? attendance.total > 0
+        ? { text: t("progress.neverVisited"), danger: false }
+        : null
+      : idle >= INACTIVE_DAYS
+        ? { text: t("progress.inactive", { count: idle }), danger: false }
+        : null,
+  ].filter((item) => item !== null);
   return (
     <li className="flex flex-col gap-3 rounded-xl bg-surface p-4">
       <button
@@ -68,11 +81,13 @@ export function ProgressStudentCard({
           label={t("progress.statAttendance")}
           value={attendance.percent === null ? "—" : `${attendance.percent}%`}
           percent={attendance.percent}
+          hint={attendance.focusPercent === null ? undefined : t("progress.focusHint", { value: attendance.focusPercent })}
         />
         <ProgressStat
           label={t("progress.statHomework")}
           value={`${homework.submitted}/${homework.total}`}
           percent={homework.completionPercent}
+          hint={homework.awaitingReview > 0 ? t("progress.awaitingHint", { count: homework.awaitingReview }) : undefined}
         />
         <ProgressStat
           label={t("progress.gradeLabel")}
@@ -84,10 +99,12 @@ export function ProgressStudentCard({
         <div className="flex flex-wrap gap-1.5">
           {warnings.map((warning) => (
             <span
-              key={warning}
-              className="flex h-6 items-center rounded-full bg-danger-bg px-2.5 text-caption-strong text-danger"
+              key={warning.text}
+              className={`flex h-6 items-center rounded-full px-2.5 text-caption-strong ${
+                warning.danger ? "bg-danger-bg text-danger" : "bg-warning-bg text-warning-text"
+              }`}
             >
-              {warning}
+              {warning.text}
             </span>
           ))}
         </div>
@@ -137,7 +154,7 @@ export function ProgressStudentCard({
   );
 }
 
-function ProgressStat({ label, value, percent }: { label: string; value: string; percent?: number | null }) {
+function ProgressStat({ label, value, percent, hint }: { label: string; value: string; percent?: number | null; hint?: string }) {
   return (
     <span className="flex flex-col gap-1.5 rounded-xl bg-subtle px-3 py-2.5">
       <small className="text-caption text-ink-secondary">{label}</small>
@@ -150,6 +167,7 @@ function ProgressStat({ label, value, percent }: { label: string; value: string;
           />
         ) : null}
       </span>
+      {hint ? <small className="truncate text-caption text-ink-secondary">{hint}</small> : null}
     </span>
   );
 }

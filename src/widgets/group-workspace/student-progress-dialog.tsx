@@ -64,7 +64,14 @@ export function StudentProgressDialog({ courseId, student, monthlyFee, range, on
       variant="panel"
       width="lg:w-115"
       title={student?.name ?? ""}
-      description={student ? t("progress.joined", { date: date(student.joinedAt) }) : undefined}
+      description={
+        student
+          ? [
+              t("progress.joined", { date: date(student.joinedAt) }),
+              student.lastVisitAt ? t("progress.lastVisit", { date: date(student.lastVisitAt) }) : t("progress.noVisit"),
+            ].join(" · ")
+          : undefined
+      }
     >
       {student ? (
         <>

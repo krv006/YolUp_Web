@@ -190,14 +190,18 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className={`grid gap-2 ${withPayments ? "grid-cols-2 lg:grid-cols-4" : "grid-cols-3"}`}>
               {[
-                withPayments
-                  ? { value: `${data.summary.paid}/${data.summary.students}`, label: t("progress.statPaid") }
-                  : { value: String(data.lessonCount), label: t("progress.statLessons") },
+                ...(withPayments
+                  ? [{ value: `${data.summary.paid}/${data.summary.students}`, label: t("progress.statPaid") }]
+                  : []),
                 {
                   value: data.summary.attendancePercent === null ? "—" : `${data.summary.attendancePercent}%`,
-                  label: t("progress.statAttendance"),
+                  label: t("progress.statAttendanceLessons", { count: data.lessonCount }),
+                },
+                {
+                  value: data.summary.focusPercent === null ? "—" : `${data.summary.focusPercent}%`,
+                  label: t("progress.statFocus"),
                 },
                 {
                   value:
@@ -209,7 +213,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
               ].map((tile) => (
                 <span key={tile.label} className="flex h-16 flex-col justify-center rounded-xl bg-on-brand-subtle px-3">
                   <strong className="text-title-lg leading-6">{tile.value}</strong>
-                  <small className="text-caption">{tile.label}</small>
+                  <small className="truncate text-caption">{tile.label}</small>
                 </span>
               ))}
             </div>
@@ -278,6 +282,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                   withPayments={withPayments}
                   beforeJoin={shownMonth ? shownMonth < monthKey(new Date(student.joinedAt)) : false}
                   busy={unmarkPaid.isPending}
+                  now={now}
                   formatDate={formatDate}
                   formatMoney={formatMoney}
                   onOpen={() => setOpenStudent(student)}

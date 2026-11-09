@@ -405,7 +405,6 @@
       "markShort": "Paid"
     },
     "noFee": "No course fee set — payments aren't tracked",
-    "statLessons": "Lessons",
     "currentMonth": "Back to the current month",
     "notJoinedYet": "Not joined yet",
     "search": "Search students",
@@ -416,6 +415,18 @@
       "homework": "Low homework",
       "debt": "Most debt"
     },
-    "searchShort": "Search"
+    "searchShort": "Search",
+    "resubmit_one": "{{count}} resubmission requested",
+    "resubmit_other": "{{count}} resubmissions requested",
+    "neverVisited": "Hasn't joined a lesson yet",
+    "inactive_one": "No lessons for {{count}} day",
+    "inactive_other": "No lessons for {{count}} days",
+    "focusHint": "Focus {{value}}%",
+    "awaitingHint_one": "{{count}} awaiting review",
+    "awaitingHint_other": "{{count}} awaiting review",
+    "statFocus": "Focus",
+    "statAttendanceLessons": "Attendance · {{count}} lessons",
+    "lastVisit": "Last visit: {{date}}",
+    "noVisit": "Hasn't joined a lesson yet"
   }
 }

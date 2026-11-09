@@ -204,3 +204,11 @@ export function sortStudents(students: StudentProgress[], sort: ProgressSort): S
   };
   return [...students].sort(compare[sort]);
 }
+
+export const INACTIVE_DAYS = 14;
+
+export function daysSinceVisit(lastVisitAt: string | null, now: Date): number | null {
+  if (!lastVisitAt) return null;
+  const at = new Date(lastVisitAt).getTime();
+  return Number.isFinite(at) ? Math.max(0, Math.floor((now.getTime() - at) / 86_400_000)) : null;
+}

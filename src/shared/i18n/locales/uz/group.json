@@ -405,7 +405,6 @@
       "markShort": "To'landi"
     },
     "noFee": "Kurs narxi kiritilmagan — to'lovlar hisoblanmaydi",
-    "statLessons": "Dars",
     "currentMonth": "Joriy oyga qaytish",
     "notJoinedYet": "Hali qo'shilmagan",
     "search": "O'quvchini qidirish",
@@ -416,6 +415,18 @@
       "homework": "Kam vazifa",
       "debt": "Ko'p qarz"
     },
-    "searchShort": "Qidirish"
+    "searchShort": "Qidirish",
+    "resubmit_one": "{{count}} ta qayta topshirish kerak",
+    "resubmit_other": "{{count}} ta qayta topshirish kerak",
+    "neverVisited": "Darsga hali kirmagan",
+    "inactive_one": "{{count}} kundan beri darsga kelmagan",
+    "inactive_other": "{{count}} kundan beri darsga kelmagan",
+    "focusHint": "Fokus {{value}}%",
+    "awaitingHint_one": "{{count}} tekshiruvda",
+    "awaitingHint_other": "{{count}} tekshiruvda",
+    "statFocus": "Fokus",
+    "statAttendanceLessons": "Davomat · {{count}} dars",
+    "lastVisit": "Oxirgi tashrif: {{date}}",
+    "noVisit": "Darsga hali kirmagan"
   }
 }
