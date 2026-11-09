@@ -3,12 +3,15 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { describeCreateError } from "@/modules/auth";
 import {
+  matchesStudent,
   monthKey,
   paymentMonthBounds,
   shiftMonth,
+  sortStudents,
   useCourseProgress,
   useUnmarkPaid,
   type ProgressRange,
+  type ProgressSort,
   type StudentProgress,
 } from "@/modules/progress";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -32,6 +35,8 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const [month, setMonth] = useState<string | undefined>(undefined);
   const [filter, setFilter] = useState<PaymentFilter>("all");
   const [range, setRange] = useState<ProgressRange>("all");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<ProgressSort>("name");
   const [openStudent, setOpenStudent] = useState<StudentProgress | null>(null);
   const [unmarkTarget, setUnmarkTarget] = useState<StudentProgress | null>(null);
   const [paying, setPaying] = useState<PaymentTarget | null>(null);
@@ -45,13 +50,17 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const bounds = useMemo(() => paymentMonthBounds((data?.students ?? []).map((item) => item.joinedAt), now), [data, now]);
   const students = useMemo(
     () =>
-      (data?.students ?? []).filter(
-        (item) =>
-          !withPayments ||
-          filter === "all" ||
-          (item.payment.status === filter && !(shownMonth && shownMonth < monthKey(new Date(item.joinedAt))))
+      sortStudents(
+        (data?.students ?? []).filter(
+          (item) =>
+            matchesStudent(item, query) &&
+            (!withPayments ||
+              filter === "all" ||
+              (item.payment.status === filter && !(shownMonth && shownMonth < monthKey(new Date(item.joinedAt)))))
+        ),
+        sort
       ),
-    [data, filter, withPayments, shownMonth]
+    [data, filter, withPayments, shownMonth, query, sort]
   );
 
   const monthLabel = shownMonth ? formatProgressMonth(shownMonth, i18n.language) : "";
@@ -222,6 +231,43 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
               ))}
             </div>
           ) : null}
+
+          <div className="flex shrink-0 items-center gap-2">
+            <label className="relative min-w-0 flex-1">
+              <Icon
+                name="search"
+                size={18}
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-icon-tertiary"
+              />
+              <input
+                type="search"
+                value={query}
+                aria-label={t("progress.search")}
+                placeholder={t("progress.searchShort")}
+                className="h-11 w-full rounded-full border border-transparent bg-surface pr-4 pl-11 text-body-sm text-ink outline-none placeholder:text-ink-tertiary focus:border-focus"
+                onChange={(event) => setQuery(event.target.value)}
+              />
+            </label>
+            <label className="relative shrink-0">
+              <span className="sr-only">{t("progress.sort.label")}</span>
+              <select
+                value={sort}
+                className="h-11 max-w-[46vw] appearance-none truncate rounded-full border border-transparent bg-surface pr-10 pl-4 text-body-sm font-medium text-ink outline-none focus:border-focus lg:max-w-none"
+                onChange={(event) => setSort(event.target.value as ProgressSort)}
+              >
+                {(["name", "attendance", "homework", ...(withPayments ? (["debt"] as const) : [])] as const).map((id) => (
+                  <option key={id} value={id}>
+                    {t(`progress.sort.${id}`)}
+                  </option>
+                ))}
+              </select>
+              <Icon
+                name="sort"
+                size={18}
+                className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-icon-secondary"
+              />
+            </label>
+          </div>
 
           {students.length ? (
             <ul className="flex shrink-0 flex-col gap-3">

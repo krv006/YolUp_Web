@@ -407,6 +407,15 @@
     "noFee": "No course fee set — payments aren't tracked",
     "statLessons": "Lessons",
     "currentMonth": "Back to the current month",
-    "notJoinedYet": "Not joined yet"
+    "notJoinedYet": "Not joined yet",
+    "search": "Search students",
+    "sort": {
+      "label": "Sort",
+      "name": "Name (A–Z)",
+      "attendance": "Low attendance",
+      "homework": "Low homework",
+      "debt": "Most debt"
+    },
+    "searchShort": "Search"
   }
 }

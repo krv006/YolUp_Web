@@ -178,3 +178,29 @@ export function paymentMonthBounds(joinedDates: string[], now: Date): { min: str
   const earliest = joined[0] && joined[0] < current ? joined[0] : current;
   return { min: earliest < "2020-01" ? "2020-01" : earliest, max: shiftMonth(current, MAX_MONTHS_AHEAD), current };
 }
+
+export type ProgressSort = "name" | "attendance" | "debt" | "homework";
+
+function normalize(value: string): string {
+  return value.toLowerCase().replace(/[‘’ʼ`]/g, "'").trim();
+}
+
+export function matchesStudent(student: Pick<StudentProgress, "name" | "username">, query: string): boolean {
+  const needle = normalize(query);
+  return !needle || normalize(student.name).includes(needle) || normalize(student.username).includes(needle);
+}
+
+function lowFirst(a: number | null, b: number | null): number {
+  return (a ?? Number.POSITIVE_INFINITY) - (b ?? Number.POSITIVE_INFINITY);
+}
+
+export function sortStudents(students: StudentProgress[], sort: ProgressSort): StudentProgress[] {
+  const byName = (a: StudentProgress, b: StudentProgress) => a.name.localeCompare(b.name);
+  const compare: Record<ProgressSort, (a: StudentProgress, b: StudentProgress) => number> = {
+    name: byName,
+    attendance: (a, b) => lowFirst(a.attendance.percent, b.attendance.percent) || byName(a, b),
+    debt: (a, b) => b.payment.unpaidMonths - a.payment.unpaidMonths || byName(a, b),
+    homework: (a, b) => lowFirst(a.homework.completionPercent, b.homework.completionPercent) || byName(a, b),
+  };
+  return [...students].sort(compare[sort]);
+}
