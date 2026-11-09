@@ -43,4 +43,13 @@ describe("progressApi", () => {
     await progressApi.getStudent("c1", "s1", "month");
     expect(get).toHaveBeenLastCalledWith("/api/v1/courses/c1/students/s1/progress/", { query: { range: "month" } });
   });
+
+  it("stores the payment amount and note for the month", async () => {
+    const put = vi
+      .spyOn(apiClient, "put")
+      .mockResolvedValue({ period: "2026-10", status: "paid", amount: 400000, paid_at: "2026-11-09T07:00:00Z", note: "Naqd" });
+    const payment = await progressApi.markPaid("c1", "s1", "2026-10", { amount: 400000, note: "Naqd" });
+    expect(put).toHaveBeenCalledWith("/api/v1/courses/c1/students/s1/payments/2026-10/", { amount: 400000, note: "Naqd" });
+    expect(payment).toMatchObject({ status: "paid", amount: 400000, note: "Naqd", unpaidMonths: 0 });
+  });
 });

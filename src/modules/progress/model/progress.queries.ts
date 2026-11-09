@@ -33,10 +33,19 @@ export interface PaymentVars {
   month: string;
 }
 
+export interface MarkPaidVars extends PaymentVars {
+  amount?: number;
+  note?: string;
+}
+
 export function useMarkPaid() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ courseId, studentId, month }: PaymentVars) => progressApi.markPaid(courseId, studentId, month),
+    mutationFn: ({ courseId, studentId, month, amount, note }: MarkPaidVars) =>
+      progressApi.markPaid(courseId, studentId, month, {
+        ...(amount === undefined ? {} : { amount }),
+        ...(note === undefined ? {} : { note }),
+      }),
     onSuccess: () => client.invalidateQueries({ queryKey: progressKeys.all }),
   });
 }

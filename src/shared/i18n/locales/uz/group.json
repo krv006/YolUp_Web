@@ -385,6 +385,23 @@
       }
     },
     "gradeLabel": "O'rt. baho",
-    "rangeLabel": "Davomat davri"
+    "rangeLabel": "Davomat davri",
+    "payment": {
+      "title": "To'lovni belgilash",
+      "editTitle": "To'lovni tahrirlash",
+      "amount": "Summa",
+      "currency": "so'm",
+      "note": "Izoh (ixtiyoriy)",
+      "notePlaceholder": "Masalan: naqd, chek raqami",
+      "notes": {
+        "cash": "Naqd",
+        "card": "Karta",
+        "transfer": "O'tkazma"
+      },
+      "save": "Saqlash",
+      "updated": "{{name}} — to'lov yangilandi",
+      "edit": "Tahrirlash",
+      "sum": "{{amount}} so'm"
+    }
   }
 }

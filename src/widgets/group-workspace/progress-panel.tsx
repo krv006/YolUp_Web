@@ -5,7 +5,6 @@ import { describeCreateError } from "@/modules/auth";
 import {
   shiftMonth,
   useCourseProgress,
-  useMarkPaid,
   useUnmarkPaid,
   type ProgressRange,
   type StudentProgress,
@@ -16,6 +15,7 @@ import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { Avatar } from "@/shared/ui/legacy";
 import { PanelHeading } from "./panel-heading";
+import { PaymentDialog, type PaymentTarget } from "./payment-dialog";
 import { formatProgressDate, formatProgressMoney, formatProgressMonth } from "./progress-format";
 import { StudentProgressDialog } from "./student-progress-dialog";
 
@@ -32,8 +32,8 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const [range, setRange] = useState<ProgressRange>("all");
   const [openStudent, setOpenStudent] = useState<StudentProgress | null>(null);
   const [unmarkTarget, setUnmarkTarget] = useState<StudentProgress | null>(null);
+  const [paying, setPaying] = useState<PaymentTarget | null>(null);
   const progress = useCourseProgress(courseId, month, range);
-  const markPaid = useMarkPaid();
   const unmarkPaid = useUnmarkPaid();
 
   const data = progress.data;
@@ -47,15 +47,14 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const formatDate = (value: string) => formatProgressDate(value, i18n.language);
   const formatMoney = (value: number) => formatProgressMoney(value, i18n.language);
 
-  function mark(student: StudentProgress) {
-    if (!courseId || !shownMonth) return;
-    markPaid.mutate(
-      { courseId, studentId: student.id, month: shownMonth },
-      {
-        onSuccess: () => toast.success(t("progress.markedPaid", { name: student.name })),
-        onError: (error) => toast.error(describeCreateError(error)),
-      }
-    );
+  function openPayment(student: StudentProgress) {
+    if (!shownMonth) return;
+    setPaying({
+      studentId: student.id,
+      name: student.name,
+      month: shownMonth,
+      payment: student.payment.status === "paid" ? student.payment : null,
+    });
   }
 
   function confirmUnmark() {
@@ -194,7 +193,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
               {students.map((student) => {
                 const paid = student.payment.status === "paid";
                 const { homework, attendance } = student;
-                const busy = markPaid.isPending || unmarkPaid.isPending;
+                const busy = unmarkPaid.isPending;
                 const warnings = [
                   homework.missed > 0 ? t("progress.missed", { count: homework.missed }) : null,
                   !paid && student.payment.unpaidMonths > 1
@@ -254,17 +253,46 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
                       </div>
                     ) : null}
 
-                    <button
-                      type="button"
-                      disabled={busy}
-                      className={`flex h-10 items-center justify-center gap-2 rounded-full text-body-sm font-medium transition-colors disabled:opacity-60 ${
-                        paid ? "bg-subtle text-ink-secondary" : "bg-brand text-on-action"
-                      }`}
-                      onClick={() => (paid ? setUnmarkTarget(student) : mark(student))}
-                    >
-                      <Icon name={paid ? "close" : "check-circle"} size={16} />
-                      {paid ? t("progress.undoPaid") : t("progress.markPaid")}
-                    </button>
+                    {paid ? (
+                      <div className="flex items-center gap-2">
+                        <small className="min-w-0 flex-1 truncate text-body-xs text-ink-secondary">
+                          {[
+                            student.payment.amount !== null
+                              ? t("progress.payment.sum", { amount: formatMoney(student.payment.amount) })
+                              : "",
+                            student.payment.note,
+                          ]
+                            .filter(Boolean)
+                            .join(" · ")}
+                        </small>
+                        <button
+                          type="button"
+                          className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-subtle px-4 text-body-sm font-medium text-ink transition-colors hover:bg-muted"
+                          onClick={() => openPayment(student)}
+                        >
+                          <Icon name="edit" size={16} />
+                          {t("progress.payment.edit")}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={busy}
+                          aria-label={t("progress.undoPaid")}
+                          className="grid size-10 shrink-0 place-items-center rounded-full bg-subtle text-ink-secondary transition-colors hover:bg-danger-bg hover:text-danger disabled:opacity-60"
+                          onClick={() => setUnmarkTarget(student)}
+                        >
+                          <Icon name="close" size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="flex h-10 items-center justify-center gap-2 rounded-full bg-brand text-body-sm font-medium text-on-action transition-colors hover:bg-brand-strong"
+                        onClick={() => openPayment(student)}
+                      >
+                        <Icon name="check-circle" size={16} />
+                        {t("progress.markPaid")}
+                      </button>
+                    )}
                   </li>
                 );
               })}
@@ -287,6 +315,13 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
         monthlyFee={data?.monthlyFee ?? null}
         range={range}
         onOpenChange={(open) => !open && setOpenStudent(null)}
+      />
+
+      <PaymentDialog
+        courseId={courseId}
+        target={paying}
+        monthlyFee={data?.monthlyFee ?? null}
+        onClose={() => setPaying(null)}
       />
 
       <ConfirmDialog

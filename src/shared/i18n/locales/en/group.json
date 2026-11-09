@@ -385,6 +385,23 @@
       }
     },
     "gradeLabel": "Avg. grade",
-    "rangeLabel": "Attendance period"
+    "rangeLabel": "Attendance period",
+    "payment": {
+      "title": "Record payment",
+      "editTitle": "Edit payment",
+      "amount": "Amount",
+      "currency": "UZS",
+      "note": "Note (optional)",
+      "notePlaceholder": "e.g. cash, receipt number",
+      "notes": {
+        "cash": "Cash",
+        "card": "Card",
+        "transfer": "Transfer"
+      },
+      "save": "Save",
+      "updated": "{{name}} — payment updated",
+      "edit": "Edit",
+      "sum": "{{amount}} UZS"
+    }
   }
 }
