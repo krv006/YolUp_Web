@@ -40,3 +40,23 @@ export function boardScale(svg: SVGSVGElement, width: number): number {
   const rect = svg.getBoundingClientRect();
   return rect.width > 0 ? rect.width / width : 1;
 }
+
+const baselineCache = new Map<string, number>();
+
+export function baselineOffset(fontPx: number, lineHeight: number, family: string, weight = 600): number {
+  const key = `${weight}|${fontPx}|${lineHeight}|${family}`;
+  const cached = baselineCache.get(key);
+  if (cached !== undefined) return cached;
+  const probe = document.createElement("div");
+  probe.style.cssText = `position:absolute;top:0;left:0;visibility:hidden;white-space:pre;font:${weight} ${fontPx}px/${lineHeight} ${family};`;
+  probe.textContent = "Hg";
+  const marker = document.createElement("span");
+  marker.style.cssText = "display:inline-block;width:0;height:0;vertical-align:baseline;";
+  probe.appendChild(marker);
+  document.body.appendChild(probe);
+  const measured = marker.getBoundingClientRect().top - probe.getBoundingClientRect().top;
+  const offset = measured > 0 ? measured : fontPx * (0.9 + (lineHeight - 1) / 2);
+  probe.remove();
+  baselineCache.set(key, offset);
+  return offset;
+}
