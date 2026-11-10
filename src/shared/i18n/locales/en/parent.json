@@ -1,39 +1,39 @@
 {
   "selector": {
-    "label": "Child",
-    "noChild": "No child linked"
+    "label": "Student",
+    "noChild": "No student linked"
   },
   "dashboard": {
-    "loading": "Loading the parent dashboard",
+    "loading": "Loading the observer dashboard",
     "loadError": "Couldn't load the data",
     "retry": "Retry",
-    "noChildTitle": "No child linked yet",
-    "noChildDescription": "Once you link your child's account, their attendance, lessons and homework will show up here. Ask your child for their invite code to get started.",
-    "noChildAction": "Link a child",
-    "eyebrow": "PARENT DASHBOARD",
+    "noChildTitle": "No student linked yet",
+    "noChildDescription": "Once you link your student's account, their attendance, lessons and homework will show up here. Ask your student for their invite code to get started.",
+    "noChildAction": "Link a student",
+    "eyebrow": "OBSERVER DASHBOARD",
     "greeting": "Good day, {{name}}! 👋",
     "subtitleWithChild": "{{name}}'s learning progress.",
-    "subtitleNoChild": "Keep track of your child's learning progress.",
+    "subtitleNoChild": "Keep track of your student's learning progress.",
     "recentActivityEyebrow": "RECENT ACTIVITY",
     "attendanceTitle": "Attendance",
     "allAttendance": "All attendance",
-    "emptyAttendance": "No attendance found for the selected child."
+    "emptyAttendance": "No attendance found for the selected student."
   },
   "children": {
-    "loading": "Loading children",
-    "loadError": "Couldn't load the list of children",
+    "loading": "Loading students",
+    "loadError": "Couldn't load the list of students",
     "retry": "Retry",
     "eyebrow": "FAMILY PROFILE",
-    "title": "My children",
+    "title": "My students",
     "subtitle": "Linked student accounts and privacy permissions.",
     "linkChild": "Link a student",
-    "createChild": "Child account",
+    "createChild": "Student account",
     "selected": "Selected",
     "verified": "Verified",
     "lessonsUnit": "lessons",
     "minutesUnit": "minutes",
     "lastActivity": "Last activity",
-    "emptyTitle": "No child linked yet",
+    "emptyTitle": "No student linked yet",
     "emptyDescription": "Enter a student code or create a new account.",
     "consentEyebrow": "PRIVACY",
     "consentTitle": "Permissions for {{name}}",
@@ -64,7 +64,7 @@
       "submit": "Send request"
     },
     "childDialog": {
-      "title": "Create a child account",
+      "title": "Create a student account",
       "description": "The created student is linked to you automatically.",
       "firstName": "First name",
       "lastName": "Last name",
@@ -76,7 +76,7 @@
     "genericError": "Error",
     "loginHistoryStudentFallback": "Student",
     "loginHistoryTitle": "{{name}} — login history",
-    "loginHistoryDescription": "Which device and IP your child's account was accessed from."
+    "loginHistoryDescription": "Which device and IP your student's account was accessed from."
   },
   "attendance": {
     "loading": "Loading attendance",
@@ -85,7 +85,7 @@
     "eyebrow": "MONITORING",
     "title": "Attendance history",
     "subtitleWithChild": "{{name}}'s lesson join and leave times.",
-    "subtitleNoChild": "Your child's attendance data.",
+    "subtitleNoChild": "Your student's attendance data.",
     "report": "Report",
     "searchPlaceholder": "Search by lesson or student",
     "recordsCount": "{{count}} records",
@@ -98,7 +98,7 @@
     "openCheckingAria": "Open check status",
     "checkError": "Check error",
     "openErrorAria": "Open error details",
-    "noChildTitle": "No child selected",
+    "noChildTitle": "No student selected",
     "noChildDescription": "First link a student account.",
     "loading": "Loading assignments",
     "loadError": "Couldn't load assignments",
@@ -110,7 +110,7 @@
     "resultDialogTitle": "{{name}} — check result"
   },
   "report": {
-    "noChildTitle": "No child selected",
+    "noChildTitle": "No student selected",
     "noChildDescription": "First link a student account.",
     "loading": "Loading rating",
     "eyebrow": "RATING",
@@ -121,7 +121,7 @@
   "attendanceTable": {
     "empty": "No attendance records found.",
     "students": "{{count}} students",
-    "parentNotified": "Parent notified",
+    "parentNotified": "Observer notified",
     "exits": "{{count}} exits",
     "focused": "Stayed focused",
     "student": "Student",
@@ -135,10 +135,10 @@
   },
   "focusJournal": {
     "noExits": "No exits",
-    "alertTitle": "Over the limit — the parent was notified",
+    "alertTitle": "Over the limit — the observer was notified",
     "exits": "{{count}} exits",
     "title": "Focus journal",
-    "alert": "Too many exits — the parent was notified.",
+    "alert": "Too many exits — the observer was notified.",
     "exitsLabel": "exits",
     "awayLabel": "total away",
     "longestLabel": "longest",
@@ -148,25 +148,25 @@
   "shell": {
     "nav": {
       "dashboard": "Home",
-      "children": "Children",
+      "children": "Students",
       "attendance": "Attendance",
       "homework": "Homework",
       "results": "Results"
     },
-    "role": "Parent",
+    "role": "Observer",
     "openAccount": "Profile and settings",
-    "navLabel": "Parent sections"
+    "navLabel": "Observer sections"
   },
   "switcher": {
-    "eyebrow": "CHILD",
+    "eyebrow": "STUDENT",
     "groups": "{{count}} groups",
-    "others": "+{{count}} children",
-    "menuTitle": "CHOOSE A CHILD",
+    "others": "+{{count}} students",
+    "menuTitle": "CHOOSE A STUDENT",
     "pending": "Pending",
     "requestSent": "request sent",
-    "add": "Add a child",
-    "manage": "Manage children",
-    "open": "Choose a child"
+    "add": "Add a student",
+    "manage": "Manage students",
+    "open": "Choose a student"
   },
   "home": {
     "datePattern": "EEEE, MMMM d",
@@ -181,7 +181,7 @@
       "night": "Good night, {{name}}!"
     },
     "welcome": "Welcome, {{name}}!",
-    "connectSubtitle": "Connect your child to get started",
+    "connectSubtitle": "Connect your student to get started",
     "hero": {
       "todayChip": "Today · {{time}}",
       "todayTitle": "{{name}} has {{count}} lessons today",
@@ -271,18 +271,18 @@
     "offline": "No internet. Last data: {{time}} — not updating",
     "serverError": "Can’t reach the server — data didn’t load.",
     "connect": {
-      "title": "Connect your child",
-      "description": "Connect your child’s account or create a new one to follow attendance, homework, mock results and safety in one place.",
+      "title": "Connect your student",
+      "description": "Connect your student’s account or create a new one to follow attendance, homework, mock results and safety in one place.",
       "link": "Connect a student",
-      "create": "New child account",
+      "create": "New student account",
       "step": "Step {{n}}",
       "steps": [
         {
           "title": "Send a request",
-          "description": "Enter your child’s login or FK code"
+          "description": "Enter your student’s login or FK code"
         },
         {
-          "title": "Your child approves",
+          "title": "Your student approves",
           "description": "The request appears in their app"
         },
         {
@@ -295,22 +295,22 @@
       "chip": "Pending · {{time}}",
       "title": "Request sent to {{name}}",
       "description": "As soon as @{{username}} approves the request in the app, attendance and results will appear here.",
-      "howTitle": "How does my child approve?",
+      "howTitle": "How does my student approve?",
       "how": [
         "Signs in to YolUp with their own login",
-        "Chats → “+” → Parent requests",
+        "Chats → “+” → Observer requests",
         "Taps “Approve”"
       ],
-      "addAnother": "Add another child",
-      "addAnotherHint": "Connect another child account"
+      "addAnother": "Add another student",
+      "addAnotherHint": "Connect another student account"
     }
   },
   "family": {
     "eyebrow": "Family · {{linked}} linked",
     "eyebrowPending": "Family · {{linked}} linked, {{pending}} pending",
-    "title": "My children",
+    "title": "My students",
     "link": "Link a student",
-    "create": "Child account",
+    "create": "Student account",
     "selected": "Selected",
     "groups": "{{count}} groups",
     "stats": {
@@ -327,16 +327,16 @@
     "choose": "Select",
     "pending": "Waiting for @{{username}} to approve",
     "addMore": {
-      "title": "Add another child",
-      "description": "Link an existing student by login or FK code, or create a new child account",
+      "title": "Add another student",
+      "description": "Link an existing student by login or FK code, or create a new student account",
       "action": "Add"
     },
     "table": {
-      "titleWeek": "This week — by child",
-      "titleMonth": "This month — by child",
+      "titleWeek": "This week — by student",
+      "titleMonth": "This month — by student",
       "week": "Week",
       "month": "Month",
-      "child": "Child",
+      "child": "Student",
       "attendance": "Attendance",
       "homework": "Homework",
       "score": "Average score",
@@ -347,8 +347,8 @@
     "eyebrowBase": "Family"
   },
   "profile": {
-    "breadcrumb": "My children",
-    "title": "Child profile",
+    "breadcrumb": "My students",
+    "title": "Student profile",
     "role": "Student",
     "groupsChip": "{{count}} groups",
     "attendanceChip": "{{percent}}% attendance",
@@ -381,7 +381,7 @@
     },
     "online": "Online",
     "unlink": {
-      "action": "Unlink child",
+      "action": "Unlink student",
       "text": "The account stays, it is only disconnected from you",
       "title": "Unlink {{name}}?",
       "description": "You will no longer see {{name}}’s attendance, results or notifications. Your permissions will be removed too. To reconnect, you will need to send a new request.",
@@ -392,37 +392,37 @@
     }
   },
   "addChild": {
-    "title": "Add a child",
+    "title": "Add a student",
     "description": "Choose how",
     "linkTitle": "Link an existing student",
-    "linkText": "If your child already has a YolUp account — by login or FK code",
-    "createTitle": "New child account",
+    "linkText": "If your student already has a YolUp account — by login or FK code",
+    "createTitle": "New student account",
     "createText": "We’ll create a login and a temporary password linked to you",
     "cancel": "Cancel",
     "next": "Continue"
   },
   "linkChild": {
     "title": "Link a student",
-    "description": "Enter your child’s login (username) or FK-… invite code",
+    "description": "Enter your student’s login (username) or FK-… invite code",
     "label": "Login or invite code",
     "placeholder": "For example: ali_valiyev or FK-8K2Q",
-    "hint": "Use the login your child signs in to YolUp with",
+    "hint": "Use the login your student signs in to YolUp with",
     "notFound": "No such login or code. Check the spelling",
-    "notFoundNote": "Ask your child for the login — it’s shown with @ in the account settings",
+    "notFoundNote": "Ask your student for the login — it’s shown with @ in the account settings",
     "cancel": "Cancel",
     "submit": "Send request",
     "retry": "Try again",
     "sentTitle": "Request sent!",
-    "sentText": "Once your child approves the request in the app, their data will appear here.",
+    "sentText": "Once your student approves the request in the app, their data will appear here.",
     "linkedTitle": "Already linked",
-    "linkedText": "You can already see this child’s data.",
+    "linkedText": "You can already see this student’s data.",
     "chipPending": "Pending",
     "chipLinked": "Linked",
     "more": "Add another",
     "done": "Got it"
   },
   "createChild": {
-    "title": "Create a child account",
+    "title": "Create a student account",
     "description": "The new student will be linked to you automatically",
     "firstName": "First name",
     "lastName": "Last name",
@@ -433,7 +433,7 @@
     "regenerate": "New password",
     "copy": "Copy",
     "copied": "Copied",
-    "info": "Your child will change the password on first sign-in",
+    "info": "Your student will change the password on first sign-in",
     "cancel": "Cancel",
     "submit": "Create account",
     "readyTitle": "Account ready!",
@@ -443,7 +443,7 @@
     "done": "Done",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp account: {{name}}",
-    "printSubtitle": "Your child signs in with this login and password.",
+    "printSubtitle": "Your student signs in with this login and password.",
     "share": "Share the details",
     "free": "Login is available",
     "invalid": "Only Latin letters, digits and _ . are allowed",
@@ -521,7 +521,7 @@
       "attention": "Attention",
       "exits": "Distractions",
       "close": "Close",
-      "notJoined": "Your child didn’t join this lesson.",
+      "notJoined": "Your student didn’t join this lesson.",
       "upcoming": "The lesson starts at {{time}}.",
       "lateReason": "Reason for being late",
       "missedReason": "Reason for absence",
@@ -544,7 +544,7 @@
     },
     "empty": {
       "title": "No lessons yet",
-      "text": "Once your child attends a first lesson, join and leave times and focus will appear here."
+      "text": "Once your student attends a first lesson, join and leave times and focus will appear here."
     },
     "notFound": {
       "title": "Nothing found",
@@ -627,7 +627,7 @@
     },
     "tip": {
       "title": "Security tip",
-      "text": "If you see an unfamiliar device, talk to your child and change their password."
+      "text": "If you see an unfamiliar device, talk to your student and change their password."
     },
     "detail": {
       "newTitle": "Sign-in from a new device",
@@ -639,7 +639,7 @@
       "location": "Location",
       "time": "Time",
       "unknownLocation": "Location unknown",
-      "warning": "If this wasn’t {{name}}, talk to your child and change the password",
+      "warning": "If this wasn’t {{name}}, talk to your student and change the password",
       "close": "Close",
       "duration": "Duration",
       "session": "Session",
@@ -653,7 +653,7 @@
     },
     "empty": {
       "title": "No sign-ins yet",
-      "text": "When your child signs in, the device, IP and time will appear here."
+      "text": "When your student signs in, the device, IP and time will appear here."
     },
     "filtered": {
       "title": "No sign-ins found",
@@ -797,7 +797,7 @@
     "noSubjects": "No subjects yet",
     "empty": {
       "title": "No statistics yet",
-      "text": "Once your child starts submitting homework, the score trend and results by subject will appear here."
+      "text": "Once your student starts submitting homework, the score trend and results by subject will appear here."
     },
     "panel": {
       "close": "Close",
@@ -869,10 +869,10 @@
       "notifications": "Notifications",
       "interface": "Interface",
       "security": "Security",
-      "children": "Children"
+      "children": "Students"
     },
     "profile": {
-      "children": "{{count}} children",
+      "children": "{{count}} students",
       "edit": "Edit",
       "photo": "Change photo",
       "photoMenu": {
@@ -905,7 +905,7 @@
       "email": "Email notifications",
       "emailText": "A copy of every notification by email",
       "reminder": "Lesson reminder",
-      "reminderText": "We’ll notify you before your child’s lesson",
+      "reminderText": "We’ll notify you before your student’s lesson",
       "when": "When",
       "minutes": "{{count}} min before",
       "hours": "{{count}} h before",
@@ -946,7 +946,7 @@
       "othersEnded": "Other sessions ended"
     },
     "alerts": {
-      "title": "Alerts about your child",
+      "title": "Alerts about your student",
       "notifyChildAbsent": {
         "title": "Missed or late for a lesson",
         "text": "10 minutes after the lesson starts"
@@ -991,14 +991,14 @@
     },
     "unlinked": {
       "title": "{{name}} unlinked you",
-      "text": "{{name}} removed you as a parent. Send a new request to link again.",
+      "text": "{{name}} removed you as an observer. Send a new request to link again.",
       "ok": "Got it",
       "again": "Send a new request"
     }
   },
   "mobile": {
     "tabs": {
-      "children": "Children",
+      "children": "Students",
       "attendance": "Attendance",
       "home": "Home",
       "homework": "Homework",
@@ -1011,8 +1011,8 @@
       "night": "Good night 👋"
     },
     "switcher": {
-      "title": "Choose a child",
-      "subtitle": "Figures are shown for this child",
+      "title": "Choose a student",
+      "subtitle": "Figures are shown for this student",
       "selected": "{{name}} selected — all sections updated",
       "requested": "@{{username}} · request sent"
     },
@@ -1026,7 +1026,7 @@
     },
     "connect": {
       "link": "By login or FK-… invite code",
-      "create": "Create a login for your child",
+      "create": "Create a login for your student",
       "how": "How it works"
     },
     "pending": {
@@ -1079,7 +1079,7 @@
       "resultTitle": "Mock result"
     },
     "settings": {
-      "role": "Parent · {{count}} children",
+      "role": "Observer · {{count}} students",
       "securityTitle": "Security — protected",
       "securityText": "Password, active sessions · {{count}} devices",
       "info": "Profile details",

@@ -73,7 +73,7 @@ export function createParentDashboard(
   const approved = links.filter((item) => item.status === "approved");
   return {
     metrics: [
-      { id: "children", label: "Farzandlar", value: String(approved.length), icon: "children" },
+      { id: "children", label: "O‘quvchilar", value: String(approved.length), icon: "children" },
       {
         id: "requests",
         label: "Kutilayotgan so‘rov",

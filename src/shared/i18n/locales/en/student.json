@@ -52,7 +52,7 @@
   "enrollmentDialog": {
     "title": "New conversation",
     "description": "Send a request to a teacher or join an open course.",
-    "parentRequestsEyebrow": "PARENT REQUESTS",
+    "parentRequestsEyebrow": "OBSERVER REQUESTS",
     "wantsToLink": "wants to link to your profile",
     "decline": "Decline",
     "approve": "Approve",

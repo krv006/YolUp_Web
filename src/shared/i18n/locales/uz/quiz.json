@@ -519,12 +519,12 @@
     },
     "shareTitle": "Natijalarni ulashish",
     "shareHint": "Natijalar jadvali guruh chatiga yuboriladi (har bir o‘quvchining eng yaxshi urinishi).",
-    "shareParents": "Ota-onalarga ham xabar berish",
-    "shareParentsHint": "Tasdiqlangan ota-onalarga bildirishnoma boradi",
+    "shareParents": "Kuzatuvchilarga ham xabar berish",
+    "shareParentsHint": "Tasdiqlangan kuzatuvchilarga bildirishnoma boradi",
     "shareConfirm": "Yuborish",
     "shareCancel": "Bekor qilish",
     "shareDone": "Natijalar guruh chatiga yuborildi",
-    "shareDoneParents": "Natijalar yuborildi · {{count}} ta ota-onaga xabar berildi"
+    "shareDoneParents": "Natijalar yuborildi · {{count}} ta kuzatuvchiga xabar berildi"
   },
   "newTest": {
     "title": "Yangi test",

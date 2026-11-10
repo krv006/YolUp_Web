@@ -519,12 +519,12 @@
     },
     "shareTitle": "Share results",
     "shareHint": "A results table is posted to the group chat (each student's best attempt).",
-    "shareParents": "Notify parents too",
-    "shareParentsHint": "Approved parents get a notification",
+    "shareParents": "Notify observers too",
+    "shareParentsHint": "Approved observers get a notification",
     "shareConfirm": "Send",
     "shareCancel": "Cancel",
     "shareDone": "Results posted to the group chat",
-    "shareDoneParents": "Results posted · {{count}} parents notified"
+    "shareDoneParents": "Results posted · {{count}} observers notified"
   },
   "newTest": {
     "title": "New test",

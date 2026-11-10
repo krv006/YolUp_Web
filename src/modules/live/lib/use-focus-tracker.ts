@@ -10,7 +10,7 @@ function warnStudent(result: FocusResult, alreadyWarned: boolean): boolean {
 
   if (result.parentNotified) {
     if (alreadyWarned) return true;
-    toast.error("Siz darsdan bir necha marta chiqdingiz — ota-onangizga xabar berildi.", {
+    toast.error("Siz darsdan bir necha marta chiqdingiz — kuzatuvchingizga xabar berildi.", {
       duration: 6000,
     });
     return true;
@@ -19,7 +19,7 @@ function warnStudent(result: FocusResult, alreadyWarned: boolean): boolean {
   const left = Math.max(0, result.threshold - result.exitCount);
   toast.warning(
     left
-      ? `Dars oynasidan chiqdingiz (${result.exitCount}/${result.threshold}). Yana ${left} marta chiqsangiz ota-onangizga xabar boradi.`
+      ? `Dars oynasidan chiqdingiz (${result.exitCount}/${result.threshold}). Yana ${left} marta chiqsangiz kuzatuvchingizga xabar boradi.`
       : `Dars oynasidan chiqdingiz (${result.exitCount}-marta).`,
     { duration: 5000 }
   );
