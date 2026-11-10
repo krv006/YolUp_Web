@@ -118,6 +118,15 @@ export function useBoardSelection({
     nudgeRef.current = { id, stroke, delta, timer };
   }
 
+  const strokeAt = useCallback(
+    (point: Point): StrokeDto | null => {
+      const svg = svgRef.current;
+      if (!svg) return null;
+      return pickStroke(strokes, point, { tolerance: HIT_PX / boardScale(svg, sheet.width), measure });
+    },
+    [svgRef, strokes, sheet.width, measure]
+  );
+
   const clear = useCallback(() => {
     setSelectedId(null);
     setBox(null);
@@ -217,6 +226,7 @@ export function useBoardSelection({
     drag,
     select: setSelectedId,
     clear,
+    strokeAt,
     nudge,
     handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp, onDoubleClick },
   };

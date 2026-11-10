@@ -58,6 +58,7 @@ import { BoardPermissionDialog } from "./board-permission-dialog";
 import { EraseReasonDialog } from "./erase-reason-dialog";
 import { FormulaSolverDialog } from "./formula-solver-dialog";
 import { FormulaPalette } from "./formula-palette";
+import { InlineTextEditor } from "./inline-text-editor";
 import { MathFieldInput, type MathFieldInputHandle } from "./math-field-input";
 import { PeriodicTableDialog } from "./periodic-table-dialog";
 import { RichTextInput } from "./rich-text-input";
@@ -93,6 +94,25 @@ export interface BoardMobileChrome {
 }
 
 type PlacedTool = "text" | "math" | "code";
+
+interface InlineText {
+  anchor: Point;
+  size: number;
+  color: string;
+  original: string;
+}
+
+const PENDING_TEXT_MS = 8000;
+
+function sameText(stroke: StrokeDto, pending: StrokeDto): boolean {
+  return (
+    stroke.type === "text" &&
+    pending.type === "text" &&
+    stroke.text.trim() === pending.text.trim() &&
+    Math.abs(stroke.x - pending.x) < 1 &&
+    Math.abs(stroke.y - pending.y) < 1
+  );
+}
 
 function strokeKey(stroke: StrokeShapeDto): string {
   return JSON.stringify(stroke, (key, value) =>
@@ -144,7 +164,15 @@ export function BoardPanel({
   const [grantOpen, setGrantOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
 
-  const [placement, setPlacement] = useState<{ tool: PlacedTool; point: Point; editingId?: string } | null>(null);
+  const [placement, setPlacement] = useState<{
+    tool: PlacedTool;
+    point: Point;
+    editingId?: string;
+    inline?: InlineText;
+  } | null>(null);
+  const [inlineText, setInlineText] = useState("");
+  const inlineActive = useRef(false);
+  const [pendingTexts, setPendingTexts] = useState<StrokeDto[]>([]);
   const [initialLines, setInitialLines] = useState<TextLineDto[] | undefined>(undefined);
   const [draftText, setDraftText] = useState("");
   const [draftLines, setDraftLines] = useState<TextLineDto[]>([]);
@@ -261,6 +289,7 @@ export function BoardPanel({
     onCommit: commitStroke,
     onPlacePoint: (point) => {
       if (tool !== "text" && tool !== "math" && tool !== "code") return;
+      if (tool === "text" && !mobileLayout) return placeInlineText(point);
       setDraftText("");
       setDraftLines([]);
       setDraftCode("");
@@ -331,8 +360,43 @@ export function BoardPanel({
   const adding = !source && addStroke.isPending;
   const canPlaceBlock = Boolean(draftPlainText.trim()) && !adding;
 
+  function startInline(inline: InlineText, point: Point, editingId?: string) {
+    inlineActive.current = true;
+    setInlineText(inline.original);
+    setPlacement({ tool: "text", point, editingId, inline });
+  }
+
+  function placeInlineText(point: Point) {
+    if (inlineActive.current) return commitInline();
+    const hit = selection.strokeAt(point);
+    if (hit?.type === "text" && canEditStroke(hit, { isTeacher: Boolean(state?.isTeacher), userId, personal: Boolean(source) })) {
+      return openEditor(hit);
+    }
+    const anchor = anchorFor(point, "text");
+    startInline({ anchor, size: BOARD_TEXT_SIZE, color, original: "" }, point);
+  }
+
+  function commitInline() {
+    if (!inlineActive.current || !placement?.inline) return;
+    inlineActive.current = false;
+    const { inline, editingId } = placement;
+    const text = inlineText.replace(/\s+$/, "");
+    closePlacement();
+    if (!text.trim()) return;
+    if (editingId) {
+      if (text !== inline.original) updateStroke(editingId, { changes: { text, lines: [] } });
+      return;
+    }
+    const stroke: StrokeShapeDto = { type: "text", text, x: inline.anchor[0], y: inline.anchor[1], size: inline.size, color: inline.color };
+    const pending = { ...stroke, id: `pending-${Date.now()}` } as StrokeDto;
+    setPendingTexts((current) => [...current, pending]);
+    globalThis.setTimeout(() => setPendingTexts((current) => current.filter((item) => item.id !== pending.id)), PENDING_TEXT_MS);
+    commitStroke(stroke);
+  }
+
   function closePlacement() {
     setPlacement(null);
+    setInlineText("");
     setDraftText("");
     setDraftLines([]);
     setDraftCode("");
@@ -341,6 +405,15 @@ export function BoardPanel({
 
   function openEditor(stroke: StrokeDto) {
     if (stroke.type !== "text" && stroke.type !== "math" && stroke.type !== "code") return;
+    if (stroke.type === "text" && !mobileLayout) {
+      if (inlineActive.current) commitInline();
+      startInline(
+        { anchor: [stroke.x, stroke.y], size: stroke.size ?? BOARD_TEXT_SIZE, color: stroke.color ?? color, original: stroke.text },
+        [stroke.x, stroke.y],
+        stroke.id
+      );
+      return;
+    }
     setDraftText("");
     setDraftLines([]);
     setDraftCode("");
@@ -444,9 +517,11 @@ export function BoardPanel({
     [tool, canDraw, source, sheet, mobileLayout, t]
   );
 
+  const hiddenId = placement?.inline ? placement.editingId : undefined;
   const strokeNodes = useMemo(
     () =>
       (activeStrokes ?? []).map((stroke) => {
+        if (stroke.id === hiddenId) return null;
         if (drag?.kind === "resize" && drag.id === stroke.id) {
           return <BoardStroke key={stroke.id} stroke={drag.stroke} selected={false} onSelect={handleStrokeClick} />;
         }
@@ -461,8 +536,11 @@ export function BoardPanel({
           node
         );
       }),
-    [activeStrokes, selected, handleStrokeClick, drag]
+    [activeStrokes, selected, handleStrokeClick, drag, hiddenId]
   );
+  const pendingNodes = pendingTexts
+    .filter((pending) => !(activeStrokes ?? []).some((stroke) => sameText(stroke, pending)))
+    .map((pending) => <BoardStroke key={pending.id} stroke={pending} selected={false} onSelect={() => undefined} />);
 
   function closeReasonDialog() {
     setReasonOpen(false);
@@ -607,6 +685,7 @@ export function BoardPanel({
         {...pointerHandlers}
       >
         {strokeNodes}
+        {pendingNodes}
         {selection.box && selection.selected ? (
           <SelectionOverlay
             box={overlayBox ?? selection.box}
@@ -703,6 +782,17 @@ export function BoardPanel({
             </button>
           </div>
         </form>
+      ) : placement?.inline ? (
+        <InlineTextEditor
+          value={inlineText}
+          onChange={setInlineText}
+          anchor={placement.inline.anchor}
+          size={placement.inline.size}
+          color={placement.inline.color}
+          boardWidth={state.width}
+          scale={scale}
+          onCommit={commitInline}
+        />
       ) : placement ? (
         <form
           ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
