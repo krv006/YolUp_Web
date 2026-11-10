@@ -50,6 +50,7 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     participantsCount: dto.participants_count ?? null,
     attendanceRate: dto.attendance_rate ?? null,
     joinedCount: dto.joined_count ?? null,
+    focusExits: dto.focus_exits ?? null,
     myRating: dto.my_rating ?? null,
     attended: dto.attended ?? null,
     recordingActive: Boolean(dto.recording_active),

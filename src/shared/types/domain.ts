@@ -258,6 +258,7 @@ export interface Lesson {
   participantsCount: number | null;
   attendanceRate: number | null;
   joinedCount: number | null;
+  focusExits: number | null;
   myRating: number | null;
   attended: boolean | null;
   recordingActive: boolean;

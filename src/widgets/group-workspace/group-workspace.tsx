@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
-import { focusExitTotals, useAttendanceSummary, useCourseAttendance } from "@/modules/attendance";
+import { useAttendanceSummary } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -878,17 +878,6 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
       .sort((a, b) => b.startsAt.localeCompare(a.startsAt));
   }, [lessons, range, now]);
 
-  const from = useMemo(() => {
-    if (range === "all") return null;
-    if (range === "month") return new Date(now.getTime() - 30 * 86_400_000).toISOString();
-    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  }, [range, now]);
-  const records = useCourseAttendance(courseId, from);
-  const exits = useMemo(
-    () => focusExitTotals(records.data ?? [], new Set(finishedLessons.map((lesson) => lesson.id))),
-    [records.data, finishedLessons]
-  );
-
   const students = useMemo(
     () =>
       [...(summary.data?.students ?? [])].sort(
@@ -966,9 +955,7 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
                 <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                   <span className="flex min-w-0 items-center gap-2">
                     <strong className="truncate text-title text-ink">{student.name}</strong>
-                    {exits.byStudent.get(student.id) ? (
-                      <ExitsBadge count={exits.byStudent.get(student.id) ?? 0} compact={isCompact} />
-                    ) : null}
+                    {student.focusExits ? <ExitsBadge count={student.focusExits} compact={isCompact} /> : null}
                   </span>
                   <span className="flex items-center gap-2">
                     <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
@@ -1019,9 +1006,7 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
                             : t("attendance.lessonOpen")}
                         </small>
                       </span>
-                      {exits.byLesson.get(lesson.id) ? (
-                        <ExitsBadge count={exits.byLesson.get(lesson.id) ?? 0} compact={isCompact} />
-                      ) : null}
+                      {lesson.focusExits ? <ExitsBadge count={lesson.focusExits} compact={isCompact} /> : null}
                       {lesson.attendanceRate !== null ? (
                         <strong
                           className={`shrink-0 font-numeric text-title-sm ${

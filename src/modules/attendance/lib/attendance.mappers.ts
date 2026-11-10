@@ -79,12 +79,14 @@ export function mapAttendanceSummary(dto: AttendanceSummaryDto | null | undefine
     attendancePercent: dto?.attendance_percent ?? 0,
     focusPercent: dto?.focus_percent ?? null,
     lessonCount: dto?.lesson_count ?? 0,
+    focusExits: dto?.focus_exits ?? 0,
     students: (dto?.students ?? []).map((item) => ({
       id: String(item.id),
       name: item.name ?? "",
       attendancePercent: item.attendance_percent ?? 0,
       focusPercent: item.focus_percent ?? null,
       attendedCount: item.attended_count ?? 0,
+      focusExits: item.focus_exits ?? 0,
     })),
   };
 }

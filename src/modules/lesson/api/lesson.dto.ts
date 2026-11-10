@@ -19,6 +19,7 @@ export interface LessonDto {
   participants_count?: number | null;
   attendance_rate?: number | null;
   joined_count?: number | null;
+  focus_exits?: number | null;
   my_rating?: number | null;
   attended?: boolean | null;
   recording_active?: boolean | null;
