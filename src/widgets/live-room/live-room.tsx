@@ -62,11 +62,16 @@ import {
   DISPLAY_CAPTURE_OPTIONS,
   useAllowShare,
   useAttentionCheck,
+  identityUserId,
   useBanFromLesson,
+  useCameraOffAll,
   useCameraSignals,
   useFocusTracker,
+  useMediaMode,
+  useMediaModeChannel,
   useMicSignals,
   useMuteAll,
+  useSetMediaMode,
   type CameraRequest,
   type MicRequest,
 } from "@/modules/live";
@@ -74,6 +79,7 @@ import type { Lesson } from "@/shared/types";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
+import { Switch } from "@/shared/ui/switch";
 import { Avatar } from "@/shared/ui/legacy";
 import { MobileLiveRoom } from "./mobile-live-room";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
@@ -351,10 +357,12 @@ function MediaPermissionWatcher({ onDenied }: { onDenied: () => void }) {
 
 function StudentMicControl({
   onRequest,
+  onRelease,
   requesting,
   waiting,
 }: {
   onRequest: () => void;
+  onRelease: () => void;
   requesting: boolean;
   waiting: boolean;
 }) {
@@ -369,6 +377,9 @@ function StudentMicControl({
         showIcon={false}
         className="live-control"
         aria-label={t("mic.label")}
+        onChange={(enabled, userInitiated) => {
+          if (!enabled && userInitiated) onRelease();
+        }}
       >
         <Mic size={19} />
         <MicOff size={19} className="live-control-off" />
@@ -425,10 +436,12 @@ function TeacherMicControl() {
 
 function StudentCameraControl({
   onRequest,
+  onRelease,
   requesting,
   waiting,
 }: {
   onRequest: () => void;
+  onRelease: () => void;
   requesting: boolean;
   waiting: boolean;
 }) {
@@ -443,6 +456,9 @@ function StudentCameraControl({
         showIcon={false}
         className="live-control"
         aria-label={t("camera.label")}
+        onChange={(enabled, userInitiated) => {
+          if (!enabled && userInitiated) onRelease();
+        }}
       >
         <Video size={19} />
         <VideoOff size={19} className="live-control-off" />
@@ -802,6 +818,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
   const attention = useAttentionCheck(lesson.id, !isTeacher);
   const mic = useMicSignals(lesson.id, isTeacher);
   const camera = useCameraSignals(lesson.id, isTeacher);
+  useMediaModeChannel(lesson.id, isTeacher);
   useFocusTracker(lesson.id, !isTeacher);
   const course = useCourse(lesson.courseId || null);
   const teacherId = course.data?.teacherUser?.id ?? null;
@@ -846,11 +863,11 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
     cameraTracks.find((track) => track.participant.isLocal) ?? cameraTracks[0] ?? null;
   const leadCamera = isTeacher
     ? localCamera
-    : (cameraTracks.find((track) => track.participant.identity === teacherId) ?? localCamera);
+    : (cameraTracks.find((track) => identityUserId(track.participant.identity) === teacherId) ?? localCamera);
   const remoteCameras = cameraTracks.filter((track) => track !== leadCamera);
   const teacherCamera = isTeacher
     ? localCamera
-    : (cameraTracks.find((track) => track.participant.identity === teacherId) ?? null);
+    : (cameraTracks.find((track) => identityUserId(track.participant.identity) === teacherId) ?? null);
   const teacherName = course.data?.teacher || (isTeacher ? room.localParticipant.name : "") || "";
   const leadLabel = leadCamera
     ? leadCamera.participant.isLocal
@@ -1175,6 +1192,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
           ) : (
             <StudentMicControl
               onRequest={mic.requestMic}
+              onRelease={mic.release}
               requesting={mic.requesting}
               waiting={mic.waiting}
             />
@@ -1184,6 +1202,7 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
           ) : (
             <StudentCameraControl
               onRequest={camera.requestCamera}
+              onRelease={camera.release}
               requesting={camera.requesting}
               waiting={camera.waiting}
             />
@@ -1367,7 +1386,6 @@ function ParticipantsPanel({
   const participants = useParticipants();
   const allowShare = useAllowShare(lessonId);
   const ban = useBanFromLesson(lessonId);
-  const muteAll = useMuteAll(lessonId);
   const raisedHands = new Set([
     ...micRequests.map((request) => request.name),
     ...cameraRequests.map((request) => request.name),
@@ -1483,31 +1501,98 @@ function ParticipantsPanel({
         ) : null}
       </div>
 
-      {isTeacher ? (
-        <div className="flex items-center gap-2.5 pt-2">
-          <button
-            type="button"
-            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink transition-colors hover:bg-muted disabled:opacity-60 max-lg:h-12 max-lg:border max-lg:border-line-strong max-lg:bg-surface"
-            disabled={muteAll.isPending}
-            onClick={() =>
-              muteAll.mutate([], {
-                onSuccess: (count) => toast.success(t("participantsPanel.muteAllDone", { count })),
-              })
-            }
+      {isTeacher ? <TeacherMediaControls lessonId={lessonId} onInvite={onInvite} /> : null}
+    </div>
+  );
+}
+
+function TeacherMediaControls({ lessonId, onInvite }: { lessonId: string; onInvite: () => void }) {
+  const { t } = useTranslation("live");
+  const isCompact = useIsCompact();
+  const muteAll = useMuteAll(lessonId);
+  const cameraOffAll = useCameraOffAll(lessonId);
+  const mode = useMediaMode(lessonId);
+  const setMode = useSetMediaMode(lessonId);
+  const openMic = Boolean(mode.data?.openMic);
+  const openCamera = Boolean(mode.data?.openCamera);
+  const action =
+    "flex min-h-12 w-full items-center gap-3 border-b border-line px-3.5 text-left text-title-sm text-ink transition-colors last:border-b-0 hover:bg-muted disabled:opacity-60 first:rounded-t-xl last:rounded-b-xl";
+
+  const toggles = [
+    { id: "mic", label: t("mediaMode.openMic"), checked: openMic, patch: (value: boolean) => ({ openMic: value }) },
+    {
+      id: "camera",
+      label: t("mediaMode.openCamera"),
+      checked: openCamera,
+      patch: (value: boolean) => ({ openCamera: value }),
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-2.5 pt-2">
+      <div className="flex flex-col rounded-xl bg-subtle px-3.5 max-lg:border max-lg:border-line-strong max-lg:bg-surface">
+        {toggles.map((item) => (
+          <label
+            key={item.id}
+            className="flex min-h-12 cursor-pointer items-center gap-3 border-b border-line py-2 last:border-b-0"
           >
-            {isCompact ? <Icon name="notifications-off" size={18} /> : <MicOff size={17} />}
-            {t("participantsPanel.muteAll")}
-          </button>
-          <button
-            type="button"
-            className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-opacity hover:opacity-85 max-lg:h-12"
-            onClick={onInvite}
-          >
-            {isCompact ? <Icon name="person" size={18} /> : <UserRoundPlus size={17} />}
-            {t("participantsPanel.invite")}
-          </button>
-        </div>
-      ) : null}
+            <span className="flex min-w-0 flex-1 flex-col">
+              <span className="text-title-sm text-ink">{item.label}</span>
+              <small className="text-body-xs text-ink-tertiary max-lg:text-ink-secondary">
+                {item.checked ? t("mediaMode.openHint") : t("mediaMode.closedHint")}
+              </small>
+            </span>
+            <Switch
+              checked={item.checked}
+              disabled={setMode.isPending || mode.isLoading}
+              aria-label={item.label}
+              onCheckedChange={(value) =>
+                setMode.mutate(item.patch(value), {
+                  onSuccess: () => toast.success(t(value ? "mediaMode.enabledToast" : "mediaMode.disabledToast")),
+                })
+              }
+            />
+          </label>
+        ))}
+      </div>
+
+      <div className="flex flex-col rounded-xl bg-subtle max-lg:border max-lg:border-line-strong max-lg:bg-surface">
+        <button
+          type="button"
+          className={action}
+          disabled={muteAll.isPending}
+          onClick={() =>
+            muteAll.mutate([], {
+              onSuccess: (count) => toast.success(t("participantsPanel.muteAllDone", { count })),
+            })
+          }
+        >
+          <MicOff size={17} className="shrink-0 text-ink-secondary" />
+          <span className="truncate">{t("participantsPanel.muteAll")}</span>
+        </button>
+        <button
+          type="button"
+          className={action}
+          disabled={cameraOffAll.isPending}
+          onClick={() =>
+            cameraOffAll.mutate([], {
+              onSuccess: (count) => toast.success(t("participantsPanel.cameraOffAllDone", { count })),
+            })
+          }
+        >
+          <VideoOff size={17} className="shrink-0 text-ink-secondary" />
+          <span className="truncate">{t("participantsPanel.cameraOffAll")}</span>
+        </button>
+      </div>
+
+      <button
+        type="button"
+        className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-opacity hover:opacity-85 max-lg:h-12"
+        onClick={onInvite}
+      >
+        {isCompact ? <Icon name="person" size={18} /> : <UserRoundPlus size={17} />}
+        {t("participantsPanel.invite")}
+      </button>
     </div>
   );
 }

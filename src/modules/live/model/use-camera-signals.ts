@@ -1,22 +1,29 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocalParticipantPermissions, useRoomContext } from "@livekit/components-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useBoardChannel, useTeacherSignals, type BoardSocketEvent } from "@/modules/board";
-import { CAMERA_SOURCE, canPublishSource } from "../lib/live-permissions";
-import { useCancelCameraRequest, useDenyCamera, useGrantCamera, useRequestCamera } from "./live.queries";
+import { CAMERA_SOURCE, canPublishSource, identityUserId } from "../lib/live-permissions";
+import { useCancelCameraRequest, useDenyCamera, useGrantCamera, useMediaMode, useReleaseMedia, useRequestCamera } from "./live.queries";
 
 export interface CameraRequest {
   studentId: string;
   name: string;
 }
 
+const RELEASE_ECHO_MS = 5_000;
+
 export function useCameraSignals(lessonId: string, isTeacher: boolean) {
+  const { t } = useTranslation("live");
   const room = useRoomContext();
   const permissions = useLocalParticipantPermissions();
   const grant = useGrantCamera(lessonId);
   const deny = useDenyCamera(lessonId);
   const request = useRequestCamera(lessonId);
   const cancel = useCancelCameraRequest(lessonId);
+  const mediaMode = useMediaMode(lessonId);
+  const releaseMedia = useReleaseMedia(lessonId);
+  const releasedAt = useRef(0);
 
   const [live, setLive] = useState<CameraRequest[]>([]);
   const [answered, setAnswered] = useState<string[]>([]);
@@ -49,7 +56,7 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
   const { mutate: denyCamera } = deny;
 
   const isMine = useCallback(
-    (studentId: string) => !isTeacher && studentId === room.localParticipant.identity,
+    (studentId: string) => !isTeacher && studentId === identityUserId(room.localParticipant.identity),
     [isTeacher, room]
   );
 
@@ -79,6 +86,14 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
         return;
       }
 
+      if (event.type === "camera_revoked") {
+        if (!isMine(event.studentId)) return;
+        setWaiting(false);
+        pendingEnable.current = false;
+        if (Date.now() - releasedAt.current > RELEASE_ECHO_MS) toast.info(t("camera.revokedToast"));
+        return;
+      }
+
       if (event.type !== "camera_granted" && event.type !== "camera_denied") return;
 
       setAnswered((current) =>
@@ -96,7 +111,7 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
       if (canPublishCamera) enableCamera();
       else pendingEnable.current = true;
     },
-    [canPublishCamera, denyCamera, enableCamera, grantCamera, isMine, isTeacher]
+    [canPublishCamera, denyCamera, enableCamera, grantCamera, isMine, isTeacher, t]
   );
 
   useBoardChannel(lessonId, Boolean(lessonId), handleEvent);
@@ -113,6 +128,14 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
     [sendRequest]
   );
 
+  const open = Boolean(mediaMode.data?.openCamera);
+  const { mutate: sendRelease } = releaseMedia;
+  const release = useCallback(() => {
+    if (isTeacher || open) return;
+    releasedAt.current = Date.now();
+    sendRelease("camera");
+  }, [isTeacher, open, sendRelease]);
+
   const { mutate: sendCancel } = cancel;
   const cancelCamera = useCallback(() => sendCancel(undefined, { onSuccess: () => setWaiting(false) }), [sendCancel]);
 
@@ -125,5 +148,7 @@ export function useCameraSignals(lessonId: string, isTeacher: boolean) {
     cancelling: cancel.isPending,
     requesting: request.isPending,
     waiting,
+    release,
+    open,
   };
 }

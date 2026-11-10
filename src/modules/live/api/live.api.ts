@@ -5,9 +5,12 @@ import type {
   AttentionResponseDto,
   FocusKind,
   FocusResponseDto,
+  MediaKind,
+  MediaMode,
+  MediaModeDto,
   RoomTokenDto,
 } from "./live.dto";
-import { mapAttentionDto, mapFocusDto, mapRoomTokenDto } from "../lib/live.mappers";
+import { mapAttentionDto, mapFocusDto, mapMediaModeDto, mapRoomTokenDto } from "../lib/live.mappers";
 
 export const liveApi = {
   async getToken(lessonId: string) {
@@ -39,6 +42,31 @@ export const liveApi = {
       ...(except.length ? { except } : {}),
     });
     return dto.muted ?? 0;
+  },
+  async cameraOffAll(lessonId: string, except: string[] = []) {
+    const dto = await apiClient.post<{ camera_off?: number }>(liveEndpoints.cameraOffAll, {
+      lesson_id: lessonId,
+      ...(except.length ? { except } : {}),
+    });
+    return dto.camera_off ?? 0;
+  },
+  async releaseMedia(lessonId: string, kind: MediaKind) {
+    const dto = await apiClient.post<{ revoked?: boolean; open?: boolean }>(liveEndpoints.releaseMedia, {
+      lesson_id: lessonId,
+      kind,
+    });
+    return { revoked: Boolean(dto?.revoked), open: Boolean(dto?.open) };
+  },
+  async getMediaMode(lessonId: string, options?: RequestOptions) {
+    return mapMediaModeDto(await apiClient.get<MediaModeDto>(liveEndpoints.mediaMode(lessonId), options));
+  },
+  async setMediaMode(lessonId: string, patch: Partial<MediaMode>) {
+    return mapMediaModeDto(
+      await apiClient.patch<MediaModeDto>(liveEndpoints.mediaMode(lessonId), {
+        ...(patch.openMic === undefined ? {} : { open_mic: patch.openMic }),
+        ...(patch.openCamera === undefined ? {} : { open_camera: patch.openCamera }),
+      })
+    );
   },
   async getPresence(lessonId: string, options?: RequestOptions) {
     const dto = await apiClient.get<{ count?: number; avatars?: string[] }>(
