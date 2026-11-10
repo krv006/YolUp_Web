@@ -16,6 +16,7 @@ import type {
 } from "./parent.dto";
 import { isInviteCode } from "../lib/parent-home";
 import { parentEndpoints } from "./parent.endpoints";
+import { mapChildScores, type ChildScoresDto, type ScoreRange } from "../lib/child-scores";
 import { createParentDashboard, mapChildFromLink, mapParentLinkDto } from "../lib/parent.mappers";
 
 export interface ParentDashboardOptions extends RequestOptions {
@@ -117,6 +118,13 @@ export const parentApi = {
 
   getChildSummary(studentId: string, options?: RequestOptions) {
     return apiClient.get<ChildSummaryDto>(parentEndpoints.childSummary(studentId), options);
+  },
+
+  async getChildScores(studentId: string, range: ScoreRange, options?: RequestOptions) {
+    return mapChildScores(
+      await apiClient.get<ChildScoresDto>(parentEndpoints.childScores(studentId), { ...options, query: { range } }),
+      range
+    );
   },
 
   getChildRank(studentId: string, courseId: string, month: string, options?: RequestOptions) {

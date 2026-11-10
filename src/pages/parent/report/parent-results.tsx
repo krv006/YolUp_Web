@@ -9,7 +9,7 @@ import { Icon } from "@/shared/ui/icon";
 import { ParentErrorBanner, ParentPageHeader } from "@/widgets/parent-shell";
 import { subjectLook } from "../attendance/attendance-styles";
 import { ConnectChild } from "../dashboard/home-empty";
-import { ScoreCard } from "../dashboard/home-side";
+import { ChildScoreChart } from "@/widgets/child-score-chart";
 import { useHomeworkView } from "../homework/use-homework-view";
 import { ResultsCoursePanel } from "./results-course-panel";
 import { GradeRow, MonthPicker, ResultsTabs } from "./results-parts";
@@ -114,16 +114,9 @@ export function ParentResults() {
               />
             </div>
 
+            <ChildScoreChart childId={view.child?.id ?? null} title={t("results.chart")} />
             {points.length ? (
               <>
-                <ScoreCard
-                  trend={parentHome.scoreTrend(points, view.now, 8)}
-                  delta={averageDelta}
-                  title={t("results.chart")}
-                  deltaLabel={t("results.thisMonth")}
-                  width={640}
-                  gradientId="results-score-fill"
-                />
                 <section className="flex flex-col gap-3">
                   <div className="flex items-center">
                     <strong className="flex-1 text-title text-ink">{t("results.recent")}</strong>

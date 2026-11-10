@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { CreateChildRequestDto, LinkAction } from "@/modules/auth";
+import type { ScoreRange } from "../lib/child-scores";
 import { parentApi } from "../api/parent.api";
 import type { SetConsentInput } from "../api/parent.dto";
 import { examApi } from "@/modules/exam";
@@ -18,6 +19,7 @@ export const parentKeys = Object.freeze({
   summary: (childId: string | null) => ["parent", "summary", childId] as const,
   childrenSummary: (period: string) => ["parent", "children-summary", period] as const,
   rank: (childId: string | null, courseId: string | null, month: string) => ["parent", "rank", childId, courseId, month] as const,
+  scores: (childId: string | null, range: ScoreRange) => ["parent", "scores", childId, range] as const,
   sessions: (childId: string | null) => ["parent", "sessions", childId] as const,
   exams: (childId: string | null) => ["parent", "exams", childId] as const,
   username: (value: string) => ["parent", "username", value] as const,
@@ -121,6 +123,16 @@ export function useChildrenSummary(period: "week" | "month", enabled = true) {
     queryKey: parentKeys.childrenSummary(period),
     queryFn: ({ signal }) => parentApi.getChildrenSummary(period, { signal }),
     enabled,
+  });
+}
+
+export function useChildScores(childId: string | null, range: ScoreRange) {
+  return useQuery({
+    queryKey: parentKeys.scores(childId, range),
+    queryFn: ({ signal }) => parentApi.getChildScores(childId as string, range, { signal }),
+    enabled: Boolean(childId),
+    retry: noConsentRetry,
+    staleTime: 60_000,
   });
 }
 

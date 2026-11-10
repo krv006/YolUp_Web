@@ -1160,5 +1160,45 @@
     "noResults": "Hech narsa topilmadi",
     "pickTitle": "Chatni tanlang",
     "pickHint": "Chap tomondagi ro'yxatdan suhbatni oching yoki o'qituvchiga yangi so'rov yuboring."
+  },
+  "scores": {
+    "title": "Ball dinamikasi",
+    "average": "O'rtacha {{value}}",
+    "kindLabel": "Ball turi",
+    "rangeLabel": "Davr",
+    "kinds": {
+      "overall": "Hammasi",
+      "homework": "Uy vazifasi",
+      "quiz": "Test",
+      "exam": "Mock"
+    },
+    "ranges": {
+      "8w": "8 hafta",
+      "6m": "6 oy",
+      "all": "Hammasi"
+    },
+    "chartAria": "{{kind}} bo'yicha ball grafigi (10 ballik)",
+    "empty": "Bu davrda baholar yo'q",
+    "locked": "O'quvchi tahlil ma'lumotlarini ko'rsatishga ruxsat bermagan",
+    "kindsShort": {
+      "overall": "Hammasi",
+      "homework": "Vazifa",
+      "quiz": "Test",
+      "exam": "Mock"
+    },
+    "monthsShort": [
+      "Yan",
+      "Fev",
+      "Mar",
+      "Apr",
+      "May",
+      "Iyn",
+      "Iyl",
+      "Avg",
+      "Sen",
+      "Okt",
+      "Noy",
+      "Dek"
+    ]
   }
 }

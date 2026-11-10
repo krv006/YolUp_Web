@@ -5,7 +5,8 @@ import { ParentErrorBanner, ParentLockedCard, ParentPageHeader } from "@/widgets
 import { greetingKey } from "./home-format";
 import { HomeHero } from "./home-hero";
 import { HomeRecent } from "./home-recent";
-import { AttentionCard, ScoreCard } from "./home-side";
+import { ChildScoreChart } from "@/widgets/child-score-chart";
+import { AttentionCard } from "./home-side";
 import { HomeSkeleton } from "./home-skeleton";
 import { HomeStats } from "./home-stats";
 import { ConnectChild, PendingLink } from "./home-empty";
@@ -81,7 +82,7 @@ export function ParentHome() {
             </div>
             <div className="flex min-w-0 flex-col gap-5">
               <AttentionCard items={view.attention} childId={child.id} now={now} />
-              <ScoreCard trend={view.trend} delta={view.score.delta} />
+              <ChildScoreChart childId={child.id} variant="compact" />
             </div>
           </div>
         </>
