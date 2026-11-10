@@ -6,9 +6,11 @@ export {
   useAttendance,
   useAttendancePage,
   useAttendanceSummary,
+  useCourseAttendance,
   useUpdateAttendanceNote,
 } from "./model/attendance.queries";
 export { groupAttendanceByLesson } from "./lib/group-by-lesson";
+export { focusExitTotals } from "./lib/focus-exit-totals";
 export { averageFocus, buildLessonRoster, LATE_AFTER_MINUTES } from "./lib/lesson-roster";
 export type { RosterEntry, RosterStatus } from "./lib/lesson-roster";
 export type { LessonAttendanceGroup } from "./lib/group-by-lesson";

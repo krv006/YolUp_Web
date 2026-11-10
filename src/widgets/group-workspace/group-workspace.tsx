@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, TrendingUp } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, LogOut, TrendingUp } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
-import { useAttendanceSummary } from "@/modules/attendance";
+import { focusExitTotals, useAttendanceSummary, useCourseAttendance } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -832,6 +832,27 @@ interface AttendancePanelProps {
   lessons?: Lesson[];
 }
 
+function ExitsBadge({ count, compact }: { count: number; compact: boolean }) {
+  const { t } = useTranslation("group");
+  const label = t("attendance.exits", { count });
+  return (
+    <span
+      className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-danger-bg px-2 font-numeric text-caption-strong text-danger"
+      title={`${label} · ${t("attendance.exitsHint")}`}
+      aria-label={label}
+    >
+      {compact ? (
+        <>
+          <LogOut size={12} aria-hidden="true" />
+          {count}
+        </>
+      ) : (
+        label
+      )}
+    </span>
+  );
+}
+
 function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
   const { t } = useTranslation("group");
   const isCompact = useIsCompact();
@@ -856,6 +877,17 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
       })
       .sort((a, b) => b.startsAt.localeCompare(a.startsAt));
   }, [lessons, range, now]);
+
+  const from = useMemo(() => {
+    if (range === "all") return null;
+    if (range === "month") return new Date(now.getTime() - 30 * 86_400_000).toISOString();
+    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  }, [range, now]);
+  const records = useCourseAttendance(courseId, from);
+  const exits = useMemo(
+    () => focusExitTotals(records.data ?? [], new Set(finishedLessons.map((lesson) => lesson.id))),
+    [records.data, finishedLessons]
+  );
 
   const students = useMemo(
     () =>
@@ -932,7 +964,12 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
               <li key={student.id} className="flex items-center gap-3 border-b border-line px-4 py-3.5 last:border-b-0">
                 <Avatar name={student.name} size="sm" className="[&_.avatar]:size-11" />
                 <span className="flex min-w-0 flex-1 flex-col gap-1.5">
-                  <strong className="truncate text-title text-ink">{student.name}</strong>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <strong className="truncate text-title text-ink">{student.name}</strong>
+                    {exits.byStudent.get(student.id) ? (
+                      <ExitsBadge count={exits.byStudent.get(student.id) ?? 0} compact={isCompact} />
+                    ) : null}
+                  </span>
                   <span className="flex items-center gap-2">
                     <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
                       <span
@@ -982,6 +1019,9 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
                             : t("attendance.lessonOpen")}
                         </small>
                       </span>
+                      {exits.byLesson.get(lesson.id) ? (
+                        <ExitsBadge count={exits.byLesson.get(lesson.id) ?? 0} compact={isCompact} />
+                      ) : null}
                       {lesson.attendanceRate !== null ? (
                         <strong
                           className={`shrink-0 font-numeric text-title-sm ${

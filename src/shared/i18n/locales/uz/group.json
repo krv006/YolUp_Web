@@ -118,7 +118,10 @@
     "lessonsMeta": "Kim keldi, kim kelmadi",
     "untitledLesson": "Mavzusiz dars",
     "lessonJoined": "{{joined}} / {{total}} qatnashdi",
-    "lessonOpen": "Davomatni ko‘rish"
+    "lessonOpen": "Davomatni ko‘rish",
+    "exits_one": "{{count}} marta chiqish",
+    "exits_other": "{{count}} marta chiqish",
+    "exitsHint": "Darsda oynadan (vkladkadan) necha marta chiqqani"
   },
   "dialogs": {
     "lesson": {
