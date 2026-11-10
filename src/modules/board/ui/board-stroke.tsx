@@ -14,6 +14,7 @@ export interface BoardStrokeProps {
 export const BoardStroke = memo(function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
   const color = selected ? "var(--destructive)" : (stroke.color ?? "currentColor");
   const shared = {
+    "data-stroke-id": stroke.id,
     onClick: () => onSelect(stroke.id),
     style: { cursor: "pointer" as const },
   };

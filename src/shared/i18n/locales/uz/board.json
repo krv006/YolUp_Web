@@ -43,7 +43,8 @@
     "colorLabel": "Rang {{value}}",
     "widthLabel": "Qalinlik {{value}}",
     "styleAria": "Rang va qalinlik",
-    "code": "Kod"
+    "code": "Kod",
+    "select": "Tanlash"
   },
   "inline": {
     "cancel": "Bekor qilish",
@@ -223,5 +224,9 @@
     "aria": "Doskaga kod yozish",
     "placeholder": "Kodni yozing…",
     "hint": "Tab — 4 probel · Shift+Tab — chekinishni olish · Ctrl+Enter — qo'shish"
+  },
+  "edit": {
+    "notOwner": "Faqat o'zingiz yozgan elementni o'zgartira olasiz",
+    "editedBy": "{{name}} tahrirladi"
   }
 }

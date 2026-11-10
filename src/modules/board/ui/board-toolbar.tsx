@@ -5,6 +5,7 @@ import {
   Eraser,
   Highlighter,
   Minus,
+  MousePointer2,
   MoveRight,
   PenLine,
   Sigma,
@@ -16,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { BOARD_COLORS, BOARD_WIDTHS } from "../constants/board.constants";
 import type { DrawKind } from "../lib/board.geometry";
 
-export type BoardTool = DrawKind | "text" | "math" | "code" | "erase";
+export type BoardTool = DrawKind | "select" | "text" | "math" | "code" | "erase";
 
 interface ToolDefinition {
   id: BoardTool;
@@ -25,6 +26,7 @@ interface ToolDefinition {
 }
 
 const TOOLS: ToolDefinition[] = [
+  { id: "select", labelKey: "tools.select", icon: MousePointer2 },
   { id: "pen", labelKey: "tools.pen", icon: PenLine },
   { id: "marker", labelKey: "tools.marker", icon: Highlighter },
   { id: "line", labelKey: "tools.line", icon: Minus },

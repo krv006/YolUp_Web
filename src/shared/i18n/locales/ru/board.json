@@ -43,7 +43,8 @@
     "colorLabel": "Цвет {{value}}",
     "widthLabel": "Толщина {{value}}",
     "styleAria": "Цвет и толщина",
-    "code": "Код"
+    "code": "Код",
+    "select": "Выделение"
   },
   "inline": {
     "cancel": "Отмена",
@@ -223,5 +224,9 @@
     "aria": "Написать код на доске",
     "placeholder": "Напишите код…",
     "hint": "Tab — 4 пробела · Shift+Tab — убрать отступ · Ctrl+Enter — добавить"
+  },
+  "edit": {
+    "notOwner": "Можно изменять только свои элементы",
+    "editedBy": "изменил(а) {{name}}"
   }
 }

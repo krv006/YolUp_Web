@@ -4,8 +4,17 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useAuth } from "@/modules/auth";
 import { useCourseStudents } from "@/modules/course";
-import type { BoardSource, FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
+import type {
+  BoardSource,
+  FormulaSolutionDto,
+  Point,
+  StrokeDto,
+  StrokeShapeDto,
+  StrokeUpdate,
+  TextLineDto,
+} from "../api/board.dto";
 import {
   BOARD_COLORS,
   BOARD_TEXT_SIZE,
@@ -16,6 +25,7 @@ import {
   MOBILE_BOARD_WIDTHS,
 } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
+import { canEditStroke } from "../lib/board-edit";
 import { buildStroke } from "../lib/board.geometry";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
@@ -28,9 +38,11 @@ import {
   useEraseStrokes,
   useSetBoardPermissions,
   useSolveFormula,
+  useUpdateStroke,
 } from "../model/board.queries";
 import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
+import { useBoardSelection } from "../model/use-board-selection";
 import { BoardStroke } from "./board-stroke";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
 import { CodeEditor } from "./code-editor";
@@ -48,6 +60,7 @@ import { FormulaPalette } from "./formula-palette";
 import { MathFieldInput, type MathFieldInputHandle } from "./math-field-input";
 import { PeriodicTableDialog } from "./periodic-table-dialog";
 import { RichTextInput } from "./rich-text-input";
+import { SelectionOverlay } from "./selection-overlay";
 
 export interface BoardPanelProps {
   lessonId: string;
@@ -100,11 +113,14 @@ export function BoardPanel({
   const { t } = useTranslation("board");
   const isCompact = useIsCompact();
   const mobileLayout = Boolean(isCompact && mobile);
-  const realtime = useBoardRealtime(lessonId, !source, currentUserId);
+  const { user } = useAuth();
+  const userId = currentUserId ?? user?.id ?? null;
+  const realtime = useBoardRealtime(lessonId, !source, userId);
   const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
   const addStroke = useAddStroke(lessonId);
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
+  const updateMutation = useUpdateStroke(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
   const renameSheet = useRenameSheet(lessonId);
   const solve = useSolveFormula(lessonId);
@@ -160,12 +176,16 @@ export function BoardPanel({
   const boardWidth = state?.width ?? 1600;
   const [canvasWrap, setCanvasWrap] = useState<HTMLDivElement | null>(null);
   const [viewRatio, setViewRatio] = useState(0);
+  const [viewWidth, setViewWidth] = useState(0);
 
   useEffect(() => {
     if (!canvasWrap) return undefined;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      if (width > 0) setViewRatio(height / width);
+      if (width > 0) {
+        setViewRatio(height / width);
+        setViewWidth(width);
+      }
     });
     observer.observe(canvasWrap);
     return () => observer.disconnect();
@@ -245,6 +265,24 @@ export function BoardPanel({
     },
   });
 
+  function updateStroke(strokeId: string, update: StrokeUpdate) {
+    if (source) return source.updateStroke(sheet, strokeId, update);
+    updateMutation.mutate({ sheet, strokeId, update });
+  }
+
+  const selection = useBoardSelection({
+    svgRef,
+    strokes: activeStrokes ?? [],
+    sheet: { width: boardWidth, height: boardHeight },
+    viewHeight: canvasHeight,
+    active: tool === "select" && canDraw,
+    canEdit: (stroke: StrokeDto) =>
+      canEditStroke(stroke, { isTeacher: Boolean(state?.isTeacher), userId, personal: Boolean(source) }),
+    onMove: (strokeId, delta) => updateStroke(strokeId, { move: delta }),
+    onDenied: () => toast.info(t("edit.notOwner")),
+  });
+  const drag = selection.drag;
+
   const draftPlainText =
     placement?.tool === "text" ? linesToPlainText(draftLines) : placement?.tool === "code" ? draftCode : draftText;
   const adding = !source && addStroke.isPending;
@@ -322,10 +360,19 @@ export function BoardPanel({
 
   const strokeNodes = useMemo(
     () =>
-      (activeStrokes ?? []).map((stroke) => (
-        <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
-      )),
-    [activeStrokes, selected, handleStrokeClick]
+      (activeStrokes ?? []).map((stroke) => {
+        const node = (
+          <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
+        );
+        return drag?.id === stroke.id ? (
+          <g key={stroke.id} transform={`translate(${drag.dx} ${drag.dy})`}>
+            {node}
+          </g>
+        ) : (
+          node
+        );
+      }),
+    [activeStrokes, selected, handleStrokeClick, drag]
   );
 
   function closeReasonDialog() {
@@ -418,9 +465,29 @@ export function BoardPanel({
     );
 
   const preview =
-    draft && tool !== "erase" && tool !== "text" && tool !== "math" && tool !== "code"
+    draft && tool !== "erase" && tool !== "select" && tool !== "text" && tool !== "math" && tool !== "code"
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
+  const scale = viewWidth ? viewWidth / state.width : 1;
+  const author = selection.selected?.by
+    ? [
+        selection.selected.by,
+        selection.selected.edited_by && selection.selected.edited_by !== selection.selected.by
+          ? t("edit.editedBy", { name: selection.selected.edited_by })
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : undefined;
+  const pointerHandlers =
+    tool === "select"
+      ? selection.handlers
+      : {
+          onPointerDown: handlePointerDown,
+          onPointerMove: handlePointerMove,
+          onPointerUp: handlePointerUp,
+          onPointerCancel: handlePointerUp,
+        };
 
 
   const canvas = (
@@ -431,12 +498,17 @@ export function BoardPanel({
         viewBox={`0 0 ${state.width} ${canvasHeight}`}
         preserveAspectRatio="xMidYMin meet"
         style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        {...pointerHandlers}
       >
         {strokeNodes}
+        {selection.box ? (
+          <SelectionOverlay
+            box={selection.box}
+            offset={drag && drag.id === selection.selected?.id ? [drag.dx, drag.dy] : undefined}
+            scale={scale}
+            label={author}
+          />
+        ) : null}
         {preview ? (
           <BoardStroke
             stroke={{ ...preview, id: "draft" }}

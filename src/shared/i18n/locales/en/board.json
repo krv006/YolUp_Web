@@ -43,7 +43,8 @@
     "colorLabel": "Color {{value}}",
     "widthLabel": "Thickness {{value}}",
     "styleAria": "Colour and width",
-    "code": "Code"
+    "code": "Code",
+    "select": "Select"
   },
   "inline": {
     "cancel": "Cancel",
@@ -223,5 +224,9 @@
     "aria": "Write code on the board",
     "placeholder": "Type code…",
     "hint": "Tab — 4 spaces · Shift+Tab — outdent · Ctrl+Enter — add"
+  },
+  "edit": {
+    "notOwner": "You can only change elements you created",
+    "editedBy": "edited by {{name}}"
   }
 }
