@@ -42,7 +42,8 @@
     "toolbarAria": "Doska asboblari",
     "colorLabel": "Rang {{value}}",
     "widthLabel": "Qalinlik {{value}}",
-    "styleAria": "Rang va qalinlik"
+    "styleAria": "Rang va qalinlik",
+    "code": "Kod"
   },
   "inline": {
     "cancel": "Bekor qilish",
@@ -58,7 +59,8 @@
     "underline": "Tagiga chizish",
     "bulletList": "Belgili ro'yxat",
     "numberedList": "Raqamli ro'yxat",
-    "formatAria": "Matnni formatlash"
+    "formatAria": "Matnni formatlash",
+    "code": "Kod"
   },
   "eraseDialog": {
     "title": "Elementni o‘chirish",
@@ -213,5 +215,13 @@
     },
     "liveLesson": "Jonli dars",
     "menu": "Amallar"
+  },
+  "code": {
+    "language": "Dasturlash tili",
+    "detected": "Avto · {{language}}",
+    "counter": "{{count}}/{{max}}",
+    "aria": "Doskaga kod yozish",
+    "placeholder": "Kodni yozing…",
+    "hint": "Tab — 4 probel · Shift+Tab — chekinishni olish · Ctrl+Enter — qo'shish"
   }
 }

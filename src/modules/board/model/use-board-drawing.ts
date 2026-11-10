@@ -3,7 +3,7 @@ import type { Point, StrokeShapeDto } from "../api/board.dto";
 import { buildStroke, type DrawKind } from "../lib/board.geometry";
 import type { BoardTool } from "../ui/board-toolbar";
 
-const PLACED_TOOLS = new Set<BoardTool>(["text", "math"]);
+const PLACED_TOOLS = new Set<BoardTool>(["text", "math", "code"]);
 const MIN_POINT_DISTANCE = 2;
 
 export interface UseBoardDrawingInit {
@@ -73,6 +73,7 @@ export function useBoardDrawing({
     const point = toBoardPoint(event);
 
     if (PLACED_TOOLS.has(tool)) {
+      event.preventDefault();
       onPlacePoint(point);
       return;
     }

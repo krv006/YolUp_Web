@@ -42,7 +42,8 @@
     "toolbarAria": "Board tools",
     "colorLabel": "Color {{value}}",
     "widthLabel": "Thickness {{value}}",
-    "styleAria": "Colour and width"
+    "styleAria": "Colour and width",
+    "code": "Code"
   },
   "inline": {
     "cancel": "Cancel",
@@ -58,7 +59,8 @@
     "underline": "Underline",
     "bulletList": "Bulleted list",
     "numberedList": "Numbered list",
-    "formatAria": "Text formatting"
+    "formatAria": "Text formatting",
+    "code": "Code"
   },
   "eraseDialog": {
     "title": "Delete element",
@@ -213,5 +215,13 @@
     },
     "liveLesson": "Live lesson",
     "menu": "Actions"
+  },
+  "code": {
+    "language": "Programming language",
+    "detected": "Auto · {{language}}",
+    "counter": "{{count}}/{{max}}",
+    "aria": "Write code on the board",
+    "placeholder": "Type code…",
+    "hint": "Tab — 4 spaces · Shift+Tab — outdent · Ctrl+Enter — add"
   }
 }

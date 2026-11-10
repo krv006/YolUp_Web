@@ -42,7 +42,8 @@
     "toolbarAria": "Инструменты доски",
     "colorLabel": "Цвет {{value}}",
     "widthLabel": "Толщина {{value}}",
-    "styleAria": "Цвет и толщина"
+    "styleAria": "Цвет и толщина",
+    "code": "Код"
   },
   "inline": {
     "cancel": "Отмена",
@@ -58,7 +59,8 @@
     "underline": "Подчёркнутый",
     "bulletList": "Маркированный список",
     "numberedList": "Нумерованный список",
-    "formatAria": "Форматирование текста"
+    "formatAria": "Форматирование текста",
+    "code": "Код"
   },
   "eraseDialog": {
     "title": "Удалить элемент",
@@ -213,5 +215,13 @@
     },
     "liveLesson": "Онлайн-урок",
     "menu": "Действия"
+  },
+  "code": {
+    "language": "Язык программирования",
+    "detected": "Авто · {{language}}",
+    "counter": "{{count}}/{{max}}",
+    "aria": "Написать код на доске",
+    "placeholder": "Напишите код…",
+    "hint": "Tab — 4 пробела · Shift+Tab — убрать отступ · Ctrl+Enter — добавить"
   }
 }

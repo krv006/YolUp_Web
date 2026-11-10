@@ -7,6 +7,7 @@ export const BOARD_TEXT_SIZE = 22;
 
 export const BOARD_SIZE_LIMITS = { min: 12, max: 48 } as const;
 export const CODE_TEXT_SIZE = 20;
+export const CODE_TEXT_COLOR = "#1c1e3a";
 export const CODE_MAX_CHARS = 6000;
 export const DEFAULT_CODE_LANGUAGES = [
   { id: "auto", label: "Avto" },
