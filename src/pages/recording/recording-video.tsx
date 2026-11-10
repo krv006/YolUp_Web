@@ -1,6 +1,8 @@
 import { useRef, useState } from "react";
 import { Pause, Play, Volume1, Volume2, VolumeX } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@/modules/auth";
+import { FloatingWatermark } from "@/shared/ui/floating-watermark";
 
 export interface RecordingVideoProps {
   src: string;
@@ -21,7 +23,9 @@ function clock(seconds: number): string {
 export function RecordingVideo({ src, poster, variant = "default" }: RecordingVideoProps) {
   const { t } = useTranslation("lesson");
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { user } = useAuth();
   const mobile = variant === "mobile";
+  const watermark = `@${user?.username || user?.name || "YolUp"} · YolUp`;
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -93,6 +97,8 @@ export function RecordingVideo({ src, poster, variant = "default" }: RecordingVi
         }}
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
       />
+
+      <FloatingWatermark label={watermark} />
 
       {!playing ? (
         <button

@@ -1,30 +1,30 @@
 {
   "selector": {
-    "label": "Farzand",
-    "noChild": "Farzand ulanmagan"
+    "label": "O‘quvchi",
+    "noChild": "O‘quvchi ulanmagan"
   },
   "dashboard": {
-    "loading": "Ota-ona paneli yuklanmoqda",
+    "loading": "Kuzatuvchi paneli yuklanmoqda",
     "loadError": "Ma'lumotlarni yuklab bo'lmadi",
     "retry": "Qayta urinish",
-    "noChildTitle": "Hali farzand biriktirilmagan",
-    "noChildDescription": "Farzandingiz hisobini ulaganingizdan so'ng bu yerda uning davomati, darslari va uy vazifalari ko'rinadi. Ulash uchun farzandingizdan taklif kodini so'rang.",
-    "noChildAction": "Farzandni ulash",
-    "eyebrow": "OTA-ONA KABINETI",
+    "noChildTitle": "Hali o‘quvchi biriktirilmagan",
+    "noChildDescription": "O‘quvchingiz hisobini ulaganingizdan so'ng bu yerda uning davomati, darslari va uy vazifalari ko'rinadi. Ulash uchun o‘quvchingizdan taklif kodini so'rang.",
+    "noChildAction": "O‘quvchini ulash",
+    "eyebrow": "KUZATUVCHI KABINETI",
     "greeting": "Xayrli tong, {{name}}! 👋",
     "subtitleWithChild": "{{name}}ning ta'lim jarayoni.",
-    "subtitleNoChild": "Farzandingizning ta'lim jarayonini kuzatib boring.",
+    "subtitleNoChild": "O‘quvchingizning ta'lim jarayonini kuzatib boring.",
     "recentActivityEyebrow": "SO'NGGI FAOLLIK",
     "attendanceTitle": "Davomat",
     "allAttendance": "Barcha davomat",
-    "emptyAttendance": "Tanlangan farzand uchun davomat topilmadi."
+    "emptyAttendance": "Tanlangan o‘quvchi uchun davomat topilmadi."
   },
   "children": {
-    "loading": "Farzandlar yuklanmoqda",
-    "loadError": "Farzandlar ro'yxatini yuklab bo'lmadi",
+    "loading": "O‘quvchilar yuklanmoqda",
+    "loadError": "O‘quvchilar ro'yxatini yuklab bo'lmadi",
     "retry": "Qayta urinish",
     "eyebrow": "OILA PROFILI",
-    "title": "Farzandlarim",
+    "title": "O‘quvchilarim",
     "subtitle": "Biriktirilgan o'quvchi hisoblari va maxfiylik ruxsatlari.",
     "linkChild": "O'quvchini ulash",
     "createChild": "Bola hisobi",
@@ -33,7 +33,7 @@
     "lessonsUnit": "dars",
     "minutesUnit": "daqiqa",
     "lastActivity": "So'nggi faollik",
-    "emptyTitle": "Farzand hali ulanmagan",
+    "emptyTitle": "O‘quvchi hali ulanmagan",
     "emptyDescription": "O'quvchi kodini kiriting yoki yangi hisob yarating.",
     "consentEyebrow": "MAXFIYLIK",
     "consentTitle": "{{name}} uchun ruxsatlar",
@@ -76,7 +76,7 @@
     "genericError": "Xatolik",
     "loginHistoryStudentFallback": "O'quvchi",
     "loginHistoryTitle": "{{name}} — kirishlar tarixi",
-    "loginHistoryDescription": "Farzandingiz hisobiga qaysi qurilma va IP'dan kirilgani."
+    "loginHistoryDescription": "O‘quvchingiz hisobiga qaysi qurilma va IP'dan kirilgani."
   },
   "attendance": {
     "loading": "Davomat yuklanmoqda",
@@ -85,7 +85,7 @@
     "eyebrow": "KUZATUV",
     "title": "Davomat tarixi",
     "subtitleWithChild": "{{name}}ning darsga kirish va chiqish vaqtlari.",
-    "subtitleNoChild": "Farzandingizning davomat ma'lumotlari.",
+    "subtitleNoChild": "O‘quvchingizning davomat ma'lumotlari.",
     "report": "Hisobot",
     "searchPlaceholder": "Dars yoki o'quvchini qidirish",
     "recordsCount": "{{count}} ta yozuv",
@@ -98,7 +98,7 @@
     "openCheckingAria": "Tekshiruv holatini ochish",
     "checkError": "Tekshiruv xatosi",
     "openErrorAria": "Xatolik tafsilotini ochish",
-    "noChildTitle": "Farzand tanlanmagan",
+    "noChildTitle": "O‘quvchi tanlanmagan",
     "noChildDescription": "Avval o'quvchi hisobini ulang.",
     "loading": "Vazifalar yuklanmoqda",
     "loadError": "Vazifalarni yuklab bo'lmadi",
@@ -110,7 +110,7 @@
     "resultDialogTitle": "{{name}} — tekshiruv natijasi"
   },
   "report": {
-    "noChildTitle": "Farzand tanlanmagan",
+    "noChildTitle": "O‘quvchi tanlanmagan",
     "noChildDescription": "Avval o'quvchi hisobini ulang.",
     "loading": "Reyting yuklanmoqda",
     "eyebrow": "REYTING",
@@ -121,7 +121,7 @@
   "attendanceTable": {
     "empty": "Davomat yozuvi topilmadi.",
     "students": "{{count}} o‘quvchi",
-    "parentNotified": "Ota-onaga xabar",
+    "parentNotified": "Kuzatuvchiga xabar",
     "exits": "{{count}} chiqish",
     "focused": "Chalg‘imagan",
     "student": "O‘quvchi",
@@ -135,10 +135,10 @@
   },
   "focusJournal": {
     "noExits": "Chiqmagan",
-    "alertTitle": "Chegaradan oshgan — ota-onaga xabar berilgan",
+    "alertTitle": "Chegaradan oshgan — kuzatuvchiga xabar berilgan",
     "exits": "{{count}} chiqish",
     "title": "Fokus jurnali",
-    "alert": "Chiqishlar soni chegaradan oshgan — ota-onaga xabar yuborilgan.",
+    "alert": "Chiqishlar soni chegaradan oshgan — kuzatuvchiga xabar yuborilgan.",
     "exitsLabel": "chiqish",
     "awayLabel": "jami yo‘q",
     "longestLabel": "eng uzun",
@@ -148,25 +148,25 @@
   "shell": {
     "nav": {
       "dashboard": "Asosiy",
-      "children": "Farzandlar",
+      "children": "O‘quvchilar",
       "attendance": "Davomat",
       "homework": "Vazifalar",
       "results": "Natijalar"
     },
-    "role": "Ota-ona",
+    "role": "Kuzatuvchi",
     "openAccount": "Profil va sozlamalar",
-    "navLabel": "Ota-ona bo‘limlari"
+    "navLabel": "Kuzatuvchi bo‘limlari"
   },
   "switcher": {
-    "eyebrow": "FARZAND",
+    "eyebrow": "O‘QUVCHI",
     "groups": "{{count}} guruh",
-    "others": "+{{count}} farzand",
-    "menuTitle": "FARZANDNI TANLANG",
+    "others": "+{{count}} o‘quvchi",
+    "menuTitle": "O‘QUVCHINI TANLANG",
     "pending": "Kutilmoqda",
     "requestSent": "so‘rov yuborilgan",
-    "add": "Farzand qo‘shish",
-    "manage": "Farzandlarni boshqarish",
-    "open": "Farzandni tanlash"
+    "add": "O‘quvchi qo‘shish",
+    "manage": "O‘quvchilarni boshqarish",
+    "open": "O‘quvchini tanlash"
   },
   "home": {
     "datePattern": "EEEE, d-MMMM",
@@ -181,7 +181,7 @@
       "night": "Xayrli tun, {{name}}!"
     },
     "welcome": "Xush kelibsiz, {{name}}!",
-    "connectSubtitle": "Boshlash uchun farzandingizni ulang",
+    "connectSubtitle": "Boshlash uchun o‘quvchingizni ulang",
     "hero": {
       "todayChip": "Bugun · {{time}}",
       "todayTitle": "{{name}} bugun {{count}} ta darsda",
@@ -271,18 +271,18 @@
     "offline": "Internet yo‘q. Oxirgi ma’lumotlar: {{time}} — yangilanmaydi",
     "serverError": "Server bilan aloqa yo‘q — ma’lumotlar yuklanmadi.",
     "connect": {
-      "title": "Farzandingizni ulang",
-      "description": "Davomat, vazifalar, mock natijalar va xavfsizlikni bir joyda kuzatish uchun farzand hisobini ulang yoki yangisini yarating.",
+      "title": "O‘quvchingizni ulang",
+      "description": "Davomat, vazifalar, mock natijalar va xavfsizlikni bir joyda kuzatish uchun o‘quvchi hisobini ulang yoki yangisini yarating.",
       "link": "Mavjud o‘quvchini ulash",
       "create": "Yangi bola hisobi",
       "step": "{{n}}-qadam",
       "steps": [
         {
           "title": "So‘rov yuboring",
-          "description": "Farzand login yoki FK-kodini kiriting"
+          "description": "O‘quvchi login yoki FK-kodini kiriting"
         },
         {
-          "title": "Farzand tasdiqlaydi",
+          "title": "O‘quvchi tasdiqlaydi",
           "description": "So‘rov uning ilovasida chiqadi"
         },
         {
@@ -295,20 +295,20 @@
       "chip": "Kutilmoqda · {{time}}",
       "title": "So‘rov {{name}}ga yuborildi",
       "description": "@{{username}} so‘rovni ilovada tasdiqlashi bilan davomat va natijalar shu yerda chiqadi.",
-      "howTitle": "Farzand qanday tasdiqlaydi?",
+      "howTitle": "O‘quvchi qanday tasdiqlaydi?",
       "how": [
         "YolUp’ga o‘z logini bilan kiradi",
-        "Suhbatlar → «+» → Ota-ona so‘rovlari",
+        "Suhbatlar → «+» → Kuzatuvchi so‘rovlari",
         "«Tasdiqlash» tugmasini bosadi"
       ],
-      "addAnother": "Yana farzand qo‘shish",
-      "addAnotherHint": "Boshqa farzand hisobini ulang"
+      "addAnother": "Yana o‘quvchi qo‘shish",
+      "addAnotherHint": "Boshqa o‘quvchi hisobini ulang"
     }
   },
   "family": {
     "eyebrow": "Oila profili · {{linked}} ta ulangan",
     "eyebrowPending": "Oila profili · {{linked}} ta ulangan, {{pending}} ta kutilmoqda",
-    "title": "Farzandlarim",
+    "title": "O‘quvchilarim",
     "link": "O‘quvchini ulash",
     "create": "Bola hisobi",
     "selected": "Tanlangan",
@@ -327,16 +327,16 @@
     "choose": "Tanlash",
     "pending": "@{{username}} tasdiqlashini kutyapmiz",
     "addMore": {
-      "title": "Yana farzand qo‘shish",
+      "title": "Yana o‘quvchi qo‘shish",
       "description": "Mavjud o‘quvchini login yoki FK-kod orqali ulang yoki yangi bola hisobini yarating",
       "action": "Qo‘shish"
     },
     "table": {
-      "titleWeek": "Bu hafta — farzandlar kesimida",
-      "titleMonth": "Bu oy — farzandlar kesimida",
+      "titleWeek": "Bu hafta — o‘quvchilar kesimida",
+      "titleMonth": "Bu oy — o‘quvchilar kesimida",
       "week": "Hafta",
       "month": "Oy",
-      "child": "Farzand",
+      "child": "O‘quvchi",
       "attendance": "Davomat",
       "homework": "Vazifalar",
       "score": "O‘rtacha ball",
@@ -347,8 +347,8 @@
     "eyebrowBase": "Oila profili"
   },
   "profile": {
-    "breadcrumb": "Farzandlarim",
-    "title": "Farzand profili",
+    "breadcrumb": "O‘quvchilarim",
+    "title": "O‘quvchi profili",
     "role": "O‘quvchi",
     "groupsChip": "{{count}} guruh",
     "attendanceChip": "{{percent}}% davomat",
@@ -381,7 +381,7 @@
     },
     "online": "Onlayn",
     "unlink": {
-      "action": "Farzandni uzish",
+      "action": "O‘quvchini uzish",
       "text": "Hisob o‘chmaydi, faqat sizdan ajratiladi",
       "title": "{{name}}ni uzasizmi?",
       "description": "{{name}}ning davomati, natijalari va bildirishnomalari sizga ko‘rinmay qoladi. Bergan ruxsatlaringiz ham o‘chadi. Qayta ulash uchun yangi so‘rov yuborish kerak bo‘ladi.",
@@ -392,10 +392,10 @@
     }
   },
   "addChild": {
-    "title": "Farzand qo‘shish",
+    "title": "O‘quvchi qo‘shish",
     "description": "Qulay usulni tanlang",
     "linkTitle": "Mavjud o‘quvchini ulash",
-    "linkText": "Farzandda YolUp hisobi bor bo‘lsa — login yoki FK-kod orqali",
+    "linkText": "O‘quvchida YolUp hisobi bor bo‘lsa — login yoki FK-kod orqali",
     "createTitle": "Yangi bola hisobi",
     "createText": "Login va vaqtinchalik parol yaratamiz, hisob sizga ulanadi",
     "cancel": "Bekor qilish",
@@ -403,19 +403,19 @@
   },
   "linkChild": {
     "title": "O‘quvchini ulash",
-    "description": "Farzandning login (username) yoki FK-… taklif kodini kiriting",
+    "description": "O‘quvchining login (username) yoki FK-… taklif kodini kiriting",
     "label": "Login yoki taklif kodi",
     "placeholder": "Masalan: ali_valiyev yoki FK-8K2Q",
-    "hint": "Farzandingiz YolUp’ga qaysi login bilan kirsa, shuni yozing",
+    "hint": "O‘quvchingiz YolUp’ga qaysi login bilan kirsa, shuni yozing",
     "notFound": "Bunday login yoki kod topilmadi. Harflarni tekshiring",
-    "notFoundNote": "Loginni farzandingizdan so‘rang — u hisob sozlamalarida @ belgisi bilan ko‘rinadi",
+    "notFoundNote": "Loginni o‘quvchingizdan so‘rang — u hisob sozlamalarida @ belgisi bilan ko‘rinadi",
     "cancel": "Bekor qilish",
     "submit": "So‘rov yuborish",
     "retry": "Qayta urinish",
     "sentTitle": "So‘rov yuborildi!",
-    "sentText": "Farzandingiz ilovada so‘rovni tasdiqlashi bilan uning ma’lumotlari sizda paydo bo‘ladi.",
-    "linkedTitle": "Farzand allaqachon ulangan",
-    "linkedText": "Bu farzandning ma’lumotlari sizda allaqachon ko‘rinadi.",
+    "sentText": "O‘quvchingiz ilovada so‘rovni tasdiqlashi bilan uning ma’lumotlari sizda paydo bo‘ladi.",
+    "linkedTitle": "O‘quvchi allaqachon ulangan",
+    "linkedText": "Bu o‘quvchining ma’lumotlari sizda allaqachon ko‘rinadi.",
     "chipPending": "Kutilmoqda",
     "chipLinked": "Ulangan",
     "more": "Yana qo‘shish",
@@ -433,7 +433,7 @@
     "regenerate": "Yangi parol",
     "copy": "Nusxa olish",
     "copied": "Nusxa olindi",
-    "info": "Farzand birinchi kirishda parolni o‘zi almashtiradi",
+    "info": "O‘quvchi birinchi kirishda parolni o‘zi almashtiradi",
     "cancel": "Bekor qilish",
     "submit": "Hisob yaratish",
     "readyTitle": "Hisob tayyor!",
@@ -443,7 +443,7 @@
     "done": "Tayyor",
     "printTitle": "YolUp — {{username}}",
     "printHeading": "YolUp hisobi: {{name}}",
-    "printSubtitle": "Farzandingiz shu login va parol bilan kiradi.",
+    "printSubtitle": "O‘quvchingiz shu login va parol bilan kiradi.",
     "share": "Ma’lumotlarni ulashish",
     "free": "Login bo‘sh — ishlatish mumkin",
     "invalid": "Faqat lotin harflari, raqamlar va _ . belgilari",
@@ -521,7 +521,7 @@
       "attention": "Diqqat",
       "exits": "Chalg‘ish",
       "close": "Yopish",
-      "notJoined": "Farzandingiz bu darsga kirmagan.",
+      "notJoined": "O‘quvchingiz bu darsga kirmagan.",
       "upcoming": "Dars {{time}} da boshlanadi.",
       "lateReason": "Kechikish sababi",
       "missedReason": "Qolish sababi",
@@ -544,7 +544,7 @@
     },
     "empty": {
       "title": "Hali darslar bo‘lmagan",
-      "text": "Farzandingiz birinchi darsga qatnashgach, kirish-chiqish vaqtlari va fokus shu yerda chiqadi."
+      "text": "O‘quvchingiz birinchi darsga qatnashgach, kirish-chiqish vaqtlari va fokus shu yerda chiqadi."
     },
     "notFound": {
       "title": "Hech narsa topilmadi",
@@ -627,7 +627,7 @@
     },
     "tip": {
       "title": "Xavfsizlik maslahati",
-      "text": "Notanish qurilma ko‘rsangiz, farzandingiz bilan gaplashing va parolini almashtiring."
+      "text": "Notanish qurilma ko‘rsangiz, o‘quvchingiz bilan gaplashing va parolini almashtiring."
     },
     "detail": {
       "newTitle": "Yangi qurilmadan kirish",
@@ -639,7 +639,7 @@
       "location": "Joylashuv",
       "time": "Vaqt",
       "unknownLocation": "Joylashuv aniqlanmagan",
-      "warning": "Bu {{name}} bo‘lmasa, farzandingiz bilan gaplashib, parolini almashtiring",
+      "warning": "Bu {{name}} bo‘lmasa, o‘quvchingiz bilan gaplashib, parolini almashtiring",
       "close": "Yopish",
       "duration": "Davomiyligi",
       "session": "Sessiya",
@@ -653,7 +653,7 @@
     },
     "empty": {
       "title": "Hali kirishlar yo‘q",
-      "text": "Farzandingiz ilovaga kirganda qurilma, IP va vaqt shu yerda ko‘rinadi."
+      "text": "O‘quvchingiz ilovaga kirganda qurilma, IP va vaqt shu yerda ko‘rinadi."
     },
     "filtered": {
       "title": "Kirish topilmadi",
@@ -869,10 +869,10 @@
       "notifications": "Bildirishnomalar",
       "interface": "Interfeys",
       "security": "Xavfsizlik",
-      "children": "Farzandlar"
+      "children": "O‘quvchilar"
     },
     "profile": {
-      "children": "{{count}} farzand",
+      "children": "{{count}} o‘quvchi",
       "edit": "Tahrirlash",
       "photo": "Rasmni o‘zgartirish",
       "photoMenu": {
@@ -905,7 +905,7 @@
       "email": "Email xabarnomalar",
       "emailText": "Har bir bildirishnoma nusxasi emailga",
       "reminder": "Dars eslatmasi",
-      "reminderText": "Farzand darsidan oldin sizga xabar beramiz",
+      "reminderText": "O‘quvchi darsidan oldin sizga xabar beramiz",
       "when": "Qachon",
       "minutes": "{{count}} daqiqa oldin",
       "hours": "{{count}} soat oldin",
@@ -946,7 +946,7 @@
       "othersEnded": "Boshqa seanslar tugatildi"
     },
     "alerts": {
-      "title": "Farzand haqida ogohlantirish",
+      "title": "O‘quvchi haqida ogohlantirish",
       "notifyChildAbsent": {
         "title": "Darsga kelmasa yoki kechiksa",
         "text": "Dars boshlanib 10 daqiqa o‘tsa"
@@ -991,14 +991,14 @@
     },
     "unlinked": {
       "title": "{{name}} ulanishni uzdi",
-      "text": "{{name}} sizni ota-ona sifatida olib tashladi. Qayta ulash uchun yangi so‘rov yuboring.",
+      "text": "{{name}} sizni kuzatuvchi sifatida olib tashladi. Qayta ulash uchun yangi so‘rov yuboring.",
       "ok": "Tushunarli",
       "again": "Qayta so‘rov yuborish"
     }
   },
   "mobile": {
     "tabs": {
-      "children": "Farzandlar",
+      "children": "O‘quvchilar",
       "attendance": "Davomat",
       "home": "Asosiy",
       "homework": "Vazifalar",
@@ -1011,8 +1011,8 @@
       "night": "Xayrli tun 👋"
     },
     "switcher": {
-      "title": "Farzandni tanlang",
-      "subtitle": "Ko‘rsatkichlar shu farzand bo‘yicha",
+      "title": "O‘quvchini tanlang",
+      "subtitle": "Ko‘rsatkichlar shu o‘quvchi bo‘yicha",
       "selected": "{{name}} tanlandi — barcha bo‘limlar yangilandi",
       "requested": "@{{username}} · so‘rov yuborilgan"
     },
@@ -1026,7 +1026,7 @@
     },
     "connect": {
       "link": "Login yoki FK-… taklif kodi orqali",
-      "create": "Farzandingiz uchun login yarating",
+      "create": "O‘quvchingiz uchun login yarating",
       "how": "Qanday ishlaydi?"
     },
     "pending": {
@@ -1079,7 +1079,7 @@
       "resultTitle": "Mock natija"
     },
     "settings": {
-      "role": "Ota-ona · {{count}} farzand",
+      "role": "Kuzatuvchi · {{count}} o‘quvchi",
       "securityTitle": "Xavfsizlik — himoyalangan",
       "securityText": "Parol, faol sessiyalar · {{count}} qurilma",
       "info": "Profil ma’lumotlari",

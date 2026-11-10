@@ -167,8 +167,8 @@
     "matchesAi": "Matches AI",
     "comment": "Comment to the student",
     "commentPlaceholder": "Nice! Next time reduce the fraction fully.",
-    "shareParent": "Show the parent",
-    "shareParentHint": "The grade and comment appear in the parent app",
+    "shareParent": "Show the observer",
+    "shareParentHint": "The grade and comment appear in the observer app",
     "resubmit": "Return",
     "confirm": "Confirm",
     "studentComment": "Student's note",
@@ -229,8 +229,8 @@
     "draftBadge": "Draft",
     "filterDraftCount": "Drafts ({{count}})",
     "aiLoading": "Preparing...",
-    "remindParents": "Send to parents too",
-    "remindParentsHint": "Goes to the confirmed parents of students who have not submitted",
+    "remindParents": "Send to observers too",
+    "remindParentsHint": "Goes to the confirmed observers of students who have not submitted",
     "remindThrottleNote": "A reminder can be sent once every 10 minutes per assignment."
   },
   "messageCard": {
@@ -333,8 +333,8 @@
     "description": "{{count}} students get a notification in the app",
     "message": "Message",
     "defaultMessage": "“{{title}}” is due {{due}}. Please send your work.",
-    "parents": "Send to parents too",
-    "parentsHint": "Parents of students who haven't submitted get it as well",
+    "parents": "Send to observers too",
+    "parentsHint": "Observers of students who haven't submitted get it as well",
     "rate": "One reminder per assignment every 10 minutes.",
     "cancel": "Cancel",
     "submit": "Send"

@@ -52,7 +52,7 @@
   "enrollmentDialog": {
     "title": "Yangi muloqot",
     "description": "O'qituvchiga so'rov yuboring yoki ochiq kursga qo'shiling.",
-    "parentRequestsEyebrow": "OTA-ONA SO'ROVLARI",
+    "parentRequestsEyebrow": "KUZATUVCHI SO'ROVLARI",
     "wantsToLink": "profilga bog'lanmoqchi",
     "decline": "Rad etish",
     "approve": "Tasdiqlash",

@@ -28,12 +28,12 @@
     "openResult": "Result"
   },
   "parentList": {
-    "subtitle": "Exams in your child's groups. Results open once the exam is over.",
+    "subtitle": "Exams in your student's groups. Results open once the exam is over.",
     "resultTitle": "{{name}} — result",
     "hidden": "The result opens once the exam is over.",
-    "notInExam": "This exam doesn't belong to your child's group.",
-    "noChildTitle": "No child selected",
-    "noChildDescription": "Add a child first to see their exams."
+    "notInExam": "This exam doesn't belong to your student's group.",
+    "noChildTitle": "No student selected",
+    "noChildDescription": "Add a student first to see their exams."
   },
   "runner": {
     "loading": "Loading the exam",
@@ -319,7 +319,7 @@
     },
     "comment": "Teacher's note (optional)",
     "commentPlaceholder": "e.g. Develop your ideas more in Writing Task 2",
-    "commentHint": "The student and parent will see it with the result",
+    "commentHint": "The student and observer will see it with the result",
     "commentNeedsScore": "Enter a band for at least one section to save the note"
   },
   "results": {

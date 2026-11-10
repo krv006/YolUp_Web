@@ -246,7 +246,7 @@
     "password": "Temporary password",
     "copyPassword": "Copy the password",
     "passwordCopied": "Password copied",
-    "parentPhone": "Parent phone · optional",
+    "parentPhone": "Observer phone · optional",
     "createNote": "Send the login and password to the student. They change the password on first sign-in.",
     "createSubmit": "Create the account",
     "requestsTitle": "Join requests · {{count}}",
@@ -256,7 +256,7 @@
     "decline": "Decline",
     "acceptAll": "Accept ({{count}})",
     "close": "Close",
-    "parentFor": "Parent · for {{name}}",
+    "parentFor": "Observer · for {{name}}",
     "createAccountShort": "New student account",
     "inviteShort": "Invite link",
     "copy": "Copy"

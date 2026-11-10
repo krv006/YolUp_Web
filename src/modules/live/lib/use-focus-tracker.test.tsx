@@ -71,7 +71,7 @@ describe("useFocusTracker", () => {
     act(() => setHidden(true));
     await flush();
     expect(toastError).toHaveBeenCalledTimes(1);
-    expect(String(toastError.mock.calls[0][0])).toContain("ota-onangizga xabar berildi");
+    expect(String(toastError.mock.calls[0][0])).toContain("kuzatuvchingizga xabar berildi");
   });
 
   it("reports the return when the student comes back", async () => {

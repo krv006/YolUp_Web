@@ -28,12 +28,12 @@
     "openResult": "Natija"
   },
   "parentList": {
-    "subtitle": "Farzandingiz guruhlaridagi imtihonlar. Natija imtihon tugagach ochiladi.",
+    "subtitle": "O‘quvchingiz guruhlaridagi imtihonlar. Natija imtihon tugagach ochiladi.",
     "resultTitle": "{{name}} — natija",
     "hidden": "Natija imtihon tugagach ochiladi.",
-    "notInExam": "Bu imtihon farzandingizning guruhiga tegishli emas.",
-    "noChildTitle": "Farzand tanlanmagan",
-    "noChildDescription": "Imtihonlarni ko'rish uchun avval farzand qo'shing."
+    "notInExam": "Bu imtihon o‘quvchingizning guruhiga tegishli emas.",
+    "noChildTitle": "O‘quvchi tanlanmagan",
+    "noChildDescription": "Imtihonlarni ko'rish uchun avval o‘quvchi qo'shing."
   },
   "runner": {
     "loading": "Imtihon yuklanmoqda",
@@ -319,7 +319,7 @@
     },
     "comment": "O'qituvchi izohi (ixtiyoriy)",
     "commentPlaceholder": "Masalan: Writing Task 2 da fikrni rivojlantirish kerak",
-    "commentHint": "O'quvchi va ota-ona natijada ko'radi",
+    "commentHint": "O'quvchi va kuzatuvchi natijada ko'radi",
     "commentNeedsScore": "Izohni saqlash uchun kamida bitta bo'limga band kiriting"
   },
   "results": {

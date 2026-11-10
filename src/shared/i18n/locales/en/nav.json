@@ -2,11 +2,11 @@
   "roles": {
     "teacher": "Teacher",
     "student": "Student",
-    "parent": "Parent"
+    "parent": "Observer"
   },
   "parent": {
     "dashboard": "Overview",
-    "children": "Children",
+    "children": "Students",
     "attendance": "Attendance",
     "homework": "Homework",
     "exams": "Mock tests",
@@ -21,7 +21,7 @@
     "resizeHandle": "Resize the conversation panel",
     "teacherWorkspace": "Teacher workspace",
     "studentWorkspace": "Student workspace",
-    "parentWorkspace": "Parent workspace"
+    "parentWorkspace": "Observer workspace"
   },
   "titles": {
     "chat": "Chats",

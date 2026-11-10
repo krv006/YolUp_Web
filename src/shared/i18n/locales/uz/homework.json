@@ -167,8 +167,8 @@
     "matchesAi": "AI bilan mos",
     "comment": "O‘quvchiga izoh",
     "commentPlaceholder": "Yaxshi! Keyingi safar kasrni oxirigacha qisqartiring.",
-    "shareParent": "Ota-onaga ham ko‘rsatish",
-    "shareParentHint": "Baho va izoh ota-ona ilovasida chiqadi",
+    "shareParent": "Kuzatuvchiga ham ko‘rsatish",
+    "shareParentHint": "Baho va izoh kuzatuvchi ilovasida chiqadi",
     "resubmit": "Qayta topshirish",
     "confirm": "Tasdiqlash",
     "studentComment": "O‘quvchi izohi",
@@ -229,8 +229,8 @@
     "draftBadge": "Qoralama",
     "filterDraftCount": "Qoralama ({{count}})",
     "aiLoading": "Tayyorlanmoqda...",
-    "remindParents": "Ota-onalarga ham yuborish",
-    "remindParentsHint": "Topshirmagan o‘quvchilarning tasdiqlangan ota-onalariga boradi",
+    "remindParents": "Kuzatuvchilarga ham yuborish",
+    "remindParentsHint": "Topshirmagan o‘quvchilarning tasdiqlangan kuzatuvchilariga boradi",
     "remindThrottleNote": "Bir vazifaga 10 daqiqada bir marta eslatma yuborish mumkin."
   },
   "messageCard": {
@@ -333,8 +333,8 @@
     "description": "{{count}} ta o‘quvchiga ilovada bildirishnoma yuboriladi",
     "message": "Xabar",
     "defaultMessage": "“{{title}}” muddati {{due}} da tugaydi. Iltimos, javobingizni yuboring.",
-    "parents": "Ota-onalarga ham yuborish",
-    "parentsHint": "Topshirmaganlarning ota-onalariga ham boradi",
+    "parents": "Kuzatuvchilarga ham yuborish",
+    "parentsHint": "Topshirmaganlarning kuzatuvchilariga ham boradi",
     "rate": "Bir vazifaga 10 daqiqada bir marta eslatma yuborish mumkin.",
     "cancel": "Bekor qilish",
     "submit": "Yuborish"

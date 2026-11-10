@@ -9,6 +9,7 @@ import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 type Filter = "all" | SearchType;
 
@@ -208,6 +209,7 @@ export function WorkspaceSearchPage() {
                 key={hit.id}
                 avatar={{ name: hit.title, src: hit.avatarUrl }}
                 title={hit.title}
+                tag={<RoleTag role={hit.role} />}
                 hint={hit.subtitle}
                 onClick={() => navigate(hit.roomId ? routes.chat(hit.roomId) : routes.chats)}
               />
@@ -233,6 +235,7 @@ function ResultRow({
   tone,
   avatar,
   title,
+  tag,
   hint,
   onClick,
 }: {
@@ -240,6 +243,7 @@ function ResultRow({
   tone?: string;
   avatar?: { name: string; src: string | null };
   title: string;
+  tag?: React.ReactNode;
   hint: string;
   onClick?: () => void;
 }) {
@@ -257,7 +261,10 @@ function ResultRow({
         </span>
       )}
       <span className="flex min-w-0 flex-1 flex-col">
-        <strong className="truncate text-title text-ink">{title}</strong>
+        <span className="flex min-w-0 items-center gap-2">
+          <strong className="truncate text-title text-ink">{title}</strong>
+          {tag}
+        </span>
         <small className="truncate text-body-sm text-ink-secondary">{hint}</small>
       </span>
       <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />

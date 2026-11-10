@@ -52,7 +52,7 @@
   "enrollmentDialog": {
     "title": "Новое общение",
     "description": "Отправьте запрос учителю или присоединитесь к открытому курсу.",
-    "parentRequestsEyebrow": "ЗАПРОСЫ РОДИТЕЛЕЙ",
+    "parentRequestsEyebrow": "ЗАПРОСЫ НАБЛЮДАТЕЛЕЙ",
     "wantsToLink": "хочет привязаться к профилю",
     "decline": "Отклонить",
     "approve": "Подтвердить",

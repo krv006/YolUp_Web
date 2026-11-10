@@ -26,6 +26,7 @@ export interface ConversationParticipant {
   username: string;
   name: string;
   phone: string | null;
+  role?: string;
 }
 
 export type PresenceStatus = "online" | "offline";

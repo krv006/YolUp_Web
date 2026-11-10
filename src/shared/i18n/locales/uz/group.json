@@ -246,7 +246,7 @@
     "password": "Vaqtinchalik parol",
     "copyPassword": "Parolni nusxalash",
     "passwordCopied": "Parol nusxalandi",
-    "parentPhone": "Ota-ona telefoni · ixtiyoriy",
+    "parentPhone": "Kuzatuvchi telefoni · ixtiyoriy",
     "createNote": "Login va parolni o‘quvchiga yuboring. Birinchi kirishda u parolini o‘zgartiradi.",
     "createSubmit": "Hisob yaratish",
     "requestsTitle": "Qo‘shilish so‘rovlari · {{count}}",
@@ -256,7 +256,7 @@
     "decline": "Rad etish",
     "acceptAll": "Qabul qilish ({{count}})",
     "close": "Yopish",
-    "parentFor": "Ota-ona · {{name}} uchun",
+    "parentFor": "Kuzatuvchi · {{name}} uchun",
     "createAccountShort": "Yangi o‘quvchi hisobi",
     "inviteShort": "Taklif havolasi",
     "copy": "Nusxalash"

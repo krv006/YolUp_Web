@@ -15,6 +15,9 @@ import { formatNotificationTime } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
 import { useOpenNotificationLink } from "@/widgets/notification-link";
+import { TeacherNotifyDialog } from "@/widgets/teacher-notify-dialog";
+import { useAuth } from "@/modules/auth";
+import { ROLES } from "@/shared/constants";
 
 const GROUP_ORDER: NotificationGroupKey[] = ["today", "yesterday", "earlier"];
 
@@ -26,6 +29,9 @@ export function NotificationsPage() {
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
   const openLink = useOpenNotificationLink();
+  const { user } = useAuth();
+  const isTeacher = user?.role === ROLES.TEACHER;
+  const [composeOpen, setComposeOpen] = useState(false);
 
   const all = inbox.data?.items ?? [];
   const unreadCount = all.filter((item) => !item.isRead).length;
@@ -43,16 +49,31 @@ export function NotificationsPage() {
           backLabel={t("back")}
           onBack={() => navigate(-1)}
           action={
-            unreadCount ? (
-              <button
-                type="button"
-                className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:opacity-50"
-                aria-label={t("markAllRead")}
-                disabled={markAllRead.isPending}
-                onClick={() => markAllRead.mutate()}
-              >
-                <Icon name="done-all" size={22} />
-              </button>
+            isTeacher || unreadCount ? (
+              <span className="flex items-center gap-2">
+                {isTeacher ? (
+                  <button
+                    type="button"
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-brand text-on-action transition-colors hover:bg-brand-strong"
+                    aria-label={t("teacherSend.button")}
+                    title={t("teacherSend.button")}
+                    onClick={() => setComposeOpen(true)}
+                  >
+                    <Icon name="campaign" size={22} />
+                  </button>
+                ) : null}
+                {unreadCount ? (
+                  <button
+                    type="button"
+                    className="grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-ink transition-colors hover:bg-muted disabled:opacity-50"
+                    aria-label={t("markAllRead")}
+                    disabled={markAllRead.isPending}
+                    onClick={() => markAllRead.mutate()}
+                  >
+                    <Icon name="done-all" size={22} />
+                  </button>
+                ) : null}
+              </span>
             ) : undefined
           }
         />
@@ -153,6 +174,7 @@ export function NotificationsPage() {
           </section>
         ))}
       </div>
+      {isTeacher ? <TeacherNotifyDialog open={composeOpen} onOpenChange={setComposeOpen} /> : null}
     </main>
   );
 }

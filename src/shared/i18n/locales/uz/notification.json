@@ -82,5 +82,26 @@
     "attendance": "Davomat",
     "homework": "Vazifalar",
     "security": "Xavfsizlik"
+  },
+  "teacherSend": {
+    "button": "Xabar yuborish",
+    "title": "O‘quvchilarga xabar",
+    "description": "Xabar o‘quvchilarning bildirishnomalariga tushadi",
+    "group": "Guruh",
+    "groupPlaceholder": "Guruhni tanlang",
+    "audience": "Kimga",
+    "audienceAll": "Butun guruh ({{count}})",
+    "audienceSelected": "Tanlangan o‘quvchilar",
+    "selectedCount_one": "{{count}} ta tanlandi",
+    "selectedCount_other": "{{count}} ta tanlandi",
+    "noStudents": "Bu guruhda hali o‘quvchi yo‘q",
+    "parents": "Kuzatuvchilarga ham yuborish",
+    "parentsHint": "O‘quvchilarning tasdiqlangan kuzatuvchilariga ham boradi",
+    "text": "Xabar",
+    "textPlaceholder": "Masalan: ertangi dars soat 15:00 da boshlanadi",
+    "cancel": "Bekor qilish",
+    "submit": "Yuborish",
+    "sent_one": "Xabar {{count}} ta o‘quvchiga yuborildi",
+    "sent_other": "Xabar {{count}} ta o‘quvchiga yuborildi"
   }
 }

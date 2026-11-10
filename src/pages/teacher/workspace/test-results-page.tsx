@@ -11,7 +11,7 @@ import {
   useQuizQuestionStats,
   useStartAiMiniQuiz,
 } from "@/modules/quiz";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -284,34 +284,36 @@ export function TestResultsPage() {
             )}
           </section>
 
-          <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-5">
-            <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
-              <Icon name="auto-awesome" size={18} />
-              {t("results.aiTitle")}
-            </strong>
-            <p className="text-body-xs text-ink-secondary">{t("results.aiHint")}</p>
-            <button
-              type="button"
-              className="flex h-10 w-full items-center justify-center rounded-full bg-surface text-button text-brand transition-colors hover:bg-tint disabled:opacity-50"
-              disabled={!hardest.length || miniQuiz.isPending}
-              onClick={() =>
-                miniQuiz.mutate(
-                  {
-                    quizId: quizId as string,
-                    wrongQuestionIds: hardest.slice(0, 10).map((item) => item.questionId),
-                  },
-                  {
-                    onSuccess: () => {
-                      toast.success(t("results.aiStarted"));
-                      navigate(ROUTES.teacher.workspaceAi);
+          {FEATURES.aiAssistant ? (
+            <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-5">
+              <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
+                <Icon name="auto-awesome" size={18} />
+                {t("results.aiTitle")}
+              </strong>
+              <p className="text-body-xs text-ink-secondary">{t("results.aiHint")}</p>
+              <button
+                type="button"
+                className="flex h-10 w-full items-center justify-center rounded-full bg-surface text-button text-brand transition-colors hover:bg-tint disabled:opacity-50"
+                disabled={!hardest.length || miniQuiz.isPending}
+                onClick={() =>
+                  miniQuiz.mutate(
+                    {
+                      quizId: quizId as string,
+                      wrongQuestionIds: hardest.slice(0, 10).map((item) => item.questionId),
                     },
-                  }
-                )
-              }
-            >
-              {t("results.aiAction")}
-            </button>
-          </section>
+                    {
+                      onSuccess: () => {
+                        toast.success(t("results.aiStarted"));
+                        navigate(ROUTES.teacher.workspaceAi);
+                      },
+                    }
+                  )
+                }
+              >
+                {t("results.aiAction")}
+              </button>
+            </section>
+          ) : null}
         </div>
       </div>
     </WorkspaceShell>

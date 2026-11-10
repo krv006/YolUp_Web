@@ -82,5 +82,26 @@
     "attendance": "Attendance",
     "homework": "Homework",
     "security": "Security"
+  },
+  "teacherSend": {
+    "button": "Send message",
+    "title": "Message to students",
+    "description": "The message arrives in the students’ notifications",
+    "group": "Group",
+    "groupPlaceholder": "Choose a group",
+    "audience": "To",
+    "audienceAll": "Whole group ({{count}})",
+    "audienceSelected": "Selected students",
+    "selectedCount_one": "{{count}} selected",
+    "selectedCount_other": "{{count}} selected",
+    "noStudents": "There are no students in this group yet",
+    "parents": "Send to observers too",
+    "parentsHint": "Approved observers of the students get it as well",
+    "text": "Message",
+    "textPlaceholder": "For example: tomorrow’s lesson starts at 15:00",
+    "cancel": "Cancel",
+    "submit": "Send",
+    "sent_one": "Message sent to {{count}} student",
+    "sent_other": "Message sent to {{count}} students"
   }
 }

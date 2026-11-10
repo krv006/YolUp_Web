@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMaterials } from "@/modules/material";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import {
@@ -17,7 +17,7 @@ import { useStudentWorkspace } from "./use-student-workspace";
 
 const DAY_MS = 86_400_000;
 
-const MODULES = [
+const ALL_MODULES = [
   { id: "tests", icon: "quiz", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.tests },
   { id: "assignments", icon: "assign", tone: "bg-accent-saffron-bg text-accent-saffron-fg", to: ROUTES.student.homework },
   { id: "mock", icon: "emoji-events", tone: "bg-accent-red-bg text-accent-red-fg", to: ROUTES.student.mockExams },
@@ -25,6 +25,8 @@ const MODULES = [
   { id: "analytics", icon: "bar-chart", tone: "bg-accent-green-bg text-accent-green-fg", to: ROUTES.student.workspaceAnalytics },
   { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.materials },
 ] as const;
+
+const MODULES = ALL_MODULES.filter((module) => module.id !== "ai" || FEATURES.aiAssistant);
 
 export function StudentWorkspacePage() {
   const { t } = useTranslation("student");

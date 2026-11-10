@@ -19,6 +19,7 @@ import {
 } from "@/shared/ui/mobile-page";
 import { ConversationRowBody } from "./conversation-row";
 import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-list";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 const LONG_PRESS_MS = 450;
 
@@ -230,7 +231,10 @@ export function MobileConversationList() {
                     <Avatar name={person.name} src={person.avatar} size="sm" className="[&_.avatar]:size-12" />
                     <span className="flex min-w-0 flex-1 flex-col">
                       <strong className="truncate text-title text-ink">{person.name}</strong>
-                      <small className="truncate text-body-sm text-ink-secondary">@{person.username}</small>
+                      <span className="flex min-w-0 items-center gap-2">
+                        <small className="truncate text-body-sm text-ink-secondary">@{person.username}</small>
+                        <RoleTag role={person.role} />
+                      </span>
                     </span>
                     <Icon name="more" size={22} className="shrink-0 text-ink-secondary" />
                   </button>

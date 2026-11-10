@@ -10,6 +10,7 @@ import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import type { Conversation } from "@/shared/types";
 import { ConversationRowBody } from "./conversation-row";
 import { CONVERSATION_FILTERS, useConversationList } from "./use-conversation-list";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 
 export function ConversationListPanel() {
@@ -201,9 +202,10 @@ export function ConversationListPanel() {
                 <Avatar name={person.name} src={person.avatar} size="sm" className="[&_.avatar]:size-10" />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-title-sm text-ink">{person.name}</strong>
-                  <small className="truncate text-body-xs text-ink-tertiary">
-                    @{person.username}
-                  </small>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <small className="truncate text-body-xs text-ink-tertiary">@{person.username}</small>
+                    <RoleTag role={person.role} />
+                  </span>
                 </span>
                 {person.roomId ? (
                   <Icon name="chevron-right" size={18} className="shrink-0 text-icon-tertiary" />

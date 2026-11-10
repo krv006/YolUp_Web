@@ -2,11 +2,11 @@
   "roles": {
     "teacher": "Учитель",
     "student": "Ученик",
-    "parent": "Родитель"
+    "parent": "Наблюдатель"
   },
   "parent": {
     "dashboard": "Главная",
-    "children": "Дети",
+    "children": "Ученики",
     "attendance": "Посещаемость",
     "homework": "Задания",
     "exams": "Мок-тесты",
@@ -21,7 +21,7 @@
     "resizeHandle": "Изменить ширину панели чатов",
     "teacherWorkspace": "Рабочее пространство учителя",
     "studentWorkspace": "Рабочее пространство ученика",
-    "parentWorkspace": "Кабинет родителя"
+    "parentWorkspace": "Кабинет наблюдателя"
   },
   "titles": {
     "chat": "Чаты",

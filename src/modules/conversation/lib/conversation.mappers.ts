@@ -28,6 +28,7 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
           username: other.username,
           name: [other.first_name, other.last_name].filter(Boolean).join(" ") || other.username,
           phone: other.phone ?? null,
+          role: other.role,
         }
       : null,
     directStatus: dto.direct_status ?? null,
