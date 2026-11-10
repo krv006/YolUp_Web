@@ -70,13 +70,14 @@ export interface LessonRequestDto {
   recurrence?: LessonRecurrenceDto;
 }
 
-export type RecordingStatusDto = "recording" | "merging" | "completed" | "failed";
+export type RecordingStatusDto = "pending" | "recording" | "merging" | "converting" | "completed" | "failed";
 
 export interface LessonRecordingDto {
   lesson_id?: string;
   title?: string | null;
   status?: RecordingStatusDto | null;
   ready?: boolean | null;
+  post_to_chat?: boolean | null;
   created_at?: string | null;
   ended_at?: string | null;
   error?: string | null;

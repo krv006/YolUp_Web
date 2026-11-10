@@ -52,18 +52,22 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
       ? t("recording.recordingTitle")
       : recording?.status === "failed"
         ? t("recording.failedTitle")
-        : recording
-          ? t("recording.mergingTitle")
-          : t("recording.noneTitle");
+        : recording?.status === "converting"
+          ? t("recording.convertingTitle")
+          : recording
+            ? t("recording.mergingTitle")
+            : t("recording.noneTitle");
   const pendingNote =
     recording?.error ??
     (recording?.status === "recording"
       ? t("recording.recording")
       : recording?.status === "failed"
         ? t("recording.failed")
-        : recording
-          ? t("recording.mobileMerging")
-          : t("recording.none"));
+        : recording?.status === "converting"
+          ? t("recording.converting")
+          : recording
+            ? t("recording.mobileMerging")
+            : t("recording.none"));
 
   async function downloadPdf() {
     try {
@@ -225,7 +229,7 @@ export function RecordingMobile({ lesson, recording, canManage, children }: Reco
             <Icon name="bolt" size={20} className="shrink-0" />
             {pendingNote}
           </p>
-          {recording && recording.status !== "failed" ? (
+          {recording && recording.status !== "failed" && recording.postToChat ? (
             <p className="mt-4 text-caption text-ink-secondary">{t("recording.mobileReadyNote")}</p>
           ) : null}
         </>

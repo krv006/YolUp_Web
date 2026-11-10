@@ -112,13 +112,13 @@ export const lessonApi = {
     await apiClient.delete(lessonEndpoints.detail(id));
     return id;
   },
-  async finish(id: string, recordingTitle?: string) {
-    const title = recordingTitle?.trim();
+  async finish(id: string, options: { recordingTitle?: string; postRecording?: boolean } = {}) {
+    const title = options.recordingTitle?.trim();
     return mapLessonDto(
-      await apiClient.post<LessonDto>(
-        lessonEndpoints.finish(id),
-        title ? { recording_title: title } : {}
-      )
+      await apiClient.post<LessonDto>(lessonEndpoints.finish(id), {
+        ...(title ? { recording_title: title } : {}),
+        ...(options.postRecording === undefined ? {} : { post_recording: options.postRecording }),
+      })
     );
   },
   async getRecording(id: string, options?: RequestOptions) {

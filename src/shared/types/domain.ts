@@ -206,7 +206,7 @@ export interface CourseStudentSearchResult extends DomainUser {
 
 export type LessonStatus = "scheduled" | "live" | "finished" | "cancelled";
 
-export type LessonRecordingStatus = "recording" | "merging" | "completed" | "failed";
+export type LessonRecordingStatus = "recording" | "merging" | "converting" | "completed" | "failed";
 
 export interface LessonRecordingChapter {
   seconds: number;
@@ -222,6 +222,7 @@ export interface BoardPagePreview {
 export interface LessonRecording {
   status: LessonRecordingStatus;
   ready: boolean;
+  postToChat: boolean;
   title: string;
   streamUrl: string | null;
   createdAt: string | null;

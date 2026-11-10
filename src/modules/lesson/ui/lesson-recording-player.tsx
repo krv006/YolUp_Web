@@ -56,7 +56,9 @@ export function LessonRecordingPlayer({
             ? t("recording.recording")
             : recording.status === "merging"
               ? t("recording.merging")
-              : t("recording.preparing")}
+              : recording.status === "converting"
+                ? t("recording.converting")
+                : t("recording.preparing")}
         </p>
       </div>
     );

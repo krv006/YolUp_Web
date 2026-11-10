@@ -32,6 +32,24 @@ function focusPercent(row: AttendanceRow): number | null {
   return row.focusPercent === null ? null : Math.round(row.focusPercent);
 }
 
+const RECORDING_TITLES = {
+  recording: "recordingTitle",
+  merging: "mergingTitle",
+  converting: "convertingTitle",
+  completed: "preparingTitle",
+  failed: "failedTitle",
+  none: "noneTitle",
+} as const;
+
+const RECORDING_NOTES = {
+  recording: "recording",
+  merging: "merging",
+  converting: "converting",
+  completed: "preparing",
+  failed: "preparing",
+  none: "none",
+} as const;
+
 export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesktopProps) {
   const { t } = useTranslation("lesson");
   const navigate = useNavigate();
@@ -116,26 +134,11 @@ export function RecordingDesktop({ lesson, recording, canManage }: RecordingDesk
               </span>
 
               <strong className="font-heading text-h2 text-ink">
-                {recording?.status === "recording"
-                  ? t("recording.recordingTitle")
-                  : recording?.status === "merging"
-                    ? t("recording.mergingTitle")
-                    : recording?.status === "failed"
-                      ? t("recording.failedTitle")
-                      : recording
-                        ? t("recording.preparingTitle")
-                        : t("recording.noneTitle")}
+                {t(`recording.${RECORDING_TITLES[recording?.status ?? "none"]}`)}
               </strong>
 
               <p className="max-w-125 text-body-sm text-ink-secondary">
-                {recording?.error ??
-                  (recording?.status === "recording"
-                    ? t("recording.recording")
-                    : recording?.status === "merging"
-                      ? t("recording.merging")
-                      : recording
-                        ? t("recording.preparing")
-                        : t("recording.none"))}
+                {recording?.error ?? t(`recording.${RECORDING_NOTES[recording?.status ?? "none"]}`)}
               </p>
 
               {pending ? (
