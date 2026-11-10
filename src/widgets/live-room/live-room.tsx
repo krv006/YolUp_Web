@@ -27,6 +27,7 @@ import {
   MonitorUp,
   MoreHorizontal,
   PhoneOff,
+  PictureInPicture2,
   UserRoundPlus,
   UserRoundX,
   Users,
@@ -58,6 +59,7 @@ import {
   MICROPHONE_SOURCE,
   requestScreenCapture,
   SCREEN_SHARE_SOURCE,
+  DISPLAY_CAPTURE_OPTIONS,
   useAllowShare,
   useAttentionCheck,
   useBanFromLesson,
@@ -76,6 +78,8 @@ import { Avatar } from "@/shared/ui/legacy";
 import { MobileLiveRoom } from "./mobile-live-room";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
 import { useScreenShareRequest } from "./use-screen-share-request";
+import { ShareControlWindow } from "./share-control-window";
+import { useDocumentPip } from "./use-document-pip";
 
 type SidePanel = "board" | "people" | null;
 
@@ -505,9 +509,13 @@ async function waitForVideoDimensions(track: MediaStreamTrack, timeoutMs = 500):
 function TeacherShareControl({
   screenStream,
   onStreamChange,
+  startedAt,
+  studentCount,
 }: {
   screenStream: MediaStream;
   onStreamChange: (stream: MediaStream) => void;
+  startedAt: Date;
+  studentCount: number;
 }) {
   const { t } = useTranslation("live");
   const room = useRoomContext();
@@ -516,6 +524,37 @@ function TeacherShareControl({
   const [starting, setStarting] = useState(false);
   const publishedRef = useRef<MediaStreamTrack[]>([]);
   const autoStartedRef = useRef(false);
+  const warnedRef = useRef(false);
+  const pip = useDocumentPip({ width: 380, height: 200, title: t("share.pipTitle") });
+  const { supported: pipSupported, open: openPip, close: closePip } = pip;
+
+  useEffect(() => {
+    if (!sharing) closePip();
+  }, [sharing, closePip]);
+
+  useEffect(() => {
+    if (!sharing) return undefined;
+    if (!pipSupported) {
+      if (!warnedRef.current) {
+        warnedRef.current = true;
+        toast.info(t("share.pipUnsupported"), { id: "share-pip-unsupported", duration: 10_000 });
+      }
+      return undefined;
+    }
+    const action = "enterpictureinpicture" as MediaSessionAction;
+    try {
+      navigator.mediaSession?.setActionHandler(action, () => void openPip().catch(() => undefined));
+    } catch {
+      return undefined;
+    }
+    return () => {
+      try {
+        navigator.mediaSession?.setActionHandler(action, null);
+      } catch {
+        return;
+      }
+    };
+  }, [sharing, pipSupported, openPip, t]);
 
   async function stopSharing() {
     const toStop = publishedRef.current;
@@ -562,6 +601,7 @@ function TeacherShareControl({
         }
         publishedRef.current = published;
         setSharing(true);
+        if (pipSupported && navigator.userActivation?.isActive) void openPip().catch(() => undefined);
       } catch {
         toPublish.forEach(({ track }) => track.stop());
         toast.error(t("share.failedToast"));
@@ -598,18 +638,45 @@ function TeacherShareControl({
   }
 
   return (
-    <button
-      type="button"
-      className="live-control live-control--share"
-      data-lk-enabled={sharing}
-      aria-pressed={sharing}
-      aria-label={t("share.teacherAria")}
-      title={t("share.teacherTitle")}
-      disabled={starting}
-      onClick={toggleShare}
-    >
-      <MonitorUp size={19} />
-    </button>
+    <>
+      <button
+        type="button"
+        className="live-control live-control--share"
+        data-lk-enabled={sharing}
+        aria-pressed={sharing}
+        aria-label={t("share.teacherAria")}
+        title={t("share.teacherTitle")}
+        disabled={starting}
+        onClick={toggleShare}
+      >
+        <MonitorUp size={19} />
+      </button>
+      {sharing && pipSupported && !pip.pipWindow ? (
+        <button
+          type="button"
+          className="live-control"
+          aria-label={t("share.pipOpen")}
+          title={t("share.pipOpenTitle")}
+          onClick={() => void openPip().catch(() => toast.error(t("share.pipFailed")))}
+        >
+          <PictureInPicture2 size={19} />
+        </button>
+      ) : null}
+      {pip.pipWindow ? (
+        <ShareControlWindow
+          pipWindow={pip.pipWindow}
+          startedAt={startedAt}
+          studentCount={studentCount}
+          controls={
+            <>
+              <TeacherMicControl />
+              <TeacherCameraControl />
+            </>
+          }
+          onStop={() => void stopSharing()}
+        />
+      ) : null}
+    </>
   );
 }
 
@@ -623,7 +690,12 @@ function StudentShareControl() {
     return (
       <TrackToggle
         source={Track.Source.ScreenShare}
-        captureOptions={{ audio: true, selfBrowserSurface: "exclude" }}
+        captureOptions={{
+          audio: true,
+          selfBrowserSurface: DISPLAY_CAPTURE_OPTIONS.selfBrowserSurface,
+          surfaceSwitching: DISPLAY_CAPTURE_OPTIONS.surfaceSwitching,
+          systemAudio: DISPLAY_CAPTURE_OPTIONS.systemAudio,
+        }}
         showIcon={false}
         className="live-control live-control--share"
         aria-label={t("share.studentAria")}
@@ -1117,7 +1189,14 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
             />
           )}
           {isTeacher ? (
-            screenStream && <TeacherShareControl screenStream={screenStream} onStreamChange={setScreenStream} />
+            screenStream && (
+              <TeacherShareControl
+                screenStream={screenStream}
+                onStreamChange={setScreenStream}
+                startedAt={lessonStartedAt}
+                studentCount={studentCount}
+              />
+            )
           ) : (
             <StudentShareControl />
           )}
