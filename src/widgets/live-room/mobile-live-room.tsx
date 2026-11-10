@@ -16,6 +16,7 @@ import {
   canPublishSource,
   MICROPHONE_SOURCE,
   SCREEN_SHARE_SOURCE,
+  DISPLAY_CAPTURE_OPTIONS,
 } from "@/modules/live";
 import type { Lesson } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
@@ -274,7 +275,12 @@ function ShareButton() {
   const share = useScreenShareRequest();
   const { enabled, pending, toggle } = useTrackToggle({
     source: Track.Source.ScreenShare,
-    captureOptions: { audio: true },
+    captureOptions: {
+      audio: true,
+      selfBrowserSurface: DISPLAY_CAPTURE_OPTIONS.selfBrowserSurface,
+      surfaceSwitching: DISPLAY_CAPTURE_OPTIONS.surfaceSwitching,
+      systemAudio: DISPLAY_CAPTURE_OPTIONS.systemAudio,
+    },
     onDeviceError: () => toast.error(t("share.failedToast")),
   });
   const label = t("room.mobileShare");
