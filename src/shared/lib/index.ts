@@ -15,9 +15,12 @@ export type { PDFDocumentProxy } from "./pdf";
 export {
   formatConversationTime,
   formatDateTime,
+  formatDayLabel,
   formatDayTime,
   formatDuration,
   formatLocalized,
   formatMessageTime,
+  formatNotificationTime,
   formatRelativeShort,
+  isSameLocalDay,
 } from "./date";

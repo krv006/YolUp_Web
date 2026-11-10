@@ -150,7 +150,6 @@
     "emptyTitle": "No messages yet",
     "emptyHint": "Be the first to say hi.",
     "emptyLockedHint": "Messages will appear here once the conversation is open.",
-    "today": "Today",
     "loadError": "Couldn't load messages",
     "loadErrorHint": "Please try again shortly.",
     "retry": "Retry",

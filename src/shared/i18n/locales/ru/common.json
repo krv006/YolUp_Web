@@ -39,6 +39,7 @@
     "watermark": "YolUp · только в платформе"
   },
   "date": {
+    "today": "Сегодня",
     "yesterday": "Вчера",
     "hourUnit": "ч",
     "minuteUnit": "м",

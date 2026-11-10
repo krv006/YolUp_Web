@@ -39,6 +39,7 @@
     "watermark": "YolUp · platform only"
   },
   "date": {
+    "today": "Today",
     "yesterday": "Yesterday",
     "hourUnit": "h",
     "minuteUnit": "m",

@@ -1,4 +1,4 @@
-import { format, isToday, isYesterday } from "date-fns";
+import { format, isSameDay, isToday, isYesterday } from "date-fns";
 import { enUS, ru, uz } from "date-fns/locale";
 import { i18n } from "@/shared/i18n";
 
@@ -17,6 +17,38 @@ export function formatConversationTime(value: string | number | Date): string {
 
 export function formatMessageTime(value: string | number | Date): string {
   return format(new Date(value), "HH:mm");
+}
+
+export function isSameLocalDay(a: string | number | Date, b: string | number | Date): boolean {
+  return isSameDay(new Date(a), new Date(b));
+}
+
+function dayPattern(month: "MMM" | "MMMM", withYear: boolean): string {
+  const year = withYear ? " yyyy" : "";
+  if (i18n.language === "en") return `${month} d${withYear ? "," : ""}${year}`;
+  if (i18n.language === "ru") return `d ${month}${year}`;
+  return `d-${month}${year}`;
+}
+
+function localizedDay(date: Date, month: "MMM" | "MMMM"): string {
+  const withYear = date.getFullYear() !== new Date().getFullYear();
+  const text = format(date, dayPattern(month, withYear), { locale: currentDateFnsLocale() });
+  return i18n.language === "uz" ? text.toLowerCase() : text;
+}
+
+export function formatDayLabel(value: string | number | Date): string {
+  const date = new Date(value);
+  if (isToday(date)) return i18n.t("common:date.today");
+  if (isYesterday(date)) return i18n.t("common:date.yesterday");
+  return localizedDay(date, "MMMM");
+}
+
+export function formatNotificationTime(value: string | number | Date): string {
+  const date = new Date(value);
+  const time = format(date, "HH:mm");
+  if (isToday(date)) return time;
+  if (isYesterday(date)) return `${i18n.t("common:date.yesterday")}, ${time}`;
+  return `${localizedDay(date, "MMM")}, ${time}`;
 }
 
 export function formatDateTime(value: string | number | Date): string {
