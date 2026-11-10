@@ -7,6 +7,7 @@ import { boxOfStroke, pickStroke } from "../lib/board-select";
 
 const HIT_PX = 10;
 const DRAG_START = 2;
+const NUDGE_COMMIT_MS = 400;
 
 export type BoardDrag =
   | { kind: "move"; id: string; dx: number; dy: number }
@@ -53,6 +54,12 @@ export function useBoardSelection({
   const [box, setBox] = useState<StrokeBox | null>(null);
   const dragRef = useRef<DragState | null>(null);
   const frameRef = useRef<number | null>(null);
+  const nudgeRef = useRef<{ id: string; stroke: StrokeDto; delta: [number, number]; timer: ReturnType<typeof setTimeout> } | null>(null);
+  const onMoveRef = useRef(onMove);
+
+  useEffect(() => {
+    onMoveRef.current = onMove;
+  }, [onMove]);
   const selected = selectedId ? (strokes.find((stroke) => stroke.id === selectedId) ?? null) : null;
   const current = active ? selected : null;
 
@@ -82,9 +89,34 @@ export function useBoardSelection({
   useEffect(
     () => () => {
       if (frameRef.current !== null) globalThis.cancelAnimationFrame(frameRef.current);
+      const pending = nudgeRef.current;
+      if (pending) {
+        clearTimeout(pending.timer);
+        nudgeRef.current = null;
+        const delta: [number, number] = [Math.round(pending.delta[0]), Math.round(pending.delta[1])];
+        if (delta[0] || delta[1]) onMoveRef.current(pending.id, delta);
+      }
     },
     []
   );
+
+  function nudge(dx: number, dy: number) {
+    if (!current) return;
+    const previous = nudgeRef.current?.id === current.id ? nudgeRef.current : null;
+    if (previous) clearTimeout(previous.timer);
+    const id = current.id;
+    const stroke = previous?.stroke ?? current;
+    const base = previous?.delta ?? [0, 0];
+    const delta = clampMove(stroke, [base[0] + dx, base[1] + dy], sheet);
+    setDrag({ kind: "move", id, dx: delta[0], dy: delta[1] });
+    const timer = setTimeout(() => {
+      nudgeRef.current = null;
+      setDrag(null);
+      const rounded: [number, number] = [Math.round(delta[0]), Math.round(delta[1])];
+      if (rounded[0] || rounded[1]) onMove(id, rounded);
+    }, NUDGE_COMMIT_MS);
+    nudgeRef.current = { id, stroke, delta, timer };
+  }
 
   const clear = useCallback(() => {
     setSelectedId(null);
@@ -185,6 +217,7 @@ export function useBoardSelection({
     drag,
     select: setSelectedId,
     clear,
+    nudge,
     handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp, onDoubleClick },
   };
 }

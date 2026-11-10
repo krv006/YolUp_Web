@@ -287,6 +287,36 @@ export function BoardPanel({
     onOpen: openEditor,
   });
 
+  const selectedStroke = selection.selected;
+  useEffect(() => {
+    if (!selectedStroke || placement || reasonOpen) return undefined;
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true'], [role='dialog']")) return;
+      const step = event.shiftKey ? 10 : 1;
+      const arrows: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0],
+        ArrowRight: [step, 0],
+        ArrowUp: [0, -step],
+        ArrowDown: [0, step],
+      };
+      if (arrows[event.key]) {
+        event.preventDefault();
+        selection.nudge(...arrows[event.key]);
+      } else if (event.key === "Escape") {
+        selection.clear();
+      } else if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        deleteSelected(selectedStroke.id);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        openEditor(selectedStroke);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
   function deleteSelected(strokeId: string) {
     selection.clear();
     if (source) return source.eraseStroke(sheet, strokeId);
