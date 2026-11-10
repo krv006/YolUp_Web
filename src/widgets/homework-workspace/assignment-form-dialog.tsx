@@ -3,7 +3,13 @@ import { Bold, Italic, Link2, List, Underline } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourses } from "@/modules/course";
-import { useCreateAssignment, useUpdateAssignment } from "@/modules/homework";
+import {
+  QuestionsEditor,
+  useAssignment,
+  useCreateAssignment,
+  useQuestionDrafts,
+  useUpdateAssignment,
+} from "@/modules/homework";
 import type { Assignment, AssignmentStatus, GradingScale } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
@@ -52,6 +58,18 @@ export function AssignmentFormDialog({
   const [announce, setAnnounce] = useState(true);
   const [allowLate, setAllowLate] = useState(true);
 
+  const detail = useAssignment(open && assignment ? assignment.id : null);
+  const questionsLocked =
+    Boolean(assignment) && ((detail.data?.submissions.length ?? 0) > 0 || (assignment?.submissionsCount ?? 0) > 0);
+  const questions = useQuestionDrafts([], { editing: Boolean(assignment), locked: questionsLocked });
+  const questionsKey = open ? (assignment ? (detail.data ? `edit:${detail.data.id}` : "") : `new:${courseId ?? ""}`) : "";
+  const [syncedQuestions, setSyncedQuestions] = useState("");
+  if (questionsKey && questionsKey !== syncedQuestions) {
+    setSyncedQuestions(questionsKey);
+    questions.reset(assignment ? (detail.data?.questions ?? []) : []);
+  }
+  if (!questionsKey && syncedQuestions) setSyncedQuestions("");
+
   const formKey = open ? `${assignment?.id ?? "new"}|${courseId ?? ""}` : "";
   const [syncedKey, setSyncedKey] = useState("");
 
@@ -67,6 +85,7 @@ export function AssignmentFormDialog({
     setMaxScore(String(assignment?.maxScore ?? 100));
     setAnnounce(assignment?.announceInChat ?? true);
     setAllowLate(assignment?.allowLate ?? true);
+    setAiCheck(assignment?.aiCheck ?? true);
     if (assignment?.dueAt) {
       const due = new Date(assignment.dueAt);
       setDate(
@@ -120,7 +139,13 @@ export function AssignmentFormDialog({
       toast.error(t("form.required"));
       return;
     }
+    if (!questions.validate()) {
+      toast.error(t("questions.fixIssues"));
+      return;
+    }
     const form = {
+      questions: questions.payload(),
+      aiCheck,
       courseId: course,
       title: title.trim(),
       description: body.trim(),
@@ -431,6 +456,13 @@ export function AssignmentFormDialog({
             </button>
           </div>
         </div>
+
+        <QuestionsEditor
+          value={questions.drafts}
+          onChange={questions.setDrafts}
+          locked={questions.locked}
+          showIssues={questions.showIssues}
+        />
 
         <div className="flex flex-col overflow-hidden rounded-2xl border border-line">
           {(

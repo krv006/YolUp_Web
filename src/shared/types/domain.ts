@@ -354,6 +354,30 @@ export interface AiResult {
   summary: AiSummary | null;
 }
 
+export type HomeworkQuestionType = "single" | "multiple" | "short" | "long";
+
+export interface HomeworkQuestion {
+  id: string;
+  type: HomeworkQuestionType;
+  text: string;
+  options: string[];
+  correct: number[] | null;
+  points: number;
+}
+
+export interface HomeworkAnswer {
+  questionId: string;
+  type: HomeworkQuestionType;
+  text: string;
+  options: string[];
+  points: number;
+  answer: number[] | string | null;
+  score: number | null;
+  correct: number[] | null;
+  isCorrect: boolean | null;
+  aiScore: number | null;
+}
+
 export interface Submission {
   id: string;
   assignmentId: string;
@@ -375,6 +399,7 @@ export interface Submission {
   comment: string;
   teacherComment: string;
   files: SubmissionFile[];
+  answers: HomeworkAnswer[];
 }
 
 export interface SubmissionFile {
@@ -419,6 +444,9 @@ export interface Assignment {
   maxScore: number;
   aiGroupSummary: AiGroupSummary | null;
   groupStats?: { average: number | null; rank: number | null; total: number | null } | null;
+  questions: HomeworkQuestion[];
+  hasQuestions: boolean;
+  questionsPoints: number;
 }
 
 export interface AiGroupSummary {

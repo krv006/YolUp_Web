@@ -1,4 +1,4 @@
-import type { AssignmentStatus, GradingScale, SubmissionStatus } from "@/shared/types";
+import type { AssignmentStatus, GradingScale, HomeworkQuestionType, SubmissionStatus } from "@/shared/types";
 
 import type { StrokeDto } from "@/modules/board";
 
@@ -57,6 +57,39 @@ export interface SubmissionDto {
   comment?: string | null;
   teacher_comment?: string | null;
   files?: Array<{ name?: string | null; size?: number | null; mime?: string | null; index?: number | null }> | null;
+  answers?: HomeworkAnswerDto[] | null;
+}
+
+export interface HomeworkQuestionDto {
+  id: string | number;
+  order?: number;
+  type: HomeworkQuestionType;
+  text: string;
+  options?: string[] | null;
+  correct?: number[] | null;
+  points?: number | null;
+}
+
+export interface HomeworkAnswerDto {
+  question_id: string | number;
+  order?: number;
+  type: HomeworkQuestionType;
+  text: string;
+  options?: string[] | null;
+  points?: number | null;
+  answer?: number[] | string | null;
+  score?: number | null;
+  correct?: number[] | null;
+  is_correct?: boolean | null;
+  ai_score?: number | null;
+}
+
+export interface HomeworkQuestionInput {
+  type: HomeworkQuestionType;
+  text: string;
+  options: string[];
+  correct: number[];
+  points: number;
 }
 
 export interface SubmissionReviewInput {
@@ -66,6 +99,12 @@ export interface SubmissionReviewInput {
   shareWithParent?: boolean;
   result?: Record<string, unknown> | null;
   teacherComment?: string;
+  answerScores?: Record<string, number>;
+}
+
+export interface HomeworkAnswerInput {
+  questionId: string;
+  answer: number[] | string;
 }
 
 export interface ResubmitRequestInput {
@@ -124,6 +163,9 @@ export interface AssignmentDto {
   lesson_starts_at?: string | null;
   grading?: GradingScale;
   max_score?: number | null;
+  questions?: HomeworkQuestionDto[] | null;
+  has_questions?: boolean;
+  questions_points?: number | null;
 }
 
 export interface HomeworkCourseReportDto {
@@ -170,4 +212,5 @@ export interface AssignmentFormInput {
   aiCheck?: boolean;
   grading?: GradingScale;
   maxScore?: number;
+  questions?: HomeworkQuestionInput[];
 }

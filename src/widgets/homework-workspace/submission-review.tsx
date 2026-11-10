@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  QuestionsResult,
   useDownloadSubmissionFile,
   useRecheckSubmission,
   useRequestResubmit,
@@ -49,9 +50,11 @@ export function SubmissionReview({
   const [resubmitComment, setResubmitComment] = useState("");
 
   const [syncedId, setSyncedId] = useState(current.id);
+  const [answerScores, setAnswerScores] = useState<Record<string, string>>({});
 
   if (syncedId !== current.id) {
     setSyncedId(current.id);
+    setAnswerScores({});
     setScore(initialScore(current, current.result?.overallScore ?? null));
     setComment(initialComment(current));
     setShareWithParent(current.shareWithParent);
@@ -283,6 +286,14 @@ export function SubmissionReview({
             </small>
           ) : null}
 
+          {current.answers.length ? (
+            <QuestionsResult
+              answers={current.answers}
+              scores={answerScores}
+              onScoreChange={(questionId, value) => setAnswerScores((scores) => ({ ...scores, [questionId]: value }))}
+            />
+          ) : null}
+
           {current.comment ? (
             <div className="flex flex-col gap-1.5">
               <span className="text-caption-strong text-ink-tertiary">{t("review.studentComment")}</span>
@@ -338,6 +349,11 @@ export function SubmissionReview({
                     gradeValue: grading === "none" ? undefined : score,
                     shareWithParent,
                     teacherComment: comment.trim(),
+                    answerScores: Object.fromEntries(
+                      Object.entries(answerScores)
+                        .filter(([, value]) => value.trim() !== "" && Number.isFinite(Number(value)))
+                        .map(([id, value]) => [id, Number(value)])
+                    ),
                   },
                 })
               }

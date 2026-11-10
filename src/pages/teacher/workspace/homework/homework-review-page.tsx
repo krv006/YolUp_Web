@@ -9,6 +9,7 @@ import {
   useRequestResubmit,
   useReviewSubmission,
   useSubmission,
+  QuestionsResult,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
@@ -54,6 +55,7 @@ export function HomeworkReviewPage() {
   const [resubmitOpen, setResubmitOpen] = useState(false);
   const [resultOpen, setResultOpen] = useState(false);
   const [loadedId, setLoadedId] = useState<string | null>(null);
+  const [answerScores, setAnswerScores] = useState<Record<string, string>>({});
   const isCompact = useIsCompact();
 
   const item = assignment.data ?? null;
@@ -69,6 +71,7 @@ export function HomeworkReviewPage() {
     setGrade(current.gradeValue ?? null);
     setComment(current.teacherComment ?? "");
     setShareWithParent(current.shareWithParent);
+    setAnswerScores({});
   }
 
   const index = rows.findIndex((row) => row.id === activeId);
@@ -94,10 +97,19 @@ export function HomeworkReviewPage() {
           grade: grade === null ? "" : String(grade),
           shareWithParent,
           teacherComment: comment.trim(),
+          answerScores: parseAnswerScores(answerScores),
         },
       })
       .then(() => move(1));
   }
+
+  const answersBlock = current?.answers.length ? (
+    <QuestionsResult
+      answers={current.answers}
+      scores={answerScores}
+      onScoreChange={(questionId, value) => setAnswerScores((scores) => ({ ...scores, [questionId]: value }))}
+    />
+  ) : null;
 
   const studentNote = current?.comment ? (
     <div className="flex flex-col gap-2">
@@ -272,6 +284,7 @@ export function HomeworkReviewPage() {
               onChange={(event) => setComment(event.target.value)}
             />
           </label>
+          {answersBlock ? <div className="mt-4">{answersBlock}</div> : null}
           {studentNote ? <div className="mt-4">{studentNote}</div> : null}
           {fileList ? <div className="mt-4">{fileList}</div> : null}
         </div>
@@ -510,6 +523,7 @@ export function HomeworkReviewPage() {
           ) : null}
         </div>
 
+        {answersBlock}
         {studentNote}
 
         <label className="flex flex-col gap-2">
@@ -594,5 +608,13 @@ function Chip({
     >
       {count === undefined ? label : `${label} · ${count}`}
     </button>
+  );
+}
+
+function parseAnswerScores(scores: Record<string, string>): Record<string, number> {
+  return Object.fromEntries(
+    Object.entries(scores)
+      .filter(([, value]) => value.trim() !== "" && Number.isFinite(Number(value)))
+      .map(([id, value]) => [id, Number(value)])
   );
 }

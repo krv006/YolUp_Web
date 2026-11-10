@@ -13,6 +13,10 @@ import {
   useSaveHomeworkDraft,
   useSubmission,
   useSubmitHomework,
+  answerInputs,
+  QuestionsAnswerForm,
+  QuestionsResult,
+  type AnswerDraft,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -94,6 +98,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState("");
+  const [answers, setAnswers] = useState<AnswerDraft>({});
   const touched = useRef(false);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -113,6 +118,8 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           : t("workspace.hwItem.daysLeft", { count: left });
   const html = assignment.body ? sanitizeHtml(assignment.body) : "";
   const serverDraft = draft.data?.comment ?? "";
+  const answerList = answerInputs(assignment.questions, answers);
+  const ready = files.length > 0 || answerList.length > 0;
 
   useEffect(() => {
     if (serverDraft && !touched.current) setComment(serverDraft);
@@ -138,7 +145,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
   function send() {
     setError(null);
     submit
-      .mutateAsync({ assignmentId: assignment.id, files, skillKey: assignment.skillKey, comment })
+      .mutateAsync({ assignmentId: assignment.id, files, skillKey: assignment.skillKey, comment, answers: answerList })
       .then(() => {
         if (serverDraft) saveDraftMutation.mutate("");
       })
@@ -215,8 +222,15 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
 
   const form = (
     <section className="flex flex-col rounded-2xl bg-surface p-5 lg:p-6">
+      {assignment.questions.length ? (
+        <div className="mb-6">
+          <QuestionsAnswerForm questions={assignment.questions} value={answers} onChange={setAnswers} disabled={locked} />
+        </div>
+      ) : null}
       <strong className="text-title-lg font-semibold text-ink">{t("workspace.hwItem.answer")}</strong>
-      <small className="mt-1 text-body-xs text-ink-secondary">{t("workspace.hwItem.answerHint")}</small>
+      <small className="mt-1 text-body-xs text-ink-secondary">
+        {assignment.questions.length ? th("questions.filesOptional") : t("workspace.hwItem.answerHint")}
+      </small>
       <input
         ref={inputRef}
         type="file"
@@ -332,7 +346,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <button
             type="button"
             className="flex h-11 items-center gap-2 rounded-full bg-brand px-[15px] text-body-sm font-semibold text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-50"
-            disabled={!files.length || locked || submit.isPending}
+            disabled={!ready || locked || submit.isPending}
             onClick={send}
           >
             <Icon name="send" size={18} />
@@ -372,7 +386,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <button
             type="button"
             className="flex h-13 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand px-3 text-body-sm font-semibold text-on-action disabled:opacity-50"
-            disabled={!files.length || locked || submit.isPending}
+            disabled={!ready || locked || submit.isPending}
             onClick={send}
           >
             <Icon name="send" size={18} />
@@ -511,6 +525,8 @@ function HomeworkResult({
           </>
         )}
       </div>
+
+      {current.answers.length ? <QuestionsResult answers={current.answers} /> : null}
 
       {current.teacherComment ? (
         <div className="flex flex-col gap-2">

@@ -13,6 +13,13 @@ import {
   Underline,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+import {
+  QuestionsEditor,
+  useAssignment,
+  useQuestionDrafts,
+  type HomeworkQuestionInput,
+} from "@/modules/homework";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { DatePicker, DurationPicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { ModalCard, modalButton } from "@/shared/ui/modal-card";
@@ -60,7 +67,14 @@ interface AssignmentDraft { title: string; description: string; dueAt: string; s
 export interface AddAssignmentDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onCreate: (values: Omit<AssignmentDraft, "gradingNote"> & { body: string; extraInstructions: string; file: File | null }) => void;
+  onCreate: (
+    values: Omit<AssignmentDraft, "gradingNote"> & {
+      body: string;
+      extraInstructions: string;
+      file: File | null;
+      questions?: HomeworkQuestionInput[];
+    }
+  ) => void;
   lessons?: readonly Lesson[];
   isLanguageSubject?: boolean;
   initialValues?: Assignment | null;
@@ -763,6 +777,8 @@ const EMPTY_ASSIGNMENT: AssignmentDraft = {
   lessonId: "",
 };
 
+const ASSIGNMENT_FORM_ID = "group-assignment-form";
+
 export function AddAssignmentDialog({
   open,
   onOpenChange,
@@ -787,6 +803,20 @@ export function AddAssignmentDialog({
   );
   const [file, setFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const detail = useAssignment(open && initialValues ? initialValues.id : null);
+  const questions = useQuestionDrafts([], {
+    editing: Boolean(initialValues),
+    locked:
+      Boolean(initialValues) &&
+      ((detail.data?.submissions.length ?? 0) > 0 || (initialValues?.submissionsCount ?? 0) > 0),
+  });
+  const questionsKey = open ? (initialValues ? (detail.data ? `edit:${detail.data.id}` : "") : "new") : "";
+  const [syncedQuestions, setSyncedQuestions] = useState("");
+  if (questionsKey && questionsKey !== syncedQuestions) {
+    setSyncedQuestions(questionsKey);
+    questions.reset(initialValues ? (detail.data?.questions ?? []) : []);
+  }
+  if (!questionsKey && syncedQuestions) setSyncedQuestions("");
 
   const lessonOptions = useMemo(() => {
     const finished = lessons
@@ -806,9 +836,14 @@ export function AddAssignmentDialog({
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.title.trim() || !form.description.trim()) return;
+    if (!questions.validate()) {
+      toast.error(t("homework:questions.fixIssues"));
+      return;
+    }
     const { gradingNote, ...rest } = form;
     onCreate({
       ...rest,
+      questions: questions.payload(),
       skillKey: isLanguageSubject ? rest.skillKey : "",
       body: rest.description,
       extraInstructions: gradingNote,
@@ -828,6 +863,7 @@ export function AddAssignmentDialog({
           description={t("dialogs.assignment.description")}
         >
           <motion.form
+            id={ASSIGNMENT_FORM_ID}
             className="group-action-form"
             onSubmit={submit}
             initial={{ opacity: 0, y: 6 }}
@@ -936,22 +972,31 @@ export function AddAssignmentDialog({
                 placeholder={t("dialogs.assignment.gradingPlaceholder")}
               />
             </label>
-            <div className="dialog-actions">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => onOpenChange(false)}
-              >
-                {t("dialogs.assignment.cancel")}
-              </Button>
-              <Button
-                type="submit"
-                disabled={!form.title.trim() || !form.description.trim()}
-              >
-                {initialValues ? t("dialogs.assignment.saveChanges") : t("dialogs.assignment.submit")}
-              </Button>
-            </div>
           </motion.form>
+          <div className="mt-4">
+            <QuestionsEditor
+              value={questions.drafts}
+              onChange={questions.setDrafts}
+              locked={questions.locked}
+              showIssues={questions.showIssues}
+            />
+          </div>
+          <div className="dialog-actions mt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+            >
+              {t("dialogs.assignment.cancel")}
+            </Button>
+            <Button
+              type="submit"
+              form={ASSIGNMENT_FORM_ID}
+              disabled={!form.title.trim() || !form.description.trim()}
+            >
+              {initialValues ? t("dialogs.assignment.saveChanges") : t("dialogs.assignment.submit")}
+            </Button>
+          </div>
         </DialogContent>
       )}
     </Dialog>

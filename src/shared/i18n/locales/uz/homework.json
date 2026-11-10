@@ -383,5 +383,52 @@
     "close": "Yopish",
     "groupPlaceholder": "Guruhni tanlang",
     "dateValue": "{{weekday}}, {{day}}-{{month}}"
+  },
+  "questions": {
+    "title": "Savollar (ixtiyoriy)",
+    "summary": "{{count}} ta savol, jami {{points}} ball",
+    "locked": "Vazifa topshirilgan — savollarni o'zgartirib bo'lmaydi.",
+    "number": "{{n}}-savol",
+    "typeLabel": "Savol turi",
+    "types": {
+      "single": "Test: bitta javob",
+      "multiple": "Test: bir nechta javob",
+      "short": "Qisqa javob",
+      "long": "Uzun javob"
+    },
+    "points": "Ball",
+    "moveUp": "Yuqoriga",
+    "moveDown": "Pastga",
+    "remove": "{{n}}-savolni o'chirish",
+    "textPlaceholder": "Savol matnini yozing",
+    "markOne": "To'g'ri javobni belgilang",
+    "markMany": "Barcha to'g'ri javoblarni belgilang",
+    "markCorrect": "{{n}}-variantni to'g'ri deb belgilash",
+    "optionPlaceholder": "{{n}}-variant",
+    "removeOption": "{{n}}-variantni o'chirish",
+    "addOption": "Variant qo'shish",
+    "shortHint": "O'quvchi qisqa matn bilan javob beradi. AI tekshiruvi yoqilgan bo'lsa AI baholaydi, aks holda siz.",
+    "longHint": "O'quvchi batafsil javob yozadi. AI tekshiruvi yoqilgan bo'lsa AI baholaydi, aks holda siz.",
+    "issues": {
+      "text": "Savol matnini yozing",
+      "options": "Kamida 2 ta to'ldirilgan variant kerak",
+      "correct": "To'g'ri javobni belgilang",
+      "points": "Ball 1 dan 1000 gacha bo'lishi kerak"
+    },
+    "add": "Savol qo'shish",
+    "fixIssues": "Savollardagi kamchiliklarni to'g'rilang",
+    "answerTitle": "Savollar",
+    "answered": "{{count}} / {{total}} javob berildi",
+    "pointsValue": "{{count}} ball",
+    "pickMany": "Bir nechta javobni tanlash mumkin",
+    "shortPlaceholder": "Javobingiz",
+    "longPlaceholder": "Javobingizni batafsil yozing",
+    "filesOptional": "Fayl biriktirish ixtiyoriy",
+    "resultTitle": "Savollar natijasi",
+    "resultTotal": "{{earned}} / {{total}} ball",
+    "scoreAria": "{{n}}-savol uchun ball",
+    "yourChoice": "(tanlov)",
+    "noAnswer": "Javob berilmagan",
+    "aiScore": "AI bahosi: {{score}}"
   }
 }

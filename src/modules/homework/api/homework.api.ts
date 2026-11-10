@@ -7,6 +7,7 @@ import type {
   AssignmentDto,
   AssignmentFormInput,
   HomeworkAiSummaryDto,
+  HomeworkAnswerInput,
   HomeworkReportDto,
   SubmissionDto,
   SubmissionReviewInput,
@@ -62,12 +63,20 @@ export const homeworkApi = {
   async downloadAssignment(id: string, options?: RequestOptions) {
     return apiClient.get<Blob>(homeworkEndpoints.assignmentFile(id), { ...options, responseType: "blob" });
   },
-  async submit(assignmentId: string, files: File[], skillKey?: string, comment?: string): Promise<Submission | null> {
-    if (!files.length) validateHomeworkFile(null, { speaking: skillKey === "speaking" });
+  async submit(
+    assignmentId: string,
+    files: File[],
+    skillKey?: string,
+    comment?: string,
+    answers?: HomeworkAnswerInput[]
+  ): Promise<Submission | null> {
+    if (!files.length && !answers?.length) validateHomeworkFile(null, { speaking: skillKey === "speaking" });
     files.forEach((file) => validateHomeworkFile(file, { speaking: skillKey === "speaking" }));
     const body = new FormData();
     files.forEach((file, index) => body.append(index ? "files" : "file", file));
     if (comment?.trim()) body.set("comment", comment.trim());
+    if (answers?.length)
+      body.set("answers", JSON.stringify(answers.map((item) => ({ question_id: item.questionId, answer: item.answer }))));
     return mapSubmissionDto(
       await apiClient.post<SubmissionDto>(homeworkEndpoints.submit(assignmentId), body)
     );
@@ -119,6 +128,7 @@ export const homeworkApi = {
     if (input.shareWithParent !== undefined) body.share_with_parent = input.shareWithParent;
     if (input.result !== undefined) body.result = input.result;
     if (input.teacherComment !== undefined) body.teacher_comment = input.teacherComment;
+    if (input.answerScores && Object.keys(input.answerScores).length) body.answer_scores = input.answerScores;
     return mapSubmissionDto(await apiClient.post<SubmissionDto>(homeworkEndpoints.review(id), body));
   },
   async requestResubmit(id: string, comment: string) {
