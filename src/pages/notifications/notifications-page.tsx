@@ -11,7 +11,7 @@ import {
   useNotificationInbox,
   type NotificationGroupKey,
 } from "@/modules/notification";
-import { formatMessageTime } from "@/shared/lib";
+import { formatNotificationTime } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment } from "@/shared/ui/mobile-page";
 import { useOpenNotificationLink } from "@/widgets/notification-link";
@@ -142,7 +142,7 @@ export function NotificationsPage() {
                     </span>
                     <span className="flex shrink-0 flex-col items-end gap-2.5 pt-0.5">
                       <small className="text-caption text-ink-secondary">
-                        {item.createdAt ? formatMessageTime(item.createdAt) : ""}
+                        {item.createdAt ? formatNotificationTime(item.createdAt) : ""}
                       </small>
                       {item.isRead ? null : <i className="size-2 rounded-full bg-brand not-italic" />}
                     </span>

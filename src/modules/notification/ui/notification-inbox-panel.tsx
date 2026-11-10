@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
-import { formatMessageTime } from "@/shared/lib";
+import { formatNotificationTime } from "@/shared/lib";
 import {
   useMarkAllNotificationsRead,
   useMarkNotificationRead,
@@ -201,7 +201,7 @@ export function NotificationInboxPanel({
 
                       <span className="flex shrink-0 flex-col items-end gap-2">
                         <small className="text-body-xs text-ink-secondary">
-                          {item.createdAt ? formatMessageTime(item.createdAt) : ""}
+                          {item.createdAt ? formatNotificationTime(item.createdAt) : ""}
                         </small>
                         {item.isRead ? null : (
                           <span className="size-2 rounded-full bg-brand" aria-label={t("markRead")} />
