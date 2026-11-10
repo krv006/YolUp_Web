@@ -24,10 +24,18 @@ import {
   MOBILE_BOARD_COLORS,
   MOBILE_BOARD_WIDTHS,
 } from "../constants/board.constants";
-import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
+import {
+  estimateTextWidth,
+  FLOW_MARGIN,
+  freeTextBaseline,
+  nextTextPoint,
+  strokeSpan,
+  type BoardObstacle,
+} from "../lib/board-flow";
 import { canEditStroke } from "../lib/board-edit";
 import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
+import { measureNode, textWidth } from "../lib/board-measure";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
@@ -100,6 +108,7 @@ interface InlineText {
   size: number;
   color: string;
   original: string;
+  obstacles?: BoardObstacle[];
 }
 
 const PENDING_TEXT_MS = 8000;
@@ -372,8 +381,38 @@ export function BoardPanel({
     if (hit?.type === "text" && canEditStroke(hit, { isTeacher: Boolean(state?.isTeacher), userId, personal: Boolean(source) })) {
       return openEditor(hit);
     }
-    const anchor = anchorFor(point, "text");
-    startInline({ anchor, size: BOARD_TEXT_SIZE, color, original: "" }, point);
+    const obstacles = textObstacles();
+    const anchor = freeTextAnchor(anchorFor(point, "text")[0], point[1], "", BOARD_TEXT_SIZE, obstacles);
+    startInline({ anchor, size: BOARD_TEXT_SIZE, color, original: "", obstacles }, point);
+  }
+
+  function typeInline(value: string) {
+    setInlineText(value);
+    const inline = placement?.inline;
+    if (!placement || !inline?.obstacles) return;
+    const anchor = freeTextAnchor(inline.anchor[0], placement.point[1], value, inline.size, inline.obstacles);
+    if (anchor[1] !== inline.anchor[1]) setPlacement({ ...placement, inline: { ...inline, anchor } });
+  }
+
+  function textObstacles(): BoardObstacle[] {
+    const svg = svgRef.current;
+    return [...(activeStrokes ?? []), ...pendingTexts].flatMap((stroke) => {
+      if (stroke.type !== "text" && stroke.type !== "math" && stroke.type !== "code") return [];
+      const box = svg ? measureNode(svg, stroke.id) : null;
+      if (box) return [{ left: box.minX, right: box.maxX, top: box.minY, bottom: box.maxY }];
+      const span = strokeSpan(stroke);
+      const content = stroke.type === "math" ? stroke.latex : stroke.text;
+      const right = stroke.x + estimateTextWidth(content, stroke.size ?? BOARD_TEXT_SIZE);
+      return span ? [{ left: stroke.x, right, ...span }] : [];
+    });
+  }
+
+  function freeTextAnchor(x: number, y: number, text: string, size: number, obstacles: BoardObstacle[]): Point {
+    const svg = svgRef.current;
+    const measured = svg ? textWidth(text, size, getComputedStyle(svg).fontFamily) : null;
+    const width = Math.max(size, measured ?? estimateTextWidth(text, size));
+    const lines = text.split("\n").length;
+    return [x, freeTextBaseline({ x, y, size, lines, width, obstacles, maxBaseline: boardHeight - 20 })];
   }
 
   function commitInline() {
@@ -381,13 +420,17 @@ export function BoardPanel({
     inlineActive.current = false;
     const { inline, editingId } = placement;
     const text = inlineText.replace(/\s+$/, "");
+    const point = placement.point;
     closePlacement();
     if (!text.trim()) return;
     if (editingId) {
       if (text !== inline.original) updateStroke(editingId, { changes: { text, lines: [] } });
       return;
     }
-    const stroke: StrokeShapeDto = { type: "text", text, x: inline.anchor[0], y: inline.anchor[1], size: inline.size, color: inline.color };
+    const [x, y] = inline.obstacles
+      ? freeTextAnchor(inline.anchor[0], point[1], text, inline.size, inline.obstacles)
+      : inline.anchor;
+    const stroke: StrokeShapeDto = { type: "text", text, x, y, size: inline.size, color: inline.color };
     const pending = { ...stroke, id: `pending-${Date.now()}` } as StrokeDto;
     setPendingTexts((current) => [...current, pending]);
     globalThis.setTimeout(() => setPendingTexts((current) => current.filter((item) => item.id !== pending.id)), PENDING_TEXT_MS);
@@ -466,7 +509,16 @@ export function BoardPanel({
       return;
     }
     let stroke: StrokeShapeDto;
-    const [x, y] = anchorFor(placement.point, placement.tool);
+    const [x, y] =
+      placement.tool === "text"
+        ? freeTextAnchor(
+            anchorFor(placement.point, "text")[0],
+            placement.point[1],
+            draftPlainText,
+            BOARD_TEXT_SIZE,
+            textObstacles()
+          )
+        : anchorFor(placement.point, placement.tool);
     if (placement.tool === "math") {
       stroke = { type: "math", latex: draftText.trim(), x, y, size: BOARD_TEXT_SIZE, color };
     } else if (placement.tool === "code") {
@@ -785,7 +837,7 @@ export function BoardPanel({
       ) : placement?.inline ? (
         <InlineTextEditor
           value={inlineText}
-          onChange={setInlineText}
+          onChange={typeInline}
           anchor={placement.inline.anchor}
           size={placement.inline.size}
           color={placement.inline.color}
