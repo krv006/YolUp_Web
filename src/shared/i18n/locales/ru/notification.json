@@ -82,5 +82,30 @@
     "attendance": "Посещаемость",
     "homework": "Задания",
     "security": "Безопасность"
+  },
+  "teacherSend": {
+    "button": "Отправить сообщение",
+    "title": "Сообщение ученикам",
+    "description": "Сообщение придёт ученикам в уведомления",
+    "group": "Группа",
+    "groupPlaceholder": "Выберите группу",
+    "audience": "Кому",
+    "audienceAll": "Вся группа ({{count}})",
+    "audienceSelected": "Выбранные ученики",
+    "selectedCount_one": "Выбран {{count}}",
+    "selectedCount_few": "Выбрано {{count}}",
+    "selectedCount_many": "Выбрано {{count}}",
+    "selectedCount_other": "Выбрано {{count}}",
+    "noStudents": "В этой группе пока нет учеников",
+    "parents": "Отправить и наблюдателям",
+    "parentsHint": "Получат и подтверждённые наблюдатели учеников",
+    "text": "Сообщение",
+    "textPlaceholder": "Например: завтрашний урок начнётся в 15:00",
+    "cancel": "Отмена",
+    "submit": "Отправить",
+    "sent_one": "Сообщение отправлено {{count}} ученику",
+    "sent_few": "Сообщение отправлено {{count}} ученикам",
+    "sent_many": "Сообщение отправлено {{count}} ученикам",
+    "sent_other": "Сообщение отправлено {{count}} ученикам"
   }
 }
