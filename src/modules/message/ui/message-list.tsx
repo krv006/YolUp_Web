@@ -112,7 +112,6 @@ export function MessageList({
     message,
   }));
   const emptyCompact = (isCompact || workspace) && !search && !timeline.length && !conversation.typing;
-  const canvas = workspace ? "" : "bg-canvas max-lg:bg-transparent";
   const matchRef = useRef<HTMLDivElement>(null);
 
   const serverTotal = serverSearch.data?.total ?? 0;
@@ -176,7 +175,7 @@ export function MessageList({
     );
   if (loading)
     return (
-      <div className={`flex flex-1 flex-col gap-3 overflow-hidden px-4 py-5 lg:px-6 ${canvas}`}>
+      <div className={`flex flex-1 flex-col gap-3 overflow-hidden px-4 py-5 lg:px-6`}>
         {Array.from({ length: 5 }, (_, index) => (
           <div
             key={index}
@@ -189,7 +188,7 @@ export function MessageList({
     );
   if (error)
     return (
-      <div className={`flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center ${canvas}`}>
+      <div className={`flex flex-1 flex-col items-center justify-center gap-2 px-6 text-center`}>
         <strong className="font-heading text-h3 text-ink">{t("list.loadError")}</strong>
         <p className="max-w-[320px] text-body-sm text-ink-secondary">{t("list.loadErrorHint")}</p>
         <button
@@ -204,7 +203,7 @@ export function MessageList({
   return (
     <div className="relative flex min-h-0 flex-1 flex-col">
       <div
-        className={`flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-4 pb-2 lg:py-5 ${workspace ? "lg:px-7" : "lg:px-6"} ${canvas}`}
+        className={`flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pt-4 pb-2 lg:py-5 ${workspace ? "lg:px-7" : "lg:px-6"}`}
         role="log"
         aria-live="polite"
         ref={scrollRef}

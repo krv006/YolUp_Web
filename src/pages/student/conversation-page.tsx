@@ -112,7 +112,7 @@ export function StudentConversationPage() {
   }
 
   return (
-    <section className="chat-page">
+    <section className="chat-page max-lg:bg-auth-gradient lg:bg-page-gradient">
       <ChatHeader conversation={activeConversation} backTo="/student/chats" />
       <MessageList
         messages={messages.data}

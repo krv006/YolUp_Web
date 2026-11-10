@@ -121,7 +121,7 @@ export function ConversationPage() {
   }
 
   return (
-    <section className="chat-page">
+    <section className="chat-page max-lg:bg-auth-gradient lg:bg-page-gradient">
       <ChatHeader conversation={activeConversation} />
       <MessageList
         messages={messages.data}
