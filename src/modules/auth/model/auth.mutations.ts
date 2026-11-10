@@ -4,6 +4,7 @@ import type { AuthUser } from "@/shared/types";
 import { authApi, type NotificationPrefs } from "../api/auth.api";
 import type { ProfileFormValues, RegisterFormValues } from "../api/auth.dto";
 import { mapCertificateDto, mapUserDto } from "../lib/auth.mappers";
+import { normalizeUzPhone } from "../lib/uz-phone";
 import { useAuthStore } from "./auth.store";
 
 export function useRegisterMutation() {
@@ -15,7 +16,7 @@ export function useRegisterMutation() {
         first_name: values.firstName.trim(),
         last_name: values.lastName.trim(),
         role: values.role,
-        phone: values.phone?.trim() || "",
+        phone: normalizeUzPhone(values.phone ?? ""),
       }),
   });
 }
@@ -82,7 +83,7 @@ export function useUpdateProfileMutation() {
         await authApi.updateCurrentUser({
           first_name: values.firstName.trim(),
           last_name: values.lastName.trim(),
-          phone: values.phone?.trim() || "",
+          phone: normalizeUzPhone(values.phone ?? ""),
           ...(username ? { username } : {}),
           ...(values.middleName !== undefined ? { middle_name: values.middleName.trim() } : {}),
           ...(values.birthDate !== undefined ? { birth_date: values.birthDate || null } : {}),
