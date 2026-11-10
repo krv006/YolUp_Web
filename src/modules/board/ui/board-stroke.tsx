@@ -2,6 +2,7 @@ import { memo } from "react";
 import type { StrokeDto } from "../api/board.dto";
 import { arrowHeadPoints, polylinePoints, textLines } from "../lib/board.geometry";
 import { listMarkers } from "../lib/rich-text";
+import { CodeBlock } from "./code-block";
 import { MathMarkup } from "./math-markup";
 
 export interface BoardStrokeProps {
@@ -65,31 +66,8 @@ export const BoardStroke = memo(function BoardStroke({ stroke, selected, onSelec
       );
     }
 
-    case "code": {
-      const size = stroke.size ?? 20;
-      const lines = String(stroke.text ?? "").replace(/\t/g, "    ").split("\n");
-      const widest = Math.max(...lines.map((line) => line.length), 1);
-      const pad = 6;
-      return (
-        <g {...shared}>
-          <rect
-            x={stroke.x - pad}
-            y={stroke.y - size * 1.05}
-            width={stroke.w ?? widest * size * 0.6 + pad * 2}
-            height={size * 1.5 + (lines.length - 1) * size * 1.35}
-            rx={4}
-            fill="#f6f8fa"
-          />
-          <text x={stroke.x} y={stroke.y} fontSize={size} fill={color} fontFamily="ui-monospace, Menlo, Consolas, monospace" xmlSpace="preserve">
-            {lines.map((line, index) => (
-              <tspan key={index} x={stroke.x} dy={index === 0 ? 0 : size * 1.35}>
-                {line || " "}
-              </tspan>
-            ))}
-          </text>
-        </g>
-      );
-    }
+    case "code":
+      return <CodeBlock {...shared} stroke={stroke} color={color} monochrome={selected} />;
 
     case "math":
       return (

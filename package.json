@@ -41,6 +41,7 @@
     "dompurify": "^3.4.13",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.43.0",
+    "highlight.js": "^11.11.1",
     "i18next": "^26.4.2",
     "input-otp": "^1.4.2",
     "livekit-client": "^2.21.0",
