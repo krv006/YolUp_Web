@@ -1,9 +1,11 @@
 import {
   Atom,
   Circle,
+  Code2,
   Eraser,
   Highlighter,
   Minus,
+  MousePointer2,
   MoveRight,
   PenLine,
   Sigma,
@@ -15,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { BOARD_COLORS, BOARD_WIDTHS } from "../constants/board.constants";
 import type { DrawKind } from "../lib/board.geometry";
 
-export type BoardTool = DrawKind | "text" | "math" | "erase";
+export type BoardTool = DrawKind | "select" | "text" | "math" | "code" | "erase";
 
 interface ToolDefinition {
   id: BoardTool;
@@ -24,6 +26,7 @@ interface ToolDefinition {
 }
 
 const TOOLS: ToolDefinition[] = [
+  { id: "select", labelKey: "tools.select", icon: MousePointer2 },
   { id: "pen", labelKey: "tools.pen", icon: PenLine },
   { id: "marker", labelKey: "tools.marker", icon: Highlighter },
   { id: "line", labelKey: "tools.line", icon: Minus },
@@ -32,6 +35,7 @@ const TOOLS: ToolDefinition[] = [
   { id: "ellipse", labelKey: "tools.ellipse", icon: Circle },
   { id: "text", labelKey: "tools.text", icon: Type },
   { id: "math", labelKey: "tools.math", icon: Sigma },
+  { id: "code", labelKey: "tools.code", icon: Code2 },
 ];
 
 export interface BoardToolbarProps {
@@ -40,6 +44,7 @@ export interface BoardToolbarProps {
   width: number;
   canDraw: boolean;
   chemistryEnabled?: boolean;
+  codeEnabled?: boolean;
   onToolChange: (tool: BoardTool) => void;
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
@@ -55,6 +60,7 @@ export function BoardToolbar({
   width,
   canDraw,
   chemistryEnabled = false,
+  codeEnabled = false,
   onToolChange,
   onColorChange,
   onWidthChange,
@@ -69,7 +75,7 @@ export function BoardToolbar({
       role="toolbar"
       aria-label={t("tools.toolbarAria")}
     >
-      {TOOLS.map(({ id, labelKey, icon: ToolIcon }) => {
+      {TOOLS.filter(({ id }) => id !== "code" || codeEnabled).map(({ id, labelKey, icon: ToolIcon }) => {
         const label = t(labelKey);
         const active = tool === id;
         return (

@@ -3,9 +3,10 @@ import { Bold, Italic, List, ListOrdered, Underline } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
 import type { TextLineDto } from "../api/board.dto";
-import { htmlToLines } from "../lib/rich-text";
+import { htmlToLines, linesToHtml } from "../lib/rich-text";
 
 export interface RichTextInputProps {
+  initialLines?: TextLineDto[];
   onChange: (lines: TextLineDto[]) => void;
   onSubmit: () => void;
   onCancel: () => void;
@@ -38,7 +39,7 @@ const INACTIVE: ActiveState = {
   insertOrderedList: false,
 };
 
-export function RichTextInput({ onChange, onSubmit, onCancel, variant = "default" }: RichTextInputProps) {
+export function RichTextInput({ initialLines, onChange, onSubmit, onCancel, variant = "default" }: RichTextInputProps) {
   const { t } = useTranslation("board");
   const editorRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState<ActiveState>(INACTIVE);
@@ -63,6 +64,23 @@ export function RichTextInput({ onChange, onSubmit, onCancel, variant = "default
       insertUnorderedList: document.queryCommandState("insertUnorderedList"),
       insertOrderedList: document.queryCommandState("insertOrderedList"),
     });
+  }, []);
+
+  const initialRef = useRef(initialLines);
+
+  useEffect(() => {
+    const editor = editorRef.current;
+    const initial = initialRef.current;
+    if (editor && initial?.length) {
+      editor.innerHTML = linesToHtml(initial);
+      setEmpty(!initial.some((line) => line.runs.some((run) => run.text.trim())));
+      const range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+      const selection = document.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
   }, []);
 
   useEffect(() => {

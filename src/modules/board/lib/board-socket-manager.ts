@@ -5,6 +5,7 @@ export type { SocketState };
 
 export type BoardSocketEvent =
   | { type: "stroke"; sheet: number; stroke: StrokeDto }
+  | { type: "stroke_updated"; sheet: number; stroke: StrokeDto }
   | { type: "erase"; sheet: number; strokeIds: string[]; by: string; reason: string }
   | { type: "sheet"; index: number; title?: string }
   | { type: "sheet_renamed"; index: number; title: string }
@@ -43,6 +44,10 @@ export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
     case "stroke":
       return event.stroke
         ? { type: "stroke", sheet: Number(event.sheet ?? 0), stroke: event.stroke }
+        : null;
+    case "stroke_updated":
+      return event.stroke?.id
+        ? { type: "stroke_updated", sheet: Number(event.sheet ?? 0), stroke: event.stroke }
         : null;
     case "erase":
       return {

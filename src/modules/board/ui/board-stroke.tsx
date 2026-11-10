@@ -2,6 +2,7 @@ import { memo } from "react";
 import type { StrokeDto } from "../api/board.dto";
 import { arrowHeadPoints, polylinePoints, textLines } from "../lib/board.geometry";
 import { listMarkers } from "../lib/rich-text";
+import { CodeBlock } from "./code-block";
 import { MathMarkup } from "./math-markup";
 
 export interface BoardStrokeProps {
@@ -13,6 +14,7 @@ export interface BoardStrokeProps {
 export const BoardStroke = memo(function BoardStroke({ stroke, selected, onSelect }: BoardStrokeProps) {
   const color = selected ? "var(--destructive)" : (stroke.color ?? "currentColor");
   const shared = {
+    "data-stroke-id": stroke.id,
     onClick: () => onSelect(stroke.id),
     style: { cursor: "pointer" as const },
   };
@@ -64,6 +66,9 @@ export const BoardStroke = memo(function BoardStroke({ stroke, selected, onSelec
         </text>
       );
     }
+
+    case "code":
+      return <CodeBlock {...shared} stroke={stroke} color={color} monochrome={selected} />;
 
     case "math":
       return (

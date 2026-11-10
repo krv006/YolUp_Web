@@ -1,4 +1,4 @@
-export type StrokeKind = "pen" | "marker" | "line" | "rect" | "ellipse" | "text" | "math";
+export type StrokeKind = "pen" | "marker" | "line" | "rect" | "ellipse" | "text" | "math" | "code";
 
 export type Point = [number, number];
 
@@ -58,7 +58,18 @@ export interface TextStrokeDto extends StrokeBase {
   x: number;
   y: number;
   size?: number;
+  w?: number;
   lines?: TextLineDto[];
+}
+
+export interface CodeStrokeDto extends StrokeBase {
+  type: "code";
+  text: string;
+  language?: string;
+  x: number;
+  y: number;
+  size?: number;
+  w?: number;
 }
 
 export interface MathStrokeDto extends StrokeBase {
@@ -75,9 +86,27 @@ export type StrokeShapeDto =
   | RectStrokeDto
   | EllipseStrokeDto
   | TextStrokeDto
-  | MathStrokeDto;
+  | MathStrokeDto
+  | CodeStrokeDto;
 
-export type StrokeDto = StrokeShapeDto & { id: string };
+export interface StrokeAuthorDto {
+  id: string;
+  by?: string;
+  by_id?: string;
+  edited_by?: string;
+}
+
+export type StrokeDto = StrokeShapeDto & StrokeAuthorDto;
+
+export interface StrokeUpdate {
+  changes?: Record<string, unknown>;
+  move?: [number, number];
+}
+
+export interface CodeLanguage {
+  id: string;
+  label: string;
+}
 
 export type StrokeInput = StrokeShapeDto;
 
@@ -97,6 +126,8 @@ export interface BoardStateDto {
   subject?: string;
   math_enabled?: boolean;
   chemistry_enabled?: boolean;
+  code_enabled?: boolean;
+  code_languages?: CodeLanguage[] | null;
   away_students?: Array<{ student_id: string | number; name: string }>;
   pending_mic_requests?: Array<{ student_id: string | number; name: string }>;
   pending_camera_requests?: Array<{ student_id: string | number; name: string }>;
@@ -169,6 +200,7 @@ export interface BoardSource {
   addStrokes: (sheet: number, strokes: StrokeInput[]) => void;
   addSheet: () => void;
   eraseStroke: (sheet: number, strokeId: string) => void;
+  updateStroke: (sheet: number, strokeId: string, update: StrokeUpdate) => void;
   /** Yechuvchi faqat dars doskasida (matematika); uy vazifasida yo'q. */
   solve?: (expression: string) => Promise<FormulaSolutionDto>;
 }
@@ -182,6 +214,8 @@ export interface BoardState {
   subject: string;
   mathEnabled: boolean;
   chemistryEnabled: boolean;
+  codeEnabled: boolean;
+  codeLanguages: CodeLanguage[];
   permissionMode: BoardPermissionMode;
   currentSheet: number | null;
   awayStudents: AwayStudent[];

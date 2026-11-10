@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { boardApi } from "../api/board.api";
-import type { StrokeInput } from "../api/board.dto";
+import type { BoardState, StrokeDto, StrokeInput, StrokeUpdate } from "../api/board.dto";
+import { applyStrokeUpdate, replaceStroke } from "../lib/board-edit";
 
 export const boardKeys = Object.freeze({
   all: ["board"] as const,
@@ -48,6 +49,57 @@ export function useAddStroke(lessonId: string) {
     mutationFn: ({ sheet, stroke }: { sheet: number; stroke: StrokeInput }) =>
       boardApi.addStroke(lessonId, sheet, stroke),
     onSuccess: () => client.invalidateQueries({ queryKey: boardKeys.state(lessonId) }),
+  });
+}
+
+export interface UpdateStrokeInput {
+  sheet: number;
+  strokeId: string;
+  update: StrokeUpdate;
+}
+
+function patchStroke(state: BoardState, sheet: number, strokeId: string, update: (stroke: StrokeDto) => StrokeDto): BoardState {
+  return {
+    ...state,
+    sheets: state.sheets.map((item) =>
+      item.index === sheet
+        ? { ...item, strokes: item.strokes.map((stroke) => (stroke.id === strokeId ? update(stroke) : stroke)) }
+        : item
+    ),
+  };
+}
+
+export function useUpdateStroke(lessonId: string) {
+  const client = useQueryClient();
+  const key = boardKeys.state(lessonId);
+  return useMutation({
+    mutationFn: ({ sheet, strokeId, update }: UpdateStrokeInput) => boardApi.updateStroke(lessonId, sheet, strokeId, update),
+    onMutate: async ({ sheet, strokeId, update }) => {
+      await client.cancelQueries({ queryKey: key });
+      const previous = client.getQueryData<BoardState>(key);
+      if (previous) {
+        const size = { width: previous.width, height: previous.height };
+        client.setQueryData<BoardState>(key, patchStroke(previous, sheet, strokeId, (stroke) => applyStrokeUpdate(stroke, update, size)));
+      }
+      return { previous };
+    },
+    onError: (error: Error, _input, context) => {
+      if (context?.previous) client.setQueryData(key, context.previous);
+      toast.error(error.message);
+    },
+    onSuccess: (stroke, { sheet }) => {
+      if (!stroke?.id) return;
+      client.setQueryData<BoardState>(key, (current) =>
+        current
+          ? {
+              ...current,
+              sheets: current.sheets.map((item) =>
+                item.index === sheet ? { ...item, strokes: replaceStroke(item.strokes, stroke) } : item
+              ),
+            }
+          : current
+      );
+    },
   });
 }
 

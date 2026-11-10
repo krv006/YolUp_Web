@@ -27,6 +27,11 @@ export function strokeSpan(stroke: StrokeDto): VerticalSpan | null {
       return textSpan(stroke.y, stroke.size ?? 22, String(stroke.text ?? "").split("\n").length);
     case "math":
       return textSpan(stroke.y, stroke.size ?? 22, 1);
+    case "code": {
+      const size = stroke.size ?? 20;
+      const lines = String(stroke.text ?? "").split("\n").length;
+      return { top: stroke.y - size * 1.05, bottom: stroke.y + (lines - 1) * size * 1.35 + size * 0.45 };
+    }
     default: {
       const points: Point[] = stroke.points ?? [];
       if (!points.length) return null;

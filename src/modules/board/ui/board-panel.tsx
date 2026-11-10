@@ -4,18 +4,32 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { useAuth } from "@/modules/auth";
 import { useCourseStudents } from "@/modules/course";
-import type { BoardSource, FormulaSolutionDto, Point, StrokeShapeDto, TextLineDto } from "../api/board.dto";
+import type {
+  BoardSource,
+  FormulaSolutionDto,
+  Point,
+  StrokeDto,
+  StrokeShapeDto,
+  StrokeUpdate,
+  TextLineDto,
+} from "../api/board.dto";
 import {
   BOARD_COLORS,
   BOARD_TEXT_SIZE,
   BOARD_WIDTHS,
+  CODE_TEXT_COLOR,
+  CODE_TEXT_SIZE,
   MOBILE_BOARD_COLORS,
   MOBILE_BOARD_WIDTHS,
 } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
+import { canEditStroke } from "../lib/board-edit";
+import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
-import { hasRichFormatting, linesToPlainText } from "../lib/rich-text";
+import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
+import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
   useAddSheet,
   useRenameSheet,
@@ -25,11 +39,14 @@ import {
   useEraseStrokes,
   useSetBoardPermissions,
   useSolveFormula,
+  useUpdateStroke,
 } from "../model/board.queries";
 import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
+import { useBoardSelection } from "../model/use-board-selection";
 import { BoardStroke } from "./board-stroke";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
+import { CodeEditor } from "./code-editor";
 import {
   MobileBoardFooter,
   MobileBoardHeader,
@@ -44,6 +61,8 @@ import { FormulaPalette } from "./formula-palette";
 import { MathFieldInput, type MathFieldInputHandle } from "./math-field-input";
 import { PeriodicTableDialog } from "./periodic-table-dialog";
 import { RichTextInput } from "./rich-text-input";
+import { SelectionOverlay } from "./selection-overlay";
+import { SelectionToolbar } from "./selection-toolbar";
 
 export interface BoardPanelProps {
   lessonId: string;
@@ -73,6 +92,8 @@ export interface BoardMobileChrome {
   footer?: ReactNode;
 }
 
+type PlacedTool = "text" | "math" | "code";
+
 function strokeKey(stroke: StrokeShapeDto): string {
   return JSON.stringify(stroke, (key, value) =>
     key === "id" ? undefined : typeof value === "number" ? Math.round(value * 10) / 10 : value
@@ -94,11 +115,14 @@ export function BoardPanel({
   const { t } = useTranslation("board");
   const isCompact = useIsCompact();
   const mobileLayout = Boolean(isCompact && mobile);
-  const realtime = useBoardRealtime(lessonId, !source, currentUserId);
+  const { user } = useAuth();
+  const userId = currentUserId ?? user?.id ?? null;
+  const realtime = useBoardRealtime(lessonId, !source, userId);
   const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
   const addStroke = useAddStroke(lessonId);
   const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
+  const updateMutation = useUpdateStroke(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
   const renameSheet = useRenameSheet(lessonId);
   const solve = useSolveFormula(lessonId);
@@ -120,9 +144,12 @@ export function BoardPanel({
   const [grantOpen, setGrantOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
 
-  const [placement, setPlacement] = useState<{ tool: "text" | "math"; point: Point } | null>(null);
+  const [placement, setPlacement] = useState<{ tool: PlacedTool; point: Point; editingId?: string } | null>(null);
+  const [initialLines, setInitialLines] = useState<TextLineDto[] | undefined>(undefined);
   const [draftText, setDraftText] = useState("");
   const [draftLines, setDraftLines] = useState<TextLineDto[]>([]);
+  const [draftCode, setDraftCode] = useState("");
+  const [codeLanguage, setCodeLanguage] = useState("auto");
   const mathFieldRef = useRef<MathFieldInputHandle>(null);
 
   const [formulaOpen, setFormulaOpen] = useState(false);
@@ -152,12 +179,16 @@ export function BoardPanel({
   const boardWidth = state?.width ?? 1600;
   const [canvasWrap, setCanvasWrap] = useState<HTMLDivElement | null>(null);
   const [viewRatio, setViewRatio] = useState(0);
+  const [viewWidth, setViewWidth] = useState(0);
 
   useEffect(() => {
     if (!canvasWrap) return undefined;
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      if (width > 0) setViewRatio(height / width);
+      if (width > 0) {
+        setViewRatio(height / width);
+        setViewWidth(width);
+      }
     });
     observer.observe(canvasWrap);
     return () => observer.disconnect();
@@ -229,14 +260,74 @@ export function BoardPanel({
     enabled: canDraw,
     onCommit: commitStroke,
     onPlacePoint: (point) => {
-      if (tool !== "text" && tool !== "math") return;
+      if (tool !== "text" && tool !== "math" && tool !== "code") return;
       setDraftText("");
       setDraftLines([]);
+      setDraftCode("");
       setPlacement({ tool, point });
     },
   });
 
-  const draftPlainText = placement?.tool === "text" ? linesToPlainText(draftLines) : draftText;
+  function updateStroke(strokeId: string, update: StrokeUpdate) {
+    if (source) return source.updateStroke(sheet, strokeId, update);
+    updateMutation.mutate({ sheet, strokeId, update });
+  }
+
+  const selection = useBoardSelection({
+    svgRef,
+    strokes: activeStrokes ?? [],
+    sheet: { width: boardWidth, height: boardHeight },
+    viewHeight: canvasHeight,
+    active: tool === "select" && canDraw,
+    canEdit: (stroke: StrokeDto) =>
+      canEditStroke(stroke, { isTeacher: Boolean(state?.isTeacher), userId, personal: Boolean(source) }),
+    onMove: (strokeId, delta) => updateStroke(strokeId, { move: delta }),
+    onResize: (strokeId, changes) => updateStroke(strokeId, { changes }),
+    onDenied: () => toast.info(t("edit.notOwner")),
+    onOpen: openEditor,
+  });
+
+  const selectedStroke = selection.selected;
+  useEffect(() => {
+    if (!selectedStroke || placement || reasonOpen) return undefined;
+    const handler = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable='true'], [role='dialog']")) return;
+      const step = event.shiftKey ? 10 : 1;
+      const arrows: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0],
+        ArrowRight: [step, 0],
+        ArrowUp: [0, -step],
+        ArrowDown: [0, step],
+      };
+      if (arrows[event.key]) {
+        event.preventDefault();
+        selection.nudge(...arrows[event.key]);
+      } else if (event.key === "Escape") {
+        selection.clear();
+      } else if (event.key === "Delete" || event.key === "Backspace") {
+        event.preventDefault();
+        deleteSelected(selectedStroke.id);
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        openEditor(selectedStroke);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
+
+  function deleteSelected(strokeId: string) {
+    selection.clear();
+    if (source) return source.eraseStroke(sheet, strokeId);
+    setSelected(strokeId);
+    setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
+    setReasonOpen(true);
+  }
+  const drag = selection.drag;
+
+  const draftPlainText =
+    placement?.tool === "text" ? linesToPlainText(draftLines) : placement?.tool === "code" ? draftCode : draftText;
   const adding = !source && addStroke.isPending;
   const canPlaceBlock = Boolean(draftPlainText.trim()) && !adding;
 
@@ -244,20 +335,78 @@ export function BoardPanel({
     setPlacement(null);
     setDraftText("");
     setDraftLines([]);
+    setDraftCode("");
+    setInitialLines(undefined);
   }
 
-  function anchorFor(point: Point): Point {
+  function openEditor(stroke: StrokeDto) {
+    if (stroke.type !== "text" && stroke.type !== "math" && stroke.type !== "code") return;
+    setDraftText("");
+    setDraftLines([]);
+    setDraftCode("");
+    setInitialLines(undefined);
+    if (stroke.type === "text") {
+      const lines = stroke.lines?.length ? stroke.lines : plainTextToLines(stroke.text);
+      setInitialLines(lines);
+      setDraftLines(lines);
+    } else if (stroke.type === "math") {
+      setDraftText(stroke.latex);
+    } else {
+      setDraftCode(stroke.text);
+      setCodeLanguage(stroke.language ?? "auto");
+    }
+    const size = stroke.size ?? (stroke.type === "code" ? CODE_TEXT_SIZE : BOARD_TEXT_SIZE);
+    const point: Point =
+      stroke.type === "code" ? [stroke.x - CODE_PAD, stroke.y - size * 1.05] : [stroke.x, stroke.y - BOARD_TEXT_SIZE * 0.35];
+    setPlacement({ tool: stroke.type, point, editingId: stroke.id });
+  }
+
+  function saveEdit(strokeId: string, kind: PlacedTool) {
+    if (kind === "math") {
+      updateStroke(strokeId, { changes: { latex: draftText.trim() } });
+    } else if (kind === "code") {
+      const text = draftCode.replace(/\s+$/, "");
+      updateStroke(strokeId, {
+        changes: { text, language: codeLanguage === "auto" ? detectCodeLanguage(text) : codeLanguage },
+      });
+    } else {
+      updateStroke(strokeId, {
+        changes: { text: draftPlainText, lines: hasRichFormatting(draftLines) ? draftLines : [] },
+      });
+    }
+    closePlacement();
+  }
+
+  function anchorFor(point: Point, kind: PlacedTool): Point {
     const width = state?.width ?? 1600;
+    if (kind === "code") {
+      return [Math.min(Math.max(point[0] + CODE_PAD, CODE_PAD), width - 40), point[1] + CODE_TEXT_SIZE * 1.05];
+    }
     return [Math.min(Math.max(point[0], 8), width - 40), point[1] + BOARD_TEXT_SIZE * 0.35];
   }
 
   function placeBlock(event?: FormEvent<HTMLFormElement>) {
     event?.preventDefault();
     if (!placement || !canPlaceBlock) return;
+    if (placement.editingId) {
+      saveEdit(placement.editingId, placement.tool);
+      return;
+    }
     let stroke: StrokeShapeDto;
-    const [x, y] = anchorFor(placement.point);
+    const [x, y] = anchorFor(placement.point, placement.tool);
     if (placement.tool === "math") {
       stroke = { type: "math", latex: draftText.trim(), x, y, size: BOARD_TEXT_SIZE, color };
+    } else if (placement.tool === "code") {
+      const text = draftCode.replace(/\s+$/, "");
+      stroke = {
+        type: "code",
+        text,
+        language: codeLanguage === "auto" ? detectCodeLanguage(text) : codeLanguage,
+        x,
+        y,
+        size: CODE_TEXT_SIZE,
+        color: CODE_TEXT_COLOR,
+      };
     } else {
       stroke = {
         type: "text",
@@ -297,10 +446,22 @@ export function BoardPanel({
 
   const strokeNodes = useMemo(
     () =>
-      (activeStrokes ?? []).map((stroke) => (
-        <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
-      )),
-    [activeStrokes, selected, handleStrokeClick]
+      (activeStrokes ?? []).map((stroke) => {
+        if (drag?.kind === "resize" && drag.id === stroke.id) {
+          return <BoardStroke key={stroke.id} stroke={drag.stroke} selected={false} onSelect={handleStrokeClick} />;
+        }
+        const node = (
+          <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
+        );
+        return drag?.kind === "move" && drag.id === stroke.id ? (
+          <g key={stroke.id} transform={`translate(${drag.dx} ${drag.dy})`}>
+            {node}
+          </g>
+        ) : (
+          node
+        );
+      }),
+    [activeStrokes, selected, handleStrokeClick, drag]
   );
 
   function closeReasonDialog() {
@@ -393,9 +554,46 @@ export function BoardPanel({
     );
 
   const preview =
-    draft && tool !== "erase" && tool !== "text" && tool !== "math"
+    draft && tool !== "erase" && tool !== "select" && tool !== "text" && tool !== "math" && tool !== "code"
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
+  const scale = viewWidth ? viewWidth / state.width : 1;
+  const overlayBox = selection.box && drag?.kind === "resize" ? resizedBox(selection.box, drag.stroke) : selection.box;
+  const author = selection.selected?.by
+    ? [
+        selection.selected.by,
+        selection.selected.edited_by && selection.selected.edited_by !== selection.selected.by
+          ? t("edit.editedBy", { name: selection.selected.edited_by })
+          : "",
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : undefined;
+  const selectionToolbar = (docked: boolean) => {
+    const target = selection.selected;
+    if (!target || !selection.box || placement || drag) return null;
+    return (
+      <SelectionToolbar
+        docked={docked}
+        stroke={target}
+        box={selection.box}
+        boardWidth={state.width}
+        onEdit={target.type === "text" || target.type === "math" || target.type === "code" ? () => openEditor(target) : undefined}
+        onChange={(changes) => updateStroke(target.id, { changes })}
+        onDelete={() => deleteSelected(target.id)}
+      />
+    );
+  };
+
+  const pointerHandlers =
+    tool === "select"
+      ? selection.handlers
+      : {
+          onPointerDown: handlePointerDown,
+          onPointerMove: handlePointerMove,
+          onPointerUp: handlePointerUp,
+          onPointerCancel: handlePointerUp,
+        };
 
 
   const canvas = (
@@ -406,12 +604,18 @@ export function BoardPanel({
         viewBox={`0 0 ${state.width} ${canvasHeight}`}
         preserveAspectRatio="xMidYMin meet"
         style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
+        {...pointerHandlers}
       >
         {strokeNodes}
+        {selection.box && selection.selected ? (
+          <SelectionOverlay
+            box={overlayBox ?? selection.box}
+            offset={drag?.kind === "move" ? [drag.dx, drag.dy] : undefined}
+            scale={scale}
+            label={author}
+            handles={resizeHandles(drag?.kind === "resize" ? drag.stroke : selection.selected, overlayBox ?? selection.box)}
+          />
+        ) : null}
         {preview ? (
           <BoardStroke
             stroke={{ ...preview, id: "draft" }}
@@ -421,6 +625,8 @@ export function BoardPanel({
         ) : null}
       </svg>
 
+      {!mobileLayout ? selectionToolbar(false) : null}
+
       {placement && mobileLayout ? (
         <form
           ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
@@ -429,33 +635,55 @@ export function BoardPanel({
           onPointerDown={(event) => event.stopPropagation()}
           onSubmit={placeBlock}
         >
-          <div className="flex h-[38px] shrink-0 rounded-full bg-subtle p-[3px]" role="tablist">
-            {(["text", "math"] as const).map((kind) => (
-              <button
-                key={kind}
-                type="button"
-                role="tab"
-                aria-selected={placement.tool === kind}
-                className={`flex-1 rounded-full text-body-sm transition-colors ${
-                  placement.tool === kind ? "bg-surface font-semibold text-ink shadow-sm" : "font-medium text-ink-secondary"
-                }`}
-                onClick={() => {
-                  setDraftText("");
-                  setDraftLines([]);
-                  setPlacement({ ...placement, tool: kind });
-                }}
-              >
-                {kind === "math" ? t("inline.formula") : t("inline.text")}
-              </button>
-            ))}
-          </div>
+          {placement.editingId ? (
+            <strong className="text-title-sm text-ink">{t(`inline.edit.${placement.tool}`)}</strong>
+          ) : (
+            <div className="flex h-[38px] shrink-0 rounded-full bg-subtle p-[3px]" role="tablist">
+              {(state.codeEnabled ? (["text", "math", "code"] as const) : (["text", "math"] as const)).map((kind) => (
+                <button
+                  key={kind}
+                  type="button"
+                  role="tab"
+                  aria-selected={placement.tool === kind}
+                  className={`flex-1 rounded-full text-body-sm transition-colors ${
+                    placement.tool === kind ? "bg-surface font-semibold text-ink shadow-sm" : "font-medium text-ink-secondary"
+                  }`}
+                  onClick={() => {
+                    setDraftText("");
+                    setDraftLines([]);
+                    setDraftCode("");
+                    setPlacement({ ...placement, tool: kind });
+                  }}
+                >
+                  {t(`inline.${kind === "math" ? "formula" : kind}`)}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="mt-[11px]">
             {placement.tool === "math" ? (
               <div className="[&_.math-field]:min-h-[71px] [&_.math-field]:rounded-xl [&_.math-field]:border-[1.5px] [&_.math-field]:border-brand [&_.math-field]:bg-subtle">
                 <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
               </div>
+            ) : placement.tool === "code" ? (
+              <CodeEditor
+                variant="mobile"
+                value={draftCode}
+                onChange={setDraftCode}
+                language={codeLanguage}
+                onLanguageChange={setCodeLanguage}
+                languages={state.codeLanguages}
+                onSubmit={() => placeBlock()}
+                onCancel={closePlacement}
+              />
             ) : (
-              <RichTextInput variant="mobile" onChange={setDraftLines} onSubmit={() => placeBlock()} onCancel={closePlacement} />
+              <RichTextInput
+                variant="mobile"
+                initialLines={initialLines}
+                onChange={setDraftLines}
+                onSubmit={() => placeBlock()}
+                onCancel={closePlacement}
+              />
             )}
           </div>
           <div className="mt-2.5 grid grid-cols-2 gap-2">
@@ -471,7 +699,7 @@ export function BoardPanel({
               className="flex h-11 items-center justify-center rounded-full bg-brand text-button text-on-action disabled:opacity-40"
               disabled={!canPlaceBlock}
             >
-              {t("inline.add")}
+              {placement.editingId ? t("inline.save") : t("inline.add")}
             </button>
           </div>
         </form>
@@ -483,20 +711,35 @@ export function BoardPanel({
           }`}
           style={{
             top: 0,
-            left: `${(placement.point[0] / state.width) * 100}%`,
+            left: `min(${(placement.point[0] / state.width) * 100}%, calc(100% - min(640px, 100% - 24px) - 12px))`,
             marginTop: `${(placement.point[1] / state.width) * 100}%`,
           }}
           onPointerDown={(event) => event.stopPropagation()}
           onSubmit={placeBlock}
         >
-          <span>{placement.tool === "math" ? t("inline.formula") : t("inline.text")}</span>
+          <span>
+            {placement.editingId
+              ? t(`inline.edit.${placement.tool}`)
+              : t(`inline.${placement.tool === "math" ? "formula" : placement.tool}`)}
+          </span>
           {placement.tool === "math" ? (
             <>
               <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
               <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
             </>
+          ) : placement.tool === "code" ? (
+            <CodeEditor
+              value={draftCode}
+              onChange={setDraftCode}
+              language={codeLanguage}
+              onLanguageChange={setCodeLanguage}
+              languages={state.codeLanguages}
+              onSubmit={() => placeBlock()}
+              onCancel={closePlacement}
+            />
           ) : (
             <RichTextInput
+              initialLines={initialLines}
               onChange={setDraftLines}
               onSubmit={() => placeBlock()}
               onCancel={closePlacement}
@@ -675,7 +918,8 @@ export function BoardPanel({
         </div>
 
         {canDraw ? (
-          <div className="mx-1 mt-1.5 flex h-[94px] shrink-0 flex-col justify-end">
+          <div className="mx-1 mt-1.5 flex min-h-[94px] shrink-0 flex-col justify-end gap-1.5">
+            {selectionToolbar(true)}
             <MobileBoardToolbar
               tool={tool}
               color={color}
@@ -738,6 +982,7 @@ export function BoardPanel({
               width={strokeWidth}
               canDraw={canDraw}
               chemistryEnabled={state.chemistryEnabled}
+              codeEnabled={state.codeEnabled}
               onToolChange={setTool}
               onColorChange={setColor}
               onWidthChange={setStrokeWidth}

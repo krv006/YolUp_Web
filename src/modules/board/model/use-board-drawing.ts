@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import type { Point, StrokeShapeDto } from "../api/board.dto";
+import { clientToBoard } from "../lib/board-measure";
 import { buildStroke, type DrawKind } from "../lib/board.geometry";
 import type { BoardTool } from "../ui/board-toolbar";
 
-const PLACED_TOOLS = new Set<BoardTool>(["text", "math"]);
+const PLACED_TOOLS = new Set<BoardTool>(["text", "math", "code"]);
 const MIN_POINT_DISTANCE = 2;
 
 export interface UseBoardDrawingInit {
@@ -55,24 +56,15 @@ export function useBoardDrawing({
   }
 
   function toBoardPoint(event: PointerEvent<SVGSVGElement>): Point {
-    const svg = svgRef.current!;
-    const matrix = svg.getScreenCTM();
-    if (!matrix) {
-      const rect = svg.getBoundingClientRect();
-      return [
-        Math.round(((event.clientX - rect.left) * width) / rect.width),
-        Math.round(((event.clientY - rect.top) * height) / rect.height),
-      ];
-    }
-    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
-    return [Math.round(point.x), Math.round(point.y)];
+    return clientToBoard(svgRef.current!, event.clientX, event.clientY, width, height);
   }
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
-    if (!enabled || tool === "erase") return;
+    if (!enabled || tool === "erase" || tool === "select") return;
     const point = toBoardPoint(event);
 
     if (PLACED_TOOLS.has(tool)) {
+      event.preventDefault();
       onPlacePoint(point);
       return;
     }

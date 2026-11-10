@@ -6,6 +6,7 @@ import { MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.con
 import type { BoardTool } from "./board-toolbar";
 
 const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number }> = [
+  { id: "select", labelKey: "tools.select", icon: "board-select", size: 22 },
   { id: "marker", labelKey: "tools.marker", icon: "board-marker", size: 21 },
   { id: "pen", labelKey: "tools.pen", icon: "board-pen", size: 24 },
   { id: "line", labelKey: "tools.line", icon: "board-line", size: 24 },
@@ -17,7 +18,7 @@ const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number
   { id: "erase", labelKey: "tools.erase", icon: "board-eraser", size: 20 },
 ];
 
-const PLAIN_TOOLS: BoardTool[] = ["text", "math", "erase"];
+const PLAIN_TOOLS: BoardTool[] = ["select", "text", "math", "erase"];
 
 export interface MobileBoardHeaderProps {
   title: ReactNode;
