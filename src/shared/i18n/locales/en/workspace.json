@@ -237,20 +237,9 @@
   "filterPeople": "People",
   "sectionPeople": "PEOPLE · {{count}}",
   "materials": {
-    "eyebrow": "{{count}} files",
     "title": "Materials",
-    "allGroups": "All groups",
     "group": "Group",
     "searchPlaceholder": "Search by material name",
-    "kinds": {
-      "all": "All",
-      "pdf": "PDF",
-      "doc": "Documents",
-      "video": "Video",
-      "audio": "Audio",
-      "image": "Images",
-      "other": "Other"
-    },
     "download": "Download",
     "downloadFailed": "Couldn't download the file",
     "delete": "Delete",
@@ -270,6 +259,23 @@
     "name": "Name",
     "namePlaceholder": "e.g. Chapter 3 notes",
     "tooLarge": "File is larger than 50 MB",
-    "uploaded": "Material uploaded"
+    "uploaded": "Material uploaded",
+    "rootEyebrow": "Group → lessons → files",
+    "breadcrumb": "Folders",
+    "general": "General",
+    "folder": "Folder",
+    "filesCount_one": "{{count}} file",
+    "filesCount_other": "{{count}} files",
+    "club": "Club",
+    "noGroups": "No groups yet",
+    "lessonsTitle": "Lessons",
+    "videoTag": "Video",
+    "boardTag": "Board",
+    "recording": "Lesson recording",
+    "recordingOpen": "Open to watch",
+    "recordingConverting": "Converting — it opens once ready",
+    "board": "Board (PDF)",
+    "boardHint": "Everything written on the board during the lesson",
+    "searchHint": "Try another word"
   }
 }

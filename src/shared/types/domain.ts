@@ -760,6 +760,7 @@ export interface Material {
   mimeType: string;
   uploadedBy: { id: string; name: string } | null;
   createdAt: string;
+  lessonId: string | null;
 }
 
 export interface PracticeQuestion {

@@ -237,20 +237,9 @@
   "filterPeople": "Люди",
   "sectionPeople": "ЛЮДИ · {{count}}",
   "materials": {
-    "eyebrow": "Файлов: {{count}}",
     "title": "Материалы",
-    "allGroups": "Все группы",
     "group": "Группа",
     "searchPlaceholder": "Поиск по названию",
-    "kinds": {
-      "all": "Все",
-      "pdf": "PDF",
-      "doc": "Документы",
-      "video": "Видео",
-      "audio": "Аудио",
-      "image": "Изображения",
-      "other": "Другое"
-    },
     "download": "Скачать",
     "downloadFailed": "Не удалось скачать файл",
     "delete": "Удалить",
@@ -270,6 +259,25 @@
     "name": "Название",
     "namePlaceholder": "Например, конспект 3 главы",
     "tooLarge": "Файл больше 50 МБ",
-    "uploaded": "Материал загружен"
+    "uploaded": "Материал загружен",
+    "rootEyebrow": "Группа → уроки → файлы",
+    "breadcrumb": "Папки",
+    "general": "Общее",
+    "folder": "Папка",
+    "filesCount_one": "{{count}} файл",
+    "filesCount_few": "{{count}} файла",
+    "filesCount_many": "{{count}} файлов",
+    "filesCount_other": "{{count}} файла",
+    "club": "Клуб",
+    "noGroups": "Групп пока нет",
+    "lessonsTitle": "Уроки",
+    "videoTag": "Видеозапись",
+    "boardTag": "Доска",
+    "recording": "Видеозапись урока",
+    "recordingOpen": "Откройте, чтобы посмотреть",
+    "recordingConverting": "Идёт конвертация — откроется, когда будет готово",
+    "board": "Доска (PDF)",
+    "boardHint": "Всё, что написано на доске на уроке",
+    "searchHint": "Попробуйте другое слово"
   }
 }

@@ -237,20 +237,9 @@
   "filterPeople": "Odamlar",
   "sectionPeople": "ODAMLAR · {{count}}",
   "materials": {
-    "eyebrow": "{{count}} ta fayl",
     "title": "Materiallar",
-    "allGroups": "Barcha guruhlar",
     "group": "Guruh",
     "searchPlaceholder": "Material nomi bo‘yicha qidirish",
-    "kinds": {
-      "all": "Hammasi",
-      "pdf": "PDF",
-      "doc": "Hujjatlar",
-      "video": "Video",
-      "audio": "Audio",
-      "image": "Rasmlar",
-      "other": "Boshqa"
-    },
     "download": "Yuklab olish",
     "downloadFailed": "Faylni yuklab bo‘lmadi",
     "delete": "O‘chirish",
@@ -270,6 +259,22 @@
     "name": "Nomi",
     "namePlaceholder": "Masalan, 3-bob konspekti",
     "tooLarge": "Fayl 50 MB dan katta",
-    "uploaded": "Material yuklandi"
+    "uploaded": "Material yuklandi",
+    "rootEyebrow": "Guruh → darslar → fayllar",
+    "breadcrumb": "Papkalar",
+    "general": "Umumiy",
+    "folder": "Papka",
+    "filesCount": "{{count}} ta fayl",
+    "club": "Club",
+    "noGroups": "Hali guruhlar yo'q",
+    "lessonsTitle": "Darslar",
+    "videoTag": "Video yozuv",
+    "boardTag": "Doska",
+    "recording": "Darsning video yozuvi",
+    "recordingOpen": "Ko'rish uchun oching",
+    "recordingConverting": "Konvertatsiya qilinmoqda — tayyor bo'lgach ochiladi",
+    "board": "Doska (PDF)",
+    "boardHint": "Darsda doskaga yozilganlar",
+    "searchHint": "Boshqa so'z bilan qidirib ko'ring"
   }
 }
