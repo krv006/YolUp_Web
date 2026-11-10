@@ -177,7 +177,18 @@
       "browser": "Вкладка браузера",
       "window": "Окно",
       "monitor": "Весь экран"
-    }
+    },
+    "pipTitle": "YolUp · управление уроком",
+    "pipSharing": "Идёт демонстрация экрана",
+    "pipStop": "Остановить показ",
+    "pipStudents_one": "На уроке {{count}} ученик",
+    "pipStudents_few": "На уроке {{count}} ученика",
+    "pipStudents_many": "На уроке {{count}} учеников",
+    "pipStudents_other": "На уроке {{count}} ученика",
+    "pipOpen": "Окно управления",
+    "pipOpenTitle": "Открыть окно управления — оно останется поверх других окон",
+    "pipFailed": "Не удалось открыть окно управления",
+    "pipUnsupported": "Если перейти в другое окно, кнопки урока не будут видны. Для мини-окна управления используйте Chrome или Edge."
   },
   "participantsPanel": {
     "micRequestsAria": "Ученики, запросившие микрофон",
