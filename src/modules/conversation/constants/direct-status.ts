@@ -5,6 +5,7 @@ export const DIRECT_STATUS = Object.freeze({
   PENDING: "pending",
   ACTIVE: "active",
   BLOCKED: "blocked",
+  SPAM: "spam",
 });
 
 export type DirectStatusValue = (typeof DIRECT_STATUS)[keyof typeof DIRECT_STATUS];

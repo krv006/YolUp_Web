@@ -41,6 +41,7 @@ export interface MobileGroupInfoProps {
   teacherName?: string;
   roomMembers?: ChatMember[];
   onMessage?: (member: ChatMember) => void;
+  onMessageStudent?: (studentId: string) => void;
   messagePending?: boolean;
 }
 
@@ -66,6 +67,7 @@ export function MobileGroupInfo({
   teacherName,
   roomMembers = [],
   onMessage,
+  onMessageStudent,
   messagePending = false,
 }: MobileGroupInfoProps) {
   const panel = variant === "panel";
@@ -358,6 +360,18 @@ export function MobileGroupInfo({
                       {status ? ` · ${status}` : ""}
                     </small>
                   </span>
+                  {onMessageStudent ? (
+                    <button
+                      type="button"
+                      className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-subtle text-brand transition-colors hover:bg-tint disabled:opacity-60"
+                      aria-label={tg("students.messageAria", { name: member.name })}
+                      title={tg("students.message")}
+                      disabled={messagePending}
+                      onClick={() => onMessageStudent(member.id)}
+                    >
+                      <Icon name="chat" size={16} />
+                    </button>
+                  ) : null}
                   {canManage ? (
                     <Dropdown>
                       <DropdownTrigger asChild>

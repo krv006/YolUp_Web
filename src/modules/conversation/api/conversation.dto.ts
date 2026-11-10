@@ -37,6 +37,8 @@ export interface ChatRoomDto {
   image?: string | null;
 }
 
+export type SpamReason = "insult" | "harassment" | "advertising" | "other";
+
 export interface DirectTeacherDto extends UserDto {
   direct_status?: DirectStatus | null;
   room_id?: string | number | null;

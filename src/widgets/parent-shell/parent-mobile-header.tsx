@@ -5,6 +5,7 @@ import { useAuth } from "@/modules/auth";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { ParentBell } from "./parent-bell";
+import { ParentChatButton } from "./parent-chat-button";
 
 function greeting(hour: number): "morning" | "day" | "evening" | "night" {
   if (hour >= 5 && hour < 11) return "morning";
@@ -26,6 +27,7 @@ export function ParentMobileHeader() {
         <small className="truncate text-caption text-ink-secondary">{t(`mobile.greeting.${greeting(hour)}`)}</small>
         <strong className="truncate font-heading text-[18px]/6 font-semibold text-ink">{user?.name}</strong>
       </span>
+      <ParentChatButton />
       <ParentBell />
     </header>
   );

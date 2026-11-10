@@ -9,6 +9,7 @@ export type {
   NotificationRecipientRow,
   NotificationSender,
   NotificationTarget,
+  PersonSearchResult,
   SendNotificationInput,
   SentNotification,
 } from "./api/notification.dto";

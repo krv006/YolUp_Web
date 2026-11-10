@@ -207,8 +207,12 @@ const ParentAttendancePage = lazy(() =>
     default: module.ParentAttendancePage,
   }))
 );
+const ParentChatsPage = lazy(() =>
+  import("@/pages/parent/chats/parent-chats-page").then((module) => ({ default: module.ParentChatsPage }))
+);
 const ParentHomeworkPage = lazy(() => import("@/pages/parent/homework/parent-homework-page").then((module) => ({ default: module.ParentHomeworkPage })));
 const AdminDashboardPage = lazy(() => import("@/pages/admin/admin-dashboard-page").then((module) => ({ default: module.AdminDashboardPage })));
+const AdminReportsPage = lazy(() => import("@/pages/admin/reports/admin-reports-page").then((module) => ({ default: module.AdminReportsPage })));
 const AdminSupportPage = lazy(() => import("@/pages/admin/support/admin-support-page").then((module) => ({ default: module.AdminSupportPage })));
 const AdminCertificatesPage = lazy(() => import("@/pages/admin/certificates/admin-certificates-page").then((module) => ({ default: module.AdminCertificatesPage })));
 const AdminTeachersPage = lazy(() => import("@/pages/admin/teachers/admin-teachers-page").then((module) => ({ default: module.AdminTeachersPage })));
@@ -496,6 +500,8 @@ export function AppRouter() {
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
                     <Route path="help" element={<ParentHelpPage />} />
                     <Route path="notifications" element={<ParentNotificationsPage />} />
+                    <Route path="chats" element={<ParentChatsPage />} />
+                    <Route path="chats/:conversationId" element={<ParentChatsPage />} />
                     <Route path="*" element={<ParentNotFoundPage />} />
                   </Route>
                 </Route>
@@ -529,6 +535,7 @@ export function AppRouter() {
                     path={ROUTES.admin.support}
                     element={<AdminSupportPage />}
                   />
+                  <Route path={ROUTES.admin.reports} element={<AdminReportsPage />} />
                 </Route>
               </Route>
 

@@ -29,7 +29,8 @@
     "pending": "So'rov kutilmoqda",
     "active": "Shaxsiy suhbat",
     "blocked": "Bloklangan",
-    "notSent": "So'rov yuborilmagan"
+    "notSent": "So'rov yuborilmagan",
+    "spam": "Shikoyat sababli bloklangan"
   },
   "info": {
     "groupSubjectFallback": "Kurs guruhi",
@@ -397,6 +398,31 @@
     "teacherBlockedHint": "O'quvchi sizga yoza olmaydi.",
     "accept": "Qabul qilish",
     "block": "Bloklash",
-    "unblock": "Blokdan chiqarish"
+    "unblock": "Blokdan chiqarish",
+    "spamTitle": "Suhbat shikoyat sababli bloklangan",
+    "spamHint": "Shikoyatni administrator ko'rib chiqadi. Hozircha xabar yozib bo'lmaydi."
+  },
+  "people": {
+    "cannotMessage": "Bu foydalanuvchiga yozib bo'lmaydi",
+    "viewOnly": "Yozib bo'lmaydi",
+    "sendRequest": "So'rov yuborish"
+  },
+  "report": {
+    "open": "Shikoyat qilish",
+    "title": "Shikoyat qilish",
+    "description": "{{name}} bilan suhbat bo'yicha sababni tanlang.",
+    "reasonLabel": "Sabab",
+    "reasons": {
+      "insult": "Haqorat",
+      "harassment": "Bezovta qilish",
+      "advertising": "Reklama yoki spam",
+      "other": "Boshqa sabab"
+    },
+    "commentLabel": "Izoh (ixtiyoriy)",
+    "commentPlaceholder": "Nima bo'lganini qisqacha yozing",
+    "warning": "Shikoyat yuborilgach suhbat darhol bloklanadi va administratorga tushadi.",
+    "cancel": "Bekor qilish",
+    "submit": "Shikoyat yuborish",
+    "sent": "Shikoyat yuborildi, suhbat bloklandi"
   }
 }

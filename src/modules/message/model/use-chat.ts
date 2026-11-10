@@ -132,7 +132,7 @@ export function useChat(
               if (event.type === "removed") {
                 toast.error(i18n.t("chat:removedFromGroup"));
                 queryClient.invalidateQueries({ queryKey: conversationKeys.all });
-                navigate(role === "teacher" ? "/teacher/chats" : "/student/chats", {
+                navigate(role === "teacher" ? "/teacher/chats" : role === "parent" ? "/parent/chats" : "/student/chats", {
                   replace: true,
                 });
               }

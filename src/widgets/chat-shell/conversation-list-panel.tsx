@@ -2,7 +2,13 @@ import { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useRoleRoutes } from "@/modules/auth";
-import { ConversationActionsSheet, useNewConversationStore } from "@/modules/conversation";
+import {
+  ConversationActionsSheet,
+  directChatAction,
+  PersonChatHint,
+  useNewConversationStore,
+  useStartDirectChat,
+} from "@/modules/conversation";
 import { useWheelScrollX } from "@/shared/hooks/use-wheel-scroll-x";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -17,6 +23,7 @@ export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const startChat = useStartDirectChat(routes.chat);
   const chipsRef = useWheelScrollX<HTMLDivElement>();
   const { conversationId } = useParams();
   const {
@@ -191,13 +198,9 @@ export function ConversationListPanel() {
               <button
                 key={person.id}
                 type="button"
-                className="mx-5 flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-subtle"
-                onClick={() => {
-                  if (person.roomId) {
-                    navigate(routes.chat(person.roomId));
-                    setSearch("");
-                  }
-                }}
+                className="mx-5 flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors enabled:hover:bg-subtle disabled:cursor-default"
+                disabled={directChatAction(person) === "none" || startChat.pending}
+                onClick={() => startChat.start(person, () => setSearch(""))}
               >
                 <Avatar name={person.name} src={person.avatar} size="sm" className="[&_.avatar]:size-10" />
                 <span className="flex min-w-0 flex-1 flex-col">
@@ -207,13 +210,7 @@ export function ConversationListPanel() {
                     <RoleTag role={person.role} />
                   </span>
                 </span>
-                {person.roomId ? (
-                  <Icon name="chevron-right" size={18} className="shrink-0 text-icon-tertiary" />
-                ) : (
-                  <small className="shrink-0 text-body-xs text-brand">
-                    {t("panel.startChat")}
-                  </small>
-                )}
+                <PersonChatHint action={directChatAction(person)} />
               </button>
             ))}
           </>

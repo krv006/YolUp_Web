@@ -91,7 +91,9 @@
     "removeDialogDescription": "They lose access to the chat, lessons and assignments. Their grades and attendance stay.",
     "cancel": "Cancel",
     "remove": "Remove",
-    "removeConfirmTitle": "Remove {{name}} from the group?"
+    "removeConfirmTitle": "Remove {{name}} from the group?",
+    "message": "Message",
+    "messageAria": "Message {{name}}"
   },
   "attendance": {
     "eyebrow": "COURSE REPORT",

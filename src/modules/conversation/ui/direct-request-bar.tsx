@@ -9,15 +9,16 @@ import { useRequestDirect, useRespondDirect } from "../model/use-conversations";
 
 export interface DirectRequestBarProps {
   conversation: Conversation;
-  role: "teacher" | "student";
+  role: "teacher" | "student" | "parent";
 }
 
 export function DirectRequestBar({ conversation, role }: DirectRequestBarProps) {
   const { t } = useTranslation("chat");
   const respond = useRespondDirect();
   const request = useRequestDirect();
-  const blocked = conversation.directStatus === DIRECT_STATUS.BLOCKED;
-  const teacher = role === "teacher";
+  const spam = conversation.directStatus === DIRECT_STATUS.SPAM;
+  const blocked = spam || conversation.directStatus === DIRECT_STATUS.BLOCKED;
+  const teacher = role === "teacher" && !spam;
 
   function answer(action: DirectAction) {
     respond.mutate(
@@ -38,14 +39,18 @@ export function DirectRequestBar({ conversation, role }: DirectRequestBarProps) 
     });
   }
 
-  const title = teacher
+  const title = spam
+    ? t("directGate.spamTitle")
+    : teacher
     ? blocked
       ? t("directGate.teacherBlockedTitle")
       : t("directGate.teacherPendingTitle", { name: conversation.title })
     : blocked
       ? t("directGate.studentBlockedTitle")
       : t("directGate.studentPendingTitle");
-  const hint = teacher
+  const hint = spam
+    ? t("directGate.spamHint")
+    : teacher
     ? blocked
       ? t("directGate.teacherBlockedHint")
       : t("directGate.teacherPendingHint")
@@ -91,7 +96,7 @@ export function DirectRequestBar({ conversation, role }: DirectRequestBarProps) 
               {blocked ? t("directGate.unblock") : t("directGate.accept")}
             </button>
           </span>
-        ) : blocked && conversation.participantId ? (
+        ) : blocked && !spam && conversation.participantId ? (
           <button
             type="button"
             className={`${dialogButton.primary} whitespace-nowrap lg:flex-none lg:shrink-0`}

@@ -2,7 +2,7 @@ import { AppError, API_ERROR_CODES, apiClient, type RequestOptions } from "@/sha
 import { courseApi, type CourseFormInput } from "@/modules/course";
 import type { Conversation } from "@/shared/types";
 import { conversationEndpoints } from "./conversation.endpoints";
-import type { ChatRoomDto, DirectAction, DirectTeacherDto } from "./conversation.dto";
+import type { ChatRoomDto, DirectAction, DirectTeacherDto, SpamReason } from "./conversation.dto";
 import { mapConversationDto, mapConversationPage, mapTeacherDto } from "../lib/conversation.mappers";
 
 export const conversationApi = {
@@ -77,10 +77,11 @@ export const conversationApi = {
       await apiClient.post<ChatRoomDto>(conversationEndpoints.directRespond, { room_id: roomId, action })
     );
   },
-  async createDirect(): Promise<never> {
-    throw new AppError({
-      code: API_ERROR_CODES.FORBIDDEN,
-      message: "Shaxsiy chat so‘rovini o‘quvchi yuboradi",
-    });
+  async openDirect(userId: string) {
+    return mapConversationDto(await apiClient.post<ChatRoomDto>(conversationEndpoints.directOpen, { user_id: userId }));
+  },
+  async report(roomId: string, reason: SpamReason, comment = "") {
+    const text = comment.trim();
+    await apiClient.post(conversationEndpoints.report(roomId), { reason, ...(text ? { comment: text } : {}) });
   },
 };

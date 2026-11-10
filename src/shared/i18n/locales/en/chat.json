@@ -29,7 +29,8 @@
     "pending": "Request pending",
     "active": "Direct message",
     "blocked": "Blocked",
-    "notSent": "No request sent"
+    "notSent": "No request sent",
+    "spam": "Blocked after a report"
   },
   "info": {
     "groupSubjectFallback": "Course group",
@@ -397,6 +398,31 @@
     "teacherBlockedHint": "The student can't message you.",
     "accept": "Accept",
     "block": "Block",
-    "unblock": "Unblock"
+    "unblock": "Unblock",
+    "spamTitle": "This chat is blocked after a report",
+    "spamHint": "An administrator will review the report. Messaging is disabled for now."
+  },
+  "people": {
+    "cannotMessage": "You can't message this user",
+    "viewOnly": "Can't message",
+    "sendRequest": "Send request"
+  },
+  "report": {
+    "open": "Report",
+    "title": "Report",
+    "description": "Choose why you are reporting the chat with {{name}}.",
+    "reasonLabel": "Reason",
+    "reasons": {
+      "insult": "Insult",
+      "harassment": "Harassment",
+      "advertising": "Advertising or spam",
+      "other": "Other"
+    },
+    "commentLabel": "Comment (optional)",
+    "commentPlaceholder": "Briefly describe what happened",
+    "warning": "Once sent, the chat is blocked right away and goes to an administrator.",
+    "cancel": "Cancel",
+    "submit": "Send report",
+    "sent": "Report sent, the chat is blocked"
   }
 }

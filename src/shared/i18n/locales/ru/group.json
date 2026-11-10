@@ -91,7 +91,9 @@
     "removeDialogDescription": "Ученик потеряет доступ к чату, занятиям и заданиям. Оценки и посещаемость сохранятся.",
     "cancel": "Отмена",
     "remove": "Удалить",
-    "removeConfirmTitle": "Удалить {{name}} из группы?"
+    "removeConfirmTitle": "Удалить {{name}} из группы?",
+    "message": "Написать",
+    "messageAria": "Написать {{name}}"
   },
   "attendance": {
     "eyebrow": "ОТЧЁТ ПО КУРСУ",

@@ -151,7 +151,8 @@
       "children": "O‘quvchilar",
       "attendance": "Davomat",
       "homework": "Vazifalar",
-      "results": "Natijalar"
+      "results": "Natijalar",
+      "chats": "Chatlar"
     },
     "role": "Kuzatuvchi",
     "openAccount": "Profil va sozlamalar",
@@ -1141,5 +1142,23 @@
     "cancelDone": "So‘rov bekor qilindi",
     "failed": "Amalni bajarib bo‘lmadi. Qayta urinib ko‘ring",
     "expires": "So‘rov {{date}}gacha amal qiladi — tasdiqlanmasa bekor bo‘ladi"
+  },
+  "chats": {
+    "title": "Chatlar",
+    "back": "Orqaga",
+    "openWithUnread": "Chatlar, {{count}} ta o'qilmagan",
+    "searchPlaceholder": "Chatlarni qidirish...",
+    "newTitle": "O'qituvchiga yozish",
+    "newDescription": "O'quvchingizning o'qituvchilari. Birinchi xabar uchun o'qituvchi so'rovni qabul qilishi kerak.",
+    "open": "Ochish",
+    "request": "So'rov yuborish",
+    "requestSent": "So'rov yuborildi — o'qituvchi qabul qilgach yozishingiz mumkin",
+    "loading": "Yuklanmoqda...",
+    "noTeachers": "Hozircha o'qituvchilar yo'q",
+    "emptyTitle": "Hali chatlar yo'q",
+    "emptyHint": "O'quvchingizning o'qituvchisiga yozish uchun so'rov yuboring.",
+    "noResults": "Hech narsa topilmadi",
+    "pickTitle": "Chatni tanlang",
+    "pickHint": "Chap tomondagi ro'yxatdan suhbatni oching yoki o'qituvchiga yangi so'rov yuboring."
   }
 }

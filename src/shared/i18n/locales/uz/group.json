@@ -91,7 +91,9 @@
     "removeDialogDescription": "O‘quvchi guruh chati, darslar va vazifalarni ko‘rmay qoladi. Uning baholari va davomat tarixi saqlanadi.",
     "cancel": "Bekor",
     "remove": "Chiqarish",
-    "removeConfirmTitle": "{{name}}ni guruhdan chiqarasizmi?"
+    "removeConfirmTitle": "{{name}}ni guruhdan chiqarasizmi?",
+    "message": "Xabar yozish",
+    "messageAria": "{{name}}ga xabar yozish"
   },
   "attendance": {
     "eyebrow": "KURS HISOBOTI",

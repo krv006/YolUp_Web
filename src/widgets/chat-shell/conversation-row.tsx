@@ -84,7 +84,9 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
       ) : isDirectLocked(conversation) ? (
         <small
           className={`truncate text-body-sm ${
-            conversation.directStatus === "blocked" ? "text-error-text" : "text-saffron-strong"
+            conversation.directStatus === "blocked" || conversation.directStatus === "spam"
+              ? "text-error-text"
+              : "text-saffron-strong"
           }`}
         >
           {directStatusLabel(conversation.directStatus)}

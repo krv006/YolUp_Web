@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useRoleRoutes } from "@/modules/auth";
 import {
   ConversationActionsSheet,
+  directChatAction,
+  PersonChatHint,
   useNewConversationStore,
+  useStartDirectChat,
   type ConversationActionsFocus,
 } from "@/modules/conversation";
 import type { Conversation } from "@/shared/types";
@@ -27,6 +30,7 @@ export function MobileConversationList() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const startChat = useStartDirectChat(routes.chat);
   const openNewConversation = useNewConversationStore((state) => state.setOpen);
   const {
     data,
@@ -220,13 +224,9 @@ export function MobileConversationList() {
                   <button
                     key={person.id}
                     type="button"
-                    className="flex items-center gap-3 border-b border-line px-4 py-4 text-left last:border-b-0"
-                    onClick={() => {
-                      if (person.roomId) {
-                        navigate(routes.chat(person.roomId));
-                        setSearch("");
-                      }
-                    }}
+                    className="flex items-center gap-3 border-b border-line px-4 py-4 text-left last:border-b-0 disabled:cursor-default"
+                    disabled={directChatAction(person) === "none" || startChat.pending}
+                    onClick={() => startChat.start(person, () => setSearch(""))}
                   >
                     <Avatar name={person.name} src={person.avatar} size="sm" className="[&_.avatar]:size-12" />
                     <span className="flex min-w-0 flex-1 flex-col">
@@ -236,7 +236,7 @@ export function MobileConversationList() {
                         <RoleTag role={person.role} />
                       </span>
                     </span>
-                    <Icon name="more" size={22} className="shrink-0 text-ink-secondary" />
+                    <PersonChatHint action={directChatAction(person)} />
                   </button>
                 ))}
               </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapInboxNotificationDto, mapSendRequest, mapSentNotificationDto } from "./notification.mappers";
+import { mapInboxNotificationDto, mapPersonSearchDto, mapSendRequest, mapSentNotificationDto } from "./notification.mappers";
 import type { NotificationRecipientDto, SentNotificationDto } from "../api/notification.dto";
 
 const evil = '<p>Salom</p><img src=x onerror="alert(1)"><script>alert(2)</script>';
@@ -35,5 +35,18 @@ describe("mapSendRequest", () => {
       target_type: "users",
       user_ids: ["u1", "u2"],
     });
+  });
+});
+
+describe("mapPersonSearchDto", () => {
+  it("reads the name and messaging rights from the people search", () => {
+    expect(
+      mapPersonSearchDto({ id: 7, name: "Aziza Karimova", username: "aziza", role: "TEACHER", room_id: null, can_message: "request" })
+    ).toMatchObject({ id: "7", name: "Aziza Karimova", role: "teacher", roomId: null, canMessage: "request", directStatus: null });
+  });
+
+  it("falls back to first and last name for the admin search", () => {
+    expect(mapPersonSearchDto({ id: 1, first_name: "Ali", last_name: "Valiyev", username: "ali" }).name).toBe("Ali Valiyev");
+    expect(mapPersonSearchDto({ id: 2, username: "vali" }).name).toBe("vali");
   });
 });

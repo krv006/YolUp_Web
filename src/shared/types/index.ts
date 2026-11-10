@@ -29,6 +29,7 @@ export type {
   DashboardPeriod,
   DashboardSummary,
   DashboardTrends,
+  CanMessage,
   DirectStatus,
   DomainUser,
   Enrollment,

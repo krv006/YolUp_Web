@@ -59,7 +59,8 @@
       "noTeachers": "No active teachers found."
     },
     "certificatesLink": "Certificates",
-    "supportLink": "Support"
+    "supportLink": "Support",
+    "reportsLink": "Reports"
   },
   "stats": {
     "title": "{{name}} — statistics",
@@ -162,6 +163,52 @@
       "answered": "Answered",
       "closed": "Closed",
       "all": "All"
+    }
+  },
+  "reports": {
+    "eyebrow": "Chat safety",
+    "title": "Reports",
+    "subtitle": "Reports about spam and insults in direct chats",
+    "filterLabel": "Status",
+    "status": {
+      "open": "New",
+      "resolved": "Confirmed",
+      "dismissed": "Dismissed"
+    },
+    "reasons": {
+      "insult": "Insult",
+      "harassment": "Harassment",
+      "advertising": "Advertising or spam",
+      "other": "Other"
+    },
+    "empty": {
+      "open": "No new reports.",
+      "resolved": "No confirmed reports.",
+      "dismissed": "No dismissed reports."
+    },
+    "loading": "Loading reports...",
+    "reportedBy": "Reported by {{name}}",
+    "view": "View",
+    "prev": "Previous",
+    "next": "Next",
+    "detailTitle": "Report",
+    "reporter": "Reported by",
+    "reported": "Reported user",
+    "reason": "Reason",
+    "comment": "Comment",
+    "date": "Date",
+    "handledBy": "Handled by",
+    "messages": "Latest messages in the chat",
+    "noMessages": "No messages.",
+    "actions": {
+      "resolve": "Confirm",
+      "dismiss": "Dismiss",
+      "unblock": "Unblock chat"
+    },
+    "done": {
+      "resolve": "Report confirmed, the chat stays blocked",
+      "dismiss": "Report dismissed, the chat is open again",
+      "unblock": "The chat is open again"
     }
   }
 }

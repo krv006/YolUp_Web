@@ -59,7 +59,8 @@
       "noTeachers": "Faol o'qituvchi topilmadi."
     },
     "certificatesLink": "Sertifikatlar",
-    "supportLink": "Murojaatlar"
+    "supportLink": "Murojaatlar",
+    "reportsLink": "Shikoyatlar"
   },
   "stats": {
     "title": "{{name}} — statistika",
@@ -162,6 +163,52 @@
       "answered": "Javob berilgan",
       "closed": "Yopilgan",
       "all": "Hammasi"
+    }
+  },
+  "reports": {
+    "eyebrow": "Chat xavfsizligi",
+    "title": "Shikoyatlar",
+    "subtitle": "Shaxsiy chatlardagi spam va haqorat haqidagi shikoyatlar",
+    "filterLabel": "Holat",
+    "status": {
+      "open": "Yangi",
+      "resolved": "Tasdiqlangan",
+      "dismissed": "Rad etilgan"
+    },
+    "reasons": {
+      "insult": "Haqorat",
+      "harassment": "Bezovta qilish",
+      "advertising": "Reklama yoki spam",
+      "other": "Boshqa"
+    },
+    "empty": {
+      "open": "Yangi shikoyatlar yo'q.",
+      "resolved": "Tasdiqlangan shikoyatlar yo'q.",
+      "dismissed": "Rad etilgan shikoyatlar yo'q."
+    },
+    "loading": "Shikoyatlar yuklanmoqda...",
+    "reportedBy": "Shikoyat qilgan: {{name}}",
+    "view": "Ko'rish",
+    "prev": "Oldingi",
+    "next": "Keyingi",
+    "detailTitle": "Shikoyat",
+    "reporter": "Shikoyat qilgan",
+    "reported": "Kimga",
+    "reason": "Sabab",
+    "comment": "Izoh",
+    "date": "Sana",
+    "handledBy": "Ko'rib chiqqan",
+    "messages": "Suhbatning oxirgi xabarlari",
+    "noMessages": "Xabarlar yo'q.",
+    "actions": {
+      "resolve": "Tasdiqlash",
+      "dismiss": "Rad etish",
+      "unblock": "Chatni qayta ochish"
+    },
+    "done": {
+      "resolve": "Shikoyat tasdiqlandi, chat bloklangan qoladi",
+      "dismiss": "Shikoyat rad etildi, chat qayta ochildi",
+      "unblock": "Chat qayta ochildi"
     }
   }
 }

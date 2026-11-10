@@ -3,7 +3,7 @@ import type { TeacherStats } from "./auth";
 
 export type AvatarTone = "violet" | "blue" | "emerald" | "amber" | "rose";
 
-export type ConversationRole = "teacher" | "student";
+export type ConversationRole = "teacher" | "student" | "parent";
 
 export interface DomainUser {
   id: string;
@@ -19,7 +19,9 @@ export interface DomainUser {
   status?: string;
 }
 
-export type DirectStatus = "pending" | "active" | "blocked";
+export type DirectStatus = "pending" | "active" | "blocked" | "spam";
+
+export type CanMessage = "write" | "request" | "none";
 
 export interface ConversationParticipant {
   id: string;
