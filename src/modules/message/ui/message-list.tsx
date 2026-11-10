@@ -6,6 +6,7 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
+import { formatDayLabel, isSameLocalDay } from "@/shared/lib";
 import { messageApi } from "../api/message.api";
 import { messageKeys } from "../model/message.keys";
 import { useChatUiStore } from "../model/chat-ui.store";
@@ -237,11 +238,6 @@ export function MessageList({
             </span>
           </div>
         ) : null}
-        {search || emptyCompact ? null : (
-          <div className={announcement ? "hidden lg:block" : undefined}>
-            <DateSeparator>{t("list.today")}</DateSeparator>
-          </div>
-        )}
         {search && serverTotal > matches.length ? (
           <p className="hidden py-2 text-center text-caption text-ink-tertiary lg:block">
             {t("list.searchOlder", { count: serverTotal - matches.length })}
@@ -266,6 +262,7 @@ export function MessageList({
               other &&
                 other.senderId === entry.message.senderId &&
                 other.type !== "system" &&
+                isSameLocalDay(other.createdAt, entry.message.createdAt) &&
                 Math.abs(
                   new Date(other.createdAt).getTime() -
                     new Date(entry.message.createdAt).getTime()
@@ -273,18 +270,27 @@ export function MessageList({
             );
           const showName = !sameAs(previous);
           const showAvatar = !sameAs(next);
+          const newDay =
+            !search &&
+            Boolean(entry.message.createdAt) &&
+            (!previous || !isSameLocalDay(previous.createdAt, entry.message.createdAt));
+          const daySeparator = newDay ? <DateSeparator>{formatDayLabel(entry.message.createdAt)}</DateSeparator> : null;
           return entry.kind === "assignment" && entry.message.assignment ? (
-            <div key={entry.message.clientMessageId || entry.message.id} className="flex justify-start">
-              <HomeworkMessageCard
-                assignment={entry.message.assignment}
-                canReview={entry.message.senderId === currentUserId}
-                compact={workspace}
-                submitted={assignmentSubmitted?.(entry.message.assignment.id) ?? null}
-                onOpen={onOpenAssignment ? () => onOpenAssignment(entry.message.assignment?.id ?? "") : undefined}
-              />
-            </div>
+            <Fragment key={entry.message.clientMessageId || entry.message.id}>
+              {daySeparator}
+              <div className="flex justify-start">
+                <HomeworkMessageCard
+                  assignment={entry.message.assignment}
+                  canReview={entry.message.senderId === currentUserId}
+                  compact={workspace}
+                  submitted={assignmentSubmitted?.(entry.message.assignment.id) ?? null}
+                  onOpen={onOpenAssignment ? () => onOpenAssignment(entry.message.assignment?.id ?? "") : undefined}
+                />
+              </div>
+            </Fragment>
           ) : (
             <Fragment key={entry.message.clientMessageId || entry.message.id}>
+              {daySeparator}
               {dividerId === entry.message.id ? (
                 <DateSeparator>{t("actionsMenu.newMessages", { count: unread })}</DateSeparator>
               ) : null}

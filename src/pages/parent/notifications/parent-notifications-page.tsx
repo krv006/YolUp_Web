@@ -18,7 +18,7 @@ import {
 } from "@/modules/notification";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { formatMessageTime } from "@/shared/lib";
+import { formatNotificationTime } from "@/shared/lib";
 import { Icon } from "@/shared/ui/icon";
 import { MobilePageHeader, mobileRoundButton } from "@/shared/ui/mobile-page";
 import { useParentNotificationLink } from "@/widgets/parent-shell";
@@ -138,7 +138,7 @@ export function ParentNotificationsPage() {
                       )}
                     </span>
                     <span className="flex shrink-0 flex-col items-end gap-2">
-                      <small className="text-caption text-ink-secondary">{item.createdAt ? formatMessageTime(item.createdAt) : ""}</small>
+                      <small className="text-caption text-ink-secondary">{item.createdAt ? formatNotificationTime(item.createdAt) : ""}</small>
                       {item.isRead ? null : <i className="size-2 rounded-full bg-brand not-italic" />}
                     </span>
                   </button>

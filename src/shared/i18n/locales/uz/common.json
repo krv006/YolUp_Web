@@ -36,9 +36,13 @@
     "unsupported": "Bu turdagi faylni brauzerda ko'rib bo'lmaydi.",
     "platformOnlyNote": "Fayl faqat platforma ichida ko‘riladi",
     "close": "Yopish",
-    "watermark": "YolUp · faqat platformada"
+    "watermark": "YolUp · faqat platformada",
+    "zoomIn": "Yaqinlashtirish",
+    "zoomOut": "Uzoqlashtirish",
+    "zoomReset": "Asl o'lchamga qaytarish"
   },
   "date": {
+    "today": "Bugun",
     "yesterday": "Kecha",
     "hourUnit": "s",
     "minuteUnit": "m",

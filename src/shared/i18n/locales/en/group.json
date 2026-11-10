@@ -118,7 +118,10 @@
     "lessonsMeta": "Who came, who didn’t",
     "untitledLesson": "Untitled lesson",
     "lessonJoined": "{{joined}} / {{total}} attended",
-    "lessonOpen": "View attendance"
+    "lessonOpen": "View attendance",
+    "exits_one": "{{count}} exit",
+    "exits_other": "{{count}} exits",
+    "exitsHint": "Times the lesson window was left"
   },
   "dialogs": {
     "lesson": {

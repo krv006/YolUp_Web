@@ -36,9 +36,13 @@
     "unsupported": "Этот тип файла нельзя просмотреть в браузере.",
     "platformOnlyNote": "Файл можно просмотреть только на платформе",
     "close": "Закрыть",
-    "watermark": "YolUp · только в платформе"
+    "watermark": "YolUp · только в платформе",
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить",
+    "zoomReset": "Вернуть исходный размер"
   },
   "date": {
+    "today": "Сегодня",
     "yesterday": "Вчера",
     "hourUnit": "ч",
     "minuteUnit": "м",

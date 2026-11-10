@@ -30,6 +30,14 @@ export function useAttendanceSummary(
   });
 }
 
+export function useCourseAttendance(courseId: string | null, from: string | null, enabled = true) {
+  return useQuery({
+    queryKey: ["attendance", "course", courseId, from],
+    queryFn: ({ signal }) => attendanceApi.getAllForCourse(courseId as string, from, { signal }),
+    enabled: Boolean(courseId) && enabled,
+  });
+}
+
 export function useAttendancePage(params: QueryParams = {}) {
   return useQuery({
     queryKey: attendanceKeys.list(params),

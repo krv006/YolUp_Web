@@ -118,7 +118,12 @@
     "lessonsMeta": "Кто пришёл, кто нет",
     "untitledLesson": "Урок без темы",
     "lessonJoined": "{{joined}} / {{total}} присутствовали",
-    "lessonOpen": "Посмотреть посещаемость"
+    "lessonOpen": "Посмотреть посещаемость",
+    "exits_one": "{{count}} выход",
+    "exits_few": "{{count}} выхода",
+    "exits_many": "{{count}} выходов",
+    "exits_other": "{{count}} выхода",
+    "exitsHint": "Сколько раз уходили из окна урока"
   },
   "dialogs": {
     "lesson": {
