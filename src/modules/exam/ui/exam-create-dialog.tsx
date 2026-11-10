@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
@@ -306,9 +306,11 @@ export function ExamCreateDialog({
         {template && !usableQuizzes.length ? (
           <div className="mt-5 flex flex-col gap-1 px-3">
             <span className="text-body-sm font-medium text-ink">{t("createDialog.noQuizzesShort")}</span>
-            <a className="w-fit text-body-sm font-semibold text-brand" href={ROUTES.teacher.workspaceAi}>
-              {t("createDialog.createWithAiShort")}
-            </a>
+            {FEATURES.aiAssistant ? (
+              <a className="w-fit text-body-sm font-semibold text-brand" href={ROUTES.teacher.workspaceAi}>
+                {t("createDialog.createWithAiShort")}
+              </a>
+            ) : null}
           </div>
         ) : null}
       </MobileScreenDialog>
@@ -547,14 +549,16 @@ export function ExamCreateDialog({
               <small className="text-body-xs text-ink-secondary">
                 {t("createDialog.noQuizzesShort")}
               </small>
-              <a
-                className="w-fit text-button text-brand transition-opacity hover:opacity-80"
-                href={`/teacher/workspace/ai?exam=${encodeURIComponent(AI_EXAM_FOR_SECTION.listening)}`}
-                target="_blank"
-                rel="noopener"
-              >
-                {t("createDialog.createWithAiShort")}
-              </a>
+              {FEATURES.aiAssistant ? (
+                <a
+                  className="w-fit text-button text-brand transition-opacity hover:opacity-80"
+                  href={`${ROUTES.teacher.workspaceAi}?exam=${encodeURIComponent(AI_EXAM_FOR_SECTION.listening)}`}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  {t("createDialog.createWithAiShort")}
+                </a>
+              ) : null}
             </div>
           ) : null}
 

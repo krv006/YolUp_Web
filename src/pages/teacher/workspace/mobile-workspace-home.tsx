@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import {
@@ -12,7 +12,7 @@ import {
   mobileRoundButton,
 } from "@/shared/ui/mobile-page";
 
-const MODULES = [
+const ALL_MODULES = [
   { id: "tests", icon: "quiz", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.teacher.tests },
   {
     id: "analytics",
@@ -36,12 +36,15 @@ const MODULES = [
   { id: "materials", icon: "folder", tone: "bg-accent-violet-bg text-accent-red-fg", to: ROUTES.teacher.materials },
 ] as const;
 
-const CREATE = [
+const ALL_CREATE = [
   { id: "test", icon: "quiz", to: `${ROUTES.teacher.tests}?new=1` },
   { id: "homework", icon: "assign", to: `${ROUTES.teacher.homework}?new=1` },
   { id: "mock", icon: "assignment-check-fill", to: `${ROUTES.teacher.mockExams}?new=1` },
   { id: "ai", icon: "sparkles-fill", to: ROUTES.teacher.workspaceAi },
 ] as const;
+
+const MODULES = ALL_MODULES.filter((module) => module.id !== "ai" || FEATURES.aiAssistant);
+const CREATE = ALL_CREATE.filter((item) => item.id !== "ai" || FEATURES.aiAssistant);
 
 export interface MobileWorkspaceHomeProps {
   unchecked: number;

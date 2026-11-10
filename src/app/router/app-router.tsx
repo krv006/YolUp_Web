@@ -10,7 +10,7 @@ import { ProtectedRoute } from "./protected-route";
 import { PublicRoute } from "./public-route";
 import { RoleRoute } from "./role-route";
 import { RouteErrorBoundary } from "./route-error-boundary";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { prefetchTranslations } from "@/shared/i18n";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 
@@ -323,7 +323,12 @@ export function AppRouter() {
                     <Route path={ROUTES.teacher.homework} element={<HomeworkListPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId" element={<HomeworkDetailPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId/review" element={<HomeworkReviewPage />} />
-                    <Route path={ROUTES.teacher.workspaceAi} element={<AiAssistantPage />} />
+                    <Route
+                      path={ROUTES.teacher.workspaceAi}
+                      element={
+                        FEATURES.aiAssistant ? <AiAssistantPage /> : <Navigate to={ROUTES.teacher.workspace} replace />
+                      }
+                    />
                     <Route path={ROUTES.teacher.materials} element={<MaterialsPage />} />
                     <Route path={ROUTES.teacher.workspaceAnalytics} element={<WorkspaceAnalyticsPage />} />
                     <Route path={ROUTES.teacher.mockExams} element={<MockExamsPage />} />
@@ -360,7 +365,7 @@ export function AppRouter() {
                     <Route path="notifications" element={<NotificationsPage />} />
                     <Route
                       path="ai"
-                      element={<Navigate to={ROUTES.teacher.workspaceAi} replace />}
+                      element={<Navigate to={FEATURES.aiAssistant ? ROUTES.teacher.workspaceAi : ROUTES.teacher.workspace} replace />}
                     />
                     <Route
                       path="workspace"
@@ -409,7 +414,10 @@ export function AppRouter() {
                     <Route path="/student/workspace/tests/:quizId/results" element={<StudentTestResultsPage />} />
                     <Route path={ROUTES.student.workspaceAnalytics} element={<StudentAnalyticsPage />} />
                     <Route path={ROUTES.student.materials} element={<MaterialsPage />} />
-                    <Route path={ROUTES.student.ai} element={<StudentAiPage />} />
+                    <Route
+                      path={ROUTES.student.ai}
+                      element={FEATURES.aiAssistant ? <StudentAiPage /> : <Navigate to={ROUTES.student.workspace} replace />}
+                    />
                     <Route path={ROUTES.student.mockExams} element={<StudentMockPage />} />
                     <Route path="/student/workspace/mock/:examId" element={<StudentMockResultPage />} />
                     <Route path="/student/workspace/mock/:examId/take" element={<StudentExamPage />} />

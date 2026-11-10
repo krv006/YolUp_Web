@@ -8,7 +8,7 @@ import { useCourses } from "@/modules/course";
 import { useExams } from "@/modules/exam";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useQuizzes } from "@/modules/quiz";
-import { ROUTES } from "@/shared/config";
+import { FEATURES, ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
@@ -21,7 +21,7 @@ interface ModuleCard {
   to: string;
 }
 
-const MODULES: ModuleCard[] = [
+const ALL_MODULES: ModuleCard[] = [
   { id: "tests", icon: "quiz", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.teacher.tests },
   {
     id: "assignments",
@@ -49,6 +49,8 @@ const MODULES: ModuleCard[] = [
   },
   { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.teacher.materials },
 ];
+
+const MODULES = ALL_MODULES.filter((module) => module.id !== "ai" || FEATURES.aiAssistant);
 
 export function WorkspaceHomePage() {
   const { t } = useTranslation("workspace");
