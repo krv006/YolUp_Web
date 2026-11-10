@@ -2,16 +2,15 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEv
 import type { Point, StrokeDto } from "../api/board.dto";
 import { clampMove, type SheetSize, type StrokeBox } from "../lib/board-edit";
 import { boardScale, clientToBoard, measureNode, strokeNode } from "../lib/board-measure";
+import { resizeStroke, type ResizeHandle } from "../lib/board-resize";
 import { boxOfStroke, pickStroke } from "../lib/board-select";
 
 const HIT_PX = 10;
 const DRAG_START = 2;
 
-export interface BoardDrag {
-  id: string;
-  dx: number;
-  dy: number;
-}
+export type BoardDrag =
+  | { kind: "move"; id: string; dx: number; dy: number }
+  | { kind: "resize"; id: string; stroke: StrokeDto };
 
 export interface UseBoardSelectionInit {
   svgRef: RefObject<SVGSVGElement | null>;
@@ -21,6 +20,7 @@ export interface UseBoardSelectionInit {
   active: boolean;
   canEdit: (stroke: StrokeDto) => boolean;
   onMove: (id: string, delta: [number, number]) => void;
+  onResize: (id: string, changes: Record<string, number>) => void;
   onDenied: () => void;
   onOpen: (stroke: StrokeDto) => void;
 }
@@ -31,6 +31,9 @@ interface DragState {
   start: Point;
   delta: [number, number];
   moved: boolean;
+  handle: ResizeHandle | null;
+  preview: StrokeDto | null;
+  changes: Record<string, number> | null;
 }
 
 export function useBoardSelection({
@@ -41,6 +44,7 @@ export function useBoardSelection({
   active,
   canEdit,
   onMove,
+  onResize,
   onDenied,
   onOpen,
 }: UseBoardSelectionInit) {
@@ -106,6 +110,13 @@ export function useBoardSelection({
   function onPointerDown(event: PointerEvent<SVGSVGElement>) {
     if (!active) return;
     const point = toPoint(event);
+    const handle = (event.target as Element | null)?.closest?.("[data-handle]")?.getAttribute("data-handle") as ResizeHandle | null;
+    if (handle && current) {
+      event.preventDefault();
+      event.currentTarget.setPointerCapture(event.pointerId);
+      dragRef.current = { id: current.id, stroke: current, start: point, delta: [0, 0], moved: false, handle, preview: null, changes: null };
+      return;
+    }
     const stroke = pickAt(event);
     if (!stroke) {
       clear();
@@ -119,7 +130,7 @@ export function useBoardSelection({
     event.preventDefault();
     setSelectedId(stroke.id);
     event.currentTarget.setPointerCapture(event.pointerId);
-    dragRef.current = { id: stroke.id, stroke, start: point, delta: [0, 0], moved: false };
+    dragRef.current = { id: stroke.id, stroke, start: point, delta: [0, 0], moved: false, handle: null, preview: null, changes: null };
   }
 
   function onPointerMove(event: PointerEvent<SVGSVGElement>) {
@@ -129,12 +140,25 @@ export function useBoardSelection({
     const raw: [number, number] = [point[0] - state.start[0], point[1] - state.start[1]];
     if (!state.moved && Math.hypot(raw[0], raw[1]) < DRAG_START) return;
     state.moved = true;
-    state.delta = clampMove(state.stroke, raw, sheet);
+    if (state.handle) {
+      const resized = resizeStroke(state.stroke, state.handle, point, sheet);
+      state.preview = resized?.stroke ?? null;
+      state.changes = resized?.changes ?? null;
+    } else {
+      state.delta = clampMove(state.stroke, raw, sheet);
+    }
     if (frameRef.current !== null) return;
     frameRef.current = globalThis.requestAnimationFrame(() => {
       frameRef.current = null;
       const live = dragRef.current;
-      setDrag(live?.moved ? { id: live.id, dx: live.delta[0], dy: live.delta[1] } : null);
+      if (!live?.moved) return setDrag(null);
+      setDrag(
+        live.handle
+          ? live.preview
+            ? { kind: "resize", id: live.id, stroke: live.preview }
+            : null
+          : { kind: "move", id: live.id, dx: live.delta[0], dy: live.delta[1] }
+      );
     });
   }
 
@@ -147,6 +171,10 @@ export function useBoardSelection({
     }
     setDrag(null);
     if (!state?.moved) return;
+    if (state.handle) {
+      if (state.changes) onResize(state.id, state.changes);
+      return;
+    }
     const delta: [number, number] = [Math.round(state.delta[0]), Math.round(state.delta[1])];
     if (delta[0] || delta[1]) onMove(state.id, delta);
   }

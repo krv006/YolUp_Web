@@ -26,6 +26,7 @@ import {
 } from "../constants/board.constants";
 import { FLOW_MARGIN, nextTextPoint, strokeSpan } from "../lib/board-flow";
 import { canEditStroke } from "../lib/board-edit";
+import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
@@ -281,6 +282,7 @@ export function BoardPanel({
     canEdit: (stroke: StrokeDto) =>
       canEditStroke(stroke, { isTeacher: Boolean(state?.isTeacher), userId, personal: Boolean(source) }),
     onMove: (strokeId, delta) => updateStroke(strokeId, { move: delta }),
+    onResize: (strokeId, changes) => updateStroke(strokeId, { changes }),
     onDenied: () => toast.info(t("edit.notOwner")),
     onOpen: openEditor,
   });
@@ -415,10 +417,13 @@ export function BoardPanel({
   const strokeNodes = useMemo(
     () =>
       (activeStrokes ?? []).map((stroke) => {
+        if (drag?.kind === "resize" && drag.id === stroke.id) {
+          return <BoardStroke key={stroke.id} stroke={drag.stroke} selected={false} onSelect={handleStrokeClick} />;
+        }
         const node = (
           <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
         );
-        return drag?.id === stroke.id ? (
+        return drag?.kind === "move" && drag.id === stroke.id ? (
           <g key={stroke.id} transform={`translate(${drag.dx} ${drag.dy})`}>
             {node}
           </g>
@@ -523,6 +528,7 @@ export function BoardPanel({
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
   const scale = viewWidth ? viewWidth / state.width : 1;
+  const overlayBox = selection.box && drag?.kind === "resize" ? resizedBox(selection.box, drag.stroke) : selection.box;
   const author = selection.selected?.by
     ? [
         selection.selected.by,
@@ -571,12 +577,13 @@ export function BoardPanel({
         {...pointerHandlers}
       >
         {strokeNodes}
-        {selection.box ? (
+        {selection.box && selection.selected ? (
           <SelectionOverlay
-            box={selection.box}
-            offset={drag && drag.id === selection.selected?.id ? [drag.dx, drag.dy] : undefined}
+            box={overlayBox ?? selection.box}
+            offset={drag?.kind === "move" ? [drag.dx, drag.dy] : undefined}
             scale={scale}
             label={author}
+            handles={resizeHandles(drag?.kind === "resize" ? drag.stroke : selection.selected, overlayBox ?? selection.box)}
           />
         ) : null}
         {preview ? (
