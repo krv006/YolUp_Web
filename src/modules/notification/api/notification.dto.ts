@@ -1,6 +1,6 @@
 import type { UserDto } from "@/shared/types";
 
-export type NotificationTarget = "user" | "all" | "users" | "parents_of";
+export type NotificationTarget = "user" | "all" | "users" | "parents_of" | "course";
 
 export interface NotificationDto {
   id: string;
@@ -46,6 +46,8 @@ export interface SendNotificationDto {
   target_type: NotificationTarget;
   user_id?: string;
   user_ids?: string[];
+  course_id?: string;
+  include_parents?: boolean;
   kind?: string;
 }
 
@@ -102,5 +104,7 @@ export interface SendNotificationInput {
   targetType: NotificationTarget;
   userId?: string | null;
   userIds?: string[];
+  courseId?: string | null;
+  includeParents?: boolean;
   kind?: string;
 }

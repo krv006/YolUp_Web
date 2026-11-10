@@ -95,6 +95,9 @@ export function mapSendRequest(input: SendNotificationInput): SendNotificationDt
     target_type: input.targetType,
     ...(input.targetType === "user" && input.userId ? { user_id: input.userId } : {}),
     ...(bulk && input.userIds?.length ? { user_ids: input.userIds } : {}),
+    ...(input.targetType === "course" && input.courseId
+      ? { course_id: input.courseId, include_parents: Boolean(input.includeParents) }
+      : {}),
     ...(input.kind ? { kind: input.kind } : {}),
   };
 }

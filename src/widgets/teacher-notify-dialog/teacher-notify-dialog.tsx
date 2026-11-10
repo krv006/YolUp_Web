@@ -53,6 +53,10 @@ export function TeacherNotifyDialog({ open, onOpenChange, courseId = null }: Tea
   const send = useMutation({
     mutationFn: async () => {
       const description = toHtml(text);
+      if (audience === "all" && activeCourse) {
+        await notificationApi.send({ description, targetType: "course", courseId: activeCourse, includeParents: parents });
+        return;
+      }
       await notificationApi.send({ description, targetType: "users", userIds: recipients });
       if (parents) await notificationApi.send({ description, targetType: "parents_of", userIds: recipients });
     },
