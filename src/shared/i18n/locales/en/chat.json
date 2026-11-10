@@ -502,5 +502,8 @@
     "noStudents": "No students found",
     "searchPlaceholder": "Student name or @username",
     "removeStudent": "Remove {{name}}"
+  },
+  "payments": {
+    "unpaidTitle": "Unpaid this month: {{count}}, overdue: {{overdue}}"
   }
 }

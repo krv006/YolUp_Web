@@ -436,7 +436,10 @@
     "statFocus": "Focus",
     "statAttendanceLessons": "Attendance · {{count}} lessons",
     "lastVisit": "Last visit: {{date}}",
-    "noVisit": "Hasn't joined a lesson yet"
+    "noVisit": "Hasn't joined a lesson yet",
+    "overdue": "Overdue",
+    "unpaidBadge_one": "{{count}} student hasn't paid",
+    "unpaidBadge_other": "{{count}} students haven't paid"
   },
   "club": {
     "eyebrow": "Speaking club",
@@ -445,5 +448,25 @@
     "addHint": "Pick groups or individual students — they join right away.",
     "added": "Students added: {{count}}",
     "empty": "No members yet"
+  },
+  "paymentSettings": {
+    "button": "Payment settings",
+    "title": "Payment settings",
+    "description": "Monthly fee, due day and reminders. Reminders go to the student and their observer.",
+    "fee": "Monthly fee (UZS)",
+    "feePlaceholder": "For example, 450000",
+    "day": "Due day every month",
+    "noDay": "Not set",
+    "dayOption": "Day {{day}}",
+    "dayHint": "If unpaid by this day, the student is marked as overdue.",
+    "reminders": "Send a reminder",
+    "reminderOption_one": "{{count}} day before",
+    "reminderOption_other": "{{count}} days before",
+    "remindersHint": "You can pick several. Only students who haven't paid this month get it.",
+    "remindersNeedDay": "Pick a due day first.",
+    "dueDay": "due on day {{day}}",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Payment settings saved"
   }
 }

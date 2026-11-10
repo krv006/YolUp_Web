@@ -510,5 +510,8 @@
     "noStudents": "Ученики не найдены",
     "searchPlaceholder": "Имя ученика или @username",
     "removeStudent": "Убрать {{name}}"
+  },
+  "payments": {
+    "unpaidTitle": "В этом месяце не оплатили: {{count}}, из них просрочено: {{overdue}}"
   }
 }

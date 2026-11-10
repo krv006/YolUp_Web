@@ -3,6 +3,7 @@ import type { CourseProgressDto, StudentProgressDetailDto } from "../api/progres
 import {
   daysSinceVisit,
   mapCourseProgress,
+  mapPayment,
   mapStudentProgress,
   mapStudentProgressDetail,
   matchesStudent,
@@ -186,5 +187,13 @@ describe("daysSinceVisit", () => {
   it("returns null when the student never joined a lesson", () => {
     expect(daysSinceVisit(null, now)).toBeNull();
     expect(daysSinceVisit("bad", now)).toBeNull();
+  });
+});
+
+describe("mapPayment overdue", () => {
+  it("marks only unpaid months as overdue", () => {
+    expect(mapPayment({ period: "2026-11", status: "unpaid", amount: null, paid_at: null, note: "", overdue: true }).overdue).toBe(true);
+    expect(mapPayment({ period: "2026-11", status: "paid", amount: 1, paid_at: "x", note: "", overdue: true }).overdue).toBe(false);
+    expect(mapPayment({ period: "2026-11", status: "unpaid", amount: null, paid_at: null, note: "" }).overdue).toBe(false);
   });
 });

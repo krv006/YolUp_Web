@@ -436,7 +436,9 @@
     "statFocus": "Fokus",
     "statAttendanceLessons": "Davomat · {{count}} dars",
     "lastVisit": "Oxirgi tashrif: {{date}}",
-    "noVisit": "Darsga hali kirmagan"
+    "noVisit": "Darsga hali kirmagan",
+    "overdue": "Muddati o'tgan",
+    "unpaidBadge": "{{count}} ta o'quvchi to'lamagan"
   },
   "club": {
     "eyebrow": "Speaking club",
@@ -445,5 +447,24 @@
     "addHint": "Guruhlarni yoki alohida o'quvchilarni tanlang — ular darhol qo'shiladi.",
     "added": "{{count}} ta o'quvchi qo'shildi",
     "empty": "Hali a'zolar yo'q"
+  },
+  "paymentSettings": {
+    "button": "To'lov sozlamalari",
+    "title": "To'lov sozlamalari",
+    "description": "Oylik to'lov, to'lov kuni va eslatmalar. Eslatma o'quvchiga ham, kuzatuvchisiga ham boradi.",
+    "fee": "Oylik to'lov (so'm)",
+    "feePlaceholder": "Masalan, 450000",
+    "day": "Har oy to'lov kuni",
+    "noDay": "Belgilanmagan",
+    "dayOption": "{{day}}-sana",
+    "dayHint": "Shu kungacha to'lanmasa, o'quvchi \"Muddati o'tgan\" bo'ladi.",
+    "reminders": "Eslatma yuborish",
+    "reminderOption": "{{count}} kun oldin",
+    "remindersHint": "Bir nechtasini tanlash mumkin. Faqat shu oy to'lamaganlarga boradi.",
+    "remindersNeedDay": "Eslatma uchun avval to'lov kunini tanlang.",
+    "dueDay": "to'lov kuni: {{day}}-sana",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "saved": "To'lov sozlamalari saqlandi"
   }
 }

@@ -81,6 +81,18 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
           {conversation.title}
         </strong>
         {conversation.type === "direct" ? <RoleTag role={conversation.participant?.role} /> : null}
+        {conversation.type === "group" && conversation.unpaidCount ? (
+          <span
+            className={`inline-flex h-5 shrink-0 items-center gap-0.5 rounded-full px-1.5 text-caption-strong ${
+              conversation.overdueCount ? "bg-danger text-ink-inverse" : "bg-danger-bg text-danger"
+            }`}
+            title={t("payments.unpaidTitle", { count: conversation.unpaidCount, overdue: conversation.overdueCount ?? 0 })}
+            aria-label={t("payments.unpaidTitle", { count: conversation.unpaidCount, overdue: conversation.overdueCount ?? 0 })}
+          >
+            <Icon name="payments" size={12} />
+            {conversation.unpaidCount}
+          </span>
+        ) : null}
         {isClub ? (
           <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-accent-saffron-bg px-2 text-caption-strong text-accent-saffron-fg">
             {t("club.badge")}

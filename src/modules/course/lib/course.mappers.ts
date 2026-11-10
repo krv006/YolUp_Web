@@ -38,6 +38,10 @@ export function mapCourseDto(dto: CourseDto): Course {
     monthlyFee: dto.monthly_fee ?? null,
     avatarUrl: normalizeMediaUrl(dto.avatar),
     kind: dto.kind === "club" ? "club" : "group",
+    paymentDay: dto.payment_day ?? null,
+    paymentReminderDays: dto.payment_reminder_days ?? [],
+    unpaidCount: dto.unpaid_count ?? null,
+    overdueCount: dto.overdue_count ?? null,
   };
 }
 

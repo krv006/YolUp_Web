@@ -196,6 +196,10 @@ export interface Course {
   monthlyFee: number | null;
   avatarUrl: string | null;
   kind: "group" | "club";
+  paymentDay: number | null;
+  paymentReminderDays: number[];
+  unpaidCount: number | null;
+  overdueCount: number | null;
 }
 
 export interface Club extends Course {

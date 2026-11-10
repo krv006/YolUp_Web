@@ -498,5 +498,8 @@
     "noStudents": "O'quvchi topilmadi",
     "searchPlaceholder": "O'quvchi ismi yoki @username",
     "removeStudent": "{{name}}ni olib tashlash"
+  },
+  "payments": {
+    "unpaidTitle": "Shu oy {{count}} ta o'quvchi to'lamagan, {{overdue}} tasining muddati o'tgan"
   }
 }

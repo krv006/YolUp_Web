@@ -6,6 +6,7 @@ import { courseApi } from "../api/course.api";
 import type {
   CourseFormInput,
   CourseInviteLinkInput,
+  CoursePaymentSettings,
   EnrollmentAction,
   EnrollPayload,
 } from "../api/course.dto";
@@ -112,6 +113,19 @@ export function useUpdateCourse() {
       client.invalidateQueries({ queryKey: courseKeys.all });
       client.setQueryData(courseKeys.detail(course.id), course);
       toast.success("Kurs yangilandi");
+    },
+  });
+}
+
+export function useUpdateCoursePayments() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, settings }: { id: string; settings: CoursePaymentSettings }) =>
+      courseApi.updatePayments(id, settings),
+    onSuccess: (course) => {
+      client.invalidateQueries({ queryKey: courseKeys.all });
+      client.invalidateQueries({ queryKey: ["progress"] });
+      client.setQueryData(courseKeys.detail(course.id), course);
     },
   });
 }

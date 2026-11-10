@@ -199,12 +199,20 @@ export function GroupWorkspace({
           return (
             <button
               key={tab.id}
-              className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
+              className={`relative flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
                 active ? "bg-brand text-ink-inverse lg:border-brand" : "bg-surface text-ink lg:border-line"
               }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
               {tab.label}
+              {tab.id === "progress" && course.data?.unpaidCount ? (
+                <span
+                  className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-ink-inverse ring-2 ring-canvas"
+                  aria-label={t("progress.unpaidBadge", { count: course.data.unpaidCount })}
+                >
+                  {course.data.unpaidCount}
+                </span>
+              ) : null}
             </button>
           );
         })}

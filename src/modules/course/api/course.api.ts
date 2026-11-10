@@ -12,6 +12,7 @@ import { courseEndpoints } from "./course.endpoints";
 import type {
   CourseDto,
   CourseFormInput,
+  CoursePaymentSettings,
   CourseInviteLinkDto,
   CourseInviteLinkInput,
   CourseJoinResultDto,
@@ -55,6 +56,16 @@ export const courseApi = {
   async update(id: string, form: CourseFormInput) {
     return mapCourseDto(
       await apiClient.patch<CourseDto>(courseEndpoints.detail(id), mapCourseRequest(form))
+    );
+  },
+  async updatePayments(id: string, settings: CoursePaymentSettings) {
+    const reminders = settings.paymentDay ? [...new Set(settings.reminderDays)].sort((a, b) => b - a) : [];
+    return mapCourseDto(
+      await apiClient.patch<CourseDto>(courseEndpoints.detail(id), {
+        monthly_fee: settings.monthlyFee,
+        payment_day: settings.paymentDay,
+        payment_reminder_days: reminders,
+      })
     );
   },
   async updateAvatar(id: string, file: File | null) {
