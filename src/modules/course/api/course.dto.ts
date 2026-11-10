@@ -15,6 +15,22 @@ export interface CourseDto {
   lessons_per_week?: number | null;
   monthly_fee?: number | null;
   avatar?: string | null;
+  kind?: "group" | "club";
+  payment_day?: number | null;
+  payment_reminder_days?: number[] | null;
+  unpaid_count?: number | null;
+  overdue_count?: number | null;
+}
+
+export interface CoursePaymentSettings {
+  monthlyFee: number | null;
+  paymentDay: number | null;
+  reminderDays: number[];
+}
+
+export interface ClubDto extends CourseDto {
+  members_count?: number | null;
+  chat_room_id?: string | number | null;
 }
 
 export interface EnrollmentDto {

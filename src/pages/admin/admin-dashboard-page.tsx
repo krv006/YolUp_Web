@@ -5,6 +5,7 @@ import {
   BookOpen,
   CalendarCheck,
   CheckCircle2,
+  Flag,
   GraduationCap,
   LogOut,
   ShieldCheck,
@@ -57,6 +58,9 @@ export function AdminDashboardPage() {
     if (link.type === "support") {
       navigate(`${ROUTES.admin.support}?ticket=${encodeURIComponent(link.id)}`);
     }
+    if (link.type === "spam_report") {
+      navigate(`${ROUTES.admin.reports}?report=${encodeURIComponent(link.id)}`);
+    }
   }
 
   async function signOut() {
@@ -102,6 +106,9 @@ export function AdminDashboardPage() {
           </Link>
           <Link className="portal-primary-link" to={ROUTES.admin.support}>
             <LifeBuoy size={15} /> {t("dashboard.supportLink")}
+          </Link>
+          <Link className="portal-primary-link" to={ROUTES.admin.reports}>
+            <Flag size={15} /> {t("dashboard.reportsLink")}
           </Link>
           <NotificationBell enabled={Boolean(user)} onOpenLink={openNotificationLink} />
           <Button variant="secondary" onClick={signOut}>

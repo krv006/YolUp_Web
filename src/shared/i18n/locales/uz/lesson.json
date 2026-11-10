@@ -117,11 +117,16 @@
   },
   "finishDialog": {
     "title": "Darsni yakunlaysizmi?",
-    "description": "Barcha ishtirokchilar xonadan chiqariladi. Dars yozuvi saqlanadi va guruh chatiga yuboriladi.",
+    "description": "Barcha ishtirokchilar xonadan chiqariladi. Dars yozuvi saqlanadi.",
     "cancel": "Bekor",
     "confirm": "Yakunlash",
     "leaveOnly": "Faqat chiqish",
-    "mobileDescription": "Barcha ishtirokchilar chiqariladi. Dars yozuvi saqlanadi va chatga yuboriladi."
+    "mobileDescription": "Barcha ishtirokchilar chiqariladi. Dars yozuvi saqlanadi.",
+    "postRecording": "Video yozuvni guruhga yuborish",
+    "postRecordingHint": "Yozuv tayyor bo'lgach guruh chatiga tushadi va o'quvchilarga bildirishnoma boradi",
+    "keepRecordingHint": "Yozuv guruhga yuborilmaydi — keyin yozuv sahifasidan yuborishingiz mumkin",
+    "finishedPosted": "Dars yakunlandi — yozuv tayyor bo'lgach guruh chatiga tushadi",
+    "finishedKept": "Dars yakunlandi — yozuv saqlandi"
   },
   "rateDialog": {
     "title": "Darsni baholang",
@@ -220,7 +225,9 @@
     "volume": "Ovoz balandligi",
     "notFoundEyebrow": "DARS YOZUVI",
     "notFoundTitle": "Darsni topib bo‘lmadi",
-    "retry": "Qayta urinish"
+    "retry": "Qayta urinish",
+    "convertingTitle": "Konvertatsiya qilinmoqda...",
+    "converting": "Video hamma qurilmalarda ochiladigan formatga o'tkazilmoqda. Tayyor bo'lishi bilan shu yerda ochiladi."
   },
   "schedule": {
     "now": "HOZIR",

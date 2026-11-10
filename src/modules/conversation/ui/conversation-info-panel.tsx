@@ -39,6 +39,8 @@ import { Switch } from "@/shared/ui/switch";
 import type { DirectAction } from "../api/conversation.dto";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MobileGroupInfo } from "./mobile-group-info";
+import { ReportConversationDialog } from "./report-conversation-dialog";
+import { useStartDirectChat } from "../model/use-start-direct-chat";
 import { MOBILE_INPUT, MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
 
 export interface ConversationInfoPanelProps {
@@ -74,6 +76,7 @@ export function ConversationInfoPanel({
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [requestsOpen, setRequestsOpen] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [courseForm, setCourseForm] = useState<CourseFormInput>({
     title: "",
     subject: "",
@@ -186,6 +189,12 @@ export function ConversationInfoPanel({
       onError: (error: Error) => toast.error(error.message),
     });
   }
+  const startChat = useStartDirectChat(ROUTES.teacher.chat);
+
+  function messageStudent(studentId: string) {
+    startChat.start({ id: studentId, roomId: null, canMessage: "write" }, () => onOpenChange(false));
+  }
+
   const joinRequests = useCourseRequests({ page_size: 50 }, open && teacherGroup);
   const pendingRequests = (joinRequests.data?.items ?? []).filter(
     (item) => item.courseId === conversation.courseId
@@ -220,7 +229,8 @@ export function ConversationInfoPanel({
       teacherName={course.data?.teacher}
       roomMembers={roomMembers.data ?? []}
       onMessage={studentViewer ? (member) => messageTeacher(member.id) : undefined}
-      messagePending={requestDirect.isPending}
+      onMessageStudent={teacherGroup ? messageStudent : undefined}
+      messagePending={requestDirect.isPending || startChat.pending}
       muted={muted}
       announcement={announcement}
       requestsCount={pendingRequests.length}
@@ -562,7 +572,12 @@ export function ConversationInfoPanel({
 
                 {tab === "members" ? (
                   teacherGroup ? (
-                    <CourseMembersSection courseId={conversation.courseId} canManage />
+                    <CourseMembersSection
+                      courseId={conversation.courseId}
+                      canManage
+                      onMessage={messageStudent}
+                      messagePending={startChat.pending}
+                    />
                   ) : (
                     <div className="flex flex-col gap-2">
                       {(roomMembers.data ?? []).map((member) => (
@@ -663,13 +678,23 @@ export function ConversationInfoPanel({
 
             {!isGroup &&
             user?.role === "TEACHER" &&
-            conversation.directStatus !== DIRECT_STATUS.BLOCKED ? (
+            conversation.directStatus !== DIRECT_STATUS.BLOCKED &&
+            conversation.directStatus !== DIRECT_STATUS.SPAM ? (
               <button
                 className="flex h-14 items-center justify-center gap-2 rounded-xl bg-error-bg text-label-strong text-error-text disabled:opacity-60"
                 disabled={respond.isPending}
                 onClick={() => respondDirect("block")}
               >
                 <Icon name="error" size={18} /> {t("info.blockUser")}
+              </button>
+            ) : null}
+            {!isGroup && conversation.directStatus !== DIRECT_STATUS.SPAM ? (
+              <button
+                type="button"
+                className="flex h-14 items-center justify-center gap-2 rounded-xl border border-line text-label-strong text-error-text transition-colors hover:bg-error-bg"
+                onClick={() => setReportOpen(true)}
+              >
+                <Icon name="warning" size={18} /> {t("report.open")}
               </button>
             ) : null}
             {teacherGroup ? (
@@ -702,6 +727,16 @@ export function ConversationInfoPanel({
         </Dialog>
       )}
 
+
+      {!isGroup ? (
+        <ReportConversationDialog
+          roomId={conversation.id}
+          name={conversation.title}
+          open={reportOpen}
+          onOpenChange={setReportOpen}
+          onReported={() => onOpenChange(false)}
+        />
+      ) : null}
 
       <InviteStudentsDialog
         open={inviteOpen}

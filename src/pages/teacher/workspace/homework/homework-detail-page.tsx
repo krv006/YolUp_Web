@@ -108,6 +108,8 @@ export function HomeworkDetailPage() {
               grading: item.grading,
               announceInChat: item.announceInChat,
               aiCheck: item.aiCheck,
+              questions: item.questions,
+              questionsLocked: item.submissions.length > 0 || (item.submissionsCount ?? 0) > 0,
             }}
             onSubmit={(values) =>
               update.mutateAsync({ id: item.id, form: values }).then(() => setEditOpen(false))

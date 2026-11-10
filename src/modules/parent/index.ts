@@ -25,6 +25,7 @@ export {
   useCancelLink,
   useChildExams,
   useChildRank,
+  useChildScores,
   useChildSessions,
   useChildSummary,
   useChildrenSummary,
@@ -37,6 +38,8 @@ export {
   useUsernameAvailability,
 } from "./model/parent.queries";
 export { useSelectedChild, useSelectedChildStore } from "./model/selected-child.store";
+export { mapChildScores, SCORE_KINDS, scoreSeries } from "./lib/child-scores";
+export type { ChildScores, ScoreKind, ScorePeriod, ScoreRange } from "./lib/child-scores";
 export type { UseSelectedChildResult } from "./model/selected-child.store";
 export { LinkChildDialog } from "./ui/link-child-dialog";
 export { CreateChildDialog } from "./ui/create-child-dialog";

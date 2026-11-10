@@ -1,22 +1,29 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocalParticipantPermissions, useRoomContext } from "@livekit/components-react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useBoardChannel, useTeacherSignals, type BoardSocketEvent } from "@/modules/board";
-import { canPublishSource, MICROPHONE_SOURCE } from "../lib/live-permissions";
-import { useCancelMicRequest, useDenyMic, useGrantMic, useRequestMic } from "./live.queries";
+import { canPublishSource, identityUserId, MICROPHONE_SOURCE } from "../lib/live-permissions";
+import { useCancelMicRequest, useDenyMic, useGrantMic, useMediaMode, useReleaseMedia, useRequestMic } from "./live.queries";
 
 export interface MicRequest {
   studentId: string;
   name: string;
 }
 
+const RELEASE_ECHO_MS = 5_000;
+
 export function useMicSignals(lessonId: string, isTeacher: boolean) {
+  const { t } = useTranslation("live");
   const room = useRoomContext();
   const permissions = useLocalParticipantPermissions();
   const grant = useGrantMic(lessonId);
   const deny = useDenyMic(lessonId);
   const request = useRequestMic(lessonId);
   const cancel = useCancelMicRequest(lessonId);
+  const mediaMode = useMediaMode(lessonId);
+  const releaseMedia = useReleaseMedia(lessonId);
+  const releasedAt = useRef(0);
 
   const [live, setLive] = useState<MicRequest[]>([]);
   const [answered, setAnswered] = useState<string[]>([]);
@@ -49,7 +56,7 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
   const { mutate: denyMic } = deny;
 
   const isMine = useCallback(
-    (studentId: string) => !isTeacher && studentId === room.localParticipant.identity,
+    (studentId: string) => !isTeacher && studentId === identityUserId(room.localParticipant.identity),
     [isTeacher, room]
   );
 
@@ -79,6 +86,14 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
         return;
       }
 
+      if (event.type === "mic_revoked") {
+        if (!isMine(event.studentId)) return;
+        setWaiting(false);
+        pendingEnable.current = false;
+        if (Date.now() - releasedAt.current > RELEASE_ECHO_MS) toast.info(t("mic.revokedToast"));
+        return;
+      }
+
       if (event.type !== "mic_granted" && event.type !== "mic_denied") return;
 
       setAnswered((current) =>
@@ -96,7 +111,7 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
       if (canSpeak) enableMic();
       else pendingEnable.current = true;
     },
-    [canSpeak, denyMic, enableMic, grantMic, isMine, isTeacher]
+    [canSpeak, denyMic, enableMic, grantMic, isMine, isTeacher, t]
   );
 
   useBoardChannel(lessonId, Boolean(lessonId), handleEvent);
@@ -113,6 +128,14 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
     [sendRequest]
   );
 
+  const open = Boolean(mediaMode.data?.openMic);
+  const { mutate: sendRelease } = releaseMedia;
+  const release = useCallback(() => {
+    if (isTeacher || open) return;
+    releasedAt.current = Date.now();
+    sendRelease("microphone");
+  }, [isTeacher, open, sendRelease]);
+
   const { mutate: sendCancel } = cancel;
   const cancelMic = useCallback(() => sendCancel(undefined, { onSuccess: () => setWaiting(false) }), [sendCancel]);
 
@@ -125,5 +148,7 @@ export function useMicSignals(lessonId: string, isTeacher: boolean) {
     cancelling: cancel.isPending,
     requesting: request.isPending,
     waiting,
+    release,
+    open,
   };
 }

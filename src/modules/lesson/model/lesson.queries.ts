@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppError, type QueryParams } from "@/shared/api";
 import { describeCreateError } from "@/modules/auth";
+import { i18n } from "@/shared/i18n";
 import { lessonApi } from "../api/lesson.api";
 import { flushTeacherAudioRecording } from "../lib/teacher-audio-recording";
 import { flushTeacherVideoRecording } from "../lib/teacher-video-recording";
@@ -18,6 +19,7 @@ export const lessonKeys = Object.freeze({
 
 const RECORDING_POLL_MS = 15_000;
 const MERGING_POLL_MS = 2_000;
+const CONVERTING_POLL_MS = 30_000;
 
 export function useLessons(params: QueryParams = {}, enabled = true) {
   return useQuery({
@@ -174,9 +176,17 @@ export function useDeleteLesson() {
 export function useFinishLesson() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, recordingTitle }: { id: string; recordingTitle?: string }) => {
+    mutationFn: async ({
+      id,
+      recordingTitle,
+      postRecording = true,
+    }: {
+      id: string;
+      recordingTitle?: string;
+      postRecording?: boolean;
+    }) => {
       await Promise.all([flushTeacherAudioRecording(id), flushTeacherVideoRecording(id)]);
-      const lesson = await lessonApi.finish(id, recordingTitle);
+      const lesson = await lessonApi.finish(id, { recordingTitle, postRecording });
       const results = await Promise.allSettled([
         lessonApi.finalizeRecordingAudio(id),
         lessonApi.finalizeRecordingVideo(id),
@@ -188,9 +198,9 @@ export function useFinishLesson() {
       });
       return lesson;
     },
-    onSuccess: () => {
+    onSuccess: (_lesson, { postRecording = true }) => {
       client.invalidateQueries({ queryKey: lessonKeys.all });
-      toast.success("Dars yakunlandi — yozuv guruh chatiga tushadi");
+      toast.success(i18n.t(postRecording ? "lesson:finishDialog.finishedPosted" : "lesson:finishDialog.finishedKept"));
     },
   });
 }
@@ -204,6 +214,7 @@ export function useLessonRecording(id: string | null) {
     refetchInterval: (query) => {
       const status = query.state.data?.status;
       if (status === "merging") return MERGING_POLL_MS;
+      if (status === "converting") return CONVERTING_POLL_MS;
       if (status === "recording") return RECORDING_POLL_MS;
       return false;
     },

@@ -20,6 +20,8 @@ function mapHit(dto: SearchHitDto): SearchHit {
     createdAt: dto.created_at ?? null,
     role: dto.role ?? null,
     avatarUrl: normalizeMediaUrl(dto.avatar ?? null),
+    directStatus: dto.direct_status ?? null,
+    canMessage: dto.can_message ?? null,
   };
 }
 

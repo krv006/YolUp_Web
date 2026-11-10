@@ -1,10 +1,22 @@
-import type { AiResult, Assignment, CourseHomeworkReport, GradingScale, HomeworkReport, HomeworkReportSummary, Submission } from "@/shared/types";
+import type {
+  AiResult,
+  Assignment,
+  CourseHomeworkReport,
+  GradingScale,
+  HomeworkAnswer,
+  HomeworkQuestion,
+  HomeworkReport,
+  HomeworkReportSummary,
+  Submission,
+} from "@/shared/types";
 import type {
   AiResultDto,
   AssignmentDto,
   AssignmentFormInput,
   HomeworkBoardDto,
+  HomeworkAnswerDto,
   HomeworkCourseReportDto,
+  HomeworkQuestionDto,
   HomeworkReportDto,
   SubmissionDto,
 } from "../api/homework.dto";
@@ -66,6 +78,33 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
       mimeType: file.mime || "",
       index: file.index ?? position,
     })),
+    answers: (dto.answers ?? []).map(mapHomeworkAnswerDto),
+  };
+}
+
+export function mapHomeworkQuestionDto(dto: HomeworkQuestionDto): HomeworkQuestion {
+  return {
+    id: String(dto.id),
+    type: dto.type,
+    text: dto.text ?? "",
+    options: dto.options ?? [],
+    correct: dto.correct ?? null,
+    points: Number(dto.points ?? 1),
+  };
+}
+
+export function mapHomeworkAnswerDto(dto: HomeworkAnswerDto): HomeworkAnswer {
+  return {
+    questionId: String(dto.question_id),
+    type: dto.type,
+    text: dto.text ?? "",
+    options: dto.options ?? [],
+    points: Number(dto.points ?? 0),
+    answer: dto.answer ?? null,
+    score: dto.score ?? null,
+    correct: dto.correct ?? null,
+    isCorrect: typeof dto.is_correct === "boolean" ? dto.is_correct : null,
+    aiScore: dto.ai_score ?? null,
   };
 }
 
@@ -119,6 +158,9 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     lessonStartsAt: dto.lesson_starts_at ?? null,
     grading: dto.grading ?? "five",
     maxScore: dto.max_score ?? defaultMaxScore(dto.grading ?? "five"),
+    questions: (dto.questions ?? []).map(mapHomeworkQuestionDto),
+    hasQuestions: Boolean(dto.has_questions ?? dto.questions?.length),
+    questionsPoints: Number(dto.questions_points ?? 0),
     groupStats: dto.group_stats
       ? { average: dto.group_stats.average ?? null, rank: dto.group_stats.rank ?? null, total: dto.group_stats.total ?? null }
       : null,
@@ -206,5 +248,6 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.grading) data.set("grading", form.grading);
   if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);
+  if (form.questions) data.set("questions", JSON.stringify(form.questions));
   return data;
 }

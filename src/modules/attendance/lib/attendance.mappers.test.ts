@@ -47,10 +47,23 @@ describe("mapAttendanceSummary", () => {
       students: [{ id: 5, name: "Nilufar", attendance_percent: 0, focus_percent: null, attended_count: 0 }],
     });
     expect(summary.focusPercent).toBeNull();
-    expect(summary.students[0]).toEqual({ id: "5", name: "Nilufar", attendancePercent: 0, focusPercent: null, attendedCount: 0 });
+    expect(summary.students[0]).toEqual({ id: "5", name: "Nilufar", attendancePercent: 0, focusPercent: null, attendedCount: 0, focusExits: 0 });
+  });
+
+  it("keeps the exit totals from the server", () => {
+    const summary = mapAttendanceSummary({
+      lesson_count: 2,
+      focus_exits: 5,
+      students: [
+        { id: 1, name: "Ali", focus_exits: 3 },
+        { id: 2, name: "Vali", focus_exits: null },
+      ],
+    });
+    expect(summary.focusExits).toBe(5);
+    expect(summary.students.map((item) => item.focusExits)).toEqual([3, 0]);
   });
 
   it("survives an empty response", () => {
-    expect(mapAttendanceSummary(null)).toEqual({ attendancePercent: 0, focusPercent: null, lessonCount: 0, students: [] });
+    expect(mapAttendanceSummary(null)).toEqual({ attendancePercent: 0, focusPercent: null, lessonCount: 0, focusExits: 0, students: [] });
   });
 });

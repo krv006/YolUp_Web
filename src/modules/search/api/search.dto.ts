@@ -1,3 +1,5 @@
+import type { CanMessage, DirectStatus } from "@/shared/types";
+
 export type SearchType = "groups" | "lessons" | "quizzes" | "messages" | "people";
 
 export interface SearchHitDto {
@@ -13,6 +15,8 @@ export interface SearchHitDto {
   created_at?: string | null;
   role?: string | null;
   avatar?: string | null;
+  direct_status?: DirectStatus | null;
+  can_message?: CanMessage | null;
 }
 
 export interface SearchResponseDto {
@@ -36,6 +40,8 @@ export interface SearchHit {
   createdAt: string | null;
   role: string | null;
   avatarUrl: string | null;
+  directStatus: DirectStatus | null;
+  canMessage: CanMessage | null;
 }
 
 export interface SearchResults {

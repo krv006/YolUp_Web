@@ -207,6 +207,17 @@ interface RequestSignal {
   requesting: boolean;
   cancelling?: boolean;
   waiting: boolean;
+  release?: () => void;
+}
+
+function toggleWithRelease(
+  enabled: boolean,
+  toggle: () => Promise<unknown>,
+  release: (() => void) | undefined
+) {
+  void toggle().then(() => {
+    if (enabled) release?.();
+  });
 }
 
 function MicButton({ isTeacher, request }: { isTeacher: boolean; request: RequestSignal }) {
@@ -224,7 +235,11 @@ function MicButton({ isTeacher, request }: { isTeacher: boolean; request: Reques
         tone={enabled ? "default" : "off"}
         pressed={enabled}
         disabled={pending}
-        onClick={() => (allowed ? void toggle() : toast.error(t("mic.disabledTitle")))}
+        onClick={() =>
+          allowed
+            ? toggleWithRelease(enabled, () => toggle(), isTeacher ? undefined : request.release)
+            : toast.error(t("mic.disabledTitle"))
+        }
       />
     );
 
@@ -254,7 +269,11 @@ function CameraButton({ isTeacher, request }: { isTeacher: boolean; request: Req
         tone={enabled ? "default" : "off"}
         pressed={enabled}
         disabled={pending}
-        onClick={() => (allowed ? void toggle() : toast.error(t("camera.disabledTitle")))}
+        onClick={() =>
+          allowed
+            ? toggleWithRelease(enabled, () => toggle(), isTeacher ? undefined : request.release)
+            : toast.error(t("camera.disabledTitle"))
+        }
       />
     );
 

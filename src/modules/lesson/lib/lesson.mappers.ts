@@ -50,6 +50,7 @@ export function mapLessonDto(dto: LessonDto): Lesson {
     participantsCount: dto.participants_count ?? null,
     attendanceRate: dto.attendance_rate ?? null,
     joinedCount: dto.joined_count ?? null,
+    focusExits: dto.focus_exits ?? null,
     myRating: dto.my_rating ?? null,
     attended: dto.attended ?? null,
     recordingActive: Boolean(dto.recording_active),
@@ -76,7 +77,7 @@ export function mapLessonPage(dto: unknown, options?: PaginationOptions): Page<L
   return { ...page, items: page.items.map(mapLessonDto) };
 }
 
-const RECORDING_STATUSES: LessonRecordingStatus[] = ["recording", "merging", "completed", "failed"];
+const RECORDING_STATUSES: LessonRecordingStatus[] = ["recording", "merging", "converting", "completed", "failed"];
 
 export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording {
   const status = RECORDING_STATUSES.includes(dto.status as LessonRecordingStatus)
@@ -86,6 +87,7 @@ export function mapLessonRecordingDto(dto: LessonRecordingDto): LessonRecording 
   return {
     status,
     ready: Boolean(dto.ready && dto.stream_url),
+    postToChat: dto.post_to_chat !== false,
     title: dto.title || "Dars yozuvi",
     streamUrl: normalizeMediaUrl(dto.stream_url),
     createdAt: dto.created_at ?? null,

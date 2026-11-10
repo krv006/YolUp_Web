@@ -68,6 +68,8 @@ export interface MessageDto {
   attachment?: MessageAttachmentDto | null;
   assignment?: MessageAssignmentDto | null;
   capabilities?: MessageCapabilitiesDto | null;
+  thread_root?: string | number | null;
+  comment_count?: number | null;
   file_url?: string | null;
   file_name?: string | null;
   file_type?: string | null;

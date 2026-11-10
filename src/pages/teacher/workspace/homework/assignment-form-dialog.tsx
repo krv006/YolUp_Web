@@ -12,8 +12,9 @@ import {
   MobilePickerField,
 } from "@/shared/ui/mobile-fields";
 import { Switch } from "@/shared/ui/switch";
-import type { AssignmentFormInput } from "@/modules/homework";
-import type { GradingScale } from "@/shared/types";
+import { QuestionsEditor, useQuestionDrafts, type AssignmentFormInput } from "@/modules/homework";
+import type { GradingScale, HomeworkQuestion } from "@/shared/types";
+import { toast } from "sonner";
 
 export interface AssignmentFormDialogProps {
   open: boolean;
@@ -28,6 +29,8 @@ export interface AssignmentFormDialogProps {
     grading: GradingScale;
     announceInChat: boolean;
     aiCheck?: boolean;
+    questions?: HomeworkQuestion[];
+    questionsLocked?: boolean;
   } | null;
   onSubmit: (values: AssignmentFormInput) => void;
 }
@@ -72,6 +75,10 @@ export function AssignmentFormDialog({
   const [aiCheck, setAiCheck] = useState(initial?.aiCheck ?? true);
   const [announce, setAnnounce] = useState(initial?.announceInChat ?? true);
   const [touched, setTouched] = useState(false);
+  const questions = useQuestionDrafts(initial?.questions ?? [], {
+    editing: Boolean(initial),
+    locked: Boolean(initial?.questionsLocked),
+  });
 
   const course = courses.find((item) => item.id === courseId) ?? null;
   const missing = [!courseId, !title.trim()].filter(Boolean).length;
@@ -82,7 +89,12 @@ export function AssignmentFormDialog({
       setTouched(true);
       return;
     }
+    if (!questions.validate()) {
+      toast.error(t("questions.fixIssues"));
+      return;
+    }
     onSubmit({
+      questions: questions.payload(),
       courseId,
       title: title.trim(),
       description: "",
@@ -234,6 +246,15 @@ export function AssignmentFormDialog({
                   render={(item) => t(`form.gradings.${item}`)}
                 />
               </MobileFieldLabel>
+
+              <div className="mt-0.5 rounded-lg bg-surface p-4">
+                <QuestionsEditor
+                  value={questions.drafts}
+                  onChange={questions.setDrafts}
+                  locked={questions.locked}
+                  showIssues={questions.showIssues}
+                />
+              </div>
 
               <div className="mt-0.5 flex flex-col gap-4 rounded-lg bg-surface p-4">
                 <MobileToggleRow
@@ -423,6 +444,14 @@ export function AssignmentFormDialog({
               onChange={setAnnounce}
             />
           </div>
+        </div>
+        <div className="lg:col-span-2">
+          <QuestionsEditor
+            value={questions.drafts}
+            onChange={questions.setDrafts}
+            locked={questions.locked}
+            showIssues={questions.showIssues}
+          />
         </div>
       </div>
     </AppDialog>

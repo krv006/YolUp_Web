@@ -29,7 +29,8 @@
     "pending": "So'rov kutilmoqda",
     "active": "Shaxsiy suhbat",
     "blocked": "Bloklangan",
-    "notSent": "So'rov yuborilmagan"
+    "notSent": "So'rov yuborilmagan",
+    "spam": "Shikoyat sababli bloklangan"
   },
   "info": {
     "groupSubjectFallback": "Kurs guruhi",
@@ -397,6 +398,108 @@
     "teacherBlockedHint": "O'quvchi sizga yoza olmaydi.",
     "accept": "Qabul qilish",
     "block": "Bloklash",
-    "unblock": "Blokdan chiqarish"
+    "unblock": "Blokdan chiqarish",
+    "spamTitle": "Suhbat shikoyat sababli bloklangan",
+    "spamHint": "Shikoyatni administrator ko'rib chiqadi. Hozircha xabar yozib bo'lmaydi."
+  },
+  "people": {
+    "cannotMessage": "Bu foydalanuvchiga yozib bo'lmaydi",
+    "viewOnly": "Yozib bo'lmaydi",
+    "sendRequest": "So'rov yuborish"
+  },
+  "report": {
+    "open": "Shikoyat qilish",
+    "title": "Shikoyat qilish",
+    "description": "{{name}} bilan suhbat bo'yicha sababni tanlang.",
+    "reasonLabel": "Sabab",
+    "reasons": {
+      "insult": "Haqorat",
+      "harassment": "Bezovta qilish",
+      "advertising": "Reklama yoki spam",
+      "other": "Boshqa sabab"
+    },
+    "commentLabel": "Izoh (ixtiyoriy)",
+    "commentPlaceholder": "Nima bo'lganini qisqacha yozing",
+    "warning": "Shikoyat yuborilgach suhbat darhol bloklanadi va administratorga tushadi.",
+    "cancel": "Bekor qilish",
+    "submit": "Shikoyat yuborish",
+    "sent": "Shikoyat yuborildi, suhbat bloklandi"
+  },
+  "channel": {
+    "badge": "Kanal",
+    "subtitle": "Kanal · {{count}} a'zo",
+    "comments": "{{count}} ta izoh",
+    "writeComment": "Izoh yozish",
+    "closeThread": "Izohlarni yopish",
+    "threadTitle": "Izohlar · {{count}}",
+    "loading": "Yuklanmoqda...",
+    "noComments": "Hali izoh yo'q. Birinchi bo'lib yozing.",
+    "commentPlaceholder": "Izoh yozing...",
+    "sendComment": "Izohni yuborish",
+    "readOnly": "Kanalga faqat o'qituvchi post yozadi. Post ostida izoh qoldirishingiz mumkin.",
+    "infoTitle": "Kanal ma'lumotlari",
+    "titleLabel": "Kanal nomi",
+    "descriptionLabel": "Tavsif",
+    "descriptionPlaceholder": "Kanal nima haqida",
+    "noDescription": "Tavsif yo'q",
+    "members": "{{count}} a'zo",
+    "membersTitle": "A'zolar",
+    "noMembers": "A'zolar yo'q",
+    "edit": "Tahrirlash",
+    "save": "Saqlash",
+    "saved": "Kanal saqlandi",
+    "cancel": "Bekor qilish",
+    "addMembers": "A'zo qo'shish",
+    "addMembersHint": "Guruhlarni yoki alohida o'quvchilarni tanlang. Ularning kuzatuvchilari ham qo'shiladi.",
+    "add": "Qo'shish",
+    "membersAdded": "{{count}} ta a'zo qo'shildi",
+    "removeMember": "{{name}}ni kanaldan chiqarish",
+    "delete": "Kanalni o'chirish",
+    "deleteTitle": "Kanal o'chirilsinmi?",
+    "deleteHint": "“{{title}}” kanali, uning postlari va izohlari o'chiriladi."
+  },
+  "club": {
+    "badge": "Club"
+  },
+  "create": {
+    "menuAria": "Yangi chat yaratish",
+    "menu": {
+      "group": "Yangi guruh",
+      "channel": "Yangi kanal",
+      "club": "Speaking club"
+    },
+    "cancel": "Bekor qilish",
+    "submit": "Yaratish",
+    "descriptionLabel": "Tavsif (ixtiyoriy)",
+    "descriptionPlaceholder": "Qisqacha tavsif",
+    "channel": {
+      "title": "Yangi kanal",
+      "description": "Kanalga faqat siz post yozasiz, a'zolar har post ostida izoh qoldiradi.",
+      "nameLabel": "Kanal nomi",
+      "namePlaceholder": "Masalan: IELTS e'lonlari",
+      "audienceHint": "Tanlangan guruhlardagi o'quvchilar va ularning kuzatuvchilari kanalga qo'shiladi.",
+      "done": "Kanal yaratildi"
+    },
+    "club": {
+      "title": "Speaking club",
+      "description": "Turli guruhlardagi o'quvchilar uchun alohida chat va jonli mashg'ulotlar.",
+      "nameLabel": "Club nomi",
+      "namePlaceholder": "Masalan: Speaking club B2",
+      "audienceHint": "Tanlangan o'quvchilar club'ga darhol qo'shiladi va bildirishnoma oladi.",
+      "done": "Speaking club yaratildi"
+    }
+  },
+  "audience": {
+    "groups": "Guruhlar",
+    "students": "Alohida o'quvchilar",
+    "studentsCount": "{{count}} o'quvchi",
+    "loading": "Yuklanmoqda...",
+    "noGroups": "Guruhlar yo'q",
+    "noStudents": "O'quvchi topilmadi",
+    "searchPlaceholder": "O'quvchi ismi yoki @username",
+    "removeStudent": "{{name}}ni olib tashlash"
+  },
+  "payments": {
+    "unpaidTitle": "Shu oy {{count}} ta o'quvchi to'lamagan, {{overdue}} tasining muddati o'tgan"
   }
 }

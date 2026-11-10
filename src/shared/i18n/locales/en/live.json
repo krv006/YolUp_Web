@@ -147,7 +147,8 @@
     "requestSentTitle": "Request sent — wait for the teacher's response",
     "requestTitle": "Request permission to speak",
     "disabledAria": "Microphone not working",
-    "disabledTitle": "The server token has no microphone permission — notify the tech team"
+    "disabledTitle": "The server token has no microphone permission — notify the tech team",
+    "revokedToast": "The teacher turned off your microphone. Ask for permission to speak again."
   },
   "camera": {
     "label": "Camera",
@@ -156,7 +157,8 @@
     "requestSentTitle": "Request sent — wait for the teacher's response",
     "requestTitle": "Request camera permission",
     "disabledAria": "Camera not working",
-    "disabledTitle": "The server token has no camera permission — notify the tech team"
+    "disabledTitle": "The server token has no camera permission — notify the tech team",
+    "revokedToast": "The teacher turned off your camera. Ask for permission to turn it on again."
   },
   "share": {
     "teacherAria": "Share screen",
@@ -216,7 +218,9 @@
     "mobileMicRequesting": "Wants to speak ✋",
     "mobileCameraRequesting": "Wants to turn on camera",
     "teacherYouMobile": "You · teacher",
-    "studentYouMobile": "You · student"
+    "studentYouMobile": "You · student",
+    "cameraOffAll": "Turn off everyone's camera",
+    "cameraOffAllDone": "Cameras turned off: {{count}}"
   },
   "permissionDialog": {
     "title": "Camera and microphone access needed",
@@ -240,5 +244,17 @@
     "mobileJoinFailedDescription": "Check your internet connection. The lesson is still going — try again.",
     "mobileBackToChat": "Back to chat",
     "joiningRoom": "Joining the lesson room"
+  },
+  "mediaMode": {
+    "openMic": "Microphone open to all",
+    "openCamera": "Camera open to all",
+    "openHint": "Students turn it on without asking",
+    "closedHint": "Only with permission",
+    "enabledToast": "Open mode is on",
+    "disabledToast": "Open mode is off, students' permissions were taken back",
+    "micOpened": "The teacher opened the microphone to everyone — you can turn it on without asking",
+    "micClosed": "The microphone now needs the teacher's permission",
+    "cameraOpened": "The teacher opened the camera to everyone — you can turn it on without asking",
+    "cameraClosed": "The camera now needs the teacher's permission"
   }
 }

@@ -8,6 +8,8 @@ import type {
   NotificationLink,
   NotificationRecipientRowDto,
   NotificationSender,
+  PersonSearchDto,
+  PersonSearchResult,
   SendNotificationDto,
   SendNotificationInput,
   SentNotification,
@@ -95,6 +97,22 @@ export function mapSendRequest(input: SendNotificationInput): SendNotificationDt
     target_type: input.targetType,
     ...(input.targetType === "user" && input.userId ? { user_id: input.userId } : {}),
     ...(bulk && input.userIds?.length ? { user_ids: input.userIds } : {}),
+    ...(input.targetType === "course" && input.courseId
+      ? { course_id: input.courseId, include_parents: Boolean(input.includeParents) }
+      : {}),
     ...(input.kind ? { kind: input.kind } : {}),
+  };
+}
+
+export function mapPersonSearchDto(dto: PersonSearchDto): PersonSearchResult {
+  return {
+    id: String(dto.id),
+    name: dto.name || [dto.first_name, dto.last_name].filter(Boolean).join(" ") || dto.username,
+    username: dto.username,
+    role: (dto.role ?? "").toLowerCase(),
+    avatar: dto.avatar ?? null,
+    roomId: dto.room_id === null || dto.room_id === undefined || dto.room_id === "" ? null : String(dto.room_id),
+    directStatus: dto.direct_status ?? null,
+    canMessage: dto.can_message ?? null,
   };
 }

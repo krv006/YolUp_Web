@@ -86,6 +86,8 @@ export function mapMessageDto(dto: MessageDto, currentUserId?: string | null): C
     clientMessageId: dto.client_message_id ?? null,
     mentions: (dto.mentions ?? []).map(String),
     capabilities: mapCapabilities(dto, currentUserId),
+    commentCount: typeof dto.comment_count === "number" ? dto.comment_count : null,
+    threadRootId: dto.thread_root === null || dto.thread_root === undefined ? null : String(dto.thread_root),
     reactions: mapReactions(dto.reactions, currentUserId),
     forwardedFrom: dto.forwarded_from
       ? {
@@ -155,6 +157,7 @@ export type ParsedSocketEvent =
   | { type: "pinned" }
   | { type: "read"; userId: string }
   | { type: "roomUpdated" }
+  | { type: "comment"; postId: string; commentCount: number; message: ChatMessage }
   | { type: "error"; detail: string };
 
 interface RawSocketEvent {
@@ -175,6 +178,15 @@ export function parseSocketEvent(raw: unknown, currentUserId?: string | null): P
   switch (event.type) {
     case "message":
       return event.message ? { type: "message", message: mapMessageDto(event.message, currentUserId) } : null;
+    case "channel_comment":
+      return event.message && payload.post_id
+        ? {
+            type: "comment",
+            postId: String(payload.post_id),
+            commentCount: Number(payload.comment_count ?? 0),
+            message: mapMessageDto(event.message, currentUserId),
+          }
+        : null;
     case "typing":
       return {
         type: "typing",

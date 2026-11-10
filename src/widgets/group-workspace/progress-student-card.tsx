@@ -64,10 +64,14 @@ export function ProgressStudentCard({
         {payable ? (
           <span
             className={`flex h-7 shrink-0 items-center rounded-full px-3 text-caption-strong ${
-              paid ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"
+              paid
+                ? "bg-brand-subtle text-brand"
+                : student.payment.overdue
+                  ? "bg-danger-bg text-danger"
+                  : "bg-accent-saffron-bg text-accent-saffron-fg"
             }`}
           >
-            {paid ? t("progress.paid") : t("progress.unpaid")}
+            {paid ? t("progress.paid") : student.payment.overdue ? t("progress.overdue") : t("progress.unpaid")}
           </span>
         ) : withPayments ? (
           <span className="flex h-7 shrink-0 items-center rounded-full bg-subtle px-3 text-caption-strong text-ink-secondary">

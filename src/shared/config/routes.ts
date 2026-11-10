@@ -79,6 +79,7 @@ export const ROUTES = Object.freeze({
     grades: "/parent/grades",
     payments: "/parent/payments",
     chats: "/parent/chats",
+    chat: (roomId: string) => `/parent/chats/${segment(roomId)}`,
     settings: (section?: string) => (section ? `/parent/settings/${segment(section)}` : "/parent/settings"),
     help: "/parent/help",
     notifications: "/parent/notifications",

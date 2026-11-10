@@ -8,6 +8,7 @@ import type { Submission } from "@/shared/types";
 import { homeworkApi } from "../api/homework.api";
 import type {
   AssignmentFormInput,
+  HomeworkAnswerInput,
   ResubmitRequestInput,
   SubmissionReviewInput,
 } from "../api/homework.dto";
@@ -167,12 +168,14 @@ export function useSubmitHomework() {
       files,
       skillKey,
       comment,
+      answers,
     }: {
       assignmentId: string;
       files: File[];
       skillKey?: string;
       comment?: string;
-    }) => homeworkApi.submit(assignmentId, files, skillKey, comment),
+      answers?: HomeworkAnswerInput[];
+    }) => homeworkApi.submit(assignmentId, files, skillKey, comment, answers),
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });

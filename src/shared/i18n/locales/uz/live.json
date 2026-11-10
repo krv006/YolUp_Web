@@ -147,7 +147,8 @@
     "requestSentTitle": "So'rov yuborildi — o'qituvchi javobini kuting",
     "requestTitle": "Gapirish uchun ruxsat so'rash",
     "disabledAria": "Mikrofon ishlamayapti",
-    "disabledTitle": "Server tokenida mikrofon ruxsati yo'q — texnik jamoaga xabar bering"
+    "disabledTitle": "Server tokenida mikrofon ruxsati yo'q — texnik jamoaga xabar bering",
+    "revokedToast": "O'qituvchi mikrofoningizni o'chirdi. Yana gapirish uchun ruxsat so'rang."
   },
   "camera": {
     "label": "Kamera",
@@ -156,7 +157,8 @@
     "requestSentTitle": "So'rov yuborildi — o'qituvchi javobini kuting",
     "requestTitle": "Kamera uchun ruxsat so'rash",
     "disabledAria": "Kamera ishlamayapti",
-    "disabledTitle": "Server tokenida kamera ruxsati yo'q — texnik jamoaga xabar bering"
+    "disabledTitle": "Server tokenida kamera ruxsati yo'q — texnik jamoaga xabar bering",
+    "revokedToast": "O'qituvchi kamerangizni o'chirdi. Qayta yoqish uchun ruxsat so'rang."
   },
   "share": {
     "teacherAria": "Ekranni ulashish",
@@ -207,7 +209,7 @@
     "teacherYou": "O‘qituvchi · Siz",
     "speaking": "Gapirmoqda",
     "raisedHand": "Qo‘l ko‘tardi",
-    "muteAll": "Hammasini ovozsiz",
+    "muteAll": "Hammaning mikrofonini o'chirish",
     "invite": "Taklif",
     "muteAllDone": "{{count}} ta ishtirokchi ovozsiz qilindi",
     "online": "Onlayn",
@@ -216,7 +218,9 @@
     "mobileMicRequesting": "Gapirmoqchi ✋",
     "mobileCameraRequesting": "Kamerani yoqmoqchi",
     "teacherYouMobile": "Siz · o‘qituvchi",
-    "studentYouMobile": "Siz · o‘quvchi"
+    "studentYouMobile": "Siz · o‘quvchi",
+    "cameraOffAll": "Hammaning kamerasini o'chirish",
+    "cameraOffAllDone": "Kameralar o'chirildi: {{count}}"
   },
   "permissionDialog": {
     "title": "Kamera va mikrofonga ruxsat kerak",
@@ -240,5 +244,17 @@
     "mobileJoinFailedDescription": "Internet aloqasini tekshiring. Dars hali davom etmoqda — qayta urinib ko‘ring.",
     "mobileBackToChat": "Chatga qaytish",
     "joiningRoom": "Dars xonasiga ulanmoqda"
+  },
+  "mediaMode": {
+    "openMic": "Hammaga mikrofon ochiq",
+    "openCamera": "Hammaga kamera ochiq",
+    "openHint": "O'quvchilar so'rovsiz yoqadi",
+    "closedHint": "Faqat ruxsat bilan",
+    "enabledToast": "Ochiq rejim yoqildi",
+    "disabledToast": "Ochiq rejim o'chirildi, o'quvchilarning ruxsati olindi",
+    "micOpened": "O'qituvchi mikrofonni hammaga ochdi — so'rovsiz yoqishingiz mumkin",
+    "micClosed": "Mikrofon endi faqat o'qituvchi ruxsati bilan yoqiladi",
+    "cameraOpened": "O'qituvchi kamerani hammaga ochdi — so'rovsiz yoqishingiz mumkin",
+    "cameraClosed": "Kamera endi faqat o'qituvchi ruxsati bilan yoqiladi"
   }
 }

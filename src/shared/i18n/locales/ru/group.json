@@ -4,7 +4,8 @@
     "lessons": "Уроки",
     "assignments": "Задания",
     "attendance": "Посещаемость",
-    "progress": "Прогресс"
+    "progress": "Прогресс",
+    "members": "Участники"
   },
   "sendFailed": "Не удалось отправить сообщение",
   "replyFallback": "Ответ",
@@ -91,7 +92,9 @@
     "removeDialogDescription": "Ученик потеряет доступ к чату, занятиям и заданиям. Оценки и посещаемость сохранятся.",
     "cancel": "Отмена",
     "remove": "Удалить",
-    "removeConfirmTitle": "Удалить {{name}} из группы?"
+    "removeConfirmTitle": "Удалить {{name}} из группы?",
+    "message": "Написать",
+    "messageAria": "Написать {{name}}"
   },
   "attendance": {
     "eyebrow": "ОТЧЁТ ПО КУРСУ",
@@ -445,6 +448,41 @@
     "statFocus": "Фокус",
     "statAttendanceLessons": "Посещаемость · занятий: {{count}}",
     "lastVisit": "Последнее посещение: {{date}}",
-    "noVisit": "Ещё не был на занятии"
+    "noVisit": "Ещё не был на занятии",
+    "overdue": "Просрочено",
+    "unpaidBadge_one": "Не оплатил {{count}} ученик",
+    "unpaidBadge_few": "Не оплатили {{count}} ученика",
+    "unpaidBadge_many": "Не оплатили {{count}} учеников",
+    "unpaidBadge_other": "Не оплатили {{count}} ученика"
+  },
+  "club": {
+    "eyebrow": "Speaking club",
+    "membersTitle": "Участники · {{count}}",
+    "add": "Добавить участников",
+    "addHint": "Выберите группы или отдельных учеников — они будут добавлены сразу.",
+    "added": "Добавлено учеников: {{count}}",
+    "empty": "Участников пока нет"
+  },
+  "paymentSettings": {
+    "button": "Настройки оплаты",
+    "title": "Настройки оплаты",
+    "description": "Ежемесячная оплата, день оплаты и напоминания. Напоминание получают ученик и его наблюдатель.",
+    "fee": "Ежемесячная оплата (сум)",
+    "feePlaceholder": "Например, 450000",
+    "day": "День оплаты каждый месяц",
+    "noDay": "Не задан",
+    "dayOption": "{{day}}-е число",
+    "dayHint": "Если не оплачено до этого дня, ученик отмечается как «Просрочено».",
+    "reminders": "Отправлять напоминание",
+    "reminderOption_one": "за {{count}} день",
+    "reminderOption_few": "за {{count}} дня",
+    "reminderOption_many": "за {{count}} дней",
+    "reminderOption_other": "за {{count}} дня",
+    "remindersHint": "Можно выбрать несколько. Приходит только тем, кто не оплатил в этом месяце.",
+    "remindersNeedDay": "Сначала выберите день оплаты.",
+    "dueDay": "день оплаты: {{day}}-е",
+    "cancel": "Отмена",
+    "save": "Сохранить",
+    "saved": "Настройки оплаты сохранены"
   }
 }

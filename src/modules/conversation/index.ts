@@ -1,5 +1,5 @@
 export { conversationApi } from "./api/conversation.api";
-export type { ChatRoomDto, DirectAction, DirectTeacher, DirectTeacherDto } from "./api/conversation.dto";
+export type { ChatRoomDto, DirectAction, DirectTeacher, DirectTeacherDto, SpamReason } from "./api/conversation.dto";
 export { DIRECT_STATUS, isDirectLocked, useDirectStatusLabel } from "./constants/direct-status";
 export type { DirectStatusValue } from "./constants/direct-status";
 export { mapConversationDto, mapConversationPage, mapTeacherDto } from "./lib/conversation.mappers";
@@ -23,13 +23,30 @@ export {
   useGroupImages,
   useLeaveConversation,
   useMuteConversation,
+  useOpenDirect,
   usePinConversation,
+  useReportConversation,
   useTeachersForDirect,
   useRequestDirect,
   useRespondDirect,
   useSetRoomImage,
 } from "./model/use-conversations";
+export { directChatAction, useStartDirectChat } from "./model/use-start-direct-chat";
+export type { DirectChatAction, DirectChatTarget } from "./model/use-start-direct-chat";
+export { mapSpamReportDto, spamReportApi } from "./api/spam-report.api";
+export type { SpamReport, SpamReportAction, SpamReportStatus } from "./api/spam-report.api";
+export { useSpamReport, useSpamReportAction, useSpamReports } from "./model/spam-reports";
+export { audienceBody, channelApi } from "./api/channel.api";
+export type { AudienceInput, ChannelInput } from "./api/channel.api";
+export {
+  useAddChannelMembers,
+  useCreateChannel,
+  useDeleteChannel,
+  useRemoveChannelMember,
+  useUpdateChannel,
+} from "./model/use-channels";
 export { ChatEmptyState } from "./ui/chat-empty-state";
+export { PersonChatHint } from "./ui/person-chat-hint";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";
 export { DirectRequestBar } from "./ui/direct-request-bar";

@@ -66,7 +66,7 @@ export function useOpenNotificationLink(): OpenNotificationLink {
         else navigate(ROUTES.teacher.mockResults(link.id));
         return;
       }
-      if (type === "course") {
+      if (type === "course" || type === "club") {
         const room = conversations.data?.find((item) => item.courseId === link.id);
         navigate(room ? routes.chat(room.id) : routes.chats);
         return;

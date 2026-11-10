@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useIsStudent, useRoleRoutes } from "@/modules/auth";
-import { useConversations } from "@/modules/conversation";
+import { directChatAction, PersonChatHint, useConversations, useStartDirectChat } from "@/modules/conversation";
 import { useQuizzes } from "@/modules/quiz";
 import { useGlobalSearch, type SearchHit, type SearchType } from "@/modules/search";
 import { ROUTES } from "@/shared/config";
@@ -19,6 +19,7 @@ export function WorkspaceSearchPage() {
   const navigate = useNavigate();
   const isStudent = useIsStudent();
   const routes = useRoleRoutes();
+  const startChat = useStartDirectChat(routes.chat);
 
   const [term, setTerm] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
@@ -211,7 +212,9 @@ export function WorkspaceSearchPage() {
                 title={hit.title}
                 tag={<RoleTag role={hit.role} />}
                 hint={hit.subtitle}
-                onClick={() => navigate(hit.roomId ? routes.chat(hit.roomId) : routes.chats)}
+                trailing={<PersonChatHint action={directChatAction(hit)} />}
+                disabled={directChatAction(hit) === "none" || startChat.pending}
+                onClick={() => startChat.start(hit)}
               />
             ))}
           </ResultSection>
@@ -237,6 +240,8 @@ function ResultRow({
   title,
   tag,
   hint,
+  trailing,
+  disabled = false,
   onClick,
 }: {
   icon?: string;
@@ -245,12 +250,15 @@ function ResultRow({
   title: string;
   tag?: React.ReactNode;
   hint: string;
+  trailing?: React.ReactNode;
+  disabled?: boolean;
   onClick?: () => void;
 }) {
   return (
     <button
       type="button"
-      className="flex items-center gap-3 border-b border-line px-4 py-3.75 text-left transition-colors last:border-b-0 hover:bg-subtle"
+      className="flex items-center gap-3 border-b border-line px-4 py-3.75 text-left transition-colors last:border-b-0 enabled:hover:bg-subtle disabled:cursor-default"
+      disabled={disabled}
       onClick={onClick}
     >
       {avatar ? (
@@ -267,7 +275,7 @@ function ResultRow({
         </span>
         <small className="truncate text-body-sm text-ink-secondary">{hint}</small>
       </span>
-      <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />
+      {trailing ?? <Icon name="chevron-right" size={20} className="shrink-0 text-icon-secondary" />}
     </button>
   );
 }

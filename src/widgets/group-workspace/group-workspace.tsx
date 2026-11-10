@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, LogOut, TrendingUp } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, LogOut, TrendingUp, UsersRound } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/modules/auth";
-import { focusExitTotals, useAttendanceSummary, useCourseAttendance } from "@/modules/attendance";
+import { useAttendanceSummary } from "@/modules/attendance";
 import { useCourse } from "@/modules/course";
 import {
   AssignmentDetailDialog,
@@ -51,6 +51,7 @@ import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { AddQuizMenu } from "./add-quiz-menu";
 import { MobileAssignmentList } from "./mobile-assignment-list";
+import { ClubMembersPanel } from "./club-members-panel";
 import { PanelHeading } from "./panel-heading";
 import { ProgressPanel } from "./progress-panel";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
@@ -79,10 +80,17 @@ import { LessonBoard } from "./lesson-board";
 import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
 import { formatMessageTime } from "@/shared/lib";
 
-type TabId = "chat" | "lessons" | "assignments" | "attendance" | "progress";
+type TabId = "chat" | "lessons" | "assignments" | "attendance" | "progress" | "members";
 
-function useTabs(isTeacher: boolean): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
+function useTabs(isTeacher: boolean, isClub: boolean): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
   const { t } = useTranslation("group");
+  if (isClub)
+    return [
+      { id: "chat", label: t("tabs.chat"), icon: BookOpen },
+      { id: "lessons", label: t("tabs.lessons"), icon: CalendarDays },
+      ...(isTeacher ? [{ id: "members" as const, label: t("tabs.members"), icon: UsersRound }] : []),
+      { id: "attendance", label: t("tabs.attendance"), icon: CheckCircle2 },
+    ];
   const tabs: Array<{ id: TabId; label: string; icon: typeof BookOpen }> = [
     { id: "chat", label: t("tabs.chat"), icon: BookOpen },
     { id: "lessons", label: t("tabs.lessons"), icon: CalendarDays },
@@ -114,14 +122,16 @@ export function GroupWorkspace({
 }: GroupWorkspaceProps) {
   const { t } = useTranslation("group");
   const { user } = useAuth();
-  const TABS = useTabs(user?.role === ROLES.TEACHER);
+  const courseId = conversation.courseId;
+  const course = useCourse(courseId);
+  const isClub = course.data?.kind === "club";
+  const TABS = useTabs(user?.role === ROLES.TEACHER, isClub);
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
   const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
   const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
   const [infoOpen, setInfoOpen] = useState(false);
   const isCompact = useIsCompact();
-  const courseId = conversation.courseId;
   const voice = useActiveVoiceRoom(courseId);
   const openVoiceCreate = useVoiceUiStore((state) => state.setCreateOpen);
   const selectionMode = useChatUiStore((state) => state.selected.length > 0);
@@ -129,7 +139,6 @@ export function GroupWorkspace({
   const tabParam = params.get("tab") as TabId | null;
   const activeTab: TabId = TABS.some((item) => item.id === tabParam) ? (tabParam as TabId) : "chat";
 
-  const course = useCourse(courseId);
   const lessons = useLessons(
     { course: courseId, page_size: 100 },
     activeTab === "lessons" || activeTab === "attendance"
@@ -190,12 +199,20 @@ export function GroupWorkspace({
           return (
             <button
               key={tab.id}
-              className={`flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
+              className={`relative flex h-11 items-center justify-center rounded-full text-body-sm font-medium whitespace-nowrap transition-colors lg:h-9 lg:border lg:text-label lg:font-normal ${
                 active ? "bg-brand text-ink-inverse lg:border-brand" : "bg-surface text-ink lg:border-line"
               }`}
               onClick={() => setParams(tab.id === "chat" ? {} : { tab: tab.id })}
             >
               {tab.label}
+              {tab.id === "progress" && course.data?.unpaidCount ? (
+                <span
+                  className="absolute -top-1 -right-1 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-ink-inverse ring-2 ring-canvas"
+                  aria-label={t("progress.unpaidBadge", { count: course.data.unpaidCount })}
+                >
+                  {course.data.unpaidCount}
+                </span>
+              ) : null}
             </button>
           );
         })}
@@ -274,6 +291,7 @@ export function GroupWorkspace({
             <AttendancePanel courseId={courseId} lessons={lessons.data} />
           ) : null}
           {activeTab === "progress" ? <ProgressPanel courseId={courseId} /> : null}
+          {activeTab === "members" ? <ClubMembersPanel clubId={courseId} /> : null}
         </motion.div>
       </AnimatePresence>
 
@@ -878,17 +896,6 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
       .sort((a, b) => b.startsAt.localeCompare(a.startsAt));
   }, [lessons, range, now]);
 
-  const from = useMemo(() => {
-    if (range === "all") return null;
-    if (range === "month") return new Date(now.getTime() - 30 * 86_400_000).toISOString();
-    return new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  }, [range, now]);
-  const records = useCourseAttendance(courseId, from);
-  const exits = useMemo(
-    () => focusExitTotals(records.data ?? [], new Set(finishedLessons.map((lesson) => lesson.id))),
-    [records.data, finishedLessons]
-  );
-
   const students = useMemo(
     () =>
       [...(summary.data?.students ?? [])].sort(
@@ -966,9 +973,7 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
                 <span className="flex min-w-0 flex-1 flex-col gap-1.5">
                   <span className="flex min-w-0 items-center gap-2">
                     <strong className="truncate text-title text-ink">{student.name}</strong>
-                    {exits.byStudent.get(student.id) ? (
-                      <ExitsBadge count={exits.byStudent.get(student.id) ?? 0} compact={isCompact} />
-                    ) : null}
+                    {student.focusExits ? <ExitsBadge count={student.focusExits} compact={isCompact} /> : null}
                   </span>
                   <span className="flex items-center gap-2">
                     <span className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-subtle">
@@ -1019,9 +1024,7 @@ function AttendancePanel({ courseId, lessons = [] }: AttendancePanelProps) {
                             : t("attendance.lessonOpen")}
                         </small>
                       </span>
-                      {exits.byLesson.get(lesson.id) ? (
-                        <ExitsBadge count={exits.byLesson.get(lesson.id) ?? 0} compact={isCompact} />
-                      ) : null}
+                      {lesson.focusExits ? <ExitsBadge count={lesson.focusExits} compact={isCompact} /> : null}
                       {lesson.attendanceRate !== null ? (
                         <strong
                           className={`shrink-0 font-numeric text-title-sm ${

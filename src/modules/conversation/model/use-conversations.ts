@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient, type QueryClient } from "@tansta
 import type { Page } from "@/shared/api";
 import type { Conversation, ConversationRole } from "@/shared/types";
 import { conversationApi } from "../api/conversation.api";
-import type { DirectAction } from "../api/conversation.dto";
+import type { DirectAction, SpamReason } from "../api/conversation.dto";
 import { conversationKeys } from "./conversation.keys";
 
 const LIST_SYNC_MS = 10_000;
@@ -82,6 +82,23 @@ export function useRequestDirect() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (teacherId: string) => conversationApi.requestDirect(teacherId),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
+export function useOpenDirect() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (userId: string) => conversationApi.openDirect(userId),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
+export function useReportConversation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ roomId, reason, comment }: { roomId: string; reason: SpamReason; comment?: string }) =>
+      conversationApi.report(roomId, reason, comment),
     onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
   });
 }

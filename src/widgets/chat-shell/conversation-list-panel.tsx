@@ -1,8 +1,15 @@
 import { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRoleRoutes } from "@/modules/auth";
-import { ConversationActionsSheet, useNewConversationStore } from "@/modules/conversation";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
+import { NewChatMenu } from "@/widgets/new-chat-menu";
+import {
+  ConversationActionsSheet,
+  directChatAction,
+  PersonChatHint,
+  useNewConversationStore,
+  useStartDirectChat,
+} from "@/modules/conversation";
 import { useWheelScrollX } from "@/shared/hooks/use-wheel-scroll-x";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -17,6 +24,8 @@ export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const isStudent = useIsStudent();
+  const startChat = useStartDirectChat(routes.chat);
   const chipsRef = useWheelScrollX<HTMLDivElement>();
   const { conversationId } = useParams();
   const {
@@ -52,14 +61,26 @@ export function ConversationListPanel() {
           <h1 className="truncate text-[24px]/[28px] font-bold text-ink">{t("panel.title")}</h1>
         </span>
 
-        <button
-          type="button"
-          className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
-          aria-label={t("panel.newGroup")}
-          onClick={() => openNewConversation(true)}
-        >
-          <Icon name="add" size={20} />
-        </button>
+        {isStudent ? (
+          <button
+            type="button"
+            className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
+            aria-label={t("panel.newGroup")}
+            onClick={() => openNewConversation(true)}
+          >
+            <Icon name="add" size={20} />
+          </button>
+        ) : (
+          <NewChatMenu>
+            <button
+              type="button"
+              className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
+              aria-label={t("create.menuAria")}
+            >
+              <Icon name="add" size={20} />
+            </button>
+          </NewChatMenu>
+        )}
       </header>
 
       <label className="mx-5 mt-0.5 flex h-11 shrink-0 items-center gap-2.5 rounded-full border border-line-strong bg-surface px-4 transition-colors focus-within:border-brand">
@@ -191,13 +212,9 @@ export function ConversationListPanel() {
               <button
                 key={person.id}
                 type="button"
-                className="mx-5 flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors hover:bg-subtle"
-                onClick={() => {
-                  if (person.roomId) {
-                    navigate(routes.chat(person.roomId));
-                    setSearch("");
-                  }
-                }}
+                className="mx-5 flex items-center gap-3 rounded-lg px-4 py-3 text-left transition-colors enabled:hover:bg-subtle disabled:cursor-default"
+                disabled={directChatAction(person) === "none" || startChat.pending}
+                onClick={() => startChat.start(person, () => setSearch(""))}
               >
                 <Avatar name={person.name} src={person.avatar} size="sm" className="[&_.avatar]:size-10" />
                 <span className="flex min-w-0 flex-1 flex-col">
@@ -207,13 +224,7 @@ export function ConversationListPanel() {
                     <RoleTag role={person.role} />
                   </span>
                 </span>
-                {person.roomId ? (
-                  <Icon name="chevron-right" size={18} className="shrink-0 text-icon-tertiary" />
-                ) : (
-                  <small className="shrink-0 text-body-xs text-brand">
-                    {t("panel.startChat")}
-                  </small>
-                )}
+                <PersonChatHint action={directChatAction(person)} />
               </button>
             ))}
           </>

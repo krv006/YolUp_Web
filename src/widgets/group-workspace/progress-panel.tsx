@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { describeCreateError } from "@/modules/auth";
+import { useCourse } from "@/modules/course";
 import {
   matchesStudent,
   monthKey,
@@ -20,6 +21,7 @@ import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { PanelHeading } from "./panel-heading";
 import { PaymentDialog, type PaymentTarget } from "./payment-dialog";
+import { PaymentSettingsDialog } from "./payment-settings-dialog";
 import { ProgressStudentCard } from "./progress-student-card";
 import { formatProgressDate, formatProgressMoney, formatProgressMonth } from "./progress-format";
 import { StudentProgressDialog } from "./student-progress-dialog";
@@ -40,6 +42,8 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
   const [sort, setSort] = useState<ProgressSort>("name");
   const [openStudent, setOpenStudent] = useState<StudentProgress | null>(null);
   const [notifyOpen, setNotifyOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const course = useCourse(courseId);
   const [unmarkTarget, setUnmarkTarget] = useState<StudentProgress | null>(null);
   const [paying, setPaying] = useState<PaymentTarget | null>(null);
   const progress = useCourseProgress(courseId, month, range);
@@ -113,13 +117,28 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
           title={t("progress.title")}
           subtitle={
             data?.monthlyFee
-              ? t("progress.fee", { amount: formatMoney(data.monthlyFee) })
+              ? [
+                  t("progress.fee", { amount: formatMoney(data.monthlyFee) }),
+                  course.data?.paymentDay ? t("paymentSettings.dueDay", { day: course.data.paymentDay }) : "",
+                ]
+                  .filter(Boolean)
+                  .join(" · ")
               : data
                 ? t("progress.noFee")
                 : undefined
           }
           className="min-w-0 flex-1"
         />
+        <button
+          type="button"
+          className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-surface px-3 text-button text-ink transition-colors hover:bg-subtle lg:px-4"
+          aria-label={t("paymentSettings.title")}
+          title={t("paymentSettings.title")}
+          onClick={() => setSettingsOpen(true)}
+        >
+          <Icon name="payments" size={18} />
+          <span className="max-lg:hidden">{t("paymentSettings.button")}</span>
+        </button>
         <button
           type="button"
           className="flex h-10 shrink-0 items-center gap-2 rounded-full bg-brand px-4 text-button text-on-action transition-colors hover:bg-brand-strong"
@@ -130,6 +149,7 @@ export function ProgressPanel({ courseId }: ProgressPanelProps) {
         </button>
       </div>
       <TeacherNotifyDialog open={notifyOpen} onOpenChange={setNotifyOpen} courseId={courseId} />
+      <PaymentSettingsDialog course={course.data} open={settingsOpen} onOpenChange={setSettingsOpen} />
 
       {withPayments ? (
         <div className="flex h-11 shrink-0 items-center justify-between rounded-full bg-surface px-2">

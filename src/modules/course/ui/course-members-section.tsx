@@ -10,11 +10,18 @@ import { AddStudentDialog } from "./add-student-dialog";
 export interface CourseMembersSectionProps {
   courseId: string | null;
   canManage: boolean;
+  onMessage?: (studentId: string) => void;
+  messagePending?: boolean;
 }
 
 const SEARCH_THRESHOLD = 8;
 
-export function CourseMembersSection({ courseId, canManage }: CourseMembersSectionProps) {
+export function CourseMembersSection({
+  courseId,
+  canManage,
+  onMessage,
+  messagePending = false,
+}: CourseMembersSectionProps) {
   const { t } = useTranslation("group");
   const [search, setSearch] = useState("");
   const [addOpen, setAddOpen] = useState(false);
@@ -81,6 +88,18 @@ export function CourseMembersSection({ courseId, canManage }: CourseMembersSecti
                   @{student.username}
                 </small>
               </span>
+              {onMessage ? (
+                <button
+                  type="button"
+                  className="grid size-9 shrink-0 place-items-center rounded-full bg-brand-subtle text-brand transition-colors hover:bg-tint disabled:opacity-60"
+                  aria-label={t("students.messageAria", { name: student.name })}
+                  title={t("students.message")}
+                  disabled={messagePending}
+                  onClick={() => onMessage(student.id)}
+                >
+                  <Icon name="chat" size={16} />
+                </button>
+              ) : null}
               {canManage ? (
                 <button
                   type="button"

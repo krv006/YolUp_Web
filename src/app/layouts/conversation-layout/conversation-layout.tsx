@@ -27,6 +27,7 @@ import type { ConversationRole } from "@/shared/types";
 const WIDTH_KEYS: Record<ConversationRole, string> = {
   teacher: STORAGE_KEYS.CONVERSATION_PANEL_WIDTH,
   student: STORAGE_KEYS.STUDENT_CONVERSATION_PANEL_WIDTH,
+  parent: STORAGE_KEYS.STUDENT_CONVERSATION_PANEL_WIDTH,
 };
 
 const MIN_WIDTH = 320;

@@ -1,9 +1,9 @@
 import { API_ERROR_CODES, apiClient, AppError, type RequestOptions } from "@/shared/api";
-import type { UserDto } from "@/shared/types";
 import { notificationEndpoints } from "./notification.endpoints";
-import type { SendNotificationInput } from "./notification.dto";
+import type { PersonSearchDto, PersonSearchResult, SendNotificationInput } from "./notification.dto";
 import {
   mapInboxPage,
+  mapPersonSearchDto,
   mapRecipientRows,
   mapSendRequest,
   mapSentPage,
@@ -69,20 +69,11 @@ export const notificationApi = {
     );
   },
 
-  async searchUsers(query: string, options?: RequestOptions) {
-    const dto = await apiClient.get<UserDto[]>(notificationEndpoints.searchUsers, {
+  async searchUsers(query: string, options?: RequestOptions): Promise<PersonSearchResult[]> {
+    const dto = await apiClient.get<PersonSearchDto[]>(notificationEndpoints.searchUsers, {
       ...options,
       query: { q: query },
     });
-    return (Array.isArray(dto) ? dto : []).map((user) => ({
-      id: String(user.id),
-      name: [user.first_name, user.last_name].filter(Boolean).join(" ") || user.username,
-      username: user.username,
-      role: user.role ?? "",
-      avatar: (user as { avatar?: string | null }).avatar ?? null,
-      roomId: (user as { room_id?: string | number | null }).room_id
-        ? String((user as { room_id?: string | number | null }).room_id)
-        : null,
-    }));
+    return (Array.isArray(dto) ? dto : []).map(mapPersonSearchDto);
   },
 };

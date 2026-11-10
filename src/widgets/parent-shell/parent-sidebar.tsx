@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink, useLocation } from "react-router-dom";
 import logoUrl from "@/shared/assets/y-logo.svg";
 import { useAuth } from "@/modules/auth";
+import { countUnreadChats, useConversations } from "@/modules/conversation";
 import { useParentHomework, useSelectedChild } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
@@ -20,6 +21,7 @@ const ITEMS = [
   { id: "attendance", icon: "event", to: ROUTES.parent.attendance, extra: [] },
   { id: "homework", icon: "assignment", to: ROUTES.parent.homework, extra: [] },
   { id: "results", icon: "bar-chart", to: ROUTES.parent.grades, extra: [ROUTES.parent.exams] },
+  { id: "chats", icon: "chat", to: ROUTES.parent.chats, extra: [] },
 ];
 
 export function ParentSidebar() {
@@ -29,6 +31,7 @@ export function ParentSidebar() {
   const { selectedChildId } = useSelectedChild();
   const homework = useParentHomework(selectedChildId);
   const [accountOpen, setAccountOpen] = useState(false);
+  const unreadChats = countUnreadChats(useConversations("parent").data ?? [], "all");
   const [now] = useState(() => Date.now());
   const open = (homework.data ?? []).filter(
     (item) => !item.mySubmission && (!item.dueAt || Date.parse(item.dueAt) >= now)
@@ -57,6 +60,11 @@ export function ParentSidebar() {
               {item.id === "homework" && open ? (
                 <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-danger px-1.5 text-caption-strong text-ink-inverse">
                   {open}
+                </span>
+              ) : null}
+              {item.id === "chats" && unreadChats ? (
+                <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-brand px-1.5 text-caption-strong text-ink-inverse">
+                  {unreadChats}
                 </span>
               ) : null}
             </NavLink>

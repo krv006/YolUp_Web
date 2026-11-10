@@ -383,5 +383,53 @@
     "close": "Close",
     "groupPlaceholder": "Choose a group",
     "dateValue": "{{weekday}}, {{month}} {{day}}"
+  },
+  "questions": {
+    "title": "Questions (optional)",
+    "summary": "{{count}} questions, {{points}} points in total",
+    "locked": "Students have already submitted — the questions can't be changed.",
+    "number": "Question {{n}}",
+    "typeLabel": "Question type",
+    "types": {
+      "single": "Test: one answer",
+      "multiple": "Test: several answers",
+      "short": "Short answer",
+      "long": "Long answer"
+    },
+    "points": "Points",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "remove": "Delete question {{n}}",
+    "textPlaceholder": "Question text",
+    "markOne": "Mark the correct answer",
+    "markMany": "Mark all correct answers",
+    "markCorrect": "Mark option {{n}} as correct",
+    "optionPlaceholder": "Option {{n}}",
+    "removeOption": "Delete option {{n}}",
+    "addOption": "Add option",
+    "shortHint": "The student answers with a short text. AI grades it if AI checking is on, otherwise you do.",
+    "longHint": "The student writes a detailed answer. AI grades it if AI checking is on, otherwise you do.",
+    "issues": {
+      "text": "Write the question text",
+      "options": "At least 2 filled options are needed",
+      "correct": "Mark the correct answer",
+      "points": "Points must be 1 to 1000"
+    },
+    "add": "Add question",
+    "fixIssues": "Fix the problems in the questions",
+    "answerTitle": "Questions",
+    "answered": "{{count}} of {{total}} answered",
+    "pointsValue_one": "{{count}} point",
+    "pointsValue_other": "{{count}} points",
+    "pickMany": "You can pick several answers",
+    "shortPlaceholder": "Your answer",
+    "longPlaceholder": "Write a detailed answer",
+    "filesOptional": "Attaching a file is optional",
+    "resultTitle": "Question results",
+    "resultTotal": "{{earned}} / {{total}} points",
+    "scoreAria": "Points for question {{n}}",
+    "yourChoice": "(your choice)",
+    "noAnswer": "No answer",
+    "aiScore": "AI score: {{score}}"
   }
 }

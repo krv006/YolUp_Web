@@ -10,6 +10,7 @@ export interface Payment {
   paidAt: string | null;
   note: string;
   unpaidMonths: number;
+  overdue: boolean;
 }
 
 export interface StudentProgress {
@@ -82,6 +83,7 @@ export function mapPayment(dto: PaymentDto): Payment {
     paidAt: dto.paid_at ?? null,
     note: dto.note ?? "",
     unpaidMonths: dto.unpaid_months ?? 0,
+    overdue: dto.status !== "paid" && Boolean(dto.overdue),
   };
 }
 

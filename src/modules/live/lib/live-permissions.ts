@@ -14,3 +14,9 @@ export function canPublishSource(
   if (!permissions?.canPublish) return false;
   return !permissions.canPublishSources.length || permissions.canPublishSources.includes(source);
 }
+
+const IDENTITY_PREFIX = "user-";
+
+export function identityUserId(identity: string): string {
+  return identity.startsWith(IDENTITY_PREFIX) ? identity.slice(IDENTITY_PREFIX.length) : identity;
+}

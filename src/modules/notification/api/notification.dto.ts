@@ -1,6 +1,6 @@
-import type { UserDto } from "@/shared/types";
+import type { CanMessage, DirectStatus, UserDto } from "@/shared/types";
 
-export type NotificationTarget = "user" | "all" | "users" | "parents_of";
+export type NotificationTarget = "user" | "all" | "users" | "parents_of" | "course";
 
 export interface NotificationDto {
   id: string;
@@ -46,6 +46,8 @@ export interface SendNotificationDto {
   target_type: NotificationTarget;
   user_id?: string;
   user_ids?: string[];
+  course_id?: string;
+  include_parents?: boolean;
   kind?: string;
 }
 
@@ -102,5 +104,31 @@ export interface SendNotificationInput {
   targetType: NotificationTarget;
   userId?: string | null;
   userIds?: string[];
+  courseId?: string | null;
+  includeParents?: boolean;
   kind?: string;
+}
+
+export interface PersonSearchDto {
+  id: string | number;
+  name?: string | null;
+  first_name?: string | null;
+  last_name?: string | null;
+  username: string;
+  role?: string | null;
+  avatar?: string | null;
+  room_id?: string | number | null;
+  direct_status?: DirectStatus | null;
+  can_message?: CanMessage | null;
+}
+
+export interface PersonSearchResult {
+  id: string;
+  name: string;
+  username: string;
+  role: string;
+  avatar: string | null;
+  roomId: string | null;
+  directStatus: DirectStatus | null;
+  canMessage: CanMessage | null;
 }

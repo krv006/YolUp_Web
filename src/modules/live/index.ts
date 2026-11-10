@@ -1,9 +1,10 @@
 export { liveApi } from "./api/live.api";
-export type { AttentionCheck, FocusKind, FocusResult, RoomToken } from "./api/live.dto";
-export { mapAttentionDto, mapFocusDto, mapRoomTokenDto } from "./lib/live.mappers";
+export type { AttentionCheck, FocusKind, FocusResult, MediaKind, MediaMode, RoomToken } from "./api/live.dto";
+export { mapAttentionDto, mapFocusDto, mapMediaModeDto, mapRoomTokenDto } from "./lib/live.mappers";
 export {
   CAMERA_SOURCE,
   canPublishSource,
+  identityUserId,
   MICROPHONE_SOURCE,
   SCREEN_SHARE_SOURCE,
 } from "./lib/live-permissions";
@@ -17,6 +18,7 @@ export {
   useAnswerAttention,
   useAttentionCheck,
   useBanFromLesson,
+  useCameraOffAll,
   useDenyCamera,
   useDenyMic,
   useGrantCamera,
@@ -24,15 +26,19 @@ export {
   useInviteToLesson,
   useLessonPresence,
   useLiveToken,
+  useMediaMode,
   useMuteAll,
+  useReleaseMedia,
   useRequestCamera,
   useRequestMic,
+  useSetMediaMode,
   useUnbanFromLesson,
 } from "./model/live.queries";
 export { MediaPermissionDialog } from "./ui/media-permission-dialog";
 export { useCameraSignals } from "./model/use-camera-signals";
 export type { CameraRequest } from "./model/use-camera-signals";
 export { useMicSignals } from "./model/use-mic-signals";
+export { useMediaModeChannel } from "./model/use-media-mode-channel";
 export type { MicRequest } from "./model/use-mic-signals";
 export { AttentionCheckDialog } from "./ui/attention-check-dialog";
 export { LessonInviteDialog } from "./ui/lesson-invite-dialog";

@@ -7,6 +7,7 @@ export interface PaymentDto {
   paid_at: string | null;
   note: string;
   unpaid_months?: number;
+  overdue?: boolean;
 }
 
 export interface StudentProgressDto {

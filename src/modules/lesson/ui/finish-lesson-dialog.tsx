@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LogOut } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -23,11 +24,29 @@ export function FinishLessonDialog({
   const { t } = useTranslation("lesson");
   const finish = useFinishLesson();
   const isCompact = useIsCompact();
+  const [postRecording, setPostRecording] = useState(true);
+
+  const postToggle = (
+    <label className="flex w-full items-start gap-3 rounded-md bg-subtle px-4 py-3 text-left">
+      <input
+        type="checkbox"
+        className="mt-0.5 size-4.5 shrink-0 accent-brand"
+        checked={postRecording}
+        onChange={(event) => setPostRecording(event.target.checked)}
+      />
+      <span className="flex min-w-0 flex-col">
+        <span className="text-body-sm font-medium text-ink">{t("finishDialog.postRecording")}</span>
+        <small className="text-caption text-ink-secondary">
+          {postRecording ? t("finishDialog.postRecordingHint") : t("finishDialog.keepRecordingHint")}
+        </small>
+      </span>
+    </label>
+  );
 
   function submit() {
     if (!lesson) return;
     finish.mutate(
-      { id: lesson.id },
+      { id: lesson.id, postRecording },
       {
         onSuccess: () => {
           onOpenChange(false);
@@ -51,7 +70,9 @@ export function FinishLessonDialog({
         pending={finish.isPending}
         onConfirm={submit}
         onCancel={onLeaveOnly}
-      />
+      >
+        {postToggle}
+      </ConfirmDialog>
     );
 
   return (
@@ -90,6 +111,8 @@ export function FinishLessonDialog({
           </button>
         </>
       }
-    />
+    >
+      {postToggle}
+    </AppDialog>
   );
 }

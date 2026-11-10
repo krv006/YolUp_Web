@@ -11,8 +11,16 @@ describe("mapConversationDto", () => {
       dto({ last_message: { text: "Salom", sender: "Aziza", sender_id: "u7", message_type: "voice", created_at: "2026-10-29T10:00:00Z" } } as Partial<ChatRoomDto>)
     );
     expect(room.lastSenderId).toBe("u7");
+    expect(room.lastSenderRole).toBeNull();
     expect(room.lastMessageType).toBe("voice");
     expect(room.updatedAt).toBe("2026-10-29T10:00:00Z");
+  });
+
+  it("keeps the last sender's role for the list tag", () => {
+    const room = mapConversationDto(
+      dto({ kind: "course", last_message: { text: "Vazifa", sender: "Aziz", sender_id: "t1", sender_role: "teacher" } })
+    );
+    expect(room.lastSenderRole).toBe("teacher");
   });
 
   it("shows the other person's photo in a direct chat", () => {

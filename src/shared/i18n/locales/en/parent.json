@@ -151,7 +151,8 @@
       "children": "Students",
       "attendance": "Attendance",
       "homework": "Homework",
-      "results": "Results"
+      "results": "Results",
+      "chats": "Chats"
     },
     "role": "Observer",
     "openAccount": "Profile and settings",
@@ -1141,5 +1142,63 @@
     "cancelDone": "Request cancelled",
     "failed": "Something went wrong. Please try again",
     "expires": "The request is valid until {{date}} — it expires if not approved"
+  },
+  "chats": {
+    "title": "Chats",
+    "back": "Back",
+    "openWithUnread": "Chats, {{count}} unread",
+    "searchPlaceholder": "Search chats...",
+    "newTitle": "Message a teacher",
+    "newDescription": "Your student's teachers. The teacher has to accept the request before you can chat.",
+    "open": "Open",
+    "request": "Send request",
+    "requestSent": "Request sent — you can chat once the teacher accepts it",
+    "loading": "Loading...",
+    "noTeachers": "No teachers yet",
+    "emptyTitle": "No chats yet",
+    "emptyHint": "Send a request to your student's teacher to start a chat.",
+    "noResults": "Nothing found",
+    "pickTitle": "Pick a chat",
+    "pickHint": "Open a conversation from the list on the left or send a new request to a teacher."
+  },
+  "scores": {
+    "title": "Score trend",
+    "average": "Average {{value}}",
+    "kindLabel": "Score type",
+    "rangeLabel": "Period",
+    "kinds": {
+      "overall": "All",
+      "homework": "Homework",
+      "quiz": "Tests",
+      "exam": "Mock"
+    },
+    "ranges": {
+      "8w": "8 weeks",
+      "6m": "6 months",
+      "all": "All time"
+    },
+    "chartAria": "{{kind}} score chart (out of 10)",
+    "empty": "No grades in this period",
+    "locked": "The student hasn't allowed sharing analytics",
+    "kindsShort": {
+      "overall": "All",
+      "homework": "Homework",
+      "quiz": "Tests",
+      "exam": "Mock"
+    },
+    "monthsShort": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ]
   }
 }

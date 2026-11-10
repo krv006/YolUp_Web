@@ -35,11 +35,13 @@ export interface AttendanceSummaryDto {
   attendance_percent?: number;
   focus_percent?: number | null;
   lesson_count?: number;
+  focus_exits?: number | null;
   students?: Array<{
     id: string | number;
     name?: string;
     attendance_percent?: number;
     focus_percent?: number | null;
     attended_count?: number;
+    focus_exits?: number | null;
   }>;
 }

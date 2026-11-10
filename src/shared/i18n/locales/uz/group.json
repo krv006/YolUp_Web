@@ -4,7 +4,8 @@
     "lessons": "Darslar",
     "assignments": "Vazifalar",
     "attendance": "Davomat",
-    "progress": "Progress"
+    "progress": "Progress",
+    "members": "A'zolar"
   },
   "sendFailed": "Xabar yuborilmadi",
   "replyFallback": "Javob",
@@ -91,7 +92,9 @@
     "removeDialogDescription": "O‘quvchi guruh chati, darslar va vazifalarni ko‘rmay qoladi. Uning baholari va davomat tarixi saqlanadi.",
     "cancel": "Bekor",
     "remove": "Chiqarish",
-    "removeConfirmTitle": "{{name}}ni guruhdan chiqarasizmi?"
+    "removeConfirmTitle": "{{name}}ni guruhdan chiqarasizmi?",
+    "message": "Xabar yozish",
+    "messageAria": "{{name}}ga xabar yozish"
   },
   "attendance": {
     "eyebrow": "KURS HISOBOTI",
@@ -433,6 +436,35 @@
     "statFocus": "Fokus",
     "statAttendanceLessons": "Davomat · {{count}} dars",
     "lastVisit": "Oxirgi tashrif: {{date}}",
-    "noVisit": "Darsga hali kirmagan"
+    "noVisit": "Darsga hali kirmagan",
+    "overdue": "Muddati o'tgan",
+    "unpaidBadge": "{{count}} ta o'quvchi to'lamagan"
+  },
+  "club": {
+    "eyebrow": "Speaking club",
+    "membersTitle": "A'zolar · {{count}}",
+    "add": "A'zo qo'shish",
+    "addHint": "Guruhlarni yoki alohida o'quvchilarni tanlang — ular darhol qo'shiladi.",
+    "added": "{{count}} ta o'quvchi qo'shildi",
+    "empty": "Hali a'zolar yo'q"
+  },
+  "paymentSettings": {
+    "button": "To'lov sozlamalari",
+    "title": "To'lov sozlamalari",
+    "description": "Oylik to'lov, to'lov kuni va eslatmalar. Eslatma o'quvchiga ham, kuzatuvchisiga ham boradi.",
+    "fee": "Oylik to'lov (so'm)",
+    "feePlaceholder": "Masalan, 450000",
+    "day": "Har oy to'lov kuni",
+    "noDay": "Belgilanmagan",
+    "dayOption": "{{day}}-sana",
+    "dayHint": "Shu kungacha to'lanmasa, o'quvchi \"Muddati o'tgan\" bo'ladi.",
+    "reminders": "Eslatma yuborish",
+    "reminderOption": "{{count}} kun oldin",
+    "remindersHint": "Bir nechtasini tanlash mumkin. Faqat shu oy to'lamaganlarga boradi.",
+    "remindersNeedDay": "Eslatma uchun avval to'lov kunini tanlang.",
+    "dueDay": "to'lov kuni: {{day}}-sana",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "saved": "To'lov sozlamalari saqlandi"
   }
 }
