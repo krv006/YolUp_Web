@@ -1,6 +1,7 @@
 export { boardApi } from "./api/board.api";
 export type {
   BoardSource,
+  CodeLanguage,
   FormulaSolutionDto,
   AwayStudent,
   BoardSheet,
@@ -13,6 +14,7 @@ export type {
   StrokeInput,
   StrokeKind,
   StrokeShapeDto,
+  StrokeUpdate,
 } from "./api/board.dto";
 export { mapBoardDto, mapPeriodicElementDto } from "./lib/board.mappers";
 export { BoardSocketManager, parseBoardEvent } from "./lib/board-socket-manager";
@@ -23,6 +25,7 @@ export {
   useAddStroke,
   useAddStrokes,
   useBoard,
+  useUpdateStroke,
   useEraseStrokes,
   useRenameSheet,
   useSetCurrentSheet,
@@ -44,7 +47,8 @@ export { BoardPreview } from "./ui/board-preview";
 export { BoardStroke } from "./ui/board-stroke";
 export { BoardToolbar } from "./ui/board-toolbar";
 export type { BoardTool } from "./ui/board-toolbar";
-export { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS } from "./constants/board.constants";
+export { BOARD_COLORS, BOARD_TEXT_SIZE, BOARD_WIDTHS, DEFAULT_CODE_LANGUAGES } from "./constants/board.constants";
+export { applyStrokeUpdate, canEditStroke, clampMove, moveStroke, shapeBox } from "./lib/board-edit";
 export { MathMarkup } from "./ui/math-markup";
 export { FormulaPalette } from "./ui/formula-palette";
 export { MathFieldInput } from "./ui/math-field-input";

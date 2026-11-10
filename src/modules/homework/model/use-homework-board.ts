@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { BoardSource, BoardState, StrokeDto, StrokeInput } from "@/modules/board";
+import { applyStrokeUpdate, DEFAULT_CODE_LANGUAGES, type BoardSource, type BoardState, type StrokeDto, type StrokeInput } from "@/modules/board";
 import { useSaveHomeworkBoard } from "./homework.queries";
 
 const AUTOSAVE_MS = 1500;
@@ -93,6 +93,8 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
       // Doska fanga bog'lanmagan: hamma fanda bir xil umumiy asboblar (yechuvchi/davriy jadval yo'q)
       mathEnabled: false,
       chemistryEnabled: false,
+      codeEnabled: false,
+      codeLanguages: DEFAULT_CODE_LANGUAGES.map((item) => ({ ...item })),
       awayStudents: [],
       pendingMicRequests: [],
       pendingCameraRequests: [],
@@ -107,6 +109,16 @@ export function useHomeworkBoardSource(assignmentId: string, init: HomeworkBoard
     addSheet: () => change([...sheetsRef.current, []]),
     eraseStroke: (sheet, strokeId) =>
       change(sheetsRef.current.map((items, index) => (index === sheet ? items.filter((item) => item.id !== strokeId) : items))),
+    updateStroke: (sheet, strokeId, update) =>
+      change(
+        sheetsRef.current.map((items, index) =>
+          index === sheet
+            ? items.map((item) =>
+                item.id === strokeId ? applyStrokeUpdate(item, update, { width: init.width, height: init.height }) : item
+              )
+            : items
+        )
+      ),
   };
 
   function addStrokes(sheet: number, strokes: StrokeInput[]) {

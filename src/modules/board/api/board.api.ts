@@ -4,7 +4,9 @@ import type {
   BoardStateDto,
   FormulaSolutionDto,
   PeriodicElementDto,
+  StrokeDto,
   StrokeInput,
+  StrokeUpdate,
 } from "./board.dto";
 import { mapBoardDto, mapPeriodicElementDto, mapSignalsDto, type BoardSignalsDto } from "../lib/board.mappers";
 
@@ -33,6 +35,12 @@ export const boardApi = {
   },
   addStroke: (lessonId: string, sheet: number, stroke: StrokeInput) =>
     apiClient.post(boardEndpoints.stroke(lessonId), { sheet, stroke }),
+  updateStroke: (lessonId: string, sheet: number, strokeId: string, update: StrokeUpdate) =>
+    apiClient.patch<StrokeDto>(boardEndpoints.strokeItem(lessonId, strokeId), {
+      sheet,
+      ...(update.changes ? { changes: update.changes } : {}),
+      ...(update.move ? { move: update.move } : {}),
+    }),
   addSheet: (lessonId: string, title?: string) =>
     apiClient.post(boardEndpoints.sheet(lessonId), title ? { title } : {}),
   renameSheet: (lessonId: string, index: number, title: string) =>

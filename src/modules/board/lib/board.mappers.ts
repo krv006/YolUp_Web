@@ -4,6 +4,7 @@ import type {
   PeriodicElement,
   PeriodicElementDto,
 } from "../api/board.dto";
+import { DEFAULT_CODE_LANGUAGES } from "../constants/board.constants";
 
 export interface BoardSignalsDto {
   away_students?: Array<{ student_id: string | number; name: string }>;
@@ -37,6 +38,10 @@ export function mapBoardDto(dto: BoardStateDto): BoardState {
     subject: dto.subject || "",
     mathEnabled: Boolean(dto.math_enabled),
     chemistryEnabled: Boolean(dto.chemistry_enabled),
+    codeEnabled: Boolean(dto.code_enabled),
+    codeLanguages: dto.code_languages?.length
+      ? dto.code_languages.map((item) => ({ id: String(item.id), label: item.label || String(item.id) }))
+      : DEFAULT_CODE_LANGUAGES.map((item) => ({ ...item })),
     permissionMode: dto.permission_mode ?? "teacher",
     currentSheet: dto.current_sheet ?? null,
     awayStudents: (dto.away_students ?? []).map((item) => ({

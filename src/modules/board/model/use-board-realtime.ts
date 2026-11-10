@@ -1,11 +1,12 @@
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { BoardState, StrokeDto } from "../api/board.dto";
+import { replaceStroke } from "../lib/board-edit";
 import type { BoardSocketEvent } from "../lib/board-socket-manager";
 import { boardKeys } from "./board.queries";
 import { useBoardChannel } from "./use-board-channel";
 
-const BOARD_STATE_EVENTS = new Set<BoardSocketEvent["type"]>(["stroke", "erase", "sheet"]);
+const BOARD_STATE_EVENTS = new Set<BoardSocketEvent["type"]>(["stroke", "stroke_updated", "erase", "sheet"]);
 
 function updateSheet(
   state: BoardState,
@@ -28,6 +29,9 @@ function applyEvent(state: BoardState | undefined, event: BoardSocketEvent): Boa
       return updateSheet(state, event.sheet, (strokes) =>
         strokes.some((item) => item.id === event.stroke.id) ? strokes : [...strokes, event.stroke]
       );
+
+    case "stroke_updated":
+      return updateSheet(state, event.sheet, (strokes) => replaceStroke(strokes, event.stroke));
 
     case "erase":
       return updateSheet(state, event.sheet, (strokes) =>
