@@ -21,7 +21,7 @@ function updateSheet(
   };
 }
 
-function applyEvent(state: BoardState | undefined, event: BoardSocketEvent): BoardState | undefined {
+export function applyBoardEvent(state: BoardState | undefined, event: BoardSocketEvent): BoardState | undefined {
   if (!state) return state;
 
   switch (event.type) {
@@ -80,7 +80,7 @@ export function useBoardRealtime(lessonId: string, enabled = true, identity?: st
       }
       if (!BOARD_STATE_EVENTS.has(event.type)) return;
       queryClient.setQueryData<BoardState>(boardKeys.state(lessonId), (current) =>
-        applyEvent(current, event)
+        applyBoardEvent(current, event)
       );
     },
     [lessonId, queryClient, identity]
