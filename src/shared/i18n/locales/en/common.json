@@ -36,7 +36,10 @@
     "unsupported": "This file type can't be viewed in the browser.",
     "platformOnlyNote": "This file can only be viewed on the platform",
     "close": "Close",
-    "watermark": "YolUp · platform only"
+    "watermark": "YolUp · platform only",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "zoomReset": "Reset zoom"
   },
   "date": {
     "today": "Today",

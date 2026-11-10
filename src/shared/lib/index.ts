@@ -11,6 +11,7 @@ export {
 } from "./file-kind";
 export type { FileKind } from "./file-kind";
 export { openPdfDocument } from "./pdf";
+export { clampZoom, stepZoom, ZOOM_MAX, ZOOM_MIN } from "./zoom";
 export type { PDFDocumentProxy } from "./pdf";
 export {
   formatConversationTime,
