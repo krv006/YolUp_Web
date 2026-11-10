@@ -10,6 +10,7 @@ export interface ChatRoomDto {
     text?: string;
     sender?: string;
     sender_id?: string | number | null;
+    sender_role?: string | null;
     message_type?: string | null;
     created_at?: string;
   } | null;

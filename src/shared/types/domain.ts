@@ -43,6 +43,7 @@ export interface Conversation {
   lastMessage: string;
   lastSender: string | null;
   lastSenderId?: string | null;
+  lastSenderRole?: string | null;
   lastMessageType?: string | null;
   updatedAt: string;
   unreadCount: number;

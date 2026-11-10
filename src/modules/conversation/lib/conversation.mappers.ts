@@ -35,6 +35,7 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
     lastMessage: dto.last_message?.text ?? "Hali xabar yo‘q",
     lastSender: dto.last_message?.sender ?? null,
     lastSenderId: dto.last_message?.sender_id == null ? null : String(dto.last_message.sender_id),
+    lastSenderRole: dto.last_message?.sender_role ?? null,
     lastMessageType: dto.last_message?.message_type ?? null,
     updatedAt: dto.last_message?.created_at ?? dto.updated_at,
     unreadCount: Number(dto.unread_count ?? dto.unread ?? 0),

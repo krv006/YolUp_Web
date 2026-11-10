@@ -14,6 +14,8 @@ import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { RoleTag } from "@/shared/ui/role-tag";
 
+const TAGGED_SENDERS = new Set(["teacher", "parent"]);
+
 function preview(conversation: Conversation, mine: boolean, youLabel: string, body: string): string {
   if (!conversation.lastMessage) return "";
   const sender = conversation.lastSender;
@@ -94,6 +96,9 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
           }`}
         >
           {mine ? <Icon name="done-all" size={16} className="shrink-0 text-brand" /> : null}
+          {!mine && conversation.type === "group" && conversation.lastSender && TAGGED_SENDERS.has(conversation.lastSenderRole ?? "") ? (
+            <RoleTag role={conversation.lastSenderRole} />
+          ) : null}
           <span className="truncate">{preview(conversation, mine, t("panel.you"), body)}</span>
         </small>
       )}
