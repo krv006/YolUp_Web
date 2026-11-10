@@ -9,6 +9,7 @@ import { PinnedMessageBar, useChatUiStore } from "@/modules/message";
 
 import { ConversationInfoPanel } from "./conversation-info-panel";
 import type { Conversation } from "@/shared/types";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 export interface ChatHeaderProps {
   conversation: Conversation;
@@ -177,9 +178,12 @@ export function ChatHeader({
               />
             )}
             <span className="flex min-w-0 flex-col">
-              <strong className={`truncate text-title text-ink ${desk("lg:text-title-lg")}`}>
-                {conversation.title}
-              </strong>
+              <span className="flex min-w-0 items-center gap-2">
+                <strong className={`truncate text-title text-ink ${desk("lg:text-title-lg")}`}>
+                  {conversation.title}
+                </strong>
+                {conversation.type === "direct" ? <RoleTag role={conversation.participant?.role} /> : null}
+              </span>
               <span className={`truncate text-body-xs text-ink-secondary ${desk("lg:text-body-sm lg:text-ink-tertiary")}`}>
                 {conversation.type === "group"
                   ? [

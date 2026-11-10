@@ -12,6 +12,7 @@ import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 function preview(conversation: Conversation, mine: boolean, youLabel: string, body: string): string {
   if (!conversation.lastMessage) return "";
@@ -66,9 +67,12 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
     )}
 
     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-      <strong className="truncate text-title text-ink">
-        {conversation.title}
-      </strong>
+      <span className="flex min-w-0 items-center gap-2">
+        <strong className="truncate text-title text-ink">
+          {conversation.title}
+        </strong>
+        {conversation.type === "direct" ? <RoleTag role={conversation.participant?.role} /> : null}
+      </span>
       {typing ? (
         <small className="truncate text-body-sm text-brand">
           {typing.kind === "voice"

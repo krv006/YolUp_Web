@@ -4,7 +4,6 @@ import { useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import { formatMessageTime } from "@/shared/lib";
-import { ROLES } from "@/shared/constants";
 import { Avatar } from "@/shared/ui/legacy";
 import { FileViewer } from "@/shared/ui/file-viewer";
 import { Icon } from "@/shared/ui/icon";
@@ -14,6 +13,7 @@ import { MessageAttachment } from "./message-attachment";
 import { VoiceMessage } from "./voice-message";
 import { useChatUiStore } from "../model/chat-ui.store";
 import { MessageText } from "./message-text";
+import { RoleTag } from "@/shared/ui/role-tag";
 
 export interface MessageBubbleProps {
   message: ChatMessage;
@@ -160,7 +160,6 @@ export function MessageBubble({
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
   const searchTerm = useChatUiStore((state) => state.search);
-  const isTeacherSender = message.senderRole === ROLES.TEACHER;
   const longPressRef = useRef<number | null>(null);
 
   function cancelLongPress() {
@@ -255,8 +254,10 @@ export function MessageBubble({
               message.senderId || message.senderName
             )}`}
           >
-            {isTeacherSender && <Icon name="school" size={13} />}
             {message.senderName}
+            {message.senderRole === "teacher" || message.senderRole === "parent" ? (
+              <RoleTag role={message.senderRole} className="ml-1" />
+            ) : null}
           </span>
         )}
 
