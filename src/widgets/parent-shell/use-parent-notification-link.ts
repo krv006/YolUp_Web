@@ -17,6 +17,8 @@ export function useParentNotificationLink(): OpenNotificationLink {
       else if (["assignment", "homework", "submission"].includes(type)) navigate(ROUTES.parent.homework);
       else if (["lesson", "recording"].includes(type)) navigate(ROUTES.parent.attendance);
       else if (["exam", "mock", "quiz", "test"].includes(type)) navigate(ROUTES.parent.exams);
+      else if (type === "course") navigate(ROUTES.parent.course(link.id));
+      else if (["conversation", "room", "chat", "chat_room", "message"].includes(type)) navigate(ROUTES.parent.chat(link.id));
     },
     [children, navigate, selectChild]
   );
