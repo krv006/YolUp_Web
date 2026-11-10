@@ -60,3 +60,13 @@ export function baselineOffset(fontPx: number, lineHeight: number, family: strin
   baselineCache.set(key, offset);
   return offset;
 }
+
+let measureContext: CanvasRenderingContext2D | null | undefined;
+
+export function textWidth(text: string, size: number, family: string, weight = 600): number | null {
+  if (measureContext === undefined) measureContext = document.createElement("canvas").getContext("2d");
+  const context = measureContext;
+  if (!context) return null;
+  context.font = `${weight} ${size}px ${family}`;
+  return Math.max(0, ...text.split("\n").map((line) => context.measureText(line).width));
+}
