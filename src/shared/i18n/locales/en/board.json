@@ -61,7 +61,13 @@
     "bulletList": "Bulleted list",
     "numberedList": "Numbered list",
     "formatAria": "Text formatting",
-    "code": "Code"
+    "code": "Code",
+    "save": "Save",
+    "edit": {
+      "text": "Edit text",
+      "math": "Edit formula",
+      "code": "Edit code"
+    }
   },
   "eraseDialog": {
     "title": "Delete element",
@@ -223,10 +229,15 @@
     "counter": "{{count}}/{{max}}",
     "aria": "Write code on the board",
     "placeholder": "Type code…",
-    "hint": "Tab — 4 spaces · Shift+Tab — outdent · Ctrl+Enter — add"
+    "hint": "Tab — 4 spaces · Shift+Tab — outdent · Ctrl+Enter — confirm"
   },
   "edit": {
     "notOwner": "You can only change elements you created",
-    "editedBy": "edited by {{name}}"
+    "editedBy": "edited by {{name}}",
+    "toolbar": "Element actions",
+    "edit": "Edit",
+    "delete": "Delete",
+    "sizeDown": "Smaller",
+    "sizeUp": "Larger"
   }
 }

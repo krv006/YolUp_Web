@@ -61,7 +61,13 @@
     "bulletList": "Belgili ro'yxat",
     "numberedList": "Raqamli ro'yxat",
     "formatAria": "Matnni formatlash",
-    "code": "Kod"
+    "code": "Kod",
+    "save": "Saqlash",
+    "edit": {
+      "text": "Matnni tahrirlash",
+      "math": "Formulani tahrirlash",
+      "code": "Kodni tahrirlash"
+    }
   },
   "eraseDialog": {
     "title": "Elementni o‘chirish",
@@ -223,10 +229,15 @@
     "counter": "{{count}}/{{max}}",
     "aria": "Doskaga kod yozish",
     "placeholder": "Kodni yozing…",
-    "hint": "Tab — 4 probel · Shift+Tab — chekinishni olish · Ctrl+Enter — qo'shish"
+    "hint": "Tab — 4 probel · Shift+Tab — chekinishni olish · Ctrl+Enter — tasdiqlash"
   },
   "edit": {
     "notOwner": "Faqat o'zingiz yozgan elementni o'zgartira olasiz",
-    "editedBy": "{{name}} tahrirladi"
+    "editedBy": "{{name}} tahrirladi",
+    "toolbar": "Element amallari",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "sizeDown": "Kichiklashtirish",
+    "sizeUp": "Kattalashtirish"
   }
 }

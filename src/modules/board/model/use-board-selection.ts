@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type PointerEvent, type RefObject } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type PointerEvent, type RefObject } from "react";
 import type { Point, StrokeDto } from "../api/board.dto";
 import { clampMove, type SheetSize, type StrokeBox } from "../lib/board-edit";
 import { boardScale, clientToBoard, measureNode, strokeNode } from "../lib/board-measure";
@@ -22,6 +22,7 @@ export interface UseBoardSelectionInit {
   canEdit: (stroke: StrokeDto) => boolean;
   onMove: (id: string, delta: [number, number]) => void;
   onDenied: () => void;
+  onOpen: (stroke: StrokeDto) => void;
 }
 
 interface DragState {
@@ -41,6 +42,7 @@ export function useBoardSelection({
   canEdit,
   onMove,
   onDenied,
+  onOpen,
 }: UseBoardSelectionInit) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [drag, setDrag] = useState<BoardDrag | null>(null);
@@ -89,11 +91,22 @@ export function useBoardSelection({
     return clientToBoard(event.currentTarget, event.clientX, event.clientY, sheet.width, viewHeight);
   }
 
+  function pickAt(event: PointerEvent<SVGSVGElement> | MouseEvent<SVGSVGElement>): StrokeDto | null {
+    const point = clientToBoard(event.currentTarget, event.clientX, event.clientY, sheet.width, viewHeight);
+    const tolerance = HIT_PX / boardScale(event.currentTarget, sheet.width);
+    return pickStroke(strokes, point, { tolerance, measure });
+  }
+
+  function onDoubleClick(event: MouseEvent<SVGSVGElement>) {
+    if (!active) return;
+    const stroke = pickAt(event);
+    if (stroke && canEdit(stroke)) onOpen(stroke);
+  }
+
   function onPointerDown(event: PointerEvent<SVGSVGElement>) {
     if (!active) return;
     const point = toPoint(event);
-    const tolerance = HIT_PX / boardScale(event.currentTarget, sheet.width);
-    const stroke = pickStroke(strokes, point, { tolerance, measure });
+    const stroke = pickAt(event);
     if (!stroke) {
       clear();
       return;
@@ -144,6 +157,6 @@ export function useBoardSelection({
     drag,
     select: setSelectedId,
     clear,
-    handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp },
+    handlers: { onPointerDown, onPointerMove, onPointerUp, onPointerCancel: onPointerUp, onDoubleClick },
   };
 }

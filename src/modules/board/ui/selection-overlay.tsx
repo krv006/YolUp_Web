@@ -32,7 +32,7 @@ export function SelectionOverlay({ box, offset = [0, 0], scale, label }: Selecti
         vectorEffect="non-scaling-stroke"
       />
       {label ? (
-        <text x={x} y={y - 6 / scale} fontSize={font} fill="#5b5cf0" fontWeight={600}>
+        <text x={x} y={y + height + font + 4 / scale} fontSize={font} fill="#5b5cf0" fontWeight={600}>
           {label}
         </text>
       ) : null}

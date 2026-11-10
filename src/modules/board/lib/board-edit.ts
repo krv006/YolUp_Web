@@ -1,4 +1,5 @@
 import type { Point, StrokeDto, StrokeUpdate } from "../api/board.dto";
+import { BOARD_TEXT_SIZE, CODE_TEXT_SIZE } from "../constants/board.constants";
 
 const PROTECTED_FIELDS = new Set(["id", "type", "by", "by_id", "edited_by"]);
 const ANCHOR_RIGHT_GAP = 40;
@@ -98,4 +99,11 @@ export function canEditStroke(
 
 export function replaceStroke(strokes: StrokeDto[], next: StrokeDto): StrokeDto[] {
   return strokes.some((item) => item.id === next.id) ? strokes.map((item) => (item.id === next.id ? next : item)) : strokes;
+}
+
+export function strokeSize(stroke: StrokeDto): number | null {
+  if (stroke.type === "code") return stroke.size ?? CODE_TEXT_SIZE;
+  if (stroke.type === "text") return stroke.size ?? BOARD_TEXT_SIZE;
+  if (stroke.type === "math") return stroke.size ?? 24;
+  return null;
 }
