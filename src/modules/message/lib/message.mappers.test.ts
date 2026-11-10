@@ -34,3 +34,24 @@ describe("parseSocketEvent typing", () => {
     expect(parseSocketEvent({ type: "typing", user_id: 2, name: "Aziza" })).toMatchObject({ kind: "text" });
   });
 });
+
+describe("channel posts", () => {
+  it("keeps the comment count on posts and the thread root on comments", () => {
+    const post = mapMessageDto({ id: "p1", room: "c1", text: "E'lon", created_at: "2026-11-10T10:00:00Z", comment_count: 3 } as MessageDto);
+    expect(post.commentCount).toBe(3);
+    expect(post.threadRootId).toBeNull();
+    const comment = mapMessageDto({ id: "k1", room: "c1", text: "Rahmat", created_at: "2026-11-10T10:01:00Z", thread_root: "p1" } as MessageDto);
+    expect(comment.threadRootId).toBe("p1");
+    expect(comment.commentCount).toBeNull();
+  });
+
+  it("parses a new comment event", () => {
+    const event = parseSocketEvent({
+      type: "channel_comment",
+      post_id: "p1",
+      comment_count: 4,
+      message: { id: "k2", room: "c1", text: "Zo'r", created_at: "2026-11-10T10:02:00Z", thread_root: "p1" },
+    });
+    expect(event).toMatchObject({ type: "comment", postId: "p1", commentCount: 4 });
+  });
+});

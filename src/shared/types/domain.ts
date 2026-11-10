@@ -35,8 +35,8 @@ export type PresenceStatus = "online" | "offline";
 
 export interface Conversation {
   id: string;
-  type: "group" | "direct";
-  kind: "course" | "direct";
+  type: "group" | "direct" | "channel";
+  kind: "course" | "direct" | "channel";
   courseId: string | null;
   title: string;
   participantId: string | null;
@@ -67,6 +67,10 @@ export interface Conversation {
   subject?: string;
   subjectLabel?: string;
   description?: string;
+  canWrite?: boolean;
+  canComment?: boolean;
+  unpaidCount?: number | null;
+  overdueCount?: number | null;
 }
 
 export interface MessageReply {
@@ -168,6 +172,8 @@ export interface ChatMessage {
   clientMessageId?: string | null;
   replyToId?: string | null;
   replyToDeleted?: boolean;
+  commentCount?: number | null;
+  threadRootId?: string | null;
 }
 
 export interface Course {
@@ -189,6 +195,12 @@ export interface Course {
   lessonsPerWeek: number | null;
   monthlyFee: number | null;
   avatarUrl: string | null;
+  kind: "group" | "club";
+}
+
+export interface Club extends Course {
+  membersCount: number;
+  chatRoomId: string | null;
 }
 
 export type EnrollmentStatus = "pending" | "approved" | "declined";

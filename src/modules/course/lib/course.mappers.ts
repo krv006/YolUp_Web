@@ -4,8 +4,8 @@ import {
   type Page,
   type PaginationOptions,
 } from "@/shared/api";
-import type { Course, DomainUser, Enrollment, UserDto } from "@/shared/types";
-import type { CourseDto, CourseFormInput, CourseRequestDto, EnrollmentDto } from "../api/course.dto";
+import type { Club, Course, DomainUser, Enrollment, UserDto } from "@/shared/types";
+import type { ClubDto, CourseDto, CourseFormInput, CourseRequestDto, EnrollmentDto } from "../api/course.dto";
 
 const TONES = ["violet", "blue", "emerald", "amber", "rose"] as const;
 
@@ -37,6 +37,16 @@ export function mapCourseDto(dto: CourseDto): Course {
     lessonsPerWeek: dto.lessons_per_week ?? null,
     monthlyFee: dto.monthly_fee ?? null,
     avatarUrl: normalizeMediaUrl(dto.avatar),
+    kind: dto.kind === "club" ? "club" : "group",
+  };
+}
+
+export function mapClubDto(dto: ClubDto): Club {
+  return {
+    ...mapCourseDto(dto),
+    kind: "club",
+    membersCount: Number(dto.members_count ?? dto.student_count ?? 0),
+    chatRoomId: dto.chat_room_id ? String(dto.chat_room_id) : null,
   };
 }
 

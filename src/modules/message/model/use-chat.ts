@@ -99,6 +99,15 @@ export function useChat(
                   upsertMessage(current, event.message)
                 );
               }
+              if (event.type === "comment") {
+                queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
+                  current.map((item) => (item.id === event.postId ? { ...item, commentCount: event.commentCount } : item))
+                );
+                queryClient.setQueryData<ChatMessage[]>(
+                  messageKeys.thread(conversationId ?? "", event.postId),
+                  (current) => (current ? upsertMessage(current, event.message) : current)
+                );
+              }
               if (event.type === "edited") {
                 queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
                   current.map((item) =>

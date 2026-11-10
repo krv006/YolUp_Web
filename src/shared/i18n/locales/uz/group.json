@@ -4,7 +4,8 @@
     "lessons": "Darslar",
     "assignments": "Vazifalar",
     "attendance": "Davomat",
-    "progress": "Progress"
+    "progress": "Progress",
+    "members": "A'zolar"
   },
   "sendFailed": "Xabar yuborilmadi",
   "replyFallback": "Javob",
@@ -436,5 +437,13 @@
     "statAttendanceLessons": "Davomat · {{count}} dars",
     "lastVisit": "Oxirgi tashrif: {{date}}",
     "noVisit": "Darsga hali kirmagan"
+  },
+  "club": {
+    "eyebrow": "Speaking club",
+    "membersTitle": "A'zolar · {{count}}",
+    "add": "A'zo qo'shish",
+    "addHint": "Guruhlarni yoki alohida o'quvchilarni tanlang — ular darhol qo'shiladi.",
+    "added": "{{count}} ta o'quvchi qo'shildi",
+    "empty": "Hali a'zolar yo'q"
   }
 }

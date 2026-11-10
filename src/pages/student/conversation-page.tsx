@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
 import { useChat } from "@/modules/message";
+import { ChannelView } from "@/widgets/channel-view";
 import { DirectChatView } from "@/widgets/direct-chat";
 import { StudentGroupWorkspace } from "@/widgets/student-group-workspace";
 
@@ -40,6 +41,17 @@ export function StudentConversationPage() {
           <div className="message-skeleton" />
         </div>
       </div>
+    );
+
+  if (activeConversation.type === "channel")
+    return (
+      <ChannelView
+        chat={chat}
+        conversation={activeConversation}
+        role="student"
+        backTo="/student/chats"
+        currentUserId={currentUserId}
+      />
     );
 
   if (activeConversation.type === "group")

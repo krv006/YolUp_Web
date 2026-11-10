@@ -1,7 +1,8 @@
 import { Fragment, useRef, useState, type PointerEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useRoleRoutes } from "@/modules/auth";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
+import { NewChatMenu } from "@/widgets/new-chat-menu";
 import {
   ConversationActionsSheet,
   directChatAction,
@@ -30,6 +31,7 @@ export function MobileConversationList() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const isStudent = useIsStudent();
   const startChat = useStartDirectChat(routes.chat);
   const openNewConversation = useNewConversationStore((state) => state.setOpen);
   const {
@@ -91,14 +93,22 @@ export function MobileConversationList() {
         eyebrow={subtitle}
         title={t("panel.title")}
         action={
-          <button
-            type="button"
-            className={mobileRoundButton}
-            aria-label={t("panel.newGroup")}
-            onClick={() => openNewConversation(true)}
-          >
-            <Icon name="add" size={24} />
-          </button>
+          isStudent ? (
+            <button
+              type="button"
+              className={mobileRoundButton}
+              aria-label={t("panel.newGroup")}
+              onClick={() => openNewConversation(true)}
+            >
+              <Icon name="add" size={24} />
+            </button>
+          ) : (
+            <NewChatMenu>
+              <button type="button" className={mobileRoundButton} aria-label={t("create.menuAria")}>
+                <Icon name="add" size={24} />
+              </button>
+            </NewChatMenu>
+          )
         }
       />
 

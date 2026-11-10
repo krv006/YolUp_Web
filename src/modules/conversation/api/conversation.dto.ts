@@ -2,7 +2,7 @@ import type { DirectStatus, UserDto } from "@/shared/types";
 
 export interface ChatRoomDto {
   id: string | number;
-  kind: "course" | "direct";
+  kind: "course" | "direct" | "channel";
   course?: string | number | null;
   title: string;
   direct_status?: DirectStatus | null;
@@ -25,6 +25,12 @@ export interface ChatRoomDto {
   announcement_only?: boolean;
   online_count?: number;
   member_count?: number;
+  members_count?: number | null;
+  description?: string | null;
+  can_write?: boolean;
+  can_comment?: boolean;
+  unpaid_count?: number | null;
+  overdue_count?: number | null;
   pinned_messages?: Array<{
     message_id: string | number;
     author_name?: string;

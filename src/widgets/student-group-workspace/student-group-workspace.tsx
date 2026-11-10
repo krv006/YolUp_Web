@@ -21,7 +21,8 @@ import { StudentTasks } from "./student-tasks";
 
 type TabId = "chat" | "lessons" | "assignments";
 
-const TABS: TabId[] = ["chat", "lessons", "assignments"];
+const GROUP_TABS: TabId[] = ["chat", "lessons", "assignments"];
+const CLUB_TABS: TabId[] = ["chat", "lessons"];
 
 export interface StudentGroupWorkspaceProps {
   conversation: Conversation;
@@ -58,10 +59,11 @@ export function StudentGroupWorkspace({
   const selectionMode = useChatUiStore((state) => state.selected.length > 0);
   const announcementMode = Boolean(conversation.announcementOnly);
 
+  const course = useCourse(courseId);
+  const TABS = course.data?.kind === "club" ? CLUB_TABS : GROUP_TABS;
   const tabParam = params.get("tab") as TabId | null;
   const active: TabId = tabParam && TABS.includes(tabParam) ? tabParam : "chat";
 
-  const course = useCourse(courseId);
   const lessons = useLessons({ course: courseId, page_size: 100 }, active === "lessons");
   const assignments = useAssignments(courseId, active === "assignments" || active === "chat");
   const quizzes = useQuizzes(courseId, active === "assignments" && Boolean(courseId));
@@ -111,7 +113,7 @@ export function StudentGroupWorkspace({
           </div>
           <VoiceRoomBar courseId={courseId} courseTitle={hydrated.title} hideIdle />
           <nav
-            className={`grid shrink-0 grid-cols-3 gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
+            className={`grid shrink-0 ${TABS.length === 2 ? "grid-cols-2" : "grid-cols-3"} gap-2 px-4 pb-1 lg:px-7 lg:pt-3.5 lg:pb-0 ${
               selectionMode ? "pt-1" : "pt-4"
             }`}
           >

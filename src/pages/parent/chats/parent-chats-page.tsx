@@ -7,6 +7,7 @@ import { useChat } from "@/modules/message";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
+import { ChannelView } from "@/widgets/channel-view";
 import { DirectChatView } from "@/widgets/direct-chat";
 import { ParentChatList } from "./parent-chat-list";
 
@@ -36,6 +37,17 @@ function ParentConversation({ conversationId }: { conversationId: string }) {
           <div className="message-skeleton right" />
         </div>
       </div>
+    );
+
+  if (conversation.data.type === "channel")
+    return (
+      <ChannelView
+        chat={chat}
+        conversation={conversation.data}
+        role="parent"
+        backTo={ROUTES.parent.chats}
+        currentUserId={currentUserId}
+      />
     );
 
   return (

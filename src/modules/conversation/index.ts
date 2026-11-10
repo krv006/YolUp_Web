@@ -36,6 +36,15 @@ export type { DirectChatAction, DirectChatTarget } from "./model/use-start-direc
 export { mapSpamReportDto, spamReportApi } from "./api/spam-report.api";
 export type { SpamReport, SpamReportAction, SpamReportStatus } from "./api/spam-report.api";
 export { useSpamReport, useSpamReportAction, useSpamReports } from "./model/spam-reports";
+export { audienceBody, channelApi } from "./api/channel.api";
+export type { AudienceInput, ChannelInput } from "./api/channel.api";
+export {
+  useAddChannelMembers,
+  useCreateChannel,
+  useDeleteChannel,
+  useRemoveChannelMember,
+  useUpdateChannel,
+} from "./model/use-channels";
 export { ChatEmptyState } from "./ui/chat-empty-state";
 export { PersonChatHint } from "./ui/person-chat-hint";
 export { ChatHeader } from "./ui/chat-header";

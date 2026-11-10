@@ -7,6 +7,7 @@ import {
   useDirectStatusLabel,
   useRoomTyping,
 } from "@/modules/conversation";
+import { useClubs } from "@/modules/course";
 import { formatMessageTime } from "@/shared/lib";
 import type { Conversation } from "@/shared/types";
 import { Avatar } from "@/shared/ui/legacy";
@@ -41,6 +42,8 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
   const weekdays = t("listTime.weekdays", { returnObjects: true }) as string[];
   const directStatusLabel = useDirectStatusLabel();
   const typing = useRoomTyping(conversation.id);
+  const clubs = useClubs(conversation.type === "group");
+  const isClub = Boolean(conversation.courseId && clubs.data?.some((club) => club.id === conversation.courseId));
   const mine = isOwnLastMessage(conversation, user);
   const body = lastMessageBody(conversation, {
     voice: t("panel.voiceMessage"),
@@ -50,7 +53,11 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
 
   return (
     <>
-    {conversation.type === "group" ? (
+    {conversation.type === "channel" ? (
+      <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-brand-subtle text-brand">
+        <Icon name="campaign" size={24} />
+      </span>
+    ) : conversation.type === "group" ? (
       <GroupTile
         name={conversation.title}
         tone={conversation.avatarTone}
@@ -74,6 +81,16 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
           {conversation.title}
         </strong>
         {conversation.type === "direct" ? <RoleTag role={conversation.participant?.role} /> : null}
+        {isClub ? (
+          <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-accent-saffron-bg px-2 text-caption-strong text-accent-saffron-fg">
+            {t("club.badge")}
+          </span>
+        ) : null}
+        {conversation.type === "channel" ? (
+          <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-subtle px-2 text-caption-strong text-ink-secondary">
+            {t("channel.badge")}
+          </span>
+        ) : null}
       </span>
       {typing ? (
         <small className="truncate text-body-sm text-brand">
@@ -98,7 +115,7 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
           }`}
         >
           {mine ? <Icon name="done-all" size={16} className="shrink-0 text-brand" /> : null}
-          {!mine && conversation.type === "group" && conversation.lastSender && TAGGED_SENDERS.has(conversation.lastSenderRole ?? "") ? (
+          {!mine && conversation.type !== "direct" && conversation.lastSender && TAGGED_SENDERS.has(conversation.lastSenderRole ?? "") ? (
             <RoleTag role={conversation.lastSenderRole} />
           ) : null}
           <span className="truncate">{preview(conversation, mine, t("panel.you"), body)}</span>

@@ -23,6 +23,7 @@ export type {
   Conversation,
   ConversationParticipant,
   ConversationRole,
+  Club,
   Course,
   CourseHomeworkReport,
   CourseStudentSearchResult,

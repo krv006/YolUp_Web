@@ -424,5 +424,91 @@
     "cancel": "Отмена",
     "submit": "Отправить жалобу",
     "sent": "Жалоба отправлена, чат заблокирован"
+  },
+  "channel": {
+    "badge": "Канал",
+    "subtitle_one": "Канал · {{count}} участник",
+    "subtitle_few": "Канал · {{count}} участника",
+    "subtitle_many": "Канал · {{count}} участников",
+    "subtitle_other": "Канал · {{count}} участника",
+    "comments_one": "{{count}} комментарий",
+    "comments_few": "{{count}} комментария",
+    "comments_many": "{{count}} комментариев",
+    "comments_other": "{{count}} комментария",
+    "writeComment": "Комментировать",
+    "closeThread": "Закрыть комментарии",
+    "threadTitle": "Комментарии · {{count}}",
+    "loading": "Загрузка...",
+    "noComments": "Комментариев пока нет. Напишите первым.",
+    "commentPlaceholder": "Напишите комментарий...",
+    "sendComment": "Отправить комментарий",
+    "readOnly": "Публиковать в канале может только учитель. Под постом можно оставить комментарий.",
+    "infoTitle": "О канале",
+    "titleLabel": "Название канала",
+    "descriptionLabel": "Описание",
+    "descriptionPlaceholder": "О чём канал",
+    "noDescription": "Нет описания",
+    "members_one": "{{count}} участник",
+    "members_few": "{{count}} участника",
+    "members_many": "{{count}} участников",
+    "members_other": "{{count}} участника",
+    "membersTitle": "Участники",
+    "noMembers": "Участников нет",
+    "edit": "Редактировать",
+    "save": "Сохранить",
+    "saved": "Канал сохранён",
+    "cancel": "Отмена",
+    "addMembers": "Добавить участников",
+    "addMembersHint": "Выберите группы или отдельных учеников. Их наблюдатели тоже будут добавлены.",
+    "add": "Добавить",
+    "membersAdded": "Добавлено участников: {{count}}",
+    "removeMember": "Удалить {{name}} из канала",
+    "delete": "Удалить канал",
+    "deleteTitle": "Удалить канал?",
+    "deleteHint": "Канал «{{title}}» вместе с постами и комментариями будет удалён."
+  },
+  "club": {
+    "badge": "Клуб"
+  },
+  "create": {
+    "menuAria": "Создать новый чат",
+    "menu": {
+      "group": "Новая группа",
+      "channel": "Новый канал",
+      "club": "Speaking club"
+    },
+    "cancel": "Отмена",
+    "submit": "Создать",
+    "descriptionLabel": "Описание (необязательно)",
+    "descriptionPlaceholder": "Коротко о чём",
+    "channel": {
+      "title": "Новый канал",
+      "description": "Публикуете только вы, участники комментируют под каждым постом.",
+      "nameLabel": "Название канала",
+      "namePlaceholder": "Например: Объявления IELTS",
+      "audienceHint": "Ученики выбранных групп и их наблюдатели будут добавлены в канал.",
+      "done": "Канал создан"
+    },
+    "club": {
+      "title": "Speaking club",
+      "description": "Отдельный чат и онлайн-занятия для учеников из разных групп.",
+      "nameLabel": "Название клуба",
+      "namePlaceholder": "Например: Speaking club B2",
+      "audienceHint": "Выбранные ученики сразу станут участниками клуба и получат уведомление.",
+      "done": "Speaking club создан"
+    }
+  },
+  "audience": {
+    "groups": "Группы",
+    "students": "Отдельные ученики",
+    "studentsCount_one": "{{count}} ученик",
+    "studentsCount_few": "{{count}} ученика",
+    "studentsCount_many": "{{count}} учеников",
+    "studentsCount_other": "{{count}} ученика",
+    "loading": "Загрузка...",
+    "noGroups": "Групп нет",
+    "noStudents": "Ученики не найдены",
+    "searchPlaceholder": "Имя ученика или @username",
+    "removeStudent": "Убрать {{name}}"
   }
 }

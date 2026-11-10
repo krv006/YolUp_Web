@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, LogOut, TrendingUp } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ClipboardList, LogOut, TrendingUp, UsersRound } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
@@ -51,6 +51,7 @@ import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { AddQuizMenu } from "./add-quiz-menu";
 import { MobileAssignmentList } from "./mobile-assignment-list";
+import { ClubMembersPanel } from "./club-members-panel";
 import { PanelHeading } from "./panel-heading";
 import { ProgressPanel } from "./progress-panel";
 import { MessageComposer, MessageList, PinnedMessageBar, useChatUiStore } from "@/modules/message";
@@ -79,10 +80,17 @@ import { LessonBoard } from "./lesson-board";
 import { LessonAttendanceDialog } from "@/widgets/lesson-attendance";
 import { formatMessageTime } from "@/shared/lib";
 
-type TabId = "chat" | "lessons" | "assignments" | "attendance" | "progress";
+type TabId = "chat" | "lessons" | "assignments" | "attendance" | "progress" | "members";
 
-function useTabs(isTeacher: boolean): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
+function useTabs(isTeacher: boolean, isClub: boolean): Array<{ id: TabId; label: string; icon: typeof BookOpen }> {
   const { t } = useTranslation("group");
+  if (isClub)
+    return [
+      { id: "chat", label: t("tabs.chat"), icon: BookOpen },
+      { id: "lessons", label: t("tabs.lessons"), icon: CalendarDays },
+      ...(isTeacher ? [{ id: "members" as const, label: t("tabs.members"), icon: UsersRound }] : []),
+      { id: "attendance", label: t("tabs.attendance"), icon: CheckCircle2 },
+    ];
   const tabs: Array<{ id: TabId; label: string; icon: typeof BookOpen }> = [
     { id: "chat", label: t("tabs.chat"), icon: BookOpen },
     { id: "lessons", label: t("tabs.lessons"), icon: CalendarDays },
@@ -114,14 +122,16 @@ export function GroupWorkspace({
 }: GroupWorkspaceProps) {
   const { t } = useTranslation("group");
   const { user } = useAuth();
-  const TABS = useTabs(user?.role === ROLES.TEACHER);
+  const courseId = conversation.courseId;
+  const course = useCourse(courseId);
+  const isClub = course.data?.kind === "club";
+  const TABS = useTabs(user?.role === ROLES.TEACHER, isClub);
   const [params, setParams] = useSearchParams();
   const [reply, setReply] = useState<ChatMessage | null>(null);
   const [editingMessageTarget, setEditingMessageTarget] = useState<ChatMessage | null>(null);
   const [forwardTarget, setForwardTarget] = useState<ChatMessage[]>([]);
   const [infoOpen, setInfoOpen] = useState(false);
   const isCompact = useIsCompact();
-  const courseId = conversation.courseId;
   const voice = useActiveVoiceRoom(courseId);
   const openVoiceCreate = useVoiceUiStore((state) => state.setCreateOpen);
   const selectionMode = useChatUiStore((state) => state.selected.length > 0);
@@ -129,7 +139,6 @@ export function GroupWorkspace({
   const tabParam = params.get("tab") as TabId | null;
   const activeTab: TabId = TABS.some((item) => item.id === tabParam) ? (tabParam as TabId) : "chat";
 
-  const course = useCourse(courseId);
   const lessons = useLessons(
     { course: courseId, page_size: 100 },
     activeTab === "lessons" || activeTab === "attendance"
@@ -274,6 +283,7 @@ export function GroupWorkspace({
             <AttendancePanel courseId={courseId} lessons={lessons.data} />
           ) : null}
           {activeTab === "progress" ? <ProgressPanel courseId={courseId} /> : null}
+          {activeTab === "members" ? <ClubMembersPanel clubId={courseId} /> : null}
         </motion.div>
       </AnimatePresence>
 

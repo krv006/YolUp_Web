@@ -15,6 +15,12 @@ export interface CourseDto {
   lessons_per_week?: number | null;
   monthly_fee?: number | null;
   avatar?: string | null;
+  kind?: "group" | "club";
+}
+
+export interface ClubDto extends CourseDto {
+  members_count?: number | null;
+  chat_room_id?: string | number | null;
 }
 
 export interface EnrollmentDto {

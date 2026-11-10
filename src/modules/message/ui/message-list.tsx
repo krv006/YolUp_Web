@@ -37,6 +37,7 @@ export interface MessageListProps {
   variant?: "default" | "workspace";
   onOpenAssignment?: (assignmentId: string) => void;
   assignmentSubmitted?: (assignmentId: string) => boolean | null;
+  onOpenThread?: (message: ChatMessage) => void;
 }
 
 type TimelineEntry = { kind: "message" | "assignment"; message: ChatMessage };
@@ -66,6 +67,7 @@ export function MessageList({
   variant = "default",
   onOpenAssignment,
   assignmentSubmitted,
+  onOpenThread,
 }: MessageListProps) {
   const workspace = variant === "workspace";
   const { t } = useTranslation("chat");
@@ -305,6 +307,7 @@ export function MessageList({
                   onReply={onReply}
                   onReact={onReact}
                   onRetryMessage={onRetryMessage}
+                  onOpenThread={onOpenThread}
                   onOpenActions={(target, position, bubble) => {
                     if (bubble) {
                       const rect = bubble.getBoundingClientRect();

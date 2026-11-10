@@ -8,4 +8,5 @@ export const messageKeys = Object.freeze({
     ["conversations", conversationId, "members", query] as const,
   search: (conversationId: string, query: string) =>
     ["conversations", conversationId, "search", query] as const,
+  thread: (conversationId: string, postId: string) => ["conversations", conversationId, "thread", postId] as const,
 });

@@ -7,6 +7,7 @@ import { ForwardDialog } from "@/widgets/forward-dialog";
 import { ChatHeader, DirectRequestBar, isDirectLocked } from "@/modules/conversation";
 import { MessageComposer, MessageList, useChat, useChatUiStore } from "@/modules/message";
 import type { ChatMessage, SendMessagePayload } from "@/shared/types";
+import { ChannelView } from "@/widgets/channel-view";
 import { GroupWorkspace } from "@/widgets/group-workspace";
 
 export function ConversationPage() {
@@ -63,6 +64,17 @@ export function ConversationPage() {
           <div className="message-skeleton" />
         </div>
       </div>
+    );
+
+  if (activeConversation.type === "channel")
+    return (
+      <ChannelView
+        chat={chat}
+        conversation={activeConversation}
+        role="teacher"
+        backTo="/teacher/chats"
+        currentUserId={currentUserId}
+      />
     );
 
   if (activeConversation.type === "group") {

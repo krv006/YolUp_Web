@@ -102,6 +102,21 @@ export const messageApi = {
     );
   },
 
+  async getThread(roomId: string, postId: string, options: RequestOptions = {}, currentUserId?: string | null) {
+    const response = await apiClient.get<MessageDto[] | MessagePageDto>(messageEndpoints.history(roomId), {
+      ...options,
+      query: { thread: postId, page_size: 100, ...options.query },
+    });
+    return toList(response).map((item) => mapMessageDto(item, currentUserId));
+  },
+
+  async sendComment(roomId: string, postId: string, text: string, currentUserId?: string | null) {
+    return mapMessageDto(
+      await apiClient.post<MessageDto>(messageEndpoints.history(roomId), { text, thread_root_id: postId }),
+      currentUserId
+    );
+  },
+
   async update(messageId: string, text: string, currentUserId?: string | null): Promise<ChatMessage> {
     return mapMessageDto(
       await apiClient.patch<MessageDto>(messageEndpoints.message(messageId), { text }),

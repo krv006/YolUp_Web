@@ -4,7 +4,8 @@
     "lessons": "Уроки",
     "assignments": "Задания",
     "attendance": "Посещаемость",
-    "progress": "Прогресс"
+    "progress": "Прогресс",
+    "members": "Участники"
   },
   "sendFailed": "Не удалось отправить сообщение",
   "replyFallback": "Ответ",
@@ -448,5 +449,13 @@
     "statAttendanceLessons": "Посещаемость · занятий: {{count}}",
     "lastVisit": "Последнее посещение: {{date}}",
     "noVisit": "Ещё не был на занятии"
+  },
+  "club": {
+    "eyebrow": "Speaking club",
+    "membersTitle": "Участники · {{count}}",
+    "add": "Добавить участников",
+    "addHint": "Выберите группы или отдельных учеников — они будут добавлены сразу.",
+    "added": "Добавлено учеников: {{count}}",
+    "empty": "Участников пока нет"
   }
 }

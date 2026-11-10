@@ -424,5 +424,83 @@
     "cancel": "Cancel",
     "submit": "Send report",
     "sent": "Report sent, the chat is blocked"
+  },
+  "channel": {
+    "badge": "Channel",
+    "subtitle_one": "Channel · {{count}} member",
+    "subtitle_other": "Channel · {{count}} members",
+    "comments_one": "{{count}} comment",
+    "comments_other": "{{count}} comments",
+    "writeComment": "Comment",
+    "closeThread": "Close comments",
+    "threadTitle": "Comments · {{count}}",
+    "loading": "Loading...",
+    "noComments": "No comments yet. Be the first.",
+    "commentPlaceholder": "Write a comment...",
+    "sendComment": "Send comment",
+    "readOnly": "Only the teacher posts in this channel. You can comment under each post.",
+    "infoTitle": "Channel info",
+    "titleLabel": "Channel name",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "What the channel is about",
+    "noDescription": "No description",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
+    "membersTitle": "Members",
+    "noMembers": "No members",
+    "edit": "Edit",
+    "save": "Save",
+    "saved": "Channel saved",
+    "cancel": "Cancel",
+    "addMembers": "Add members",
+    "addMembersHint": "Pick groups or individual students. Their observers are added too.",
+    "add": "Add",
+    "membersAdded": "Members added: {{count}}",
+    "removeMember": "Remove {{name}} from the channel",
+    "delete": "Delete channel",
+    "deleteTitle": "Delete the channel?",
+    "deleteHint": "The “{{title}}” channel with its posts and comments will be deleted."
+  },
+  "club": {
+    "badge": "Club"
+  },
+  "create": {
+    "menuAria": "Create a new chat",
+    "menu": {
+      "group": "New group",
+      "channel": "New channel",
+      "club": "Speaking club"
+    },
+    "cancel": "Cancel",
+    "submit": "Create",
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "A short description",
+    "channel": {
+      "title": "New channel",
+      "description": "Only you post; members comment under each post.",
+      "nameLabel": "Channel name",
+      "namePlaceholder": "For example: IELTS announcements",
+      "audienceHint": "Students of the selected groups and their observers join the channel.",
+      "done": "Channel created"
+    },
+    "club": {
+      "title": "Speaking club",
+      "description": "A separate chat and live sessions for students from different groups.",
+      "nameLabel": "Club name",
+      "namePlaceholder": "For example: Speaking club B2",
+      "audienceHint": "Selected students join the club right away and get a notification.",
+      "done": "Speaking club created"
+    }
+  },
+  "audience": {
+    "groups": "Groups",
+    "students": "Individual students",
+    "studentsCount_one": "{{count}} student",
+    "studentsCount_other": "{{count}} students",
+    "loading": "Loading...",
+    "noGroups": "No groups",
+    "noStudents": "No students found",
+    "searchPlaceholder": "Student name or @username",
+    "removeStudent": "Remove {{name}}"
   }
 }

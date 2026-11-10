@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useRoleRoutes } from "@/modules/auth";
+import { useIsStudent, useRoleRoutes } from "@/modules/auth";
+import { NewChatMenu } from "@/widgets/new-chat-menu";
 import {
   ConversationActionsSheet,
   directChatAction,
@@ -23,6 +24,7 @@ export function ConversationListPanel() {
   const { t } = useTranslation("chat");
   const navigate = useNavigate();
   const routes = useRoleRoutes();
+  const isStudent = useIsStudent();
   const startChat = useStartDirectChat(routes.chat);
   const chipsRef = useWheelScrollX<HTMLDivElement>();
   const { conversationId } = useParams();
@@ -59,14 +61,26 @@ export function ConversationListPanel() {
           <h1 className="truncate text-[24px]/[28px] font-bold text-ink">{t("panel.title")}</h1>
         </span>
 
-        <button
-          type="button"
-          className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
-          aria-label={t("panel.newGroup")}
-          onClick={() => openNewConversation(true)}
-        >
-          <Icon name="add" size={20} />
-        </button>
+        {isStudent ? (
+          <button
+            type="button"
+            className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
+            aria-label={t("panel.newGroup")}
+            onClick={() => openNewConversation(true)}
+          >
+            <Icon name="add" size={20} />
+          </button>
+        ) : (
+          <NewChatMenu>
+            <button
+              type="button"
+              className="mt-0.5 grid size-11 shrink-0 place-items-center rounded-full bg-subtle text-icon transition-colors hover:bg-muted"
+              aria-label={t("create.menuAria")}
+            >
+              <Icon name="add" size={20} />
+            </button>
+          </NewChatMenu>
+        )}
       </header>
 
       <label className="mx-5 mt-0.5 flex h-11 shrink-0 items-center gap-2.5 rounded-full border border-line-strong bg-surface px-4 transition-colors focus-within:border-brand">

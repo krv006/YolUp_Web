@@ -33,6 +33,7 @@ export interface MessageBubbleProps {
   /** Ketma-ket xabarlarda avatar va ism faqat guruhning oxirgi/birinchi xabarida ko'rsatiladi. */
   showAvatar?: boolean;
   showName?: boolean;
+  onOpenThread?: (message: ChatMessage) => void;
 }
 
 const SENDER_COLORS = ["text-action", "text-success-text", "text-saffron-strong", "text-link"];
@@ -156,6 +157,7 @@ export function MessageBubble({
   highlighted = false,
   showAvatar = true,
   showName = true,
+  onOpenThread,
 }: MessageBubbleProps) {
   const { t } = useTranslation("chat");
   const outgoing = message.senderId === currentUserId;
@@ -366,6 +368,20 @@ export function MessageBubble({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {onOpenThread && typeof message.commentCount === "number" && !selectionMode ? (
+          <button
+            type="button"
+            className="flex h-8 w-fit items-center gap-1.5 rounded-full border border-line bg-surface px-3 text-caption-strong text-brand transition-colors hover:bg-brand-subtle"
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpenThread(message);
+            }}
+          >
+            <Icon name="chat-outline" size={14} />
+            {message.commentCount ? t("channel.comments", { count: message.commentCount }) : t("channel.writeComment")}
+          </button>
+        ) : null}
       </div>
 
       {selectionMode ? null : (

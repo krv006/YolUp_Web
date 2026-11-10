@@ -4,7 +4,8 @@
     "lessons": "Lessons",
     "assignments": "Assignments",
     "attendance": "Attendance",
-    "progress": "Progress"
+    "progress": "Progress",
+    "members": "Members"
   },
   "sendFailed": "Couldn't send the message",
   "replyFallback": "Reply",
@@ -436,5 +437,13 @@
     "statAttendanceLessons": "Attendance · {{count}} lessons",
     "lastVisit": "Last visit: {{date}}",
     "noVisit": "Hasn't joined a lesson yet"
+  },
+  "club": {
+    "eyebrow": "Speaking club",
+    "membersTitle": "Members · {{count}}",
+    "add": "Add members",
+    "addHint": "Pick groups or individual students — they join right away.",
+    "added": "Students added: {{count}}",
+    "empty": "No members yet"
   }
 }
