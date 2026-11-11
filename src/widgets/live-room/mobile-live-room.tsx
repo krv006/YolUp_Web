@@ -17,12 +17,14 @@ import {
   MICROPHONE_SOURCE,
   SCREEN_SHARE_SOURCE,
   DISPLAY_CAPTURE_OPTIONS,
+  describeShareTrack,
 } from "@/modules/live";
 import type { Lesson } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
 import { useScreenShareRequest } from "./use-screen-share-request";
+import { useShareSourceText } from "./use-share-source-text";
 
 const MAX_TILES = 6;
 
@@ -370,6 +372,7 @@ export function MobileLiveRoom({
   onEnd,
 }: MobileLiveRoomProps) {
   const { t } = useTranslation("live");
+  const sourceText = useShareSourceText();
   const ordered = [
     ...cameraTracks.filter((track) => track.participant.isLocal),
     ...cameraTracks.filter((track) => !track.participant.isLocal),
@@ -392,9 +395,25 @@ export function MobileLiveRoom({
     };
   });
 
+  const sharedWhat =
+    isTeacher && activeShare?.participant.isLocal && isTrackReference(activeShare)
+      ? sourceText(describeShareTrack(activeShare.publication.track?.mediaStreamTrack))
+      : null;
+
   const stage =
     activeShare && isTrackReference(activeShare) ? (
-      <VideoTrack trackRef={activeShare} className="size-full bg-subtle object-contain" />
+      <div className="relative size-full">
+        <VideoTrack trackRef={activeShare} className="size-full bg-subtle object-contain" />
+        {sharedWhat ? (
+          <span
+            className="absolute top-2.5 left-2.5 flex h-7 max-w-[calc(100%-20px)] items-center gap-1.5 rounded-full bg-canvas/85 px-3 text-caption-strong text-ink backdrop-blur-sm"
+            role="status"
+          >
+            <Icon name="send" size={14} className="shrink-0 text-brand" />
+            <span className="truncate">{t("share.sharingWhat", { what: sharedWhat })}</span>
+          </span>
+        ) : null}
+      </div>
     ) : (
       <BoardPreview lessonId={lesson.id} currentUserId={currentUserId} />
     );
