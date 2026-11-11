@@ -3,6 +3,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  GoogleFormLink,
   useAssignment,
   useDeleteAssignment,
   useDownloadAssignmentFile,
@@ -108,6 +109,7 @@ export function HomeworkDetailPage() {
               grading: item.grading,
               announceInChat: item.announceInChat,
               aiCheck: item.aiCheck,
+              googleFormUrl: item.googleFormUrl,
               questions: item.questions,
               questionsLocked: item.submissions.length > 0 || (item.submissionsCount ?? 0) > 0,
             }}
@@ -227,6 +229,10 @@ export function HomeworkDetailPage() {
                 </strong>
                 <Icon name="download" size={18} className="shrink-0 text-icon-tertiary" />
               </button>
+            ) : null}
+
+            {item?.googleFormUrl ? (
+              <GoogleFormLink className="mt-3" url={item.googleFormUrl} hint={item.googleFormUrl} />
             ) : null}
 
             <dl className="mt-[15px] flex flex-col gap-3">

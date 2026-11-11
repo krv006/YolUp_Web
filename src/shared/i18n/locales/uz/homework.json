@@ -147,7 +147,10 @@
     "announce": "Guruh chatida e’lon qilish",
     "announceHint": "Vazifa kartasi chatga yuboriladi",
     "draft": "Qoralama",
-    "submit": "Yuborish"
+    "submit": "Yuborish",
+    "googleForm": "Google Form havolasi (ixtiyoriy)",
+    "googleFormHint": "O‘quvchi formani ochib to‘ldiradi, so‘ng shu yerda izoh bilan topshiradi",
+    "googleFormInvalid": "Google Form havolasi kerak: forms.gle/… yoki docs.google.com/forms/…"
   },
   "review": {
     "back": "Orqaga",
@@ -438,5 +441,9 @@
     "yourChoice": "(tanlov)",
     "noAnswer": "Javob berilmagan",
     "aiScore": "AI bahosi: {{score}}"
+  },
+  "googleForm": {
+    "open": "Google Form’ni ochish",
+    "hint": "Formani to‘ldirgach, shu yerda izoh bilan topshiring"
   }
 }

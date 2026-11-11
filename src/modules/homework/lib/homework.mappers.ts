@@ -135,6 +135,7 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     body: dto.body || "",
     attachmentName: dto.attachment_name || "",
     hasAttachment: Boolean(dto.has_attachment),
+    googleFormUrl: dto.google_form_url || null,
     dueAt: dto.due_at,
     skillKey: dto.skill_key || "",
     lessonId: dto.lesson_id == null ? null : String(dto.lesson_id),
@@ -251,5 +252,6 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);
   if (form.questions) data.set("questions", JSON.stringify(form.questions));
+  if (form.googleFormUrl !== undefined) data.set("google_form_url", form.googleFormUrl.trim());
   return data;
 }

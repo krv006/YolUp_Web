@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+  googleFormUrlInvalid,
   QuestionsEditor,
   useAssignment,
   useQuestionDrafts,
@@ -82,6 +83,7 @@ export interface AddAssignmentDialogProps {
       extraInstructions: string;
       file: File | null;
       questions?: HomeworkQuestionInput[];
+      googleFormUrl: string;
     }
   ) => void;
   lessons?: readonly Lesson[];
@@ -873,6 +875,8 @@ export function AddAssignmentDialog({
       : EMPTY_ASSIGNMENT
   );
   const [file, setFile] = useState<File | null>(null);
+  const [googleFormUrl, setGoogleFormUrl] = useState(initialValues?.googleFormUrl ?? "");
+  const googleFormInvalid = googleFormUrlInvalid(googleFormUrl);
   const fileRef = useRef<HTMLInputElement>(null);
   const detail = useAssignment(open && initialValues ? initialValues.id : null);
   const questions = useQuestionDrafts([], {
@@ -906,7 +910,7 @@ export function AddAssignmentDialog({
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!form.title.trim() || !form.description.trim()) return;
+    if (!form.title.trim() || !form.description.trim() || googleFormInvalid) return;
     if (!questions.validate()) {
       toast.error(t("homework:questions.fixIssues"));
       return;
@@ -919,9 +923,11 @@ export function AddAssignmentDialog({
       body: rest.description,
       extraInstructions: gradingNote,
       file,
+      googleFormUrl: googleFormUrl.trim(),
     });
     setForm(EMPTY_ASSIGNMENT);
     setFile(null);
+    setGoogleFormUrl("");
     onOpenChange(false);
   }
 
@@ -1043,6 +1049,20 @@ export function AddAssignmentDialog({
                 placeholder={t("dialogs.assignment.gradingPlaceholder")}
               />
             </label>
+            <label>
+              <span>{t("homework:form.googleForm")}</span>
+              <input
+                type="url"
+                inputMode="url"
+                value={googleFormUrl}
+                aria-invalid={googleFormInvalid}
+                onChange={(event) => setGoogleFormUrl(event.target.value)}
+                placeholder="https://forms.gle/…"
+              />
+              <small className={`text-body-xs ${googleFormInvalid ? "text-danger" : "text-ink-tertiary"}`}>
+                {googleFormInvalid ? t("homework:form.googleFormInvalid") : t("homework:form.googleFormHint")}
+              </small>
+            </label>
           </motion.form>
           <div className="mt-4">
             <QuestionsEditor
@@ -1063,7 +1083,7 @@ export function AddAssignmentDialog({
             <Button
               type="submit"
               form={ASSIGNMENT_FORM_ID}
-              disabled={!form.title.trim() || !form.description.trim()}
+              disabled={!form.title.trim() || !form.description.trim() || googleFormInvalid}
             >
               {initialValues ? t("dialogs.assignment.saveChanges") : t("dialogs.assignment.submit")}
             </Button>

@@ -16,6 +16,7 @@ import {
   answerInputs,
   QuestionsAnswerForm,
   QuestionsResult,
+  GoogleFormLink,
   type AnswerDraft,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
@@ -201,6 +202,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
           <Icon name="download" size={20} className="shrink-0 text-icon-secondary" />
         </button>
       ) : null}
+      {assignment.googleFormUrl ? <GoogleFormLink url={assignment.googleFormUrl} /> : null}
       <dl className="flex flex-col gap-3 text-body-sm">
         <span className="flex items-center justify-between gap-3">
           <dt className="text-ink-secondary">{th("detail.grading")}</dt>

@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { useCourses } from "@/modules/course";
 import {
+  GoogleFormField,
+  googleFormUrlInvalid,
   QuestionsEditor,
   useAssignment,
   useCreateAssignment,
@@ -57,6 +59,7 @@ export function AssignmentFormDialog({
   const [aiCheck, setAiCheck] = useState(true);
   const [announce, setAnnounce] = useState(true);
   const [allowLate, setAllowLate] = useState(true);
+  const [googleFormUrl, setGoogleFormUrl] = useState("");
 
   const detail = useAssignment(open && assignment ? assignment.id : null);
   const questionsLocked =
@@ -86,6 +89,7 @@ export function AssignmentFormDialog({
     setAnnounce(assignment?.announceInChat ?? true);
     setAllowLate(assignment?.allowLate ?? true);
     setAiCheck(assignment?.aiCheck ?? true);
+    setGoogleFormUrl(assignment?.googleFormUrl ?? "");
     if (assignment?.dueAt) {
       const due = new Date(assignment.dueAt);
       setDate(
@@ -139,6 +143,10 @@ export function AssignmentFormDialog({
       toast.error(t("form.required"));
       return;
     }
+    if (googleFormUrlInvalid(googleFormUrl)) {
+      toast.error(t("form.googleFormInvalid"));
+      return;
+    }
     if (!questions.validate()) {
       toast.error(t("questions.fixIssues"));
       return;
@@ -146,6 +154,7 @@ export function AssignmentFormDialog({
     const form = {
       questions: questions.payload(),
       aiCheck,
+      googleFormUrl: googleFormUrl.trim(),
       courseId: course,
       title: title.trim(),
       description: body.trim(),
@@ -456,6 +465,8 @@ export function AssignmentFormDialog({
             </button>
           </div>
         </div>
+
+        <GoogleFormField value={googleFormUrl} onChange={setGoogleFormUrl} />
 
         <QuestionsEditor
           value={questions.drafts}

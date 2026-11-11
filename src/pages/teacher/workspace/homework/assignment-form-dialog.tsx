@@ -12,7 +12,13 @@ import {
   MobilePickerField,
 } from "@/shared/ui/mobile-fields";
 import { Switch } from "@/shared/ui/switch";
-import { QuestionsEditor, useQuestionDrafts, type AssignmentFormInput } from "@/modules/homework";
+import {
+  GoogleFormField,
+  googleFormUrlInvalid,
+  QuestionsEditor,
+  useQuestionDrafts,
+  type AssignmentFormInput,
+} from "@/modules/homework";
 import type { GradingScale, HomeworkQuestion } from "@/shared/types";
 import { toast } from "sonner";
 
@@ -29,6 +35,7 @@ export interface AssignmentFormDialogProps {
     grading: GradingScale;
     announceInChat: boolean;
     aiCheck?: boolean;
+    googleFormUrl?: string | null;
     questions?: HomeworkQuestion[];
     questionsLocked?: boolean;
   } | null;
@@ -74,6 +81,7 @@ export function AssignmentFormDialog({
   const [grading, setGrading] = useState<GradingScale>(initial?.grading ?? "five");
   const [aiCheck, setAiCheck] = useState(initial?.aiCheck ?? true);
   const [announce, setAnnounce] = useState(initial?.announceInChat ?? true);
+  const [googleFormUrl, setGoogleFormUrl] = useState(initial?.googleFormUrl ?? "");
   const [touched, setTouched] = useState(false);
   const questions = useQuestionDrafts(initial?.questions ?? [], {
     editing: Boolean(initial),
@@ -87,6 +95,10 @@ export function AssignmentFormDialog({
   function save(status: "draft" | "active") {
     if (missing) {
       setTouched(true);
+      return;
+    }
+    if (googleFormUrlInvalid(googleFormUrl)) {
+      toast.error(t("form.googleFormInvalid"));
       return;
     }
     if (!questions.validate()) {
@@ -105,6 +117,7 @@ export function AssignmentFormDialog({
       allowLate: true,
       aiCheck,
       grading,
+      googleFormUrl: googleFormUrl.trim(),
     });
   }
 
@@ -246,6 +259,8 @@ export function AssignmentFormDialog({
                   render={(item) => t(`form.gradings.${item}`)}
                 />
               </MobileFieldLabel>
+
+              <GoogleFormField compact value={googleFormUrl} onChange={setGoogleFormUrl} />
 
               <div className="mt-0.5 rounded-lg bg-surface p-4">
                 <QuestionsEditor
@@ -398,6 +413,8 @@ export function AssignmentFormDialog({
               />
             </span>
           </label>
+
+          <GoogleFormField value={googleFormUrl} onChange={setGoogleFormUrl} />
         </div>
 
         <div className="lesson-form flex min-w-0 flex-col gap-4">

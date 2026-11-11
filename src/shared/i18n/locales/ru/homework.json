@@ -147,7 +147,10 @@
     "announce": "Объявить в чате группы",
     "announceHint": "Карточка задания уйдёт в чат",
     "draft": "Черновик",
-    "submit": "Отправить"
+    "submit": "Отправить",
+    "googleForm": "Ссылка на Google Form (необязательно)",
+    "googleFormHint": "Ученик заполнит форму, затем сдаст работу здесь с комментарием",
+    "googleFormInvalid": "Нужна ссылка Google Form: forms.gle/… или docs.google.com/forms/…"
   },
   "review": {
     "back": "Назад",
@@ -441,5 +444,9 @@
     "yourChoice": "(выбор)",
     "noAnswer": "Нет ответа",
     "aiScore": "Оценка ИИ: {{score}}"
+  },
+  "googleForm": {
+    "open": "Открыть Google Form",
+    "hint": "Заполните форму, затем сдайте работу здесь с комментарием"
   }
 }

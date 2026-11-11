@@ -431,6 +431,7 @@ export interface Assignment {
   body: string;
   attachmentName: string;
   hasAttachment: boolean;
+  googleFormUrl: string | null;
   dueAt: string | null;
   skillKey: string;
   lessonId: string | null;

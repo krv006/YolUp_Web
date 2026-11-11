@@ -139,6 +139,7 @@ export interface AssignmentDto {
   body?: string;
   attachment_name?: string;
   has_attachment?: boolean;
+  google_form_url?: string | null;
   due_at: string | null;
   skill_key?: string;
   lesson_id?: string | number | null;
@@ -215,4 +216,5 @@ export interface AssignmentFormInput {
   grading?: GradingScale;
   maxScore?: number;
   questions?: HomeworkQuestionInput[];
+  googleFormUrl?: string;
 }

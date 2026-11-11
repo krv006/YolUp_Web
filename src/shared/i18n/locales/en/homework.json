@@ -147,7 +147,10 @@
     "announce": "Announce in the group chat",
     "announceHint": "The assignment card goes to the chat",
     "draft": "Draft",
-    "submit": "Send"
+    "submit": "Send",
+    "googleForm": "Google Form link (optional)",
+    "googleFormHint": "Students fill in the form, then submit here with a note",
+    "googleFormInvalid": "Use a Google Form link: forms.gle/… or docs.google.com/forms/…"
   },
   "review": {
     "back": "Back",
@@ -439,5 +442,9 @@
     "yourChoice": "(your choice)",
     "noAnswer": "No answer",
     "aiScore": "AI score: {{score}}"
+  },
+  "googleForm": {
+    "open": "Open Google Form",
+    "hint": "Fill in the form, then submit here with a note"
   }
 }
