@@ -11,6 +11,9 @@ import type {
 } from "@/shared/types";
 import type {
   AiResultDto,
+  AssignFromBankInput,
+  AssignmentAudience,
+  AssignmentAudienceDto,
   AssignmentDto,
   AssignmentFormInput,
   HomeworkBoardDto,
@@ -127,8 +130,8 @@ export function defaultMaxScore(grading: GradingScale): number {
 export function mapAssignmentDto(dto: AssignmentDto): Assignment {
   return {
     id: String(dto.id),
-    courseId: String(dto.course_id),
-    courseTitle: dto.course_title,
+    courseId: dto.course_id == null ? "" : String(dto.course_id),
+    courseTitle: dto.course_title ?? "",
     subject: dto.subject_label || dto.subject,
     title: dto.title,
     description: dto.description || "",
@@ -136,6 +139,11 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     attachmentName: dto.attachment_name || "",
     hasAttachment: Boolean(dto.has_attachment),
     googleFormUrl: dto.google_form_url || null,
+    isBank: dto.is_bank === true || dto.status === "bank",
+    sourceId: dto.source_id == null ? null : String(dto.source_id),
+    copiesCount: dto.copies_count ?? null,
+    questionsCount: dto.questions_count ?? (dto.questions ? dto.questions.length : null),
+    studentIds: dto.student_ids?.length ? dto.student_ids.map(String) : null,
     dueAt: dto.due_at,
     skillKey: dto.skill_key || "",
     lessonId: dto.lesson_id == null ? null : String(dto.lesson_id),
@@ -153,7 +161,7 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
           averageScore: dto.stats.avg_score ?? null,
         }
       : null,
-    status: dto.status === "draft" ? "draft" : "active",
+    status: dto.status === "draft" ? "draft" : dto.status === "bank" || dto.is_bank ? "bank" : "active",
     announceInChat: dto.announce_in_chat !== false,
     allowLate: dto.allow_late !== false,
     aiCheck: dto.ai_check !== false,
@@ -254,4 +262,30 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.questions) data.set("questions", JSON.stringify(form.questions));
   if (form.googleFormUrl !== undefined) data.set("google_form_url", form.googleFormUrl.trim());
   return data;
+}
+
+export function mapAssignmentAudienceDto(dto: AssignmentAudienceDto | null | undefined): AssignmentAudience {
+  const students = (dto?.students ?? []).map((student) => ({
+    id: String(student.id),
+    name: student.name || student.username || "",
+    username: student.username ?? "",
+    assigned: student.assigned !== false,
+    submitted: Boolean(student.submitted),
+  }));
+  return {
+    restricted: Boolean(dto?.restricted),
+    total: Number(dto?.total ?? students.length),
+    assignedCount: Number(dto?.assigned_count ?? students.filter((student) => student.assigned).length),
+    students,
+  };
+}
+
+export function assignFromBankBody(input: AssignFromBankInput): Record<string, unknown> {
+  return {
+    course_ids: input.courseIds,
+    student_ids: input.studentIds,
+    ...(input.dueAt ? { due_at: input.dueAt } : {}),
+    allow_late: input.allowLate,
+    announce_in_chat: input.announceInChat,
+  };
 }

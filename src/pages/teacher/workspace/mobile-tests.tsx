@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { quizDisplayTitle } from "@/modules/quiz";
+import { quizDisplayTitle, useQuizLimitsText } from "@/modules/quiz";
 import type { QuizSummary } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
@@ -110,6 +110,7 @@ export function MobileTests(props: MobileTestsProps) {
 
 function TestCard({ quiz, ...props }: MobileTestsProps & { quiz: QuizSummary }) {
   const { t } = useTranslation("quiz");
+  const limitsText = useQuizLimitsText();
   const draft = quiz.status === "draft";
 
   return (
@@ -124,7 +125,7 @@ function TestCard({ quiz, ...props }: MobileTestsProps & { quiz: QuizSummary }) 
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <strong className="truncate text-title text-ink">{quizDisplayTitle(quiz)}</strong>
                 <small className="truncate text-body-sm text-ink-secondary">
-                  {[quiz.subjectLabel, t("tests.questionCount", { count: quiz.questionCount })]
+                  {[quiz.subjectLabel, t("tests.questionCount", { count: quiz.questionCount }), limitsText(quiz)]
                     .filter(Boolean)
                     .join(" · ")}
                 </small>

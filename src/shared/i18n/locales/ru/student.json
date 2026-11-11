@@ -209,7 +209,8 @@
       "emptyHint": "Тесты преподавателя появятся здесь.",
       "attemptsTitle": "Мои попытки",
       "attemptsSubtitle": "Последние решённые тесты",
-      "attemptsEmpty": "Вы ещё не решали тесты"
+      "attemptsEmpty": "Вы ещё не решали тесты",
+      "attemptsOver": "Попытки закончились"
     },
     "player": {
       "questions": "Вопросы · {{count}}",
@@ -249,7 +250,37 @@
       },
       "trueLabel": "Верно",
       "falseLabel": "Неверно",
-      "finishShort": "Завершить"
+      "finishShort": "Завершить",
+      "timeUp": "Время вышло — тест отправляется",
+      "timeLeft": "Осталось времени: {{time}}",
+      "start": {
+        "title": "Начать тест",
+        "time_one": "Время: {{count}} минута",
+        "time_few": "Время: {{count}} минуты",
+        "time_many": "Время: {{count}} минут",
+        "time_other": "Время: {{count}} минуты",
+        "attempts": "Попытки: осталось {{left}} из {{total}}",
+        "questions_one": "Вопросов: {{count}}",
+        "questions_few": "Вопросов: {{count}}",
+        "questions_many": "Вопросов: {{count}}",
+        "questions_other": "Вопросов: {{count}}",
+        "note": "После начала время не останавливается, даже если закрыть страницу. Когда время выйдет, тест отправится сам.",
+        "action": "Начать",
+        "starting": "Начинаем…"
+      },
+      "over": {
+        "title": "Попытки закончились",
+        "text_one": "Вы уже сдали этот тест {{count}} раз. Попыток больше нет.",
+        "text_few": "Вы уже сдали этот тест {{count}} раза. Попыток больше нет.",
+        "text_many": "Вы уже сдали этот тест {{count}} раз. Попыток больше нет.",
+        "text_other": "Вы уже сдали этот тест {{count}} раза. Попыток больше нет.",
+        "results": "Посмотреть результат",
+        "back": "Вернуться к тестам"
+      },
+      "metaTimed_one": "время: {{count}} минута",
+      "metaTimed_few": "время: {{count}} минуты",
+      "metaTimed_many": "время: {{count}} минут",
+      "metaTimed_other": "время: {{count}} минуты"
     },
     "results": {
       "eyebrow": "Тесты / Ваш результат · {{course}}",

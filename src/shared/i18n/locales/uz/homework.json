@@ -150,7 +150,7 @@
     "submit": "Yuborish",
     "googleForm": "Google Form havolasi (ixtiyoriy)",
     "googleFormHint": "O‘quvchi formani ochib to‘ldiradi, so‘ng shu yerda izoh bilan topshiradi",
-    "googleFormInvalid": "Google Form havolasi kerak: forms.gle/… yoki docs.google.com/forms/…"
+    "googleFormInvalid": "Google Form havolasi kerak: forms.gle/…, forms.google.com/… yoki docs.google.com/forms/…"
   },
   "review": {
     "back": "Orqaga",
@@ -445,5 +445,50 @@
   "googleForm": {
     "open": "Google Form’ni ochish",
     "hint": "Formani to‘ldirgach, shu yerda izoh bilan topshiring"
+  },
+  "bank": {
+    "option": "Guruhsiz — bazaga saqlash",
+    "badge": "Bazadagi vazifa",
+    "save": "Bazaga saqlash",
+    "saveHint": "Guruhlarga keyin, muddat bilan beriladi",
+    "formHint": "Vazifa bazaga tushadi. Guruh(lar)ga yoki alohida o'quvchilarga keyin muddat bilan berasiz.",
+    "saved": "Vazifa bazaga saqlandi",
+    "assigned": "Vazifa {{count}} ta guruhga berildi",
+    "tab": "Baza",
+    "empty": "Bazada vazifa yo'q. Yangi vazifa yaratishda guruh o'rniga «Guruhsiz — bazaga saqlash»ni tanlang.",
+    "copies": "{{count}} ta guruhga berilgan",
+    "notGiven": "Hali berilmagan",
+    "questions": "{{count}} ta savol",
+    "give": "Berish",
+    "assignTitle": "Bazadan berish",
+    "assignDescription": "Bazadagi vazifani tanlang va kimlarga berishni belgilang",
+    "assignAction": "Berish",
+    "pickLabel": "Bazadagi vazifa",
+    "pick": "Tanlang",
+    "allowLate": "Muddatdan keyin ham topshirsa bo'ladi",
+    "announceHint": "Faqat butun guruhga berilganda chatga karta tushadi",
+    "cancel": "Bekor qilish",
+    "fromBank": "Bazadan berish",
+    "fromBankHint": "Tayyor vazifani shu guruhga muddat bilan berish",
+    "newAssignment": "Yangi vazifa",
+    "newAssignmentHint": "Yangi vazifa yaratib shu guruhga berish",
+    "formTitle": "Bazaga vazifa qo'shish",
+    "ambiguous": "Tanlangan o'quvchilardan biri sizning boshqa guruhingizda ham bor. Vazifani butun guruhga bering, keyin vazifa sahifasidagi «Kimlarga berilgan» bo'limida ro'yxatni cheklang.",
+    "detailTitle": "Bu vazifa bazada",
+    "detailHint": "Uni bir yoki bir nechta guruhga yoki alohida o'quvchilarga muddat bilan bering — har guruh uchun alohida nusxa yaratiladi, topshiriqlar o'sha nusxada ko'rinadi."
+  },
+  "audience": {
+    "title": "Kimlarga berilgan",
+    "everyone": "Guruhdagi hamma {{count}} o'quvchiga",
+    "restricted": "{{total}} tadan {{count}} ta o'quvchiga",
+    "edit": "O'zgartirish",
+    "editTitle": "Kimlarga berilgan",
+    "editHint": "Belgilanmagan o'quvchilar vazifani ko'rmaydi va topshira olmaydi",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "saved": "Ro'yxat saqlandi",
+    "submitted": "Topshirgan",
+    "notSubmitted": "Topshirmagan",
+    "loading": "Yuklanmoqda…"
   }
 }

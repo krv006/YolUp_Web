@@ -130,8 +130,8 @@ export interface AssignmentStatsDto {
 export interface AssignmentDto {
   group_stats?: { average?: number | null; rank?: number | null; total?: number | null } | null;
   id: string | number;
-  course_id: string | number;
-  course_title: string;
+  course_id: string | number | null;
+  course_title: string | null;
   subject: string;
   subject_label?: string;
   title: string;
@@ -140,6 +140,11 @@ export interface AssignmentDto {
   attachment_name?: string;
   has_attachment?: boolean;
   google_form_url?: string | null;
+  is_bank?: boolean;
+  source_id?: string | number | null;
+  copies_count?: number | null;
+  questions_count?: number | null;
+  student_ids?: Array<string | number> | null;
   due_at: string | null;
   skill_key?: string;
   lesson_id?: string | number | null;
@@ -217,4 +222,38 @@ export interface AssignmentFormInput {
   maxScore?: number;
   questions?: HomeworkQuestionInput[];
   googleFormUrl?: string;
+}
+
+export interface AssignFromBankDto {
+  count?: number;
+  assignments?: AssignmentDto[];
+}
+
+export interface AssignFromBankInput {
+  courseIds: string[];
+  studentIds: string[];
+  dueAt: string | null;
+  allowLate: boolean;
+  announceInChat: boolean;
+}
+
+export interface AssignmentAudienceDto {
+  restricted?: boolean;
+  total?: number;
+  assigned_count?: number;
+  students?: Array<{
+    id: string | number;
+    name?: string;
+    username?: string;
+    assigned?: boolean;
+    can_submit?: boolean;
+    submitted?: boolean;
+  }>;
+}
+
+export interface AssignmentAudience {
+  restricted: boolean;
+  total: number;
+  assignedCount: number;
+  students: Array<{ id: string; name: string; username: string; assigned: boolean; submitted: boolean }>;
 }

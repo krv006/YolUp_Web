@@ -27,6 +27,7 @@ export interface AssignmentFormDialogProps {
   onOpenChange: (open: boolean) => void;
   courses: ReadonlyArray<{ id: string; title: string; studentCount: number }>;
   pending?: boolean;
+  bank?: boolean;
   initial?: {
     courseId: string;
     title: string;
@@ -53,6 +54,8 @@ const FORMAT_BUTTONS = [
   { id: "formula", icon: "functions" },
 ];
 
+const BANK_VALUE = "__bank__";
+
 function today(): string {
   const date = new Date();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -65,6 +68,7 @@ export function AssignmentFormDialog({
   onOpenChange,
   courses,
   pending = false,
+  bank = false,
   initial = null,
   onSubmit,
 }: AssignmentFormDialogProps) {
@@ -74,6 +78,8 @@ export function AssignmentFormDialog({
   const months = common("formPickers.months", { returnObjects: true }) as string[];
   const isCompact = useIsCompact();
   const [courseId, setCourseId] = useState(initial?.courseId ?? "");
+  const [inBank, setInBank] = useState(initial ? !initial.courseId : bank);
+  const lockedBank = Boolean(initial) && inBank;
   const [title, setTitle] = useState(initial?.title ?? "");
   const [body, setBody] = useState(initial?.body ?? "");
   const [date, setDate] = useState(() => initial?.dueAt?.slice(0, 10) ?? today());
@@ -89,7 +95,21 @@ export function AssignmentFormDialog({
   });
 
   const course = courses.find((item) => item.id === courseId) ?? null;
-  const missing = [!courseId, !title.trim()].filter(Boolean).length;
+  const missing = [!courseId && !inBank, !title.trim()].filter(Boolean).length;
+  const groupValue = inBank ? BANK_VALUE : courseId;
+  const groupOptions = [
+    { value: BANK_VALUE, label: t("bank.option") },
+    ...courses.map((item) => ({
+      value: item.id,
+      label: `${item.title} · ${t("form.students", { count: item.studentCount })}`,
+    })),
+  ];
+
+  function pickGroup(value: string) {
+    setInBank(value === BANK_VALUE);
+    setCourseId(value === BANK_VALUE ? "" : value);
+    setTouched(false);
+  }
   const invalid = touched && missing > 0;
 
   function save(status: "draft" | "active") {
@@ -107,13 +127,11 @@ export function AssignmentFormDialog({
     }
     onSubmit({
       questions: questions.payload(),
-      courseId,
+      courseId: inBank ? "" : courseId,
       title: title.trim(),
       description: "",
       body,
-      dueAt: `${date}T${time || "23:59"}`,
-      status,
-      announceInChat: announce,
+      ...(inBank ? {} : { dueAt: `${date}T${time || "23:59"}`, status, announceInChat: announce }),
       allowLate: true,
       aiCheck,
       grading,
@@ -145,7 +163,7 @@ export function AssignmentFormDialog({
                   <Icon name="close" size={22} />
                 </DialogPrimitive.Close>
                 <DialogPrimitive.Title className="min-w-0 flex-1 truncate text-center text-title-lg font-semibold">
-                  {initial ? t("mobileForm.editTitle") : t("mobileForm.title")}
+                  {initial ? t("mobileForm.editTitle") : inBank ? t("bank.formTitle") : t("mobileForm.title")}
                 </DialogPrimitive.Title>
                 <span className="size-11 shrink-0" aria-hidden="true" />
               </header>
@@ -158,33 +176,32 @@ export function AssignmentFormDialog({
                 </p>
               ) : null}
 
-              <MobileFieldLabel label={<RequiredLabel>{t("form.group")}</RequiredLabel>}>
-                <MobilePickerField
-                  type="select"
-                  surface
-                  value={courseId}
-                  invalid={invalid && !courseId}
-                  display={
-                    course ? (
-                      `${course.title} · ${t("form.students", { count: course.studentCount })}`
-                    ) : (
-                      <span className="text-ink-secondary">{t("mobileForm.groupPlaceholder")}</span>
-                    )
-                  }
-                  ariaLabel={t("form.group")}
-                  options={[
-                    { value: "", label: t("mobileForm.groupPlaceholder") },
-                    ...courses.map((item) => ({
-                      value: item.id,
-                      label: `${item.title} · ${t("form.students", { count: item.studentCount })}`,
-                    })),
-                  ]}
-                  onChange={(value) => {
-                    setCourseId(value);
-                    setTouched(false);
-                  }}
-                />
-              </MobileFieldLabel>
+              {lockedBank ? (
+                <span className="flex h-11 items-center gap-2 self-start rounded-full bg-brand-subtle px-4 text-body-sm font-medium text-brand">
+                  <Icon name="menu-book" size={18} /> {t("bank.badge")}
+                </span>
+              ) : (
+                <MobileFieldLabel label={<RequiredLabel>{t("form.group")}</RequiredLabel>}>
+                  <MobilePickerField
+                    type="select"
+                    surface
+                    value={groupValue}
+                    invalid={invalid && !courseId && !inBank}
+                    display={
+                      inBank ? (
+                        t("bank.option")
+                      ) : course ? (
+                        `${course.title} · ${t("form.students", { count: course.studentCount })}`
+                      ) : (
+                        <span className="text-ink-secondary">{t("mobileForm.groupPlaceholder")}</span>
+                      )
+                    }
+                    ariaLabel={t("form.group")}
+                    options={[{ value: "", label: t("mobileForm.groupPlaceholder") }, ...groupOptions]}
+                    onChange={pickGroup}
+                  />
+                </MobileFieldLabel>
+              )}
 
               <MobileFieldLabel label={<RequiredLabel>{t("form.titleLabel")}</RequiredLabel>}>
                 <span className="relative flex flex-col">
@@ -227,29 +244,31 @@ export function AssignmentFormDialog({
                 </span>
               </MobileFieldLabel>
 
-              <div className="grid grid-cols-2 gap-3">
-                <MobileFieldLabel label={<RequiredLabel>{t("form.due")}</RequiredLabel>}>
-                  <MobilePickerField
-                    type="date"
-                    surface
-                    value={date}
-                    min={today()}
-                    display={dateLabel}
-                    ariaLabel={t("form.due")}
-                    onChange={setDate}
-                  />
-                </MobileFieldLabel>
-                <MobileFieldLabel label={t("form.time")}>
-                  <MobilePickerField
-                    type="time"
-                    surface
-                    value={time}
-                    display={time}
-                    ariaLabel={t("form.time")}
-                    onChange={setTime}
-                  />
-                </MobileFieldLabel>
-              </div>
+              {inBank ? null : (
+                <div className="grid grid-cols-2 gap-3">
+                  <MobileFieldLabel label={<RequiredLabel>{t("form.due")}</RequiredLabel>}>
+                    <MobilePickerField
+                      type="date"
+                      surface
+                      value={date}
+                      min={today()}
+                      display={dateLabel}
+                      ariaLabel={t("form.due")}
+                      onChange={setDate}
+                    />
+                  </MobileFieldLabel>
+                  <MobileFieldLabel label={t("form.time")}>
+                    <MobilePickerField
+                      type="time"
+                      surface
+                      value={time}
+                      display={time}
+                      ariaLabel={t("form.time")}
+                      onChange={setTime}
+                    />
+                  </MobileFieldLabel>
+                </div>
+              )}
 
               <MobileFieldLabel label={t("form.grading")}>
                 <MobileChoiceChips
@@ -280,33 +299,37 @@ export function AssignmentFormDialog({
                   checked={aiCheck}
                   onChange={setAiCheck}
                 />
-                <MobileToggleRow
-                  icon="chat"
-                  tone="bg-brand-subtle text-brand"
-                  title={t("form.announce")}
-                  hint={t("form.announceHint")}
-                  checked={announce}
-                  onChange={setAnnounce}
-                />
+                {inBank ? null : (
+                  <MobileToggleRow
+                    icon="chat"
+                    tone="bg-brand-subtle text-brand"
+                    title={t("form.announce")}
+                    hint={t("form.announceHint")}
+                    checked={announce}
+                    onChange={setAnnounce}
+                  />
+                )}
               </div>
             </div>
 
             <div className="flex shrink-0 gap-3 rounded-t-2xl bg-surface px-4 pt-3 pb-8.5 shadow-nav-top">
-              <button
-                type="button"
-                className="flex h-13 shrink-0 items-center justify-center rounded-full border border-line-strong px-5 text-title font-medium text-ink disabled:opacity-40"
-                disabled={pending}
-                onClick={() => save("draft")}
-              >
-                {t("form.draft")}
-              </button>
+              {inBank ? null : (
+                <button
+                  type="button"
+                  className="flex h-13 shrink-0 items-center justify-center rounded-full border border-line-strong px-5 text-title font-medium text-ink disabled:opacity-40"
+                  disabled={pending}
+                  onClick={() => save("draft")}
+                >
+                  {t("form.draft")}
+                </button>
+              )}
               <button
                 type="button"
                 className="flex h-13 min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-brand text-title font-medium text-on-action disabled:opacity-40"
                 disabled={pending}
                 onClick={() => save("active")}
               >
-                <Icon name="send" size={20} /> {t("form.submit")}
+                <Icon name={inBank ? "menu-book" : "send"} size={20} /> {inBank ? t("bank.save") : t("form.submit")}
               </button>
             </div>
           </DialogPrimitive.Content>
@@ -326,28 +349,36 @@ export function AssignmentFormDialog({
           <Icon name="assignment" size={22} />
         </span>
       }
-      title={t("form.title")}
-      description={invalid ? t("form.missing", { count: missing }) : t("form.description")}
+      title={inBank && !initial ? t("bank.formTitle") : t("form.title")}
+      description={
+        invalid ? t("form.missing", { count: missing }) : inBank ? t("bank.saveHint") : t("form.description")
+      }
       footer={
         <>
           <small className="min-w-0 flex-1 truncate text-body-xs text-ink-tertiary">
-            {course ? `${course.title} · ${t("form.students", { count: course.studentCount })}` : ""}
+            {inBank
+              ? t("bank.saveHint")
+              : course
+                ? `${course.title} · ${t("form.students", { count: course.studentCount })}`
+                : ""}
           </small>
-          <button
-            type="button"
-            className="flex h-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
-            disabled={pending}
-            onClick={() => save("draft")}
-          >
-            {t("form.draft")}
-          </button>
+          {inBank ? null : (
+            <button
+              type="button"
+              className="flex h-11 shrink-0 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
+              disabled={pending}
+              onClick={() => save("draft")}
+            >
+              {t("form.draft")}
+            </button>
+          )}
           <button
             type="button"
             className="flex h-11 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
             disabled={pending}
             onClick={() => save("active")}
           >
-            {t("form.submit")}
+            {inBank ? t("bank.save") : t("form.submit")}
           </button>
         </>
       }
@@ -361,19 +392,19 @@ export function AssignmentFormDialog({
             </p>
           ) : null}
 
-          <SelectPicker
-            label={t("form.group")}
-            searchable
-            value={courseId}
-            onChange={(value) => {
-              setCourseId(value);
-              setTouched(false);
-            }}
-            options={courses.map((item) => ({
-              value: item.id,
-              label: `${item.title} · ${t("form.students", { count: item.studentCount })}`,
-            }))}
-          />
+          {lockedBank ? (
+            <span className="flex h-10 items-center gap-2 self-start rounded-full bg-brand-subtle px-4 text-button text-brand">
+              <Icon name="menu-book" size={16} /> {t("bank.badge")}
+            </span>
+          ) : (
+            <SelectPicker
+              label={t("form.group")}
+              searchable
+              value={groupValue}
+              onChange={pickGroup}
+              options={groupOptions}
+            />
+          )}
 
           <label className="flex flex-col gap-2">
             <span className="text-body-xs text-ink-secondary">{t("form.titleLabel")}</span>
@@ -418,10 +449,17 @@ export function AssignmentFormDialog({
         </div>
 
         <div className="lesson-form flex min-w-0 flex-col gap-4">
-          <div className="grid grid-cols-2 items-start gap-3">
-            <DatePicker label={t("form.due")} value={date} onChange={setDate} />
-            <TimePicker label={t("form.time")} value={time} onChange={setTime} />
-          </div>
+          {inBank ? (
+            <p className="flex items-start gap-2.5 rounded-md bg-brand-subtle px-4 py-3 text-body-sm text-brand-strong">
+              <Icon name="menu-book" size={18} className="mt-0.5 shrink-0" />
+              {t("bank.formHint")}
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 items-start gap-3">
+              <DatePicker label={t("form.due")} value={date} onChange={setDate} />
+              <TimePicker label={t("form.time")} value={time} onChange={setTime} />
+            </div>
+          )}
 
           <div className="flex flex-col gap-2">
             <span className="text-body-xs text-ink-secondary">{t("form.grading")}</span>
@@ -452,14 +490,16 @@ export function AssignmentFormDialog({
               checked={aiCheck}
               onChange={setAiCheck}
             />
-            <ToggleRow
-              icon="chat"
-              tone="bg-brand-subtle text-brand"
-              title={t("form.announce")}
-              hint={t("form.announceHint")}
-              checked={announce}
-              onChange={setAnnounce}
-            />
+            {inBank ? null : (
+              <ToggleRow
+                icon="chat"
+                tone="bg-brand-subtle text-brand"
+                title={t("form.announce")}
+                hint={t("form.announceHint")}
+                checked={announce}
+                onChange={setAnnounce}
+              />
+            )}
           </div>
         </div>
         <div className="lg:col-span-2">

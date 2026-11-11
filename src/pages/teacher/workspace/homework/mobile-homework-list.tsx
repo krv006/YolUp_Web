@@ -4,9 +4,10 @@ import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import { Dropdown, DropdownContent, DropdownItem, DropdownTrigger } from "@/shared/ui/legacy";
 import { MobileEmptyCard, MobilePageHeader, MobileSegment, mobileRoundButton } from "@/shared/ui/mobile-page";
+import { BankAssignmentCard } from "./bank-assignment-card";
 import { formatDue } from "./format-due";
 
-export type HomeworkFilter = "active" | "review" | "draft";
+export type HomeworkFilter = "active" | "review" | "draft" | "bank";
 
 export interface MobileHomeworkListProps {
   filter: HomeworkFilter;
@@ -20,6 +21,8 @@ export interface MobileHomeworkListProps {
   onOpen: (item: Assignment) => void;
   onReview: (item: Assignment) => void;
   onDelete: (item: Assignment) => void;
+  bankRows: Assignment[];
+  onGive: (item: Assignment) => void;
 }
 
 function daysLeft(value: string | null): number | null {
@@ -41,10 +44,14 @@ export function MobileHomeworkList({
   onOpen,
   onReview,
   onDelete,
+  bankRows,
+  onGive,
 }: MobileHomeworkListProps) {
   const { t } = useTranslation("homework");
-  const filters: HomeworkFilter[] = ["active", "review", "draft"];
-  const empty = !loading && sections.every((section) => !section.rows.length);
+  const filters: HomeworkFilter[] = ["active", "review", "draft", "bank"];
+  const bankMode = filter === "bank";
+  const empty = !loading && (bankMode ? !bankRows.length : sections.every((section) => !section.rows.length));
+  const filterLabel = (id: HomeworkFilter) => (id === "bank" ? t("bank.tab") : t(`list.filters.${id}`));
 
   return (
     <main className="flex h-full flex-col overflow-y-auto bg-canvas bg-auth-gradient px-4 pt-5.5 pb-8 font-body text-ink">
@@ -61,9 +68,10 @@ export function MobileHomeworkList({
 
       <div className="mt-4.5">
         <MobileSegment
+          scroll
           items={filters.map((id) => ({
             id,
-            label: counts[id] ? `${t(`list.filters.${id}`)} · ${counts[id]}` : t(`list.filters.${id}`),
+            label: counts[id] ? `${filterLabel(id)} · ${counts[id]}` : filterLabel(id),
           }))}
           value={filter}
           onChange={onFilterChange}
@@ -77,7 +85,13 @@ export function MobileHomeworkList({
             ))
           : null}
 
-        {sections.map((section) =>
+        {bankMode
+          ? bankRows.map((item) => (
+              <BankAssignmentCard key={item.id} compact item={item} onOpen={() => onOpen(item)} onGive={() => onGive(item)} />
+            ))
+          : null}
+
+        {(bankMode ? [] : sections).map((section) =>
           section.rows.length ? (
             <section key={section.id} className="contents">
               <span className="text-caption-strong text-ink-secondary uppercase">
@@ -97,7 +111,13 @@ export function MobileHomeworkList({
           ) : null
         )}
 
-        {empty ? <MobileEmptyCard icon="assign" title={t("list.empty")} /> : null}
+        {empty ? (
+          bankMode ? (
+            <MobileEmptyCard icon="menu-book" title={t("bank.tab")} description={t("bank.empty")} />
+          ) : (
+            <MobileEmptyCard icon="assign" title={t("list.empty")} />
+          )
+        ) : null}
       </div>
     </main>
   );

@@ -22,6 +22,7 @@ import type {
   QuizGroupDto,
   QuizImportPreviewDto,
   QuizImportRequest,
+  QuizStartDto,
   QuizSummaryDto,
 } from "./quiz.dto";
 import {
@@ -64,6 +65,10 @@ export const quizApi = {
   },
   async getById(id: string, options?: RequestOptions) {
     return mapQuizDto(await apiClient.get<QuizDto>(quizEndpoints.detail(id), options));
+  },
+  async start(id: string) {
+    const dto = await apiClient.post<QuizStartDto>(quizEndpoints.start(id), {});
+    return { startedAt: dto.started_at, endsAt: dto.ends_at ?? null, attemptsLeft: dto.attempts_left ?? null };
   },
   async create(form: QuizFormValues) {
     return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.list, mapQuizRequest(form)));

@@ -4,6 +4,9 @@ import type { Submission } from "@/shared/types";
 import { homeworkEndpoints } from "./homework.endpoints";
 import type {
   HomeworkBoardDto,
+  AssignFromBankDto,
+  AssignFromBankInput,
+  AssignmentAudienceDto,
   AssignmentDto,
   AssignmentFormInput,
   HomeworkAiSummaryDto,
@@ -13,6 +16,8 @@ import type {
   SubmissionReviewInput,
 } from "./homework.dto";
 import {
+  assignFromBankBody,
+  mapAssignmentAudienceDto,
   mapBoardDto,
   mapAssignmentDto,
   mapAssignmentRequest,
@@ -40,6 +45,25 @@ export const homeworkApi = {
     return apiClient.post<{ last_reminded_at: string | null; sent: boolean }>(homeworkEndpoints.remindChild(assignmentId), {
       student: studentId,
     });
+  },
+  async getBank(options: RequestOptions = {}) {
+    const items = await apiClient.get<AssignmentDto[]>(homeworkEndpoints.assignments, {
+      ...options,
+      query: { bank: 1 },
+    });
+    return items.map(mapAssignmentDto);
+  },
+  async assignFromBank(id: string, input: AssignFromBankInput) {
+    const dto = await apiClient.post<AssignFromBankDto>(homeworkEndpoints.assignFromBank(id), assignFromBankBody(input));
+    return (dto?.assignments ?? []).map(mapAssignmentDto);
+  },
+  async getAudience(id: string, options?: RequestOptions) {
+    return mapAssignmentAudienceDto(await apiClient.get<AssignmentAudienceDto>(homeworkEndpoints.audience(id), options));
+  },
+  async setAudience(id: string, studentIds: string[]) {
+    return mapAssignmentAudienceDto(
+      await apiClient.put<AssignmentAudienceDto>(homeworkEndpoints.audience(id), { student_ids: studentIds })
+    );
   },
   async getAssignment(id: string, options?: RequestOptions) {
     return mapAssignmentDto(await apiClient.get<AssignmentDto>(homeworkEndpoints.assignment(id), options));

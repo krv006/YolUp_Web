@@ -10,6 +10,7 @@ import {
   useQuiz,
   useQuizAttempts,
   useQuizAudience,
+  useQuizLimitsText,
   useQuizQuestionStats,
   useStartAiMiniQuiz,
 } from "@/modules/quiz";
@@ -49,6 +50,7 @@ export function TestResultsPage() {
   const [attemptsOpen, setAttemptsOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const quiz = useQuiz(quizId);
+  const limitsText = useQuizLimitsText()(quiz.data);
   const courses = useCourses();
   const attempts = useQuizAttempts(quizId, Boolean(quizId));
   const questionStats = useQuizQuestionStats(quizId, Boolean(quizId));
@@ -134,7 +136,7 @@ export function TestResultsPage() {
     return (
       <>
         <MobileTestResults
-          eyebrow={[courseTitle, t("tests.questionCount", { count: quiz.data?.questionCount ?? 0 })]
+          eyebrow={[courseTitle, t("tests.questionCount", { count: quiz.data?.questionCount ?? 0 }), limitsText]
             .filter(Boolean)
             .join(" · ")}
           title={quiz.data ? quizDisplayTitle(quiz.data) : ""}
@@ -160,7 +162,11 @@ export function TestResultsPage() {
           open={attemptsOpen}
           onOpenChange={setAttemptsOpen}
           title={quiz.data ? quizDisplayTitle(quiz.data) : ""}
-          subtitle={t("attemptsDrawer.unlimited")}
+          subtitle={
+            quiz.data?.maxAttempts
+              ? t("attemptsDrawer.limited", { count: quiz.data.maxAttempts })
+              : t("attemptsDrawer.unlimited")
+          }
           attempts={attempts.data ?? []}
           students={rows.map((row) => ({ id: row.id, name: row.name, avatarUrl: row.avatarUrl }))}
           loading={attempts.isLoading}
@@ -171,10 +177,12 @@ export function TestResultsPage() {
 
   return (
     <WorkspaceShell
-      eyebrow={t("results.eyebrow", {
-        count: quiz.data?.questionCount ?? 0,
-        subject: quiz.data?.subjectLabel ?? "",
-      })}
+      eyebrow={[
+        t("results.eyebrow", { count: quiz.data?.questionCount ?? 0, subject: quiz.data?.subjectLabel ?? "" }),
+        limitsText,
+      ]
+        .filter(Boolean)
+        .join(" · ")}
       title={quiz.data ? quizDisplayTitle(quiz.data) : ""}
       action={
         <button

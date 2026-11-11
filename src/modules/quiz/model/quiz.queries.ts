@@ -33,6 +33,15 @@ export function useQuiz(id: string | null) {
   });
 }
 
+export function useStartQuiz() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => quizApi.start(id),
+    onSuccess: (_session, id) => client.invalidateQueries({ queryKey: quizKeys.detail(id) }),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 export function useQuizDetailLoader() {
   const client = useQueryClient();
   return (id: string) =>

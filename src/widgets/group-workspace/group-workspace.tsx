@@ -53,6 +53,8 @@ import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { RowSkeleton } from "@/shared/ui/row-skeleton";
 import { AddQuizMenu } from "./add-quiz-menu";
+import { AddAssignmentMenu } from "./add-assignment-menu";
+import { AssignHomeworkDialog } from "@/widgets/homework-assign";
 import { MobileAssignmentList } from "./mobile-assignment-list";
 import { ClubMembersPanel } from "./club-members-panel";
 import { PanelHeading } from "./panel-heading";
@@ -576,6 +578,7 @@ function AssignmentsPanel({
   const [quizDialog, setQuizDialog] = useState(false);
   const quizGate = usePaidTestGate();
   const [bankDialog, setBankDialog] = useState(false);
+  const [giveFromBank, setGiveFromBank] = useState(false);
   const assignQuiz = useAssignQuizToCourse();
   const createQuiz = useCreateQuiz();
   const updateQuiz = useUpdateQuiz();
@@ -685,6 +688,7 @@ function AssignmentsPanel({
         />
 
         <PaidTestDialog open={quizGate.open} onOpenChange={quizGate.setOpen} />
+        <AssignHomeworkDialog open={giveFromBank} onOpenChange={setGiveFromBank} courseId={courseId} />
 
         {quizDialog && courseId ? (
           <AddQuizDialog
@@ -783,14 +787,12 @@ function AssignmentsPanel({
         />
         {hasItems || loading ? (
           <div className="grid shrink-0 grid-cols-2 gap-2.5 lg:mb-0.5 lg:flex lg:flex-row-reverse lg:items-end">
-            <button
-              type="button"
-              className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-brand px-4 text-button whitespace-nowrap text-on-action transition-colors hover:bg-brand-strong lg:h-[42px] lg:px-[15px]"
-              onClick={() => setDialog(true)}
-            >
-              <Icon name="add" size={16} />
-              {t("assignments.addAssignment")}
-            </button>
+            <AddAssignmentMenu
+              className="px-4 lg:h-[42px] lg:px-[15px]"
+              label={t("assignments.addAssignment")}
+              onCreate={() => setDialog(true)}
+              onFromBank={() => setGiveFromBank(true)}
+            />
             <AddQuizMenu
               className="px-4 lg:px-[13px]"
               onFromBank={() => setBankDialog(true)}

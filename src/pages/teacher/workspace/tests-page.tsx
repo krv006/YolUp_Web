@@ -17,6 +17,7 @@ import {
   useQuizzes,
   PaidTestDialog,
   usePaidTestGate,
+  useQuizLimitsText,
   type QuizImportSource,
 } from "@/modules/quiz";
 import { NewTestDialog, type NewTestDraft } from "./new-test-dialog";
@@ -50,6 +51,7 @@ export function TestsPage() {
   const [deleting, setDeleting] = useState<QuizSummary | null>(null);
   const [importOpen, setImportOpen] = useState(false);
   const gate = usePaidTestGate();
+  const limitsText = useQuizLimitsText();
   const [importSource, setImportSource] = useState<QuizImportSource | null>(null);
   const [assignTarget, setAssignTarget] = useState<QuizSummary | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
@@ -187,7 +189,11 @@ export function TestsPage() {
           if (!open) setAttemptsOf(null);
         }}
         title={attemptsOf ? quizDisplayTitle(attemptsOf) : ""}
-        subtitle={t("attemptsDrawer.unlimited")}
+        subtitle={
+          attemptsOf?.maxAttempts
+            ? t("attemptsDrawer.limited", { count: attemptsOf.maxAttempts })
+            : t("attemptsDrawer.unlimited")
+        }
         attempts={attempts.data ?? []}
         loading={attempts.isLoading}
       />
@@ -368,7 +374,9 @@ export function TestsPage() {
                         {quizDisplayTitle(quiz)}
                       </strong>
                       <small className="truncate text-body-xs text-ink-tertiary">
-                        {quiz.subjectLabel} · {t("tests.questionCount", { count: quiz.questionCount })}
+                        {[quiz.subjectLabel, t("tests.questionCount", { count: quiz.questionCount }), limitsText(quiz)]
+                          .filter(Boolean)
+                          .join(" · ")}
                       </small>
                     </span>
                     {draft ? (

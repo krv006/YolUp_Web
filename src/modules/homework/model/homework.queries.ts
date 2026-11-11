@@ -7,6 +7,7 @@ import { downloadBlob } from "@/shared/lib";
 import type { Submission } from "@/shared/types";
 import { homeworkApi } from "../api/homework.api";
 import type {
+  AssignFromBankInput,
   AssignmentFormInput,
   HomeworkAnswerInput,
   ResubmitRequestInput,
@@ -24,6 +25,8 @@ export const homeworkKeys = Object.freeze({
   board: (id: string) => ["homework", "board", id] as const,
   report: (studentId?: string | null) => ["homework", "report", studentId ?? "me"] as const,
   draft: (id: string) => ["homework", "draft", id] as const,
+  bank: ["homework", "bank"] as const,
+  audience: (id: string) => ["homework", "audience", id] as const,
 });
 
 export function getHomeworkPollingInterval(
@@ -90,8 +93,8 @@ export function useCreateAssignment() {
   return useMutation({
     mutationFn: (form: AssignmentFormInput) => homeworkApi.createAssignment(form),
     onSuccess: (item) => {
-      client.invalidateQueries({ queryKey: homeworkKeys.assignments(item.courseId) });
-      toast.success(t("toast.assignmentCreated"));
+      client.invalidateQueries({ queryKey: item.isBank ? homeworkKeys.bank : homeworkKeys.assignments(item.courseId) });
+      toast.success(item.isBank ? t("bank.saved") : t("toast.assignmentCreated"));
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -104,7 +107,8 @@ export function useUpdateAssignment() {
     mutationFn: ({ id, form }: { id: string; form: AssignmentFormInput }) =>
       homeworkApi.updateAssignment(id, form),
     onSuccess: (item) => {
-      client.invalidateQueries({ queryKey: homeworkKeys.assignments(item.courseId) });
+      client.invalidateQueries({ queryKey: item.isBank ? homeworkKeys.bank : homeworkKeys.assignments(item.courseId) });
+      client.invalidateQueries({ queryKey: homeworkKeys.assignment(item.id) });
       toast.success(t("toast.assignmentUpdated"));
     },
     onError: (error: Error) => toast.error(error.message),
@@ -225,6 +229,48 @@ export function useSubmitHomeworkBoard() {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });
       toast.success(t("toast.submitted"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useHomeworkBank(enabled = true) {
+  return useQuery({
+    queryKey: homeworkKeys.bank,
+    queryFn: ({ signal }) => homeworkApi.getBank({ signal }),
+    enabled,
+  });
+}
+
+export function useAssignFromBank() {
+  const { t } = useTranslation("homework");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, input }: { id: string; input: AssignFromBankInput }) => homeworkApi.assignFromBank(id, input),
+    onSuccess: (created) => {
+      client.invalidateQueries({ queryKey: homeworkKeys.all });
+      toast.success(t("bank.assigned", { count: created.length }));
+    },
+  });
+}
+
+export function useAssignmentAudience(id: string | null, enabled = true) {
+  return useQuery({
+    queryKey: homeworkKeys.audience(id ?? ""),
+    queryFn: ({ signal }) => homeworkApi.getAudience(id as string, { signal }),
+    enabled: Boolean(id) && enabled,
+  });
+}
+
+export function useSetAssignmentAudience() {
+  const { t } = useTranslation("homework");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, studentIds }: { id: string; studentIds: string[] }) => homeworkApi.setAudience(id, studentIds),
+    onSuccess: (audience, { id }) => {
+      client.setQueryData(homeworkKeys.audience(id), audience);
+      client.invalidateQueries({ queryKey: homeworkKeys.assignment(id) });
+      toast.success(t("audience.saved"));
     },
     onError: (error: Error) => toast.error(error.message),
   });

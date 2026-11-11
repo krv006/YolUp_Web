@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { quizDisplayTitle } from "@/modules/quiz";
+import { quizDisplayTitle, useQuizLimitsText } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { QuizSummary, StudentAttemptSummary } from "@/shared/types";
@@ -73,6 +73,7 @@ export function StudentTestsPage() {
                 key={quiz.id}
                 quiz={quiz}
                 attempt={data.attemptByQuiz.get(quiz.id) ?? null}
+                attemptsUsed={data.attempts.filter((item) => item.quizId === quiz.id).length}
                 overdue={stateOf(quiz) === "overdue"}
                 onSolve={() => navigate(ROUTES.student.test(quiz.id))}
                 onResult={() => navigate(ROUTES.student.testResults(quiz.id))}
@@ -145,18 +146,22 @@ export function StudentTestsPage() {
 function TestCard({
   quiz,
   attempt,
+  attemptsUsed,
   overdue,
   onSolve,
   onResult,
 }: {
   quiz: QuizSummary;
   attempt: StudentAttemptSummary | null;
+  attemptsUsed: number;
   overdue: boolean;
   onSolve: () => void;
   onResult: () => void;
 }) {
   const { t } = useTranslation("student");
+  const limitsText = useQuizLimitsText()(quiz);
   const percent = attempt ? Math.round(attempt.percentage ?? 0) : null;
+  const attemptsOver = Boolean(quiz.maxAttempts && attemptsUsed >= quiz.maxAttempts);
   return (
     <article className="flex flex-col gap-3.5 rounded-2xl bg-surface p-4">
       <div className="flex items-start gap-3">
@@ -166,10 +171,15 @@ function TestCard({
         <span className="flex min-w-0 flex-1 flex-col">
           <strong className="truncate text-title text-ink">{quizDisplayTitle(quiz)}</strong>
           <small className="truncate text-body-sm text-ink-secondary">
-            {t("workspace.tests.meta", {
-              subject: quiz.subjectLabel || t("workspace.tests.otherSubject"),
-              count: quiz.questionCount,
-            })}
+            {[
+              t("workspace.tests.meta", {
+                subject: quiz.subjectLabel || t("workspace.tests.otherSubject"),
+                count: quiz.questionCount,
+              }),
+              limitsText,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </small>
         </span>
         {percent !== null ? (
@@ -194,14 +204,21 @@ function TestCard({
             <Icon name="bar-chart" size={18} />
             {t("workspace.tests.result")}
           </button>
-          <button
-            type="button"
-            className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-colors hover:bg-tint"
-            onClick={onSolve}
-          >
-            <Icon name="refresh" size={18} />
-            {t("workspace.tests.retry")}
-          </button>
+          {attemptsOver ? (
+            <span className="flex h-11 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink-secondary">
+              <Icon name="lock" size={18} />
+              {t("workspace.tests.attemptsOver")}
+            </span>
+          ) : (
+            <button
+              type="button"
+              className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-colors hover:bg-tint"
+              onClick={onSolve}
+            >
+              <Icon name="refresh" size={18} />
+              {t("workspace.tests.retry")}
+            </button>
+          )}
         </div>
       ) : (
         <button

@@ -150,7 +150,7 @@
     "submit": "Send",
     "googleForm": "Google Form link (optional)",
     "googleFormHint": "Students fill in the form, then submit here with a note",
-    "googleFormInvalid": "Use a Google Form link: forms.gle/… or docs.google.com/forms/…"
+    "googleFormInvalid": "Use a Google Form link: forms.gle/…, forms.google.com/… or docs.google.com/forms/…"
   },
   "review": {
     "back": "Back",
@@ -446,5 +446,54 @@
   "googleForm": {
     "open": "Open Google Form",
     "hint": "Fill in the form, then submit here with a note"
+  },
+  "bank": {
+    "option": "No group — save to the bank",
+    "badge": "Bank assignment",
+    "save": "Save to the bank",
+    "saveHint": "Give it to groups later, with a deadline",
+    "formHint": "The assignment goes to the bank. Later you give it to groups or single students with a deadline.",
+    "saved": "Saved to the bank",
+    "assigned_one": "Given to {{count}} group",
+    "assigned_other": "Given to {{count}} groups",
+    "tab": "Bank",
+    "empty": "The bank is empty. When creating an assignment, pick «No group — save to the bank».",
+    "copies_one": "Given to {{count}} group",
+    "copies_other": "Given to {{count}} groups",
+    "notGiven": "Not given yet",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions",
+    "give": "Give",
+    "assignTitle": "Give from the bank",
+    "assignDescription": "Pick a bank assignment and choose who gets it",
+    "assignAction": "Give",
+    "pickLabel": "Bank assignment",
+    "pick": "Choose",
+    "allowLate": "Allow late submissions",
+    "announceHint": "A chat card is posted only when the whole group gets it",
+    "cancel": "Cancel",
+    "fromBank": "Give from the bank",
+    "fromBankHint": "Give a ready assignment to this group with a deadline",
+    "newAssignment": "New assignment",
+    "newAssignmentHint": "Create an assignment for this group",
+    "formTitle": "Add to the bank",
+    "ambiguous": "One of the chosen students is also in another of your groups. Give the assignment to the whole group, then narrow the list under «Given to» on the assignment page.",
+    "detailTitle": "This assignment is in the bank",
+    "detailHint": "Give it to one or more groups or single students with a deadline — each group gets its own copy, and submissions show up there."
+  },
+  "audience": {
+    "title": "Given to",
+    "everyone_one": "All {{count}} student in the group",
+    "everyone_other": "All {{count}} students in the group",
+    "restricted": "{{count}} of {{total}} students",
+    "edit": "Change",
+    "editTitle": "Given to",
+    "editHint": "Unchecked students don't see the assignment and can't submit it",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "List saved",
+    "submitted": "Submitted",
+    "notSubmitted": "Not submitted",
+    "loading": "Loading…"
   }
 }

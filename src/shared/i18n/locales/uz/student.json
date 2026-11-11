@@ -209,7 +209,8 @@
       "emptyHint": "O‘qituvchingiz test bersa, shu yerda ko‘rinadi.",
       "attemptsTitle": "Urinishlarim",
       "attemptsSubtitle": "Oxirgi yechgan testlaringiz",
-      "attemptsEmpty": "Hali test yechmagansiz"
+      "attemptsEmpty": "Hali test yechmagansiz",
+      "attemptsOver": "Urinishlar tugagan"
     },
     "player": {
       "questions": "Savollar · {{count}}",
@@ -249,7 +250,25 @@
       },
       "trueLabel": "To‘g‘ri",
       "falseLabel": "Noto‘g‘ri",
-      "finishShort": "Yakunlash"
+      "finishShort": "Yakunlash",
+      "timeUp": "Vaqt tugadi — test topshirilmoqda",
+      "timeLeft": "Qolgan vaqt: {{time}}",
+      "start": {
+        "title": "Testni boshlash",
+        "time": "Vaqt: {{count}} daqiqa",
+        "attempts": "Urinishlar: {{total}} tadan {{left}} tasi qoldi",
+        "questions": "Savollar: {{count}} ta",
+        "note": "Boshlaganingizdan keyin vaqt to'xtamaydi — sahifani yopsangiz ham. Vaqt tugasa test o'zi topshiriladi.",
+        "action": "Boshlash",
+        "starting": "Boshlanmoqda…"
+      },
+      "over": {
+        "title": "Urinishlar tugagan",
+        "text": "Bu testni {{count}} marta topshirdingiz. Boshqa urinish qolmadi.",
+        "results": "Natijani ko'rish",
+        "back": "Testlarga qaytish"
+      },
+      "metaTimed": "vaqt: {{count}} daqiqa"
     },
     "results": {
       "eyebrow": "Testlar / Natijangiz · {{course}}",

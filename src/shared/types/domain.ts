@@ -324,7 +324,7 @@ export type SubmissionStatus =
   | "error"
   | "resubmit_requested";
 
-export type AssignmentStatus = "draft" | "active";
+export type AssignmentStatus = "draft" | "active" | "bank";
 
 export type GradingScale = "five" | "hundred" | "none";
 
@@ -432,6 +432,11 @@ export interface Assignment {
   attachmentName: string;
   hasAttachment: boolean;
   googleFormUrl: string | null;
+  isBank: boolean;
+  sourceId: string | null;
+  copiesCount: number | null;
+  questionsCount: number | null;
+  studentIds: string[] | null;
   dueAt: string | null;
   skillKey: string;
   lessonId: string | null;
@@ -848,9 +853,17 @@ export interface QuizSummary {
   createdAt: string;
   questionCount: number;
   studentIds: string[] | null;
+  timeLimitMinutes: number | null;
+  maxAttempts: number | null;
+  questionsPerAttempt: number | null;
 }
 
 export interface QuizDetail extends QuizSummary {
+  attemptsUsed: number | null;
+  attemptsLeft: number | null;
+  startedAt: string | null;
+  endsAt: string | null;
+  needsStart: boolean;
   groupAvgPercentage: number | null;
   groups: QuizGroup[];
   questions: QuizQuestion[];
