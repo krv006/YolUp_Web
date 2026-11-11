@@ -8,6 +8,7 @@ import { flushTeacherAudioRecording } from "../lib/teacher-audio-recording";
 import { flushTeacherVideoRecording } from "../lib/teacher-video-recording";
 import type { LessonFormInput, LessonRatingInput } from "../api/lesson.dto";
 import { addMinutesToTime, toBackendWeekdays, weeksBetween } from "../lib/lesson-schedule";
+import type { BulkLessonRow } from "../lib/bulk-lessons";
 
 export const lessonKeys = Object.freeze({
   all: ["lessons"] as const,
@@ -77,6 +78,19 @@ export function useCreateLesson() {
     onSuccess: () => {
       client.invalidateQueries({ queryKey: lessonKeys.all });
       toast.success("Dars saqlandi");
+    },
+    onError: (error) => toast.error(describeCreateError(error)),
+  });
+}
+
+export function useCreateLessonsBulk() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, rows }: { courseId: string; rows: readonly BulkLessonRow[] }) =>
+      lessonApi.createBulk(courseId, rows),
+    onSuccess: ({ count }) => {
+      client.invalidateQueries({ queryKey: lessonKeys.all });
+      toast.success(i18n.t("lesson:bulk.saved", { count }));
     },
     onError: (error) => toast.error(describeCreateError(error)),
   });

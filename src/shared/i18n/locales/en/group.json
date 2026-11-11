@@ -183,7 +183,14 @@
       "timeShort": "Time",
       "startShort": "Start",
       "durationMinutes": "Duration (minutes)",
-      "minutesValue": "{{count}} minutes"
+      "minutesValue": "{{count}} minutes",
+      "bulk": "Several lessons",
+      "bulkSubtitle": "Set a topic and time for each lesson",
+      "short": {
+        "single": "Once",
+        "repeat": "Weekly",
+        "bulk": "Several"
+      }
     },
     "conflict": {
       "singleTitle": "You already have a lesson at this time",

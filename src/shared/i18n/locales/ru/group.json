@@ -185,7 +185,14 @@
       "timeShort": "Время",
       "startShort": "Начало",
       "durationMinutes": "Длительность (мин)",
-      "minutesValue": "{{count}} минут"
+      "minutesValue": "{{count}} минут",
+      "bulk": "Несколько уроков",
+      "bulkSubtitle": "Укажите тему и время каждого урока",
+      "short": {
+        "single": "Один раз",
+        "repeat": "Еженедельно",
+        "bulk": "Несколько"
+      }
     },
     "conflict": {
       "singleTitle": "У вас уже есть урок в это время",

@@ -431,5 +431,24 @@
     "noteFailed": "Izohni saqlab bo'lmadi",
     "reasonLine": "Sabab: {{text}}",
     "noteLine": "Izoh: {{text}}"
+  },
+  "bulk": {
+    "mode": "Bir nechta dars",
+    "modeShort": "Bir nechta",
+    "topicPlaceholder": "Dars mavzusi",
+    "topicAria": "{{number}}-dars mavzusi",
+    "date": "Sana",
+    "time": "Boshlanish",
+    "duration": "Davomiylik",
+    "dateAria": "{{number}}-dars sanasi",
+    "timeAria": "{{number}}-dars vaqti va davomiyligi",
+    "remove": "{{number}}-darsni olib tashlash",
+    "addRow": "Yana dars qo'shish",
+    "limit": "{{count}} / {{max}} ta dars",
+    "past": "Bu vaqt o'tib ketgan",
+    "overlap": "Ro'yxatdagi boshqa dars bilan bir vaqtga to'g'ri keladi",
+    "busy": "Bu vaqtda «{{title}}» darsi bor",
+    "submit": "{{count}} ta darsni saqlash",
+    "saved": "{{count}} ta dars qo'shildi"
   }
 }

@@ -21,6 +21,7 @@ import {
   useCancelLesson,
   useCreateLesson,
   useCreateLessonSchedule,
+  useCreateLessonsBulk,
   useDeleteLesson,
   useLessons,
   useUpdateLesson,
@@ -368,6 +369,7 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
   const navigate = useNavigate();
   const create = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
+  const createBulk = useCreateLessonsBulk();
   const update = useUpdateLesson();
   const remove = useDeleteLesson();
   const cancelLesson = useCancelLesson();
@@ -489,6 +491,7 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         existingLessons={allLessons.data ?? []}
         onCreate={save}
         onCreateSchedule={saveSchedule}
+        onCreateBulk={courseId ? (rows) => createBulk.mutateAsync({ courseId, rows }) : undefined}
       />
       <ConfirmDialog
         open={Boolean(deleteTarget)}

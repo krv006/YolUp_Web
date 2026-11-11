@@ -21,6 +21,7 @@ import {
   mapLessonRecordingDto,
   mapLessonRequest,
 } from "../lib/lesson.mappers";
+import { bulkLessonsRequest, type BulkLessonRow } from "../lib/bulk-lessons";
 
 function isMissingRatingApi(error: unknown): boolean {
   return (
@@ -81,6 +82,11 @@ export const lessonApi = {
       if (error instanceof AppError && error.status === 404) return null;
       throw error;
     }
+  },
+  async createBulk(courseId: string, rows: readonly BulkLessonRow[]) {
+    const dto = await apiClient.post<LessonScheduleResponseDto>(lessonEndpoints.bulk, bulkLessonsRequest(courseId, rows));
+    const lessons = (dto?.lessons ?? []).map(mapLessonDto);
+    return { count: Number(dto?.count ?? lessons.length), lessons };
   },
   async createMany(dates: readonly string[], form: LessonFormInput) {
     const created: Lesson[] = [];

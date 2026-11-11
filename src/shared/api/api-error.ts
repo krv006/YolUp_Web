@@ -36,6 +36,7 @@ export interface AppErrorInit {
   fields?: ApiFieldErrors | null;
   retryAfter?: number | null;
   detail?: string | null;
+  details?: unknown;
   requestId?: string | null;
   originalError?: unknown;
 }
@@ -46,6 +47,7 @@ export class AppError extends Error {
   readonly fields: ApiFieldErrors | null;
   readonly retryAfter: number | null;
   readonly detail: string | null;
+  readonly details: unknown;
   readonly requestId: string | null;
   readonly originalError: unknown;
 
@@ -56,6 +58,7 @@ export class AppError extends Error {
     fields = null,
     retryAfter = null,
     detail = null,
+    details = null,
     requestId = null,
     originalError = null,
   }: AppErrorInit) {
@@ -66,6 +69,7 @@ export class AppError extends Error {
     this.fields = fields;
     this.retryAfter = retryAfter;
     this.detail = detail;
+    this.details = details;
     this.requestId = requestId;
     this.originalError = originalError;
   }
@@ -124,6 +128,7 @@ export function createApiError({
     fields: (backendError?.fields as ApiFieldErrors | undefined) ?? extractFields(details),
     retryAfter: typeof backendError?.retry_after === "number" ? backendError.retry_after : null,
     detail: asString(asRecord(details)?.detail) ?? asString(body?.detail) ?? null,
+    details,
     message:
       asString(backendError?.message) ??
       asString(body?.message) ??

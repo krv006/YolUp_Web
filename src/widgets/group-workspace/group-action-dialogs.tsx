@@ -33,13 +33,19 @@ import {
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import {
+  BulkLessonRows,
+  bulkRowErrors,
+  bulkRowsReady,
   buildScheduleDates,
+  createBulkRow,
   EVEN_WEEKDAYS,
   findScheduleConflicts,
   findScheduleConflictsForDates,
   MAX_SCHEDULE_LESSONS,
+  nextBulkRow,
   ODD_WEEKDAYS,
   WEEKDAYS,
+  type BulkLessonRow,
 } from "@/modules/lesson";
 import type { Assignment, Lesson } from "@/shared/types";
 
@@ -52,11 +58,14 @@ export interface LessonScheduleDraft extends LessonDraft {
   endsOn: string;
 }
 
+type LessonDialogMode = "single" | "repeat" | "bulk";
+
 export interface AddLessonDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreate: (values: LessonDraft) => void;
   onCreateSchedule?: (values: LessonScheduleDraft) => void;
+  onCreateBulk?: (rows: BulkLessonRow[]) => Promise<unknown>;
   existingLessons?: readonly Lesson[];
   initialValues?: Lesson | null;
   onDelete?: () => void;
@@ -138,6 +147,7 @@ export function AddLessonDialog({
   onOpenChange,
   onCreate,
   onCreateSchedule,
+  onCreateBulk,
   existingLessons = [],
   initialValues = null,
   onDelete,
@@ -153,12 +163,24 @@ export function AddLessonDialog({
     duration: String(initialValues?.durationMinutes ?? initialValues?.duration ?? "45"),
     quizId: initialValues?.quizId ?? "",
   }));
-  const [repeat, setRepeat] = useState(false);
+  const [mode, setMode] = useState<LessonDialogMode>("single");
   const [weekdays, setWeekdays] = useState<number[]>([...ODD_WEEKDAYS]);
   const [range, setRange] = useState(() => ({ from: todayString(), to: monthLaterString() }));
+  const [rows, setRows] = useState<BulkLessonRow[]>([]);
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
+  const [savingBulk, setSavingBulk] = useState(false);
 
   const canRepeat = Boolean(onCreateSchedule) && !initialValues;
-  const isRepeating = canRepeat && repeat;
+  const canBulk = Boolean(onCreateBulk) && !initialValues;
+  const isRepeating = canRepeat && mode === "repeat";
+  const isBulk = canBulk && mode === "bulk";
+  const singleMode = !isRepeating && !isBulk;
+  const modes: Array<{ id: LessonDialogMode; label: string }> = [
+    { id: "single", label: t("dialogs.lesson.single") },
+    ...(canRepeat ? [{ id: "repeat" as const, label: t("dialogs.lesson.repeating") }] : []),
+    ...(canBulk ? [{ id: "bulk" as const, label: t("dialogs.lesson.bulk") }] : []),
+  ];
+  const shortModes = modes.map((item) => ({ ...item, label: t(`dialogs.lesson.short.${item.id}`) }));
   const duration = Number(form.duration) || 45;
   const durationPicker = {
     value: duration,
@@ -168,7 +190,7 @@ export function AddLessonDialog({
   const today = todayString();
   const editingPast = Boolean(initialValues) && form.date < today;
   const startsInPast =
-    !isRepeating &&
+    singleMode &&
     !editingPast &&
     Boolean(form.date) &&
     (form.date < today || (form.date === today && form.time < nowTimeString()));
@@ -183,14 +205,14 @@ export function AddLessonDialog({
   );
 
   const singleConflicts = useMemo(() => {
-    if (isRepeating || !form.date) return [];
+    if (!singleMode || !form.date) return [];
     return findScheduleConflicts(existingLessons, {
       date: form.date,
       time: form.time,
       durationMinutes: duration,
       excludeLessonId: initialValues?.id ?? null,
     });
-  }, [isRepeating, existingLessons, form.date, form.time, duration, initialValues]);
+  }, [singleMode, existingLessons, form.date, form.time, duration, initialValues]);
 
   const scheduleConflicts = useMemo(
     () => (isRepeating ? findScheduleConflictsForDates(existingLessons, dates, form.time, duration) : []),
@@ -209,13 +231,44 @@ export function AddLessonDialog({
 
   function reset() {
     setForm({ topic: "", date: todayString(), time: "18:30", duration: "45", quizId: "" });
-    setRepeat(false);
+    setMode("single");
     setWeekdays([...ODD_WEEKDAYS]);
     setRange({ from: todayString(), to: monthLaterString() });
+    setRows([]);
+    setRowErrors({});
+  }
+
+  function changeMode(next: LessonDialogMode) {
+    if (next === "repeat") update("topic", "");
+    if (next === "bulk" && !rows.length) {
+      const first = createBulkRow({ topic: form.topic.trim(), date: form.date, time: form.time, duration });
+      setRows([first, nextBulkRow(first)]);
+    }
+    setMode(next);
+  }
+
+  function changeRows(next: BulkLessonRow[]) {
+    setRows(next);
+    setRowErrors({});
   }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isBulk) {
+      if (!bulkRowsReady(rows) || savingBulk) return;
+      setSavingBulk(true);
+      setRowErrors({});
+      onCreateBulk?.(rows)
+        .then(
+          () => {
+            reset();
+            onOpenChange(false);
+          },
+          (error: unknown) => setRowErrors(bulkRowErrors(error, rows))
+        )
+        .finally(() => setSavingBulk(false));
+      return;
+    }
     if (!form.time || startsInPast) return;
 
     if (isRepeating) {
@@ -248,9 +301,18 @@ export function AddLessonDialog({
     if (value === today) return t("dialogs.lesson.todayDate", { date: label });
     return `${weekdayText.short[date.getDay() || 7]}, ${label}`;
   };
-  const submitDisabled = isRepeating
-    ? !dates.length || invalidRange || scheduleConflicts.length > 0
-    : !form.topic.trim() || startsInPast || singleConflicts.length > 0;
+  const submitDisabled = isBulk
+    ? !bulkRowsReady(rows) || savingBulk
+    : isRepeating
+      ? !dates.length || invalidRange || scheduleConflicts.length > 0
+      : !form.topic.trim() || startsInPast || singleConflicts.length > 0;
+  const submitLabel = initialValues
+    ? t("dialogs.lesson.saveChanges")
+    : isBulk
+      ? t("dialogs.lesson.saveMultiple", { count: rows.length })
+      : isRepeating
+        ? t("dialogs.lesson.saveMultiple", { count: dates.length })
+        : t("dialogs.lesson.saveSingle");
 
   if (isCompact)
     return (
@@ -263,18 +325,16 @@ export function AddLessonDialog({
             ? t("dialogs.lesson.editDescription")
             : timeBusy
               ? undefined
-              : isRepeating
-                ? t("dialogs.lesson.repeatingSubtitle")
-                : t("dialogs.lesson.mobileSubtitle")
+              : isBulk
+                ? t("dialogs.lesson.bulkSubtitle")
+                : isRepeating
+                  ? t("dialogs.lesson.repeatingSubtitle")
+                  : t("dialogs.lesson.mobileSubtitle")
         }
         footer={
           <div className="flex flex-col gap-4">
             <button type="submit" form="lesson-form" className={modalButton.primary} disabled={submitDisabled}>
-              {initialValues
-                ? t("dialogs.lesson.saveChanges")
-                : isRepeating
-                  ? t("dialogs.lesson.saveMultiple", { count: dates.length })
-                  : t("dialogs.lesson.saveSingle")}
+              {submitLabel}
             </button>
             {initialValues && onDelete ? (
               <button
@@ -292,7 +352,7 @@ export function AddLessonDialog({
         }
       >
         <form id="lesson-form" className="flex flex-col gap-4" onSubmit={submit}>
-          {isRepeating ? null : (
+          {singleMode ? (
             <MobileFieldLabel label={t("dialogs.lesson.topicLabel")}>
               <input
                 className={MOBILE_INPUT}
@@ -301,23 +361,25 @@ export function AddLessonDialog({
                 placeholder={t("dialogs.lesson.topicPlaceholder")}
               />
             </MobileFieldLabel>
-          )}
+          ) : null}
 
-          {canRepeat && !timeBusy ? (
+          {modes.length > 1 && !timeBusy ? (
             <MobileToggle
-              items={[
-                { id: "single", label: t("dialogs.lesson.single") },
-                { id: "repeat", label: t("dialogs.lesson.repeating") },
-              ]}
-              value={repeat ? "repeat" : "single"}
-              onChange={(mode) => {
-                setRepeat(mode === "repeat");
-                if (mode === "repeat") update("topic", "");
-              }}
+              items={modes.length > 2 ? shortModes : modes}
+              value={isBulk ? "bulk" : isRepeating ? "repeat" : "single"}
+              onChange={changeMode}
             />
           ) : null}
 
-          {isRepeating ? (
+          {isBulk ? (
+            <BulkLessonRows
+              compact
+              rows={rows}
+              errors={rowErrors}
+              existingLessons={existingLessons}
+              onChange={changeRows}
+            />
+          ) : isRepeating ? (
             <>
               <MobileFieldLabel
                 label={t("dialogs.lesson.weekdaysLabel")}
@@ -482,8 +544,15 @@ export function AddLessonDialog({
     <ModalCard
       open={open}
       onOpenChange={onOpenChange}
+      width={isBulk ? "max-w-160" : undefined}
       title={initialValues ? t("dialogs.lesson.editTitle") : t("dialogs.lesson.newTitle")}
-      subtitle={isRepeating ? t("dialogs.lesson.repeatingSubtitle") : undefined}
+      subtitle={
+        isBulk
+          ? t("dialogs.lesson.bulkSubtitle")
+          : isRepeating
+            ? t("dialogs.lesson.repeatingSubtitle")
+            : undefined
+      }
       footer={
         <div className="flex flex-col gap-2">
           <button
@@ -491,14 +560,14 @@ export function AddLessonDialog({
             form="lesson-form"
             className={modalButton.primary}
             disabled={
-              isRepeating ? !dates.length || invalidRange : !form.topic.trim() || startsInPast
+              isBulk
+                ? submitDisabled
+                : isRepeating
+                  ? !dates.length || invalidRange
+                  : !form.topic.trim() || startsInPast
             }
           >
-            {initialValues
-              ? t("dialogs.lesson.saveChanges")
-              : isRepeating
-                ? t("dialogs.lesson.saveMultiple", { count: dates.length })
-                : t("dialogs.lesson.saveSingle")}
+            {submitLabel}
           </button>
           {initialValues && onDelete ? (
             <button
@@ -522,33 +591,33 @@ export function AddLessonDialog({
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        {canRepeat ? (
+        {modes.length > 1 ? (
           <div
             className="flex w-fit items-center gap-1 rounded-full bg-subtle p-1"
             role="radiogroup"
             aria-label={t("dialogs.lesson.typeAria")}
           >
-            {[false, true].map((mode) => (
-              <button
-                key={String(mode)}
-                type="button"
-                role="radio"
-                aria-checked={repeat === mode}
-                className={`flex h-8 items-center rounded-full px-4 text-button transition-colors ${
-                  repeat === mode ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
-                }`}
-                onClick={() => {
-                  setRepeat(mode);
-                  if (mode) update("topic", "");
-                }}
-              >
-                {mode ? t("dialogs.lesson.repeating") : t("dialogs.lesson.single")}
-              </button>
-            ))}
+            {modes.map((item) => {
+              const active = (isBulk ? "bulk" : isRepeating ? "repeat" : "single") === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  className={`flex h-8 items-center rounded-full px-4 text-button transition-colors ${
+                    active ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
+                  }`}
+                  onClick={() => changeMode(item.id)}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </div>
         ) : null}
 
-        {isRepeating ? null : (
+        {singleMode ? (
           <label className="flex flex-col gap-2">
             <span className="text-body-xs text-ink-secondary">
               {t("dialogs.lesson.topicLabel")}
@@ -561,9 +630,11 @@ export function AddLessonDialog({
               placeholder={t("dialogs.lesson.topicPlaceholder")}
             />
           </label>
-        )}
+        ) : null}
 
-        {isRepeating ? (
+        {isBulk ? (
+          <BulkLessonRows rows={rows} errors={rowErrors} existingLessons={existingLessons} onChange={changeRows} />
+        ) : isRepeating ? (
           <>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-3">

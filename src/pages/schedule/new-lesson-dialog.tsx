@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  BulkLessonRows,
+  bulkRowErrors,
+  bulkRowsReady,
+  createBulkRow,
+  nextBulkRow,
+  type BulkLessonRow,
+} from "@/modules/lesson";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { GroupTile } from "@/shared/ui/group-tile";
@@ -34,7 +42,10 @@ export interface NewLessonDialogProps {
   }>;
   pending?: boolean;
   onSubmit: (values: NewLessonValues) => void;
+  onSubmitBulk?: (courseId: string, rows: BulkLessonRow[]) => Promise<unknown>;
 }
+
+type LessonMode = "once" | "weekly" | "bulk";
 
 const DURATIONS = [45, 60, 90, 120];
 const MIN_WEEKS = 2;
@@ -53,11 +64,14 @@ export function NewLessonDialog({
   courses,
   pending = false,
   onSubmit,
+  onSubmitBulk,
 }: NewLessonDialogProps) {
   const { t } = useTranslation("lesson");
   const [courseId, setCourseId] = useState("");
   const [topic, setTopic] = useState("");
-  const [repeat, setRepeat] = useState(false);
+  const [mode, setMode] = useState<LessonMode>("once");
+  const [rows, setRows] = useState<BulkLessonRow[]>([]);
+  const [rowErrors, setRowErrors] = useState<Record<string, string>>({});
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("18:00");
   const [duration, setDuration] = useState(90);
@@ -65,9 +79,45 @@ export function NewLessonDialog({
   const isCompact = useIsCompact();
   const weekdays = t("list.weekdaysShort", { returnObjects: true }) as string[];
   const months = t("list.months", { returnObjects: true }) as string[];
-  const canSubmit = !pending && Boolean(courseId) && Boolean(topic.trim());
+  const repeat = mode === "weekly";
+  const bulk = mode === "bulk" && Boolean(onSubmitBulk);
+  const canSubmit = !pending && Boolean(courseId) && (bulk ? bulkRowsReady(rows) : Boolean(topic.trim()));
+  const modes: Array<{ id: LessonMode; label: string }> = [
+    { id: "once", label: t("schedule.repeatOnce") },
+    { id: "weekly", label: t("schedule.repeatWeekly") },
+    ...(onSubmitBulk ? [{ id: "bulk" as const, label: t("bulk.modeShort") }] : []),
+  ];
+  const desktopModes: Array<{ id: LessonMode; label: string }> = [
+    { id: "once", label: t("scheduleDialog.single") },
+    { id: "weekly", label: t("scheduleDialog.repeating") },
+    ...(onSubmitBulk ? [{ id: "bulk" as const, label: t("bulk.mode") }] : []),
+  ];
+
+  function changeMode(next: LessonMode) {
+    if (next === "bulk" && !rows.length) {
+      const first = createBulkRow({ topic: topic.trim(), date, time, duration });
+      setRows([first, nextBulkRow(first)]);
+    }
+    setMode(next);
+  }
+
+  function changeRows(next: BulkLessonRow[]) {
+    setRows(next);
+    setRowErrors({});
+  }
 
   function submit() {
+    if (bulk) {
+      setRowErrors({});
+      onSubmitBulk?.(courseId, rows).then(
+        () => {
+          setRows([]);
+          setMode("once");
+        },
+        (error: unknown) => setRowErrors(bulkRowErrors(error, rows))
+      );
+      return;
+    }
     onSubmit({
       courseId,
       topic: topic.trim(),
@@ -142,79 +192,74 @@ export function NewLessonDialog({
             </div>
           </MobileFieldLabel>
 
-          <MobileFieldLabel label={t("scheduleDialog.topic")}>
-            <input
-              className={MOBILE_INPUT}
-              value={topic}
-              placeholder={t("scheduleDialog.topicPlaceholder")}
-              onChange={(event) => setTopic(event.target.value)}
-            />
-          </MobileFieldLabel>
+          <MobileToggle items={modes} value={bulk ? "bulk" : mode} onChange={changeMode} />
 
-          <div className="grid grid-cols-2 gap-3">
-            <MobileFieldLabel label={t("scheduleDialog.date")}>
-              <MobilePickerField
-                type="date"
-                value={date}
-                min={today()}
-                display={dateLabel}
-                ariaLabel={t("scheduleDialog.date")}
-                onChange={setDate}
-              />
-            </MobileFieldLabel>
-            <MobileFieldLabel label={t("schedule.time")}>
-              <MobilePickerField
-                type="time"
-                value={time}
-                display={time}
-                ariaLabel={t("schedule.time")}
-                onChange={setTime}
-              />
-            </MobileFieldLabel>
-          </div>
+          {bulk ? (
+            <BulkLessonRows compact rows={rows} errors={rowErrors} onChange={changeRows} />
+          ) : (
+            <>
+              <MobileFieldLabel label={t("scheduleDialog.topic")}>
+                <input
+                  className={MOBILE_INPUT}
+                  value={topic}
+                  placeholder={t("scheduleDialog.topicPlaceholder")}
+                  onChange={(event) => setTopic(event.target.value)}
+                />
+              </MobileFieldLabel>
 
-          <div className="flex items-center gap-3">
-            <MobileToggle
-              items={[
-                { id: "once", label: t("schedule.repeatOnce") },
-                { id: "weekly", label: t("schedule.repeatWeekly") },
-              ]}
-              value={repeat ? "weekly" : "once"}
-              onChange={(value) => setRepeat(value === "weekly")}
-            />
-            <span
-              className={`flex h-13 min-w-0 flex-1 items-center rounded-full bg-subtle px-1.5 transition-opacity ${
-                repeat ? "" : "opacity-50"
-              }`}
-            >
-              <button
-                type="button"
-                className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
-                disabled={!repeat || weeks <= MIN_WEEKS}
-                aria-label={t("scheduleDialog.fewerWeeks")}
-                onClick={() => setWeeks((value) => Math.max(MIN_WEEKS, value - 1))}
-              >
-                <Icon name="remove" size={20} />
-              </button>
-              <span className="min-w-0 flex-1 truncate text-center text-body-sm font-semibold text-ink">
-                {t("scheduleDialog.weeksValue", { count: weeks })}
-              </span>
-              <button
-                type="button"
-                className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
-                disabled={!repeat || weeks >= MAX_WEEKS}
-                aria-label={t("scheduleDialog.moreWeeks")}
-                onClick={() => setWeeks((value) => Math.min(MAX_WEEKS, value + 1))}
-              >
-                <Icon name="add" size={20} />
-              </button>
-            </span>
-          </div>
+              <div className="grid grid-cols-2 gap-3">
+                <MobileFieldLabel label={t("scheduleDialog.date")}>
+                  <MobilePickerField
+                    type="date"
+                    value={date}
+                    min={today()}
+                    display={dateLabel}
+                    ariaLabel={t("scheduleDialog.date")}
+                    onChange={setDate}
+                  />
+                </MobileFieldLabel>
+                <MobileFieldLabel label={t("schedule.time")}>
+                  <MobilePickerField
+                    type="time"
+                    value={time}
+                    display={time}
+                    ariaLabel={t("schedule.time")}
+                    onChange={setTime}
+                  />
+                </MobileFieldLabel>
+              </div>
 
-          <MobileFieldLabel label={t("scheduleDialog.duration")}>
-            <MobileChoiceChips items={DURATIONS} value={duration} onChange={setDuration} />
-          </MobileFieldLabel>
+              {repeat ? (
+                <span className="flex h-13 min-w-0 items-center rounded-full bg-subtle px-1.5">
+                  <button
+                    type="button"
+                    className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
+                    disabled={weeks <= MIN_WEEKS}
+                    aria-label={t("scheduleDialog.fewerWeeks")}
+                    onClick={() => setWeeks((value) => Math.max(MIN_WEEKS, value - 1))}
+                  >
+                    <Icon name="remove" size={20} />
+                  </button>
+                  <span className="min-w-0 flex-1 truncate text-center text-body-sm font-semibold text-ink">
+                    {t("scheduleDialog.weeksValue", { count: weeks })}
+                  </span>
+                  <button
+                    type="button"
+                    className="grid size-9 shrink-0 place-items-center rounded-full bg-surface text-ink disabled:opacity-50"
+                    disabled={weeks >= MAX_WEEKS}
+                    aria-label={t("scheduleDialog.moreWeeks")}
+                    onClick={() => setWeeks((value) => Math.min(MAX_WEEKS, value + 1))}
+                  >
+                    <Icon name="add" size={20} />
+                  </button>
+                </span>
+              ) : null}
 
+              <MobileFieldLabel label={t("scheduleDialog.duration")}>
+                <MobileChoiceChips items={DURATIONS} value={duration} onChange={setDuration} />
+              </MobileFieldLabel>
+            </>
+          )}
         </div>
       </AppDialog>
     );
@@ -225,6 +270,7 @@ export function NewLessonDialog({
       open={open}
       onOpenChange={onOpenChange}
       variant="confirm"
+      width={bulk ? "lg:w-160" : undefined}
       title={t("scheduleDialog.title")}
       description={t("scheduleDialog.description")}
       footer={
@@ -234,7 +280,7 @@ export function NewLessonDialog({
           disabled={!canSubmit}
           onClick={submit}
         >
-          {t("scheduleDialog.submit")}
+          {bulk ? t("bulk.submit", { count: rows.length }) : t("scheduleDialog.submit")}
         </button>
       }
     >
@@ -247,56 +293,64 @@ export function NewLessonDialog({
           options={courses.map((course) => ({ value: course.id, label: course.title }))}
         />
 
-        <label className="flex flex-col gap-2">
-          <span className="text-body-xs text-ink-secondary">{t("scheduleDialog.topic")}</span>
-          <input
-            autoFocus
-            className="h-12.5 w-full rounded-md border border-transparent bg-subtle px-4 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
-            value={topic}
-            placeholder={t("scheduleDialog.topicPlaceholder")}
-            onChange={(event) => setTopic(event.target.value)}
-          />
-        </label>
-
-        <div className="flex w-fit items-center gap-1 rounded-full bg-subtle p-1">
-          {[false, true].map((mode) => (
+        <div className="flex w-fit items-center gap-1 rounded-full bg-subtle p-1" role="radiogroup">
+          {desktopModes.map((item) => (
             <button
-              key={String(mode)}
+              key={item.id}
               type="button"
+              role="radio"
+              aria-checked={(bulk ? "bulk" : mode) === item.id}
               className={`flex h-8 items-center rounded-full px-4 text-button transition-colors ${
-                repeat === mode ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
+                (bulk ? "bulk" : mode) === item.id ? "bg-brand text-ink-inverse" : "text-ink-secondary hover:text-ink"
               }`}
-              onClick={() => setRepeat(mode)}
+              onClick={() => changeMode(item.id)}
             >
-              {mode ? t("scheduleDialog.repeating") : t("scheduleDialog.single")}
+              {item.label}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-2 items-start gap-3">
-          <DatePicker label={t("scheduleDialog.date")} value={date} onChange={setDate} />
-          <TimePicker label={t("scheduleDialog.start")} value={time} onChange={setTime} />
-        </div>
+        {bulk ? (
+          <BulkLessonRows rows={rows} errors={rowErrors} onChange={changeRows} />
+        ) : (
+          <>
+            <label className="flex flex-col gap-2">
+              <span className="text-body-xs text-ink-secondary">{t("scheduleDialog.topic")}</span>
+              <input
+                autoFocus
+                className="h-12.5 w-full rounded-md border border-transparent bg-subtle px-4 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
+                value={topic}
+                placeholder={t("scheduleDialog.topicPlaceholder")}
+                onChange={(event) => setTopic(event.target.value)}
+              />
+            </label>
 
-        <div className="flex flex-col gap-2">
-          <span className="text-body-xs text-ink-secondary">{t("scheduleDialog.duration")}</span>
-          <div className="grid grid-cols-4 gap-2">
-            {DURATIONS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={`flex h-10 items-center justify-center rounded-full text-button transition-colors ${
-                  duration === value
-                    ? "bg-brand text-ink-inverse"
-                    : "text-ink-secondary hover:bg-subtle"
-                }`}
-                onClick={() => setDuration(value)}
-              >
-                {value}
-              </button>
-            ))}
-          </div>
-        </div>
+            <div className="grid grid-cols-2 items-start gap-3">
+              <DatePicker label={t("scheduleDialog.date")} value={date} onChange={setDate} />
+              <TimePicker label={t("scheduleDialog.start")} value={time} onChange={setTime} />
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <span className="text-body-xs text-ink-secondary">{t("scheduleDialog.duration")}</span>
+              <div className="grid grid-cols-4 gap-2">
+                {DURATIONS.map((value) => (
+                  <button
+                    key={value}
+                    type="button"
+                    className={`flex h-10 items-center justify-center rounded-full text-button transition-colors ${
+                      duration === value
+                        ? "bg-brand text-ink-inverse"
+                        : "text-ink-secondary hover:bg-subtle"
+                    }`}
+                    onClick={() => setDuration(value)}
+                  >
+                    {value}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </AppDialog>
   );
