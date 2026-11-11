@@ -65,6 +65,14 @@ export function mapConversationDto(dto: ChatRoomDto): Conversation {
     ...(dto.can_comment === undefined ? {} : { canComment: Boolean(dto.can_comment) }),
     unpaidCount: dto.unpaid_count ?? null,
     overdueCount: dto.overdue_count ?? null,
+    ...(dto.course_kind === undefined ? {} : { courseKind: dto.course_kind === "club" ? "club" : dto.course_kind ? "group" : null }),
+    ...(dto.courses || dto.course_ids
+      ? {
+          linkedCourses: dto.courses
+            ? dto.courses.map((course) => ({ id: String(course.id), title: course.title ?? "" }))
+            : (dto.course_ids ?? []).map((id) => ({ id: String(id), title: "" })),
+        }
+      : {}),
   };
 }
 

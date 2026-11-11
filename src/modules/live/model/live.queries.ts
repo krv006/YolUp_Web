@@ -1,8 +1,10 @@
+import { useCallback } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useBoardChannel, type BoardSocketEvent } from "@/modules/board";
 import { AppError } from "@/shared/api";
 import { liveApi } from "../api/live.api";
-import type { MediaKind, MediaMode, RoomToken } from "../api/live.dto";
+import type { AttentionCheck, MediaKind, MediaMode, RoomToken } from "../api/live.dto";
 
 export const liveKeys = Object.freeze({
   all: ["live"] as const,
@@ -74,14 +76,25 @@ export function useLiveToken(lessonId: string | undefined, enabled: boolean) {
 
 // Tekshiruv oynasi 15 soniya (+8 s server imtiyozi). 6 s oraliqda o'quvchi eng kechi bilan 9 soniya qoladi; 3 s dan 2 barobar
 // kam so'rov (1 500 o'quvchida ~500 -> ~250 so'rov/s). Oraliqni 8 s dan oshirmang — oyna juda qisqa qoladi.
-const ATTENTION_POLL_MS = 6000;
+const ATTENTION_FALLBACK_POLL_MS = 60_000;
 
 export function useAttentionCheck(lessonId: string | undefined, enabled: boolean) {
+  const client = useQueryClient();
+  const active = Boolean(lessonId && enabled);
+  const handleEvent = useCallback(
+    (event: BoardSocketEvent) => {
+      if (event.type !== "attention" || !lessonId) return;
+      const check: AttentionCheck = { id: event.checkId, dueAt: event.dueAt };
+      client.setQueryData(liveKeys.attention(lessonId), check);
+    },
+    [client, lessonId]
+  );
+  useBoardChannel(lessonId ?? "", active, handleEvent);
   return useQuery({
     queryKey: liveKeys.attention(lessonId ?? ""),
     queryFn: ({ signal }) => liveApi.getAttention(lessonId as string, { signal }),
-    enabled: Boolean(lessonId && enabled),
-    refetchInterval: ATTENTION_POLL_MS,
+    enabled: active,
+    refetchInterval: ATTENTION_FALLBACK_POLL_MS,
   });
 }
 

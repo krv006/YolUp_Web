@@ -524,7 +524,8 @@
     "shareConfirm": "Send",
     "shareCancel": "Cancel",
     "shareDone": "Results posted to the group chat",
-    "shareDoneParents": "Results posted · {{count}} observers notified"
+    "shareDoneParents": "Results posted · {{count}} observers notified",
+    "hardestEmpty": "No questions with mistakes yet"
   },
   "newTest": {
     "title": "New test",
@@ -542,7 +543,9 @@
     },
     "cancel": "Cancel",
     "continue": "Continue",
-    "mobileTitle": "New test · 1/2"
+    "mobileTitle": "New test · 1/2",
+    "noGroup": "Save without a group",
+    "noGroupHint": "A test without a group is visible only to you. Give it to a group later with \"Give to group\"."
   },
   "importDialog": {
     "title": "Import questions",
@@ -555,7 +558,24 @@
     "found": "{{count}} questions found · {{warnings}} warnings",
     "warningLine": "Question {{number}}: {{reason}}",
     "cancel": "Cancel",
-    "submit": "Import"
+    "submit": "Import",
+    "sources": {
+      "docx": {
+        "title": "Import from Word",
+        "description": "Questions come from a .docx file",
+        "pickHint": "Only .docx. Single and multiple choice questions are imported"
+      },
+      "xlsx": {
+        "title": "Import from Excel",
+        "description": "Questions come from an .xlsx sheet",
+        "pickHint": "Only .xlsx. Single and multiple choice questions are imported"
+      },
+      "google": {
+        "title": "Import from Google Forms",
+        "description": "Questions come from a Google form or document",
+        "label": "Google Forms link"
+      }
+    }
   },
   "attemptsDrawer": {
     "title": "Attempts",
@@ -641,5 +661,33 @@
     "noDue": "No deadline",
     "questions": "Questions",
     "questionsLocked": "Questions — can’t be changed"
+  },
+  "audience": {
+    "title": "Who can open it",
+    "edit": "Change",
+    "noGroup": "The test hasn't been given to a group yet.",
+    "loading": "Loading...",
+    "empty": "No students in the group",
+    "everyone": "Every student in the group ({{count}})",
+    "restricted": "Given to {{count}} of {{total}} students",
+    "attempted": "Submitted",
+    "notAttempted": "Not submitted",
+    "studentsLabel": "Students",
+    "selected": "{{count}} / {{total}}",
+    "selectAll": "Select all",
+    "clearAll": "Clear all",
+    "pickOne": "Pick at least one student",
+    "editTitle": "Who can open it",
+    "editHint": "Checked students see and take the test. Newly added ones get a notification.",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Student list saved"
+  },
+  "paid": {
+    "title": "Test creation is a paid service",
+    "description": "Test creation isn't enabled for your account. You can still assign, edit and review results of your existing tests. Contact an administrator to enable it.",
+    "contact": "Help center",
+    "close": "Close",
+    "badge": "Paid service"
   }
 }

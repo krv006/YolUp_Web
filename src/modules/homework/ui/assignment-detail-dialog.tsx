@@ -51,7 +51,9 @@ function SubmissionRow({ submission, onOpenResult }: { submission: Submission; o
       <div className="submission-row-main">
         <strong>{submission.studentName || t("detailDialog.defaultStudent")}</strong>
         <small>
-          <FileText size={12} /> {submission.fileName || t("detailDialog.defaultFile")}
+          <FileText size={12} />{" "}
+          {submission.fileName ||
+            (submission.comment ? t("detailDialog.textAnswer") : t("detailDialog.defaultFile"))}
           {submission.isLate ? <em className="is-late"> · {t("detailDialog.lateSuffix")}</em> : null}
         </small>
       </div>
@@ -68,24 +70,28 @@ function SubmissionRow({ submission, onOpenResult }: { submission: Submission; o
         )}
       </span>
       <div className="submission-row-actions">
-        <button
-          className="icon-button"
-          aria-label={t("detailDialog.downloadSubmissionAria")}
-          disabled={download.isPending}
-          onClick={() =>
-            download.mutate({ id: submission.id, fileName: submission.fileName })
-          }
-        >
-          <Download size={16} />
-        </button>
-        <button
-          className="icon-button"
-          aria-label={t("detailDialog.recheckAria")}
-          disabled={recheck.isPending || submission.status === "checking"}
-          onClick={() => recheck.mutate(submission.id)}
-        >
-          <RefreshCw size={16} />
-        </button>
+        {submission.files.length ? (
+          <>
+            <button
+              className="icon-button"
+              aria-label={t("detailDialog.downloadSubmissionAria")}
+              disabled={download.isPending}
+              onClick={() =>
+                download.mutate({ id: submission.id, fileName: submission.fileName })
+              }
+            >
+              <Download size={16} />
+            </button>
+            <button
+              className="icon-button"
+              aria-label={t("detailDialog.recheckAria")}
+              disabled={recheck.isPending || submission.status === "checking"}
+              onClick={() => recheck.mutate(submission.id)}
+            >
+              <RefreshCw size={16} />
+            </button>
+          </>
+        ) : null}
         <Button size="sm" variant="secondary" onClick={() => onOpenResult(submission)}>
           {t("detailDialog.result")}
         </Button>

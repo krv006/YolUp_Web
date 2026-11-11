@@ -15,7 +15,8 @@
     "unsupportedType": "Этот тип файла не поддерживается",
     "allowedTypes": "Разрешено: {{types}}",
     "audioOnlySpeaking": "Аудио только для заданий Speaking",
-    "fileTooLarge": "Файл больше 25 МБ"
+    "fileTooLarge": "Файл больше 25 МБ",
+    "fileOrComment": "Загрузите файл или напишите ответ в комментарии"
   },
   "status": {
     "checking": "Проверяется",
@@ -41,7 +42,8 @@
     "scorePoints": "{{score}} баллов",
     "downloadSubmissionAria": "Скачать сданный файл",
     "recheckAria": "Проверить снова",
-    "result": "Результат"
+    "result": "Результат",
+    "textAnswer": "Текстовый ответ"
   },
   "resultDialog": {
     "defaultTitle": "Результат проверки ИИ",
@@ -73,7 +75,10 @@
     "mistakes": "Ошибки",
     "suggestions": "Рекомендации",
     "defaultFileName": "Работа",
-    "scoreRange": "Общий балл должен быть от 0 до 100"
+    "scoreRange": "Общий балл должен быть от 0 до 100",
+    "aiFailedTitle": "ИИ не смог оценить — оцените сами",
+    "aiNone": "Эта работа не проверялась ИИ. Оценку ставите вы.",
+    "checkingSince": "Проверяется с {{time}}"
   },
   "report": {
     "noGrade": "Без оценки",
@@ -142,7 +147,10 @@
     "announce": "Объявить в чате группы",
     "announceHint": "Карточка задания уйдёт в чат",
     "draft": "Черновик",
-    "submit": "Отправить"
+    "submit": "Отправить",
+    "googleForm": "Ссылка на Google Form (необязательно)",
+    "googleFormHint": "Ученик заполнит форму, затем сдаст работу здесь с комментарием",
+    "googleFormInvalid": "Нужна ссылка Google Form: forms.gle/… или docs.google.com/forms/…"
   },
   "review": {
     "back": "Назад",
@@ -172,7 +180,10 @@
     "resubmit": "На доработку",
     "confirm": "Подтвердить",
     "studentComment": "Комментарий ученика",
-    "files": "Файлы · {{count}}"
+    "files": "Файлы · {{count}}",
+    "textAnswer": "Текстовый ответ ученика",
+    "aiFailed": "ИИ не смог оценить — оцените сами",
+    "aiFailedHint": "Просмотрите работу и поставьте оценку сами"
   },
   "workspace": {
     "emptyTitle": "Задания ещё не выданы",
@@ -433,5 +444,9 @@
     "yourChoice": "(выбор)",
     "noAnswer": "Нет ответа",
     "aiScore": "Оценка ИИ: {{score}}"
+  },
+  "googleForm": {
+    "open": "Открыть Google Form",
+    "hint": "Заполните форму, затем сдайте работу здесь с комментарием"
   }
 }

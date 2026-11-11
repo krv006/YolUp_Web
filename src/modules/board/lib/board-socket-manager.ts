@@ -23,6 +23,7 @@ export type BoardSocketEvent =
   | { type: "mic_revoked"; studentId: string }
   | { type: "camera_revoked"; studentId: string }
   | { type: "media_mode"; openMic: boolean; openCamera: boolean }
+  | { type: "attention"; checkId: string; dueAt: string }
   | { type: "error"; detail: string };
 
 interface RawBoardEvent {
@@ -39,6 +40,7 @@ interface RawBoardEvent {
   detail?: string;
   open_mic?: boolean;
   open_camera?: boolean;
+  check?: { id?: string | number; due_at?: string } | null;
 }
 
 export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
@@ -98,6 +100,10 @@ export function parseBoardEvent(raw: unknown): BoardSocketEvent | null {
       return event.student_id ? { type: "camera_revoked", studentId: String(event.student_id) } : null;
     case "media_mode":
       return { type: "media_mode", openMic: Boolean(event.open_mic), openCamera: Boolean(event.open_camera) };
+    case "attention":
+      return event.check?.id
+        ? { type: "attention", checkId: String(event.check.id), dueAt: event.check.due_at ?? "" }
+        : null;
     case "error":
       return { type: "error", detail: event.detail || "Doska ulanishida xatolik" };
     default:

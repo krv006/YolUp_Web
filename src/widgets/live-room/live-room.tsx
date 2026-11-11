@@ -53,6 +53,7 @@ import {
   CAMERA_SOURCE,
   canPublishSource,
   decodeScreenShareRequest,
+  describeShareTrack,
   hasLiveVideo,
   LessonInviteDialog,
   MediaPermissionDialog,
@@ -83,6 +84,7 @@ import { Switch } from "@/shared/ui/switch";
 import { Avatar } from "@/shared/ui/legacy";
 import { MobileLiveRoom } from "./mobile-live-room";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
+import { useShareSourceText } from "./use-share-source-text";
 import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
 import { useDocumentPip } from "./use-document-pip";
@@ -170,8 +172,6 @@ function CameraTile({
   );
 }
 
-const SURFACES = ["browser", "window", "monitor"] as const;
-
 function LocalSharePreview({ stream }: { stream: MediaStream }) {
   const ref = useRef<HTMLVideoElement>(null);
 
@@ -196,11 +196,10 @@ function ShareStage({
   localStream: MediaStream | null;
 }) {
   const { t } = useTranslation("live");
+  const sourceText = useShareSourceText();
   const local = track.participant.isLocal;
-  const surface = localStream?.getVideoTracks()[0]?.getSettings().displaySurface;
-  const surfaceLabel = SURFACES.find((item) => item === surface);
   const caption = local
-    ? [t("share.previewSelf"), surfaceLabel ? t(`share.surface.${surfaceLabel}`) : ""].filter(Boolean).join(" · ")
+    ? `${t("share.previewSelf")} · ${sourceText(describeShareTrack(localStream?.getVideoTracks()[0]))}`
     : t("share.previewRemote", { name: firstName(track.participant.name || track.participant.identity) });
 
   return (
@@ -543,6 +542,8 @@ function TeacherShareControl({
   const warnedRef = useRef(false);
   const pip = useDocumentPip({ width: 380, height: 200, title: t("share.pipTitle") });
   const { supported: pipSupported, open: openPip, close: closePip } = pip;
+  const sourceText = useShareSourceText();
+  const sharedWhat = sourceText(describeShareTrack(screenStream.getVideoTracks()[0]));
 
   useEffect(() => {
     if (!sharing) closePip();
@@ -681,6 +682,7 @@ function TeacherShareControl({
       {pip.pipWindow ? (
         <ShareControlWindow
           pipWindow={pip.pipWindow}
+          sharedWhat={sharedWhat}
           startedAt={startedAt}
           studentCount={studentCount}
           controls={
@@ -845,6 +847,8 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
   const screenTracks = tracks.filter((track) => track.source === Track.Source.ScreenShare);
   const cameraTracks = tracks.filter((track) => track.source === Track.Source.Camera);
   const activeShare = screenTracks[0] ?? null;
+  const localShare = screenTracks.find((track) => track.participant.isLocal) ?? null;
+  const shareSourceText = useShareSourceText();
   const pendingRequestsCount = mic.requests.length + camera.requests.length;
 
   const audioRecording = useTeacherAudioRecording(lesson.id, audioMediaTracks, isTeacher);
@@ -1039,6 +1043,18 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
             {connected ? "" : ` · ${connectionLabels[connectionState] ?? connectionState}`}
           </small>
         </div>
+
+        {isTeacher && localShare ? (
+          <span
+            className="flex h-6 max-w-80 shrink-0 items-center gap-1.5 rounded-full bg-brand-subtle px-3 text-caption-strong text-brand"
+            role="status"
+          >
+            <MonitorUp size={14} className="shrink-0" />
+            <span className="truncate">
+              {t("share.sharingWhat", { what: shareSourceText(describeShareTrack(screenStream?.getVideoTracks()[0])) })}
+            </span>
+          </span>
+        ) : null}
 
         {recordingChips.length ? <RecordingChip startedAt={lessonStartedAt} /> : null}
 

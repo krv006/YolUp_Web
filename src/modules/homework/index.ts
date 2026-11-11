@@ -14,6 +14,10 @@ export type {
 export { HOMEWORK_EXTENSIONS, HOMEWORK_MAX_FILE_SIZE, HOMEWORK_SKILLS } from "./constants/homework.constants";
 export { defaultMaxScore, mapAiResultDto, mapAssignmentDto, mapAssignmentRequest, mapHomeworkReportDto, mapSubmissionDto } from "./lib/homework.mappers";
 export { validateHomeworkFile } from "./lib/homework-validation";
+export { submissionAiState } from "./lib/submission-ai-state";
+export { googleFormUrlInvalid, isGoogleFormUrl } from "./lib/google-form";
+export { GoogleFormField } from "./ui/google-form-field";
+export { GoogleFormLink } from "./ui/google-form-link";
 export {
   draftsFromQuestions,
   isTestQuestion,

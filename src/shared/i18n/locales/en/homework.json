@@ -15,7 +15,8 @@
     "unsupportedType": "This file type isn't supported",
     "allowedTypes": "Allowed: {{types}}",
     "audioOnlySpeaking": "Audio is only for Speaking assignments",
-    "fileTooLarge": "File is larger than 25 MB"
+    "fileTooLarge": "File is larger than 25 MB",
+    "fileOrComment": "Upload a file or write your answer in the comment"
   },
   "status": {
     "checking": "Checking",
@@ -41,7 +42,8 @@
     "scorePoints": "{{score}} pts",
     "downloadSubmissionAria": "Download the submitted file",
     "recheckAria": "Recheck",
-    "result": "Result"
+    "result": "Result",
+    "textAnswer": "Written answer"
   },
   "resultDialog": {
     "defaultTitle": "AI review result",
@@ -73,7 +75,10 @@
     "mistakes": "Mistakes",
     "suggestions": "Suggestions",
     "defaultFileName": "Submission",
-    "scoreRange": "The overall score must be between 0 and 100"
+    "scoreRange": "The overall score must be between 0 and 100",
+    "aiFailedTitle": "AI couldn’t grade this — grade it yourself",
+    "aiNone": "This submission wasn’t checked by AI. You set the grade.",
+    "checkingSince": "Checking since {{time}}"
   },
   "report": {
     "noGrade": "No grade",
@@ -142,7 +147,10 @@
     "announce": "Announce in the group chat",
     "announceHint": "The assignment card goes to the chat",
     "draft": "Draft",
-    "submit": "Send"
+    "submit": "Send",
+    "googleForm": "Google Form link (optional)",
+    "googleFormHint": "Students fill in the form, then submit here with a note",
+    "googleFormInvalid": "Use a Google Form link: forms.gle/… or docs.google.com/forms/…"
   },
   "review": {
     "back": "Back",
@@ -172,7 +180,10 @@
     "resubmit": "Return",
     "confirm": "Confirm",
     "studentComment": "Student's note",
-    "files": "Files · {{count}}"
+    "files": "Files · {{count}}",
+    "textAnswer": "Student’s written answer",
+    "aiFailed": "AI couldn’t grade this — grade it yourself",
+    "aiFailedHint": "Review the work and set the grade yourself"
   },
   "workspace": {
     "emptyTitle": "No homework yet",
@@ -431,5 +442,9 @@
     "yourChoice": "(your choice)",
     "noAnswer": "No answer",
     "aiScore": "AI score: {{score}}"
+  },
+  "googleForm": {
+    "open": "Open Google Form",
+    "hint": "Fill in the form, then submit here with a note"
   }
 }

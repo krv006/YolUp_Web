@@ -58,6 +58,8 @@ export interface SubmissionDto {
   teacher_comment?: string | null;
   files?: Array<{ name?: string | null; size?: number | null; mime?: string | null; index?: number | null }> | null;
   answers?: HomeworkAnswerDto[] | null;
+  ai_state?: "checking" | "ready" | "failed" | "none" | null;
+  ai_checking_since?: string | null;
 }
 
 export interface HomeworkQuestionDto {
@@ -137,6 +139,7 @@ export interface AssignmentDto {
   body?: string;
   attachment_name?: string;
   has_attachment?: boolean;
+  google_form_url?: string | null;
   due_at: string | null;
   skill_key?: string;
   lesson_id?: string | number | null;
@@ -213,4 +216,5 @@ export interface AssignmentFormInput {
   grading?: GradingScale;
   maxScore?: number;
   questions?: HomeworkQuestionInput[];
+  googleFormUrl?: string;
 }

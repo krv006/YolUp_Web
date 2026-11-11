@@ -431,5 +431,26 @@
     "noteFailed": "Couldn't save the note",
     "reasonLine": "Reason: {{text}}",
     "noteLine": "Note: {{text}}"
+  },
+  "bulk": {
+    "mode": "Several lessons",
+    "modeShort": "Several",
+    "topicPlaceholder": "Lesson topic",
+    "topicAria": "Lesson {{number}} topic",
+    "date": "Date",
+    "time": "Start",
+    "duration": "Duration",
+    "dateAria": "Lesson {{number}} date",
+    "timeAria": "Lesson {{number}} time and duration",
+    "remove": "Remove lesson {{number}}",
+    "addRow": "Add another lesson",
+    "limit": "{{count}} / {{max}} lessons",
+    "past": "This time has already passed",
+    "overlap": "Overlaps another lesson in this list",
+    "busy": "«{{title}}» is already at this time",
+    "submit_one": "Save {{count}} lesson",
+    "submit_other": "Save {{count}} lessons",
+    "saved_one": "{{count}} lesson added",
+    "saved_other": "{{count}} lessons added"
   }
 }

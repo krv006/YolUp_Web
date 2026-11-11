@@ -56,6 +56,45 @@ export interface QuizSummaryDto {
   opens_at: string | null;
   question_count: number;
   created_at: string;
+  student_ids?: Array<string | number> | null;
+}
+
+export interface QuizAudienceDto {
+  restricted?: boolean;
+  total?: number;
+  assigned_count?: number;
+  students?: Array<{
+    id: string | number;
+    name?: string | null;
+    username?: string | null;
+    avatar_url?: string | null;
+    assigned?: boolean;
+    can_attend?: boolean;
+    attempted?: boolean;
+  }>;
+}
+
+export interface QuizAudienceStudent {
+  id: string;
+  name: string;
+  username: string;
+  avatarUrl: string | null;
+  assigned: boolean;
+  attempted: boolean;
+}
+
+export interface QuizAudience {
+  restricted: boolean;
+  total: number;
+  assignedCount: number;
+  students: QuizAudienceStudent[];
+}
+
+export interface QuizAssignInput {
+  quizId: string;
+  courseId: string;
+  dueAt?: string | null;
+  studentIds?: string[] | null;
 }
 
 export interface QuizGroupDto {

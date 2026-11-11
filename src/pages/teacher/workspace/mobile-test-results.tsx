@@ -28,6 +28,7 @@ export interface MobileTestResultsProps {
   onBack: () => void;
   onAttempts: () => void;
   onShare: () => void;
+  extra?: ReactNode;
 }
 
 function percentTone(value: number): string {
@@ -45,6 +46,7 @@ export function MobileTestResults({
   onBack,
   onAttempts,
   onShare,
+  extra,
 }: MobileTestResultsProps) {
   const { t } = useTranslation("quiz");
 
@@ -114,6 +116,7 @@ export function MobileTestResults({
           {t("results.empty")}
         </p>
       )}
+      {extra ? <div className="mt-5">{extra}</div> : null}
     </main>
   );
 }

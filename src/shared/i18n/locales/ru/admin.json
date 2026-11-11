@@ -96,7 +96,11 @@
     "noTeachers": "Учителя не найдены.",
     "viewLabel": "Вид",
     "viewPending": "Ждут подтверждения ({{count}})",
-    "viewAll": "Все учителя ({{count}})"
+    "viewAll": "Все учителя ({{count}})",
+    "testAccess": "Создание тестов",
+    "testAccessAria": "Создание тестов для {{name}}",
+    "testAccessOn": "Создание тестов для {{name}} включено",
+    "testAccessOff": "Создание тестов для {{name}} отключено"
   },
   "storage": {
     "eyebrow": "ХРАНИЛИЩЕ",

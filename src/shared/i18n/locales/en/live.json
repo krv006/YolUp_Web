@@ -178,7 +178,8 @@
     "surface": {
       "browser": "Browser tab",
       "window": "Window",
-      "monitor": "Entire screen"
+      "monitor": "Entire screen",
+      "unknown": "Screen"
     },
     "pipTitle": "YolUp · lesson controls",
     "pipSharing": "Sharing your screen",
@@ -188,7 +189,8 @@
     "pipOpen": "Control window",
     "pipOpenTitle": "Open the control window — it stays on top of other windows",
     "pipFailed": "Couldn't open the control window",
-    "pipUnsupported": "If you switch to another window, the lesson buttons won't be visible. Use Chrome or Edge for the mini control window."
+    "pipUnsupported": "If you switch to another window, the lesson buttons won't be visible. Use Chrome or Edge for the mini control window.",
+    "sharingWhat": "Sharing: {{what}}"
   },
   "participantsPanel": {
     "micRequestsAria": "Students requesting the microphone",

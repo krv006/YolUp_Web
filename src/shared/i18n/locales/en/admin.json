@@ -96,7 +96,11 @@
     "noTeachers": "No teachers found.",
     "viewLabel": "View",
     "viewPending": "Awaiting approval ({{count}})",
-    "viewAll": "All teachers ({{count}})"
+    "viewAll": "All teachers ({{count}})",
+    "testAccess": "Test creation",
+    "testAccessAria": "Test creation for {{name}}",
+    "testAccessOn": "Test creation enabled for {{name}}",
+    "testAccessOff": "Test creation disabled for {{name}}"
   },
   "storage": {
     "eyebrow": "STORAGE",

@@ -1,5 +1,6 @@
 export const lessonEndpoints = Object.freeze({
   list: "/api/v1/lessons/",
+  bulk: "/api/v1/lessons/bulk/",
   detail: (id: string) => `/api/v1/lessons/${id}/`,
   finish: (id: string) => `/api/v1/lessons/${id}/finish/`,
   cancel: (id: string) => `/api/v1/lessons/${id}/cancel/`,

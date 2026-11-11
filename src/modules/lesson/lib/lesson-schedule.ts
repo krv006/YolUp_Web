@@ -60,14 +60,14 @@ export function buildScheduleDates({ startsOn, endsOn, weekdays }: ScheduleInput
   return dates;
 }
 
-function toMinutes(date: string, time: string): number | null {
+export function toMinutes(date: string, time: string): number | null {
   const [year, month, day] = date.split("-").map(Number);
   const [hours, minutes] = (time || "").split(":").map(Number);
   if (!year || !month || !day || Number.isNaN(hours) || Number.isNaN(minutes)) return null;
   return Date.UTC(year, month - 1, day, hours, minutes) / 60_000;
 }
 
-function overlaps(startA: number, lengthA: number, startB: number, lengthB: number): boolean {
+export function overlaps(startA: number, lengthA: number, startB: number, lengthB: number): boolean {
   return startA < startB + lengthB && startB < startA + lengthA;
 }
 

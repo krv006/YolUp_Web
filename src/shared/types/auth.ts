@@ -54,6 +54,7 @@ export interface AuthUser {
   mustChangePassword: boolean;
   grade: string | null;
   linkedAccounts: LinkedAccount[];
+  canCreateTests?: boolean;
   middleName: string | null;
   birthDate: string | null;
   subject: string | null;

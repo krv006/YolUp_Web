@@ -431,5 +431,30 @@
     "noteFailed": "Не удалось сохранить комментарий",
     "reasonLine": "Причина: {{text}}",
     "noteLine": "Комментарий: {{text}}"
+  },
+  "bulk": {
+    "mode": "Несколько уроков",
+    "modeShort": "Несколько",
+    "topicPlaceholder": "Тема урока",
+    "topicAria": "Тема урока {{number}}",
+    "date": "Дата",
+    "time": "Начало",
+    "duration": "Длительность",
+    "dateAria": "Дата урока {{number}}",
+    "timeAria": "Время и длительность урока {{number}}",
+    "remove": "Убрать урок {{number}}",
+    "addRow": "Добавить ещё урок",
+    "limit": "{{count}} / {{max}} уроков",
+    "past": "Это время уже прошло",
+    "overlap": "Совпадает по времени с другим уроком из списка",
+    "busy": "В это время уже есть урок «{{title}}»",
+    "submit_one": "Сохранить {{count}} урок",
+    "submit_few": "Сохранить {{count}} урока",
+    "submit_many": "Сохранить {{count}} уроков",
+    "submit_other": "Сохранить {{count}} урока",
+    "saved_one": "Добавлен {{count}} урок",
+    "saved_few": "Добавлено {{count}} урока",
+    "saved_many": "Добавлено {{count}} уроков",
+    "saved_other": "Добавлено {{count}} урока"
   }
 }

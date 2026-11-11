@@ -15,7 +15,9 @@ import {
   usePublishQuiz,
   useQuizAttempts,
   useQuizzes,
-  useUpdateQuiz,
+  PaidTestDialog,
+  usePaidTestGate,
+  type QuizImportSource,
 } from "@/modules/quiz";
 import { NewTestDialog, type NewTestDraft } from "./new-test-dialog";
 import { MobileTests } from "./mobile-tests";
@@ -38,7 +40,6 @@ export function TestsPage() {
   const subjectOptions = useSubjects();
   const publish = usePublishQuiz();
   const create = useCreateQuiz();
-  const update = useUpdateQuiz();
   const assign = useAssignQuizToCourse();
   const remove = useDeleteQuiz();
   const exportQuiz = useExportQuiz();
@@ -48,6 +49,8 @@ export function TestsPage() {
   const [exportOf, setExportOf] = useState<QuizSummary | null>(null);
   const [deleting, setDeleting] = useState<QuizSummary | null>(null);
   const [importOpen, setImportOpen] = useState(false);
+  const gate = usePaidTestGate();
+  const [importSource, setImportSource] = useState<QuizImportSource | null>(null);
   const [assignTarget, setAssignTarget] = useState<QuizSummary | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const attempts = useQuizAttempts(attemptsOf?.id ?? null, Boolean(attemptsOf));
@@ -138,6 +141,7 @@ export function TestsPage() {
 
   const dialogs = (
     <>
+      <PaidTestDialog open={gate.open} onOpenChange={gate.setOpen} />
       <NewTestDialog
         open={createOpen}
         onOpenChange={changeCreateOpen}
@@ -145,12 +149,16 @@ export function TestsPage() {
         subjects={(subjectOptions.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
         pending={create.isPending}
         onContinue={startTest}
-        onImport={() => setImportOpen(true)}
+        onImport={(source) => {
+          setImportSource(source);
+          setImportOpen(true);
+        }}
       />
 
       <QuizImportDialog
         open={importOpen}
         onOpenChange={setImportOpen}
+        source={importSource}
         request={{ topic: t("tests.importedTopic") }}
         onImported={(quiz) => {
           changeCreateOpen(false);
@@ -168,17 +176,8 @@ export function TestsPage() {
         quizzes={items.filter((quiz) => quiz.status !== DRAFT).map((quiz) => ({ id: quiz.id, label: quizDisplayTitle(quiz) }))}
         courses={courseOptions.map((course) => ({ id: course.id, label: course.label, studentCount: course.studentCount }))}
         pending={assign.isPending}
-        onSubmit={({ quizId, courseId, dueAt }) => {
-          const target = items.find((quiz) => quiz.id === quizId) ?? assignTarget;
-          assign.mutateAsync({ quizId, courseId }).then(() => {
-            if (dueAt && target) {
-              update.mutate({
-                id: target.id,
-                values: { dueAt },
-              });
-            }
-            setAssignTarget(null);
-          });
+        onSubmit={(value) => {
+          assign.mutateAsync(value).then(() => setAssignTarget(null));
         }}
       />
 
@@ -250,7 +249,8 @@ export function TestsPage() {
           onFilterChange={setFilter}
           onQueryChange={setQuery}
           onBack={() => navigate(ROUTES.teacher.workspace)}
-          onCreate={() => changeCreateOpen(true)}
+          onCreate={gate.guard(() => changeCreateOpen(true))}
+          createLocked={!gate.allowed}
           onEdit={(quiz) =>
             navigate(quiz.status === DRAFT ? ROUTES.teacher.test(quiz.id) : ROUTES.teacher.testEdit(quiz.id))
           }
@@ -271,7 +271,13 @@ export function TestsPage() {
       eyebrow={quizzes.isLoading ? t("tests.eyebrowLoading") : t("tests.eyebrow", { count: items.length })}
       title={t("tests.title")}
       action={
-        <button type="button" className={workspaceAction} onClick={() => changeCreateOpen(true)}>
+        <button
+          type="button"
+          className={workspaceAction}
+          title={gate.allowed ? undefined : t("paid.badge")}
+          onClick={gate.guard(() => changeCreateOpen(true))}
+        >
+          {gate.allowed ? null : <Icon name="lock" size={16} />}
           {t("tests.create")}
         </button>
       }
@@ -303,7 +309,16 @@ export function TestsPage() {
         >
           {t("tests.attempts")}
         </button>
-        <button type="button" className={workspaceGhostAction} onClick={() => setImportOpen(true)}>
+        <button
+          type="button"
+          className={workspaceGhostAction}
+          title={gate.allowed ? undefined : t("paid.badge")}
+          onClick={gate.guard(() => {
+            setImportSource(null);
+            setImportOpen(true);
+          })}
+        >
+          {gate.allowed ? null : <Icon name="lock" size={16} />}
           {t("tests.import")}
         </button>
       </div>
@@ -422,7 +437,13 @@ export function TestsPage() {
             <strong className="font-heading text-h2 text-ink">{t("tests.emptyTitle")}</strong>
             <p className="max-w-70 text-body-sm text-ink-secondary">{t("tests.emptyHint")}</p>
           </span>
-          <button type="button" className={workspaceAction} onClick={() => changeCreateOpen(true)}>
+          <button
+            type="button"
+            className={workspaceAction}
+            title={gate.allowed ? undefined : t("paid.badge")}
+            onClick={gate.guard(() => changeCreateOpen(true))}
+          >
+            {gate.allowed ? null : <Icon name="lock" size={16} />}
             {t("tests.create")}
           </button>
         </div>

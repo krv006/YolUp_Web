@@ -10,3 +10,7 @@ export function useIsStudent() {
 export function useRoleRoutes() {
   return useIsStudent() ? ROUTES.student : ROUTES.teacher;
 }
+
+export function useCanCreateTests() {
+  return useCurrentUser()?.canCreateTests !== false;
+}

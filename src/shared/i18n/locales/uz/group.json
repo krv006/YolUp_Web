@@ -183,7 +183,14 @@
       "timeShort": "Vaqt",
       "startShort": "Boshlanish",
       "durationMinutes": "Davomiyligi (daqiqa)",
-      "minutesValue": "{{count}} daqiqa"
+      "minutesValue": "{{count}} daqiqa",
+      "bulk": "Bir nechta dars",
+      "bulkSubtitle": "Har dars uchun mavzu va vaqtni kiriting",
+      "short": {
+        "single": "Bir marta",
+        "repeat": "Har hafta",
+        "bulk": "Bir nechta"
+      }
     },
     "conflict": {
       "singleTitle": "Bu vaqtda darsingiz bor",

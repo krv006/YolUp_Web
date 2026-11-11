@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+  ChannelAvatar,
   useAddChannelMembers,
   useDeleteChannel,
   useRemoveChannelMember,
+  useRemoveRoomImage,
+  useSetRoomImage,
   useUpdateChannel,
   type AudienceInput,
 } from "@/modules/conversation";
@@ -49,6 +53,28 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
   const remove = useDeleteChannel();
   const addMembers = useAddChannelMembers();
   const removeMember = useRemoveChannelMember();
+  const setImage = useSetRoomImage();
+  const removeImage = useRemoveRoomImage();
+  const imageRef = useRef<HTMLInputElement>(null);
+  const imageBusy = setImage.isPending || removeImage.isPending;
+  const linkedCourses = conversation.linkedCourses ?? [];
+
+  function uploadImage(file: File) {
+    setImage.mutate(
+      { roomId: conversation.id, image: file },
+      {
+        onSuccess: () => toast.success(t("channel.imageUpdated")),
+        onError: (error: Error) => toast.error(error.message),
+      }
+    );
+  }
+
+  function dropImage() {
+    removeImage.mutate(conversation.id, {
+      onSuccess: () => toast.success(t("channel.imageRemoved")),
+      onError: (error: Error) => toast.error(error.message),
+    });
+  }
 
   function save() {
     update.mutate(
@@ -91,9 +117,43 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
       >
         <div className="flex flex-col gap-4">
           <section className="flex flex-col items-center gap-2 text-center">
-            <span className="grid size-18 place-items-center rounded-2xl bg-brand-subtle text-brand">
-              <Icon name="campaign" size={32} />
+            <span className="relative">
+              <ChannelAvatar src={conversation.imageUrl} className="size-18 rounded-2xl" iconSize={32} />
+              {manage ? (
+                <>
+                  <input
+                    ref={imageRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      event.target.value = "";
+                      if (file) uploadImage(file);
+                    }}
+                  />
+                  <button
+                    type="button"
+                    className="absolute -right-2 -bottom-2 grid size-8 place-items-center rounded-full border border-line bg-surface text-ink shadow-sm transition-colors hover:bg-subtle disabled:opacity-60"
+                    aria-label={conversation.imageUrl ? t("channel.changeImage") : t("channel.addImage")}
+                    disabled={imageBusy}
+                    onClick={() => imageRef.current?.click()}
+                  >
+                    {imageBusy ? <Loader2 size={14} className="animate-spin" /> : <Icon name="camera" size={16} />}
+                  </button>
+                </>
+              ) : null}
             </span>
+            {manage && conversation.imageUrl ? (
+              <button
+                type="button"
+                className="mt-1 text-caption-strong text-error-text transition-opacity hover:opacity-80 disabled:opacity-50"
+                disabled={imageBusy}
+                onClick={dropImage}
+              >
+                {t("channel.removeImage")}
+              </button>
+            ) : null}
             {editing ? (
               <div className="flex w-full flex-col gap-2">
                 <input
@@ -152,6 +212,23 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
               </>
             )}
           </section>
+
+          {linkedCourses.length ? (
+            <section className="flex flex-col gap-2">
+              <strong className="text-title-sm text-ink">{t("channel.linkedGroups")}</strong>
+              <ul className="flex flex-wrap gap-2">
+                {linkedCourses.map((course) => (
+                  <li
+                    key={course.id}
+                    className="flex h-8 max-w-full items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink"
+                  >
+                    <Icon name="groups" size={16} className="shrink-0 text-ink-secondary" />
+                    <span className="truncate">{course.title || t("channel.groupFallback")}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-2">

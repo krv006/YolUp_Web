@@ -112,6 +112,14 @@ export function useSetRoomImage() {
   });
 }
 
+export function useRemoveRoomImage() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (roomId: string) => conversationApi.removeRoomImage(roomId),
+    onSuccess: () => client.invalidateQueries({ queryKey: conversationKeys.all }),
+  });
+}
+
 export function useRespondDirect() {
   const client = useQueryClient();
   return useMutation({

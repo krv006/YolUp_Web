@@ -977,7 +977,9 @@
     "logoutTitle": "Hisobdan chiqasizmi?",
     "logoutText": "Qayta kirish uchun login va parolingiz kerak bo‘ladi.",
     "logoutConfirm": "Chiqish",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "switchAccount": "Akkauntni almashtirish",
+    "switchAccountText": "O‘qituvchi yoki o‘quvchi akkauntingizga o‘tish"
   },
   "states": {
     "home": "Asosiyga qaytish",

@@ -6,13 +6,14 @@ import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
 
 export interface ShareControlWindowProps {
   pipWindow: Window;
+  sharedWhat: string;
   startedAt: Date;
   studentCount: number;
   controls: ReactNode;
   onStop: () => void;
 }
 
-export function ShareControlWindow({ pipWindow, startedAt, studentCount, controls, onStop }: ShareControlWindowProps) {
+export function ShareControlWindow({ pipWindow, sharedWhat, startedAt, studentCount, controls, onStop }: ShareControlWindowProps) {
   const { t } = useTranslation("live");
   const elapsed = formatElapsed(useElapsedSeconds(startedAt));
 
@@ -20,7 +21,9 @@ export function ShareControlWindow({ pipWindow, startedAt, studentCount, control
     <div className="live-room-shell flex min-h-screen flex-col justify-center gap-4 bg-surface-inverse px-4 py-3 font-body text-ink-inverse">
       <div className="flex items-center gap-2">
         <span className="size-2.5 shrink-0 animate-pulse rounded-full bg-danger" aria-hidden="true" />
-        <strong className="min-w-0 flex-1 truncate text-title-sm">{t("share.pipSharing")}</strong>
+        <strong className="min-w-0 flex-1 truncate text-title-sm" title={sharedWhat}>
+          {t("share.sharingWhat", { what: sharedWhat })}
+        </strong>
         <span className="shrink-0 font-numeric text-body-sm text-ink-inverse-secondary">{elapsed}</span>
       </div>
       <div className="flex items-center gap-3">

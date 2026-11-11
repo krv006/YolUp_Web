@@ -72,13 +72,15 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     resubmitComment: dto.resubmit_comment || "",
     comment: dto.comment || "",
     teacherComment: dto.teacher_comment || "",
-    files: (dto.files?.length ? dto.files : [{ name: dto.file_name, index: 0 }]).map((file, position) => ({
+    files: (dto.files ?? (dto.file_name ? [{ name: dto.file_name, index: 0 }] : [])).map((file, position) => ({
       name: file.name || dto.file_name || "",
       size: file.size ?? null,
       mimeType: file.mime || "",
       index: file.index ?? position,
     })),
     answers: (dto.answers ?? []).map(mapHomeworkAnswerDto),
+    aiState: dto.ai_state ?? null,
+    aiCheckingSince: dto.ai_checking_since ?? null,
   };
 }
 
@@ -133,6 +135,7 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     body: dto.body || "",
     attachmentName: dto.attachment_name || "",
     hasAttachment: Boolean(dto.has_attachment),
+    googleFormUrl: dto.google_form_url || null,
     dueAt: dto.due_at,
     skillKey: dto.skill_key || "",
     lessonId: dto.lesson_id == null ? null : String(dto.lesson_id),
@@ -249,5 +252,6 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);
   if (form.questions) data.set("questions", JSON.stringify(form.questions));
+  if (form.googleFormUrl !== undefined) data.set("google_form_url", form.googleFormUrl.trim());
   return data;
 }

@@ -31,6 +31,7 @@ export {
   useLiveLessons,
   useCreateLesson,
   useCreateLessonSchedule,
+  useCreateLessonsBulk,
   useCancelLesson,
   useDeleteLesson,
   useDeleteRecording,
@@ -79,6 +80,17 @@ export {
   weeksBetween,
 } from "./lib/lesson-schedule";
 export type { ConflictQuery, ScheduleInput, Weekday } from "./lib/lesson-schedule";
+export {
+  bulkRowErrors,
+  bulkRowsReady,
+  createBulkRow,
+  findBulkOverlaps,
+  isBulkRowInPast,
+  MAX_BULK_LESSONS,
+  nextBulkRow,
+} from "./lib/bulk-lessons";
+export type { BulkLessonRow } from "./lib/bulk-lessons";
+export { BulkLessonRows } from "./ui/bulk-lesson-rows";
 export type { LessonStatusMeta } from "./lib/lesson-status";
 export { FinishLessonDialog } from "./ui/finish-lesson-dialog";
 export { LessonActions } from "./ui/lesson-actions";

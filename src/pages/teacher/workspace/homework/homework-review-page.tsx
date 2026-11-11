@@ -10,6 +10,7 @@ import {
   useReviewSubmission,
   useSubmission,
   QuestionsResult,
+  submissionAiState,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
@@ -75,8 +76,12 @@ export function HomeworkReviewPage() {
   }
 
   const index = rows.findIndex((row) => row.id === activeId);
-  const checking = current?.status === "checking";
-  const aiScore = current?.overallScore ?? null;
+  const aiState = current ? submissionAiState(current) : "none";
+  const checking = aiState === "checking";
+  const aiFailed = aiState === "failed";
+  const hasFile = Boolean(current?.files.length);
+  const textAnswer = !hasFile && Boolean(current?.comment);
+  const aiScore = aiState === "ready" ? (current?.overallScore ?? null) : null;
   const aiGrade = aiScore === null ? null : Math.max(1, Math.min(5, Math.round(aiScore / 20)));
   const findings = (current?.result?.questions ?? [])
     .filter((question) => (question.analysis ?? "").length > 0)
@@ -111,12 +116,23 @@ export function HomeworkReviewPage() {
     />
   ) : null;
 
-  const studentNote = current?.comment ? (
+  const studentNote = current?.comment && !textAnswer ? (
     <div className="flex flex-col gap-2">
       <span className="text-body-xs text-ink-secondary">{t("review.studentComment")}</span>
       <p className="rounded-md border border-line px-4 py-3 text-body-sm whitespace-pre-line text-ink">{current.comment}</p>
     </div>
   ) : null;
+
+  const textAnswerBody =
+    textAnswer && current ? (
+      <>
+        <span className="flex items-center gap-2 text-body-xs text-ink-secondary">
+          <Icon name="edit-note" size={16} />
+          {t("review.textAnswer")}
+        </span>
+        <p className="text-body whitespace-pre-line text-ink">{current.comment}</p>
+      </>
+    ) : null;
 
   const fileList =
     current && current.files.length > 1 ? (
@@ -200,54 +216,68 @@ export function HomeworkReviewPage() {
             </span>
           </div>
 
-          <div className="relative mt-4 flex h-42 items-center justify-center overflow-hidden rounded-xl bg-surface">
-            {current?.fileName ? (
-              <SubmissionPreview id={current.id} fileName={current.fileName} />
-            ) : (
-              <p className="text-body-sm text-ink-secondary">{t("review.noFile")}</p>
-            )}
-            {current?.fileName ? (
-              <button
-                type="button"
-                className="absolute right-3 bottom-3 flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-button text-ink"
-                onClick={() => download.mutate({ id: current.id, fileName: current.fileName })}
-              >
-                <Icon name="add" size={18} /> {t("review.download")}
-              </button>
-            ) : null}
-          </div>
-
-          <button
-            type="button"
-            className="mt-4 flex flex-col gap-2 rounded-xl bg-surface p-4 text-left disabled:cursor-default"
-            disabled={!current}
-            onClick={() => setResultOpen(true)}
-          >
-            <span className="flex w-full items-center gap-2">
-              <Icon name="auto-awesome" size={20} className="text-accent-saffron-fg" />
-              <strong className="min-w-0 flex-1 text-title text-ink">
-                {checking ? t("review.aiChecking") : t("mobileReview.aiGrade")}
-              </strong>
-              {checking ? null : (
-                <strong className="text-title-lg text-brand">{aiGrade ?? "—"} / 5</strong>
+          {textAnswerBody ? (
+            <section className="mt-4 flex flex-col gap-2 rounded-xl bg-surface p-4">{textAnswerBody}</section>
+          ) : (
+            <div className="relative mt-4 flex h-42 items-center justify-center overflow-hidden rounded-xl bg-surface">
+              {current?.fileName ? (
+                <SubmissionPreview id={current.id} fileName={current.fileName} />
+              ) : (
+                <p className="text-body-sm text-ink-secondary">{t("review.noFile")}</p>
               )}
-            </span>
-            <small className="text-caption text-ink-secondary">
-              {checking ? t("review.aiCheckingHint") : t("review.aiSuggestionHint")}
-            </small>
-            {questions.length && !checking ? (
-              <span className="flex items-center gap-2 text-body-sm text-ink">
-                <Icon name="check-circle" size={18} className="text-success" />
-                {t("mobileReview.correct", { correct: correctCount, total: questions.length })}
+              {current?.fileName ? (
+                <button
+                  type="button"
+                  className="absolute right-3 bottom-3 flex h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-button text-ink"
+                  onClick={() => download.mutate({ id: current.id, fileName: current.fileName })}
+                >
+                  <Icon name="add" size={18} /> {t("review.download")}
+                </button>
+              ) : null}
+            </div>
+          )}
+
+          {aiState === "none" ? null : (
+            <button
+              type="button"
+              className="mt-4 flex flex-col gap-2 rounded-xl bg-surface p-4 text-left disabled:cursor-default"
+              disabled={!current}
+              onClick={() => setResultOpen(true)}
+            >
+              <span className="flex w-full items-center gap-2">
+                <Icon
+                  name={aiFailed ? "warning" : "auto-awesome"}
+                  size={20}
+                  className={aiFailed ? "text-error-text" : "text-accent-saffron-fg"}
+                />
+                <strong className="min-w-0 flex-1 text-title text-ink">
+                  {checking ? t("review.aiChecking") : aiFailed ? t("review.aiFailed") : t("mobileReview.aiGrade")}
+                </strong>
+                {checking || aiFailed ? null : (
+                  <strong className="text-title-lg text-brand">{aiGrade ?? "—"} / 5</strong>
+                )}
               </span>
-            ) : null}
-            {findings.slice(0, 2).map((question, position) => (
-              <span key={position} className="flex items-start gap-2 text-body-sm text-ink">
-                <Icon name="warning" size={18} className="mt-0.5 shrink-0 text-accent-saffron-fg" />
-                <span className="line-clamp-2">{question.analysis}</span>
-              </span>
-            ))}
-          </button>
+              <small className="text-caption text-ink-secondary">
+                {checking
+                  ? t("review.aiCheckingHint")
+                  : aiFailed
+                    ? current?.error || t("review.aiFailedHint")
+                    : t("review.aiSuggestionHint")}
+              </small>
+              {questions.length && !checking ? (
+                <span className="flex items-center gap-2 text-body-sm text-ink">
+                  <Icon name="check-circle" size={18} className="text-success" />
+                  {t("mobileReview.correct", { correct: correctCount, total: questions.length })}
+                </span>
+              ) : null}
+              {findings.slice(0, 2).map((question, position) => (
+                <span key={position} className="flex items-start gap-2 text-body-sm text-ink">
+                  <Icon name="warning" size={18} className="mt-0.5 shrink-0 text-accent-saffron-fg" />
+                  <span className="line-clamp-2">{question.analysis}</span>
+                </span>
+              ))}
+            </button>
+          )}
 
           <span className="mt-5 text-body-sm text-ink">{t("review.yourGrade")}</span>
           <div className="mt-2 grid grid-cols-5 gap-2">
@@ -419,20 +449,26 @@ export function HomeworkReviewPage() {
           >
             <Icon name="chevron-right" size={20} />
           </button>
-          <button
-            type="button"
-            className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-muted disabled:opacity-40"
-            disabled={!current}
-            aria-label={t("review.download")}
-            onClick={() =>
-              current && download.mutate({ id: current.id, fileName: current.fileName })
-            }
-          >
-            <Icon name="download" size={20} />
-          </button>
+          {hasFile ? (
+            <button
+              type="button"
+              className="grid size-10 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-muted disabled:opacity-40"
+              disabled={!current}
+              aria-label={t("review.download")}
+              onClick={() =>
+                current && download.mutate({ id: current.id, fileName: current.fileName })
+              }
+            >
+              <Icon name="download" size={20} />
+            </button>
+          ) : null}
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center rounded-lg bg-surface p-6">
+        <div
+          className={`flex min-h-0 flex-1 flex-col rounded-lg bg-surface p-6 ${
+            textAnswerBody ? "gap-2" : "items-center justify-center"
+          }`}
+        >
           {current?.fileName ? (
             <span className="flex flex-col items-center gap-2 text-center">
               <Icon name="image" size={32} className="text-icon-tertiary" />
@@ -440,6 +476,8 @@ export function HomeworkReviewPage() {
               <small className="text-body-xs text-ink-tertiary">{t("review.openHint")}</small>
               {fileList ? <span className="mt-4 w-80 max-w-full">{fileList}</span> : null}
             </span>
+          ) : textAnswerBody ? (
+            textAnswerBody
           ) : (
             <p className="text-body-sm text-ink-tertiary">{t("review.noFile")}</p>
           )}
@@ -466,7 +504,17 @@ export function HomeworkReviewPage() {
               <i className="block h-full w-1/2 animate-pulse rounded-full bg-accent-violet-fg" />
             </span>
           </section>
-        ) : (
+        ) : aiFailed ? (
+          <section className="flex items-start gap-3 rounded-lg bg-danger-bg p-4">
+            <span className="grid size-12 shrink-0 place-items-center rounded-md bg-surface text-error-text">
+              <Icon name="warning" size={22} />
+            </span>
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <strong className="text-title-sm text-error-text">{t("review.aiFailed")}</strong>
+              <small className="text-body-xs text-ink-secondary">{current?.error || t("review.aiFailedHint")}</small>
+            </span>
+          </section>
+        ) : aiState === "none" ? null : (
           <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-4">
             <span className="flex items-center gap-3">
               <strong className="flex size-12 shrink-0 flex-col items-center justify-center rounded-md bg-brand text-ink-inverse">

@@ -13,6 +13,8 @@ import type {
   AiQuizJob,
   AiQuizJobDto,
   AiQuizRequest,
+  QuizAssignInput,
+  QuizAudienceDto,
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
   QuizQuestionStatDto,
@@ -23,6 +25,8 @@ import type {
   QuizSummaryDto,
 } from "./quiz.dto";
 import {
+  assignRequestBody,
+  mapQuizAudienceDto,
   mapQuizAttemptRequest,
   mapQuizAttemptResultDto,
   mapQuizQuestionStatDto,
@@ -70,8 +74,14 @@ export const quizApi = {
     );
   },
   /** Guruhsiz testni (masalan, AI yaratgan) o'qituvchining guruhiga biriktiradi. */
-  async assignToCourse(id: string, courseId: string) {
-    return mapQuizDto(await apiClient.patch<QuizDto>(quizEndpoints.detail(id), { course: courseId }));
+  async assignToCourse({ quizId, ...input }: QuizAssignInput) {
+    return mapQuizDto(await apiClient.patch<QuizDto>(quizEndpoints.detail(quizId), assignRequestBody(input)));
+  },
+  async getAudience(id: string, options?: RequestOptions) {
+    return mapQuizAudienceDto(await apiClient.get<QuizAudienceDto>(quizEndpoints.audience(id), options));
+  },
+  async setAudience(id: string, studentIds: string[]) {
+    return mapQuizAudienceDto(await apiClient.put<QuizAudienceDto>(quizEndpoints.audience(id), { student_ids: studentIds }));
   },
   async importDocx(file: File, request: QuizImportRequest) {
     const body = new FormData();

@@ -19,6 +19,7 @@ import { toIntlLocale } from "@/shared/i18n";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { FileViewer } from "@/shared/ui/file-viewer";
 import { homeworkApi } from "../api/homework.api";
+import { submissionAiState } from "../lib/submission-ai-state";
 import {
   useRecheckSubmission,
   useReviewSubmission,
@@ -180,6 +181,15 @@ export function HomeworkResultDialog({
   const review = useReviewSubmission();
   const submission = query.data ?? initial;
   const isCompact = useIsCompact();
+  const aiState = submission ? submissionAiState(submission) : "checking";
+  const hasFiles = Boolean(submission?.files.length);
+  const showScore = aiState === "ready" || submission?.status === "done";
+  const textAnswer = submission && !hasFiles && submission.comment ? submission.comment : "";
+  const checkingSince = submission?.aiCheckingSince
+    ? new Intl.DateTimeFormat(toIntlLocale(i18n.language), { hour: "2-digit", minute: "2-digit" }).format(
+        new Date(submission.aiCheckingSince)
+      )
+    : "";
 
   const [reviewError, setReviewError] = useState<string | null>(null);
   const [draft, setDraft] = useState<{
@@ -269,29 +279,48 @@ export function HomeworkResultDialog({
               {submission?.studentName ?? dialogTitle}
             </DialogPrimitive.Description>
 
-            {!submission || submission.status === "checking" || submission.status === "error" ? (
-              <>
-                <section className="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4">
-                  <span className="flex items-center gap-3">
-                    <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-subtle text-brand">
-                      <Icon name="hourglass-empty" size={20} />
-                    </span>
-                    <span className="flex min-w-0 flex-1 flex-col">
-                      <strong className="text-title leading-6 text-ink">{t("mobileResult.checking")}</strong>
-                      <small className="text-body-sm leading-5 text-ink-secondary">{t("mobileResult.checkingHint")}</small>
-                    </span>
+            {textAnswer ? (
+              <section className="mt-4 flex flex-col gap-2 rounded-lg bg-surface p-4">
+                <small className="text-caption text-ink-secondary">{t("detailDialog.textAnswer")}</small>
+                <p className="text-body-sm whitespace-pre-line text-ink">{textAnswer}</p>
+              </section>
+            ) : null}
+
+            {!submission || aiState === "checking" ? (
+              <section className="mt-4 flex flex-col gap-3 rounded-lg bg-surface p-4">
+                <span className="flex items-center gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-lg bg-brand-subtle text-brand">
+                    <Icon name="hourglass-empty" size={20} />
                   </span>
-                  <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
-                    <i className="block h-full w-[30%] rounded-full bg-brand not-italic" />
+                  <span className="flex min-w-0 flex-1 flex-col">
+                    <strong className="text-title leading-6 text-ink">{t("mobileResult.checking")}</strong>
+                    <small className="text-body-sm leading-5 text-ink-secondary">
+                      {checkingSince ? t("resultDialog.checkingSince", { time: checkingSince }) : t("mobileResult.checkingHint")}
+                    </small>
                   </span>
-                </section>
-                {submission?.status === "error" ? (
-                  <p className="mt-4 flex items-center gap-3 rounded-lg bg-danger-bg px-4 py-2.5 text-body-sm text-error-text">
-                    <Icon name="warning-fill" size={18} className="shrink-0 text-danger" />
-                    {t("mobileResult.error")}
-                  </p>
-                ) : null}
-              </>
+                </span>
+                <span className="h-1.5 overflow-hidden rounded-full bg-subtle">
+                  <i className="block h-full w-[30%] animate-pulse rounded-full bg-brand not-italic" />
+                </span>
+              </section>
+            ) : !showScore ? (
+              <section
+                className={`mt-4 flex items-start gap-3 rounded-lg p-4 ${aiState === "failed" ? "bg-danger-bg" : "bg-surface"}`}
+              >
+                <Icon
+                  name={aiState === "failed" ? "warning-fill" : "info"}
+                  size={20}
+                  className={`mt-0.5 shrink-0 ${aiState === "failed" ? "text-danger" : "text-ink-secondary"}`}
+                />
+                <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                  <strong className={`text-title-sm ${aiState === "failed" ? "text-error-text" : "text-ink"}`}>
+                    {aiState === "failed" ? t("resultDialog.aiFailedTitle") : t("resultDialog.aiNone")}
+                  </strong>
+                  {aiState === "failed" && submission.error ? (
+                    <small className="text-body-xs text-ink-secondary">{submission.error}</small>
+                  ) : null}
+                </span>
+              </section>
             ) : (
               <>
                 <section className="mt-4 flex flex-col gap-3 rounded-lg bg-brand p-4 text-on-action">
@@ -358,7 +387,7 @@ export function HomeworkResultDialog({
                         <button
                           type="button"
                           className="flex h-11 items-center justify-center gap-1.5 rounded-full bg-surface text-button text-ink disabled:opacity-50"
-                          disabled={!canRecheck || recheck.isPending}
+                          disabled={!canRecheck || !hasFiles || recheck.isPending}
                           onClick={() => recheck.mutate(submission.id)}
                         >
                           <Icon name="refresh" size={16} /> {t("mobileResult.recheck")}
@@ -411,7 +440,9 @@ export function HomeworkResultDialog({
           title={dialogTitle}
           description={
             submission?.studentName
-              ? `${submission.studentName} · ${submission.fileName ?? ""}`
+              ? [submission.studentName, submission.fileName || (textAnswer ? t("detailDialog.textAnswer") : "")]
+                  .filter(Boolean)
+                  .join(" · ")
               : t("resultDialog.defaultDescription")
           }
         >
@@ -444,7 +475,7 @@ export function HomeworkResultDialog({
                       />
                     </label>
                   </div>
-                ) : (
+                ) : showScore ? (
                   <div className="hw-score">
                     <strong>
                       {submission.overallScore ?? "—"}
@@ -452,7 +483,7 @@ export function HomeworkResultDialog({
                     </strong>
                     <span>{submission.grade || t("resultDialog.noGrade")}</span>
                   </div>
-                )}
+                ) : null}
                 <div className="hw-result-badges">
                   {submission.isLate ? (
                     <span className="hw-badge hw-badge--warn">
@@ -485,17 +516,17 @@ export function HomeworkResultDialog({
                       <PencilLine size={15} /> {t("resultDialog.editGrade")}
                     </Button>
                   ) : null}
-                  {canDownloadFile ? (
+                  {canDownloadFile && hasFiles ? (
                     <Button size="sm" variant="secondary" onClick={() => setFileOpen(true)}>
                       <Eye size={15} /> {t("resultDialog.viewFile")}
                     </Button>
                   ) : null}
-                  {canRecheck ? (
+                  {canRecheck && hasFiles ? (
                     <Button
                       size="sm"
                       variant="secondary"
                       loading={recheck.isPending}
-                      disabled={submission.status === "checking"}
+                      disabled={aiState === "checking"}
                       onClick={() => recheck.mutate(submission.id)}
                     >
                       <RefreshCw size={15} /> {t("resultDialog.recheck")}
@@ -506,17 +537,35 @@ export function HomeworkResultDialog({
 
               {reviewError ? <div className="form-alert">{reviewError}</div> : null}
 
-              {submission.status === "checking" ? (
+              {textAnswer ? (
+                <section className="flex flex-col gap-1.5 rounded-xl bg-subtle px-4 py-3">
+                  <span className="dialog-section-label">{t("detailDialog.textAnswer")}</span>
+                  <p className="text-body-sm whitespace-pre-line text-ink">{textAnswer}</p>
+                </section>
+              ) : null}
+
+              {aiState === "checking" ? (
                 <div className="hw-result-state">
                   <Sparkles size={26} className="spin" />
-                  <p>{t("resultDialog.checking")}</p>
+                  <p>
+                    {t("resultDialog.checking")}
+                    {checkingSince ? ` ${t("resultDialog.checkingSince", { time: checkingSince })}` : ""}
+                  </p>
                 </div>
               ) : null}
 
-              {submission.status === "error" ? (
+              {aiState === "failed" && !showScore ? (
                 <div className="hw-result-state hw-result-state--error">
                   <AlertTriangle size={26} />
-                  <p>{submission.error || t("resultDialog.checkError")}</p>
+                  <p>{t("resultDialog.aiFailedTitle")}</p>
+                  {submission.error ? <small>{submission.error}</small> : null}
+                </div>
+              ) : null}
+
+              {aiState === "none" && !showScore ? (
+                <div className="hw-result-state">
+                  <ListChecks size={26} />
+                  <p>{t("resultDialog.aiNone")}</p>
                 </div>
               ) : null}
 

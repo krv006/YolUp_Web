@@ -37,6 +37,9 @@ export const conversationApi = {
       await apiClient.post<ChatRoomDto>(conversationEndpoints.roomImage(roomId), body)
     );
   },
+  async removeRoomImage(roomId: string): Promise<Conversation> {
+    return mapConversationDto(await apiClient.delete<ChatRoomDto>(conversationEndpoints.roomImage(roomId)));
+  },
   async getTeachers(options?: RequestOptions) {
     const items = await apiClient.get<DirectTeacherDto[]>(conversationEndpoints.teachers, options);
     return items.map(mapTeacherDto);

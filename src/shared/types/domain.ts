@@ -71,6 +71,8 @@ export interface Conversation {
   canComment?: boolean;
   unpaidCount?: number | null;
   overdueCount?: number | null;
+  courseKind?: "group" | "club" | null;
+  linkedCourses?: Array<{ id: string; title: string }>;
 }
 
 export interface MessageReply {
@@ -400,7 +402,11 @@ export interface Submission {
   teacherComment: string;
   files: SubmissionFile[];
   answers: HomeworkAnswer[];
+  aiState: AiCheckState | null;
+  aiCheckingSince: string | null;
 }
+
+export type AiCheckState = "checking" | "ready" | "failed" | "none";
 
 export interface SubmissionFile {
   name: string;
@@ -425,6 +431,7 @@ export interface Assignment {
   body: string;
   attachmentName: string;
   hasAttachment: boolean;
+  googleFormUrl: string | null;
   dueAt: string | null;
   skillKey: string;
   lessonId: string | null;
@@ -840,6 +847,7 @@ export interface QuizSummary {
   opensAt: string | null;
   createdAt: string;
   questionCount: number;
+  studentIds: string[] | null;
 }
 
 export interface QuizDetail extends QuizSummary {

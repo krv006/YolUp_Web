@@ -30,6 +30,7 @@ export {
   useRequestDirect,
   useRespondDirect,
   useSetRoomImage,
+  useRemoveRoomImage,
 } from "./model/use-conversations";
 export { directChatAction, useStartDirectChat } from "./model/use-start-direct-chat";
 export type { DirectChatAction, DirectChatTarget } from "./model/use-start-direct-chat";
@@ -46,6 +47,7 @@ export {
   useUpdateChannel,
 } from "./model/use-channels";
 export { ChatEmptyState } from "./ui/chat-empty-state";
+export { ChannelAvatar } from "./ui/channel-avatar";
 export { PersonChatHint } from "./ui/person-chat-hint";
 export { ChatHeader } from "./ui/chat-header";
 export { ConversationInfoPanel } from "./ui/conversation-info-panel";

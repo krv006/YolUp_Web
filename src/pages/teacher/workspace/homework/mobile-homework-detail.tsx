@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { GoogleFormLink } from "@/modules/homework";
 import type { Assignment, Submission } from "@/shared/types";
 
 type AiGroupSummary = NonNullable<Assignment["aiGroupSummary"]>;
@@ -111,6 +112,10 @@ export function MobileHomeworkDetail({
             </span>
           ))}
         </div>
+
+        {item?.googleFormUrl ? (
+          <GoogleFormLink className="mt-3 bg-surface" url={item.googleFormUrl} hint={item.googleFormUrl} />
+        ) : null}
 
         {submissions.length ? (
         <>

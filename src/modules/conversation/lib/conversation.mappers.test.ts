@@ -29,6 +29,24 @@ describe("mapConversationDto", () => {
     expect(room.participantId).toBe("t1");
   });
 
+  it("tells a club group apart without asking for the club list", () => {
+    expect(mapConversationDto(dto({ kind: "course", course: "c1", course_kind: "club" })).courseKind).toBe("club");
+    expect(mapConversationDto(dto({ kind: "course", course: "c1", course_kind: "group" })).courseKind).toBe("group");
+    expect(mapConversationDto(dto({ kind: "channel", course_kind: null })).courseKind).toBeNull();
+    expect(mapConversationDto(dto({ kind: "course" })).courseKind).toBeUndefined();
+  });
+
+  it("lists the groups a channel is linked to", () => {
+    const room = mapConversationDto(
+      dto({ kind: "channel", course_ids: ["c1", "c2"], courses: [{ id: "c1", title: "Algebra" }, { id: "c2", title: "IELTS" }] })
+    );
+    expect(room.linkedCourses).toEqual([
+      { id: "c1", title: "Algebra" },
+      { id: "c2", title: "IELTS" },
+    ]);
+    expect(mapConversationDto(dto({ kind: "channel", course_ids: [7] })).linkedCourses).toEqual([{ id: "7", title: "" }]);
+  });
+
   it("does not fail on a room without optional fields", () => {
     const room = mapConversationDto(dto({}));
     expect(room.unreadCount).toBe(0);
