@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { GoogleFormLink } from "@/modules/homework";
 import type { Assignment, Submission } from "@/shared/types";
@@ -39,6 +39,8 @@ export interface MobileHomeworkDetailProps {
   onRemind: () => void;
   onSummary: () => void;
   onOpenSubmission: (row: Submission) => void;
+  onGive: () => void;
+  audience?: ReactNode;
 }
 
 export function MobileHomeworkDetail({
@@ -54,8 +56,11 @@ export function MobileHomeworkDetail({
   onRemind,
   onSummary,
   onOpenSubmission,
+  onGive,
+  audience = null,
 }: MobileHomeworkDetailProps) {
   const { t } = useTranslation("homework");
+  const isBank = Boolean(item?.isBank);
   const [filter, setFilter] = useState<Filter>("all");
   const submissions = useMemo(() => item?.submissions ?? [], [item]);
   const total = item?.stats?.studentsCount ?? submissions.length;
@@ -104,20 +109,32 @@ export function MobileHomeworkDetail({
         <small className="mt-3.5 truncate text-caption text-ink-secondary">{eyebrow}</small>
         <h1 className="mt-0.5 text-[22px]/[28px] font-bold text-ink">{item?.title}</h1>
 
-        <div className="mt-4 grid grid-cols-3 gap-2">
-          {stats.map((stat) => (
-            <span key={stat.label} className="flex h-16 flex-col justify-center rounded-xl bg-surface px-3">
-              <strong className={`text-title-lg leading-6 ${stat.tone}`}>{stat.value}</strong>
-              <small className="truncate text-caption text-ink-secondary">{stat.label}</small>
-            </span>
-          ))}
-        </div>
+        {isBank ? (
+          <section className="mt-4 flex flex-col gap-2 rounded-xl bg-surface p-4">
+            <strong className="flex items-center gap-2 text-title text-ink">
+              <Icon name="menu-book" size={20} className="text-brand" />
+              {t("bank.detailTitle")}
+            </strong>
+            <p className="text-body-sm text-ink-secondary">{t("bank.detailHint")}</p>
+          </section>
+        ) : (
+          <div className="mt-4 grid grid-cols-3 gap-2">
+            {stats.map((stat) => (
+              <span key={stat.label} className="flex h-16 flex-col justify-center rounded-xl bg-surface px-3">
+                <strong className={`text-title-lg leading-6 ${stat.tone}`}>{stat.value}</strong>
+                <small className="truncate text-caption text-ink-secondary">{stat.label}</small>
+              </span>
+            ))}
+          </div>
+        )}
 
         {item?.googleFormUrl ? (
           <GoogleFormLink className="mt-3 bg-surface" url={item.googleFormUrl} hint={item.googleFormUrl} />
         ) : null}
 
-        {submissions.length ? (
+        {isBank || !audience ? null : <div className="mt-4">{audience}</div>}
+
+        {isBank ? null : submissions.length ? (
         <>
         <section className="mt-4 flex flex-col gap-3 rounded-xl bg-surface p-4">
           <strong className="flex items-center gap-2 text-title text-ink">
@@ -208,19 +225,26 @@ export function MobileHomeworkDetail({
       </div>
 
       <div className="shrink-0 rounded-t-2xl bg-surface px-4 pt-3 pb-8.5">
-        <button
-          type="button"
-          className={
-            submissions.length
-              ? "flex h-13 w-full items-center justify-center gap-2 rounded-full border border-line-strong text-button text-ink disabled:opacity-50"
-              : `${mobileButton.primary} w-full`
-          }
-          disabled={!missing}
-          onClick={onRemind}
-        >
-          <Icon name="notifications" size={18} />
-          {t("detail.remind", { count: missing })}
-        </button>
+        {isBank ? (
+          <button type="button" className={`${mobileButton.primary} w-full`} onClick={onGive}>
+            <Icon name="send" size={18} />
+            {t("bank.give")}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={
+              submissions.length
+                ? "flex h-13 w-full items-center justify-center gap-2 rounded-full border border-line-strong text-button text-ink disabled:opacity-50"
+                : `${mobileButton.primary} w-full`
+            }
+            disabled={!missing}
+            onClick={onRemind}
+          >
+            <Icon name="notifications" size={18} />
+            {t("detail.remind", { count: missing })}
+          </button>
+        )}
       </div>
     </div>
   );

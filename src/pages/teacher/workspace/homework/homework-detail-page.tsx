@@ -16,7 +16,9 @@ import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { formatDue } from "./format-due";
+import { AssignmentAudienceCard } from "./assignment-audience-card";
 import type { Submission, SubmissionStatus } from "@/shared/types";
+import { AssignHomeworkDialog } from "@/widgets/homework-assign";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
 import { DeleteAssignmentDialog } from "./delete-assignment-dialog";
@@ -56,11 +58,17 @@ export function HomeworkDetailPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [remindOpen, setRemindOpen] = useState(false);
+  const [giving, setGiving] = useState(false);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const isCompact = useIsCompact();
 
   const item = assignment.data ?? null;
+  const isBank = Boolean(item?.isBank);
+  const bankEyebrow = [
+    t("bank.badge"),
+    item?.copiesCount ? t("bank.copies", { count: item.copiesCount }) : t("bank.notGiven"),
+  ].join(" · ");
   const submissions = useMemo(() => item?.submissions ?? [], [item]);
 
   const total = item?.stats?.studentsCount ?? submissions.length;
@@ -130,6 +138,8 @@ export function HomeworkDetailPage() {
           }}
         />
 
+        <AssignHomeworkDialog open={giving} onOpenChange={setGiving} assignment={isBank ? item : null} />
+
         <RemindDialog
           open={remindOpen}
           count={missing}
@@ -156,10 +166,14 @@ export function HomeworkDetailPage() {
       <>
         <MobileHomeworkDetail
           item={item}
-          eyebrow={t("mobileDetail.eyebrow", {
-            course: item?.courseTitle ?? "",
-            due: formatDue(item?.dueAt ?? null, months),
-          })}
+          eyebrow={
+            isBank
+              ? bankEyebrow
+              : t("mobileDetail.eyebrow", {
+                  course: item?.courseTitle ?? "",
+                  due: formatDue(item?.dueAt ?? null, months),
+                })
+          }
           summary={summary}
           summaryPending={aiSummary.isPending}
           missing={missing}
@@ -172,6 +186,8 @@ export function HomeworkDetailPage() {
           onOpenSubmission={(row) =>
             assignmentId && navigate(`${ROUTES.teacher.homeworkReview(assignmentId)}?s=${row.id}`)
           }
+          onGive={() => setGiving(true)}
+          audience={item && !isBank ? <AssignmentAudienceCard assignmentId={item.id} className="rounded-xl" /> : null}
         />
         {dialogs}
       </>
@@ -179,32 +195,49 @@ export function HomeworkDetailPage() {
 
   return (
     <WorkspaceShell
-      eyebrow={t("detail.eyebrow", {
-        course: item?.courseTitle ?? "",
-        due: formatDue(item?.dueAt ?? null, months),
-      })}
+      eyebrow={
+        isBank
+          ? bankEyebrow
+          : t("detail.eyebrow", {
+              course: item?.courseTitle ?? "",
+              due: formatDue(item?.dueAt ?? null, months),
+            })
+      }
       title={item?.title ?? ""}
       action={
-        <button
-          type="button"
-          className={workspaceAction}
-          disabled={!missing}
-          onClick={() => setRemindOpen(true)}
-        >
-          {t("detail.remind", { count: missing })}
-        </button>
+        isBank ? (
+          <button type="button" className={workspaceAction} onClick={() => setGiving(true)}>
+            {t("bank.give")}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className={workspaceAction}
+            disabled={!missing}
+            onClick={() => setRemindOpen(true)}
+          >
+            {t("detail.remind", { count: missing })}
+          </button>
+        )
       }
     >
       <div className="grid gap-4 xl:grid-cols-[380px_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-4">
           <section className="flex flex-col rounded-lg bg-surface p-5">
             <span className="flex flex-wrap items-center gap-2">
-              <span className="flex h-[22px] items-center gap-1 rounded-full bg-warning-bg px-2 text-caption-strong text-ink">
-                <Icon name="timer" size={13} />
-                {days !== null && days >= 0
-                  ? t("list.daysLeft", { count: days })
-                  : t("detail.due", { value: formatDue(item?.dueAt ?? null, months) })}
-              </span>
+              {isBank ? (
+                <span className="flex h-[22px] items-center gap-1 rounded-full bg-brand-subtle px-2 text-caption-strong text-brand">
+                  <Icon name="menu-book" size={13} />
+                  {t("bank.badge")}
+                </span>
+              ) : (
+                <span className="flex h-[22px] items-center gap-1 rounded-full bg-warning-bg px-2 text-caption-strong text-ink">
+                  <Icon name="timer" size={13} />
+                  {days !== null && days >= 0
+                    ? t("list.daysLeft", { count: days })
+                    : t("detail.due", { value: formatDue(item?.dueAt ?? null, months) })}
+                </span>
+              )}
               <span className="flex h-[22px] items-center rounded-full bg-accent-violet-bg px-2 text-caption-strong text-accent-violet-fg">
                 {t("detail.aiCheck")}
               </span>
@@ -264,6 +297,8 @@ export function HomeworkDetailPage() {
             </div>
           </section>
 
+          {item && !isBank ? <AssignmentAudienceCard assignmentId={item.id} /> : null}
+
           {submitted ? (
           <section className="flex flex-col gap-3 rounded-lg bg-brand-subtle p-5">
             <strong className="flex items-center gap-2 text-title-sm text-brand-strong">
@@ -299,6 +334,18 @@ export function HomeworkDetailPage() {
           ) : null}
         </div>
 
+        {isBank ? (
+          <section className="flex flex-col items-start gap-3 self-start rounded-lg bg-surface p-6">
+            <span className="grid size-12 place-items-center rounded-full bg-brand-subtle text-brand">
+              <Icon name="menu-book" size={24} />
+            </span>
+            <strong className="text-title text-ink">{t("bank.detailTitle")}</strong>
+            <p className="max-w-130 text-body-sm text-ink-secondary">{t("bank.detailHint")}</p>
+            <button type="button" className={workspaceAction} onClick={() => setGiving(true)}>
+              {t("bank.give")}
+            </button>
+          </section>
+        ) : (
         <div className="flex min-w-0 flex-col gap-4">
           <div className="grid gap-3 sm:grid-cols-4">
             <StatCard label={t("detail.stats.submitted")} value={`${submitted} / ${total}`} />
@@ -418,6 +465,7 @@ export function HomeworkDetailPage() {
             />
           )}
         </div>
+        )}
       </div>
 
       {dialogs}

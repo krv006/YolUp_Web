@@ -324,7 +324,7 @@ export type SubmissionStatus =
   | "error"
   | "resubmit_requested";
 
-export type AssignmentStatus = "draft" | "active";
+export type AssignmentStatus = "draft" | "active" | "bank";
 
 export type GradingScale = "five" | "hundred" | "none";
 
@@ -432,6 +432,11 @@ export interface Assignment {
   attachmentName: string;
   hasAttachment: boolean;
   googleFormUrl: string | null;
+  isBank: boolean;
+  sourceId: string | null;
+  copiesCount: number | null;
+  questionsCount: number | null;
+  studentIds: string[] | null;
   dueAt: string | null;
   skillKey: string;
   lessonId: string | null;

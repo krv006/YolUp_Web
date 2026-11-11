@@ -9,13 +9,16 @@ import {
   useCreateAssignment,
   useDeleteAssignment,
   useHomeworkAiStats,
+  useHomeworkBank,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { GroupTile } from "@/shared/ui/group-tile";
 import { Icon } from "@/shared/ui/icon";
 import type { Assignment } from "@/shared/types";
+import { AssignHomeworkDialog } from "@/widgets/homework-assign";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
+import { BankAssignmentCard } from "./bank-assignment-card";
 import { formatDue } from "./format-due";
 import { AssignmentFormDialog } from "./assignment-form-dialog";
 import { DeleteAssignmentDialog } from "./delete-assignment-dialog";
@@ -40,6 +43,9 @@ export function HomeworkListPage() {
   const [filter, setFilter] = useState<HomeworkFilter>("active");
   const [createOpen, setCreateOpen] = useState(() => params.get("new") === "1");
   const [deleting, setDeleting] = useState<Assignment | null>(null);
+  const [giving, setGiving] = useState<Assignment | null>(null);
+  const bank = useHomeworkBank();
+  const bankRows = bank.data ?? [];
 
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
 
@@ -98,6 +104,7 @@ export function HomeworkListPage() {
 
   const formDialog = (
     <AssignmentFormDialog
+      key={filter === "bank" ? "bank" : "group"}
       open={createOpen}
       onOpenChange={changeCreateOpen}
       courses={groups.map((course) => ({
@@ -106,8 +113,13 @@ export function HomeworkListPage() {
         studentCount: course.studentCount ?? 0,
       }))}
       pending={create.isPending}
+      bank={filter === "bank"}
       onSubmit={(values) => create.mutateAsync(values).then(() => changeCreateOpen(false))}
     />
+  );
+
+  const giveDialog = (
+    <AssignHomeworkDialog open={Boolean(giving)} onOpenChange={(open) => !open && setGiving(null)} assignment={giving} />
   );
 
   if (isCompact)
@@ -115,13 +127,20 @@ export function HomeworkListPage() {
       <>
         <MobileHomeworkList
           filter={filter}
-          counts={{ active: active.length, review: active.filter(needsReview).length, draft: drafts.length }}
+          counts={{
+            active: active.length,
+            review: active.filter(needsReview).length,
+            draft: drafts.length,
+            bank: bankRows.length,
+          }}
+          bankRows={bankRows}
+          onGive={setGiving}
           sections={[
             { id: "week", rows: thisWeek },
             { id: "earlier", rows: earlier },
           ]}
           courses={new Map(groups.map((course) => [course.id, course]))}
-          loading={loading}
+          loading={filter === "bank" ? bank.isLoading : loading}
           onFilterChange={setFilter}
           onBack={() => navigate(ROUTES.teacher.workspace)}
           onCreate={() => changeCreateOpen(true)}
@@ -130,6 +149,7 @@ export function HomeworkListPage() {
           onDelete={setDeleting}
         />
         {formDialog}
+        {giveDialog}
         <DeleteAssignmentDialog
           open={Boolean(deleting)}
           count={deleting?.stats?.submittedCount ?? deleting?.submissions.length ?? 0}
@@ -152,7 +172,7 @@ export function HomeworkListPage() {
     >
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_376px]">
         <div className="flex min-w-0 flex-col gap-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
             <Tab
               label={t("list.filters.active")}
               count={active.length}
@@ -171,9 +191,26 @@ export function HomeworkListPage() {
               active={filter === "draft"}
               onClick={() => setFilter("draft")}
             />
+            <Tab label={t("bank.tab")} count={bankRows.length} active={filter === "bank"} onClick={() => setFilter("bank")} />
           </div>
 
-          {loading ? (
+          {filter === "bank" ? (
+            <section className="flex flex-col gap-3">
+              {bankRows.map((item) => (
+                <BankAssignmentCard
+                  key={item.id}
+                  item={item}
+                  onOpen={() => navigate(ROUTES.teacher.homeworkItem(item.id))}
+                  onGive={() => setGiving(item)}
+                />
+              ))}
+              {!bank.isLoading && !bankRows.length ? (
+                <p className="rounded-lg bg-surface px-5 py-10 text-center text-body-sm text-ink-tertiary">{t("bank.empty")}</p>
+              ) : null}
+            </section>
+          ) : null}
+
+          {filter !== "bank" && loading ? (
             <div className="flex flex-col gap-3">
               {Array.from({ length: 3 }, (_, index) => (
                 <div key={index} className="h-30 animate-pulse rounded-lg bg-muted" />
@@ -181,10 +218,10 @@ export function HomeworkListPage() {
             </div>
           ) : null}
 
-          {[
+          {(filter === "bank" ? [] : [
             { id: "week", rows: thisWeek },
             { id: "earlier", rows: earlier },
-          ].map((section) =>
+          ]).map((section) =>
             section.rows.length ? (
               <section key={section.id} className="flex flex-col gap-3">
                 <span className="text-overline text-ink-tertiary uppercase">
@@ -202,7 +239,7 @@ export function HomeworkListPage() {
             ) : null
           )}
 
-          {!loading && !visible.length ? (
+          {filter !== "bank" && !loading && !visible.length ? (
             <p className="rounded-lg bg-surface px-5 py-10 text-center text-body-sm text-ink-tertiary">
               {t("list.empty")}
             </p>
@@ -245,6 +282,7 @@ export function HomeworkListPage() {
       </div>
 
       {formDialog}
+      {giveDialog}
     </WorkspaceShell>
   );
 }
