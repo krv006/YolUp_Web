@@ -248,6 +248,9 @@ export const authApi = {
   approveTeacher(id: string) {
     return apiClient.post<AuthUserDto>(authEndpoints.teacherApprove(id), {});
   },
+  setTestAccess(id: string, enabled: boolean) {
+    return apiClient.patch<{ id: string; can_create_tests: boolean }>(authEndpoints.adminTestAccess(id), { enabled });
+  },
   uploadCertificate(file: File, title?: string, issuer?: string, issuedYear?: number | null) {
     const body = new FormData();
     body.set("file", file);

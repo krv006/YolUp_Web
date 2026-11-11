@@ -6,6 +6,7 @@ import {
   QuestionPrompt,
   QuizExportDialog,
   QuizImportDialog,
+  PaidTestDialog,
   createDraft,
   draftToFormValues,
   draftToStudentQuestion,
@@ -18,6 +19,7 @@ import {
   useRemoveGroupAudio,
   useUpdateQuiz,
   useUploadGroupAudio,
+  usePaidTestGate,
   type GroupDraft,
   type QuestionDraft,
 } from "@/modules/quiz";
@@ -54,6 +56,7 @@ export function TestEditorPage() {
   const [dirty, setDirty] = useState(0);
   const [typeOpen, setTypeOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const importGate = usePaidTestGate();
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [preview, setPreview] = useState<Record<string, QuizAnswerValue>>({});
@@ -263,8 +266,9 @@ export function TestEditorPage() {
           <button
             type="button"
             className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle"
-            onClick={() => setImportOpen(true)}
+            onClick={importGate.guard(() => setImportOpen(true))}
           >
+            {importGate.allowed ? null : <Icon name="lock" size={16} />}
             {t("editor.import")}
           </button>
           <button
@@ -352,6 +356,8 @@ export function TestEditorPage() {
             .then(() => setExportOpen(false));
         }}
       />
+
+      <PaidTestDialog open={importGate.open} onOpenChange={importGate.setOpen} />
 
       <QuizImportDialog
         open={importOpen}

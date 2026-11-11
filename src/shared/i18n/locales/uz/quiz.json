@@ -682,5 +682,12 @@
     "cancel": "Bekor qilish",
     "save": "Saqlash",
     "saved": "O'quvchilar ro'yxati saqlandi"
+  },
+  "paid": {
+    "title": "Test yaratish — pullik xizmat",
+    "description": "Sizda test yaratish xizmati yoqilmagan. Mavjud testlaringizni guruhga berishingiz, tahrirlashingiz va natijalarni ko'rishingiz mumkin. Xizmatni yoqish uchun administrator bilan bog'laning.",
+    "contact": "Yordam markazi",
+    "close": "Yopish",
+    "badge": "Pullik xizmat"
   }
 }

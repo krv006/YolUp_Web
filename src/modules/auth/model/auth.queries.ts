@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { AuthUser } from "@/shared/types";
 import { authApi } from "../api/auth.api";
 import { mapUserDto } from "../lib/auth.mappers";
 
@@ -119,6 +120,26 @@ export function usePendingTeachers() {
   return useQuery({
     queryKey: authKeys.teachersPending,
     queryFn: async ({ signal }) => (await authApi.getPendingTeachers({ signal })).map(mapUserDto),
+  });
+}
+
+export function useSetTeacherTestAccess() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, enabled }: { id: string; enabled: boolean }) => authApi.setTestAccess(id, enabled),
+    onMutate: async ({ id, enabled }) => {
+      await client.cancelQueries({ queryKey: authKeys.teachers, exact: true });
+      const previous = client.getQueryData<AuthUser[]>(authKeys.teachers);
+      client.setQueryData<AuthUser[]>(authKeys.teachers, (rows) =>
+        rows?.map((row) => (row.id === id ? { ...row, canCreateTests: enabled } : row))
+      );
+      return { previous };
+    },
+    onError: (error: Error, _variables, context) => {
+      if (context?.previous) client.setQueryData(authKeys.teachers, context.previous);
+      toast.error(error.message);
+    },
+    onSettled: () => client.invalidateQueries({ queryKey: authKeys.teachers, exact: true }),
   });
 }
 

@@ -2,12 +2,14 @@ import { useEffect, useState, type ReactNode } from "react";
 import { ArrowLeft, BarChart3, ShieldCheck, Users } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useApproveTeacher, usePendingTeachers, useTeachers } from "@/modules/auth";
+import { toast } from "sonner";
+import { useApproveTeacher, usePendingTeachers, useSetTeacherTestAccess, useTeachers } from "@/modules/auth";
 import { RatingSummary } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import type { AuthUser } from "@/shared/types";
 import { Avatar, Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
+import { Switch } from "@/shared/ui/switch";
 import { TeacherStatsDialog } from "./teacher-stats-dialog";
 
 type TeacherView = "pending" | "all";
@@ -25,10 +27,12 @@ function TeacherRow({
   teacher,
   action,
   onStats,
+  onTestAccess,
 }: {
   teacher: AuthUser;
   action?: ReactNode;
   onStats?: (teacher: AuthUser) => void;
+  onTestAccess?: (teacher: AuthUser, enabled: boolean) => void;
 }) {
   const { t } = useTranslation("admin");
   return (
@@ -39,6 +43,16 @@ function TeacherRow({
         <small>@{teacher.username}</small>
       </div>
       <RatingSummary average={teacher.avgRating} count={teacher.ratingCount ?? 0} compact />
+      {onTestAccess ? (
+        <label className="flex shrink-0 cursor-pointer items-center gap-2 text-body-xs text-ink-secondary">
+          <span className="max-sm:sr-only">{t("teachers.testAccess")}</span>
+          <Switch
+            checked={teacher.canCreateTests !== false}
+            onCheckedChange={(enabled) => onTestAccess(teacher, enabled)}
+            aria-label={t("teachers.testAccessAria", { name: teacher.name })}
+          />
+        </label>
+      ) : null}
       {onStats ? (
         <button
           className="icon-button"
@@ -59,6 +73,7 @@ export function AdminTeachersPage() {
   const pending = usePendingTeachers();
   const teachers = useTeachers();
   const approve = useApproveTeacher();
+  const testAccess = useSetTeacherTestAccess();
   const [statsTarget, setStatsTarget] = useState<AuthUser | null>(null);
   const [params] = useSearchParams();
   const highlightId = params.get("teacher");
@@ -119,6 +134,20 @@ export function AdminTeachersPage() {
               key={teacher.id}
               teacher={teacher}
               onStats={setStatsTarget}
+              onTestAccess={
+                view === "all"
+                  ? (row, enabled) =>
+                      testAccess.mutate(
+                        { id: row.id, enabled },
+                        {
+                          onSuccess: () =>
+                            toast.success(
+                              t(enabled ? "teachers.testAccessOn" : "teachers.testAccessOff", { name: row.name })
+                            ),
+                        }
+                      )
+                  : undefined
+              }
               action={
                 view === "pending" ? (
                   <Button

@@ -41,6 +41,8 @@ import {
   useQuizAttempts,
   useQuizzes,
   useUpdateQuiz,
+  PaidTestDialog,
+  usePaidTestGate,
 } from "@/modules/quiz";
 import { ChatHeader, ConversationInfoPanel } from "@/modules/conversation";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -569,6 +571,7 @@ function AssignmentsPanel({
   const update = useUpdateAssignment();
   const remove = useDeleteAssignment();
   const [quizDialog, setQuizDialog] = useState(false);
+  const quizGate = usePaidTestGate();
   const [bankDialog, setBankDialog] = useState(false);
   const assignQuiz = useAssignQuizToCourse();
   const createQuiz = useCreateQuiz();
@@ -678,6 +681,8 @@ function AssignmentsPanel({
           onSubmit={(value) => assignQuiz.mutateAsync(value).then(() => setBankDialog(false))}
         />
 
+        <PaidTestDialog open={quizGate.open} onOpenChange={quizGate.setOpen} />
+
         {quizDialog && courseId ? (
           <AddQuizDialog
             open
@@ -786,7 +791,8 @@ function AssignmentsPanel({
             <AddQuizMenu
               className="px-4 lg:px-[13px]"
               onFromBank={() => setBankDialog(true)}
-              onCreate={() => setQuizDialog(true)}
+              onCreate={quizGate.guard(() => setQuizDialog(true))}
+              createLocked={!quizGate.allowed}
             />
           </div>
         ) : null}

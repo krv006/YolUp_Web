@@ -682,5 +682,12 @@
     "cancel": "Cancel",
     "save": "Save",
     "saved": "Student list saved"
+  },
+  "paid": {
+    "title": "Test creation is a paid service",
+    "description": "Test creation isn't enabled for your account. You can still assign, edit and review results of your existing tests. Contact an administrator to enable it.",
+    "contact": "Help center",
+    "close": "Close",
+    "badge": "Paid service"
   }
 }

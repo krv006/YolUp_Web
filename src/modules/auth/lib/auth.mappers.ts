@@ -112,6 +112,7 @@ export function mapUserDto(dto: unknown): AuthUser {
     mustChangePassword: parsed.must_change_password === true,
     grade: parsed.grade || null,
     linkedAccounts: parsed.linked_accounts.map(mapLinkedAccountDto),
+    canCreateTests: parsed.can_create_tests !== false,
     middleName: parsed.middle_name ?? null,
     birthDate: parsed.birth_date ?? null,
     subject: parsed.subject ?? null,

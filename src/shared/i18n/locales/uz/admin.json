@@ -96,7 +96,11 @@
     "noTeachers": "O'qituvchi topilmadi.",
     "viewLabel": "Ko'rinish",
     "viewPending": "Tasdiqlanishi kerak ({{count}})",
-    "viewAll": "Barcha o'qituvchilar ({{count}})"
+    "viewAll": "Barcha o'qituvchilar ({{count}})",
+    "testAccess": "Test yaratish",
+    "testAccessAria": "{{name}} uchun test yaratish xizmati",
+    "testAccessOn": "{{name}} uchun test yaratish yoqildi",
+    "testAccessOff": "{{name}} uchun test yaratish o'chirildi"
   },
   "storage": {
     "eyebrow": "SAQLASH",

@@ -89,6 +89,8 @@ export { QuizImportDialog } from "./ui/quiz-import-dialog";
 export type { QuizImportSource } from "./ui/quiz-import-dialog";
 export { StudentChecklist } from "./ui/student-checklist";
 export { QuizAudienceCard } from "./ui/quiz-audience-card";
+export { PaidTestDialog } from "./ui/paid-test-dialog";
+export { usePaidTestGate } from "./model/use-paid-test-gate";
 export type { ChecklistStudent } from "./ui/student-checklist";
 export { QuizAttemptsDrawer } from "./ui/quiz-attempts-drawer";
 export { useAiQuizJobs, useStartAiQuiz } from "./model/quiz.queries";

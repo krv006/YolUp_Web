@@ -24,6 +24,7 @@ export interface MobileTestsProps {
   onQueryChange: (query: string) => void;
   onBack: () => void;
   onCreate: () => void;
+  createLocked?: boolean;
   onEdit: (quiz: QuizSummary) => void;
   onPublish: (quiz: QuizSummary) => void;
   onResults: (quiz: QuizSummary) => void;
@@ -40,7 +41,8 @@ const SOFT =
 
 export function MobileTests(props: MobileTestsProps) {
   const { t } = useTranslation("quiz");
-  const { drafts, published, loading, chips, filter, query, onFilterChange, onQueryChange, onBack, onCreate } = props;
+  const { drafts, published, loading, chips, filter, query, onFilterChange, onQueryChange, onBack, onCreate, createLocked } =
+    props;
   const empty = !loading && !drafts.length && !published.length;
 
   return (
@@ -51,7 +53,7 @@ export function MobileTests(props: MobileTestsProps) {
         onBack={onBack}
         action={
           <button type="button" className={mobileRoundButton} aria-label={t("tests.create")} onClick={onCreate}>
-            <Icon name="add" size={24} />
+            <Icon name={createLocked ? "lock" : "add"} size={createLocked ? 20 : 24} />
           </button>
         }
       />
@@ -96,7 +98,7 @@ export function MobileTests(props: MobileTestsProps) {
                 icon="quiz"
                 title={t("tests.emptyTitle")}
                 description={t("tests.emptyHint")}
-                action={{ label: t("tests.create"), icon: "add", onClick: onCreate }}
+                action={{ label: t("tests.create"), icon: createLocked ? "lock" : "add", onClick: onCreate }}
               />
             )
           ) : null}

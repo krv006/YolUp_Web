@@ -11,11 +11,12 @@ const OPTIONS = [
 export interface AddQuizMenuProps {
   onFromBank: () => void;
   onCreate: () => void;
+  createLocked?: boolean;
   className?: string;
 }
 
-export function AddQuizMenu({ onFromBank, onCreate, className = "" }: AddQuizMenuProps) {
-  const { t } = useTranslation("group");
+export function AddQuizMenu({ onFromBank, onCreate, createLocked = false, className = "" }: AddQuizMenuProps) {
+  const { t } = useTranslation(["group", "quiz"]);
   const [open, setOpen] = useState(false);
 
   return (
@@ -50,10 +51,16 @@ export function AddQuizMenu({ onFromBank, onCreate, className = "" }: AddQuizMen
                   {t(`assignments.testMenu.${option.id}.title`)}
                 </strong>
                 <small className="mt-1 truncate text-body-sm leading-[18px] text-ink-secondary">
-                  {t(`assignments.testMenu.${option.id}.hint`)}
+                  {createLocked && option.id === "create"
+                    ? t("quiz:paid.badge")
+                    : t(`assignments.testMenu.${option.id}.hint`)}
                 </small>
               </span>
-              <Icon name="chevron-right" size={20} className="shrink-0 text-ink-secondary" />
+              <Icon
+                name={createLocked && option.id === "create" ? "lock" : "chevron-right"}
+                size={createLocked && option.id === "create" ? 18 : 20}
+                className="shrink-0 text-ink-secondary"
+              />
             </DropdownMenu.Item>
           ))}
         </DropdownMenu.Content>
