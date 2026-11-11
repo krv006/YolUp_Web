@@ -19,7 +19,7 @@ import {
   mapHomeworkReportDto,
   mapSubmissionDto,
 } from "../lib/homework.mappers";
-import { validateHomeworkFile } from "../lib/homework-validation";
+import { validateHomeworkAnswer, validateHomeworkFile } from "../lib/homework-validation";
 
 export const homeworkApi = {
   async getAssignments(courseId: string | null, options: RequestOptions = {}) {
@@ -70,7 +70,7 @@ export const homeworkApi = {
     comment?: string,
     answers?: HomeworkAnswerInput[]
   ): Promise<Submission | null> {
-    if (!files.length && !answers?.length) validateHomeworkFile(null, { speaking: skillKey === "speaking" });
+    validateHomeworkAnswer({ files, comment, answers });
     files.forEach((file) => validateHomeworkFile(file, { speaking: skillKey === "speaking" }));
     const body = new FormData();
     files.forEach((file, index) => body.append(index ? "files" : "file", file));

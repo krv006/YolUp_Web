@@ -58,6 +58,8 @@ export interface SubmissionDto {
   teacher_comment?: string | null;
   files?: Array<{ name?: string | null; size?: number | null; mime?: string | null; index?: number | null }> | null;
   answers?: HomeworkAnswerDto[] | null;
+  ai_state?: "checking" | "ready" | "failed" | "none" | null;
+  ai_checking_since?: string | null;
 }
 
 export interface HomeworkQuestionDto {

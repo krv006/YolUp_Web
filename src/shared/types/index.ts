@@ -11,6 +11,7 @@ export type {
   TeacherStats,
 } from "./auth";
 export type {
+  AiCheckState,
   AiQuestion,
   AiResult,
   AiSummary,

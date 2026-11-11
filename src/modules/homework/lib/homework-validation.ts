@@ -13,6 +13,22 @@ export interface ValidateHomeworkFileOptions {
   speaking?: boolean;
 }
 
+export function validateHomeworkAnswer({
+  files,
+  comment,
+  answers,
+}: {
+  files: readonly File[];
+  comment?: string;
+  answers?: readonly unknown[];
+}): true {
+  if (files.length || answers?.length || comment?.trim()) return true;
+  throw new AppError({
+    code: API_ERROR_CODES.VALIDATION_ERROR,
+    message: i18n.t("homework:validation.fileOrComment"),
+  });
+}
+
 export function validateHomeworkFile(
   file: File | null | undefined,
   { assignment = false, speaking = false }: ValidateHomeworkFileOptions = {}

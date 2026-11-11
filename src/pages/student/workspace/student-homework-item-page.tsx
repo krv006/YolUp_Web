@@ -119,7 +119,7 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
   const html = assignment.body ? sanitizeHtml(assignment.body) : "";
   const serverDraft = draft.data?.comment ?? "";
   const answerList = answerInputs(assignment.questions, answers);
-  const ready = files.length > 0 || answerList.length > 0;
+  const ready = files.length > 0 || answerList.length > 0 || Boolean(comment.trim());
 
   useEffect(() => {
     if (serverDraft && !touched.current) setComment(serverDraft);
@@ -627,15 +627,17 @@ function HomeworkResult({
             </h1>
             <small className="truncate text-body-xs text-ink-secondary">{meta}</small>
           </span>
-          <button
-            type="button"
-            className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle disabled:opacity-40"
-            aria-label={t("workspace.hwItem.download")}
-            disabled={!current.fileName || download.isPending}
-            onClick={() => download.mutate({ id: current.id, fileName: current.fileName })}
-          >
-            <Icon name="download" size={20} />
-          </button>
+          {current.fileName ? (
+            <button
+              type="button"
+              className="grid size-11 shrink-0 place-items-center rounded-full bg-surface text-icon transition-colors hover:bg-subtle disabled:opacity-40"
+              aria-label={t("workspace.hwItem.download")}
+              disabled={download.isPending}
+              onClick={() => download.mutate({ id: current.id, fileName: current.fileName })}
+            >
+              <Icon name="download" size={20} />
+            </button>
+          ) : null}
         </header>
         <div className="mt-4 flex flex-1 items-start justify-center">{preview}</div>
       </div>

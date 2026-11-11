@@ -72,13 +72,15 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     resubmitComment: dto.resubmit_comment || "",
     comment: dto.comment || "",
     teacherComment: dto.teacher_comment || "",
-    files: (dto.files?.length ? dto.files : [{ name: dto.file_name, index: 0 }]).map((file, position) => ({
+    files: (dto.files ?? (dto.file_name ? [{ name: dto.file_name, index: 0 }] : [])).map((file, position) => ({
       name: file.name || dto.file_name || "",
       size: file.size ?? null,
       mimeType: file.mime || "",
       index: file.index ?? position,
     })),
     answers: (dto.answers ?? []).map(mapHomeworkAnswerDto),
+    aiState: dto.ai_state ?? null,
+    aiCheckingSince: dto.ai_checking_since ?? null,
   };
 }
 

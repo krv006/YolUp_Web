@@ -402,7 +402,11 @@ export interface Submission {
   teacherComment: string;
   files: SubmissionFile[];
   answers: HomeworkAnswer[];
+  aiState: AiCheckState | null;
+  aiCheckingSince: string | null;
 }
+
+export type AiCheckState = "checking" | "ready" | "failed" | "none";
 
 export interface SubmissionFile {
   name: string;

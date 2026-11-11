@@ -15,7 +15,8 @@
     "unsupportedType": "Этот тип файла не поддерживается",
     "allowedTypes": "Разрешено: {{types}}",
     "audioOnlySpeaking": "Аудио только для заданий Speaking",
-    "fileTooLarge": "Файл больше 25 МБ"
+    "fileTooLarge": "Файл больше 25 МБ",
+    "fileOrComment": "Загрузите файл или напишите ответ в комментарии"
   },
   "status": {
     "checking": "Проверяется",
@@ -41,7 +42,8 @@
     "scorePoints": "{{score}} баллов",
     "downloadSubmissionAria": "Скачать сданный файл",
     "recheckAria": "Проверить снова",
-    "result": "Результат"
+    "result": "Результат",
+    "textAnswer": "Текстовый ответ"
   },
   "resultDialog": {
     "defaultTitle": "Результат проверки ИИ",
@@ -73,7 +75,10 @@
     "mistakes": "Ошибки",
     "suggestions": "Рекомендации",
     "defaultFileName": "Работа",
-    "scoreRange": "Общий балл должен быть от 0 до 100"
+    "scoreRange": "Общий балл должен быть от 0 до 100",
+    "aiFailedTitle": "ИИ не смог оценить — оцените сами",
+    "aiNone": "Эта работа не проверялась ИИ. Оценку ставите вы.",
+    "checkingSince": "Проверяется с {{time}}"
   },
   "report": {
     "noGrade": "Без оценки",
@@ -172,7 +177,10 @@
     "resubmit": "На доработку",
     "confirm": "Подтвердить",
     "studentComment": "Комментарий ученика",
-    "files": "Файлы · {{count}}"
+    "files": "Файлы · {{count}}",
+    "textAnswer": "Текстовый ответ ученика",
+    "aiFailed": "ИИ не смог оценить — оцените сами",
+    "aiFailedHint": "Просмотрите работу и поставьте оценку сами"
   },
   "workspace": {
     "emptyTitle": "Задания ещё не выданы",

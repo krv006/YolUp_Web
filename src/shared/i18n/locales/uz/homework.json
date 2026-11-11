@@ -15,7 +15,8 @@
     "unsupportedType": "Fayl turi qo'llab-quvvatlanmaydi",
     "allowedTypes": "Mumkin: {{types}}",
     "audioOnlySpeaking": "Audio faqat Speaking vazifasi uchun",
-    "fileTooLarge": "Fayl 25 MB dan katta"
+    "fileTooLarge": "Fayl 25 MB dan katta",
+    "fileOrComment": "Fayl yuklang yoki javobingizni izohga yozing"
   },
   "status": {
     "checking": "Tekshirilmoqda",
@@ -41,7 +42,8 @@
     "scorePoints": "{{score}} ball",
     "downloadSubmissionAria": "Topshirilgan faylni yuklab olish",
     "recheckAria": "Qayta tekshirish",
-    "result": "Natija"
+    "result": "Natija",
+    "textAnswer": "Matnli javob"
   },
   "resultDialog": {
     "defaultTitle": "AI tekshiruv natijasi",
@@ -73,7 +75,10 @@
     "mistakes": "Xatolar",
     "suggestions": "Tavsiyalar",
     "defaultFileName": "Topshiriq",
-    "scoreRange": "Umumiy ball 0 dan 100 gacha bo'lishi kerak"
+    "scoreRange": "Umumiy ball 0 dan 100 gacha bo'lishi kerak",
+    "aiFailedTitle": "AI baholay olmadi — o‘zingiz baholang",
+    "aiNone": "Bu topshiriq AI’da tekshirilmagan. Bahoni o‘zingiz qo‘yasiz.",
+    "checkingSince": "{{time}} dan beri tekshirilmoqda"
   },
   "report": {
     "noGrade": "Baho yo'q",
@@ -172,7 +177,10 @@
     "resubmit": "Qayta topshirish",
     "confirm": "Tasdiqlash",
     "studentComment": "O‘quvchi izohi",
-    "files": "Fayllar · {{count}}"
+    "files": "Fayllar · {{count}}",
+    "textAnswer": "O‘quvchining matnli javobi",
+    "aiFailed": "AI baholay olmadi — o‘zingiz baholang",
+    "aiFailedHint": "Topshiriqni ko‘rib chiqing va bahoni o‘zingiz qo‘ying"
   },
   "workspace": {
     "emptyTitle": "Hali vazifa berilmagan",
