@@ -85,6 +85,7 @@ import { Avatar } from "@/shared/ui/legacy";
 import { MobileLiveRoom } from "./mobile-live-room";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
 import { useShareSourceText } from "./use-share-source-text";
+import { SharePreview } from "./share-preview";
 import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
 import { useDocumentPip } from "./use-document-pip";
@@ -172,22 +173,6 @@ function CameraTile({
   );
 }
 
-function LocalSharePreview({ stream }: { stream: MediaStream }) {
-  const ref = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return undefined;
-    element.srcObject = stream;
-    void element.play().catch(() => undefined);
-    return () => {
-      element.srcObject = null;
-    };
-  }, [stream]);
-
-  return <video ref={ref} className="size-full bg-black object-contain" autoPlay muted playsInline />;
-}
-
 function ShareStage({
   track,
   localStream,
@@ -205,7 +190,7 @@ function ShareStage({
   return (
     <div className="relative min-h-0 flex-1 overflow-hidden rounded-xl bg-black">
       {local && hasLiveVideo(localStream) && localStream ? (
-        <LocalSharePreview stream={localStream} />
+        <SharePreview stream={localStream} />
       ) : (
         <ParticipantTile trackRef={track} />
       )}
@@ -682,6 +667,7 @@ function TeacherShareControl({
       {pip.pipWindow ? (
         <ShareControlWindow
           pipWindow={pip.pipWindow}
+          stream={screenStream}
           sharedWhat={sharedWhat}
           startedAt={startedAt}
           studentCount={studentCount}
@@ -1046,10 +1032,10 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
 
         {isTeacher && localShare ? (
           <span
-            className="flex h-6 max-w-80 shrink-0 items-center gap-1.5 rounded-full bg-brand-subtle px-3 text-caption-strong text-brand"
+            className="flex h-9 max-w-80 shrink-0 items-center gap-2 rounded-lg bg-brand-subtle py-1 pr-3 pl-1 text-caption-strong text-brand"
             role="status"
           >
-            <MonitorUp size={14} className="shrink-0" />
+            <SharePreview stream={screenStream} className="h-7 w-12 shrink-0 rounded-md" />
             <span className="truncate">
               {t("share.sharingWhat", { what: shareSourceText(describeShareTrack(screenStream?.getVideoTracks()[0])) })}
             </span>
