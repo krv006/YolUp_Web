@@ -43,7 +43,7 @@ export function AttentionCheckDialog({
 
   return (
     <AppDialog
-      open={Boolean(check)}
+      open={Boolean(check) && seconds > 0}
       onOpenChange={() => undefined}
       variant="confirm"
       icon={
