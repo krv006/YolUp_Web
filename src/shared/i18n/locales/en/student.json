@@ -209,7 +209,8 @@
       "emptyHint": "Tests from your teacher will appear here.",
       "attemptsTitle": "My attempts",
       "attemptsSubtitle": "Your latest test attempts",
-      "attemptsEmpty": "You haven’t taken any tests yet"
+      "attemptsEmpty": "You haven’t taken any tests yet",
+      "attemptsOver": "No attempts left"
     },
     "player": {
       "questions": "Questions · {{count}}",
@@ -249,7 +250,29 @@
       },
       "trueLabel": "True",
       "falseLabel": "False",
-      "finishShort": "Finish"
+      "finishShort": "Finish",
+      "timeUp": "Time is up — submitting the test",
+      "timeLeft": "Time left: {{time}}",
+      "start": {
+        "title": "Start the test",
+        "time_one": "Time: {{count}} minute",
+        "time_other": "Time: {{count}} minutes",
+        "attempts": "Attempts: {{left}} of {{total}} left",
+        "questions_one": "Questions: {{count}}",
+        "questions_other": "Questions: {{count}}",
+        "note": "Once you start, the timer keeps running even if you close the page. When time is up, the test is submitted automatically.",
+        "action": "Start",
+        "starting": "Starting…"
+      },
+      "over": {
+        "title": "No attempts left",
+        "text_one": "You have taken this test {{count}} time. There are no attempts left.",
+        "text_other": "You have taken this test {{count}} times. There are no attempts left.",
+        "results": "See the result",
+        "back": "Back to tests"
+      },
+      "metaTimed_one": "time: {{count}} minute",
+      "metaTimed_other": "time: {{count}} minutes"
     },
     "results": {
       "eyebrow": "Tests / Your result · {{course}}",

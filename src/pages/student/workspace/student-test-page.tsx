@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -8,10 +8,12 @@ import {
   QuestionAnswerInput,
   QuizGroupPanel,
   emptyAnswer,
+  formatCountdown,
   optionLetter,
   quizApi,
   quizDisplayTitle,
   useQuiz,
+  useQuizCountdown,
   useQuizDraft,
   useSubmitQuizAttempt,
 } from "@/modules/quiz";
@@ -21,11 +23,13 @@ import type { QuizAnswerValue, QuizDetail, QuizQuestion } from "@/shared/types";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { MobileActionBar, MobileEmptyCard, mobileButton, mobileRoundButton } from "@/shared/ui/mobile-page";
+import { TestAttemptsOver, TestStartScreen } from "./student-test-gate";
 
 interface Draft {
   answers: Record<string, QuizAnswerValue>;
   index: number;
   startedAt: number;
+  session?: string;
 }
 
 const draftKey = (quizId: string) => `yolup.quiz-draft.${quizId}`;
@@ -90,6 +94,7 @@ function answered(value: QuizAnswerValue | undefined): boolean {
 export function StudentTestPage() {
   const { quizId = "" } = useParams();
   const quiz = useQuiz(quizId || null);
+  const course = useCourse(quiz.data?.courseId || null);
   const { t } = useTranslation("student");
 
   if (quiz.isError)
@@ -109,7 +114,32 @@ export function StudentTestPage() {
         <i className="h-96 w-full max-w-160 rounded-2xl bg-surface" />
       </main>
     );
-  return <TestPlayer key={quiz.data.id} quiz={quiz.data} />;
+  if (quiz.data.attemptsLeft === 0 && !quiz.data.questions.length) return <TestAttemptsOver quiz={quiz.data} />;
+  if (quiz.data.needsStart)
+    return (
+      <TestStartScreen
+        quiz={quiz.data}
+        meta={[quiz.data.subjectLabel, course.data?.title, course.data?.teacher].filter(Boolean).join(" · ")}
+      />
+    );
+  return <TestPlayer key={`${quiz.data.id}:${quiz.data.startedAt ?? ""}`} quiz={quiz.data} />;
+}
+
+function TimerPill({ seconds, className = "" }: { seconds: number; className?: string }) {
+  const { t } = useTranslation("student");
+  const urgent = seconds <= 60;
+  return (
+    <span
+      className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full px-3 text-body-sm font-semibold tabular-nums ${
+        urgent ? "animate-pulse bg-danger-bg text-error-text" : "bg-brand-subtle text-brand"
+      } ${className}`}
+      role="timer"
+      aria-label={t("workspace.player.timeLeft", { time: formatCountdown(seconds) })}
+    >
+      <Icon name="timer" size={16} className="shrink-0" />
+      {formatCountdown(seconds)}
+    </span>
+  );
 }
 
 function TestPlayer({ quiz }: { quiz: QuizDetail }) {
@@ -119,9 +149,15 @@ function TestPlayer({ quiz }: { quiz: QuizDetail }) {
   const course = useCourse(quiz.courseId || null);
   const submit = useSubmitQuizAttempt();
   const questions = quiz.questions;
-  const [draft, setDraft] = useState<Draft>(
-    () => readDraft(quiz.id) ?? { answers: {}, index: 0, startedAt: Date.now() }
-  );
+  const session = quiz.startedAt ?? "";
+  const [draft, setDraft] = useState<Draft>(() => {
+    const stored = readDraft(quiz.id);
+    return stored && (stored.session ?? "") === session
+      ? stored
+      : { answers: {}, index: 0, startedAt: quiz.startedAt ? Date.parse(quiz.startedAt) : Date.now(), session };
+  });
+  const remaining = useQuizCountdown(quiz.endsAt);
+  const timeUpHandled = useRef(false);
   const serverDraft = useQuizDraft(quiz.id);
   const [hydrated, setHydrated] = useState(false);
   if (!hydrated && serverDraft.data) {
@@ -171,7 +207,7 @@ function TestPlayer({ quiz }: { quiz: QuizDetail }) {
       {
         quizId: quiz.id,
         answers: questions.map((item) => ({ questionId: item.id, answer: draft.answers[item.id] ?? emptyAnswer(item) })),
-        durationSeconds: Math.round((Date.now() - draft.startedAt) / 1000),
+        durationSeconds: Math.round((Date.now() - (quiz.startedAt ? Date.parse(quiz.startedAt) : draft.startedAt)) / 1000),
       },
       {
         onSuccess: (result) => {
@@ -186,7 +222,25 @@ function TestPlayer({ quiz }: { quiz: QuizDetail }) {
   }
 
   const requestFinish = () => (missing ? setConfirmOpen(true) : finish());
-  const meta = [course.data?.title, course.data?.teacher, t("workspace.player.meta")].filter(Boolean).join(" · ");
+
+  const onTimeUp = useEffectEvent(() => {
+    setConfirmOpen(false);
+    toast.info(t("workspace.player.timeUp"));
+    if (!submit.isPending) finish();
+  });
+
+  useEffect(() => {
+    if (remaining !== 0 || timeUpHandled.current) return;
+    timeUpHandled.current = true;
+    onTimeUp();
+  }, [remaining]);
+  const meta = [
+    course.data?.title,
+    course.data?.teacher,
+    quiz.timeLimitMinutes ? t("workspace.player.metaTimed", { count: quiz.timeLimitMinutes }) : t("workspace.player.meta"),
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const last = index === questions.length - 1;
 
   const body = question ? (
@@ -223,7 +277,13 @@ function TestPlayer({ quiz }: { quiz: QuizDetail }) {
             <button type="button" className={mobileRoundButton} aria-label={t("workspace.player.later")} onClick={later}>
               <Icon name="chevron-left" size={22} />
             </button>
-            <h1 className="min-w-0 flex-1 truncate text-center text-title-lg font-semibold">{quizDisplayTitle(quiz)}</h1>
+            {remaining === null ? (
+              <h1 className="min-w-0 flex-1 truncate text-center text-title-lg font-semibold">{quizDisplayTitle(quiz)}</h1>
+            ) : (
+              <span className="flex min-w-0 flex-1 justify-center">
+                <TimerPill seconds={remaining} />
+              </span>
+            )}
             <button
               type="button"
               className="flex h-11 shrink-0 items-center rounded-full bg-brand px-4 text-button text-on-action disabled:opacity-50"
@@ -333,6 +393,7 @@ function TestPlayer({ quiz }: { quiz: QuizDetail }) {
             >
               {submit.isPending ? t("workspace.player.submitting") : t("workspace.player.finish")}
             </button>
+            {remaining === null ? null : <TimerPill seconds={remaining} className="ml-auto h-[42px] px-4" />}
           </div>
 
           <section className="mt-[17px] flex flex-col rounded-2xl border border-line bg-surface p-4">
