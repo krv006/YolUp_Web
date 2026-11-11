@@ -8,3 +8,4 @@ export { ParentMobileHeader } from "./parent-mobile-header";
 export { ChildChips } from "./child-chips";
 export { useParentNotificationLink } from "./use-parent-notification-link";
 export { ParentLockedCard } from "./parent-locked-card";
+export { ParentAccountSwitchDialog } from "./parent-account-switch-dialog";

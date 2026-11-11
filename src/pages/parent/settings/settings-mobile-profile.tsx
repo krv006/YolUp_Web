@@ -12,6 +12,7 @@ import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { MOBILE_INPUT_SURFACE } from "@/shared/ui/mobile-fields";
 import { MobilePageHeader, mobileButton, mobileRoundButton } from "@/shared/ui/mobile-page";
+import { ParentAccountSwitchDialog } from "@/widgets/parent-shell";
 
 const PHONE = /^\+998\s?\d{2}\s?\d{3}\s?\d{2}\s?\d{2}$/;
 type Field = "firstName" | "lastName" | "username" | "phone";
@@ -48,6 +49,7 @@ export function ProfileHubMobile() {
   const links = useParentLinks();
   const sessions = useSessions();
   const [confirm, setConfirm] = useState(false);
+  const [switchOpen, setSwitchOpen] = useState(false);
   const pending = (links.data ?? []).filter((link) => link.status === "pending").length;
 
   return (
@@ -99,10 +101,18 @@ export function ProfileHubMobile() {
         <MenuRow icon="notifications" tone="bg-accent-saffron-bg text-accent-saffron-fg" title={t("settings.nav.notifications")} text={t("mobile.settings.notificationsText")} onClick={() => navigate(ROUTES.parent.notifications)} />
         <MenuRow icon="settings" tone="bg-accent-blue-bg text-accent-blue-fg" title={t("account.settings")} text={t("mobile.settings.settingsText")} onClick={() => navigate(ROUTES.parent.settings())} />
         <MenuRow icon="help" tone="bg-subtle text-icon" title={t("account.help")} onClick={() => navigate(ROUTES.parent.help)} />
+        <MenuRow
+          icon="swap-horiz"
+          tone="bg-brand-subtle text-brand"
+          title={t("account.switchAccount")}
+          text={t("account.switchAccountText")}
+          onClick={() => setSwitchOpen(true)}
+        />
       </ul>
       <ul className="flex flex-col overflow-hidden rounded-[20px] bg-surface">
         <MenuRow icon="logout" tone="bg-danger-bg text-error-text" title={t("account.logout")} danger onClick={() => setConfirm(true)} />
       </ul>
+      <ParentAccountSwitchDialog open={switchOpen} onOpenChange={setSwitchOpen} />
       <ConfirmDialog
         open={confirm}
         onOpenChange={setConfirm}

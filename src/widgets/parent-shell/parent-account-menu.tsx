@@ -8,6 +8,7 @@ import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { Popover, PopoverAnchor, PopoverContent } from "@/shared/ui/popover";
+import { ParentAccountSwitchDialog } from "./parent-account-switch-dialog";
 
 export function ParentAccountMenu({
   open,
@@ -23,12 +24,14 @@ export function ParentAccountMenu({
   const { user, logout } = useAuth();
   const { selectedChildId } = useSelectedChild();
   const [confirm, setConfirm] = useState(false);
+  const [switchOpen, setSwitchOpen] = useState(false);
 
   const items = [
     { id: "profile", icon: "person", run: () => navigate(ROUTES.parent.settings("profile")) },
     { id: "settings", icon: "settings", run: () => navigate(ROUTES.parent.settings("notifications")) },
     ...(selectedChildId ? [{ id: "logins", icon: "history", run: () => navigate(ROUTES.parent.childLogins(selectedChildId)) }] : []),
     { id: "help", icon: "help", run: () => navigate(ROUTES.parent.help) },
+    { id: "switchAccount", icon: "swap-horiz", run: () => setSwitchOpen(true) },
   ];
 
   return (
@@ -79,6 +82,7 @@ export function ParentAccountMenu({
           </div>
         </PopoverContent>
       </Popover>
+      <ParentAccountSwitchDialog open={switchOpen} onOpenChange={setSwitchOpen} />
       <ConfirmDialog
         alert
         open={confirm}

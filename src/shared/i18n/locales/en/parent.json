@@ -977,7 +977,9 @@
     "logoutTitle": "Sign out?",
     "logoutText": "You’ll need your login and password to sign in again.",
     "logoutConfirm": "Sign out",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "switchAccount": "Switch account",
+    "switchAccountText": "Go to your teacher or student account"
   },
   "states": {
     "home": "Back to home",
