@@ -71,6 +71,8 @@ export interface Conversation {
   canComment?: boolean;
   unpaidCount?: number | null;
   overdueCount?: number | null;
+  courseKind?: "group" | "club" | null;
+  linkedCourses?: Array<{ id: string; title: string }>;
 }
 
 export interface MessageReply {

@@ -456,7 +456,14 @@
     "removeMember": "{{name}}ni kanaldan chiqarish",
     "delete": "Kanalni o'chirish",
     "deleteTitle": "Kanal o'chirilsinmi?",
-    "deleteHint": "“{{title}}” kanali, uning postlari va izohlari o'chiriladi."
+    "deleteHint": "“{{title}}” kanali, uning postlari va izohlari o'chiriladi.",
+    "addImage": "Kanal rasmini qo'yish",
+    "changeImage": "Kanal rasmini almashtirish",
+    "removeImage": "Rasmni olib tashlash",
+    "imageUpdated": "Kanal rasmi yangilandi",
+    "imageRemoved": "Kanal rasmi olib tashlandi",
+    "linkedGroups": "Ulangan guruhlar",
+    "groupFallback": "Guruh"
   },
   "club": {
     "badge": "Club"

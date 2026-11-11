@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useCurrentUser } from "@/modules/auth";
 import {
+  ChannelAvatar,
   isDirectLocked,
   isOwnLastMessage,
   lastMessageBody,
@@ -42,8 +43,11 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
   const weekdays = t("listTime.weekdays", { returnObjects: true }) as string[];
   const directStatusLabel = useDirectStatusLabel();
   const typing = useRoomTyping(conversation.id);
-  const clubs = useClubs(conversation.type === "group");
-  const isClub = Boolean(conversation.courseId && clubs.data?.some((club) => club.id === conversation.courseId));
+  const clubs = useClubs(conversation.type === "group" && conversation.courseKind === undefined);
+  const isClub =
+    conversation.courseKind === undefined
+      ? Boolean(conversation.courseId && clubs.data?.some((club) => club.id === conversation.courseId))
+      : conversation.courseKind === "club";
   const mine = isOwnLastMessage(conversation, user);
   const body = lastMessageBody(conversation, {
     voice: t("panel.voiceMessage"),
@@ -54,9 +58,7 @@ export function ConversationRowBody({ conversation }: { conversation: Conversati
   return (
     <>
     {conversation.type === "channel" ? (
-      <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-brand-subtle text-brand">
-        <Icon name="campaign" size={24} />
-      </span>
+      <ChannelAvatar src={conversation.imageUrl} />
     ) : conversation.type === "group" ? (
       <GroupTile
         name={conversation.title}

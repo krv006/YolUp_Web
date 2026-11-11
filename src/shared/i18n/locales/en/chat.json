@@ -459,7 +459,14 @@
     "removeMember": "Remove {{name}} from the channel",
     "delete": "Delete channel",
     "deleteTitle": "Delete the channel?",
-    "deleteHint": "The “{{title}}” channel with its posts and comments will be deleted."
+    "deleteHint": "The “{{title}}” channel with its posts and comments will be deleted.",
+    "addImage": "Add channel photo",
+    "changeImage": "Change channel photo",
+    "removeImage": "Remove photo",
+    "imageUpdated": "Channel photo updated",
+    "imageRemoved": "Channel photo removed",
+    "linkedGroups": "Linked groups",
+    "groupFallback": "Group"
   },
   "club": {
     "badge": "Club"

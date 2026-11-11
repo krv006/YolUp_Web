@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { ChannelAvatar } from "@/modules/conversation";
 import { MessageComposer, MessageList, type ChatController } from "@/modules/message";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { ChatMessage, Conversation, ConversationRole, SendMessagePayload } from "@/shared/types";
@@ -72,9 +73,7 @@ export function ChannelView({ chat, conversation, role, backTo, currentUserId }:
             aria-label={t("header.openInfoAria", { title: conversation.title })}
             onClick={() => setInfoOpen(true)}
           >
-            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-brand-subtle text-brand">
-              <Icon name="campaign" size={22} />
-            </span>
+            <ChannelAvatar src={conversation.imageUrl} className="size-11 rounded-xl" iconSize={22} />
             <span className="flex min-w-0 flex-col">
               <strong className="truncate text-title text-ink">{conversation.title}</strong>
               <small className="truncate text-body-xs text-ink-secondary">

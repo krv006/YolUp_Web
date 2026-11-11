@@ -31,6 +31,9 @@ export interface ChatRoomDto {
   can_comment?: boolean;
   unpaid_count?: number | null;
   overdue_count?: number | null;
+  course_kind?: string | null;
+  course_ids?: Array<string | number> | null;
+  courses?: Array<{ id: string | number; title?: string }> | null;
   pinned_messages?: Array<{
     message_id: string | number;
     author_name?: string;
