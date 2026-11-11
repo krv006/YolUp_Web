@@ -101,6 +101,9 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     createdAt: dto.created_at,
     questionCount: dto.question_count,
     studentIds: dto.student_ids?.length ? dto.student_ids.map(String) : null,
+    timeLimitMinutes: dto.time_limit_minutes ?? null,
+    maxAttempts: dto.max_attempts ?? null,
+    questionsPerAttempt: dto.questions_per_attempt ?? null,
   };
 }
 
@@ -126,6 +129,9 @@ export function assignRequestBody(input: Omit<QuizAssignInput, "quizId">): Recor
     course: input.courseId,
     ...(input.dueAt === undefined ? {} : { due_at: input.dueAt }),
     ...(input.studentIds === undefined ? {} : { student_ids: input.studentIds ?? [] }),
+    ...(input.timeLimitMinutes === undefined ? {} : { time_limit_minutes: input.timeLimitMinutes }),
+    ...(input.maxAttempts === undefined ? {} : { max_attempts: input.maxAttempts }),
+    ...(input.questionsPerAttempt === undefined ? {} : { questions_per_attempt: input.questionsPerAttempt }),
   };
 }
 
@@ -143,6 +149,12 @@ export function mapQuizGroupDto(dto: QuizGroupDto): QuizGroup {
 export function mapQuizDto(dto: QuizDto): QuizDetail {
   return {
     ...mapQuizSummaryDto(dto),
+    questionCount: dto.question_count ?? (dto.questions ?? []).length,
+    attemptsUsed: dto.attempts_used ?? null,
+    attemptsLeft: dto.attempts_left ?? null,
+    startedAt: dto.started_at ?? null,
+    endsAt: dto.ends_at ?? null,
+    needsStart: dto.needs_start === true,
     groupAvgPercentage: dto.group_avg_percentage ?? null,
     groups: (dto.groups ?? []).map(mapQuizGroupDto),
     questions: (dto.questions ?? []).map(mapQuizQuestionDto),

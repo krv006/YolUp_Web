@@ -590,7 +590,9 @@
     "lastToday": "last today {{time}}",
     "yesterday": "yesterday",
     "noAttempts": "No attempts yet",
-    "detailTitle": "{{name}} · attempts"
+    "detailTitle": "{{name}} · attempts",
+    "limited_one": "{{count}} attempt allowed",
+    "limited_other": "{{count}} attempts allowed"
   },
   "ai": {
     "eyebrow": "Workspace / AI · test builder",
@@ -689,5 +691,26 @@
     "contact": "Help center",
     "close": "Close",
     "badge": "Paid service"
+  },
+  "limits": {
+    "title": "Test settings",
+    "hint": "Leave empty for no limit",
+    "time": "Time, min",
+    "attempts": "Attempts",
+    "perAttempt": "Questions",
+    "none": "No limit",
+    "allQuestions": "All ({{count}})",
+    "range": {
+      "time": "Time: 1–600 minutes",
+      "attempts": "Attempts: 1–20",
+      "perAttempt": "Questions: 1–{{max}}"
+    },
+    "groupedHint": "A test tied to a text or audio can't limit its questions",
+    "short": {
+      "time": "{{count}} min",
+      "attempts_one": "{{count}} attempt",
+      "attempts_other": "{{count}} attempts",
+      "perAttempt": "{{count}} per student"
+    }
   }
 }

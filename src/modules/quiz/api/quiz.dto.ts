@@ -57,6 +57,9 @@ export interface QuizSummaryDto {
   question_count: number;
   created_at: string;
   student_ids?: Array<string | number> | null;
+  time_limit_minutes?: number | null;
+  max_attempts?: number | null;
+  questions_per_attempt?: number | null;
 }
 
 export interface QuizAudienceDto {
@@ -95,6 +98,18 @@ export interface QuizAssignInput {
   courseId: string;
   dueAt?: string | null;
   studentIds?: string[] | null;
+  timeLimitMinutes?: number | null;
+  maxAttempts?: number | null;
+  questionsPerAttempt?: number | null;
+}
+
+export interface QuizStartDto {
+  started_at: string;
+  ends_at: string | null;
+  time_limit_minutes?: number | null;
+  attempts_used?: number | null;
+  attempts_left?: number | null;
+  question_count?: number | null;
 }
 
 export interface QuizGroupDto {
@@ -108,6 +123,11 @@ export interface QuizGroupDto {
 }
 
 export interface QuizDto extends QuizSummaryDto {
+  attempts_used?: number | null;
+  attempts_left?: number | null;
+  started_at?: string | null;
+  ends_at?: string | null;
+  needs_start?: boolean;
   group_avg_percentage?: number | null;
   groups?: QuizGroupDto[];
   questions: QuizQuestionDto[];

@@ -590,7 +590,11 @@
     "lastToday": "последняя сегодня {{time}}",
     "yesterday": "вчера",
     "noAttempts": "Пока нет попыток",
-    "detailTitle": "{{name}} · попытки"
+    "detailTitle": "{{name}} · попытки",
+    "limited_one": "разрешена {{count}} попытка",
+    "limited_few": "разрешено {{count}} попытки",
+    "limited_many": "разрешено {{count}} попыток",
+    "limited_other": "разрешено {{count}} попытки"
   },
   "ai": {
     "eyebrow": "Workspace / AI · создание теста",
@@ -689,5 +693,28 @@
     "contact": "Центр помощи",
     "close": "Закрыть",
     "badge": "Платная услуга"
+  },
+  "limits": {
+    "title": "Условия прохождения",
+    "hint": "Пустое поле — без ограничения",
+    "time": "Время, мин",
+    "attempts": "Попытки",
+    "perAttempt": "Вопросов",
+    "none": "Без ограничения",
+    "allQuestions": "Все ({{count}})",
+    "range": {
+      "time": "Время: 1–600 минут",
+      "attempts": "Попытки: 1–20",
+      "perAttempt": "Вопросов: 1–{{max}}"
+    },
+    "groupedHint": "В тесте с текстом или аудио число вопросов не ограничивается",
+    "short": {
+      "time": "{{count}} мин",
+      "attempts_one": "{{count}} попытка",
+      "attempts_few": "{{count}} попытки",
+      "attempts_many": "{{count}} попыток",
+      "attempts_other": "{{count}} попытки",
+      "perAttempt": "по {{count}} вопр."
+    }
   }
 }

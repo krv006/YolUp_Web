@@ -46,6 +46,7 @@ export {
   useImportGoogleLink,
   useImportQuizDocx,
   useQuiz,
+  useStartQuiz,
   useQuizAttempts,
   useQuizAudience,
   useQuizDraft,
@@ -90,6 +91,7 @@ export type { QuizImportSource } from "./ui/quiz-import-dialog";
 export { StudentChecklist } from "./ui/student-checklist";
 export { QuizAudienceCard } from "./ui/quiz-audience-card";
 export { PaidTestDialog } from "./ui/paid-test-dialog";
+export { useQuizLimitsText } from "./model/use-quiz-limits-text";
 export { usePaidTestGate } from "./model/use-paid-test-gate";
 export type { ChecklistStudent } from "./ui/student-checklist";
 export { QuizAttemptsDrawer } from "./ui/quiz-attempts-drawer";

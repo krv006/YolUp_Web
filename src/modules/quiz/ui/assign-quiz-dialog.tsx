@@ -5,6 +5,10 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
+import type { QuizAssignInput } from "../api/quiz.dto";
+import { parseQuizLimits, quizLimitsDraft, type QuizLimitsDraft } from "../lib/quiz-limits";
+import { useQuiz } from "../model/quiz.queries";
+import { QuizLimitsFields } from "./quiz-limits-fields";
 import { StudentChecklist } from "./student-checklist";
 
 export interface AssignQuizDialogProps {
@@ -18,7 +22,7 @@ export interface AssignQuizDialogProps {
   quizLabel?: string;
   courseId?: string | null;
   pending?: boolean;
-  onSubmit: (value: { quizId: string; courseId: string; dueAt: string | null; studentIds: string[] | null }) => void;
+  onSubmit: (value: QuizAssignInput) => void;
 }
 
 function today(): string {
@@ -57,6 +61,12 @@ export function AssignQuizDialog({
         .map((item) => ({ id: item.student.id, name: item.student.name, avatarUrl: item.student.avatarUrl })),
     [enrollments.data]
   );
+  const detail = useQuiz(open && finalQuiz ? finalQuiz : null);
+  const questionCount = detail.data?.questionCount ?? 0;
+  const hasGroups = (detail.data?.groups.length ?? 0) > 0;
+  const [limitsDraft, setLimitsDraft] = useState<{ quiz: string; value: QuizLimitsDraft } | null>(null);
+  const limitsValue = limitsDraft?.quiz === finalQuiz ? limitsDraft.value : quizLimitsDraft(detail.data);
+  const limits = parseQuizLimits(limitsValue, { questionCount, hasGroups });
   const [excluded, setExcluded] = useState<{ course: string; ids: Set<string> }>({ course: "", ids: new Set() });
   const excludedIds = excluded.course === finalCourse ? excluded.ids : new Set<string>();
   const chosen = students.filter((student) => !excludedIds.has(student.id)).map((student) => student.id);
@@ -66,6 +76,7 @@ export function AssignQuizDialog({
     if (!next) {
       setPickedQuiz(null);
       setExcluded({ course: "", ids: new Set() });
+      setLimitsDraft(null);
     }
     onOpenChange(next);
   }
@@ -76,8 +87,24 @@ export function AssignQuizDialog({
       courseId: finalCourse,
       dueAt: date ? `${date}T${time || "23:59"}` : null,
       studentIds: excludedIds.size ? chosen : null,
+      ...limits.limits,
     });
   }
+
+  const limitsBlock = (compact: boolean) =>
+    detail.data ? (
+      <QuizLimitsFields
+        compact={compact}
+        value={limitsValue}
+        invalid={limits.invalid}
+        questionCount={questionCount}
+        hasGroups={hasGroups}
+        onChange={(value) => setLimitsDraft({ quiz: finalQuiz, value })}
+      />
+    ) : finalQuiz ? (
+      <span className="h-20 animate-pulse rounded-lg bg-skeleton" aria-hidden="true" />
+    ) : null;
+  const blocked = pending || !finalQuiz || !finalCourse || nobody || limits.invalid.length > 0 || !detail.data;
 
   const checklist = finalCourse ? (
     <StudentChecklist
@@ -122,7 +149,7 @@ export function AssignQuizDialog({
             <button
               type="button"
               className={`${dialogButton.primary} h-13 text-title font-semibold`}
-              disabled={pending || !finalQuiz || !finalCourse || nobody}
+              disabled={blocked}
               onClick={submit}
             >
               {t("assignDialog.submit")}
@@ -184,6 +211,8 @@ export function AssignQuizDialog({
               />
             </MobileFieldLabel>
           </div>
+
+          {limitsBlock(true)}
         </div>
       </AppDialog>
     );
@@ -208,7 +237,7 @@ export function AssignQuizDialog({
           <button
             type="button"
             className={dialogButton.primary}
-            disabled={pending || !finalQuiz || !finalCourse || nobody}
+            disabled={blocked}
             onClick={submit}
           >
             {t("assignDialog.submit")}
@@ -250,6 +279,8 @@ export function AssignQuizDialog({
           <DatePicker label={t("assignDialog.dueLabel")} value={date} onChange={setDate} />
           <TimePicker label={t("assignDialog.timeLabel")} value={time} onChange={setTime} />
         </div>
+
+        {limitsBlock(false)}
 
         {quizId || quizzes.length ? null : (
           <p className="text-body-xs text-ink-tertiary">{t("assignDialog.noQuizzes")}</p>

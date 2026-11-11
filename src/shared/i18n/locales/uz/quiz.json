@@ -590,7 +590,8 @@
     "lastToday": "oxirgisi bugun {{time}}",
     "yesterday": "kecha",
     "noAttempts": "Hali urinish yo‘q",
-    "detailTitle": "{{name}} · urinishlar"
+    "detailTitle": "{{name}} · urinishlar",
+    "limited": "{{count}} ta urinish ruxsat etilgan"
   },
   "ai": {
     "eyebrow": "Workspace / AI · test tuzish",
@@ -689,5 +690,25 @@
     "contact": "Yordam markazi",
     "close": "Yopish",
     "badge": "Pullik xizmat"
+  },
+  "limits": {
+    "title": "Topshirish sozlamalari",
+    "hint": "Bo'sh qoldirilsa — cheklov yo'q",
+    "time": "Vaqt, daqiqa",
+    "attempts": "Urinishlar",
+    "perAttempt": "Savollar soni",
+    "none": "Cheklovsiz",
+    "allQuestions": "Hammasi ({{count}})",
+    "range": {
+      "time": "Vaqt: 1–600 daqiqa",
+      "attempts": "Urinishlar: 1–20",
+      "perAttempt": "Savollar: 1–{{max}}"
+    },
+    "groupedHint": "Matn yoki audioga bog'langan testda savollar soni cheklanmaydi",
+    "short": {
+      "time": "{{count}} daq",
+      "attempts": "{{count}} urinish",
+      "perAttempt": "{{count}} tadan savol"
+    }
   }
 }

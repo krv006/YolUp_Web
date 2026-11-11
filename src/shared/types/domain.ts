@@ -848,9 +848,17 @@ export interface QuizSummary {
   createdAt: string;
   questionCount: number;
   studentIds: string[] | null;
+  timeLimitMinutes: number | null;
+  maxAttempts: number | null;
+  questionsPerAttempt: number | null;
 }
 
 export interface QuizDetail extends QuizSummary {
+  attemptsUsed: number | null;
+  attemptsLeft: number | null;
+  startedAt: string | null;
+  endsAt: string | null;
+  needsStart: boolean;
   groupAvgPercentage: number | null;
   groups: QuizGroup[];
   questions: QuizQuestion[];
