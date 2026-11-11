@@ -8,6 +8,22 @@
   box-shadow: var(--shadow-xl);
 }
 
+.dialog-content {
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.dialog-content .dialog-actions.is-sticky {
+  position: sticky;
+  bottom: -22px;
+  z-index: 2;
+  margin: 16px -22px -22px;
+  padding: 14px 22px 22px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
 .dialog-heading h2 {
   font-family: var(--font-heading);
   font-size: var(--fs-h3);

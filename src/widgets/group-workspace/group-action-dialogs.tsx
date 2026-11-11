@@ -981,7 +981,7 @@ export function AddAssignmentDialog({
               showIssues={questions.showIssues}
             />
           </div>
-          <div className="dialog-actions mt-4">
+          <div className="dialog-actions is-sticky">
             <Button
               type="button"
               variant="ghost"
