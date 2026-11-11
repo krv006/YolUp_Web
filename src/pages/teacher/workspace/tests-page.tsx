@@ -15,7 +15,7 @@ import {
   usePublishQuiz,
   useQuizAttempts,
   useQuizzes,
-  useUpdateQuiz,
+  type QuizImportSource,
 } from "@/modules/quiz";
 import { NewTestDialog, type NewTestDraft } from "./new-test-dialog";
 import { MobileTests } from "./mobile-tests";
@@ -38,7 +38,6 @@ export function TestsPage() {
   const subjectOptions = useSubjects();
   const publish = usePublishQuiz();
   const create = useCreateQuiz();
-  const update = useUpdateQuiz();
   const assign = useAssignQuizToCourse();
   const remove = useDeleteQuiz();
   const exportQuiz = useExportQuiz();
@@ -48,6 +47,7 @@ export function TestsPage() {
   const [exportOf, setExportOf] = useState<QuizSummary | null>(null);
   const [deleting, setDeleting] = useState<QuizSummary | null>(null);
   const [importOpen, setImportOpen] = useState(false);
+  const [importSource, setImportSource] = useState<QuizImportSource | null>(null);
   const [assignTarget, setAssignTarget] = useState<QuizSummary | null>(null);
   const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
   const attempts = useQuizAttempts(attemptsOf?.id ?? null, Boolean(attemptsOf));
@@ -145,12 +145,16 @@ export function TestsPage() {
         subjects={(subjectOptions.data ?? []).map((item) => ({ value: item.value, label: item.label }))}
         pending={create.isPending}
         onContinue={startTest}
-        onImport={() => setImportOpen(true)}
+        onImport={(source) => {
+          setImportSource(source);
+          setImportOpen(true);
+        }}
       />
 
       <QuizImportDialog
         open={importOpen}
         onOpenChange={setImportOpen}
+        source={importSource}
         request={{ topic: t("tests.importedTopic") }}
         onImported={(quiz) => {
           changeCreateOpen(false);
@@ -168,17 +172,8 @@ export function TestsPage() {
         quizzes={items.filter((quiz) => quiz.status !== DRAFT).map((quiz) => ({ id: quiz.id, label: quizDisplayTitle(quiz) }))}
         courses={courseOptions.map((course) => ({ id: course.id, label: course.label, studentCount: course.studentCount }))}
         pending={assign.isPending}
-        onSubmit={({ quizId, courseId, dueAt }) => {
-          const target = items.find((quiz) => quiz.id === quizId) ?? assignTarget;
-          assign.mutateAsync({ quizId, courseId }).then(() => {
-            if (dueAt && target) {
-              update.mutate({
-                id: target.id,
-                values: { dueAt },
-              });
-            }
-            setAssignTarget(null);
-          });
+        onSubmit={(value) => {
+          assign.mutateAsync(value).then(() => setAssignTarget(null));
         }}
       />
 

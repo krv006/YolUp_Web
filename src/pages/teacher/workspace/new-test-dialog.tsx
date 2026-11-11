@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { QuizImportSource } from "@/modules/quiz";
 import { useTranslation } from "react-i18next";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
@@ -22,10 +23,10 @@ export interface NewTestDialogProps {
   subjects: ReadonlyArray<{ value: string; label: string }>;
   pending?: boolean;
   onContinue: (draft: NewTestDraft) => void;
-  onImport: () => void;
+  onImport: (source: QuizImportSource) => void;
 }
 
-const IMPORT_SOURCES = [
+const IMPORT_SOURCES: Array<{ id: QuizImportSource; icon: string; mobileIcon: string }> = [
   { id: "docx", icon: "description", mobileIcon: "assignment-check-fill" },
   { id: "xlsx", icon: "grid-view", mobileIcon: "bar-chart" },
   { id: "google", icon: "send", mobileIcon: "send" },
@@ -86,7 +87,7 @@ export function NewTestDialog({
           <button
             type="button"
             className={mobileButton.primary}
-            disabled={pending || !courseId || !title.trim()}
+            disabled={pending || !title.trim()}
             onClick={submit}
           >
             <Icon name="chevron-right" size={20} />
@@ -104,15 +105,16 @@ export function NewTestDialog({
               type="select"
               surface
               value={courseId}
-              display={course ? course.label : placeholder}
+              display={course ? course.label : <span className="text-ink-secondary">{t("newTest.noGroup")}</span>}
               ariaLabel={t("newTest.group")}
               options={[
-                ...(course ? [] : [{ value: "", label: t("assignDialog.pick") }]),
+                { value: "", label: t("newTest.noGroup") },
                 ...courses.map((item) => ({ value: item.id, label: item.label })),
               ]}
               onChange={setCourseId}
             />
           </MobileFieldLabel>
+          {course ? null : <small className="-mt-2 text-body-xs text-ink-secondary">{t("newTest.noGroupHint")}</small>}
 
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("newTest.name")}>
             <input
@@ -160,7 +162,7 @@ export function NewTestDialog({
               key={source.id}
               type="button"
               className="flex h-18.5 flex-col items-center justify-center gap-2 rounded-lg bg-surface text-ink transition-colors hover:bg-subtle"
-              onClick={onImport}
+              onClick={() => onImport(source.id)}
             >
               <Icon name={source.mobileIcon} size={20} className="text-brand" />
               <small className="text-body-sm font-medium">{t(`newTest.sources.${source.id}`)}</small>
@@ -197,7 +199,7 @@ export function NewTestDialog({
           <button
             type="button"
             className="flex h-11 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
-            disabled={pending || !courseId || !title.trim()}
+            disabled={pending || !title.trim()}
             onClick={() =>
               onContinue({
                 courseId,
@@ -213,13 +215,19 @@ export function NewTestDialog({
       }
     >
       <div className="lesson-form flex flex-col gap-4.5">
-        <SelectPicker
-          label={t("newTest.group")}
-          searchable
-          value={courseId}
-          onChange={setCourseId}
-          options={courses.map((item) => ({ value: item.id, label: item.label }))}
-        />
+        <div className="flex flex-col gap-1.5">
+          <SelectPicker
+            label={t("newTest.group")}
+            searchable
+            value={courseId}
+            onChange={setCourseId}
+            options={[
+              { value: "", label: t("newTest.noGroup") },
+              ...courses.map((item) => ({ value: item.id, label: item.label })),
+            ]}
+          />
+          {course ? null : <small className="text-body-xs text-ink-tertiary">{t("newTest.noGroupHint")}</small>}
+        </div>
 
         <label className="flex flex-col gap-2">
           <span className="text-body-xs text-ink-secondary">{t("newTest.name")}</span>
@@ -250,7 +258,7 @@ export function NewTestDialog({
               key={source.id}
               type="button"
               className="flex h-19 flex-col items-center justify-center gap-2 rounded-md bg-subtle text-ink transition-colors hover:bg-muted"
-              onClick={onImport}
+              onClick={() => onImport(source.id)}
             >
               <Icon name={source.icon} size={20} className="text-brand" />
               <small className="text-title-sm">{t(`newTest.sources.${source.id}`)}</small>

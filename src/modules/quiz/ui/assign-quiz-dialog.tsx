@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useCourseStudents } from "@/modules/course";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
+import { StudentChecklist } from "./student-checklist";
 
 export interface AssignQuizDialogProps {
   open: boolean;
@@ -16,7 +18,7 @@ export interface AssignQuizDialogProps {
   quizLabel?: string;
   courseId?: string | null;
   pending?: boolean;
-  onSubmit: (value: { quizId: string; courseId: string; dueAt: string | null }) => void;
+  onSubmit: (value: { quizId: string; courseId: string; dueAt: string | null; studentIds: string[] | null }) => void;
 }
 
 function today(): string {
@@ -47,9 +49,24 @@ export function AssignQuizDialog({
 
   const finalQuiz = pickedQuiz ?? quizId ?? "";
   const finalCourse = courseId ?? pickedCourse;
+  const enrollments = useCourseStudents(finalCourse || null, { page_size: 100 }, open);
+  const students = useMemo(
+    () =>
+      (enrollments.data?.items ?? [])
+        .filter((item) => item.status === "approved")
+        .map((item) => ({ id: item.student.id, name: item.student.name, avatarUrl: item.student.avatarUrl })),
+    [enrollments.data]
+  );
+  const [excluded, setExcluded] = useState<{ course: string; ids: Set<string> }>({ course: "", ids: new Set() });
+  const excludedIds = excluded.course === finalCourse ? excluded.ids : new Set<string>();
+  const chosen = students.filter((student) => !excludedIds.has(student.id)).map((student) => student.id);
+  const nobody = students.length > 0 && chosen.length === 0;
 
   function changeOpen(next: boolean) {
-    if (!next) setPickedQuiz(null);
+    if (!next) {
+      setPickedQuiz(null);
+      setExcluded({ course: "", ids: new Set() });
+    }
     onOpenChange(next);
   }
 
@@ -58,8 +75,18 @@ export function AssignQuizDialog({
       quizId: finalQuiz,
       courseId: finalCourse,
       dueAt: date ? `${date}T${time || "23:59"}` : null,
+      studentIds: excludedIds.size ? chosen : null,
     });
   }
+
+  const checklist = finalCourse ? (
+    <StudentChecklist
+      students={students}
+      excluded={excludedIds}
+      loading={enrollments.isLoading}
+      onChange={(ids) => setExcluded({ course: finalCourse, ids })}
+    />
+  ) : null;
 
   if (isCompact) {
     const quizOptions =
@@ -95,7 +122,7 @@ export function AssignQuizDialog({
             <button
               type="button"
               className={`${dialogButton.primary} h-13 text-title font-semibold`}
-              disabled={pending || !finalQuiz || !finalCourse}
+              disabled={pending || !finalQuiz || !finalCourse || nobody}
               onClick={submit}
             >
               {t("assignDialog.submit")}
@@ -133,6 +160,8 @@ export function AssignQuizDialog({
               />
             </MobileFieldLabel>
           )}
+
+          {checklist}
 
           <div className="grid grid-cols-2 gap-3">
             <MobileFieldLabel label={t("assignDialog.dueLabel")}>
@@ -179,7 +208,7 @@ export function AssignQuizDialog({
           <button
             type="button"
             className={dialogButton.primary}
-            disabled={pending || !finalQuiz || !finalCourse}
+            disabled={pending || !finalQuiz || !finalCourse || nobody}
             onClick={submit}
           >
             {t("assignDialog.submit")}
@@ -214,6 +243,8 @@ export function AssignQuizDialog({
             options={courses.map((item) => ({ value: item.id, label: item.label }))}
           />
         )}
+
+        {checklist}
 
         <div className="grid grid-cols-2 items-start gap-3">
           <DatePicker label={t("assignDialog.dueLabel")} value={date} onChange={setDate} />

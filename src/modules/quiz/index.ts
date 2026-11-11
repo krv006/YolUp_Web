@@ -14,6 +14,9 @@ export type {
   QuizAttemptAnswerDto,
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
+  QuizAssignInput,
+  QuizAudience,
+  QuizAudienceStudent,
   QuizDto,
   QuizImportPreviewDto,
   QuizOptionDto,
@@ -24,6 +27,7 @@ export {
   mapQuizAttemptAnswerDto,
   mapQuizAttemptResultDto,
   mapQuizAttemptSummaryDto,
+  mapQuizAudienceDto,
   mapQuizDto,
   mapQuizImportPreviewDto,
   quizDisplayTitle,
@@ -43,7 +47,9 @@ export {
   useImportQuizDocx,
   useQuiz,
   useQuizAttempts,
+  useQuizAudience,
   useQuizDraft,
+  useSetQuizAudience,
   useShareQuizResults,
   useGenerateQuizFromBank,
   useQuizQuestionStats,
@@ -80,6 +86,10 @@ export {
 } from "./lib/question-draft";
 export type { GroupDraft, KeyFactory, QuestionDraft } from "./lib/question-draft";
 export { QuizImportDialog } from "./ui/quiz-import-dialog";
+export type { QuizImportSource } from "./ui/quiz-import-dialog";
+export { StudentChecklist } from "./ui/student-checklist";
+export { QuizAudienceCard } from "./ui/quiz-audience-card";
+export type { ChecklistStudent } from "./ui/student-checklist";
 export { QuizAttemptsDrawer } from "./ui/quiz-attempts-drawer";
 export { useAiQuizJobs, useStartAiQuiz } from "./model/quiz.queries";
 export type { AiQuizJob, AiQuizRequest, AiQuizStandard } from "./api/quiz.dto";

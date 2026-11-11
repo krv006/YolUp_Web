@@ -524,7 +524,8 @@
     "shareConfirm": "Yuborish",
     "shareCancel": "Bekor qilish",
     "shareDone": "Natijalar guruh chatiga yuborildi",
-    "shareDoneParents": "Natijalar yuborildi · {{count}} ta kuzatuvchiga xabar berildi"
+    "shareDoneParents": "Natijalar yuborildi · {{count}} ta kuzatuvchiga xabar berildi",
+    "hardestEmpty": "Hali xato qilingan savollar yo'q"
   },
   "newTest": {
     "title": "Yangi test",
@@ -542,7 +543,9 @@
     },
     "cancel": "Bekor qilish",
     "continue": "Davom etish",
-    "mobileTitle": "Yangi test · 1/2"
+    "mobileTitle": "Yangi test · 1/2",
+    "noGroup": "Guruhsiz saqlash",
+    "noGroupHint": "Guruhsiz test faqat sizga ko'rinadi. Keyin \"Guruhga berish\" orqali guruhga berasiz."
   },
   "importDialog": {
     "title": "Savollarni import qilish",
@@ -555,7 +558,24 @@
     "found": "{{count}} ta savol topildi · {{warnings}} ta ogohlantirish",
     "warningLine": "{{number}}-savol: {{reason}}",
     "cancel": "Bekor qilish",
-    "submit": "Import qilish"
+    "submit": "Import qilish",
+    "sources": {
+      "docx": {
+        "title": "Word fayldan import",
+        "description": "Savollar .docx fayldan olinadi",
+        "pickHint": "Faqat .docx fayl. Bitta va bir nechta tanlovli savollar olinadi"
+      },
+      "xlsx": {
+        "title": "Excel fayldan import",
+        "description": "Savollar .xlsx jadvaldan olinadi",
+        "pickHint": "Faqat .xlsx fayl. Bitta va bir nechta tanlovli savollar olinadi"
+      },
+      "google": {
+        "title": "Google Forms'dan import",
+        "description": "Savollar Google forma yoki hujjatdan olinadi",
+        "label": "Google Forms havolasi"
+      }
+    }
   },
   "attemptsDrawer": {
     "title": "Urinishlar",
@@ -641,5 +661,26 @@
     "noDue": "Muddatsiz",
     "questions": "Savollar",
     "questionsLocked": "Savollar — o‘zgartirib bo‘lmaydi"
+  },
+  "audience": {
+    "title": "Kimlar ochishi mumkin",
+    "edit": "O'zgartirish",
+    "noGroup": "Test hali guruhga berilmagan.",
+    "loading": "Yuklanmoqda...",
+    "empty": "Guruhda o'quvchilar yo'q",
+    "everyone": "Guruhdagi hamma o'quvchi ({{count}})",
+    "restricted": "{{total}} tadan {{count}} ta o'quvchiga berilgan",
+    "attempted": "Topshirgan",
+    "notAttempted": "Topshirmagan",
+    "studentsLabel": "O'quvchilar",
+    "selected": "{{count}} / {{total}}",
+    "selectAll": "Hammasini belgilash",
+    "clearAll": "Hammasini olib tashlash",
+    "pickOne": "Kamida bitta o'quvchini belgilang",
+    "editTitle": "Kimlar ochishi mumkin",
+    "editHint": "Belgilangan o'quvchilar testni ko'radi va topshiradi. Yangi qo'shilganlarga bildirishnoma boradi.",
+    "cancel": "Bekor qilish",
+    "save": "Saqlash",
+    "saved": "O'quvchilar ro'yxati saqlandi"
   }
 }

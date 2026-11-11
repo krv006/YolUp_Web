@@ -6,7 +6,7 @@ import { downloadBlob } from "@/shared/lib";
 import type { QuizEditValues, QuizFormValues } from "@/shared/types";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import { quizApi, type QuizExportMode, type QuizExportType } from "../api/quiz.api";
-import type { AiQuizRequest, QuizImportRequest } from "../api/quiz.dto";
+import type { AiQuizRequest, QuizAssignInput, QuizImportRequest } from "../api/quiz.dto";
 
 export const quizKeys = Object.freeze({
   all: ["quizzes"] as const,
@@ -73,11 +73,32 @@ export function useAssignQuizToCourse() {
   const { t } = useTranslation("quiz");
   const client = useQueryClient();
   return useMutation({
-    mutationFn: ({ quizId, courseId }: { quizId: string; courseId: string }) =>
-      quizApi.assignToCourse(quizId, courseId),
+    mutationFn: (input: QuizAssignInput) => quizApi.assignToCourse(input),
     onSuccess: () => {
       client.invalidateQueries({ queryKey: quizKeys.all });
       toast.success(t("toast.assigned"));
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+export function useQuizAudience(quizId: string | null, enabled = true) {
+  return useQuery({
+    queryKey: [...quizKeys.all, "audience", quizId ?? ""],
+    queryFn: ({ signal }) => quizApi.getAudience(quizId as string, { signal }),
+    enabled: Boolean(quizId) && enabled,
+  });
+}
+
+export function useSetQuizAudience() {
+  const { t } = useTranslation("quiz");
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ quizId, studentIds }: { quizId: string; studentIds: string[] }) =>
+      quizApi.setAudience(quizId, studentIds),
+    onSuccess: () => {
+      client.invalidateQueries({ queryKey: quizKeys.all });
+      toast.success(t("audience.saved"));
     },
     onError: (error: Error) => toast.error(error.message),
   });

@@ -5,9 +5,11 @@ import { toast } from "sonner";
 import { useCourseStudents, useCourses } from "@/modules/course";
 import {
   QuizAttemptsDrawer,
+  QuizAudienceCard,
   quizDisplayTitle,
   useQuiz,
   useQuizAttempts,
+  useQuizAudience,
   useQuizQuestionStats,
   useStartAiMiniQuiz,
 } from "@/modules/quiz";
@@ -52,11 +54,20 @@ export function TestResultsPage() {
   const questionStats = useQuizQuestionStats(quizId, Boolean(quizId));
   const miniQuiz = useStartAiMiniQuiz();
   const students = useCourseStudents(quiz.data?.courseId ?? null, { page_size: 100 });
+  const audience = useQuizAudience(quizId, Boolean(quiz.data?.courseId));
+  const assignedIds = useMemo(
+    () =>
+      audience.data?.restricted
+        ? new Set(audience.data.students.filter((student) => student.assigned).map((student) => student.id))
+        : null,
+    [audience.data]
+  );
 
   const rows = useMemo<Row[]>(() => {
     const byStudent = new Map<string, Row>();
 
     for (const item of students.data?.items ?? []) {
+      if (assignedIds && !assignedIds.has(item.student.id)) continue;
       byStudent.set(item.student.id, {
         id: item.student.id,
         name: item.student.name,
@@ -102,7 +113,7 @@ export function TestResultsPage() {
     }
 
     return [...byStudent.values()].sort((a, b) => (b.percent ?? -1) - (a.percent ?? -1));
-  }, [attempts.data, students.data]);
+  }, [attempts.data, students.data, assignedIds]);
 
   const hardest = (questionStats.data ?? []).slice(0, 3);
   const solved = rows.filter((row) => row.attempts > 0);
@@ -142,6 +153,7 @@ export function TestResultsPage() {
           onBack={() => navigate(ROUTES.teacher.tests)}
           onAttempts={() => setAttemptsOpen(true)}
           onShare={() => setShareOpen(true)}
+          extra={<QuizAudienceCard quizId={quizId} hasCourse={Boolean(quiz.data?.courseId)} className="rounded-xl" />}
         />
         {quizId ? <ShareResultsDialog quizId={quizId} open={shareOpen} onOpenChange={setShareOpen} /> : null}
         <QuizAttemptsDrawer
@@ -254,6 +266,7 @@ export function TestResultsPage() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
+          <QuizAudienceCard quizId={quizId} hasCourse={Boolean(quiz.data?.courseId)} />
           <section className="flex flex-col gap-3 rounded-lg bg-surface p-5">
             <strong className="text-title text-ink">{t("results.hardest")}</strong>
 

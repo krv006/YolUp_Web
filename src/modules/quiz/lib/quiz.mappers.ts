@@ -19,6 +19,9 @@ import type {
   QuizSummary,
 } from "@/shared/types";
 import type {
+  QuizAssignInput,
+  QuizAudience,
+  QuizAudienceDto,
   QuizAttemptAnswerDto,
   QuizAttemptResultDto,
   QuizAttemptSummaryDto,
@@ -97,6 +100,32 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     opensAt: dto.opens_at,
     createdAt: dto.created_at,
     questionCount: dto.question_count,
+    studentIds: dto.student_ids?.length ? dto.student_ids.map(String) : null,
+  };
+}
+
+export function mapQuizAudienceDto(dto: QuizAudienceDto | null | undefined): QuizAudience {
+  const students = (dto?.students ?? []).map((student) => ({
+    id: String(student.id),
+    name: student.name || student.username || "",
+    username: student.username ?? "",
+    avatarUrl: student.avatar_url ?? null,
+    assigned: student.assigned !== false,
+    attempted: Boolean(student.attempted),
+  }));
+  return {
+    restricted: Boolean(dto?.restricted),
+    total: Number(dto?.total ?? students.length),
+    assignedCount: Number(dto?.assigned_count ?? students.filter((student) => student.assigned).length),
+    students,
+  };
+}
+
+export function assignRequestBody(input: Omit<QuizAssignInput, "quizId">): Record<string, unknown> {
+  return {
+    course: input.courseId,
+    ...(input.dueAt === undefined ? {} : { due_at: input.dueAt }),
+    ...(input.studentIds === undefined ? {} : { student_ids: input.studentIds ?? [] }),
   };
 }
 

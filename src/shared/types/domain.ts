@@ -840,6 +840,7 @@ export interface QuizSummary {
   opensAt: string | null;
   createdAt: string;
   questionCount: number;
+  studentIds: string[] | null;
 }
 
 export interface QuizDetail extends QuizSummary {
