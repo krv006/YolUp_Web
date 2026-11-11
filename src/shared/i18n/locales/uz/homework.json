@@ -150,7 +150,7 @@
     "submit": "Yuborish",
     "googleForm": "Google Form havolasi (ixtiyoriy)",
     "googleFormHint": "O‘quvchi formani ochib to‘ldiradi, so‘ng shu yerda izoh bilan topshiradi",
-    "googleFormInvalid": "Google Form havolasi kerak: forms.gle/… yoki docs.google.com/forms/…"
+    "googleFormInvalid": "Google Form havolasi kerak: forms.gle/…, forms.google.com/… yoki docs.google.com/forms/…"
   },
   "review": {
     "back": "Orqaga",

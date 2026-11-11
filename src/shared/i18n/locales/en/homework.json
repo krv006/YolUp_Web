@@ -150,7 +150,7 @@
     "submit": "Send",
     "googleForm": "Google Form link (optional)",
     "googleFormHint": "Students fill in the form, then submit here with a note",
-    "googleFormInvalid": "Use a Google Form link: forms.gle/… or docs.google.com/forms/…"
+    "googleFormInvalid": "Use a Google Form link: forms.gle/…, forms.google.com/… or docs.google.com/forms/…"
   },
   "review": {
     "back": "Back",

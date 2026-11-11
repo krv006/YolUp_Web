@@ -150,7 +150,7 @@
     "submit": "Отправить",
     "googleForm": "Ссылка на Google Form (необязательно)",
     "googleFormHint": "Ученик заполнит форму, затем сдаст работу здесь с комментарием",
-    "googleFormInvalid": "Нужна ссылка Google Form: forms.gle/… или docs.google.com/forms/…"
+    "googleFormInvalid": "Нужна ссылка Google Form: forms.gle/…, forms.google.com/… или docs.google.com/forms/…"
   },
   "review": {
     "back": "Назад",
