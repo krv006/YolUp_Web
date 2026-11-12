@@ -83,7 +83,8 @@
     "openHint": "Opens automatically, no registration needed",
     "switchHint": "Tap an account to switch to it instantly, no password needed.",
     "switched": "Signed in as {{name}}",
-    "failed": "Could not switch the account"
+    "failed": "Could not switch the account",
+    "needsPhone": "Add your phone number to your profile first"
   },
   "toast": {
     "copied": "{{label}} copied",

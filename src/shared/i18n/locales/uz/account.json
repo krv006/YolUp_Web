@@ -83,7 +83,8 @@
     "openHint": "Ro'yxatdan o'tishsiz avtomatik ochiladi",
     "switchHint": "Akkauntga bosilsa, parolsiz darhol o'sha akkauntga o'tasiz.",
     "switched": "{{name}} sifatida kirdingiz",
-    "failed": "Hisobni almashtirib bo'lmadi"
+    "failed": "Hisobni almashtirib bo'lmadi",
+    "needsPhone": "Avval profilga telefon raqamingizni qo'shing"
   },
   "toast": {
     "copied": "{{label}} nusxalandi",

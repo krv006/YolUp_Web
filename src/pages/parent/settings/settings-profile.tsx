@@ -1,9 +1,11 @@
 import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useAuth, useRemoveAvatarMutation, useUpdateAvatarMutation, useUpdateProfileMutation } from "@/modules/auth";
 import { useSelectedChild } from "@/modules/parent";
 import { AppError } from "@/shared/api";
+import { ROUTES } from "@/shared/config";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
@@ -27,8 +29,9 @@ function fieldError(error: unknown, key: string): string {
   return Array.isArray(value) ? value.join(" ") : value ? String(value) : "";
 }
 
-export function SettingsProfile() {
+export function SettingsProfile({ startEditing = false }: { startEditing?: boolean }) {
   const { t } = useTranslation("parent");
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { children } = useSelectedChild();
   const update = useUpdateProfileMutation();
@@ -36,9 +39,14 @@ export function SettingsProfile() {
   const removeAvatar = useRemoveAvatarMutation();
   const fileRef = useRef<HTMLInputElement>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(startEditing);
   const [photoOpen, setPhotoOpen] = useState(false);
-  const [draft, setDraft] = useState<Record<Field, string>>({ firstName: "", lastName: "", username: "", phone: "" });
+  const [draft, setDraft] = useState<Record<Field, string>>(() => ({
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    username: user?.username ?? "",
+    phone: user?.phone ?? "",
+  }));
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
 
   if (!user) return null;
@@ -57,6 +65,11 @@ export function SettingsProfile() {
     setEditing(true);
   }
 
+  function stopEditing() {
+    setEditing(false);
+    if (startEditing) navigate(ROUTES.parent.settings("profile"), { replace: true });
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const local: Partial<Record<Field, string>> = {};
@@ -69,7 +82,7 @@ export function SettingsProfile() {
       { firstName: draft.firstName, lastName: draft.lastName, username: draft.username, phone: draft.phone },
       {
         onSuccess: () => {
-          setEditing(false);
+          stopEditing();
           toast.success(t("settings.profile.saved"));
         },
         onError: (error) => {
@@ -205,7 +218,7 @@ export function SettingsProfile() {
             <button
               type="button"
               className="flex h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle"
-              onClick={() => setEditing(false)}
+              onClick={stopEditing}
             >
               {t("settings.profile.cancel")}
             </button>

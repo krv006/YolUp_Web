@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { ROLES, type Role } from "@/shared/constants";
 import type { AuthUser } from "@/shared/types";
-import { resolveHomeRoute } from "../lib/resolve-home-route";
+import { resolveHomeRoute, resolvePhoneRoute } from "../lib/resolve-home-route";
 import { useSwitchAccountMutation, useSwitchRoleMutation } from "./auth.mutations";
 import { useCurrentUser } from "./use-auth";
 
@@ -19,6 +19,7 @@ export function useAccountSwitch() {
   const missingRoles = user
     ? SELF_SERVICE_ROLES.filter((role) => role !== user.role && !linkedAccounts.some((account) => account.role === role))
     : [];
+  const needsPhone = Boolean(user) && !user?.phone?.trim();
   const pending = switchAccount.isPending || switchRole.isPending;
 
   async function finish(request: Promise<AuthUser>, onDone?: () => void) {
@@ -36,6 +37,7 @@ export function useAccountSwitch() {
     user,
     linkedAccounts,
     missingRoles,
+    needsPhone,
     pending,
     pendingAccountId: switchAccount.isPending ? switchAccount.variables : null,
     pendingRole: switchRole.isPending ? switchRole.variables : null,
@@ -43,7 +45,13 @@ export function useAccountSwitch() {
       if (!pending) void finish(switchAccount.mutateAsync(accountId), onDone);
     },
     toRole(role: Role, onDone?: () => void) {
-      if (!pending) void finish(switchRole.mutateAsync(role.toLowerCase()), onDone);
+      if (pending) return;
+      if (needsPhone) {
+        onDone?.();
+        navigate(resolvePhoneRoute(user));
+        return;
+      }
+      void finish(switchRole.mutateAsync(role.toLowerCase()), onDone);
     },
   };
 }

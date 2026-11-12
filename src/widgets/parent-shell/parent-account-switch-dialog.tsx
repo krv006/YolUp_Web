@@ -81,12 +81,18 @@ export function ParentAccountSwitchDialog({ open, onOpenChange }: ParentAccountS
                 </span>
                 <span className="flex min-w-0 flex-1 flex-col">
                   <strong className="truncate text-title-sm text-ink">{roleLabel(role)}</strong>
-                  <small className="truncate text-body-xs text-ink-secondary">{t("roleSwitcher.openHint")}</small>
+                  <small className={`text-body-xs ${accounts.needsPhone ? "text-warning-fg" : "truncate text-ink-secondary"}`}>
+                    {accounts.needsPhone ? t("roleSwitcher.needsPhone") : t("roleSwitcher.openHint")}
+                  </small>
                 </span>
                 {accounts.pendingRole === role.toLowerCase() ? (
                   <Loader2 size={18} className="shrink-0 animate-spin text-brand" />
                 ) : (
-                  <Icon name="add" size={20} className="shrink-0 text-brand" />
+                  <Icon
+                    name={accounts.needsPhone ? "chevron-right" : "add"}
+                    size={20}
+                    className={`shrink-0 ${accounts.needsPhone ? "text-icon-tertiary" : "text-brand"}`}
+                  />
                 )}
               </button>
             ))}

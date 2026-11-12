@@ -21,8 +21,10 @@ export function ParentSettings() {
   const { t } = useTranslation("parent");
   const { section = "profile" } = useParams();
   if (section === "password") return <Navigate to={ROUTES.parent.settings("security")} replace />;
-  if (!SECTIONS.some((item) => item.id === section)) return <Navigate to={ROUTES.parent.settings("profile")} replace />;
-  const active = section as Section;
+  const editing = section === "edit";
+  if (!editing && !SECTIONS.some((item) => item.id === section))
+    return <Navigate to={ROUTES.parent.settings("profile")} replace />;
+  const active = (editing ? "profile" : section) as Section;
 
   return (
     <div className="flex flex-col gap-6 px-8 py-7">
@@ -53,7 +55,7 @@ export function ParentSettings() {
             {t("settings.nav.children")}
           </NavLink>
         </nav>
-        {active === "profile" ? <SettingsProfile /> : null}
+        {active === "profile" ? <SettingsProfile key={section} startEditing={editing} /> : null}
         {active === "notifications" ? <SettingsNotifications /> : null}
         {active === "interface" ? <SettingsInterface /> : null}
         {active === "security" ? <SettingsSecurity /> : null}
