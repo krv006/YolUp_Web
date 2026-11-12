@@ -28,7 +28,7 @@ export function SwitchAccountDialog({
     : "flex items-center gap-3 rounded-md bg-subtle px-3 py-2.5 text-left transition-colors hover:bg-muted disabled:opacity-60";
   const titleClass = isCompact ? "truncate text-title text-ink" : "truncate text-title-sm text-ink";
   const hintClass = isCompact ? "truncate text-body-sm text-ink-secondary" : "truncate text-body-xs text-ink-secondary";
-  const openHintClass = isCompact ? "text-body-sm text-ink-secondary" : "text-body-xs text-ink-secondary";
+  const openHintClass = `${isCompact ? "text-body-sm" : "text-body-xs"} ${accounts.needsPhone ? "text-warning-fg" : "text-ink-secondary"}`;
   const avatarClass = isCompact ? "[&_.avatar]:size-11" : undefined;
 
   const list = (
@@ -70,12 +70,18 @@ export function SwitchAccountDialog({
           </span>
           <span className="flex min-w-0 flex-1 flex-col">
             <strong className={titleClass}>{roleLabel(role)}</strong>
-            <small className={openHintClass}>{t("roleSwitcher.openHint")}</small>
+            <small className={openHintClass}>
+              {accounts.needsPhone ? t("roleSwitcher.needsPhone") : t("roleSwitcher.openHint")}
+            </small>
           </span>
           {accounts.pendingRole === role.toLowerCase() ? (
             <Loader2 size={18} className="shrink-0 animate-spin text-brand" />
           ) : (
-            <Icon name="add" size={isCompact ? 20 : 18} className="shrink-0 text-brand" />
+            <Icon
+              name={accounts.needsPhone ? "chevron-right" : "add"}
+              size={isCompact ? 20 : 18}
+              className={`shrink-0 ${accounts.needsPhone ? "text-icon-tertiary" : "text-brand"}`}
+            />
           )}
         </button>
       ))}
