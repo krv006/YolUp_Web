@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { quizDisplayTitle, useQuizLimitsText } from "@/modules/quiz";
+import { formatCountdown, quizDisplayTitle, useQuizLimitsText, useQuizSessionsLeft } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { QuizSummary, StudentAttemptSummary } from "@/shared/types";
@@ -25,6 +25,7 @@ export function StudentTestsPage() {
   const data = useStudentWorkspace();
   const [filter, setFilter] = useState<Filter>("all");
   const [attemptsOpen, setAttemptsOpen] = useState(false);
+  const sessions = useQuizSessionsLeft(data.quizzes);
 
   const stateOf = (quiz: QuizSummary): Exclude<Filter, "all"> =>
     data.attemptByQuiz.has(quiz.id)
@@ -48,7 +49,7 @@ export function StudentTestsPage() {
   const cards = (
     <>
       {data.quizzesLoading ? (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
           {Array.from({ length: 6 }, (_, index) => (
             <span key={index} className="flex h-33 flex-col gap-4 rounded-2xl bg-surface p-4">
               <span className="flex gap-3">
@@ -67,13 +68,14 @@ export function StudentTestsPage() {
       {sections.map(([label, rows]) => (
         <section key={label} className="flex flex-col gap-3">
           <span className="text-overline text-ink-secondary uppercase">{label}</span>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {rows.map((quiz) => (
               <TestCard
                 key={quiz.id}
                 quiz={quiz}
                 attempt={data.attemptByQuiz.get(quiz.id) ?? null}
                 attemptsUsed={data.attempts.filter((item) => item.quizId === quiz.id).length}
+                sessionLeft={sessions.get(quiz.id) ?? null}
                 overdue={stateOf(quiz) === "overdue"}
                 onSolve={() => navigate(ROUTES.student.test(quiz.id))}
                 onResult={() => navigate(ROUTES.student.testResults(quiz.id))}
@@ -147,6 +149,7 @@ function TestCard({
   quiz,
   attempt,
   attemptsUsed,
+  sessionLeft,
   overdue,
   onSolve,
   onResult,
@@ -154,6 +157,7 @@ function TestCard({
   quiz: QuizSummary;
   attempt: StudentAttemptSummary | null;
   attemptsUsed: number;
+  sessionLeft: number | null;
   overdue: boolean;
   onSolve: () => void;
   onResult: () => void;
@@ -161,7 +165,46 @@ function TestCard({
   const { t } = useTranslation("student");
   const limitsText = useQuizLimitsText()(quiz);
   const percent = attempt ? Math.round(attempt.percentage ?? 0) : null;
-  const attemptsOver = Boolean(quiz.maxAttempts && attemptsUsed >= quiz.maxAttempts);
+  const attemptsOver =
+    sessionLeft === null &&
+    (quiz.attemptsLeft !== null ? quiz.attemptsLeft === 0 : Boolean(quiz.maxAttempts && attemptsUsed >= quiz.maxAttempts));
+  const mainAction =
+    sessionLeft !== null ? (
+      <button
+        type="button"
+        className={`flex h-11 items-center justify-center gap-2 rounded-full text-button text-ink-inverse tabular-nums transition-colors ${
+          sessionLeft <= 60 ? "bg-danger hover:bg-danger/85" : "bg-brand hover:bg-brand-strong"
+        }`}
+        aria-label={t("workspace.tests.continueAria", { time: formatCountdown(sessionLeft) })}
+        onClick={onSolve}
+      >
+        <Icon name="timer" size={18} />
+        {t("workspace.tests.continue", { time: formatCountdown(sessionLeft) })}
+      </button>
+    ) : attemptsOver ? (
+      <span className="flex h-11 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink-secondary">
+        <Icon name="lock" size={18} />
+        {t("workspace.tests.attemptsOver")}
+      </span>
+    ) : attempt ? (
+      <button
+        type="button"
+        className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-colors hover:bg-tint"
+        onClick={onSolve}
+      >
+        <Icon name="refresh" size={18} />
+        {t("workspace.tests.retry")}
+      </button>
+    ) : (
+      <button
+        type="button"
+        className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+        onClick={onSolve}
+      >
+        <Icon name="send" size={18} />
+        {t("workspace.tests.solve")}
+      </button>
+    );
   return (
     <article className="flex flex-col gap-3.5 rounded-2xl bg-surface p-4">
       <div className="flex items-start gap-3">
@@ -204,31 +247,10 @@ function TestCard({
             <Icon name="bar-chart" size={18} />
             {t("workspace.tests.result")}
           </button>
-          {attemptsOver ? (
-            <span className="flex h-11 items-center justify-center gap-2 rounded-full bg-subtle text-button text-ink-secondary">
-              <Icon name="lock" size={18} />
-              {t("workspace.tests.attemptsOver")}
-            </span>
-          ) : (
-            <button
-              type="button"
-              className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand-subtle text-button text-brand transition-colors hover:bg-tint"
-              onClick={onSolve}
-            >
-              <Icon name="refresh" size={18} />
-              {t("workspace.tests.retry")}
-            </button>
-          )}
+          {mainAction}
         </div>
       ) : (
-        <button
-          type="button"
-          className="flex h-11 items-center justify-center gap-2 rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-          onClick={onSolve}
-        >
-          <Icon name="send" size={18} />
-          {t("workspace.tests.solve")}
-        </button>
+        mainAction
       )}
     </article>
   );

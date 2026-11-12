@@ -27,7 +27,10 @@
       "open": "Открыть",
       "results": "Результат",
       "emptyTitle": "Заданий пока нет",
-      "emptyHint": "Здесь появятся задания от учителя."
+      "emptyHint": "Здесь появятся задания от учителя.",
+      "continue": "Продолжить · {{time}}",
+      "continueAction": "Продолжить",
+      "attemptsOver": "Попытки закончились"
     },
     "lessonsTab": {
       "eyebrow": "РАСПИСАНИЕ",
@@ -210,7 +213,9 @@
       "attemptsTitle": "Мои попытки",
       "attemptsSubtitle": "Последние решённые тесты",
       "attemptsEmpty": "Вы ещё не решали тесты",
-      "attemptsOver": "Попытки закончились"
+      "attemptsOver": "Попытки закончились",
+      "continue": "Продолжить · {{time}}",
+      "continueAria": "Продолжить тест, осталось {{time}}"
     },
     "player": {
       "questions": "Вопросы · {{count}}",

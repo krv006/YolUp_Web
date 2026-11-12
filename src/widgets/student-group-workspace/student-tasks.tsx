@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMyAnalytics } from "@/modules/analytics";
+import { formatCountdown, useQuizSessionsLeft } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import type { Assignment, QuizSummary } from "@/shared/types";
 import { MobileEmptyCard } from "@/shared/ui/mobile-page";
@@ -22,6 +23,7 @@ export function StudentTasks({ assignments, quizzes, loading, courseTitle, cours
   const navigate = useNavigate();
   const analytics = useMyAnalytics();
   const assignmentRow = useAssignmentRows();
+  const sessions = useQuizSessionsLeft(quizzes);
 
   const attempts = new Map(
     (analytics.data?.kind === "student" ? analytics.data.recentAttempts : []).map((item) => [item.quizId, item])
@@ -36,29 +38,49 @@ export function StudentTasks({ assignments, quizzes, loading, courseTitle, cours
     .filter((quiz) => quiz.status !== "draft")
     .map((quiz) => {
       const attempt = attempts.get(quiz.id);
-      const open = () => navigate(attempt ? ROUTES.student.testResults(quiz.id) : ROUTES.student.test(quiz.id));
+      const left = sessions.get(quiz.id) ?? null;
+      const locked = left === null && !attempt && quiz.attemptsLeft === 0;
+      const open = () =>
+        navigate(attempt && left === null ? ROUTES.student.testResults(quiz.id) : ROUTES.student.test(quiz.id));
       return {
         id: `quiz-${quiz.id}`,
         quizId: quiz.id,
         title: quiz.title,
         meta: [
           t("groupWorkspace.tasks.quizMeta", { count: quiz.questionCount }),
-          attempt ? "" : quiz.dueAt ? t("groupWorkspace.tasks.due", { date: day(quiz.dueAt) }) : t("groupWorkspace.tasks.noDue"),
+          attempt || left !== null || locked ? "" : quiz.dueAt ? t("groupWorkspace.tasks.due", { date: day(quiz.dueAt) }) : t("groupWorkspace.tasks.noDue"),
         ]
           .filter(Boolean)
           .join(" · "),
-        pill: attempt
-          ? { tone: "success", icon: "check-circle", label: t("groupWorkspace.tasks.finished") }
-          : { tone: "violet", icon: "edit", label: t("groupWorkspace.tasks.new") },
-        aside: attempt
-          ? t("groupWorkspace.tasks.result", { value: `${Math.round(attempt.percentage ?? 0)}%` })
-          : t("groupWorkspace.tasks.solve"),
+        pill:
+          left !== null
+            ? {
+                tone: left <= 60 ? "danger" : "brand",
+                icon: "timer",
+                label: t("groupWorkspace.tasks.continue", { time: formatCountdown(left) }),
+              }
+            : attempt
+              ? { tone: "success", icon: "check-circle", label: t("groupWorkspace.tasks.finished") }
+              : locked
+                ? { tone: "danger", icon: "lock", label: t("groupWorkspace.tasks.attemptsOver") }
+                : { tone: "violet", icon: "edit", label: t("groupWorkspace.tasks.new") },
+        aside:
+          left !== null || locked
+            ? ""
+            : attempt
+              ? t("groupWorkspace.tasks.result", { value: `${Math.round(attempt.percentage ?? 0)}%` })
+              : t("groupWorkspace.tasks.solve"),
         progress: null,
         onOpen: open,
         menu: [
           {
             id: "open",
-            label: attempt ? t("groupWorkspace.tasks.results") : t("groupWorkspace.tasks.solve"),
+            label:
+              left !== null
+                ? t("groupWorkspace.tasks.continueAction")
+                : attempt
+                  ? t("groupWorkspace.tasks.results")
+                  : t("groupWorkspace.tasks.solve"),
             run: open,
           },
         ],

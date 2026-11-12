@@ -10,6 +10,7 @@ import type { AiQuizRequest, QuizAssignInput, QuizImportRequest } from "../api/q
 
 export const quizKeys = Object.freeze({
   all: ["quizzes"] as const,
+  lists: ["quizzes", "list"] as const,
   list: (courseId: string | null) => ["quizzes", "list", courseId] as const,
   detail: (id: string) => ["quizzes", "detail", id] as const,
   attempts: (id: string) => ["quizzes", "attempts", id] as const,
@@ -37,7 +38,10 @@ export function useStartQuiz() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => quizApi.start(id),
-    onSuccess: (_session, id) => client.invalidateQueries({ queryKey: quizKeys.detail(id) }),
+    onSuccess: (_session, id) => {
+      client.invalidateQueries({ queryKey: quizKeys.detail(id) });
+      client.invalidateQueries({ queryKey: quizKeys.lists });
+    },
     onError: (error: Error) => toast.error(error.message),
   });
 }

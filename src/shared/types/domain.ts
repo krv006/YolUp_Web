@@ -856,11 +856,12 @@ export interface QuizSummary {
   timeLimitMinutes: number | null;
   maxAttempts: number | null;
   questionsPerAttempt: number | null;
+  attemptsUsed: number | null;
+  attemptsLeft: number | null;
+  sessionEndsAt: string | null;
 }
 
 export interface QuizDetail extends QuizSummary {
-  attemptsUsed: number | null;
-  attemptsLeft: number | null;
   startedAt: string | null;
   endsAt: string | null;
   needsStart: boolean;

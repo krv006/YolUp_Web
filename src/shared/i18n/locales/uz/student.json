@@ -27,7 +27,10 @@
       "open": "Ochish",
       "results": "Natijani ko‘rish",
       "emptyTitle": "Hali vazifa yo‘q",
-      "emptyHint": "O‘qituvchi vazifa berganda shu yerda ko‘rinadi."
+      "emptyHint": "O‘qituvchi vazifa berganda shu yerda ko‘rinadi.",
+      "continue": "Davom etish · {{time}}",
+      "continueAction": "Davom etish",
+      "attemptsOver": "Urinishlar tugagan"
     },
     "lessonsTab": {
       "eyebrow": "DARS JADVALI",
@@ -210,7 +213,9 @@
       "attemptsTitle": "Urinishlarim",
       "attemptsSubtitle": "Oxirgi yechgan testlaringiz",
       "attemptsEmpty": "Hali test yechmagansiz",
-      "attemptsOver": "Urinishlar tugagan"
+      "attemptsOver": "Urinishlar tugagan",
+      "continue": "Davom etish · {{time}}",
+      "continueAria": "Testni davom ettirish, {{time}} qoldi"
     },
     "player": {
       "questions": "Savollar · {{count}}",

@@ -60,6 +60,9 @@ export interface QuizSummaryDto {
   time_limit_minutes?: number | null;
   max_attempts?: number | null;
   questions_per_attempt?: number | null;
+  attempts_used?: number | null;
+  attempts_left?: number | null;
+  session_ends_at?: string | null;
 }
 
 export interface QuizAudienceDto {
@@ -123,8 +126,6 @@ export interface QuizGroupDto {
 }
 
 export interface QuizDto extends QuizSummaryDto {
-  attempts_used?: number | null;
-  attempts_left?: number | null;
   started_at?: string | null;
   ends_at?: string | null;
   needs_start?: boolean;
