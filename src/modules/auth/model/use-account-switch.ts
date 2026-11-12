@@ -16,12 +16,9 @@ export function useAccountSwitch() {
   const switchAccount = useSwitchAccountMutation();
   const switchRole = useSwitchRoleMutation();
   const linkedAccounts = user?.linkedAccounts ?? [];
-  const missingRoles =
-    user && user.role !== ROLES.STUDENT
-      ? SELF_SERVICE_ROLES.filter(
-          (role) => role !== user.role && !linkedAccounts.some((account) => account.role === role)
-        )
-      : [];
+  const missingRoles = user
+    ? SELF_SERVICE_ROLES.filter((role) => role !== user.role && !linkedAccounts.some((account) => account.role === role))
+    : [];
   const pending = switchAccount.isPending || switchRole.isPending;
 
   async function finish(request: Promise<AuthUser>, onDone?: () => void) {
