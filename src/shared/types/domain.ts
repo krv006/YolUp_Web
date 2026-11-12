@@ -326,6 +326,16 @@ export type SubmissionStatus =
 
 export type AssignmentStatus = "draft" | "active" | "bank";
 
+export interface AssignmentCopy {
+  id: string;
+  courseId: string;
+  courseTitle: string;
+  dueAt: string | null;
+  submissionsCount: number;
+  studentIds: string[] | null;
+  createdAt: string;
+}
+
 export type GradingScale = "five" | "hundred" | "none";
 
 export interface AiQuestion {
@@ -435,6 +445,7 @@ export interface Assignment {
   isBank: boolean;
   sourceId: string | null;
   copiesCount: number | null;
+  copies: AssignmentCopy[];
   questionsCount: number | null;
   studentIds: string[] | null;
   dueAt: string | null;

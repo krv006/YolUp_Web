@@ -132,7 +132,7 @@ export function MobileHomeworkDetail({
           <GoogleFormLink className="mt-3 bg-surface" url={item.googleFormUrl} hint={item.googleFormUrl} />
         ) : null}
 
-        {isBank || !audience ? null : <div className="mt-4">{audience}</div>}
+        {audience ? <div className="mt-4">{audience}</div> : null}
 
         {isBank ? null : submissions.length ? (
         <>

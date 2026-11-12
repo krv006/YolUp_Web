@@ -494,7 +494,17 @@
     "studentsCount_many": "{{count}} учеников",
     "studentsCount_other": "{{count}} ученика",
     "loading": "Загрузка...",
-    "noGroups": "Групп нет"
+    "noGroups": "Групп нет",
+    "copiesTitle": "Выдано группам · {{count}}",
+    "copyDue": "Срок: {{date}}",
+    "copyNoDue": "Без срока",
+    "copySubmitted": "Сдали: {{count}}",
+    "copyStudents_one": "{{count}} ученику",
+    "copyStudents_few": "{{count}} ученикам",
+    "copyStudents_many": "{{count}} ученикам",
+    "copyStudents_other": "{{count}} ученикам",
+    "copyWholeGroup": "Всей группе",
+    "copyNoGroup": "Без группы"
   },
   "audience": {
     "title": "Кому выдано",

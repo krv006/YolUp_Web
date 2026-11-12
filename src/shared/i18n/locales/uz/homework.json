@@ -479,7 +479,14 @@
     "groupsHint": "Guruhni belgilang — o'quvchilar ro'yxati ochiladi, kerak bo'lmaganini olib tashlang",
     "studentsCount": "{{count}} o'quvchi",
     "loading": "Yuklanmoqda...",
-    "noGroups": "Guruhlar yo'q"
+    "noGroups": "Guruhlar yo'q",
+    "copiesTitle": "Berilgan guruhlar · {{count}}",
+    "copyDue": "Muddat: {{date}}",
+    "copyNoDue": "Muddatsiz",
+    "copySubmitted": "{{count}} ta topshirdi",
+    "copyStudents": "{{count}} ta o'quvchiga",
+    "copyWholeGroup": "Butun guruhga",
+    "copyNoGroup": "Guruhsiz"
   },
   "audience": {
     "title": "Kimlarga berilgan",

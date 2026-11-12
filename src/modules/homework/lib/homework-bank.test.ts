@@ -22,6 +22,25 @@ describe("homework bank", () => {
     expect(item).toMatchObject({ courseId: "", courseTitle: "", status: "bank", isBank: true, copiesCount: 3, questionsCount: 4 });
   });
 
+  it("lists where a bank assignment was given, newest first as the backend sends it", () => {
+    const item = mapAssignmentDto({
+      ...base,
+      course_id: null,
+      status: "bank",
+      is_bank: true,
+      copies: [
+        { id: 21, course_id: "c3", course_title: "8-B", due_at: "2026-11-22T23:59:00+05:00", status: "active", submissions_count: 1, student_ids: ["s7", 8], created_at: "2026-11-12T08:00:00Z" },
+        { id: "a20", course_id: "c1", course_title: "7-A", due_at: null, status: "active", submissions_count: null, student_ids: null, created_at: "2026-11-11T08:00:00Z" },
+      ],
+    } as AssignmentDto);
+    expect(item.copiesCount).toBe(2);
+    expect(item.copies).toEqual([
+      { id: "21", courseId: "c3", courseTitle: "8-B", dueAt: "2026-11-22T23:59:00+05:00", submissionsCount: 1, studentIds: ["s7", "8"], createdAt: "2026-11-12T08:00:00Z" },
+      { id: "a20", courseId: "c1", courseTitle: "7-A", dueAt: null, submissionsCount: 0, studentIds: null, createdAt: "2026-11-11T08:00:00Z" },
+    ]);
+    expect(mapAssignmentDto({ ...base, course_id: "c1" } as AssignmentDto).copies).toEqual([]);
+  });
+
   it("keeps the group's restriction on a given assignment", () => {
     const item = mapAssignmentDto({ ...base, course_id: "c1", course_title: "A", status: "active", student_ids: ["s1"] } as AssignmentDto);
     expect(item).toMatchObject({ isBank: false, status: "active", studentIds: ["s1"] });

@@ -17,6 +17,7 @@ import { Icon } from "@/shared/ui/icon";
 import { MobileEmptyCard } from "@/shared/ui/mobile-page";
 import { formatDue } from "./format-due";
 import { AssignmentAudienceCard } from "./assignment-audience-card";
+import { BankCopies } from "./bank-copies";
 import type { Submission, SubmissionStatus } from "@/shared/types";
 import { AssignHomeworkDialog } from "@/widgets/homework-assign";
 import { WorkspaceShell, workspaceAction } from "@/widgets/workspace-shell";
@@ -187,7 +188,13 @@ export function HomeworkDetailPage() {
             assignmentId && navigate(`${ROUTES.teacher.homeworkReview(assignmentId)}?s=${row.id}`)
           }
           onGive={() => setGiving(true)}
-          audience={item && !isBank ? <AssignmentAudienceCard assignmentId={item.id} className="rounded-xl" /> : null}
+          audience={
+            !item ? null : isBank ? (
+              <BankCopies compact copies={item.copies} onOpen={(id) => navigate(ROUTES.teacher.homeworkItem(id))} />
+            ) : (
+              <AssignmentAudienceCard assignmentId={item.id} className="rounded-xl" />
+            )
+          }
         />
         {dialogs}
       </>
@@ -335,16 +342,21 @@ export function HomeworkDetailPage() {
         </div>
 
         {isBank ? (
-          <section className="flex flex-col items-start gap-3 self-start rounded-lg bg-surface p-6">
-            <span className="grid size-12 place-items-center rounded-full bg-brand-subtle text-brand">
-              <Icon name="menu-book" size={24} />
-            </span>
-            <strong className="text-title text-ink">{t("bank.detailTitle")}</strong>
-            <p className="max-w-130 text-body-sm text-ink-secondary">{t("bank.detailHint")}</p>
-            <button type="button" className={workspaceAction} onClick={() => setGiving(true)}>
-              {t("bank.give")}
-            </button>
-          </section>
+          <div className="flex min-w-0 flex-col gap-4 self-start">
+            <section className="flex flex-col items-start gap-3 rounded-lg bg-surface p-6">
+              <span className="grid size-12 place-items-center rounded-full bg-brand-subtle text-brand">
+                <Icon name="menu-book" size={24} />
+              </span>
+              <strong className="text-title text-ink">{t("bank.detailTitle")}</strong>
+              <p className="max-w-130 text-body-sm text-ink-secondary">{t("bank.detailHint")}</p>
+              <button type="button" className={workspaceAction} onClick={() => setGiving(true)}>
+                {t("bank.give")}
+              </button>
+            </section>
+            {item ? (
+              <BankCopies copies={item.copies} onOpen={(id) => navigate(ROUTES.teacher.homeworkItem(id))} />
+            ) : null}
+          </div>
         ) : (
         <div className="flex min-w-0 flex-col gap-4">
           <div className="grid gap-3 sm:grid-cols-4">
