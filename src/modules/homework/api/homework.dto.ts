@@ -143,6 +143,7 @@ export interface AssignmentDto {
   is_bank?: boolean;
   source_id?: string | number | null;
   copies_count?: number | null;
+  copies?: AssignmentCopyDto[] | null;
   questions_count?: number | null;
   student_ids?: Array<string | number> | null;
   due_at: string | null;
@@ -224,14 +225,29 @@ export interface AssignmentFormInput {
   googleFormUrl?: string;
 }
 
+export interface AssignmentCopyDto {
+  id: string | number;
+  course_id?: string | number | null;
+  course_title?: string | null;
+  due_at?: string | null;
+  status?: string;
+  submissions_count?: number | null;
+  student_ids?: Array<string | number> | null;
+  created_at?: string;
+}
+
 export interface AssignFromBankDto {
   count?: number;
   assignments?: AssignmentDto[];
 }
 
+export interface AssignTarget {
+  courseId: string;
+  studentIds: string[] | null;
+}
+
 export interface AssignFromBankInput {
-  courseIds: string[];
-  studentIds: string[];
+  targets: AssignTarget[];
   dueAt: string | null;
   allowLate: boolean;
   announceInChat: boolean;

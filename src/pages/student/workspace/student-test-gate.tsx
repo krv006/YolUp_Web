@@ -27,8 +27,8 @@ export function TestStartScreen({ quiz, meta }: { quiz: QuizDetail; meta: string
           }),
         }
       : null,
-    quiz.questionsPerAttempt
-      ? { id: "questions", icon: "quiz", text: t("workspace.player.start.questions", { count: quiz.questionsPerAttempt }) }
+    quiz.questionCount
+      ? { id: "questions", icon: "quiz", text: t("workspace.player.start.questions", { count: quiz.questionCount }) }
       : null,
   ].filter((row) => row !== null);
 

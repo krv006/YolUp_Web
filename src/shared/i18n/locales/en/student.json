@@ -27,7 +27,10 @@
       "open": "Open",
       "results": "View result",
       "emptyTitle": "No tasks yet",
-      "emptyHint": "Tasks from your teacher will appear here."
+      "emptyHint": "Tasks from your teacher will appear here.",
+      "continue": "Continue · {{time}}",
+      "continueAction": "Continue",
+      "attemptsOver": "No attempts left"
     },
     "lessonsTab": {
       "eyebrow": "SCHEDULE",
@@ -210,7 +213,9 @@
       "attemptsTitle": "My attempts",
       "attemptsSubtitle": "Your latest test attempts",
       "attemptsEmpty": "You haven’t taken any tests yet",
-      "attemptsOver": "No attempts left"
+      "attemptsOver": "No attempts left",
+      "continue": "Continue · {{time}}",
+      "continueAria": "Continue the test, {{time}} left"
     },
     "player": {
       "questions": "Questions · {{count}}",

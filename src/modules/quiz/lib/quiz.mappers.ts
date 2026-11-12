@@ -104,6 +104,9 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     timeLimitMinutes: dto.time_limit_minutes ?? null,
     maxAttempts: dto.max_attempts ?? null,
     questionsPerAttempt: dto.questions_per_attempt ?? null,
+    attemptsUsed: dto.attempts_used ?? null,
+    attemptsLeft: dto.attempts_left ?? null,
+    sessionEndsAt: dto.session_ends_at ?? null,
   };
 }
 
@@ -150,8 +153,6 @@ export function mapQuizDto(dto: QuizDto): QuizDetail {
   return {
     ...mapQuizSummaryDto(dto),
     questionCount: dto.question_count ?? (dto.questions ?? []).length,
-    attemptsUsed: dto.attempts_used ?? null,
-    attemptsLeft: dto.attempts_left ?? null,
     startedAt: dto.started_at ?? null,
     endsAt: dto.ends_at ?? null,
     needsStart: dto.needs_start === true,

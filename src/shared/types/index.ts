@@ -82,6 +82,7 @@ export type {
   HomeworkQuestionType,
   Submission,
   SubmissionStatus,
+  AssignmentCopy,
   AssignmentStatus,
   GradingScale,
   TeacherAnalytics,

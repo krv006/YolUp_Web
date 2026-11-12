@@ -11,3 +11,15 @@ export function secondsUntil(target: string | null, now: number): number | null 
   const end = Date.parse(target);
   return Number.isFinite(end) ? Math.max(0, Math.ceil((end - now) / 1000)) : null;
 }
+
+export function runningSessions(
+  quizzes: ReadonlyArray<{ id: string; sessionEndsAt: string | null }>,
+  now: number
+): Map<string, number> {
+  const running = new Map<string, number>();
+  for (const quiz of quizzes) {
+    const left = secondsUntil(quiz.sessionEndsAt, now);
+    if (left) running.set(quiz.id, left);
+  }
+  return running;
+}

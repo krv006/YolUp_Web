@@ -141,7 +141,16 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     googleFormUrl: dto.google_form_url || null,
     isBank: dto.is_bank === true || dto.status === "bank",
     sourceId: dto.source_id == null ? null : String(dto.source_id),
-    copiesCount: dto.copies_count ?? null,
+    copiesCount: dto.copies_count ?? dto.copies?.length ?? null,
+    copies: (dto.copies ?? []).map((copy) => ({
+      id: String(copy.id),
+      courseId: copy.course_id == null ? "" : String(copy.course_id),
+      courseTitle: copy.course_title ?? "",
+      dueAt: copy.due_at ?? null,
+      submissionsCount: copy.submissions_count ?? 0,
+      studentIds: copy.student_ids?.length ? copy.student_ids.map(String) : null,
+      createdAt: copy.created_at ?? "",
+    })),
     questionsCount: dto.questions_count ?? (dto.questions ? dto.questions.length : null),
     studentIds: dto.student_ids?.length ? dto.student_ids.map(String) : null,
     dueAt: dto.due_at,
@@ -282,8 +291,10 @@ export function mapAssignmentAudienceDto(dto: AssignmentAudienceDto | null | und
 
 export function assignFromBankBody(input: AssignFromBankInput): Record<string, unknown> {
   return {
-    course_ids: input.courseIds,
-    student_ids: input.studentIds,
+    targets: input.targets.map(({ courseId, studentIds }) => ({
+      course_id: courseId,
+      ...(studentIds?.length ? { student_ids: studentIds } : {}),
+    })),
     ...(input.dueAt ? { due_at: input.dueAt } : {}),
     allow_late: input.allowLate,
     announce_in_chat: input.announceInChat,

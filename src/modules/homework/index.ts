@@ -41,4 +41,4 @@ export { HomeworkMessageCard } from "./ui/homework-message-card";
 export { homeworkFieldError } from "./lib/homework-errors";
 export { HomeworkResultDialog } from "./ui/homework-result-dialog";
 export { HomeworkReportView } from "./ui/homework-report-view";
-export type { AssignFromBankInput, AssignmentAudience } from "./api/homework.dto";
+export type { AssignFromBankInput, AssignmentAudience, AssignTarget } from "./api/homework.dto";
