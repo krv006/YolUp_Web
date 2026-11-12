@@ -477,9 +477,14 @@
     "newAssignment": "New assignment",
     "newAssignmentHint": "Create an assignment for this group",
     "formTitle": "Add to the bank",
-    "ambiguous": "One of the chosen students is also in another of your groups. Give the assignment to the whole group, then narrow the list under «Given to» on the assignment page.",
     "detailTitle": "This assignment is in the bank",
-    "detailHint": "Give it to one or more groups or single students with a deadline — each group gets its own copy, and submissions show up there."
+    "detailHint": "Give it to one or more groups or single students with a deadline — each group gets its own copy, and submissions show up there.",
+    "groupsLabel": "Groups",
+    "groupsHint": "Tick a group to see its students, then untick anyone who shouldn't get it",
+    "studentsCount_one": "{{count}} student",
+    "studentsCount_other": "{{count}} students",
+    "loading": "Loading...",
+    "noGroups": "No groups"
   },
   "audience": {
     "title": "Given to",

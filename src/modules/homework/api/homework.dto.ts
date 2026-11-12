@@ -229,9 +229,13 @@ export interface AssignFromBankDto {
   assignments?: AssignmentDto[];
 }
 
+export interface AssignTarget {
+  courseId: string;
+  studentIds: string[] | null;
+}
+
 export interface AssignFromBankInput {
-  courseIds: string[];
-  studentIds: string[];
+  targets: AssignTarget[];
   dueAt: string | null;
   allowLate: boolean;
   announceInChat: boolean;

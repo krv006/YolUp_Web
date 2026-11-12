@@ -32,29 +32,46 @@ describe("homework bank", () => {
     expect(mapAssignmentRequest({ courseId: null, title: "Uy ishi" }).get("course_id")).toBe("");
   });
 
-  it("sends groups, students and the deadline when giving from the bank", () => {
+  it("sends each group with its chosen students when giving from the bank", () => {
     expect(
-      assignFromBankBody({ courseIds: ["c1"], studentIds: [], dueAt: "2026-11-20T23:59", allowLate: true, announceInChat: false })
-    ).toEqual({ course_ids: ["c1"], student_ids: [], due_at: "2026-11-20T23:59", allow_late: true, announce_in_chat: false });
+      assignFromBankBody({
+        targets: [
+          { courseId: "c1", studentIds: ["s1", "s2"] },
+          { courseId: "c2", studentIds: null },
+          { courseId: "c3", studentIds: [] },
+        ],
+        dueAt: "2026-11-20T23:59",
+        allowLate: true,
+        announceInChat: false,
+      })
+    ).toEqual({
+      targets: [{ course_id: "c1", student_ids: ["s1", "s2"] }, { course_id: "c2" }, { course_id: "c3" }],
+      due_at: "2026-11-20T23:59",
+      allow_late: true,
+      announce_in_chat: false,
+    });
   });
 
-  it("limits a single group copy to the chosen students", async () => {
+  it("gives from the bank in one request without a follow-up audience call", async () => {
     const post = vi.spyOn(apiClient, "post").mockResolvedValue({ count: 1, assignments: [{ ...base, id: "a9", course_id: "c1", course_title: "A" }] });
-    const put = vi.spyOn(apiClient, "put").mockResolvedValue({ restricted: true, students: [] });
+    const put = vi.spyOn(apiClient, "put");
     const created = await homeworkApi.assignFromBank("a1", {
-      courseIds: ["c1"],
-      studentIds: [],
+      targets: [{ courseId: "c1", studentIds: ["s1"] }],
       dueAt: null,
       allowLate: true,
       announceInChat: true,
     });
     expect(post).toHaveBeenCalledWith("/api/v1/homework/assignments/a1/assign/", {
-      course_ids: ["c1"],
-      student_ids: [],
+      targets: [{ course_id: "c1", student_ids: ["s1"] }],
       allow_late: true,
       announce_in_chat: true,
     });
+    expect(put).not.toHaveBeenCalled();
     expect(created.map((item) => item.id)).toEqual(["a9"]);
+  });
+
+  it("changes who an assignment is given to", async () => {
+    const put = vi.spyOn(apiClient, "put").mockResolvedValue({ restricted: true, students: [] });
     await homeworkApi.setAudience("a9", ["s1"]);
     expect(put).toHaveBeenCalledWith("/api/v1/homework/assignments/a9/audience/", { student_ids: ["s1"] });
   });

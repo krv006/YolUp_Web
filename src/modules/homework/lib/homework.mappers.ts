@@ -282,8 +282,10 @@ export function mapAssignmentAudienceDto(dto: AssignmentAudienceDto | null | und
 
 export function assignFromBankBody(input: AssignFromBankInput): Record<string, unknown> {
   return {
-    course_ids: input.courseIds,
-    student_ids: input.studentIds,
+    targets: input.targets.map(({ courseId, studentIds }) => ({
+      course_id: courseId,
+      ...(studentIds?.length ? { student_ids: studentIds } : {}),
+    })),
     ...(input.dueAt ? { due_at: input.dueAt } : {}),
     allow_late: input.allowLate,
     announce_in_chat: input.announceInChat,

@@ -1,18 +1,17 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import type { AudienceInput } from "@/modules/conversation";
 import { useCourseStudents } from "@/modules/course";
 import { useAssignFromBank, useHomeworkBank } from "@/modules/homework";
 import { StudentChecklist } from "@/modules/quiz";
-import { AppError } from "@/shared/api";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { Assignment } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { DatePicker, SelectPicker, TimePicker } from "@/shared/ui/legacy/form-pickers";
 import { MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
 import { Switch } from "@/shared/ui/switch";
-import { AudiencePicker } from "@/widgets/audience-picker";
+import { GroupTargetsPicker } from "./group-targets-picker";
+import { hasEmptyTarget, targetOf, targetsOf, type GroupPicks } from "./group-targets";
 
 export interface AssignHomeworkDialogProps {
   open: boolean;
@@ -40,7 +39,7 @@ export function AssignHomeworkDialog({ open, onOpenChange, assignment = null, co
   const assign = useAssignFromBank();
   const bank = useHomeworkBank(open && !assignment);
   const [pickedId, setPickedId] = useState("");
-  const [audience, setAudience] = useState<AudienceInput>({ courseIds: [], studentIds: [] });
+  const [picks, setPicks] = useState<GroupPicks>(() => new Map());
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
   const [date, setDate] = useState(() => inDays(7));
   const [time, setTime] = useState("23:59");
@@ -56,17 +55,14 @@ export function AssignHomeworkDialog({ open, onOpenChange, assignment = null, co
         .map((item) => ({ id: item.student.id, name: item.student.name, avatarUrl: item.student.avatarUrl })),
     [enrollments.data]
   );
-  const chosen = students.filter((student) => !excluded.has(student.id)).map((student) => student.id);
-  const target = courseId
-    ? excluded.size
-      ? { courseIds: [] as string[], studentIds: chosen }
-      : { courseIds: [courseId], studentIds: [] as string[] }
-    : audience;
-  const nobody = courseId ? students.length > 0 && chosen.length === 0 : !audience.courseIds.length && !audience.studentIds.length;
+  const targets = courseId
+    ? [targetOf(courseId, { excluded, studentIds: students.map((student) => student.id) })]
+    : targetsOf(picks);
+  const nobody = hasEmptyTarget(targets);
 
   function close() {
     setPickedId("");
-    setAudience({ courseIds: [], studentIds: [] });
+    setPicks(new Map());
     setExcluded(new Set());
     onOpenChange(false);
   }
@@ -76,17 +72,14 @@ export function AssignHomeworkDialog({ open, onOpenChange, assignment = null, co
     assign.mutate(
       {
         id: source.id,
-        input: { ...target, dueAt: date ? `${date}T${time || "23:59"}` : null, allowLate, announceInChat: announce },
+        input: { targets, dueAt: date ? `${date}T${time || "23:59"}` : null, allowLate, announceInChat: announce },
       },
       {
         onSuccess: (created) => {
           onAssigned?.(created);
           close();
         },
-        onError: (error) =>
-          toast.error(
-            courseId && error instanceof AppError && error.fields?.student_ids ? t("bank.ambiguous") : error.message
-          ),
+        onError: (error) => toast.error(error.message),
       }
     );
   }
@@ -123,7 +116,7 @@ export function AssignHomeworkDialog({ open, onOpenChange, assignment = null, co
       onChange={setExcluded}
     />
   ) : (
-    <AudiencePicker value={audience} onChange={setAudience} />
+    <GroupTargetsPicker value={picks} onChange={setPicks} />
   );
 
   const due = isCompact ? (

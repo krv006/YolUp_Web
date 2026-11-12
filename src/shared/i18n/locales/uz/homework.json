@@ -473,9 +473,13 @@
     "newAssignment": "Yangi vazifa",
     "newAssignmentHint": "Yangi vazifa yaratib shu guruhga berish",
     "formTitle": "Bazaga vazifa qo'shish",
-    "ambiguous": "Tanlangan o'quvchilardan biri sizning boshqa guruhingizda ham bor. Vazifani butun guruhga bering, keyin vazifa sahifasidagi «Kimlarga berilgan» bo'limida ro'yxatni cheklang.",
     "detailTitle": "Bu vazifa bazada",
-    "detailHint": "Uni bir yoki bir nechta guruhga yoki alohida o'quvchilarga muddat bilan bering — har guruh uchun alohida nusxa yaratiladi, topshiriqlar o'sha nusxada ko'rinadi."
+    "detailHint": "Uni bir yoki bir nechta guruhga yoki alohida o'quvchilarga muddat bilan bering — har guruh uchun alohida nusxa yaratiladi, topshiriqlar o'sha nusxada ko'rinadi.",
+    "groupsLabel": "Guruhlar",
+    "groupsHint": "Guruhni belgilang — o'quvchilar ro'yxati ochiladi, kerak bo'lmaganini olib tashlang",
+    "studentsCount": "{{count}} o'quvchi",
+    "loading": "Yuklanmoqda...",
+    "noGroups": "Guruhlar yo'q"
   },
   "audience": {
     "title": "Kimlarga berilgan",
