@@ -44,7 +44,9 @@
     "widthLabel": "Thickness {{value}}",
     "styleAria": "Colour and width",
     "code": "Code",
-    "select": "Select"
+    "select": "Select",
+    "textSizeLabel": "Text size: {{value}}",
+    "eraserSizeLabel": "Eraser size: {{value}}"
   },
   "inline": {
     "cancel": "Cancel",
@@ -82,7 +84,9 @@
       "cleanup": "Clearing the board",
       "other": "Other"
     },
-    "reasonPlaceholder": "Describe the reason"
+    "reasonPlaceholder": "Describe the reason",
+    "deletedCount_one": "{{count}} element deleted",
+    "deletedCount_other": "{{count}} elements deleted"
   },
   "grantDialog": {
     "title": "Board drawing permission",
@@ -239,5 +243,10 @@
     "delete": "Delete",
     "sizeDown": "Smaller",
     "sizeUp": "Larger"
+  },
+  "zoom": {
+    "in": "Zoom in",
+    "out": "Zoom out",
+    "reset": "Reset zoom ({{value}}%)"
   }
 }

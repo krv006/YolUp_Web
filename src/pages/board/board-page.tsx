@@ -161,7 +161,7 @@ export function BoardPage() {
       }
     >
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_240px]">
-        <div className="flex min-h-150 min-w-0 flex-col">
+        <div className="flex h-[calc(100dvh-148px)] min-h-150 min-w-0 flex-col">
           <BoardPanel
             lessonId={data.id}
             courseId={data.courseId}

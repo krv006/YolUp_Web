@@ -78,7 +78,9 @@
     "scoreRange": "The overall score must be between 0 and 100",
     "aiFailedTitle": "AI couldn’t grade this — grade it yourself",
     "aiNone": "This submission wasn’t checked by AI. You set the grade.",
-    "checkingSince": "Checking since {{time}}"
+    "checkingSince": "Checking since {{time}}",
+    "aiUnscoredTitle": "AI didn't give a score — grade it yourself",
+    "aiSummary": "AI summary"
   },
   "report": {
     "noGrade": "No grade",
@@ -183,7 +185,8 @@
     "files": "Files · {{count}}",
     "textAnswer": "Student’s written answer",
     "aiFailed": "AI couldn’t grade this — grade it yourself",
-    "aiFailedHint": "Review the work and set the grade yourself"
+    "aiFailedHint": "Review the work and set the grade yourself",
+    "aiUnscored": "AI didn't give a score — grade it yourself"
   },
   "workspace": {
     "emptyTitle": "No homework yet",

@@ -106,5 +106,14 @@ export function useBoardDrawing({
     setDraft(null);
   }
 
-  return { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp };
+  function cancel() {
+    liveRef.current = null;
+    if (frameRef.current !== null) {
+      globalThis.cancelAnimationFrame(frameRef.current);
+      frameRef.current = null;
+    }
+    setDraft(null);
+  }
+
+  return { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp, cancel };
 }

@@ -44,7 +44,9 @@
     "widthLabel": "Qalinlik {{value}}",
     "styleAria": "Rang va qalinlik",
     "code": "Kod",
-    "select": "Tanlash"
+    "select": "Tanlash",
+    "textSizeLabel": "Matn o'lchami: {{value}}",
+    "eraserSizeLabel": "O'chirg'ich o'lchami: {{value}}"
   },
   "inline": {
     "cancel": "Bekor qilish",
@@ -82,7 +84,8 @@
       "cleanup": "Doskani tozalash",
       "other": "Boshqa"
     },
-    "reasonPlaceholder": "Sababni yozing"
+    "reasonPlaceholder": "Sababni yozing",
+    "deletedCount": "{{count}} ta element o'chirildi"
   },
   "grantDialog": {
     "title": "Doskada chizish ruxsati",
@@ -239,5 +242,10 @@
     "delete": "O'chirish",
     "sizeDown": "Kichiklashtirish",
     "sizeUp": "Kattalashtirish"
+  },
+  "zoom": {
+    "in": "Kattalashtirish",
+    "out": "Kichiklashtirish",
+    "reset": "Asl o'lchamga qaytarish ({{value}}%)"
   }
 }

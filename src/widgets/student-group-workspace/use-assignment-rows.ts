@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { formatGradeValue } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import type { Assignment } from "@/shared/types";
 import type { TaskRow } from "@/widgets/group-workspace";
@@ -51,7 +52,9 @@ export function useAssignmentRows() {
       pill,
       aside: mine
         ? mine.status === "done" && mine.gradeValue !== null
-          ? t("groupWorkspace.tasks.grade", { value: mine.gradeValue })
+          ? item.grading === "hundred"
+            ? t("groupWorkspace.tasks.score", { value: formatGradeValue(mine.gradeValue), max: item.maxScore })
+            : t("groupWorkspace.tasks.grade", { value: formatGradeValue(mine.gradeValue) })
           : t("groupWorkspace.tasks.submittedOn", { date: day(mine.createdAt) })
         : t("groupWorkspace.tasks.notSubmitted"),
       progress: null,

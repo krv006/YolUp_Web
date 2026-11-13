@@ -30,7 +30,8 @@
       "emptyHint": "Здесь появятся задания от учителя.",
       "continue": "Продолжить · {{time}}",
       "continueAction": "Продолжить",
-      "attemptsOver": "Попытки закончились"
+      "attemptsOver": "Попытки закончились",
+      "score": "{{value}} / {{max}} баллов"
     },
     "lessonsTab": {
       "eyebrow": "РАСПИСАНИЕ",
@@ -468,7 +469,9 @@
       "tooManyFiles": "Можно прикрепить не более {{count}} файлов",
       "filesCount": "{{count}} / {{max}} файлов",
       "myComment": "Ваш комментарий",
-      "filesTitle": "Отправленные файлы · {{count}}"
+      "filesTitle": "Отправленные файлы · {{count}}",
+      "outOf": "/ {{max}} баллов",
+      "notGraded": "Это задание не оценивается баллами"
     }
   },
   "tutor": {

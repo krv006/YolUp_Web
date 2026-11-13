@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { StrokeDto } from "../api/board.dto";
-import { boxOfStroke, distanceToSegment, pickStroke } from "./board-select";
+import { boxOfStroke, distanceToSegment, pickStroke, strokesAlong } from "./board-select";
 
 const measure = (stroke: StrokeDto) =>
   stroke.type === "text" ? { minX: stroke.x, minY: stroke.y - 20, maxX: stroke.x + 100, maxY: stroke.y + 6 } : null;
@@ -37,5 +37,21 @@ describe("boxOfStroke", () => {
   it("includes half the line width for shapes and uses the measurement for text", () => {
     expect(boxOfStroke(strokes[0], measure)).toEqual({ minX: 98, minY: 98, maxX: 302, maxY: 202 });
     expect(boxOfStroke(strokes[3], measure)).toEqual({ minX: 120, minY: 130, maxX: 220, maxY: 156 });
+  });
+});
+
+describe("strokesAlong", () => {
+  it("collects every stroke the eraser passes over", () => {
+    expect(strokesAlong(strokes, [0, 390], [650, 510], 12, measure).sort()).toEqual(["line", "pen"]);
+  });
+
+  it("does not skip a thin line when the pointer jumps fast", () => {
+    expect(strokesAlong(strokes, [200, 300], [200, 500], 6, measure)).toEqual(["line"]);
+  });
+
+  it("erases a single stroke on a simple press", () => {
+    expect(strokesAlong(strokes, [150, 140], [150, 140], 8, measure)).toEqual(["text"]);
+    expect(strokesAlong(strokes, [150, 102], [150, 102], 8, measure)).toEqual(["rect"]);
+    expect(strokesAlong(strokes, [900, 900], [900, 900], 8, measure)).toEqual([]);
   });
 });

@@ -126,7 +126,9 @@
     "postRecordingHint": "Once ready, the recording is posted to the group chat and students get a notification",
     "keepRecordingHint": "The recording won't be posted — you can send it later from the recording page",
     "finishedPosted": "Lesson finished — the recording will reach the group chat once it is ready",
-    "finishedKept": "Lesson finished — the recording is saved"
+    "finishedKept": "Lesson finished — the recording is saved",
+    "postRecordingDecided": "Once ready, the recording will be posted to the group chat — you chose this when joining the lesson.",
+    "keepRecordingDecided": "The recording won't be posted — you chose this when joining the lesson. You can send it later from the recording page."
   },
   "rateDialog": {
     "title": "Rate the lesson",

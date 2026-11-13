@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePreviewTracks } from "@livekit/components-react";
 import { Track, type LocalVideoTrack } from "livekit-client";
 import { Info, Mic, MicOff, Settings, Video, VideoOff } from "lucide-react";
@@ -7,15 +7,12 @@ import { i18n } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
-import { Switch } from "@/shared/ui/switch";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MediaPermissionDialog } from "./media-permission-dialog";
-import { requestScreenCapture } from "../lib/screen-capture";
 
 export interface LessonPreJoinChoices {
   micOn: boolean;
   cameraOn: boolean;
-  screenStream?: MediaStream;
 }
 
 export interface LessonPreJoinProps {
@@ -52,8 +49,6 @@ export function LessonPreJoin({
   const [failure, setFailure] = useState<{ attempt: number; denied: boolean; message: string } | null>(
     null
   );
-  const [screenShareError, setScreenShareError] = useState<string | null>(null);
-  const [joining, setJoining] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleDeviceError = useCallback(
@@ -74,8 +69,6 @@ export function LessonPreJoin({
   const videoTrack = tracks?.find((track) => track.kind === Track.Kind.Video) as
     | LocalVideoTrack
     | undefined;
-  const audioTrack = tracks?.find((track) => track.kind === Track.Kind.Audio);
-  const micLabel = audioTrack?.mediaStreamTrack?.label || t("preJoin.defaultMic");
   const timeRange = useMemo(() => {
     const start = new Date(lesson.startsAt);
     if (Number.isNaN(start.getTime())) return lesson.time;
@@ -84,7 +77,6 @@ export function LessonPreJoin({
       `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
     return `${clock(start)} – ${clock(end)}`;
   }, [lesson.startsAt, lesson.durationMinutes, lesson.time]);
-  const cameraLabel = videoTrack?.mediaStreamTrack?.label || t("preJoin.defaultCamera");
 
   useEffect(() => {
     const element = videoRef.current;
@@ -95,34 +87,9 @@ export function LessonPreJoin({
     };
   }, [videoTrack]);
 
-  async function join() {
+  function join() {
     tracks?.forEach((track) => track.stop());
-
-    if (!isTeacher || isCompact) {
-      onJoin({ micOn, cameraOn });
-      return;
-    }
-
-    if (typeof navigator.mediaDevices?.getDisplayMedia !== "function") {
-      setScreenShareError(t("preJoin.screenShareUnsupported"));
-      return;
-    }
-
-    setJoining(true);
-    setScreenShareError(null);
-    try {
-      const screenStream = await requestScreenCapture();
-      if (screenStream.getAudioTracks().length === 0) {
-        screenStream.getTracks().forEach((track) => track.stop());
-        setScreenShareError(t("preJoin.screenShareNoAudio"));
-        return;
-      }
-      onJoin({ micOn, cameraOn, screenStream });
-    } catch {
-      setScreenShareError(t("preJoin.screenSharePermissionDenied"));
-    } finally {
-      setJoining(false);
-    }
+    onJoin({ micOn, cameraOn });
   }
 
   function retryDevices() {
@@ -231,7 +198,6 @@ export function LessonPreJoin({
           <button
             type="button"
             className="flex h-13 items-center justify-center rounded-full bg-surface-inverse text-title font-semibold text-ink-inverse disabled:opacity-60"
-            disabled={joining}
             onClick={onCancel}
           >
             {t("preJoin.mobileCancel")}
@@ -239,7 +205,6 @@ export function LessonPreJoin({
           <button
             type="button"
             className="flex h-13 items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action disabled:opacity-60"
-            disabled={joining}
             onClick={join}
           >
             <Icon name="videocam-fill" size={20} />
@@ -343,24 +308,6 @@ export function LessonPreJoin({
             </span>
           ) : null}
 
-          <div className="flex flex-col gap-4">
-            <DeviceRow
-              icon={<Mic size={20} />}
-              title={micOn ? t("preJoin.micOn") : t("preJoin.micOff")}
-              hint={micLabel}
-              checked={micOn}
-              disabled={!micAllowed}
-              onChange={toggleMic}
-            />
-            <DeviceRow
-              icon={<Video size={20} />}
-              title={cameraOn ? t("preJoin.cameraOnTitle") : t("preJoin.cameraOffTitle")}
-              hint={cameraLabel}
-              checked={cameraOn}
-              onChange={toggleCamera}
-            />
-          </div>
-
           <p className="flex items-center gap-2 text-body-xs text-ink-tertiary">
             <Info size={15} className="shrink-0" />
             {isTeacher ? t("preJoin.recordingNote") : t("preJoin.recordingNoteStudent")}
@@ -378,26 +325,18 @@ export function LessonPreJoin({
             </p>
           ) : null}
 
-          {screenShareError ? (
-            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger" role="alert">
-              {screenShareError}
-            </p>
-          ) : null}
-
           <div className="flex items-center justify-end gap-11">
             <button
               type="button"
               className="flex h-13 items-center rounded-full px-6 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
-              disabled={joining}
-              onClick={onCancel}
+                onClick={onCancel}
             >
               {t("preJoin.cancel")}
             </button>
             <button
               type="button"
               className="flex h-13 items-center rounded-full bg-brand px-11 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
-              disabled={joining}
-              onClick={join}
+                onClick={join}
             >
               {isTeacher ? t("preJoin.start") : t("preJoin.join")}
             </button>
@@ -405,32 +344,5 @@ export function LessonPreJoin({
         </div>
       </div>
     </main>
-  );
-}
-
-function DeviceRow({
-  icon,
-  title,
-  hint,
-  checked,
-  disabled = false,
-  onChange,
-}: {
-  icon: ReactNode;
-  title: string;
-  hint: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: () => void;
-}) {
-  return (
-    <span className="flex items-center gap-3 rounded-md bg-subtle px-4 py-2.5">
-      <span className="grid size-5 shrink-0 place-items-center text-ink-secondary">{icon}</span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <strong className="truncate text-title-sm leading-5 text-ink">{title}</strong>
-        <small className="truncate text-body-xs leading-4.5 text-ink-tertiary">{hint}</small>
-      </span>
-      <Switch checked={checked} disabled={disabled} onCheckedChange={onChange} aria-label={title} />
-    </span>
   );
 }

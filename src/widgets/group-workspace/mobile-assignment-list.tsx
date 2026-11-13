@@ -59,7 +59,7 @@ export function MobileAssignmentList({
   const assignmentRows: TaskRow[] = assignments.map((item) => {
     const total = item.stats?.studentsCount ?? item.submissions.length;
     const submitted = item.stats?.submittedCount ?? item.submissionsCount ?? item.submissions.length;
-    const pending = item.submissions.filter((entry) => !entry.grade).length;
+    const pending = item.stats?.pendingReviewCount ?? item.submissions.filter((entry) => !entry.grade).length;
     const left = daysLeft(item.dueAt);
     const draft = item.status === "draft";
     const closed = left !== null && left < 0;

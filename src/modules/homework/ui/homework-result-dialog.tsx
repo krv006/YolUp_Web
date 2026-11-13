@@ -308,16 +308,25 @@ export function HomeworkResultDialog({
                 className={`mt-4 flex items-start gap-3 rounded-lg p-4 ${aiState === "failed" ? "bg-danger-bg" : "bg-surface"}`}
               >
                 <Icon
-                  name={aiState === "failed" ? "warning-fill" : "info"}
+                  name={aiState === "failed" ? "warning-fill" : aiState === "unscored" ? "auto-awesome" : "info"}
                   size={20}
-                  className={`mt-0.5 shrink-0 ${aiState === "failed" ? "text-danger" : "text-ink-secondary"}`}
+                  className={`mt-0.5 shrink-0 ${
+                    aiState === "failed" ? "text-danger" : aiState === "unscored" ? "text-accent-violet-fg" : "text-ink-secondary"
+                  }`}
                 />
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <strong className={`text-title-sm ${aiState === "failed" ? "text-error-text" : "text-ink"}`}>
-                    {aiState === "failed" ? t("resultDialog.aiFailedTitle") : t("resultDialog.aiNone")}
+                    {aiState === "failed"
+                      ? t("resultDialog.aiFailedTitle")
+                      : aiState === "unscored"
+                        ? t("resultDialog.aiUnscoredTitle")
+                        : t("resultDialog.aiNone")}
                   </strong>
                   {aiState === "failed" && submission.error ? (
                     <small className="text-body-xs text-ink-secondary">{submission.error}</small>
+                  ) : null}
+                  {aiState === "unscored" && submission.aiSummary ? (
+                    <small className="mt-1 text-body-sm whitespace-pre-line text-ink-secondary">{submission.aiSummary}</small>
                   ) : null}
                 </span>
               </section>
@@ -560,6 +569,18 @@ export function HomeworkResultDialog({
                   <p>{t("resultDialog.aiFailedTitle")}</p>
                   {submission.error ? <small>{submission.error}</small> : null}
                 </div>
+              ) : null}
+
+              {aiState === "unscored" ? (
+                <section className="flex flex-col gap-1.5 rounded-xl bg-subtle px-4 py-3">
+                  <strong className="flex items-center gap-2 text-title-sm text-ink">
+                    <Sparkles size={18} className="shrink-0 text-accent-violet-fg" />
+                    {showScore ? t("resultDialog.aiSummary") : t("resultDialog.aiUnscoredTitle")}
+                  </strong>
+                  {submission.aiSummary ? (
+                    <p className="text-body-sm whitespace-pre-line text-ink-secondary">{submission.aiSummary}</p>
+                  ) : null}
+                </section>
               ) : null}
 
               {aiState === "none" && !showScore ? (

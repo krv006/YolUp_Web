@@ -17,6 +17,8 @@ import {
   QuestionsAnswerForm,
   QuestionsResult,
   GoogleFormLink,
+  formatGradeValue,
+  gradePercent,
   type AnswerDraft,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
@@ -480,7 +482,12 @@ function HomeworkResult({
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <strong className="flex items-center gap-1.5 text-body-sm font-semibold text-ink">
                 <Icon name="auto-awesome" size={16} className="shrink-0 text-brand" />
-                {t("workspace.hwItem.aiScore", { value: aiGrade ?? "—" })}
+                {t("workspace.hwItem.aiScore", {
+                  value:
+                    assignment.grading === "hundred" && aiScore !== null
+                      ? formatGradeValue((aiScore * assignment.maxScore) / 100)
+                      : (aiGrade ?? "—"),
+                })}
               </strong>
               <small className="text-caption text-ink-secondary">
                 {teacherGrade === null ? t("workspace.hwItem.aiHint") : t("workspace.hwItem.aiHintDone")}
@@ -502,8 +509,25 @@ function HomeworkResult({
 
       <div className="flex flex-col gap-2">
         <span className="text-overline text-ink-secondary uppercase">{t("workspace.hwItem.teacherGrade")}</span>
-        {teacherGrade === null ? (
+        {assignment.grading === "none" ? (
+          <small className="text-body-sm text-ink-secondary">{t("workspace.hwItem.notGraded")}</small>
+        ) : teacherGrade === null ? (
           <small className="text-body-sm text-ink-secondary">{t("workspace.hwItem.waitingGrade")}</small>
+        ) : assignment.grading === "hundred" ? (
+          <div className="flex flex-col gap-2.5 rounded-xl bg-brand-subtle px-4 py-3">
+            <span className="flex items-baseline gap-1.5">
+              <strong className="font-heading text-[32px]/[38px] text-brand">{formatGradeValue(teacherGrade)}</strong>
+              <small className="text-body-sm text-ink-secondary">
+                {t("workspace.hwItem.outOf", { max: assignment.maxScore })}
+              </small>
+            </span>
+            <span className="h-1.5 overflow-hidden rounded-full bg-surface">
+              <i
+                className="block h-full rounded-full bg-brand"
+                style={{ width: `${gradePercent(teacherGrade, assignment.maxScore)}%` }}
+              />
+            </span>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-5 gap-2">
@@ -511,14 +535,14 @@ function HomeworkResult({
                 <span
                   key={value}
                   className={`flex h-11 items-center justify-center rounded-xl text-title font-semibold ${
-                    teacherGrade === value ? "bg-brand text-ink-inverse" : "bg-subtle text-ink"
+                    Math.round(teacherGrade) === value ? "bg-brand text-ink-inverse" : "bg-subtle text-ink"
                   }`}
                 >
                   {value}
                 </span>
               ))}
             </div>
-            {aiGrade !== null && aiGrade === teacherGrade ? (
+            {aiGrade !== null && aiGrade === Math.round(teacherGrade) ? (
               <small className="flex items-center gap-1 text-caption-strong text-success-fg">
                 <Icon name="check" size={14} />
                 {t("workspace.hwItem.matchesAi")}

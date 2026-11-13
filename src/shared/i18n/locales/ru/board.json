@@ -44,7 +44,9 @@
     "widthLabel": "Толщина {{value}}",
     "styleAria": "Цвет и толщина",
     "code": "Код",
-    "select": "Выделение"
+    "select": "Выделение",
+    "textSizeLabel": "Размер текста: {{value}}",
+    "eraserSizeLabel": "Размер ластика: {{value}}"
   },
   "inline": {
     "cancel": "Отмена",
@@ -82,7 +84,11 @@
       "cleanup": "Очистка доски",
       "other": "Другое"
     },
-    "reasonPlaceholder": "Укажите причину"
+    "reasonPlaceholder": "Укажите причину",
+    "deletedCount_one": "Удалён {{count}} элемент",
+    "deletedCount_few": "Удалено {{count}} элемента",
+    "deletedCount_many": "Удалено {{count}} элементов",
+    "deletedCount_other": "Удалено {{count}} элемента"
   },
   "grantDialog": {
     "title": "Разрешение рисовать на доске",
@@ -239,5 +245,10 @@
     "delete": "Удалить",
     "sizeDown": "Уменьшить",
     "sizeUp": "Увеличить"
+  },
+  "zoom": {
+    "in": "Увеличить",
+    "out": "Уменьшить",
+    "reset": "Вернуть исходный масштаб ({{value}}%)"
   }
 }

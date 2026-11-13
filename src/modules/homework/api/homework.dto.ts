@@ -58,7 +58,8 @@ export interface SubmissionDto {
   teacher_comment?: string | null;
   files?: Array<{ name?: string | null; size?: number | null; mime?: string | null; index?: number | null }> | null;
   answers?: HomeworkAnswerDto[] | null;
-  ai_state?: "checking" | "ready" | "failed" | "none" | null;
+  ai_state?: "checking" | "ready" | "unscored" | "failed" | "none" | null;
+  ai_summary?: string | null;
   ai_checking_since?: string | null;
 }
 
@@ -152,6 +153,10 @@ export interface AssignmentDto {
   lesson_title?: string | null;
   created_at: string;
   submissions_count?: number | null;
+  students_count?: number | null;
+  submitted_count?: number | null;
+  pending_review_count?: number | null;
+  graded_count?: number | null;
   my_submission?: SubmissionDto | null;
   submissions?: SubmissionDto[];
   stats?: AssignmentStatsDto | null;

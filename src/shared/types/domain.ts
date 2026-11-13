@@ -413,10 +413,11 @@ export interface Submission {
   files: SubmissionFile[];
   answers: HomeworkAnswer[];
   aiState: AiCheckState | null;
+  aiSummary: string | null;
   aiCheckingSince: string | null;
 }
 
-export type AiCheckState = "checking" | "ready" | "failed" | "none";
+export type AiCheckState = "checking" | "ready" | "unscored" | "failed" | "none";
 
 export interface SubmissionFile {
   name: string;
@@ -428,6 +429,8 @@ export interface SubmissionFile {
 export interface AssignmentStats {
   studentsCount: number | null;
   submittedCount: number | null;
+  pendingReviewCount: number | null;
+  gradedCount: number | null;
   averageScore: number | null;
 }
 

@@ -22,6 +22,7 @@ import {
   mapLessonRequest,
 } from "../lib/lesson.mappers";
 import { bulkLessonsRequest, type BulkLessonRow } from "../lib/bulk-lessons";
+import { mapRecordingChoice, type RecordingChoice } from "../lib/recording-choice";
 
 function isMissingRatingApi(error: unknown): boolean {
   return (
@@ -125,6 +126,14 @@ export const lessonApi = {
         ...(title ? { recording_title: title } : {}),
         ...(options.postRecording === undefined ? {} : { post_recording: options.postRecording }),
       })
+    );
+  },
+  async getRecordingChoice(id: string, options?: RequestOptions): Promise<RecordingChoice> {
+    return mapRecordingChoice(await apiClient.get<unknown>(lessonEndpoints.recordingChoice(id), options));
+  },
+  async setRecordingChoice(id: string, postRecording: boolean): Promise<RecordingChoice> {
+    return mapRecordingChoice(
+      await apiClient.patch<unknown>(lessonEndpoints.recordingChoice(id), { post_recording: postRecording })
     );
   },
   async getRecording(id: string, options?: RequestOptions) {

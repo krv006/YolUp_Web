@@ -5,7 +5,7 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import type { Lesson } from "@/shared/types";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
-import { useFinishLesson } from "../model/lesson.queries";
+import { useFinishLesson, useRecordingChoice } from "../model/lesson.queries";
 
 export interface FinishLessonDialogProps {
   lesson: Lesson | null;
@@ -24,29 +24,37 @@ export function FinishLessonDialog({
   const { t } = useTranslation("lesson");
   const finish = useFinishLesson();
   const isCompact = useIsCompact();
+  const choice = useRecordingChoice(lesson?.id ?? null).data;
   const [postRecording, setPostRecording] = useState(true);
+  const decided = choice?.decided ? choice.postRecording : null;
+  const finalPost = decided ?? postRecording;
 
-  const postToggle = (
-    <label className="flex w-full items-start gap-3 rounded-md bg-subtle px-4 py-3 text-left">
-      <input
-        type="checkbox"
-        className="mt-0.5 size-4.5 shrink-0 accent-brand"
-        checked={postRecording}
-        onChange={(event) => setPostRecording(event.target.checked)}
-      />
-      <span className="flex min-w-0 flex-col">
-        <span className="text-body-sm font-medium text-ink">{t("finishDialog.postRecording")}</span>
-        <small className="text-caption text-ink-secondary">
-          {postRecording ? t("finishDialog.postRecordingHint") : t("finishDialog.keepRecordingHint")}
-        </small>
-      </span>
-    </label>
-  );
+  const postToggle =
+    decided !== null ? (
+      <p className="flex w-full items-start gap-3 rounded-md bg-subtle px-4 py-3 text-left text-body-sm text-ink-secondary">
+        {decided ? t("finishDialog.postRecordingDecided") : t("finishDialog.keepRecordingDecided")}
+      </p>
+    ) : (
+      <label className="flex w-full items-start gap-3 rounded-md bg-subtle px-4 py-3 text-left">
+        <input
+          type="checkbox"
+          className="mt-0.5 size-4.5 shrink-0 accent-brand"
+          checked={postRecording}
+          onChange={(event) => setPostRecording(event.target.checked)}
+        />
+        <span className="flex min-w-0 flex-col">
+          <span className="text-body-sm font-medium text-ink">{t("finishDialog.postRecording")}</span>
+          <small className="text-caption text-ink-secondary">
+            {postRecording ? t("finishDialog.postRecordingHint") : t("finishDialog.keepRecordingHint")}
+          </small>
+        </span>
+      </label>
+    );
 
   function submit() {
     if (!lesson) return;
     finish.mutate(
-      { id: lesson.id, postRecording },
+      { id: lesson.id, postRecording: finalPost },
       {
         onSuccess: () => {
           onOpenChange(false);

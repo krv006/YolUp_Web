@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Atom, ChevronLeft, ChevronRight, Plus, Redo2, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
-import { MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.constants";
+import { BOARD_TEXT_SIZES, ERASER_SIZES, MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.constants";
 import type { BoardTool } from "./board-toolbar";
 
 const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number }> = [
@@ -18,7 +18,7 @@ const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number
   { id: "erase", labelKey: "tools.erase", icon: "board-eraser", size: 20 },
 ];
 
-const PLAIN_TOOLS: BoardTool[] = ["select", "text", "math", "erase"];
+const PLAIN_TOOLS: BoardTool[] = ["select", "math"];
 
 export interface MobileBoardHeaderProps {
   title: ReactNode;
@@ -89,9 +89,13 @@ export interface MobileBoardToolbarProps {
   tool: BoardTool;
   color: string;
   width: number;
+  textSize: number;
+  eraserSize: number;
   onToolChange: (tool: BoardTool) => void;
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
+  onTextSizeChange: (size: number) => void;
+  onEraserSizeChange: (size: number) => void;
   onPeriodic?: () => void;
 }
 
@@ -99,9 +103,13 @@ export function MobileBoardToolbar({
   tool,
   color,
   width,
+  textSize,
+  eraserSize,
   onToolChange,
   onColorChange,
   onWidthChange,
+  onTextSizeChange,
+  onEraserSizeChange,
   onPeriodic,
 }: MobileBoardToolbarProps) {
   const { t } = useTranslation("board");
@@ -114,7 +122,27 @@ export function MobileBoardToolbar({
       aria-label={t("tools.toolbarAria")}
     >
       <div className={`h-8 items-center ${plain ? "hidden" : "flex"}`}>
-        {MOBILE_BOARD_COLORS.map((value) => {
+        {tool === "erase"
+          ? ERASER_SIZES.map(({ value, label }) => {
+              const active = eraserSize === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid size-8 shrink-0 place-items-center rounded-sm ${active ? "bg-brand-subtle" : ""} [&+&]:ml-2`}
+                  aria-label={t("tools.eraserSizeLabel", { value: label })}
+                  aria-pressed={active}
+                  onClick={() => onEraserSizeChange(value)}
+                >
+                  <span
+                    className="block rounded-full border-2 border-ink-secondary"
+                    style={{ width: value / 2 + 6, height: value / 2 + 6 }}
+                  />
+                </button>
+              );
+            })
+          : null}
+        {tool === "erase" ? null : MOBILE_BOARD_COLORS.map((value) => {
           const active = color.toLowerCase() === value;
           return (
             <button
@@ -135,8 +163,27 @@ export function MobileBoardToolbar({
             </button>
           );
         })}
-        <i className="mr-2 ml-[7px] h-5 w-px shrink-0 bg-line not-italic" aria-hidden="true" />
-        {MOBILE_BOARD_WIDTHS.map((value) => {
+        {tool === "erase" ? null : <i className="mr-2 ml-[7px] h-5 w-px shrink-0 bg-line not-italic" aria-hidden="true" />}
+        {tool === "text"
+          ? BOARD_TEXT_SIZES.map(({ value, label }) => {
+              const active = textSize === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid h-7 min-w-7 shrink-0 place-items-center rounded-sm px-1 text-caption-strong ${
+                    active ? "bg-brand text-on-action" : "text-ink"
+                  } [&+&]:ml-1.5`}
+                  aria-label={t("tools.textSizeLabel", { value: label })}
+                  aria-pressed={active}
+                  onClick={() => onTextSizeChange(value)}
+                >
+                  {label}
+                </button>
+              );
+            })
+          : null}
+        {tool === "text" || tool === "erase" ? null : MOBILE_BOARD_WIDTHS.map((value) => {
           const active = width === value;
           return (
             <button

@@ -55,6 +55,10 @@ describe("submissionAiState", () => {
   it("follows the state the server reports", () => {
     expect(submissionAiState(map({ ai_state: "failed", error: "AI baholay olmadi" }))).toBe("failed");
     expect(submissionAiState(map({ ai_state: "none" }))).toBe("none");
+    const unscored = map({ ai_state: "unscored", ai_summary: "  Javob mavzuga mos, lekin ball qo'yib bo'lmadi.  " });
+    expect(submissionAiState(unscored)).toBe("unscored");
+    expect(unscored.aiSummary).toBe("Javob mavzuga mos, lekin ball qo'yib bo'lmadi.");
+    expect(map({ ai_summary: "  " }).aiSummary).toBeNull();
     expect(map({ ai_state: "checking", ai_checking_since: "2026-11-11T10:01:00Z" }).aiCheckingSince).toBe(
       "2026-11-11T10:01:00Z"
     );
@@ -63,6 +67,7 @@ describe("submissionAiState", () => {
   it("works it out when the server does not say", () => {
     expect(submissionAiState(map({ status: "checking" }))).toBe("checking");
     expect(submissionAiState(map({ result: { overall_score: 70 } }))).toBe("ready");
+    expect(submissionAiState(map({ result: { summary: { strengths: ["Yaxshi"] } } }))).toBe("unscored");
     expect(submissionAiState(map({ error: "AI baholay olmadi" }))).toBe("failed");
     expect(submissionAiState(map({}))).toBe("none");
   });
