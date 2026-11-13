@@ -92,6 +92,7 @@ import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
 import { RecordingStartDialog } from "./recording-start-dialog";
 import { useScreenShareRelease } from "./use-screen-share-release";
+import { useLiveHealth } from "./use-live-health";
 import { SilenceAllControl } from "./silence-all-control";
 import { useDocumentPip } from "./use-document-pip";
 
@@ -816,6 +817,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const camera = useCameraSignals(lesson.id, isTeacher);
   useMediaModeChannel(lesson.id, isTeacher);
   useScreenShareRelease(lesson.id, !isTeacher);
+  useLiveHealth(lesson.id);
   useFocusTracker(lesson.id, !isTeacher);
   const course = useCourse(lesson.courseId || null);
   const teacherId = course.data?.teacherUser?.id ?? null;

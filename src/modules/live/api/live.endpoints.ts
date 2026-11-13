@@ -1,5 +1,6 @@
 export const liveEndpoints = Object.freeze({
   token: "/api/v1/live/token/",
+  clientHealth: (lessonId: string) => `/api/v1/live/lesson/${lessonId}/client-health/`,
   leave: "/api/v1/live/leave/",
   attention: "/api/v1/live/attention/",
   focus: "/api/v1/live/focus/",

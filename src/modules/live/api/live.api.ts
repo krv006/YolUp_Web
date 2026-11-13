@@ -10,6 +10,7 @@ import type {
   MediaModeDto,
   RoomTokenDto,
 } from "./live.dto";
+import type { ClientHealthReport } from "../lib/client-health";
 import { mapAttentionDto, mapFocusDto, mapMediaModeDto, mapRoomTokenDto } from "../lib/live.mappers";
 
 export const liveApi = {
@@ -49,6 +50,9 @@ export const liveApi = {
       ...(except.length ? { except } : {}),
     });
     return dto.camera_off ?? 0;
+  },
+  reportHealth(lessonId: string, report: ClientHealthReport) {
+    return apiClient.post<{ id?: string }>(liveEndpoints.clientHealth(lessonId), report);
   },
   async releaseMedia(lessonId: string, kind: MediaKind) {
     const dto = await apiClient.post<{ revoked?: boolean; open?: boolean }>(liveEndpoints.releaseMedia, {

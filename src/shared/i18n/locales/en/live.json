@@ -268,5 +268,8 @@
     "aria": "Turn off everyone's mic and camera",
     "mobileLabel": "Mute all",
     "done": "Turned off — mics: {{mics}}, cameras: {{cameras}}"
+  },
+  "health": {
+    "cpuLowered": "Your computer is overloaded — camera quality was lowered. Close extra windows and apps."
   }
 }

@@ -52,3 +52,13 @@ export { AttentionCheckDialog } from "./ui/attention-check-dialog";
 export { LessonInviteDialog } from "./ui/lesson-invite-dialog";
 export { LessonPreJoin } from "./ui/lesson-pre-join";
 export type { LessonPreJoinChoices, LessonPreJoinProps } from "./ui/lesson-pre-join";
+export {
+  audioHealth,
+  bitrateSince,
+  clientHealthReport,
+  isHealthSource,
+  sentBytes,
+  videoHealth,
+  type ClientHealthReport,
+  type HealthTrack,
+} from "./lib/client-health";
