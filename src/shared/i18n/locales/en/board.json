@@ -44,7 +44,8 @@
     "widthLabel": "Thickness {{value}}",
     "styleAria": "Colour and width",
     "code": "Code",
-    "select": "Select"
+    "select": "Select",
+    "textSizeLabel": "Text size: {{value}}"
   },
   "inline": {
     "cancel": "Cancel",

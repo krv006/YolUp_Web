@@ -44,7 +44,8 @@
     "widthLabel": "Qalinlik {{value}}",
     "styleAria": "Rang va qalinlik",
     "code": "Kod",
-    "select": "Tanlash"
+    "select": "Tanlash",
+    "textSizeLabel": "Matn o'lchami: {{value}}"
   },
   "inline": {
     "cancel": "Bekor qilish",

@@ -164,6 +164,7 @@ export function BoardPanel({
   const [tool, setTool] = useState<BoardTool>("pen");
   const [color, setColor] = useState<string>(mobileLayout ? MOBILE_BOARD_COLORS[1] : BOARD_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState<number>(mobileLayout ? MOBILE_BOARD_WIDTHS[1] : BOARD_WIDTHS[1]);
+  const [textSize, setTextSize] = useState<number>(BOARD_TEXT_SIZE);
   const [history, setHistory] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
   const [redoStack, setRedoStack] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -382,8 +383,8 @@ export function BoardPanel({
       return openEditor(hit);
     }
     const obstacles = textObstacles();
-    const anchor = freeTextAnchor(anchorFor(point, "text")[0], point[1], "", BOARD_TEXT_SIZE, obstacles);
-    startInline({ anchor, size: BOARD_TEXT_SIZE, color, original: "", obstacles }, point);
+    const anchor = freeTextAnchor(anchorFor(point, "text")[0], point[1], "", textSize, obstacles);
+    startInline({ anchor, size: textSize, color, original: "", obstacles }, point);
   }
 
   function typeInline(value: string) {
@@ -538,7 +539,7 @@ export function BoardPanel({
         text: draftPlainText,
         x,
         y,
-        size: BOARD_TEXT_SIZE,
+        size: textSize,
         color,
         ...(hasRichFormatting(draftLines) ? { lines: draftLines } : {}),
       };
@@ -1066,9 +1067,11 @@ export function BoardPanel({
               tool={tool}
               color={color}
               width={strokeWidth}
+              textSize={textSize}
               onToolChange={(next) => (next === "math" ? setFormulaOpen(true) : setTool(next))}
               onColorChange={setColor}
               onWidthChange={setStrokeWidth}
+              onTextSizeChange={setTextSize}
               onPeriodic={state.chemistryEnabled ? () => setPeriodicOpen(true) : undefined}
             />
           </div>
@@ -1122,12 +1125,14 @@ export function BoardPanel({
               tool={tool}
               color={color}
               width={strokeWidth}
+              textSize={textSize}
               canDraw={canDraw}
               chemistryEnabled={state.chemistryEnabled}
               codeEnabled={state.codeEnabled}
               onToolChange={setTool}
               onColorChange={setColor}
               onWidthChange={setStrokeWidth}
+              onTextSizeChange={setTextSize}
               onPeriodic={() => setPeriodicOpen(true)}
             />
           </div>

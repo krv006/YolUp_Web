@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Atom, ChevronLeft, ChevronRight, Plus, Redo2, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
-import { MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.constants";
+import { BOARD_TEXT_SIZES, MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.constants";
 import type { BoardTool } from "./board-toolbar";
 
 const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number }> = [
@@ -18,7 +18,7 @@ const TOOLS: Array<{ id: BoardTool; labelKey: string; icon: string; size: number
   { id: "erase", labelKey: "tools.erase", icon: "board-eraser", size: 20 },
 ];
 
-const PLAIN_TOOLS: BoardTool[] = ["select", "text", "math", "erase"];
+const PLAIN_TOOLS: BoardTool[] = ["select", "math", "erase"];
 
 export interface MobileBoardHeaderProps {
   title: ReactNode;
@@ -89,9 +89,11 @@ export interface MobileBoardToolbarProps {
   tool: BoardTool;
   color: string;
   width: number;
+  textSize: number;
   onToolChange: (tool: BoardTool) => void;
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
+  onTextSizeChange: (size: number) => void;
   onPeriodic?: () => void;
 }
 
@@ -99,9 +101,11 @@ export function MobileBoardToolbar({
   tool,
   color,
   width,
+  textSize,
   onToolChange,
   onColorChange,
   onWidthChange,
+  onTextSizeChange,
   onPeriodic,
 }: MobileBoardToolbarProps) {
   const { t } = useTranslation("board");
@@ -136,7 +140,26 @@ export function MobileBoardToolbar({
           );
         })}
         <i className="mr-2 ml-[7px] h-5 w-px shrink-0 bg-line not-italic" aria-hidden="true" />
-        {MOBILE_BOARD_WIDTHS.map((value) => {
+        {tool === "text"
+          ? BOARD_TEXT_SIZES.map(({ value, label }) => {
+              const active = textSize === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid h-7 min-w-7 shrink-0 place-items-center rounded-sm px-1 text-caption-strong ${
+                    active ? "bg-brand text-on-action" : "text-ink"
+                  } [&+&]:ml-1.5`}
+                  aria-label={t("tools.textSizeLabel", { value: label })}
+                  aria-pressed={active}
+                  onClick={() => onTextSizeChange(value)}
+                >
+                  {label}
+                </button>
+              );
+            })
+          : null}
+        {tool === "text" ? null : MOBILE_BOARD_WIDTHS.map((value) => {
           const active = width === value;
           return (
             <button

@@ -44,7 +44,8 @@
     "widthLabel": "Толщина {{value}}",
     "styleAria": "Цвет и толщина",
     "code": "Код",
-    "select": "Выделение"
+    "select": "Выделение",
+    "textSizeLabel": "Размер текста: {{value}}"
   },
   "inline": {
     "cancel": "Отмена",

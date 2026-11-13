@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState, type ComponentType } from "react";
 import { useTranslation } from "react-i18next";
-import { BOARD_COLORS, BOARD_WIDTHS } from "../constants/board.constants";
+import { BOARD_COLORS, BOARD_TEXT_SIZES, BOARD_WIDTHS } from "../constants/board.constants";
 import type { DrawKind } from "../lib/board.geometry";
 
 export type BoardTool = DrawKind | "select" | "text" | "math" | "code" | "erase";
@@ -42,12 +42,14 @@ export interface BoardToolbarProps {
   tool: BoardTool;
   color: string;
   width: number;
+  textSize: number;
   canDraw: boolean;
   chemistryEnabled?: boolean;
   codeEnabled?: boolean;
   onToolChange: (tool: BoardTool) => void;
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
+  onTextSizeChange: (size: number) => void;
   onPeriodic?: () => void;
 }
 
@@ -58,12 +60,14 @@ export function BoardToolbar({
   tool,
   color,
   width,
+  textSize,
   canDraw,
   chemistryEnabled = false,
   codeEnabled = false,
   onToolChange,
   onColorChange,
   onWidthChange,
+  onTextSizeChange,
   onPeriodic,
 }: BoardToolbarProps) {
   const { t } = useTranslation("board");
@@ -158,27 +162,49 @@ export function BoardToolbar({
             ))}
           </div>
 
-          <div className="flex items-center gap-1">
-            {BOARD_WIDTHS.map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={`grid h-9 w-10 shrink-0 place-items-center rounded-md transition-colors disabled:opacity-40 ${
-                  width === value ? "bg-brand-subtle" : "hover:bg-subtle"
-                }`}
-                disabled={!canDraw}
-                title={t("tools.widthLabel", { value })}
-                aria-label={t("tools.widthLabel", { value })}
-                aria-pressed={width === value}
-                onClick={() => onWidthChange(value)}
-              >
-                <span
-                  className="block w-5 rounded-full bg-ink"
-                  style={{ height: Math.min(value, 10) }}
-                />
-              </button>
-            ))}
-          </div>
+          {tool === "text" ? (
+            <div className="flex items-center gap-1">
+              {BOARD_TEXT_SIZES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid h-9 w-10 shrink-0 place-items-center rounded-md font-semibold text-ink transition-colors disabled:opacity-40 ${
+                    textSize === value ? "bg-brand-subtle text-brand" : "hover:bg-subtle"
+                  }`}
+                  style={{ fontSize: Math.round(value * 0.6) }}
+                  disabled={!canDraw}
+                  title={t("tools.textSizeLabel", { value: label })}
+                  aria-label={t("tools.textSizeLabel", { value: label })}
+                  aria-pressed={textSize === value}
+                  onClick={() => onTextSizeChange(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-1">
+              {BOARD_WIDTHS.map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid h-9 w-10 shrink-0 place-items-center rounded-md transition-colors disabled:opacity-40 ${
+                    width === value ? "bg-brand-subtle" : "hover:bg-subtle"
+                  }`}
+                  disabled={!canDraw}
+                  title={t("tools.widthLabel", { value })}
+                  aria-label={t("tools.widthLabel", { value })}
+                  aria-pressed={width === value}
+                  onClick={() => onWidthChange(value)}
+                >
+                  <span
+                    className="block w-5 rounded-full bg-ink"
+                    style={{ height: Math.min(value, 10) }}
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       ) : null}
     </div>
