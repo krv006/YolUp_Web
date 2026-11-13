@@ -27,8 +27,6 @@
     "you": "Siz",
     "deviceErrorFallback": "qurilma topilmadi",
     "screenShareUnsupported": "Bu brauzer ekran ulashishni qo'llamaydi — boshqa brauzerdan urinib ko'ring.",
-    "screenShareNoAudio": "Ekran tovushi ulanmadi — ochilgan oynada \"Tovushni ham ulashish\" (Share audio / Share tab audio) belgisini albatta yoqing. Qayta urinib ko'ring.",
-    "screenSharePermissionDenied": "Ekran ulashishga ruxsat berilmadi — dars video yozuvi uchun bu shart. Qayta urinib ko'ring.",
     "cameraOff": "Kamera o'chiq",
     "muteMicAria": "Mikrofonni o'chirish",
     "unmuteMicAria": "Mikrofonni yoqish",
@@ -38,7 +36,6 @@
     "eyebrow": "DARSGA KIRISH",
     "deviceErrorMessage": "Qurilmaga ulanib bo'lmadi: {{error}}. Brauzer ruxsatini tekshiring.",
     "micTokenMissing": "Server tokenida mikrofon ruxsati yo'q — darsda gapira olmaysiz. Bu kutilmagan holat, texnik jamoaga xabar bering.",
-    "teacherScreenShareNote": "Dars <0>yozib olinishi</0> va o'quvchilarga <1>jonli ko'rsatilishi</1> uchun brauzer ekran ulashishni so'raydi — ochilgan oynada istalgan bo'limni (masalan \"Chrome tab\") tanlang va <2>\"Tovushni ham ulashish\"</2> (Share audio) belgisini <3>albatta yoqing</3> — aks holda ekrandagi tovush (masalan video/musiqa) na o'quvchilarga, na yozuvga tushmaydi. Darsga kirishning o'zida yozuv HAM, o'quvchilarga ko'rsatish HAM darhol boshlanadi — qayta tugma bosish shart emas. Ruxsat berilmasa yoki tovush ulanmasa, darsga kira olmaysiz — qayta urinib ko'rasiz.",
     "cameraOnSuffix": "kamera yoqilgan",
     "cameraOffSuffix": "kamera o'chiq",
     "canChangeLater": "Darsga kirgandan keyin ham o'zgartirishingiz mumkin.",
@@ -47,7 +44,7 @@
     "join": "Darsga qo‘shilish",
     "mobileTitle": "Darsga qo‘shilish",
     "minutes": "daqiqa",
-    "recordingNote": "Dars avtomatik yoziladi — audio va video",
+    "recordingNote": "Darsga kirgach yozuvni boshlash uchun ekranni ulashish so'raladi",
     "minutesValue": "{{count}} daqiqa",
     "waiting": "{{count}} / {{total}} o'quvchi kutmoqda",
     "waitingNames_zero": "{{names}} kutmoqda",
@@ -252,5 +249,19 @@
     "micClosed": "Mikrofon endi faqat o'qituvchi ruxsati bilan yoqiladi",
     "cameraOpened": "O'qituvchi kamerani hammaga ochdi — so'rovsiz yoqishingiz mumkin",
     "cameraClosed": "Kamera endi faqat o'qituvchi ruxsati bilan yoqiladi"
+  },
+  "recordingStart": {
+    "title": "Darsni yozib olish",
+    "text": "Yozuv uchun ekranni ulashing. Ochilgan oynada «Tovushni ham ulashish» (Share audio) belgisini yoqing — aks holda ekrandagi tovush yozuvga tushmaydi.",
+    "mobileTitle": "Dars yozuvi",
+    "mobileText": "Dars ovozi yozib olinadi. Yozuv tayyor bo'lgach nima qilishni tanlang.",
+    "start": "Ekranni ulashib, yozishni boshlash",
+    "starting": "Ochilmoqda...",
+    "later": "Keyinroq",
+    "continue": "Davom etish",
+    "buttonAria": "Ekranni ulashib, darsni yozishni boshlash",
+    "unsupported": "Bu brauzer ekran ulashishni qo'llamaydi — boshqa brauzerdan urinib ko'ring.",
+    "noAudio": "Ekran tovushi ulanmadi — ochilgan oynada «Tovushni ham ulashish» (Share audio) belgisini yoqib, qayta urinib ko'ring.",
+    "denied": "Ekran ulashishga ruxsat berilmadi. Qayta urinib ko'ring yoki keyinroq pastdagi tugma orqali boshlang."
   }
 }

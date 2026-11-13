@@ -27,8 +27,6 @@
     "you": "You",
     "deviceErrorFallback": "device not found",
     "screenShareUnsupported": "This browser doesn't support screen sharing — try a different browser.",
-    "screenShareNoAudio": "Screen audio wasn't connected — make sure to enable \"Share audio\" (Share tab audio) in the picker window. Please try again.",
-    "screenSharePermissionDenied": "Screen sharing permission was denied — it's required for the lesson recording. Please try again.",
     "cameraOff": "Camera off",
     "muteMicAria": "Mute microphone",
     "unmuteMicAria": "Unmute microphone",
@@ -38,7 +36,6 @@
     "eyebrow": "JOIN LESSON",
     "deviceErrorMessage": "Couldn't connect to the device: {{error}}. Check your browser permissions.",
     "micTokenMissing": "The server token has no microphone permission — you can't speak in the lesson. This is unexpected, please notify the tech team.",
-    "teacherScreenShareNote": "The browser will ask to share your screen so the lesson can be <0>recorded</0> and <1>shown live</1> to students — pick any section (e.g. \"Chrome tab\") in the picker and be sure to enable <2>\"Share audio\"</2> <3>without fail</3> — otherwise sound from your screen (e.g. a video/music) won't reach either the students or the recording. Both the recording and the live view to students start immediately when you join — no need to press anything again. If permission is denied or audio isn't shared, you won't be able to join — you'll need to try again.",
     "cameraOnSuffix": "camera on",
     "cameraOffSuffix": "camera off",
     "canChangeLater": "You can change this after joining the lesson too.",
@@ -47,7 +44,7 @@
     "join": "Join the lesson",
     "mobileTitle": "Join the lesson",
     "minutes": "minutes",
-    "recordingNote": "The lesson is recorded automatically — audio and video",
+    "recordingNote": "Once you're in, you'll be asked to share your screen to start recording",
     "minutesValue": "{{count}} min",
     "waiting": "{{count}} / {{total}} students waiting",
     "waitingNames_zero": "{{names}} is waiting",
@@ -252,5 +249,19 @@
     "micClosed": "The microphone now needs the teacher's permission",
     "cameraOpened": "The teacher opened the camera to everyone — you can turn it on without asking",
     "cameraClosed": "The camera now needs the teacher's permission"
+  },
+  "recordingStart": {
+    "title": "Record the lesson",
+    "text": "Share your screen to record. In the window that opens, turn on \"Share audio\" — otherwise sound from the screen won't be recorded.",
+    "mobileTitle": "Lesson recording",
+    "mobileText": "The lesson audio is recorded. Choose what happens to the recording once it's ready.",
+    "start": "Share screen and start recording",
+    "starting": "Opening...",
+    "later": "Later",
+    "continue": "Continue",
+    "buttonAria": "Share your screen and start recording the lesson",
+    "unsupported": "This browser can't share the screen — try another browser.",
+    "noAudio": "Screen audio wasn't connected — turn on \"Share audio\" in the window that opens and try again.",
+    "denied": "Screen sharing wasn't allowed. Try again, or start later with the button below."
   }
 }

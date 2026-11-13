@@ -43,6 +43,7 @@ import { AppDialog } from "@/shared/ui/app-dialog";
 import { i18n } from "@/shared/i18n";
 import {
   FinishLessonDialog,
+  useRecordingChoice,
   useTeacherAudioRecording,
   useTeacherVideoRecording,
   type TeacherAudioRecordingSnapshot,
@@ -88,6 +89,7 @@ import { useShareSourceText } from "./use-share-source-text";
 import { SharePreview } from "./share-preview";
 import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
+import { RecordingStartDialog } from "./recording-start-dialog";
 import { useDocumentPip } from "./use-document-pip";
 
 type SidePanel = "board" | "people" | null;
@@ -782,11 +784,10 @@ function ShareRequestListener({
 export interface LiveRoomProps {
   lesson: Lesson;
   isTeacher: boolean;
-  screenStream: MediaStream | null;
   onLeave: () => void;
 }
 
-export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream, onLeave }: LiveRoomProps) {
+export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const { t } = useTranslation("live");
   const connectionLabels = useConnectionLabels();
   const audioRecordingLabels = useAudioRecordingLabels();
@@ -797,7 +798,9 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
   const [inviteOpen, setInviteOpen] = useState(false);
   const [finishOpen, setFinishOpen] = useState(false);
   const [shareRequest, setShareRequest] = useState<ShareRequest | null>(null);
-  const [screenStream, setScreenStream] = useState(initialScreenStream);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [recordingDismissed, setRecordingDismissed] = useState(false);
+  const recordingChoice = useRecordingChoice(lesson.id, isTeacher);
   const isCompact = useIsCompact();
   const allowShare = useAllowShare(lesson.id);
   const connectionState = useConnectionState();
@@ -880,6 +883,12 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
     return !Number.isNaN(scheduled.getTime()) && scheduled.getTime() <= joinedAt.getTime() ? scheduled : joinedAt;
   }, [lesson.recordingStartedAt, lesson.startsAt, joinedAt]);
   const connected = connectionState === ConnectionState.Connected;
+  const recordingPromptOpen =
+    isTeacher &&
+    connected &&
+    !recordingDismissed &&
+    recordingChoice.isFetched &&
+    ((!isCompact && !screenStream) || !recordingChoice.data?.decided);
 
   const recordingChips = isTeacher
     ? [
@@ -902,6 +911,16 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
           courseId={lesson.courseId}
           open={inviteOpen}
           onOpenChange={setInviteOpen}
+        />
+      ) : null}
+
+      {isTeacher ? (
+        <RecordingStartDialog
+          lessonId={lesson.id}
+          open={recordingPromptOpen}
+          withScreen={!isCompact}
+          onClose={() => setRecordingDismissed(true)}
+          onScreen={setScreenStream}
         />
       ) : null}
 
@@ -1210,13 +1229,24 @@ export function LiveRoom({ lesson, isTeacher, screenStream: initialScreenStream,
             />
           )}
           {isTeacher ? (
-            screenStream && (
+            screenStream ? (
               <TeacherShareControl
                 screenStream={screenStream}
                 onStreamChange={setScreenStream}
                 startedAt={lessonStartedAt}
                 studentCount={studentCount}
               />
+            ) : (
+              <button
+                type="button"
+                className="live-control live-control--share-request"
+                aria-label={t("recordingStart.buttonAria")}
+                title={t("recordingStart.buttonAria")}
+                onClick={() => setRecordingDismissed(false)}
+              >
+                <MonitorUp size={19} />
+                <span className="live-control-request-dot" aria-hidden="true" />
+              </button>
             )
           ) : (
             <StudentShareControl />

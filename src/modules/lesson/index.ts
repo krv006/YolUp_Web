@@ -36,6 +36,8 @@ export {
   useDeleteLesson,
   useDeleteRecording,
   useFinishLesson,
+  useRecordingChoice,
+  useSetRecordingChoice,
   useRateLesson,
   useLessonReminder,
   useUpdateLesson,

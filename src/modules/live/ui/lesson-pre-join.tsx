@@ -9,12 +9,10 @@ import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MediaPermissionDialog } from "./media-permission-dialog";
-import { requestScreenCapture } from "../lib/screen-capture";
 
 export interface LessonPreJoinChoices {
   micOn: boolean;
   cameraOn: boolean;
-  screenStream?: MediaStream;
 }
 
 export interface LessonPreJoinProps {
@@ -51,8 +49,6 @@ export function LessonPreJoin({
   const [failure, setFailure] = useState<{ attempt: number; denied: boolean; message: string } | null>(
     null
   );
-  const [screenShareError, setScreenShareError] = useState<string | null>(null);
-  const [joining, setJoining] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleDeviceError = useCallback(
@@ -91,34 +87,9 @@ export function LessonPreJoin({
     };
   }, [videoTrack]);
 
-  async function join() {
+  function join() {
     tracks?.forEach((track) => track.stop());
-
-    if (!isTeacher || isCompact) {
-      onJoin({ micOn, cameraOn });
-      return;
-    }
-
-    if (typeof navigator.mediaDevices?.getDisplayMedia !== "function") {
-      setScreenShareError(t("preJoin.screenShareUnsupported"));
-      return;
-    }
-
-    setJoining(true);
-    setScreenShareError(null);
-    try {
-      const screenStream = await requestScreenCapture();
-      if (screenStream.getAudioTracks().length === 0) {
-        screenStream.getTracks().forEach((track) => track.stop());
-        setScreenShareError(t("preJoin.screenShareNoAudio"));
-        return;
-      }
-      onJoin({ micOn, cameraOn, screenStream });
-    } catch {
-      setScreenShareError(t("preJoin.screenSharePermissionDenied"));
-    } finally {
-      setJoining(false);
-    }
+    onJoin({ micOn, cameraOn });
   }
 
   function retryDevices() {
@@ -227,7 +198,6 @@ export function LessonPreJoin({
           <button
             type="button"
             className="flex h-13 items-center justify-center rounded-full bg-surface-inverse text-title font-semibold text-ink-inverse disabled:opacity-60"
-            disabled={joining}
             onClick={onCancel}
           >
             {t("preJoin.mobileCancel")}
@@ -235,7 +205,6 @@ export function LessonPreJoin({
           <button
             type="button"
             className="flex h-13 items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action disabled:opacity-60"
-            disabled={joining}
             onClick={join}
           >
             <Icon name="videocam-fill" size={20} />
@@ -356,26 +325,18 @@ export function LessonPreJoin({
             </p>
           ) : null}
 
-          {screenShareError ? (
-            <p className="rounded-md bg-danger-bg px-4 py-3 text-body-sm text-danger" role="alert">
-              {screenShareError}
-            </p>
-          ) : null}
-
           <div className="flex items-center justify-end gap-11">
             <button
               type="button"
               className="flex h-13 items-center rounded-full px-6 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
-              disabled={joining}
-              onClick={onCancel}
+                onClick={onCancel}
             >
               {t("preJoin.cancel")}
             </button>
             <button
               type="button"
               className="flex h-13 items-center rounded-full bg-brand px-11 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-50"
-              disabled={joining}
-              onClick={join}
+                onClick={join}
             >
               {isTeacher ? t("preJoin.start") : t("preJoin.join")}
             </button>

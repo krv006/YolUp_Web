@@ -15,6 +15,7 @@ export const lessonKeys = Object.freeze({
   list: (params: QueryParams = {}) => ["lessons", "list", params] as const,
   detail: (id: string) => ["lessons", "detail", id] as const,
   recording: (id: string) => ["lessons", "recording", id] as const,
+  recordingChoice: (id: string) => ["lessons", "recording-choice", id] as const,
   ratings: (id: string) => ["lessons", "ratings", id] as const,
 });
 
@@ -216,6 +217,23 @@ export function useFinishLesson() {
       client.invalidateQueries({ queryKey: lessonKeys.all });
       toast.success(i18n.t(postRecording ? "lesson:finishDialog.finishedPosted" : "lesson:finishDialog.finishedKept"));
     },
+  });
+}
+
+export function useRecordingChoice(id: string | null, enabled = true) {
+  return useQuery({
+    queryKey: lessonKeys.recordingChoice(id ?? ""),
+    queryFn: ({ signal }) => lessonApi.getRecordingChoice(id as string, { signal }),
+    enabled: Boolean(id) && enabled,
+    staleTime: Infinity,
+  });
+}
+
+export function useSetRecordingChoice(id: string) {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (postRecording: boolean) => lessonApi.setRecordingChoice(id, postRecording),
+    onSuccess: (choice) => client.setQueryData(lessonKeys.recordingChoice(id), choice),
   });
 }
 

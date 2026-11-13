@@ -126,7 +126,9 @@
     "postRecordingHint": "Yozuv tayyor bo'lgach guruh chatiga tushadi va o'quvchilarga bildirishnoma boradi",
     "keepRecordingHint": "Yozuv guruhga yuborilmaydi — keyin yozuv sahifasidan yuborishingiz mumkin",
     "finishedPosted": "Dars yakunlandi — yozuv tayyor bo'lgach guruh chatiga tushadi",
-    "finishedKept": "Dars yakunlandi — yozuv saqlandi"
+    "finishedKept": "Dars yakunlandi — yozuv saqlandi",
+    "postRecordingDecided": "Yozuv tayyor bo'lgach guruh chatiga yuboriladi — buni darsga kirganda tanlagansiz.",
+    "keepRecordingDecided": "Yozuv guruhga yuborilmaydi — buni darsga kirganda tanlagansiz. Keyin yozuv sahifasidan yuborishingiz mumkin."
   },
   "rateDialog": {
     "title": "Darsni baholang",
