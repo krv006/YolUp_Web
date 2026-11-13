@@ -115,6 +115,10 @@ export const switchAccountResponseDtoSchema = tokenPairDtoSchema.extend({
   user: userDtoSchema,
 });
 
+export const accountLinkResponseDtoSchema = z.object({
+  account: linkedAccountDtoSchema,
+});
+
 export type TokenPairDto = z.infer<typeof tokenPairDtoSchema>;
 export type TwoFactorChallengeDto = z.infer<typeof twoFactorChallengeDtoSchema>;
 export type LoginResponseDto = z.infer<typeof loginResponseDtoSchema>;

@@ -203,6 +203,9 @@ export const authApi = {
   switchRole(role: string) {
     return apiClient.post<SwitchAccountResponseDto>(authEndpoints.switchRole, { role });
   },
+  linkAccount(username: string, password: string) {
+    return apiClient.post<unknown>(authEndpoints.accountLinks, { username, password });
+  },
   createChild(dto: CreateChildRequestDto) {
     return apiClient.post(authEndpoints.children, dto);
   },

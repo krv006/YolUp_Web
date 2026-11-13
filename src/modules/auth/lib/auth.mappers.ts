@@ -72,7 +72,7 @@ export function mapCertificateDto(dto: unknown): Certificate {
   };
 }
 
-function mapLinkedAccountDto(dto: LinkedAccountDto): LinkedAccount {
+export function mapLinkedAccountDto(dto: LinkedAccountDto): LinkedAccount {
   const name = [dto.first_name, dto.last_name].filter(Boolean).join(" ") || dto.username;
   return {
     id: dto.id,

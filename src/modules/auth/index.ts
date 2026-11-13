@@ -40,7 +40,8 @@ export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
 export { describeUserAgent } from "./lib/describe-user-agent";
 export { useAuth, useCurrentUser, useIsAuthenticated } from "./model/use-auth";
 export { useCanCreateTests, useIsStudent, useRoleRoutes } from "./model/use-role-routes";
-export { useAccountSwitch } from "./model/use-account-switch";
+export { useAccountSwitch, type LinkPrompt } from "./model/use-account-switch";
+export { LinkAccountDialog } from "./ui/link-account-dialog";
 export { createLoginSchema, createRegisterSchema } from "./model/auth.schemas";
 export {
   useChangePasswordMutation,

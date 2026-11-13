@@ -6,6 +6,7 @@ export const authEndpoints = Object.freeze({
   register: "/api/v1/auth/register/",
   switchAccount: (id: string) => `/api/v1/auth/switch/${id}/`,
   switchRole: "/api/v1/auth/switch-role/",
+  accountLinks: "/api/v1/auth/account-links/",
   children: "/api/v1/auth/children/",
   links: "/api/v1/auth/links/",
   requestLink: "/api/v1/auth/links/request/",

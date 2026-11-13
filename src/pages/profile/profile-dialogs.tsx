@@ -1,6 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useAccountSwitch, useAuth } from "@/modules/auth";
+import { LinkAccountDialog, useAccountSwitch, useAuth } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog } from "@/shared/ui/app-dialog";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -88,59 +88,80 @@ export function SwitchAccountDialog({
           )}
         </button>
       ))}
+
+      <button type="button" className={`${row} mt-1`} disabled={accounts.pending} onClick={accounts.openLink}>
+        <span className={`grid shrink-0 place-items-center rounded-full bg-surface text-brand ${isCompact ? "size-11" : "size-10"}`}>
+          <Icon name="link" size={isCompact ? 22 : 20} />
+        </span>
+        <span className="flex min-w-0 flex-1 flex-col">
+          <strong className={titleClass}>{t("roleSwitcher.link.row")}</strong>
+          <small className={hintClass}>{t("roleSwitcher.link.rowHint")}</small>
+        </span>
+        <Icon name="chevron-right" size={isCompact ? 20 : 18} className="shrink-0 text-icon-tertiary" />
+      </button>
     </>
+  );
+
+  const linkDialog = (
+    <LinkAccountDialog prompt={accounts.linkPrompt} onClose={accounts.closeLink} onLinked={accounts.afterLink} />
   );
 
   if (isCompact)
     return (
+      <>
+        <AppDialog
+          open={open}
+          onOpenChange={onOpenChange}
+          variant="adaptive"
+          title={t("page.switchAccount")}
+          description={t("page.switchAccountHint")}
+          footer={<span aria-hidden="true" />}
+          footerClassName="pb-[43px]"
+        >
+          <div className="-mt-0.5 flex flex-col gap-[11px]">
+            <span className="flex h-[70px] items-center gap-3 rounded-lg border-[1.5px] border-brand bg-brand-subtle px-3.5">
+              <Avatar name={user?.name} size="sm" src={user?.avatarUrl} className="[&_.avatar]:size-11" />
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="truncate text-title text-ink">{user?.name}</strong>
+                <small className="truncate text-body-sm text-ink-secondary">{roleLabel(user?.role)}</small>
+              </span>
+              <span className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-success-bg px-2 text-caption-strong text-success-fg">
+                <Icon name="check-circle" size={14} className="text-success" /> {t("page.accountActive")}
+              </span>
+            </span>
+            {list}
+          </div>
+        </AppDialog>
+        {linkDialog}
+      </>
+    );
+
+  return (
+    <>
       <AppDialog
         open={open}
         onOpenChange={onOpenChange}
-        variant="adaptive"
+        variant="confirm"
+        width="lg:w-120"
         title={t("page.switchAccount")}
         description={t("page.switchAccountHint")}
-        footer={<span aria-hidden="true" />}
-        footerClassName="pb-[43px]"
       >
-        <div className="-mt-0.5 flex flex-col gap-[11px]">
-          <span className="flex h-[70px] items-center gap-3 rounded-lg border-[1.5px] border-brand bg-brand-subtle px-3.5">
-            <Avatar name={user?.name} size="sm" src={user?.avatarUrl} className="[&_.avatar]:size-11" />
+        <div className="flex flex-col gap-2.5 pb-3">
+          <span className="flex items-center gap-3 rounded-md border-2 border-brand bg-brand-subtle px-3 py-2.5">
+            <Avatar name={user?.name} size="sm" src={user?.avatarUrl} />
             <span className="flex min-w-0 flex-1 flex-col">
-              <strong className="truncate text-title text-ink">{user?.name}</strong>
-              <small className="truncate text-body-sm text-ink-secondary">{roleLabel(user?.role)}</small>
+              <strong className="truncate text-title-sm text-ink">{user?.name}</strong>
+              <small className="truncate text-body-xs text-ink-secondary">{roleLabel(user?.role)}</small>
             </span>
-            <span className="flex h-6 shrink-0 items-center gap-1 rounded-full bg-success-bg px-2 text-caption-strong text-success-fg">
-              <Icon name="check-circle" size={14} className="text-success" /> {t("page.accountActive")}
-            </span>
+            <small className="flex shrink-0 items-center gap-1 text-body-xs text-success">
+              <Icon name="check-circle" size={15} /> {t("page.accountActive")}
+            </small>
           </span>
           {list}
         </div>
       </AppDialog>
-    );
-
-  return (
-    <AppDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      variant="confirm"
-      width="lg:w-120"
-      title={t("page.switchAccount")}
-      description={t("page.switchAccountHint")}
-    >
-      <div className="flex flex-col gap-2.5 pb-3">
-        <span className="flex items-center gap-3 rounded-md border-2 border-brand bg-brand-subtle px-3 py-2.5">
-          <Avatar name={user?.name} size="sm" src={user?.avatarUrl} />
-          <span className="flex min-w-0 flex-1 flex-col">
-            <strong className="truncate text-title-sm text-ink">{user?.name}</strong>
-            <small className="truncate text-body-xs text-ink-secondary">{roleLabel(user?.role)}</small>
-          </span>
-          <small className="flex shrink-0 items-center gap-1 text-body-xs text-success">
-            <Icon name="check-circle" size={15} /> {t("page.accountActive")}
-          </small>
-        </span>
-        {list}
-      </div>
-    </AppDialog>
+      {linkDialog}
+    </>
   );
 }
 

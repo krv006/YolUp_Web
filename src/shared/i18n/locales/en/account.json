@@ -85,7 +85,23 @@
     "switched": "Signed in as {{name}}",
     "failed": "Could not switch the account",
     "needsPhone": "Add your phone number to your profile first",
-    "studentBlocked": "A new role can't be opened from a student account."
+    "studentBlocked": "A new role can't be opened from a student account. If you have another account, link it with its login and password.",
+    "link": {
+      "row": "Link another account",
+      "rowHint": "With its login and password",
+      "title": "Link an account",
+      "text": "Enter the login and password of your other account. Once linked, you can switch between them without a password.",
+      "existingText": "This number already has the account «{{username}}» ({{role}}). Enter its password to switch to it — the accounts will be linked.",
+      "username": "Login",
+      "password": "Password",
+      "submit": "Link",
+      "linking": "Linking...",
+      "cancel": "Cancel",
+      "done": "{{name}} account linked",
+      "twoFactor": "Two-factor protection is on for this account, so it can't be linked.",
+      "throttled_one": "Too many wrong attempts. Try again in {{count}} minute.",
+      "throttled_other": "Too many wrong attempts. Try again in {{count}} minutes."
+    }
   },
   "toast": {
     "copied": "{{label}} copied",
@@ -193,8 +209,8 @@
     "otherSessionsClosed": "{{count}} devices signed out",
     "certificatePending": "Under review",
     "switchAccount": "Switch account",
-    "switchAccountHint": "Roles linked to one phone number",
-    "switchAccountDescription": "Roles linked to one phone number. Switching does not require signing in again.",
+    "switchAccountHint": "Your linked accounts and roles",
+    "switchAccountDescription": "Your linked accounts and roles. Switching does not require signing in again.",
     "accountActive": "active",
     "addAccount": "Add another account",
     "close": "Close",
