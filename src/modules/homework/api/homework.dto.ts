@@ -153,6 +153,10 @@ export interface AssignmentDto {
   lesson_title?: string | null;
   created_at: string;
   submissions_count?: number | null;
+  students_count?: number | null;
+  submitted_count?: number | null;
+  pending_review_count?: number | null;
+  graded_count?: number | null;
   my_submission?: SubmissionDto | null;
   submissions?: SubmissionDto[];
   stats?: AssignmentStatsDto | null;

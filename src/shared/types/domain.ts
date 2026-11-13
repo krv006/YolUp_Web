@@ -429,6 +429,8 @@ export interface SubmissionFile {
 export interface AssignmentStats {
   studentsCount: number | null;
   submittedCount: number | null;
+  pendingReviewCount: number | null;
+  gradedCount: number | null;
   averageScore: number | null;
 }
 

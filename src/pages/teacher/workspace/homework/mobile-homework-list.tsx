@@ -142,7 +142,7 @@ function AssignmentCard({
   const due = item.dueAt ? formatDue(item.dueAt, months).replace(", 23:59", "") : "";
   const submitted = item.stats?.submittedCount ?? 0;
   const total = item.stats?.studentsCount ?? 0;
-  const pending = item.submissions.filter((row) => row.status !== "done").length;
+  const pending = item.stats?.pendingReviewCount ?? item.submissions.filter((row) => row.status !== "done").length;
   const percent = total ? Math.min(100, Math.round((submitted / total) * 100)) : 0;
 
   return (

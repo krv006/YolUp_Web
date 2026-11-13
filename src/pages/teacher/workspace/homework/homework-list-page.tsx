@@ -60,11 +60,7 @@ export function HomeworkListPage() {
   const items = useMemo(() => queries.flatMap((query) => query.data ?? []), [queries]);
   const loading = queries.some((query) => query.isLoading);
 
-  const toReview = items.reduce((sum, item) => {
-    const submitted = item.stats?.submittedCount ?? 0;
-    const checked = item.submissions?.filter((row) => row.status === "done").length ?? 0;
-    return sum + Math.max(submitted - checked, 0);
-  }, 0);
+  const toReview = items.reduce((sum, item) => sum + awaitingReview(item), 0);
 
   const active = items.filter((item) => item.status === "active");
   const drafts = items.filter((item) => item.status === "draft");
@@ -287,10 +283,15 @@ export function HomeworkListPage() {
   );
 }
 
-function needsReview(item: Assignment): boolean {
+function awaitingReview(item: Assignment): number {
+  if (item.stats?.pendingReviewCount != null) return item.stats.pendingReviewCount;
   const submitted = item.stats?.submittedCount ?? 0;
   const checked = item.submissions?.filter((row) => row.status === "done").length ?? 0;
-  return submitted > checked;
+  return Math.max(submitted - checked, 0);
+}
+
+function needsReview(item: Assignment): boolean {
+  return awaitingReview(item) > 0;
 }
 
 function AssignmentCard({ item, onOpen }: { item: Assignment; onOpen: () => void }) {
@@ -299,7 +300,7 @@ function AssignmentCard({ item, onOpen }: { item: Assignment; onOpen: () => void
   const days = dueInDays(item.dueAt);
   const submitted = item.stats?.submittedCount ?? 0;
   const total = item.stats?.studentsCount ?? 0;
-  const pending = item.submissions?.filter((row) => row.status !== "done").length ?? 0;
+  const pending = awaitingReview(item);
   const percent = total ? Math.round((submitted / total) * 100) : 0;
 
   return (

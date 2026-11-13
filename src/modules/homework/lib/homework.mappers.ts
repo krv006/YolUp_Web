@@ -164,13 +164,16 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     submissions: (dto.submissions ?? [])
       .map(mapSubmissionDto)
       .filter((item): item is Submission => item !== null),
-    stats: dto.stats
-      ? {
-          studentsCount: dto.stats.students_count ?? null,
-          submittedCount: dto.stats.submitted_count ?? null,
-          averageScore: dto.stats.avg_score ?? null,
-        }
-      : null,
+    stats:
+      dto.stats || dto.students_count != null || dto.submitted_count != null
+        ? {
+            studentsCount: dto.students_count ?? dto.stats?.students_count ?? null,
+            submittedCount: dto.submitted_count ?? dto.stats?.submitted_count ?? null,
+            pendingReviewCount: dto.pending_review_count ?? null,
+            gradedCount: dto.graded_count ?? null,
+            averageScore: dto.stats?.avg_score ?? null,
+          }
+        : null,
     status: dto.status === "draft" ? "draft" : dto.status === "bank" || dto.is_bank ? "bank" : "active",
     announceInChat: dto.announce_in_chat !== false,
     allowLate: dto.allow_late !== false,
