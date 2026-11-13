@@ -90,6 +90,7 @@ import { SharePreview } from "./share-preview";
 import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
 import { RecordingStartDialog } from "./recording-start-dialog";
+import { useScreenShareRelease } from "./use-screen-share-release";
 import { useDocumentPip } from "./use-document-pip";
 
 type SidePanel = "board" | "people" | null;
@@ -810,6 +811,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const mic = useMicSignals(lesson.id, isTeacher);
   const camera = useCameraSignals(lesson.id, isTeacher);
   useMediaModeChannel(lesson.id, isTeacher);
+  useScreenShareRelease(lesson.id, !isTeacher);
   useFocusTracker(lesson.id, !isTeacher);
   const course = useCourse(lesson.courseId || null);
   const teacherId = course.data?.teacherUser?.id ?? null;

@@ -18,7 +18,7 @@ export interface MediaMode {
   openCamera: boolean;
 }
 
-export type MediaKind = "microphone" | "camera";
+export type MediaKind = "microphone" | "camera" | "screen";
 
 export interface AttentionResponseDto {
   check: { id: string | number; due_at: string } | null;
