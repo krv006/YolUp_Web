@@ -54,6 +54,9 @@ export function SwitchAccountDialog({
         </button>
       ))}
 
+      {accounts.blocked === "student_not_allowed" ? (
+        <p className={`px-1 text-ink-secondary ${isCompact ? "text-body-sm" : "text-body-xs"}`}>{t("roleSwitcher.studentBlocked")}</p>
+      ) : null}
       {accounts.missingRoles.length ? (
         <small className="mt-1.5 px-1 text-caption-strong text-ink-tertiary uppercase">{t("roleSwitcher.openRoles")}</small>
       ) : null}

@@ -84,7 +84,8 @@
     "switchHint": "Akkauntga bosilsa, parolsiz darhol o'sha akkauntga o'tasiz.",
     "switched": "{{name}} sifatida kirdingiz",
     "failed": "Hisobni almashtirib bo'lmadi",
-    "needsPhone": "Avval profilga telefon raqamingizni qo'shing"
+    "needsPhone": "Avval profilga telefon raqamingizni qo'shing",
+    "studentBlocked": "O'quvchi akkauntidan yangi rol ochib bo'lmaydi."
   },
   "toast": {
     "copied": "{{label}} nusxalandi",

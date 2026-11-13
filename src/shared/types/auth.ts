@@ -27,6 +27,8 @@ export interface LinkedAccount {
   role: Role;
 }
 
+export type RoleSwitchBlock = "phone_required" | "student_not_allowed";
+
 export interface AuthUser {
   id: string;
   username: string;
@@ -54,6 +56,8 @@ export interface AuthUser {
   mustChangePassword: boolean;
   grade: string | null;
   linkedAccounts: LinkedAccount[];
+  availableRoles?: Role[] | null;
+  roleSwitchBlocked?: RoleSwitchBlock | null;
   canCreateTests?: boolean;
   middleName: string | null;
   birthDate: string | null;

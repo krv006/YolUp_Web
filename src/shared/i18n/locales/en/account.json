@@ -84,7 +84,8 @@
     "switchHint": "Tap an account to switch to it instantly, no password needed.",
     "switched": "Signed in as {{name}}",
     "failed": "Could not switch the account",
-    "needsPhone": "Add your phone number to your profile first"
+    "needsPhone": "Add your phone number to your profile first",
+    "studentBlocked": "A new role can't be opened from a student account."
   },
   "toast": {
     "copied": "{{label}} copied",
