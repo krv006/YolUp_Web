@@ -37,6 +37,7 @@ import { canEditStroke } from "../lib/board-edit";
 import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
 import { clientToBoard, measureNode, textWidth } from "../lib/board-measure";
+import { confirmsPending } from "../lib/board-pending";
 import { strokesAlong } from "../lib/board-select";
 import { BOARD_ZOOM, clampZoom, zoomScroll } from "../lib/board-zoom";
 import { BoardZoomControls } from "./board-zoom-controls";
@@ -115,16 +116,11 @@ interface InlineText {
   obstacles?: BoardObstacle[];
 }
 
-const PENDING_TEXT_MS = 8000;
+const PENDING_STROKE_MS = 8000;
 
-function sameText(stroke: StrokeDto, pending: StrokeDto): boolean {
-  return (
-    stroke.type === "text" &&
-    pending.type === "text" &&
-    stroke.text.trim() === pending.text.trim() &&
-    Math.abs(stroke.x - pending.x) < 1 &&
-    Math.abs(stroke.y - pending.y) < 1
-  );
+interface PendingStroke {
+  sheet: number;
+  stroke: StrokeDto;
 }
 
 function strokeKey(stroke: StrokeShapeDto): string {
@@ -191,7 +187,8 @@ export function BoardPanel({
   } | null>(null);
   const [inlineText, setInlineText] = useState("");
   const inlineActive = useRef(false);
-  const [pendingTexts, setPendingTexts] = useState<StrokeDto[]>([]);
+  const [pendingStrokes, setPendingStrokes] = useState<PendingStroke[]>([]);
+  const pendingSeq = useRef(0);
   const [initialLines, setInitialLines] = useState<TextLineDto[] | undefined>(undefined);
   const [draftText, setDraftText] = useState("");
   const [draftLines, setDraftLines] = useState<TextLineDto[]>([]);
@@ -349,9 +346,14 @@ export function BoardPanel({
     });
   }
 
-  function sendStroke(stroke: StrokeShapeDto) {
-    if (source) return source.addStroke(sheet, stroke);
-    if (!realtime.sendStroke(sheet, stroke)) addStroke.mutate({ sheet, stroke });
+  function sendStroke(stroke: StrokeShapeDto, target = sheet) {
+    if (source) return source.addStroke(target, stroke);
+    pendingSeq.current += 1;
+    const id = `pending-${pendingSeq.current}`;
+    const drop = () => setPendingStrokes((current) => current.filter((item) => item.stroke.id !== id));
+    setPendingStrokes((current) => [...current, { sheet: target, stroke: { ...stroke, id } as StrokeDto }]);
+    globalThis.setTimeout(drop, PENDING_STROKE_MS);
+    if (!realtime.sendStroke(target, stroke)) addStroke.mutate({ sheet: target, stroke }, { onError: drop });
   }
 
   function commitStroke(stroke: StrokeShapeDto) {
@@ -362,6 +364,14 @@ export function BoardPanel({
 
   const lastOwn = history.filter((entry) => entry.sheet === sheet).at(-1) ?? null;
   const activeStrokes = active?.strokes;
+  const visiblePending = useMemo(
+    () =>
+      pendingStrokes
+        .filter((item) => item.sheet === sheet)
+        .filter((item) => !(activeStrokes ?? []).some((stroke) => confirmsPending(stroke, item.stroke)))
+        .map((item) => item.stroke),
+    [pendingStrokes, activeStrokes, sheet]
+  );
   const undoTarget = useMemo(() => {
     if (!lastOwn) return null;
     const key = strokeKey(lastOwn.shape);
@@ -385,8 +395,7 @@ export function BoardPanel({
     setRedoStack((current) => current.slice(0, -1));
     setHistory((current) => [...current, entry]);
     if (entry.sheet !== sheet) setSheet(entry.sheet);
-    if (source) source.addStroke(entry.sheet, entry.shape);
-    else if (!realtime.sendStroke(entry.sheet, entry.shape)) addStroke.mutate({ sheet: entry.sheet, stroke: entry.shape });
+    sendStroke(entry.shape, entry.sheet);
   }
 
   const { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp, cancel: cancelDrawing } = useBoardDrawing({
@@ -497,7 +506,7 @@ export function BoardPanel({
 
   function textObstacles(): BoardObstacle[] {
     const svg = svgRef.current;
-    return [...(activeStrokes ?? []), ...pendingTexts].flatMap((stroke) => {
+    return [...(activeStrokes ?? []), ...visiblePending].flatMap((stroke) => {
       if (stroke.type !== "text" && stroke.type !== "math" && stroke.type !== "code") return [];
       const box = svg ? measureNode(svg, stroke.id) : null;
       if (box) return [{ left: box.minX, right: box.maxX, top: box.minY, bottom: box.maxY }];
@@ -532,9 +541,6 @@ export function BoardPanel({
       ? freeTextAnchor(inline.anchor[0], point[1], text, inline.size, inline.obstacles)
       : inline.anchor;
     const stroke: StrokeShapeDto = { type: "text", text, x, y, size: inline.size, color: inline.color };
-    const pending = { ...stroke, id: `pending-${Date.now()}` } as StrokeDto;
-    setPendingTexts((current) => [...current, pending]);
-    globalThis.setTimeout(() => setPendingTexts((current) => current.filter((item) => item.id !== pending.id)), PENDING_TEXT_MS);
     commitStroke(stroke);
   }
 
@@ -689,9 +695,9 @@ export function BoardPanel({
       }),
     [activeStrokes, selected, handleStrokeClick, drag, hiddenId, erasing]
   );
-  const pendingNodes = pendingTexts
-    .filter((pending) => !(activeStrokes ?? []).some((stroke) => sameText(stroke, pending)))
-    .map((pending) => <BoardStroke key={pending.id} stroke={pending} selected={false} onSelect={() => undefined} />);
+  const pendingNodes = visiblePending.map((pending) => (
+    <BoardStroke key={pending.id} stroke={pending} selected={false} onSelect={() => undefined} />
+  ));
 
   function closeReasonDialog() {
     setReasonOpen(false);
