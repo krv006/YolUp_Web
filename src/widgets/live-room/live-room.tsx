@@ -15,7 +15,6 @@ import { ConnectionState, RoomEvent, Track, type Participant } from "livekit-cli
 
 // Ekran ulashish bitreyti: 15 kadr/s, ~1.5 Mbit/s gacha. Statik slaydlarda real bitreyt ancha past; bu faqat
 // harakatli kontentda server trafigi (har tomoshabinga) cheksiz o'smasligi uchun yuqori chegara.
-const SCREEN_SHARE_ENCODING = { maxBitrate: 1_500_000, maxFramerate: 15 } as const;
 import {
   CircleStop,
   Hand,
@@ -62,6 +61,8 @@ import {
   requestScreenCapture,
   SCREEN_SHARE_SOURCE,
   DISPLAY_CAPTURE_OPTIONS,
+  SCREEN_SHARE_PUBLISH,
+  SCREEN_SHARE_RESOLUTION,
   useAllowShare,
   useAttentionCheck,
   identityUserId,
@@ -600,7 +601,7 @@ function TeacherShareControl({
           await room.localParticipant.publishTrack(
             track,
             source === Track.Source.ScreenShare
-              ? { source, screenShareEncoding: SCREEN_SHARE_ENCODING }
+              ? { source, ...SCREEN_SHARE_PUBLISH }
               : { source }
           );
           published.push(track);
@@ -700,10 +701,12 @@ function StudentShareControl() {
         source={Track.Source.ScreenShare}
         captureOptions={{
           audio: true,
+          resolution: SCREEN_SHARE_RESOLUTION,
           selfBrowserSurface: DISPLAY_CAPTURE_OPTIONS.selfBrowserSurface,
           surfaceSwitching: DISPLAY_CAPTURE_OPTIONS.surfaceSwitching,
           systemAudio: DISPLAY_CAPTURE_OPTIONS.systemAudio,
         }}
+        publishOptions={SCREEN_SHARE_PUBLISH}
         showIcon={false}
         className="live-control live-control--share"
         aria-label={t("share.studentAria")}

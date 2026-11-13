@@ -1,7 +1,7 @@
 import "@livekit/components-styles";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { LiveKitRoom } from "@livekit/components-react";
-import { DisconnectReason, type RoomOptions } from "livekit-client";
+import { DisconnectReason, VideoPresets, type RoomOptions } from "livekit-client";
 import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
@@ -25,7 +25,12 @@ import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
 
 // adaptiveStream: tomoshabin faqat ko'rinib turgan o'lchamga mos qatlamni oladi (tarmoq va server CPU'ni 2-3x kamaytiradi).
 // dynacast: hech kim ko'rmayotgan qatlam yuborilmaydi (o'qituvchi yuklashi kamayadi). Modul darajasida — Room qayta yaratilmasin.
-const ROOM_OPTIONS: RoomOptions = { adaptiveStream: true, dynacast: true };
+const ROOM_OPTIONS: RoomOptions = {
+  adaptiveStream: true,
+  dynacast: true,
+  videoCaptureDefaults: { resolution: { ...VideoPresets.h540.resolution, frameRate: 24 } },
+  publishDefaults: { videoSimulcastLayers: [VideoPresets.h180] },
+};
 
 // LiveKit o'zi qayta ulana olmay (~1 daqiqa) uzilsa ham foydalanuvchini darsdan chiqarib yubormaymiz: yangi token olib qayta kiramiz.
 // Kutish oraliqlari kengayib boradi (jami ~1,5 daqiqa); hammasi muvaffaqiyatsiz bo'lsagina eski xatti-harakat (darsdan chiqish).

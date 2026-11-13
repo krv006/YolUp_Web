@@ -10,7 +10,13 @@ export {
 } from "./lib/live-permissions";
 export { MIC_TRACK, tokenAllowsTrack } from "./lib/live-token";
 export { decodeScreenShareRequest, encodeScreenShareRequest } from "./lib/screen-share-signal";
-export { DISPLAY_CAPTURE_OPTIONS, hasLiveVideo, requestScreenCapture } from "./lib/screen-capture";
+export {
+  DISPLAY_CAPTURE_OPTIONS,
+  hasLiveVideo,
+  requestScreenCapture,
+  SCREEN_SHARE_PUBLISH,
+  SCREEN_SHARE_RESOLUTION,
+} from "./lib/screen-capture";
 export { describeShareTrack } from "./lib/share-source";
 export type { ShareSourceInfo, ShareSurface } from "./lib/share-source";
 export { useFocusTracker } from "./lib/use-focus-tracker";

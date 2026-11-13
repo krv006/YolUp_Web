@@ -88,7 +88,7 @@ export class TeacherVideoRecordingSession {
       const mimeType = chooseMimeType();
       this.recorder = new MediaRecorder(
         stream,
-        mimeType ? { mimeType, videoBitsPerSecond: 1_500_000 } : { videoBitsPerSecond: 1_500_000 }
+        mimeType ? { mimeType, videoBitsPerSecond: 800_000 } : { videoBitsPerSecond: 800_000 }
       );
       this.recorder.ondataavailable = (event) => {
         if (event.data.size > 0) this.enqueue(event.data);

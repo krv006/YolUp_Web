@@ -17,6 +17,8 @@ import {
   MICROPHONE_SOURCE,
   SCREEN_SHARE_SOURCE,
   DISPLAY_CAPTURE_OPTIONS,
+  SCREEN_SHARE_PUBLISH,
+  SCREEN_SHARE_RESOLUTION,
   describeShareTrack,
 } from "@/modules/live";
 import type { Lesson } from "@/shared/types";
@@ -318,10 +320,12 @@ function ShareButton() {
     source: Track.Source.ScreenShare,
     captureOptions: {
       audio: true,
+      resolution: SCREEN_SHARE_RESOLUTION,
       selfBrowserSurface: DISPLAY_CAPTURE_OPTIONS.selfBrowserSurface,
       surfaceSwitching: DISPLAY_CAPTURE_OPTIONS.surfaceSwitching,
       systemAudio: DISPLAY_CAPTURE_OPTIONS.systemAudio,
     },
+    publishOptions: SCREEN_SHARE_PUBLISH,
     onDeviceError: () => toast.error(t("share.failedToast")),
   });
   const label = t("room.mobileShare");
