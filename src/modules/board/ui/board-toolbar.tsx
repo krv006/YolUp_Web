@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState, type ComponentType } from "react";
 import { useTranslation } from "react-i18next";
-import { BOARD_COLORS, BOARD_TEXT_SIZES, BOARD_WIDTHS } from "../constants/board.constants";
+import { BOARD_COLORS, BOARD_TEXT_SIZES, BOARD_WIDTHS, ERASER_SIZES } from "../constants/board.constants";
 import type { DrawKind } from "../lib/board.geometry";
 
 export type BoardTool = DrawKind | "select" | "text" | "math" | "code" | "erase";
@@ -43,6 +43,7 @@ export interface BoardToolbarProps {
   color: string;
   width: number;
   textSize: number;
+  eraserSize: number;
   canDraw: boolean;
   chemistryEnabled?: boolean;
   codeEnabled?: boolean;
@@ -50,6 +51,7 @@ export interface BoardToolbarProps {
   onColorChange: (color: string) => void;
   onWidthChange: (width: number) => void;
   onTextSizeChange: (size: number) => void;
+  onEraserSizeChange: (size: number) => void;
   onPeriodic?: () => void;
 }
 
@@ -61,6 +63,7 @@ export function BoardToolbar({
   color,
   width,
   textSize,
+  eraserSize,
   canDraw,
   chemistryEnabled = false,
   codeEnabled = false,
@@ -68,6 +71,7 @@ export function BoardToolbar({
   onColorChange,
   onWidthChange,
   onTextSizeChange,
+  onEraserSizeChange,
   onPeriodic,
 }: BoardToolbarProps) {
   const { t } = useTranslation("board");
@@ -144,7 +148,7 @@ export function BoardToolbar({
 
       {styleOpen ? (
         <div className="absolute bottom-0 left-[calc(100%+8px)] flex flex-col gap-3 rounded-xl bg-surface p-3 shadow-xl">
-          <div className="flex items-center gap-1.5">
+          <div className={`items-center gap-1.5 ${tool === "erase" ? "hidden" : "flex"}`}>
             {BOARD_COLORS.map((value) => (
               <button
                 key={value}
@@ -162,7 +166,29 @@ export function BoardToolbar({
             ))}
           </div>
 
-          {tool === "text" ? (
+          {tool === "erase" ? (
+            <div className="flex items-center gap-1">
+              {ERASER_SIZES.map(({ value, label }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`grid h-9 w-10 shrink-0 place-items-center rounded-md transition-colors disabled:opacity-40 ${
+                    eraserSize === value ? "bg-brand-subtle" : "hover:bg-subtle"
+                  }`}
+                  disabled={!canDraw}
+                  title={t("tools.eraserSizeLabel", { value: label })}
+                  aria-label={t("tools.eraserSizeLabel", { value: label })}
+                  aria-pressed={eraserSize === value}
+                  onClick={() => onEraserSizeChange(value)}
+                >
+                  <span
+                    className="block rounded-full border-2 border-ink-secondary"
+                    style={{ width: value / 2 + 6, height: value / 2 + 6 }}
+                  />
+                </button>
+              ))}
+            </div>
+          ) : tool === "text" ? (
             <div className="flex items-center gap-1">
               {BOARD_TEXT_SIZES.map(({ value, label }) => (
                 <button

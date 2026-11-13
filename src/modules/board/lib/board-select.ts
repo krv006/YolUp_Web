@@ -56,3 +56,45 @@ export function boxOfStroke(stroke: StrokeDto, measure: (stroke: StrokeDto) => S
   const pad = stroke.type === "text" || stroke.type === "math" || stroke.type === "code" ? 0 : (stroke.width ?? 4) / 2;
   return { minX: box.minX - pad, minY: box.minY - pad, maxX: box.maxX + pad, maxY: box.maxY + pad };
 }
+
+function touchesOutline(stroke: StrokeDto, point: Point, reach: number): boolean | null {
+  if (stroke.type !== "rect" && stroke.type !== "ellipse") return null;
+  const box = shapeBox(stroke);
+  if (!box) return false;
+  if (stroke.type === "rect") {
+    const corners: Point[] = [
+      [box.minX, box.minY],
+      [box.maxX, box.minY],
+      [box.maxX, box.maxY],
+      [box.minX, box.maxY],
+    ];
+    return corners.some((corner, index) => distanceToSegment(point, corner, corners[(index + 1) % 4]) <= reach);
+  }
+  const rx = Math.max(1, (box.maxX - box.minX) / 2);
+  const ry = Math.max(1, (box.maxY - box.minY) / 2);
+  const ratio = Math.hypot((point[0] - (box.minX + rx)) / rx, (point[1] - (box.minY + ry)) / ry);
+  return Math.abs(ratio - 1) * Math.min(rx, ry) <= reach;
+}
+
+export function strokesAlong(
+  strokes: StrokeDto[],
+  from: Point,
+  to: Point,
+  radius: number,
+  measure: PickOptions["measure"]
+): string[] {
+  const steps = Math.max(1, Math.ceil(Math.hypot(to[0] - from[0], to[1] - from[1]) / Math.max(2, radius / 2)));
+  const hit: string[] = [];
+  for (const stroke of strokes) {
+    for (let index = 0; index <= steps; index += 1) {
+      const t = index / steps;
+      const point: Point = [from[0] + (to[0] - from[0]) * t, from[1] + (to[1] - from[1]) * t];
+      const outline = touchesOutline(stroke, point, radius + (stroke.width ?? 4) / 2);
+      if (outline ?? hitsStroke(stroke, point, { tolerance: radius, measure })) {
+        hit.push(stroke.id);
+        break;
+      }
+    }
+  }
+  return hit;
+}

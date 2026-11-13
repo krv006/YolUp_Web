@@ -3676,8 +3676,10 @@ body.is-resizing-sidebar {
 .board-sheets > button { min-width: 34px; height: 34px; border: 1px solid var(--border); border-radius: var(--r-sm); color: var(--foreground); background: var(--surface); font-size: var(--fs-sm); font-weight: 700; cursor: pointer; }
 .board-sheets > button.is-active { color: var(--primary-foreground); border-color: var(--primary); background: var(--primary); }
 .board-canvas-wrap { position: relative; min-width: 0; min-height: 0; overflow: hidden auto; overscroll-behavior: contain; scrollbar-width: thin; background: var(--surface); }
-.board-canvas { display: block; width: 100%; height: auto; touch-action: none; background-image: radial-gradient(var(--border-strong) 1px, transparent 1px); background-size: 20px 20px; }
-.board-canvas--erase, .board-canvas--select { cursor: default; }
+.board-canvas { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; background-image: radial-gradient(var(--border-strong) 1px, transparent 1px); background-size: 20px 20px; }
+.board-canvas--select { cursor: default; }
+.board-canvas--erase { cursor: none; }
+.board-eraser { fill: rgb(127 127 127 / 0.12); stroke: var(--muted-foreground); stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
 .board-canvas--text, .board-canvas--math, .board-canvas--code { cursor: text; }
 .board-canvas--pen, .board-canvas--marker, .board-canvas--line, .board-canvas--arrow, .board-canvas--rect, .board-canvas--ellipse { cursor: crosshair; }
 .board-loading, .board-error { display: grid; place-content: center; justify-items: center; gap: 12px; min-height: 320px; color: var(--muted-foreground); }

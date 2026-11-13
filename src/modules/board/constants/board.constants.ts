@@ -4,6 +4,11 @@ export const MOBILE_BOARD_COLORS = ["#24264d", "#4567f5", "#e5484d", "#1f9d62", 
 export const MOBILE_BOARD_WIDTHS = [2, 4, 8] as const;
 
 export const BOARD_TEXT_SIZE = 22;
+export const ERASER_SIZES = [
+  { value: 8, label: "S" },
+  { value: 18, label: "M" },
+  { value: 32, label: "L" },
+] as const;
 export const BOARD_TEXT_SIZES = [
   { value: 16, label: "S" },
   { value: 22, label: "M" },

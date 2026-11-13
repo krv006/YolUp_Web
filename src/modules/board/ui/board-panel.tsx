@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Pencil, Users, Wifi, X } from "lucide-react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -21,6 +21,7 @@ import {
   BOARD_WIDTHS,
   CODE_TEXT_COLOR,
   CODE_TEXT_SIZE,
+  ERASER_SIZES,
   MOBILE_BOARD_COLORS,
   MOBILE_BOARD_WIDTHS,
 } from "../constants/board.constants";
@@ -35,7 +36,8 @@ import {
 import { canEditStroke } from "../lib/board-edit";
 import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
-import { measureNode, textWidth } from "../lib/board-measure";
+import { clientToBoard, measureNode, textWidth } from "../lib/board-measure";
+import { strokesAlong } from "../lib/board-select";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
@@ -165,6 +167,11 @@ export function BoardPanel({
   const [color, setColor] = useState<string>(mobileLayout ? MOBILE_BOARD_COLORS[1] : BOARD_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState<number>(mobileLayout ? MOBILE_BOARD_WIDTHS[1] : BOARD_WIDTHS[1]);
   const [textSize, setTextSize] = useState<number>(BOARD_TEXT_SIZE);
+  const [eraserSize, setEraserSize] = useState<number>(ERASER_SIZES[1].value);
+  const [eraserAt, setEraserAt] = useState<Point | null>(null);
+  const [erasing, setErasing] = useState<string[] | null>(null);
+  const [eraseIds, setEraseIds] = useState<string[]>([]);
+  const eraserLast = useRef<Point | null>(null);
   const [history, setHistory] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
   const [redoStack, setRedoStack] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -559,22 +566,20 @@ export function BoardPanel({
     );
   }
 
-  const handleStrokeClick = useCallback(
-    (id: string) => {
-      if (tool !== "erase" || !canDraw) return;
-      if (source) return source.eraseStroke(sheet, id); // shaxsiy doska: o'chirishga sabab so'ralmaydi
-      setSelected(id);
-      setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
-      setReasonOpen(true);
-    },
-    [tool, canDraw, source, sheet, mobileLayout, t]
-  );
+  const handleStrokeClick = useCallback(() => undefined, []);
 
   const hiddenId = placement?.inline ? placement.editingId : undefined;
   const strokeNodes = useMemo(
     () =>
       (activeStrokes ?? []).map((stroke) => {
         if (stroke.id === hiddenId) return null;
+        if (erasing?.includes(stroke.id)) {
+          return (
+            <g key={stroke.id} opacity={0.25}>
+              <BoardStroke stroke={stroke} selected={false} onSelect={handleStrokeClick} />
+            </g>
+          );
+        }
         if (drag?.kind === "resize" && drag.id === stroke.id) {
           return <BoardStroke key={stroke.id} stroke={drag.stroke} selected={false} onSelect={handleStrokeClick} />;
         }
@@ -589,7 +594,7 @@ export function BoardPanel({
           node
         );
       }),
-    [activeStrokes, selected, handleStrokeClick, drag, hiddenId]
+    [activeStrokes, selected, handleStrokeClick, drag, hiddenId, erasing]
   );
   const pendingNodes = pendingTexts
     .filter((pending) => !(activeStrokes ?? []).some((stroke) => sameText(stroke, pending)))
@@ -598,15 +603,69 @@ export function BoardPanel({
   function closeReasonDialog() {
     setReasonOpen(false);
     setSelected(null);
+    setEraseIds([]);
     setReason("");
   }
 
+  function eraserPoint(event: PointerEvent<SVGSVGElement>): Point {
+    return clientToBoard(event.currentTarget, event.clientX, event.clientY, state?.width ?? 1200, canvasHeight);
+  }
+
+  function eraseBetween(from: Point, to: Point) {
+    const measure = (stroke: StrokeDto) => (svgRef.current ? measureNode(svgRef.current, stroke.id) : null);
+    const ids = strokesAlong(activeStrokes ?? [], from, to, eraserSize, measure);
+    if (ids.length) setErasing((current) => (current ? [...new Set([...current, ...ids])] : current));
+  }
+
+  function finishErasing() {
+    const ids = erasing ?? [];
+    setErasing(null);
+    eraserLast.current = null;
+    if (!ids.length) return;
+    if (source) {
+      ids.forEach((id) => source.eraseStroke(sheet, id));
+      return;
+    }
+    setEraseIds(ids);
+    setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
+    setReasonOpen(true);
+  }
+
+  const eraserHandlers = {
+    onPointerDown(event: PointerEvent<SVGSVGElement>) {
+      if (!canDraw || !event.isPrimary) return;
+      const point = eraserPoint(event);
+      event.currentTarget.setPointerCapture(event.pointerId);
+      eraserLast.current = point;
+      setEraserAt(point);
+      setErasing([]);
+      eraseBetween(point, point);
+    },
+    onPointerMove(event: PointerEvent<SVGSVGElement>) {
+      if (!event.isPrimary) return;
+      const point = eraserPoint(event);
+      setEraserAt(point);
+      if (!eraserLast.current) return;
+      eraseBetween(eraserLast.current, point);
+      eraserLast.current = point;
+    },
+    onPointerUp: finishErasing,
+    onPointerCancel() {
+      setErasing(null);
+      eraserLast.current = null;
+    },
+    onPointerLeave() {
+      if (!eraserLast.current) setEraserAt(null);
+    },
+  };
+
   async function removeSelected() {
-    if (!selected || !reason.trim()) return;
+    const strokeIds = eraseIds.length ? eraseIds : selected ? [selected] : [];
+    if (!strokeIds.length || !reason.trim()) return;
     try {
-      await erase.mutateAsync({ sheet, strokeIds: [selected], reason: reason.trim() });
+      await erase.mutateAsync({ sheet, strokeIds, reason: reason.trim() });
       closeReasonDialog();
-      toast.success(t("eraseDialog.deleted"));
+      toast.success(strokeIds.length > 1 ? t("eraseDialog.deletedCount", { count: strokeIds.length }) : t("eraseDialog.deleted"));
     } catch (error) {
       void error;
     }
@@ -719,12 +778,14 @@ export function BoardPanel({
   const pointerHandlers =
     tool === "select"
       ? selection.handlers
-      : {
-          onPointerDown: handlePointerDown,
-          onPointerMove: handlePointerMove,
-          onPointerUp: handlePointerUp,
-          onPointerCancel: handlePointerUp,
-        };
+      : tool === "erase"
+        ? eraserHandlers
+        : {
+            onPointerDown: handlePointerDown,
+            onPointerMove: handlePointerMove,
+            onPointerUp: handlePointerUp,
+            onPointerCancel: handlePointerUp,
+          };
 
 
   const canvas = (
@@ -754,6 +815,9 @@ export function BoardPanel({
             selected={false}
             onSelect={() => undefined}
           />
+        ) : null}
+        {tool === "erase" && eraserAt ? (
+          <circle className="board-eraser" cx={eraserAt[0]} cy={eraserAt[1]} r={eraserSize} />
         ) : null}
       </svg>
 
@@ -1068,10 +1132,12 @@ export function BoardPanel({
               color={color}
               width={strokeWidth}
               textSize={textSize}
+              eraserSize={eraserSize}
               onToolChange={(next) => (next === "math" ? setFormulaOpen(true) : setTool(next))}
               onColorChange={setColor}
               onWidthChange={setStrokeWidth}
               onTextSizeChange={setTextSize}
+              onEraserSizeChange={setEraserSize}
               onPeriodic={state.chemistryEnabled ? () => setPeriodicOpen(true) : undefined}
             />
           </div>
@@ -1126,6 +1192,7 @@ export function BoardPanel({
               color={color}
               width={strokeWidth}
               textSize={textSize}
+              eraserSize={eraserSize}
               canDraw={canDraw}
               chemistryEnabled={state.chemistryEnabled}
               codeEnabled={state.codeEnabled}
@@ -1133,6 +1200,7 @@ export function BoardPanel({
               onColorChange={setColor}
               onWidthChange={setStrokeWidth}
               onTextSizeChange={setTextSize}
+              onEraserSizeChange={setEraserSize}
               onPeriodic={() => setPeriodicOpen(true)}
             />
           </div>
