@@ -955,34 +955,38 @@ export function AddAssignmentDialog({
                 placeholder={t("dialogs.assignment.titlePlaceholder")}
               />
             </label>
-            <div className="rich-assignment-field">
-              <div
-                className="rich-toolbar"
-                aria-label={t("dialogs.assignment.toolbarAria")}
-              >
-                <button type="button" aria-label={t("dialogs.assignment.boldAria")}>
-                  <Bold size={14} />
-                </button>
-                <button type="button" aria-label={t("dialogs.assignment.italicAria")}>
-                  <Italic size={14} />
-                </button>
-                <button type="button" aria-label={t("dialogs.assignment.underlineAria")}>
-                  <Underline size={14} />
-                </button>
-                <span />
-                <button type="button" aria-label={t("dialogs.assignment.listAria")}>
-                  <List size={14} />
-                </button>
-                <button type="button" aria-label={t("dialogs.assignment.linkAria")}>
-                  <Link size={14} />
-                </button>
+            <div className="grid gap-1.5">
+              <span className="field-block-label">{t("dialogs.assignment.descriptionLabel")}</span>
+              <div className="rich-assignment-field">
+                <div
+                  className="rich-toolbar"
+                  aria-label={t("dialogs.assignment.toolbarAria")}
+                >
+                  <button type="button" aria-label={t("dialogs.assignment.boldAria")}>
+                    <Bold size={14} />
+                  </button>
+                  <button type="button" aria-label={t("dialogs.assignment.italicAria")}>
+                    <Italic size={14} />
+                  </button>
+                  <button type="button" aria-label={t("dialogs.assignment.underlineAria")}>
+                    <Underline size={14} />
+                  </button>
+                  <span />
+                  <button type="button" aria-label={t("dialogs.assignment.listAria")}>
+                    <List size={14} />
+                  </button>
+                  <button type="button" aria-label={t("dialogs.assignment.linkAria")}>
+                    <Link size={14} />
+                  </button>
+                </div>
+                <textarea
+                  value={form.description}
+                  onChange={(event) => update("description", event.target.value)}
+                  placeholder={t("dialogs.assignment.descriptionPlaceholder")}
+                  aria-label={t("dialogs.assignment.descriptionLabel")}
+                  rows={5}
+                />
               </div>
-              <textarea
-                value={form.description}
-                onChange={(event) => update("description", event.target.value)}
-                placeholder={t("dialogs.assignment.descriptionPlaceholder")}
-                rows={5}
-              />
             </div>
             <div className="assignment-upload-row">
               <input

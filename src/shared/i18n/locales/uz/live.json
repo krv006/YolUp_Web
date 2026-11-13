@@ -268,5 +268,8 @@
     "aria": "Hammaning mikrofoni va kamerasini o'chirish",
     "mobileLabel": "Cheklash",
     "done": "O'chirildi — mikrofon: {{mics}}, kamera: {{cameras}}"
+  },
+  "health": {
+    "cpuLowered": "Kompyuter zo'riqmoqda — kamera sifati pasaytirildi. Ortiqcha oyna va dasturlarni yoping."
   }
 }
