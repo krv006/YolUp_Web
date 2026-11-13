@@ -24,6 +24,7 @@ import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
 import { formatElapsed, useElapsedSeconds } from "./use-elapsed-seconds";
 import { useScreenShareRequest } from "./use-screen-share-request";
+import { useSilenceAll } from "./use-silence-all";
 import { useShareSourceText } from "./use-share-source-text";
 
 const MAX_TILES = 6;
@@ -46,6 +47,7 @@ export interface MobileLiveLayoutProps {
   tiles: MobileTile[];
   overflow: number;
   toolbar: ReactNode;
+  denseToolbar?: boolean;
   onBack: () => void;
   onPeople: () => void;
 }
@@ -71,6 +73,7 @@ export function MobileLiveLayout({
   tiles,
   overflow,
   toolbar,
+  denseToolbar = false,
   onBack,
   onPeople,
 }: MobileLiveLayoutProps) {
@@ -147,7 +150,11 @@ export function MobileLiveLayout({
         </div>
       </div>
 
-      <nav className="flex shrink-0 justify-between rounded-t-2xl bg-subtle/40 px-3 pt-0.5 pb-6.5 min-[380px]:px-4">
+      <nav
+        className={`flex shrink-0 justify-between rounded-t-2xl bg-subtle/40 px-3 pt-0.5 pb-6.5 min-[380px]:px-4 ${
+          denseToolbar ? "[&>button]:w-12 [&>button>span]:size-12" : ""
+        }`}
+      >
         {toolbar}
       </nav>
     </div>
@@ -286,6 +293,19 @@ function CameraButton({ isTeacher, request }: { isTeacher: boolean; request: Req
       tone={request.waiting ? "active" : "default"}
       disabled={request.requesting || Boolean(request.cancelling)}
       onClick={request.waiting ? request.cancelCamera : request.requestCamera}
+    />
+  );
+}
+
+function SilenceAllButton({ lessonId }: { lessonId: string }) {
+  const { t } = useTranslation("live");
+  const silence = useSilenceAll(lessonId);
+  return (
+    <ToolbarButton
+      icon={<MicOff size={22} />}
+      label={t("silenceAll.mobileLabel")}
+      disabled={silence.pending}
+      onClick={silence.run}
     />
   );
 }
@@ -430,10 +450,12 @@ export function MobileLiveRoom({
         overflow={ordered.length - visible.length}
         onBack={onBack}
         onPeople={onPeople}
+        denseToolbar={isTeacher}
         toolbar={
           <>
             <MicButton isTeacher={isTeacher} request={mic} />
             <CameraButton isTeacher={isTeacher} request={camera} />
+            {isTeacher ? <SilenceAllButton lessonId={lesson.id} /> : null}
             <ShareButton />
             <ToolbarButton
               icon={<Icon name="edit" size={22} />}

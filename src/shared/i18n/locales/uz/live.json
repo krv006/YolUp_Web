@@ -263,5 +263,10 @@
     "unsupported": "Bu brauzer ekran ulashishni qo'llamaydi — boshqa brauzerdan urinib ko'ring.",
     "noAudio": "Ekran tovushi ulanmadi — ochilgan oynada «Tovushni ham ulashish» (Share audio) belgisini yoqib, qayta urinib ko'ring.",
     "denied": "Ekran ulashishga ruxsat berilmadi. Qayta urinib ko'ring yoki keyinroq pastdagi tugma orqali boshlang."
+  },
+  "silenceAll": {
+    "aria": "Hammaning mikrofoni va kamerasini o'chirish",
+    "mobileLabel": "Cheklash",
+    "done": "O'chirildi — mikrofon: {{mics}}, kamera: {{cameras}}"
   }
 }

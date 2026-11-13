@@ -91,6 +91,7 @@ import { useScreenShareRequest } from "./use-screen-share-request";
 import { ShareControlWindow } from "./share-control-window";
 import { RecordingStartDialog } from "./recording-start-dialog";
 import { useScreenShareRelease } from "./use-screen-share-release";
+import { SilenceAllControl } from "./silence-all-control";
 import { useDocumentPip } from "./use-document-pip";
 
 type SidePanel = "board" | "people" | null;
@@ -1253,6 +1254,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
           ) : (
             <StudentShareControl />
           )}
+          {isTeacher ? <SilenceAllControl lessonId={lesson.id} /> : null}
 
           <button
             type="button"

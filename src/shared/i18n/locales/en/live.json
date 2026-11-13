@@ -263,5 +263,10 @@
     "unsupported": "This browser can't share the screen — try another browser.",
     "noAudio": "Screen audio wasn't connected — turn on \"Share audio\" in the window that opens and try again.",
     "denied": "Screen sharing wasn't allowed. Try again, or start later with the button below."
+  },
+  "silenceAll": {
+    "aria": "Turn off everyone's mic and camera",
+    "mobileLabel": "Mute all",
+    "done": "Turned off — mics: {{mics}}, cameras: {{cameras}}"
   }
 }
