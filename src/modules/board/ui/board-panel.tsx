@@ -289,12 +289,28 @@ export function BoardPanel({
     const onTouchEnd = (event: TouchEvent) => {
       if (event.touches.length < 2) pinch = null;
     };
+    let gestureZoom = 1;
+    const onGestureStart = (event: Event) => {
+      event.preventDefault();
+      gestureZoom = zoomRef.current;
+    };
+    const onGestureChange = (event: Event) => {
+      event.preventDefault();
+      if (pinch) return;
+      const gesture = event as Event & { scale?: number; clientX?: number; clientY?: number };
+      if (!gesture.scale) return;
+      zoomBy((gestureZoom * gesture.scale) / zoomRef.current, gesture.clientX, gesture.clientY);
+    };
     canvasWrap.addEventListener("wheel", onWheel, { passive: false });
     canvasWrap.addEventListener("touchstart", onTouchStart, { passive: true });
     canvasWrap.addEventListener("touchmove", onTouchMove, { passive: false });
     canvasWrap.addEventListener("touchend", onTouchEnd);
     canvasWrap.addEventListener("touchcancel", onTouchEnd);
+    canvasWrap.addEventListener("gesturestart", onGestureStart);
+    canvasWrap.addEventListener("gesturechange", onGestureChange);
     return () => {
+      canvasWrap.removeEventListener("gesturestart", onGestureStart);
+      canvasWrap.removeEventListener("gesturechange", onGestureChange);
       canvasWrap.removeEventListener("wheel", onWheel);
       canvasWrap.removeEventListener("touchstart", onTouchStart);
       canvasWrap.removeEventListener("touchmove", onTouchMove);
@@ -1270,10 +1286,10 @@ export function BoardPanel({
         {canvas}
 
         {!source && !realtime.connected ? (
-          <div className="absolute inset-x-0 top-5 z-10 flex justify-center px-4">
+          <div className="pointer-events-none absolute inset-x-0 top-5 z-10 flex justify-center px-4">
             <p
               role="status"
-              className="flex max-w-140 items-start gap-2.5 rounded-md bg-warning-bg px-4 py-3.5 text-body-sm text-warning-fg"
+              className="pointer-events-auto flex max-w-140 items-start gap-2.5 rounded-md bg-warning-bg px-4 py-3.5 text-body-sm text-warning-fg"
             >
               <Icon name="warning" size={18} className="mt-0.5 shrink-0" />
               {t("status.slowSyncNote")}

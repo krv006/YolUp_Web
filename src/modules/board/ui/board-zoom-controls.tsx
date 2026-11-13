@@ -15,7 +15,7 @@ export function BoardZoomControls({ zoom, onZoomIn, onZoomOut, onReset }: BoardZ
   const { t } = useTranslation("board");
   const percent = Math.round(zoom * 100);
   return (
-    <div className="absolute top-3 right-3 z-10 flex items-center gap-0.5 rounded-xl bg-surface p-1 shadow-lg">
+    <div className="absolute top-3 right-3 z-20 flex items-center gap-0.5 rounded-xl bg-surface p-1 shadow-lg">
       <button type="button" className={BUTTON} aria-label={t("zoom.out")} title={t("zoom.out")} disabled={zoom <= BOARD_ZOOM.min} onClick={onZoomOut}>
         <Minus size={16} />
       </button>
