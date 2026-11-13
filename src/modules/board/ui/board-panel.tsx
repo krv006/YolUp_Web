@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from "react";
 import { Check, ChevronLeft, ChevronRight, Eye, Pencil, Users, Wifi, X } from "lucide-react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -38,6 +38,8 @@ import { resizedBox, resizeHandles } from "../lib/board-resize";
 import { buildStroke } from "../lib/board.geometry";
 import { clientToBoard, measureNode, textWidth } from "../lib/board-measure";
 import { strokesAlong } from "../lib/board-select";
+import { BOARD_ZOOM, clampZoom, zoomScroll } from "../lib/board-zoom";
+import { BoardZoomControls } from "./board-zoom-controls";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
@@ -225,6 +227,81 @@ export function BoardPanel({
   const [canvasWrap, setCanvasWrap] = useState<HTMLDivElement | null>(null);
   const [viewRatio, setViewRatio] = useState(0);
   const [viewWidth, setViewWidth] = useState(0);
+  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  const pendingScroll = useRef<{ left: number; top: number } | null>(null);
+  const gestureCancel = useRef<() => void>(() => undefined);
+
+  const zoomBy = useCallback(
+    (factor: number, clientX?: number, clientY?: number) => {
+      const previous = zoomRef.current;
+      const next = clampZoom(previous * factor);
+      if (next === previous) return;
+      if (canvasWrap) {
+        const rect = canvasWrap.getBoundingClientRect();
+        pendingScroll.current = zoomScroll(
+          { left: canvasWrap.scrollLeft, top: canvasWrap.scrollTop },
+          { x: (clientX ?? rect.left + rect.width / 2) - rect.left, y: (clientY ?? rect.top + rect.height / 2) - rect.top },
+          next / previous
+        );
+      }
+      zoomRef.current = next;
+      setZoom(next);
+    },
+    [canvasWrap]
+  );
+
+  useLayoutEffect(() => {
+    const pending = pendingScroll.current;
+    if (!canvasWrap || !pending) return;
+    pendingScroll.current = null;
+    canvasWrap.scrollLeft = pending.left;
+    canvasWrap.scrollTop = pending.top;
+  }, [zoom, canvasWrap]);
+
+  useEffect(() => {
+    if (!canvasWrap) return undefined;
+    let pinch: { distance: number; zoom: number; x: number; y: number } | null = null;
+    const measure = (touches: TouchList) => ({
+      distance: Math.hypot(touches[0].clientX - touches[1].clientX, touches[0].clientY - touches[1].clientY),
+      x: (touches[0].clientX + touches[1].clientX) / 2,
+      y: (touches[0].clientY + touches[1].clientY) / 2,
+    });
+    const onWheel = (event: WheelEvent) => {
+      if (!event.ctrlKey && !event.metaKey) return;
+      event.preventDefault();
+      zoomBy(Math.exp(-event.deltaY * 0.002), event.clientX, event.clientY);
+    };
+    const onTouchStart = (event: TouchEvent) => {
+      if (event.touches.length !== 2) return;
+      gestureCancel.current();
+      pinch = { ...measure(event.touches), zoom: zoomRef.current };
+    };
+    const onTouchMove = (event: TouchEvent) => {
+      if (!pinch || event.touches.length !== 2) return;
+      event.preventDefault();
+      const now = measure(event.touches);
+      canvasWrap.scrollLeft -= now.x - pinch.x;
+      canvasWrap.scrollTop -= now.y - pinch.y;
+      pinch = { ...pinch, x: now.x, y: now.y };
+      zoomBy((pinch.zoom * now.distance) / pinch.distance / zoomRef.current, now.x, now.y);
+    };
+    const onTouchEnd = (event: TouchEvent) => {
+      if (event.touches.length < 2) pinch = null;
+    };
+    canvasWrap.addEventListener("wheel", onWheel, { passive: false });
+    canvasWrap.addEventListener("touchstart", onTouchStart, { passive: true });
+    canvasWrap.addEventListener("touchmove", onTouchMove, { passive: false });
+    canvasWrap.addEventListener("touchend", onTouchEnd);
+    canvasWrap.addEventListener("touchcancel", onTouchEnd);
+    return () => {
+      canvasWrap.removeEventListener("wheel", onWheel);
+      canvasWrap.removeEventListener("touchstart", onTouchStart);
+      canvasWrap.removeEventListener("touchmove", onTouchMove);
+      canvasWrap.removeEventListener("touchend", onTouchEnd);
+      canvasWrap.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [canvasWrap, zoomBy]);
 
   useEffect(() => {
     if (!canvasWrap) return undefined;
@@ -296,7 +373,7 @@ export function BoardPanel({
     else if (!realtime.sendStroke(entry.sheet, entry.shape)) addStroke.mutate({ sheet: entry.sheet, stroke: entry.shape });
   }
 
-  const { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp } = useBoardDrawing({
+  const { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp, cancel: cancelDrawing } = useBoardDrawing({
     width: state?.width ?? 1600,
     height: state?.height ?? 900,
     tool,
@@ -747,7 +824,12 @@ export function BoardPanel({
     draft && tool !== "erase" && tool !== "select" && tool !== "text" && tool !== "math" && tool !== "code"
       ? buildStroke({ kind: tool, ...draft, color, width: strokeWidth })
       : null;
-  const scale = viewWidth ? viewWidth / state.width : 1;
+  const scale = viewWidth ? (viewWidth * zoom) / state.width : 1;
+  gestureCancel.current = () => {
+    cancelDrawing();
+    setErasing(null);
+    eraserLast.current = null;
+  };
   const overlayBox = selection.box && drag?.kind === "resize" ? resizedBox(selection.box, drag.stroke) : selection.box;
   const author = selection.selected?.by
     ? [
@@ -781,192 +863,206 @@ export function BoardPanel({
       : tool === "erase"
         ? eraserHandlers
         : {
-            onPointerDown: handlePointerDown,
-            onPointerMove: handlePointerMove,
+            onPointerDown: (event: PointerEvent<SVGSVGElement>) => {
+              if (event.isPrimary) handlePointerDown(event);
+            },
+            onPointerMove: (event: PointerEvent<SVGSVGElement>) => {
+              if (event.isPrimary) handlePointerMove(event);
+            },
             onPointerUp: handlePointerUp,
-            onPointerCancel: handlePointerUp,
+            onPointerCancel: cancelDrawing,
           };
 
 
   const canvas = (
-    <div ref={setCanvasWrap} className="board-canvas-wrap h-full">
-      <svg
-        ref={svgRef}
-        className={`board-canvas board-canvas--${tool}`}
-        viewBox={`0 0 ${state.width} ${canvasHeight}`}
-        preserveAspectRatio="xMidYMin meet"
-        style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
-        {...pointerHandlers}
-      >
-        {strokeNodes}
-        {pendingNodes}
-        {selection.box && selection.selected ? (
-          <SelectionOverlay
-            box={overlayBox ?? selection.box}
-            offset={drag?.kind === "move" ? [drag.dx, drag.dy] : undefined}
-            scale={scale}
-            label={author}
-            handles={resizeHandles(drag?.kind === "resize" ? drag.stroke : selection.selected, overlayBox ?? selection.box)}
-          />
-        ) : null}
-        {preview ? (
-          <BoardStroke
-            stroke={{ ...preview, id: "draft" }}
-            selected={false}
-            onSelect={() => undefined}
-          />
-        ) : null}
-        {tool === "erase" && eraserAt ? (
-          <circle className="board-eraser" cx={eraserAt[0]} cy={eraserAt[1]} r={eraserSize} />
-        ) : null}
-      </svg>
+    <div className="relative h-full min-h-0">
+      <div ref={setCanvasWrap} className="board-canvas-wrap h-full">
+        <div className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
+          <svg
+            ref={svgRef}
+            className={`board-canvas board-canvas--${tool}`}
+            viewBox={`0 0 ${state.width} ${canvasHeight}`}
+            preserveAspectRatio="xMidYMin meet"
+            style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
+            {...pointerHandlers}
+          >
+            {strokeNodes}
+            {pendingNodes}
+            {selection.box && selection.selected ? (
+              <SelectionOverlay
+                box={overlayBox ?? selection.box}
+                offset={drag?.kind === "move" ? [drag.dx, drag.dy] : undefined}
+                scale={scale}
+                label={author}
+                handles={resizeHandles(drag?.kind === "resize" ? drag.stroke : selection.selected, overlayBox ?? selection.box)}
+              />
+            ) : null}
+            {preview ? (
+              <BoardStroke
+                stroke={{ ...preview, id: "draft" }}
+                selected={false}
+                onSelect={() => undefined}
+              />
+            ) : null}
+            {tool === "erase" && eraserAt ? (
+              <circle className="board-eraser" cx={eraserAt[0]} cy={eraserAt[1]} r={eraserSize} />
+            ) : null}
+          </svg>
 
-      {!mobileLayout ? selectionToolbar(false) : null}
+          {!mobileLayout ? selectionToolbar(false) : null}
 
-      {placement && mobileLayout ? (
-        <form
-          ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
-          className="absolute inset-x-6 top-0 z-20 flex -translate-y-[34px] flex-col rounded-lg border border-line bg-surface p-3 shadow-lg"
-          style={{ marginTop: `${(placement.point[1] / state.width) * 100}%` }}
-          onPointerDown={(event) => event.stopPropagation()}
-          onSubmit={placeBlock}
-        >
-          {placement.editingId ? (
-            <strong className="text-title-sm text-ink">{t(`inline.edit.${placement.tool}`)}</strong>
-          ) : (
-            <div className="flex h-[38px] shrink-0 rounded-full bg-subtle p-[3px]" role="tablist">
-              {(state.codeEnabled ? (["text", "math", "code"] as const) : (["text", "math"] as const)).map((kind) => (
-                <button
-                  key={kind}
-                  type="button"
-                  role="tab"
-                  aria-selected={placement.tool === kind}
-                  className={`flex-1 rounded-full text-body-sm transition-colors ${
-                    placement.tool === kind ? "bg-surface font-semibold text-ink shadow-sm" : "font-medium text-ink-secondary"
-                  }`}
-                  onClick={() => {
-                    setDraftText("");
-                    setDraftLines([]);
-                    setDraftCode("");
-                    setPlacement({ ...placement, tool: kind });
-                  }}
-                >
-                  {t(`inline.${kind === "math" ? "formula" : kind}`)}
-                </button>
-              ))}
-            </div>
-          )}
-          <div className="mt-[11px]">
-            {placement.tool === "math" ? (
-              <div className="[&_.math-field]:min-h-[71px] [&_.math-field]:rounded-xl [&_.math-field]:border-[1.5px] [&_.math-field]:border-brand [&_.math-field]:bg-subtle">
-                <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
+          {placement && mobileLayout ? (
+            <form
+              ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
+              className="absolute inset-x-6 top-0 z-20 flex -translate-y-[34px] flex-col rounded-lg border border-line bg-surface p-3 shadow-lg"
+              style={{ marginTop: `${(placement.point[1] / state.width) * 100}%` }}
+              onPointerDown={(event) => event.stopPropagation()}
+              onSubmit={placeBlock}
+            >
+              {placement.editingId ? (
+                <strong className="text-title-sm text-ink">{t(`inline.edit.${placement.tool}`)}</strong>
+              ) : (
+                <div className="flex h-[38px] shrink-0 rounded-full bg-subtle p-[3px]" role="tablist">
+                  {(state.codeEnabled ? (["text", "math", "code"] as const) : (["text", "math"] as const)).map((kind) => (
+                    <button
+                      key={kind}
+                      type="button"
+                      role="tab"
+                      aria-selected={placement.tool === kind}
+                      className={`flex-1 rounded-full text-body-sm transition-colors ${
+                        placement.tool === kind ? "bg-surface font-semibold text-ink shadow-sm" : "font-medium text-ink-secondary"
+                      }`}
+                      onClick={() => {
+                        setDraftText("");
+                        setDraftLines([]);
+                        setDraftCode("");
+                        setPlacement({ ...placement, tool: kind });
+                      }}
+                    >
+                      {t(`inline.${kind === "math" ? "formula" : kind}`)}
+                    </button>
+                  ))}
+                </div>
+              )}
+              <div className="mt-[11px]">
+                {placement.tool === "math" ? (
+                  <div className="[&_.math-field]:min-h-[71px] [&_.math-field]:rounded-xl [&_.math-field]:border-[1.5px] [&_.math-field]:border-brand [&_.math-field]:bg-subtle">
+                    <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
+                  </div>
+                ) : placement.tool === "code" ? (
+                  <CodeEditor
+                    variant="mobile"
+                    value={draftCode}
+                    onChange={setDraftCode}
+                    language={codeLanguage}
+                    onLanguageChange={setCodeLanguage}
+                    languages={state.codeLanguages}
+                    onSubmit={() => placeBlock()}
+                    onCancel={closePlacement}
+                  />
+                ) : (
+                  <RichTextInput
+                    variant="mobile"
+                    initialLines={initialLines}
+                    onChange={setDraftLines}
+                    onSubmit={() => placeBlock()}
+                    onCancel={closePlacement}
+                  />
+                )}
               </div>
-            ) : placement.tool === "code" ? (
-              <CodeEditor
-                variant="mobile"
-                value={draftCode}
-                onChange={setDraftCode}
-                language={codeLanguage}
-                onLanguageChange={setCodeLanguage}
-                languages={state.codeLanguages}
-                onSubmit={() => placeBlock()}
-                onCancel={closePlacement}
-              />
-            ) : (
-              <RichTextInput
-                variant="mobile"
-                initialLines={initialLines}
-                onChange={setDraftLines}
-                onSubmit={() => placeBlock()}
-                onCancel={closePlacement}
-              />
-            )}
-          </div>
-          <div className="mt-2.5 grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              className="flex h-11 items-center justify-center rounded-full border border-line-strong bg-surface text-button text-ink"
-              onClick={closePlacement}
-            >
-              {t("inline.cancel")}
-            </button>
-            <button
-              type="submit"
-              className="flex h-11 items-center justify-center rounded-full bg-brand text-button text-on-action disabled:opacity-40"
-              disabled={!canPlaceBlock}
-            >
-              {placement.editingId ? t("inline.save") : t("inline.add")}
-            </button>
-          </div>
-        </form>
-      ) : placement?.inline ? (
-        <InlineTextEditor
-          value={inlineText}
-          onChange={typeInline}
-          anchor={placement.inline.anchor}
-          size={placement.inline.size}
-          color={placement.inline.color}
-          boardWidth={state.width}
-          scale={scale}
-          onCommit={commitInline}
-        />
-      ) : placement ? (
-        <form
-          ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
-          className={`board-inline-editor is-wide is-${placement.tool} ${
-            placement.point[0] > state.width * 0.6 ? "is-right" : ""
-          }`}
-          style={{
-            top: 0,
-            left: `min(${(placement.point[0] / state.width) * 100}%, calc(100% - min(640px, 100% - 24px) - 12px))`,
-            marginTop: `${(placement.point[1] / state.width) * 100}%`,
-          }}
-          onPointerDown={(event) => event.stopPropagation()}
-          onSubmit={placeBlock}
-        >
-          <span>
-            {placement.editingId
-              ? t(`inline.edit.${placement.tool}`)
-              : t(`inline.${placement.tool === "math" ? "formula" : placement.tool}`)}
-          </span>
-          {placement.tool === "math" ? (
-            <>
-              <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
-              <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
-            </>
-          ) : placement.tool === "code" ? (
-            <CodeEditor
-              value={draftCode}
-              onChange={setDraftCode}
-              language={codeLanguage}
-              onLanguageChange={setCodeLanguage}
-              languages={state.codeLanguages}
-              onSubmit={() => placeBlock()}
-              onCancel={closePlacement}
+              <div className="mt-2.5 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  className="flex h-11 items-center justify-center rounded-full border border-line-strong bg-surface text-button text-ink"
+                  onClick={closePlacement}
+                >
+                  {t("inline.cancel")}
+                </button>
+                <button
+                  type="submit"
+                  className="flex h-11 items-center justify-center rounded-full bg-brand text-button text-on-action disabled:opacity-40"
+                  disabled={!canPlaceBlock}
+                >
+                  {placement.editingId ? t("inline.save") : t("inline.add")}
+                </button>
+              </div>
+            </form>
+          ) : placement?.inline ? (
+            <InlineTextEditor
+              value={inlineText}
+              onChange={typeInline}
+              anchor={placement.inline.anchor}
+              size={placement.inline.size}
+              color={placement.inline.color}
+              boardWidth={state.width}
+              scale={scale}
+              onCommit={commitInline}
             />
-          ) : (
-            <RichTextInput
-              initialLines={initialLines}
-              onChange={setDraftLines}
-              onSubmit={() => placeBlock()}
-              onCancel={closePlacement}
-            />
-          )}
-          <div className="board-inline-actions">
-            <button type="button" onClick={closePlacement} aria-label={t("inline.cancelAria")}>
-              <X size={15} />
-            </button>
-            <button
-              type="submit"
-              className="is-primary"
-              disabled={!canPlaceBlock}
-              aria-label={t("inline.addAria")}
+          ) : placement ? (
+            <form
+              ref={(node) => node?.scrollIntoView({ block: "nearest", behavior: "smooth" })}
+              className={`board-inline-editor is-wide is-${placement.tool} ${
+                placement.point[0] > state.width * 0.6 ? "is-right" : ""
+              }`}
+              style={{
+                top: 0,
+                left: `min(${(placement.point[0] / state.width) * 100}%, calc(100% - min(640px, 100% - 24px) - 12px))`,
+                marginTop: `${(placement.point[1] / state.width) * 100}%`,
+              }}
+              onPointerDown={(event) => event.stopPropagation()}
+              onSubmit={placeBlock}
             >
-              <Check size={15} />
-            </button>
-          </div>
-        </form>
-      ) : null}
+              <span>
+                {placement.editingId
+                  ? t(`inline.edit.${placement.tool}`)
+                  : t(`inline.${placement.tool === "math" ? "formula" : placement.tool}`)}
+              </span>
+              {placement.tool === "math" ? (
+                <>
+                  <FormulaPalette onInsert={(latex) => mathFieldRef.current?.insert(latex)} />
+                  <MathFieldInput ref={mathFieldRef} value={draftText} onChange={setDraftText} />
+                </>
+              ) : placement.tool === "code" ? (
+                <CodeEditor
+                  value={draftCode}
+                  onChange={setDraftCode}
+                  language={codeLanguage}
+                  onLanguageChange={setCodeLanguage}
+                  languages={state.codeLanguages}
+                  onSubmit={() => placeBlock()}
+                  onCancel={closePlacement}
+                />
+              ) : (
+                <RichTextInput
+                  initialLines={initialLines}
+                  onChange={setDraftLines}
+                  onSubmit={() => placeBlock()}
+                  onCancel={closePlacement}
+                />
+              )}
+              <div className="board-inline-actions">
+                <button type="button" onClick={closePlacement} aria-label={t("inline.cancelAria")}>
+                  <X size={15} />
+                </button>
+                <button
+                  type="submit"
+                  className="is-primary"
+                  disabled={!canPlaceBlock}
+                  aria-label={t("inline.addAria")}
+                >
+                  <Check size={15} />
+                </button>
+              </div>
+            </form>
+          ) : null}
+        </div>
+      </div>
+      <BoardZoomControls
+        zoom={zoom}
+        onZoomIn={() => zoomBy(BOARD_ZOOM.step)}
+        onZoomOut={() => zoomBy(1 / BOARD_ZOOM.step)}
+        onReset={() => zoomBy(1 / zoomRef.current)}
+      />
     </div>
   );
 

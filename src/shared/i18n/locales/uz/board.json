@@ -242,5 +242,10 @@
     "delete": "O'chirish",
     "sizeDown": "Kichiklashtirish",
     "sizeUp": "Kattalashtirish"
+  },
+  "zoom": {
+    "in": "Kattalashtirish",
+    "out": "Kichiklashtirish",
+    "reset": "Asl o'lchamga qaytarish ({{value}}%)"
   }
 }
