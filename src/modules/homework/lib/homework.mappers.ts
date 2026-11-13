@@ -83,6 +83,7 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     })),
     answers: (dto.answers ?? []).map(mapHomeworkAnswerDto),
     aiState: dto.ai_state ?? null,
+    aiSummary: dto.ai_summary?.trim() || null,
     aiCheckingSince: dto.ai_checking_since ?? null,
   };
 }

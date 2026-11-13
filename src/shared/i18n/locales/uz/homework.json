@@ -78,7 +78,9 @@
     "scoreRange": "Umumiy ball 0 dan 100 gacha bo'lishi kerak",
     "aiFailedTitle": "AI baholay olmadi — o‘zingiz baholang",
     "aiNone": "Bu topshiriq AI’da tekshirilmagan. Bahoni o‘zingiz qo‘yasiz.",
-    "checkingSince": "{{time}} dan beri tekshirilmoqda"
+    "checkingSince": "{{time}} dan beri tekshirilmoqda",
+    "aiUnscoredTitle": "AI ball qo‘ymadi — o‘zingiz baholang",
+    "aiSummary": "AI xulosasi"
   },
   "report": {
     "noGrade": "Baho yo'q",
@@ -183,7 +185,8 @@
     "files": "Fayllar · {{count}}",
     "textAnswer": "O‘quvchining matnli javobi",
     "aiFailed": "AI baholay olmadi — o‘zingiz baholang",
-    "aiFailedHint": "Topshiriqni ko‘rib chiqing va bahoni o‘zingiz qo‘ying"
+    "aiFailedHint": "Topshiriqni ko‘rib chiqing va bahoni o‘zingiz qo‘ying",
+    "aiUnscored": "AI ball qo‘ymadi — o‘zingiz baholang"
   },
   "workspace": {
     "emptyTitle": "Hali vazifa berilmagan",

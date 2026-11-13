@@ -79,6 +79,7 @@ export function HomeworkReviewPage() {
   const aiState = current ? submissionAiState(current) : "none";
   const checking = aiState === "checking";
   const aiFailed = aiState === "failed";
+  const aiUnscored = aiState === "unscored";
   const hasFile = Boolean(current?.files.length);
   const textAnswer = !hasFile && Boolean(current?.comment);
   const aiScore = aiState === "ready" ? (current?.overallScore ?? null) : null;
@@ -251,18 +252,26 @@ export function HomeworkReviewPage() {
                   className={aiFailed ? "text-error-text" : "text-accent-saffron-fg"}
                 />
                 <strong className="min-w-0 flex-1 text-title text-ink">
-                  {checking ? t("review.aiChecking") : aiFailed ? t("review.aiFailed") : t("mobileReview.aiGrade")}
+                  {checking
+                    ? t("review.aiChecking")
+                    : aiFailed
+                      ? t("review.aiFailed")
+                      : aiUnscored
+                        ? t("review.aiUnscored")
+                        : t("mobileReview.aiGrade")}
                 </strong>
-                {checking || aiFailed ? null : (
+                {checking || aiFailed || aiUnscored ? null : (
                   <strong className="text-title-lg text-brand">{aiGrade ?? "—"} / 5</strong>
                 )}
               </span>
-              <small className="text-caption text-ink-secondary">
+              <small className="line-clamp-3 text-caption text-ink-secondary">
                 {checking
                   ? t("review.aiCheckingHint")
                   : aiFailed
                     ? current?.error || t("review.aiFailedHint")
-                    : t("review.aiSuggestionHint")}
+                    : aiUnscored
+                      ? current?.aiSummary || t("review.aiFailedHint")
+                      : t("review.aiSuggestionHint")}
               </small>
               {questions.length && !checking ? (
                 <span className="flex items-center gap-2 text-body-sm text-ink">
@@ -512,6 +521,18 @@ export function HomeworkReviewPage() {
             <span className="flex min-w-0 flex-1 flex-col gap-0.5">
               <strong className="text-title-sm text-error-text">{t("review.aiFailed")}</strong>
               <small className="text-body-xs text-ink-secondary">{current?.error || t("review.aiFailedHint")}</small>
+            </span>
+          </section>
+        ) : aiUnscored ? (
+          <section className="flex items-start gap-3 rounded-lg bg-brand-subtle p-4">
+            <span className="grid size-12 shrink-0 place-items-center rounded-md bg-accent-violet-fg text-ink-inverse">
+              <Icon name="auto-awesome" size={22} />
+            </span>
+            <span className="flex min-w-0 flex-1 flex-col gap-1">
+              <strong className="text-title-sm text-brand-strong">{t("review.aiUnscored")}</strong>
+              <small className="text-body-xs whitespace-pre-line text-ink-secondary">
+                {current?.aiSummary || t("review.aiFailedHint")}
+              </small>
             </span>
           </section>
         ) : aiState === "none" ? null : (
