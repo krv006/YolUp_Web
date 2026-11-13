@@ -232,7 +232,8 @@
         "reading": "Reading",
         "listening": "Listening",
         "speaking": "Speaking"
-      }
+      },
+      "descriptionLabel": "Vazifa tavsifi"
     }
   },
   "addStudent": {
