@@ -30,7 +30,8 @@
       "emptyHint": "Tasks from your teacher will appear here.",
       "continue": "Continue · {{time}}",
       "continueAction": "Continue",
-      "attemptsOver": "No attempts left"
+      "attemptsOver": "No attempts left",
+      "score": "{{value}} / {{max}} points"
     },
     "lessonsTab": {
       "eyebrow": "SCHEDULE",
@@ -460,7 +461,9 @@
       "tooManyFiles": "You can attach up to {{count}} files",
       "filesCount": "{{count}} / {{max}} files",
       "myComment": "Your note",
-      "filesTitle": "Submitted files · {{count}}"
+      "filesTitle": "Submitted files · {{count}}",
+      "outOf": "/ {{max}} points",
+      "notGraded": "This task isn't graded with points"
     }
   },
   "tutor": {

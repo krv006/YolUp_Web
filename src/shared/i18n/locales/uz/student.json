@@ -30,7 +30,8 @@
       "emptyHint": "O‘qituvchi vazifa berganda shu yerda ko‘rinadi.",
       "continue": "Davom etish · {{time}}",
       "continueAction": "Davom etish",
-      "attemptsOver": "Urinishlar tugagan"
+      "attemptsOver": "Urinishlar tugagan",
+      "score": "{{value}} / {{max}} ball"
     },
     "lessonsTab": {
       "eyebrow": "DARS JADVALI",
@@ -456,7 +457,9 @@
       "tooManyFiles": "Ko‘pi bilan {{count}} ta fayl yuklash mumkin",
       "filesCount": "{{count}} / {{max}} fayl",
       "myComment": "Sizning izohingiz",
-      "filesTitle": "Yuborilgan fayllar · {{count}}"
+      "filesTitle": "Yuborilgan fayllar · {{count}}",
+      "outOf": "/ {{max}} ball",
+      "notGraded": "Bu vazifa ball bilan baholanmaydi"
     }
   },
   "tutor": {
