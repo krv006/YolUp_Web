@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { usePreviewTracks } from "@livekit/components-react";
 import { Track, type LocalVideoTrack } from "livekit-client";
 import { Info, Mic, MicOff, Settings, Video, VideoOff } from "lucide-react";
@@ -7,7 +7,6 @@ import { i18n } from "@/shared/i18n";
 import type { Lesson } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { Avatar } from "@/shared/ui/legacy";
-import { Switch } from "@/shared/ui/switch";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { MediaPermissionDialog } from "./media-permission-dialog";
 import { requestScreenCapture } from "../lib/screen-capture";
@@ -74,8 +73,6 @@ export function LessonPreJoin({
   const videoTrack = tracks?.find((track) => track.kind === Track.Kind.Video) as
     | LocalVideoTrack
     | undefined;
-  const audioTrack = tracks?.find((track) => track.kind === Track.Kind.Audio);
-  const micLabel = audioTrack?.mediaStreamTrack?.label || t("preJoin.defaultMic");
   const timeRange = useMemo(() => {
     const start = new Date(lesson.startsAt);
     if (Number.isNaN(start.getTime())) return lesson.time;
@@ -84,7 +81,6 @@ export function LessonPreJoin({
       `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
     return `${clock(start)} – ${clock(end)}`;
   }, [lesson.startsAt, lesson.durationMinutes, lesson.time]);
-  const cameraLabel = videoTrack?.mediaStreamTrack?.label || t("preJoin.defaultCamera");
 
   useEffect(() => {
     const element = videoRef.current;
@@ -343,24 +339,6 @@ export function LessonPreJoin({
             </span>
           ) : null}
 
-          <div className="flex flex-col gap-4">
-            <DeviceRow
-              icon={<Mic size={20} />}
-              title={micOn ? t("preJoin.micOn") : t("preJoin.micOff")}
-              hint={micLabel}
-              checked={micOn}
-              disabled={!micAllowed}
-              onChange={toggleMic}
-            />
-            <DeviceRow
-              icon={<Video size={20} />}
-              title={cameraOn ? t("preJoin.cameraOnTitle") : t("preJoin.cameraOffTitle")}
-              hint={cameraLabel}
-              checked={cameraOn}
-              onChange={toggleCamera}
-            />
-          </div>
-
           <p className="flex items-center gap-2 text-body-xs text-ink-tertiary">
             <Info size={15} className="shrink-0" />
             {isTeacher ? t("preJoin.recordingNote") : t("preJoin.recordingNoteStudent")}
@@ -405,32 +383,5 @@ export function LessonPreJoin({
         </div>
       </div>
     </main>
-  );
-}
-
-function DeviceRow({
-  icon,
-  title,
-  hint,
-  checked,
-  disabled = false,
-  onChange,
-}: {
-  icon: ReactNode;
-  title: string;
-  hint: string;
-  checked: boolean;
-  disabled?: boolean;
-  onChange: () => void;
-}) {
-  return (
-    <span className="flex items-center gap-3 rounded-md bg-subtle px-4 py-2.5">
-      <span className="grid size-5 shrink-0 place-items-center text-ink-secondary">{icon}</span>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <strong className="truncate text-title-sm leading-5 text-ink">{title}</strong>
-        <small className="truncate text-body-xs leading-4.5 text-ink-tertiary">{hint}</small>
-      </span>
-      <Switch checked={checked} disabled={disabled} onCheckedChange={onChange} aria-label={title} />
-    </span>
   );
 }
