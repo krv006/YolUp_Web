@@ -7,6 +7,7 @@ export type {
   CertificateStatus,
   LinkedAccount,
   LoginCredentials,
+  RoleSwitchBlock,
   TeacherRating,
   TeacherStats,
 } from "./auth";

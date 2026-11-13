@@ -52,6 +52,8 @@ export const userDtoSchema = z.object({
   preferred_language: z.string().default("uz"),
   lesson_reminder_minutes: z.number().nullable().optional(),
   linked_accounts: z.array(linkedAccountDtoSchema).optional().default([]),
+  available_roles: z.array(z.string()).nullable().optional(),
+  role_switch_blocked: z.string().nullable().optional(),
   can_create_tests: z.boolean().nullable().optional(),
   middle_name: z.string().nullable().optional(),
   birth_date: z.string().nullable().optional(),
@@ -111,6 +113,10 @@ export type LessonRatingDto = z.infer<typeof lessonRatingDtoSchema>;
 
 export const switchAccountResponseDtoSchema = tokenPairDtoSchema.extend({
   user: userDtoSchema,
+});
+
+export const accountLinkResponseDtoSchema = z.object({
+  account: linkedAccountDtoSchema,
 });
 
 export type TokenPairDto = z.infer<typeof tokenPairDtoSchema>;

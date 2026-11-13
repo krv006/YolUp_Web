@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type { AuthUser } from "@/shared/types";
+import type { AuthUser, LinkedAccount } from "@/shared/types";
 import { authApi, type NotificationPrefs } from "../api/auth.api";
 import type { ProfileFormValues, RegisterFormValues } from "../api/auth.dto";
 import { mapCertificateDto, mapUserDto } from "../lib/auth.mappers";
@@ -66,6 +66,13 @@ export function usePasswordResetConfirmMutation() {
 export function useSwitchAccountMutation() {
   return useMutation({
     mutationFn: (userId: string): Promise<AuthUser> => useAuthStore.getState().switchAccount(userId),
+  });
+}
+
+export function useLinkAccountMutation() {
+  return useMutation({
+    mutationFn: ({ username, password }: { username: string; password: string }): Promise<LinkedAccount> =>
+      useAuthStore.getState().linkAccount(username, password),
   });
 }
 

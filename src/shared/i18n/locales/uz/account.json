@@ -84,7 +84,23 @@
     "switchHint": "Akkauntga bosilsa, parolsiz darhol o'sha akkauntga o'tasiz.",
     "switched": "{{name}} sifatida kirdingiz",
     "failed": "Hisobni almashtirib bo'lmadi",
-    "needsPhone": "Avval profilga telefon raqamingizni qo'shing"
+    "needsPhone": "Avval profilga telefon raqamingizni qo'shing",
+    "studentBlocked": "O'quvchi akkauntidan yangi rol ochib bo'lmaydi. Boshqa akkauntingiz bo'lsa, uni login va parol bilan bog'lang.",
+    "link": {
+      "row": "Boshqa akkauntni bog'lash",
+      "rowHint": "Login va parol bilan",
+      "title": "Akkauntni bog'lash",
+      "text": "Boshqa akkauntingiz login va parolini kiriting. Bog'langach, ular orasida parolsiz o'tasiz.",
+      "existingText": "Bu raqamda «{{username}}» ({{role}}) akkaunti bor. Unga o'tish uchun shu akkaunt parolini kiriting — akkauntlar bog'lanadi.",
+      "username": "Login",
+      "password": "Parol",
+      "submit": "Bog'lash",
+      "linking": "Bog'lanmoqda...",
+      "cancel": "Bekor qilish",
+      "done": "{{name}} akkaunti bog'landi",
+      "twoFactor": "Bu akkauntda ikki bosqichli himoya yoqilgan, uni bog'lab bo'lmaydi.",
+      "throttled": "Juda ko'p noto'g'ri urinish. {{count}} daqiqadan keyin qayta urinib ko'ring."
+    }
   },
   "toast": {
     "copied": "{{label}} nusxalandi",
@@ -192,8 +208,8 @@
     "otherSessionsClosed": "{{count}} ta qurilma chiqarildi",
     "certificatePending": "Tekshirilmoqda",
     "switchAccount": "Akkauntni almashtirish",
-    "switchAccountHint": "Bir telefon raqamiga bog‘langan rollar",
-    "switchAccountDescription": "Bir telefon raqamiga bog‘langan rollar. Almashtirganda qayta kirish shart emas.",
+    "switchAccountHint": "Bog‘langan akkauntlaringiz va rollaringiz",
+    "switchAccountDescription": "Bog‘langan akkauntlaringiz va rollaringiz. Almashtirganda qayta kirish shart emas.",
     "accountActive": "faol",
     "addAccount": "Boshqa akkaunt qo‘shish",
     "close": "Yopish",

@@ -72,7 +72,7 @@ export function mapCertificateDto(dto: unknown): Certificate {
   };
 }
 
-function mapLinkedAccountDto(dto: LinkedAccountDto): LinkedAccount {
+export function mapLinkedAccountDto(dto: LinkedAccountDto): LinkedAccount {
   const name = [dto.first_name, dto.last_name].filter(Boolean).join(" ") || dto.username;
   return {
     id: dto.id,
@@ -112,6 +112,11 @@ export function mapUserDto(dto: unknown): AuthUser {
     mustChangePassword: parsed.must_change_password === true,
     grade: parsed.grade || null,
     linkedAccounts: parsed.linked_accounts.map(mapLinkedAccountDto),
+    availableRoles: parsed.available_roles ? parsed.available_roles.map((role) => normalizeRole(role) as Role) : null,
+    roleSwitchBlocked:
+      parsed.role_switch_blocked === "phone_required" || parsed.role_switch_blocked === "student_not_allowed"
+        ? parsed.role_switch_blocked
+        : null,
     canCreateTests: parsed.can_create_tests !== false,
     middleName: parsed.middle_name ?? null,
     birthDate: parsed.birth_date ?? null,
