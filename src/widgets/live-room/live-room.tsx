@@ -568,6 +568,12 @@ function TeacherShareControl({
     const toStop = publishedRef.current;
     publishedRef.current = [];
     setSharing(false);
+    const wasLive = hasLiveVideo(screenStream);
+    screenStream.getTracks().forEach((track) => track.stop());
+    onStreamChange(new MediaStream());
+    const notice = { id: "video-recording-interrupted", duration: wasLive ? 10_000 : 20_000 };
+    if (wasLive) toast.info(t("videoRecording.interrupted"), notice);
+    else toast.warning(t("videoRecording.interrupted"), notice);
     await Promise.all(
       toStop.map((track) => room.localParticipant.unpublishTrack(track, true))
     );
@@ -609,6 +615,7 @@ function TeacherShareControl({
         }
         publishedRef.current = published;
         setSharing(true);
+        toast.dismiss("video-recording-interrupted");
         if (pipSupported && navigator.userActivation?.isActive) void openPip().catch(() => undefined);
       } catch {
         toPublish.forEach(({ track }) => track.stop());
@@ -903,7 +910,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
         audioRecording.phase === "recording"
           ? { id: "audio", label: audioRecordingLabels.recording }
           : null,
-        screenStream && videoRecording.phase === "recording"
+        hasLiveVideo(screenStream) && videoRecording.phase === "recording"
           ? { id: "video", label: videoRecordingLabels.recording }
           : null,
       ].filter(Boolean)
