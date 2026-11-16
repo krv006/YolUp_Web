@@ -28,6 +28,7 @@ export function notificationCategory(item: Pick<InboxNotification, "kind" | "lin
 
 export function notificationIcon(item: InboxNotification) {
   if (item.kind === LESSON_REMINDER_KIND) return { icon: "clock", tone: NOTIFICATION_TONES.lesson };
+  if (item.kind === "lesson_invite") return { icon: "videocam-fill", tone: NOTIFICATION_TONES.lesson };
   if (/login|device|security/.test(item.kind ?? "")) return { icon: "shield", tone: NOTIFICATION_TONES.danger };
   if (item.kind === "attendance.missed") return { icon: "cancel", tone: NOTIFICATION_TONES.danger };
   if (item.kind === "attendance.late") return { icon: "schedule", tone: NOTIFICATION_TONES.lesson };
