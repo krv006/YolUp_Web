@@ -1,4 +1,11 @@
 
+function urlFromLink(payload) {
+  const type = String(payload.link_type || "").toLowerCase();
+  const id = payload.link_id ? encodeURIComponent(String(payload.link_id)) : "";
+  if (type === "lesson" && id && !String(payload.kind || "").includes("recording")) return `/live/${id}`;
+  return "";
+}
+
 function readPayload(event) {
   if (!event.data) return {};
   try {
@@ -16,7 +23,7 @@ self.addEventListener("push", (event) => {
     icon: "/notification-icon.png",
     badge: "/notification-icon.png",
     tag: payload.tag || undefined,
-    data: { url: payload.url || "/" },
+    data: { url: payload.url || urlFromLink(payload) || "/" },
   };
   event.waitUntil(self.registration.showNotification(title, options));
 });

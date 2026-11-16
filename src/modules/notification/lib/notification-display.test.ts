@@ -28,6 +28,7 @@ describe("notificationIcon", () => {
     expect(icon("attendance.late")).toBe("schedule");
     expect(icon("security.new_device")).toBe("shield");
     expect(icon("homework_due_soon")).toBe("hourglass-empty");
+    expect(icon("lesson_invite")).toBe("videocam-fill");
     expect(icon("link.revoked")).toBe("link");
   });
 });
