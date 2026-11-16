@@ -545,7 +545,9 @@
     "continue": "Continue",
     "mobileTitle": "New test · 1/2",
     "noGroup": "Save without a group",
-    "noGroupHint": "A test without a group is visible only to you. Give it to a group later with \"Give to group\"."
+    "noGroupHint": "A test without a group is visible only to you. Give it to a group later with \"Give to group\".",
+    "description": "Description · optional",
+    "descriptionPlaceholder": "E.g. covers topics 1–5, no calculators"
   },
   "importDialog": {
     "title": "Import questions",
