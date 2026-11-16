@@ -1,8 +1,7 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
 import { authEndpoints } from "./auth.endpoints";
-import { mapAdminCertificate, mapLoginRecords, mapLoginRecordsPage, mapTeacherRatings, mapTeacherStats } from "../lib/auth.mappers";
+import { mapLoginRecords, mapLoginRecordsPage, mapTeacherRatings, mapTeacherStats } from "../lib/auth.mappers";
 import type {
-  AdminCertificateDto,
   AuthUserDto,
   CertificateDto,
   ConsentRequestDto,
@@ -174,17 +173,6 @@ export const authApi = {
       await apiClient.get(authEndpoints.logins, { ...options, query: { page, page_size: pageSize } }),
       { page, pageSize }
     );
-  },
-  async getAdminCertificates(status: string, options?: RequestOptions) {
-    return normalizePagination<AdminCertificateDto>(
-      await apiClient.get(authEndpoints.adminCertificates, { ...options, query: { status, page_size: 100 } })
-    ).items.map(mapAdminCertificate);
-  },
-  verifyCertificate(id: string) {
-    return apiClient.post(authEndpoints.adminCertificateVerify(id), {});
-  },
-  rejectCertificate(id: string, reason: string) {
-    return apiClient.post(authEndpoints.adminCertificateReject(id), { reason });
   },
   updateAvatar(avatar: File | null) {
     const body = new FormData();

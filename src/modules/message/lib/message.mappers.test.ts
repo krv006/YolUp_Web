@@ -35,6 +35,13 @@ describe("parseSocketEvent typing", () => {
   });
 });
 
+describe("parseSocketEvent lesson signals", () => {
+  it("turns live and ended lesson signals into a lesson refresh", () => {
+    expect(parseSocketEvent({ type: "lesson_live", lesson: { id: "l1", title: "Simple", room_name: "r1" } })).toEqual({ type: "lessonChanged" });
+    expect(parseSocketEvent({ type: "lesson_ended", lesson: { id: "l1" } })).toEqual({ type: "lessonChanged" });
+  });
+});
+
 describe("channel posts", () => {
   it("keeps the comment count on posts and the thread root on comments", () => {
     const post = mapMessageDto({ id: "p1", room: "c1", text: "E'lon", created_at: "2026-11-10T10:00:00Z", comment_count: 3 } as MessageDto);

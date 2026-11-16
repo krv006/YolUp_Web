@@ -36,6 +36,7 @@ const ROOM_OPTIONS: RoomOptions = {
 // Kutish oraliqlari kengayib boradi (jami ~1,5 daqiqa); hammasi muvaffaqiyatsiz bo'lsagina eski xatti-harakat (darsdan chiqish).
 const REJOIN_DELAYS_MS = [1_500, 3_000, 5_000, 8_000, 10_000, 15_000, 15_000, 20_000];
 const REJOIN_CONNECT_TIMEOUT_MS = 20_000;
+const START_POLL_MS = 5_000;
 // Dars/xona ataylab yopilgan yoki o'quvchi chetlashtirilgan holatlar — qayta kirilmaydi.
 // CLIENT_INITIATED bu yerda YO'Q: kutubxona qayta ulanish bekor bo'lganda ham shu sababni beradi; foydalanuvchining o'z chiqishi
 // `leaving` belgisi bilan ajratiladi.
@@ -109,6 +110,20 @@ export function LiveLessonPage() {
   }, [lessonId]);
 
   const refetchLesson = lesson.refetch;
+  const tokenStatus = (token.error as { status?: number } | null)?.status ?? 0;
+  const lessonStatus = lesson.data?.status;
+  const awaitingTeacher =
+    user?.role === ROLES.STUDENT &&
+    token.isError &&
+    tokenStatus === 400 &&
+    (lessonStatus === "scheduled" || lessonStatus === "live");
+  const teacherStarted = awaitingTeacher && lessonStatus === "live";
+
+  useEffect(() => {
+    if (!awaitingTeacher || teacherStarted) return undefined;
+    const timer = globalThis.setInterval(() => void refetchLesson(), START_POLL_MS);
+    return () => globalThis.clearInterval(timer);
+  }, [awaitingTeacher, teacherStarted, refetchLesson]);
 
   const handleLeave = useCallback(() => {
     leaving.current = true;
@@ -235,6 +250,32 @@ export function LiveLessonPage() {
           onOpenChange={(open) => {
             if (!open) navigate(-1);
           }}
+        />
+      </main>
+    );
+  }
+
+  if (awaitingTeacher) {
+    const start = new Date(lesson.data.startsAt);
+    const time = Number.isNaN(start.getTime())
+      ? lesson.data.time
+      : `${String(start.getHours()).padStart(2, "0")}:${String(start.getMinutes()).padStart(2, "0")}`;
+    return (
+      <main className="live-page">
+        <LiveRoomState
+          tone="waiting"
+          lessonTitle={lesson.data.title || lesson.data.courseTitle}
+          subtitle={lesson.data.courseTitle}
+          title={teacherStarted ? t("state.startedTitle") : t("state.notStartedTitle")}
+          description={
+            teacherStarted ? t("state.startedDescription") : t("state.notStartedDescription", { time })
+          }
+          actionLabel={t("preJoin.join")}
+          actionDisabled={!teacherStarted || token.isFetching}
+          onAction={() => void token.refetch()}
+          secondaryLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
+          onSecondary={handleLeave}
+          onBack={handleLeave}
         />
       </main>
     );

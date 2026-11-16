@@ -214,7 +214,6 @@ const ParentHomeworkPage = lazy(() => import("@/pages/parent/homework/parent-hom
 const AdminDashboardPage = lazy(() => import("@/pages/admin/admin-dashboard-page").then((module) => ({ default: module.AdminDashboardPage })));
 const AdminReportsPage = lazy(() => import("@/pages/admin/reports/admin-reports-page").then((module) => ({ default: module.AdminReportsPage })));
 const AdminSupportPage = lazy(() => import("@/pages/admin/support/admin-support-page").then((module) => ({ default: module.AdminSupportPage })));
-const AdminCertificatesPage = lazy(() => import("@/pages/admin/certificates/admin-certificates-page").then((module) => ({ default: module.AdminCertificatesPage })));
 const AdminTeachersPage = lazy(() => import("@/pages/admin/teachers/admin-teachers-page").then((module) => ({ default: module.AdminTeachersPage })));
 const LiveLessonPage = lazy(() => import("@/pages/live/live-lesson-page").then((module) => ({ default: module.LiveLessonPage })));
 // Dizayn-tizim sahifasi faqat ishlab chiqishda (prod bundle'ga kirmaydi va ochiq marshrut bo'lmaydi)
@@ -526,10 +525,6 @@ export function AppRouter() {
                   <Route
                     path={ROUTES.admin.teachers}
                     element={<AdminTeachersPage />}
-                  />
-                  <Route
-                    path={ROUTES.admin.certificates}
-                    element={<AdminCertificatesPage />}
                   />
                   <Route
                     path={ROUTES.admin.support}

@@ -238,7 +238,11 @@
     "mobileJoinFailedTitle": "Не удалось подключиться к уроку",
     "mobileJoinFailedDescription": "Проверьте подключение к интернету. Урок ещё идёт — попробуйте снова.",
     "mobileBackToChat": "Вернуться в чат",
-    "joiningRoom": "Подключение к уроку"
+    "joiningRoom": "Подключение к уроку",
+    "notStartedTitle": "Урок ещё не начался",
+    "notStartedDescription": "Урок начнётся в {{time}}. Как только учитель начнёт урок — даже раньше времени — кнопка «Войти на урок» станет активной.",
+    "startedTitle": "Учитель начал урок",
+    "startedDescription": "Теперь вы можете войти на урок."
   },
   "mediaMode": {
     "openMic": "Микрофон открыт для всех",

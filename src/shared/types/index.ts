@@ -2,7 +2,6 @@ export type {
   AuthContextValue,
   AuthStatus,
   AuthUser,
-  AdminCertificate,
   Certificate,
   CertificateStatus,
   LinkedAccount,

@@ -82,7 +82,7 @@ export function TestsPage() {
         lessonId: null,
         title: draft.title,
         topic: draft.title,
-        description: "",
+        description: draft.description,
         dueAt: draft.dueAt,
         opensAt: null,
         groups: [],

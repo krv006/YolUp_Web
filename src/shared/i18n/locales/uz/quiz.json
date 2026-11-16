@@ -545,7 +545,9 @@
     "continue": "Davom etish",
     "mobileTitle": "Yangi test · 1/2",
     "noGroup": "Guruhsiz saqlash",
-    "noGroupHint": "Guruhsiz test faqat sizga ko'rinadi. Keyin \"Guruhga berish\" orqali guruhga berasiz."
+    "noGroupHint": "Guruhsiz test faqat sizga ko'rinadi. Keyin \"Guruhga berish\" orqali guruhga berasiz.",
+    "description": "Tavsif · ixtiyoriy",
+    "descriptionPlaceholder": "Masalan: 1–5-mavzular bo'yicha nazorat, kalkulyatorsiz"
   },
   "importDialog": {
     "title": "Savollarni import qilish",

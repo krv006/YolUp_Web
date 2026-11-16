@@ -42,9 +42,6 @@ export const authEndpoints = Object.freeze({
   teacherApprove: (id: string) => `/api/v1/auth/teachers/${id}/approve/`,
   adminTestAccess: (id: string) => `/api/v1/admin/users/${id}/test-access/`,
   meAvatar: "/api/v1/auth/me/avatar/",
-  adminCertificates: "/api/v1/admin/certificates/",
-  adminCertificateVerify: (id: string) => `/api/v1/admin/certificates/${id}/verify/`,
-  adminCertificateReject: (id: string) => `/api/v1/admin/certificates/${id}/reject/`,
   meCertificates: "/api/v1/auth/me/certificates/",
   meCertificate: (id: string) => `/api/v1/auth/me/certificates/${id}/`,
 });

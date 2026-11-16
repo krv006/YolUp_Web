@@ -12,6 +12,7 @@ import { MobileScreenDialog } from "@/shared/ui/mobile-screen-dialog";
 export interface NewTestDraft {
   courseId: string;
   title: string;
+  description: string;
   subject: string;
   dueAt: string | null;
 }
@@ -25,6 +26,8 @@ export interface NewTestDialogProps {
   onContinue: (draft: NewTestDraft) => void;
   onImport: (source: QuizImportSource) => void;
 }
+
+const DESCRIPTION_MAX = 500;
 
 const IMPORT_SOURCES: Array<{ id: QuizImportSource; icon: string; mobileIcon: string }> = [
   { id: "docx", icon: "description", mobileIcon: "assignment-check-fill" },
@@ -53,6 +56,7 @@ export function NewTestDialog({
   const isCompact = useIsCompact();
   const [courseId, setCourseId] = useState("");
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [subject, setSubject] = useState("");
   const [due, setDue] = useState(today);
 
@@ -63,6 +67,7 @@ export function NewTestDialog({
     onContinue({
       courseId,
       title: title.trim(),
+      description: description.trim(),
       subject: finalSubject,
       dueAt: due ? `${due}T23:59` : null,
     });
@@ -122,6 +127,17 @@ export function NewTestDialog({
               value={title}
               placeholder={t("newTest.namePlaceholder")}
               onChange={(event) => setTitle(event.target.value)}
+            />
+          </MobileFieldLabel>
+
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("newTest.description")}>
+            <textarea
+              className="min-h-22 w-full resize-none rounded-lg border-[1.5px] border-transparent bg-surface px-4 py-3 text-body text-ink outline-none transition-colors placeholder:text-ink-secondary focus:border-focus"
+              rows={3}
+              maxLength={DESCRIPTION_MAX}
+              value={description}
+              placeholder={t("newTest.descriptionPlaceholder")}
+              onChange={(event) => setDescription(event.target.value)}
             />
           </MobileFieldLabel>
 
@@ -200,14 +216,7 @@ export function NewTestDialog({
             type="button"
             className="flex h-11 shrink-0 items-center justify-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong disabled:opacity-40"
             disabled={pending || !title.trim()}
-            onClick={() =>
-              onContinue({
-                courseId,
-                title: title.trim(),
-                subject: finalSubject,
-                dueAt: due ? `${due}T23:59` : null,
-              })
-            }
+            onClick={submit}
           >
             {t("newTest.continue")}
           </button>
@@ -237,6 +246,18 @@ export function NewTestDialog({
             value={title}
             placeholder={t("newTest.namePlaceholder")}
             onChange={(event) => setTitle(event.target.value)}
+          />
+        </label>
+
+        <label className="flex flex-col gap-2">
+          <span className="text-body-xs text-ink-secondary">{t("newTest.description")}</span>
+          <textarea
+            className="min-h-20 w-full resize-none rounded-md border border-transparent bg-subtle px-4 py-3 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface"
+            rows={2}
+            maxLength={DESCRIPTION_MAX}
+            value={description}
+            placeholder={t("newTest.descriptionPlaceholder")}
+            onChange={(event) => setDescription(event.target.value)}
           />
         </label>
 

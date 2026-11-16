@@ -96,7 +96,6 @@ export const ROUTES = Object.freeze({
     dashboard: "/admin/dashboard",
     users: "/admin/users",
     teachers: "/admin/teachers",
-    certificates: "/admin/certificates",
     support: "/admin/support",
     courses: "/admin/courses",
     payments: "/admin/payments",

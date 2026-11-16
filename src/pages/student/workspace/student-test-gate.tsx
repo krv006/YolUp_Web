@@ -41,6 +41,9 @@ export function TestStartScreen({ quiz, meta }: { quiz: QuizDetail; meta: string
         <strong className="font-heading text-h3 text-ink">{quizDisplayTitle(quiz)}</strong>
         {meta ? <small className="truncate text-body-sm text-ink-secondary">{meta}</small> : null}
       </span>
+      {quiz.description ? (
+        <p className="max-w-full text-body whitespace-pre-line break-words text-ink-secondary">{quiz.description}</p>
+      ) : null}
       <ul className="flex w-full flex-col gap-2 text-left">
         {rows.map((row) => (
           <li key={row.id} className="flex min-h-12 items-center gap-3 rounded-xl bg-subtle px-4 py-2.5">
