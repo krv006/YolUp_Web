@@ -30,9 +30,6 @@ export {
   useTeachers,
   useTwoFactorStatus,
   useLoginHistoryPage,
-  useAdminCertificates,
-  useVerifyCertificate,
-  useRejectCertificate,
 } from "./model/auth.queries";
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { ForcePasswordDialog } from "./ui/force-password-dialog";

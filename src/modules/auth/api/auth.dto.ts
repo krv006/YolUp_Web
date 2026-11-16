@@ -127,10 +127,6 @@ export type LinkedAccountDto = z.infer<typeof linkedAccountDtoSchema>;
 export type LoginRecordDto = z.infer<typeof loginRecordDtoSchema>;
 export type CertificateDto = z.infer<typeof certificateDtoSchema>;
 
-export interface AdminCertificateDto extends CertificateDto {
-  owner?: { id: string | number; name?: string; username?: string; first_name?: string; last_name?: string; role?: string; avatar?: string | null } | null;
-  user?: { id: string | number; name?: string; username?: string; first_name?: string; last_name?: string; role?: string; avatar?: string | null } | null;
-}
 export type SwitchAccountResponseDto = z.infer<typeof switchAccountResponseDtoSchema>;
 
 export interface LoginRecord {

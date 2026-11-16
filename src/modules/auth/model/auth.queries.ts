@@ -14,7 +14,6 @@ export const authKeys = Object.freeze({
   teacherStats: (id: string) => ["auth", "stats", id] as const,
   twoFactor: ["auth", "2fa"] as const,
   loginsPage: (page: number) => ["auth", "logins", "page", page] as const,
-  adminCertificates: (status: string) => ["auth", "admin", "certificates", status] as const,
 });
 
 export function useLoginHistoryPage(page: number, pageSize = 10) {
@@ -23,31 +22,6 @@ export function useLoginHistoryPage(page: number, pageSize = 10) {
     queryFn: ({ signal }) => authApi.getLoginsPage(page, pageSize, { signal }),
     staleTime: 30_000,
     placeholderData: (previous) => previous,
-  });
-}
-
-export function useAdminCertificates(status: string) {
-  return useQuery({
-    queryKey: authKeys.adminCertificates(status),
-    queryFn: ({ signal }) => authApi.getAdminCertificates(status, { signal }),
-  });
-}
-
-export function useVerifyCertificate() {
-  const client = useQueryClient();
-  return useMutation({
-    mutationFn: (id: string) => authApi.verifyCertificate(id),
-    onSuccess: () => client.invalidateQueries({ queryKey: ["auth", "admin", "certificates"] }),
-    onError: (error: Error) => toast.error(error.message),
-  });
-}
-
-export function useRejectCertificate() {
-  const client = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, reason }: { id: string; reason: string }) => authApi.rejectCertificate(id, reason),
-    onSuccess: () => client.invalidateQueries({ queryKey: ["auth", "admin", "certificates"] }),
-    onError: (error: Error) => toast.error(error.message),
   });
 }
 
