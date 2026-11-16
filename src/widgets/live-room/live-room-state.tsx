@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowLeft, CircleX, Wifi } from "lucide-react";
+import { ArrowLeft, CircleX, Clock, Wifi } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -9,8 +9,9 @@ export interface LiveRoomStateProps {
   description?: ReactNode;
   lessonTitle?: string;
   subtitle?: string;
-  tone?: "error" | "neutral" | "offline";
+  tone?: "error" | "neutral" | "offline" | "waiting";
   actionLabel?: string;
+  actionDisabled?: boolean;
   onAction?: () => void;
   secondaryLabel?: string;
   onSecondary?: () => void;
@@ -24,11 +25,13 @@ export function LiveRoomState({
   subtitle,
   tone = "error",
   actionLabel,
+  actionDisabled = false,
   onAction,
   secondaryLabel,
   onSecondary,
   onBack,
 }: LiveRoomStateProps) {
+  const waiting = tone === "waiting";
   const { t } = useTranslation("live");
   const isCompact = useIsCompact();
 
@@ -54,8 +57,10 @@ export function LiveRoomState({
 
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-2 pb-25 text-center">
           {tone !== "neutral" ? (
-            <span className="grid size-24 shrink-0 place-items-center rounded-full bg-subtle text-error-text">
-              <Icon name={tone === "offline" ? "wifi" : "error"} size={40} />
+            <span
+              className={`grid size-24 shrink-0 place-items-center rounded-full bg-subtle ${waiting ? "text-brand" : "text-error-text"}`}
+            >
+              <Icon name={waiting ? "schedule" : tone === "offline" ? "wifi" : "error"} size={40} />
             </span>
           ) : null}
 
@@ -70,10 +75,11 @@ export function LiveRoomState({
           {actionLabel && onAction ? (
             <button
               type="button"
-              className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action"
+              className="mt-4 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-brand text-title font-semibold text-on-action disabled:opacity-40"
+              disabled={actionDisabled}
               onClick={onAction}
             >
-              {tone === "neutral" ? null : <Icon name="refresh" size={20} />}
+              {tone === "neutral" ? null : <Icon name={waiting ? "videocam-fill" : "refresh"} size={20} />}
               {actionLabel}
             </button>
           ) : null}
@@ -125,8 +131,10 @@ export function LiveRoomState({
 
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
         {tone !== "neutral" ? (
-          <span className="mb-5.5 grid size-20 place-items-center rounded-xl bg-danger-bg text-danger">
-            {tone === "offline" ? <Wifi size={34} /> : <CircleX size={34} />}
+          <span
+            className={`mb-5.5 grid size-20 place-items-center rounded-xl ${waiting ? "bg-brand-subtle text-brand" : "bg-danger-bg text-danger"}`}
+          >
+            {waiting ? <Clock size={34} /> : tone === "offline" ? <Wifi size={34} /> : <CircleX size={34} />}
           </span>
         ) : null}
 
@@ -150,7 +158,8 @@ export function LiveRoomState({
             {actionLabel && onAction ? (
               <button
                 type="button"
-                className="flex h-12 items-center rounded-full bg-brand px-6 text-button text-on-action transition-colors hover:bg-brand-strong"
+                className="flex h-12 items-center rounded-full bg-brand px-6 text-button text-on-action transition-colors hover:bg-brand-strong disabled:opacity-40"
+                disabled={actionDisabled}
                 onClick={onAction}
               >
                 {actionLabel}

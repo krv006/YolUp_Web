@@ -236,7 +236,11 @@
     "mobileJoinFailedTitle": "Couldn't connect to the lesson",
     "mobileJoinFailedDescription": "Check your internet connection. The lesson is still going — try again.",
     "mobileBackToChat": "Back to chat",
-    "joiningRoom": "Joining the lesson room"
+    "joiningRoom": "Joining the lesson room",
+    "notStartedTitle": "The lesson hasn't started yet",
+    "notStartedDescription": "The lesson starts at {{time}}. As soon as the teacher starts it — even early — the “Join the lesson” button becomes active.",
+    "startedTitle": "The teacher has started the lesson",
+    "startedDescription": "You can join the lesson now."
   },
   "mediaMode": {
     "openMic": "Microphone open to all",

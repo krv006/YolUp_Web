@@ -130,6 +130,9 @@ export function useChat(
               if (event.type === "pinned") {
                 queryClient.invalidateQueries({ queryKey: messageKeys.pinned(conversationId ?? "") });
               }
+              if (event.type === "lessonChanged") {
+                queryClient.invalidateQueries({ queryKey: ["lessons"] });
+              }
               if (event.type === "roomUpdated" || event.type === "read") {
                 queryClient.invalidateQueries({
                   queryKey: conversationKeys.detail(conversationId ?? "", role),

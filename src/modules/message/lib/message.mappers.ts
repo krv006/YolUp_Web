@@ -157,6 +157,7 @@ export type ParsedSocketEvent =
   | { type: "pinned" }
   | { type: "read"; userId: string }
   | { type: "roomUpdated" }
+  | { type: "lessonChanged" }
   | { type: "comment"; postId: string; commentCount: number; message: ChatMessage }
   | { type: "error"; detail: string };
 
@@ -229,6 +230,9 @@ export function parseSocketEvent(raw: unknown, currentUserId?: string | null): P
       return { type: "read", userId: String(payload.user_id ?? "") };
     case "room_updated":
       return { type: "roomUpdated" };
+    case "lesson_live":
+    case "lesson_ended":
+      return { type: "lessonChanged" };
     case "error":
       return { type: "error", detail: event.detail || "WebSocket xatosi" };
     default:

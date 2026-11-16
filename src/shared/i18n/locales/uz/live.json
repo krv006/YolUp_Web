@@ -236,7 +236,11 @@
     "mobileJoinFailedTitle": "Darsga ulanib bo‘lmadi",
     "mobileJoinFailedDescription": "Internet aloqasini tekshiring. Dars hali davom etmoqda — qayta urinib ko‘ring.",
     "mobileBackToChat": "Chatga qaytish",
-    "joiningRoom": "Dars xonasiga ulanmoqda"
+    "joiningRoom": "Dars xonasiga ulanmoqda",
+    "notStartedTitle": "Dars hali boshlanmagan",
+    "notStartedDescription": "Dars {{time}} da boshlanadi. O‘qituvchi darsni boshlashi bilan — vaqtidan oldin bo‘lsa ham — «Darsga qo‘shilish» tugmasi yonadi.",
+    "startedTitle": "O‘qituvchi darsni boshladi",
+    "startedDescription": "Endi darsga qo‘shilishingiz mumkin."
   },
   "mediaMode": {
     "openMic": "Hammaga mikrofon ochiq",
