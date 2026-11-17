@@ -463,7 +463,17 @@
       "myComment": "Your note",
       "filesTitle": "Submitted files · {{count}}",
       "outOf": "/ {{max}} points",
-      "notGraded": "This task isn't graded with points"
+      "notGraded": "This task isn't graded with points",
+      "doneTitle": "Homework submitted",
+      "doneText": "“{{title}}” was sent to your teacher. What happens next:",
+      "doneSent": "Submitted",
+      "doneAi": "AI pre-check",
+      "doneAiHint": "Your answers are being checked — the result will appear on the homework page",
+      "doneTeacher": "Teacher's grade",
+      "doneTeacherHint": "You'll get a notification once it's graded",
+      "doneReview": "Teacher review",
+      "doneReviewHint": "This homework isn't graded — your teacher may leave a comment",
+      "doneBack": "Back to homework"
     }
   },
   "tutor": {

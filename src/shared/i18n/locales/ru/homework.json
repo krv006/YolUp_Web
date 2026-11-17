@@ -2,7 +2,6 @@
   "toast": {
     "assignmentCreated": "Задание отправлено",
     "assignmentUpdated": "Задание обновлено",
-    "submitted": "Работа отправлена, начата проверка ИИ",
     "assignmentDeleted": "Задание удалено",
     "rechecking": "Повторная проверка начата",
     "gradeUpdated": "Оценка обновлена",
@@ -525,5 +524,16 @@
     "submitted": "Сдал",
     "notSubmitted": "Не сдал",
     "loading": "Загрузка…"
+  },
+  "reviewSaved": {
+    "gradedTitle": "Оценка сохранена",
+    "gradedText": "{{name}} — оценка {{grade}}. Ученику отправлено уведомление.",
+    "resubmitTitle": "Запрошена пересдача",
+    "resubmitText": "{{name}} получит уведомление с вашим комментарием. Новую работу проверите, когда она придёт.",
+    "progress": "Проверено: {{done}} из {{total}}",
+    "allDone": "Все работы проверены",
+    "next": "Следующий: {{name}}",
+    "back": "К заданию",
+    "close": "Закрыть"
   }
 }

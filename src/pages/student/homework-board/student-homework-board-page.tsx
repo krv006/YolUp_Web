@@ -38,7 +38,7 @@ export function StudentHomeworkBoardPage() {
       />
     );
 
-  return <HomeworkBoardScreen assignment={assignment.data} board={board.data} onBack={() => navigate(-1)} onSubmitted={() => navigate(ROUTES.student.homeworkItem(assignment.data.id), { replace: true })} />;
+  return <HomeworkBoardScreen assignment={assignment.data} board={board.data} onBack={() => navigate(-1)} onSubmitted={() => navigate(ROUTES.student.homeworkItem(assignment.data.id), { replace: true, state: { submitted: true } })} />;
 }
 
 function HomeworkBoardScreen({
