@@ -20,6 +20,8 @@ import { Switch } from "@/shared/ui/switch";
 import type { Submission } from "@/shared/types";
 import { SubmissionPreview } from "./submission-preview";
 import { ResubmitDialog } from "./resubmit-dialog";
+import { nextPendingSubmission, reviewedCount } from "./review-progress";
+import { ReviewSavedDialog, type ReviewSaved } from "./review-saved-dialog";
 
 const GRADES = [1, 2, 3, 4, 5];
 
@@ -45,8 +47,8 @@ export function HomeworkReviewPage() {
   const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const assignment = useAssignment(assignmentId);
-  const review = useReviewSubmission();
-  const resubmit = useRequestResubmit();
+  const review = useReviewSubmission({ notify: false });
+  const resubmit = useRequestResubmit({ notify: false });
   const download = useDownloadSubmissionFile();
 
   const [filter, setFilter] = useState("review");
@@ -55,6 +57,8 @@ export function HomeworkReviewPage() {
   const [shareWithParent, setShareWithParent] = useState(true);
   const [resubmitOpen, setResubmitOpen] = useState(false);
   const [resultOpen, setResultOpen] = useState(false);
+  const [saved, setSaved] = useState<ReviewSaved | null>(null);
+  const [pinnedId, setPinnedId] = useState<string | null>(null);
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [answerScores, setAnswerScores] = useState<Record<string, string>>({});
   const isCompact = useIsCompact();
@@ -63,7 +67,7 @@ export function HomeworkReviewPage() {
   const rows = useMemo(() => item?.submissions ?? [], [item]);
   const visible = filter === "review" ? rows.filter((row) => row.status !== "done") : rows;
 
-  const activeId = params.get("s") ?? visible[0]?.id ?? rows[0]?.id ?? null;
+  const activeId = pinnedId ?? params.get("s") ?? visible[0]?.id ?? rows[0]?.id ?? null;
   const submission = useSubmission(activeId);
   const current = submission.data ?? rows.find((row) => row.id === activeId) ?? null;
 
@@ -93,8 +97,48 @@ export function HomeworkReviewPage() {
     if (next) setParams({ s: next.id });
   }
 
+  function showSaved(target: Submission, kind: ReviewSaved["kind"]) {
+    const next = nextPendingSubmission(rows, target.id);
+    setPinnedId(target.id);
+    setSaved({
+      kind,
+      studentName: target.studentName,
+      grade: kind === "graded" ? grade : null,
+      reviewed: reviewedCount(rows, target.id),
+      total: rows.length,
+      next: next ? { id: next.id, name: next.studentName } : null,
+    });
+  }
+
+  function backToAssignment() {
+    setSaved(null);
+    navigate(assignmentId ? ROUTES.teacher.homeworkItem(assignmentId) : ROUTES.teacher.homework);
+  }
+
+  function requestResubmit(value: string) {
+    if (!current) return;
+    const target = current;
+    resubmit.mutateAsync({ id: target.id, comment: value }).then(() => {
+      setResubmitOpen(false);
+      showSaved(target, "resubmit");
+    });
+  }
+
+  const savedDialog = (
+    <ReviewSavedDialog
+      saved={saved}
+      onNext={(id) => {
+        setSaved(null);
+        setParams({ s: id });
+      }}
+      onBack={backToAssignment}
+      onClose={() => setSaved(null)}
+    />
+  );
+
   function confirm() {
     if (!current) return;
+    const target = current;
     review
       .mutateAsync({
         id: current.id,
@@ -106,7 +150,7 @@ export function HomeworkReviewPage() {
           answerScores: parseAnswerScores(answerScores),
         },
       })
-      .then(() => move(1));
+      .then(() => showSaved(target, "graded"));
   }
 
   const answersBlock = current?.answers.length ? (
@@ -163,10 +207,7 @@ export function HomeworkReviewPage() {
       student={current?.studentName ?? ""}
       pending={resubmit.isPending}
       onOpenChange={setResubmitOpen}
-      onConfirm={(value) => {
-        if (!current) return;
-        resubmit.mutateAsync({ id: current.id, comment: value }).then(() => setResubmitOpen(false));
-      }}
+      onConfirm={requestResubmit}
     />
   );
 
@@ -347,6 +388,7 @@ export function HomeworkReviewPage() {
           </button>
         </div>
         {resubmitDialog}
+        {savedDialog}
         <HomeworkResultDialog
           submissionId={current?.id}
           initial={current ?? undefined}
@@ -645,13 +687,9 @@ export function HomeworkReviewPage() {
         student={current?.studentName ?? ""}
         pending={resubmit.isPending}
         onOpenChange={setResubmitOpen}
-        onConfirm={(value) => {
-          if (!current) return;
-          resubmit
-            .mutateAsync({ id: current.id, comment: value })
-            .then(() => setResubmitOpen(false));
-        }}
+        onConfirm={requestResubmit}
       />
+      {savedDialog}
     </div>
   );
 }

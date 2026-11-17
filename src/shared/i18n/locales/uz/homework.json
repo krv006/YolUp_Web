@@ -503,5 +503,16 @@
     "submitted": "Topshirgan",
     "notSubmitted": "Topshirmagan",
     "loading": "Yuklanmoqda…"
+  },
+  "reviewSaved": {
+    "gradedTitle": "Baho saqlandi",
+    "gradedText": "{{name}} — {{grade}} baho. O‘quvchiga bildirishnoma yuborildi.",
+    "resubmitTitle": "Qayta topshirish so‘raldi",
+    "resubmitText": "{{name}}ga izohingiz bilan bildirishnoma yuborildi. Yangi javob kelganda yana tekshirasiz.",
+    "progress": "Tekshirildi: {{done}} / {{total}}",
+    "allDone": "Barcha ishlar tekshirildi",
+    "next": "Keyingi: {{name}}",
+    "back": "Vazifaga qaytish",
+    "close": "Yopish"
   }
 }

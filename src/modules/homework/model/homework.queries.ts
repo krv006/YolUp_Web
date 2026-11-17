@@ -115,7 +115,7 @@ export function useUpdateAssignment() {
   });
 }
 
-export function useRequestResubmit() {
+export function useRequestResubmit({ notify = true }: { notify?: boolean } = {}) {
   const { t } = useTranslation("homework");
   const client = useQueryClient();
   return useMutation({
@@ -123,7 +123,7 @@ export function useRequestResubmit() {
     onSuccess: (id) => {
       client.invalidateQueries({ queryKey: homeworkKeys.submission(id) });
       client.invalidateQueries({ queryKey: homeworkKeys.all });
-      toast.success(t("toast.resubmitRequested"));
+      if (notify) toast.success(t("toast.resubmitRequested"));
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -298,7 +298,7 @@ export function useRecheckSubmission() {
   });
 }
 
-export function useReviewSubmission() {
+export function useReviewSubmission({ notify = true }: { notify?: boolean } = {}) {
   const { t } = useTranslation("homework");
   const client = useQueryClient();
   return useMutation({
@@ -307,7 +307,7 @@ export function useReviewSubmission() {
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });
-      toast.success(t("toast.gradeUpdated"));
+      if (notify) toast.success(t("toast.gradeUpdated"));
     },
     onError: (error: Error) => toast.error(error.message),
   });

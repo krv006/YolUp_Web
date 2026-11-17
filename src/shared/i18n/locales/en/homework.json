@@ -510,5 +510,16 @@
     "submitted": "Submitted",
     "notSubmitted": "Not submitted",
     "loading": "Loading…"
+  },
+  "reviewSaved": {
+    "gradedTitle": "Grade saved",
+    "gradedText": "{{name}} — grade {{grade}}. The student has been notified.",
+    "resubmitTitle": "Resubmission requested",
+    "resubmitText": "{{name}} has been notified with your comment. You'll review the new work when it arrives.",
+    "progress": "Reviewed: {{done}} of {{total}}",
+    "allDone": "All work reviewed",
+    "next": "Next: {{name}}",
+    "back": "Back to homework",
+    "close": "Close"
   }
 }
