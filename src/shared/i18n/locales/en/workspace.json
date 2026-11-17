@@ -276,6 +276,10 @@
     "recordingConverting": "Converting — it opens once ready",
     "board": "Board (PDF)",
     "boardHint": "Everything written on the board during the lesson",
-    "searchHint": "Try another word"
+    "searchHint": "Try another word",
+    "videoCount_one": "{{count}} video",
+    "videoCount_other": "{{count}} videos",
+    "boardCount_one": "{{count}} board",
+    "boardCount_other": "{{count}} boards"
   }
 }
