@@ -164,7 +164,6 @@ export function useAssignmentAiSummary() {
 }
 
 export function useSubmitHomework() {
-  const { t } = useTranslation("homework");
   const client = useQueryClient();
   return useMutation({
     mutationFn: ({
@@ -183,7 +182,6 @@ export function useSubmitHomework() {
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });
-      toast.success(t("toast.submitted"));
     },
     onError: (error: Error) => toast.error(error.message),
   });
@@ -221,14 +219,12 @@ export function useSaveHomeworkBoard(assignmentId: string) {
 }
 
 export function useSubmitHomeworkBoard() {
-  const { t } = useTranslation("homework");
   const client = useQueryClient();
   return useMutation({
     mutationFn: (assignmentId: string) => homeworkApi.submitBoard(assignmentId),
     onSuccess: (submission) => {
       if (submission) client.setQueryData(homeworkKeys.submission(submission.id), submission);
       client.invalidateQueries({ queryKey: homeworkKeys.all });
-      toast.success(t("toast.submitted"));
     },
     onError: (error: Error) => toast.error(error.message),
   });

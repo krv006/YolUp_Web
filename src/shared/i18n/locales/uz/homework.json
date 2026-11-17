@@ -2,7 +2,6 @@
   "toast": {
     "assignmentCreated": "Vazifa yuborildi",
     "assignmentUpdated": "Vazifa yangilandi",
-    "submitted": "Vazifa topshirildi, AI tekshiruvi boshlandi",
     "assignmentDeleted": "Vazifa o'chirildi",
     "rechecking": "Qayta tekshirish boshlandi",
     "gradeUpdated": "Baho yangilandi",

@@ -2,7 +2,6 @@
   "toast": {
     "assignmentCreated": "Assignment posted",
     "assignmentUpdated": "Assignment updated",
-    "submitted": "Homework submitted, AI review started",
     "assignmentDeleted": "Assignment deleted",
     "rechecking": "Rechecking started",
     "gradeUpdated": "Grade updated",

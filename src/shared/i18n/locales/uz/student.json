@@ -459,7 +459,17 @@
       "myComment": "Sizning izohingiz",
       "filesTitle": "Yuborilgan fayllar · {{count}}",
       "outOf": "/ {{max}} ball",
-      "notGraded": "Bu vazifa ball bilan baholanmaydi"
+      "notGraded": "Bu vazifa ball bilan baholanmaydi",
+      "doneTitle": "Vazifa topshirildi",
+      "doneText": "«{{title}}» o‘qituvchiga yuborildi. Keyingi bosqichlar:",
+      "doneSent": "Topshirildi",
+      "doneAi": "AI dastlabki tekshiruvi",
+      "doneAiHint": "Javoblaringiz tekshirilmoqda — natija vazifa sahifasida chiqadi",
+      "doneTeacher": "O‘qituvchi bahosi",
+      "doneTeacherHint": "Baho qo‘yilgach sizga bildirishnoma keladi",
+      "doneReview": "O‘qituvchi ko‘rib chiqadi",
+      "doneReviewHint": "Bu vazifa baholanmaydi — o‘qituvchi izoh qoldirishi mumkin",
+      "doneBack": "Vazifalarga qaytish"
     }
   },
   "tutor": {

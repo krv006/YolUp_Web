@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useConversations } from "@/modules/conversation";
 import { useCourse } from "@/modules/course";
@@ -19,6 +19,7 @@ import {
   GoogleFormLink,
   formatGradeValue,
   gradePercent,
+  latestSubmission,
   type AnswerDraft,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
@@ -30,6 +31,7 @@ import { MobileActionBar, MobileEmptyCard, MobilePageHeader } from "@/shared/ui/
 import { SubmissionPreview } from "@/pages/teacher/workspace/homework/submission-preview";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { shortDateTime } from "../lib/format";
+import { HomeworkSubmittedDialog } from "./homework-submitted-dialog";
 
 const DAY_MS = 86_400_000;
 const GRADES = [1, 2, 3, 4, 5];
@@ -47,7 +49,11 @@ export function StudentHomeworkItemPage() {
   const { t } = useTranslation("student");
   const { assignmentId = "" } = useParams();
   const assignment = useAssignment(assignmentId || null);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [resubmitting, setResubmitting] = useState(false);
+  const [doneOpen, setDoneOpen] = useState(() => Boolean((location.state as { submitted?: boolean } | null)?.submitted));
+  const [sent, setSent] = useState<Submission | null>(null);
 
   if (assignment.isError)
     return (
@@ -70,16 +76,39 @@ export function StudentHomeworkItemPage() {
       </main>
     );
 
-  const mine = assignment.data.mySubmission;
+  const mine = assignment.data.mySubmission ?? latestSubmission(assignment.data.submissions);
+  const doneDialog = (
+    <HomeworkSubmittedDialog
+      open={doneOpen}
+      assignment={assignment.data}
+      submission={sent ?? mine}
+      onDone={() => navigate(ROUTES.student.homework)}
+    />
+  );
   if (mine && !resubmitting)
     return (
-      <HomeworkResult
-        assignment={assignment.data}
-        initial={mine}
-        onResubmit={mine.status === "resubmit_requested" ? () => setResubmitting(true) : undefined}
-      />
+      <>
+        <HomeworkResult
+          assignment={assignment.data}
+          initial={mine}
+          onResubmit={mine.status === "resubmit_requested" ? () => setResubmitting(true) : undefined}
+        />
+        {doneDialog}
+      </>
     );
-  return <HomeworkSubmit assignment={assignment.data} />;
+  return (
+    <>
+      <HomeworkSubmit
+        assignment={assignment.data}
+        onSubmitted={(submission) => {
+          setSent(submission);
+          setResubmitting(false);
+          setDoneOpen(true);
+        }}
+      />
+      {doneDialog}
+    </>
+  );
 }
 
 function useCourseRoom(courseId: string) {
@@ -87,7 +116,13 @@ function useCourseRoom(courseId: string) {
   return conversations.data?.find((item) => item.courseId === courseId)?.id ?? null;
 }
 
-function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
+function HomeworkSubmit({
+  assignment,
+  onSubmitted,
+}: {
+  assignment: Assignment;
+  onSubmitted: (submission: Submission | null) => void;
+}) {
   const { t } = useTranslation("student");
   const { t: th } = useTranslation("homework");
   const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
@@ -149,8 +184,9 @@ function HomeworkSubmit({ assignment }: { assignment: Assignment }) {
     setError(null);
     submit
       .mutateAsync({ assignmentId: assignment.id, files, skillKey: assignment.skillKey, comment, answers: answerList })
-      .then(() => {
+      .then((submission) => {
         if (serverDraft) saveDraftMutation.mutate("");
+        onSubmitted(submission ?? null);
       })
       .catch((reason: unknown) => setError(homeworkFieldError(reason, "file")));
   }

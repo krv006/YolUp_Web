@@ -2,7 +2,6 @@
   "toast": {
     "assignmentCreated": "Задание отправлено",
     "assignmentUpdated": "Задание обновлено",
-    "submitted": "Работа отправлена, начата проверка ИИ",
     "assignmentDeleted": "Задание удалено",
     "rechecking": "Повторная проверка начата",
     "gradeUpdated": "Оценка обновлена",
