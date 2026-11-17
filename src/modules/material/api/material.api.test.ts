@@ -18,6 +18,16 @@ describe("materialApi folders", () => {
     expect(folder.files[0]).toMatchObject({ id: "5", lessonId: "l1", kind: "pdf" });
   });
 
+  it("maps course folder counts and defaults missing video and board counts to zero", async () => {
+    vi.spyOn(apiClient, "get").mockResolvedValue([
+      { id: "c1", title: "Ingliz Tili A1", kind: "group", file_count: 2, recording_count: 3, board_count: 1 },
+      { id: "c2", title: "RV", kind: "club", file_count: 0 },
+    ]);
+    const folders = await materialApi.courses();
+    expect(folders[0]).toMatchObject({ fileCount: 2, recordingCount: 3, boardCount: 1 });
+    expect(folders[1]).toMatchObject({ fileCount: 0, recordingCount: 0, boardCount: 0, kind: "club" });
+  });
+
   it("uploads into a lesson folder only when one is chosen", async () => {
     const post = vi.spyOn(apiClient, "post").mockResolvedValue({ id: 1, course_id: "c1" });
     const file = new File(["x"], "a.pdf");

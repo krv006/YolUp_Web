@@ -21,6 +21,8 @@ export interface MaterialCourseDto {
   kind?: "group" | "club";
   subject?: string | null;
   file_count?: number | null;
+  recording_count?: number | null;
+  board_count?: number | null;
 }
 
 export interface MaterialLessonDto {
@@ -51,6 +53,8 @@ export interface MaterialCourseFolder {
   title: string;
   kind: "group" | "club";
   fileCount: number;
+  recordingCount: number;
+  boardCount: number;
 }
 
 export interface MaterialLessonFolder {

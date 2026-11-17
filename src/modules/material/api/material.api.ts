@@ -66,6 +66,8 @@ export const materialApi = {
       title: item.title,
       kind: folderKind(item.kind),
       fileCount: Number(item.file_count ?? 0),
+      recordingCount: Number(item.recording_count ?? 0),
+      boardCount: Number(item.board_count ?? 0),
     }));
   },
   async courseLessons(courseId: string, options?: RequestOptions): Promise<MaterialCourseLessons> {

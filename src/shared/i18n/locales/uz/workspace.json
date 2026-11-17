@@ -275,6 +275,8 @@
     "recordingConverting": "Konvertatsiya qilinmoqda — tayyor bo'lgach ochiladi",
     "board": "Doska (PDF)",
     "boardHint": "Darsda doskaga yozilganlar",
-    "searchHint": "Boshqa so'z bilan qidirib ko'ring"
+    "searchHint": "Boshqa so'z bilan qidirib ko'ring",
+    "videoCount": "{{count}} ta video",
+    "boardCount": "{{count}} ta doska"
   }
 }

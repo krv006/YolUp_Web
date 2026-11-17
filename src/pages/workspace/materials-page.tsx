@@ -242,7 +242,15 @@ export function MaterialsPage() {
             icon={<Icon name="folder" size={22} />}
             tone="bg-brand-subtle text-brand"
             title={item.title}
-            meta={t("materials.filesCount", { count: item.fileCount })}
+            meta={[
+              item.fileCount || (!item.recordingCount && !item.boardCount)
+                ? t("materials.filesCount", { count: item.fileCount })
+                : "",
+              item.recordingCount ? t("materials.videoCount", { count: item.recordingCount }) : "",
+              item.boardCount ? t("materials.boardCount", { count: item.boardCount }) : "",
+            ]
+              .filter(Boolean)
+              .join(" · ")}
             badge={
               item.kind === "club" ? (
                 <span className="inline-flex h-5 shrink-0 items-center rounded-full bg-accent-saffron-bg px-2 text-caption-strong text-accent-saffron-fg">
