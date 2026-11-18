@@ -17,6 +17,7 @@ export function useRegisterMutation() {
         last_name: values.lastName.trim(),
         role: values.role,
         phone: normalizeUzPhone(values.phone ?? ""),
+        ...(values.email && values.emailToken ? { email: values.email, email_token: values.emailToken } : {}),
       }),
   });
 }
@@ -45,14 +46,14 @@ export function useDisableTwoFactorMutation() {
 
 export function usePasswordResetRequestMutation() {
   return useMutation({
-    mutationFn: (phone: string) => authApi.requestPasswordReset(phone),
+    mutationFn: (email: string) => authApi.requestPasswordReset(email),
   });
 }
 
 export function usePasswordResetVerifyMutation() {
   return useMutation({
-    mutationFn: (values: { phone: string; code: string }) =>
-      authApi.verifyPasswordReset(values.phone, values.code),
+    mutationFn: (values: { email: string; code: string }) =>
+      authApi.verifyPasswordReset(values.email, values.code),
   });
 }
 

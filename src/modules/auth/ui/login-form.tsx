@@ -44,6 +44,8 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         <AuthField
           id="login"
           autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
           placeholder={t("form.loginPlaceholder")}
           invalid={Boolean(errors.login)}
           {...register("login")}

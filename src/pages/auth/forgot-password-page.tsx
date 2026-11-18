@@ -3,10 +3,11 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AuthButton,
-  AuthPhoneInput,
+  AuthField,
   AuthScreen,
-  UZ_PHONE_LENGTH,
   describeResetError,
+  isValidEmail,
+  normalizeEmail,
   usePasswordResetRequestMutation,
 } from "@/modules/auth";
 import { showErrorToast } from "@/shared/ui/app-toast";
@@ -19,17 +20,18 @@ export function ForgotPasswordPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const requestCode = usePasswordResetRequestMutation();
-  const initial = (location.state as { digits?: string } | null)?.digits ?? "";
-  const [digits, setDigits] = useState(initial);
+  const initial = (location.state as { email?: string } | null)?.email ?? "";
+  const [email, setEmail] = useState(initial);
+  const valid = isValidEmail(email);
 
   async function sendCode() {
-    const phone = `+998${digits}`;
+    if (!valid) return;
+    const address = normalizeEmail(email);
     try {
-      const response = await requestCode.mutateAsync(phone);
+      const response = await requestCode.mutateAsync(address);
       navigate("/verify-code", {
         state: {
-          phone,
-          digits,
+          email: address,
           expiresIn: response.expires_in ?? DEFAULT_EXPIRES_IN,
           retryAfter: response.retry_after ?? DEFAULT_RETRY_AFTER,
         },
@@ -52,7 +54,7 @@ export function ForgotPasswordPage() {
           onClick={sendCode}
           loading={requestCode.isPending}
           loadingLabel={t("mobile.reset.sending")}
-          disabled={digits.length < UZ_PHONE_LENGTH}
+          disabled={!valid}
         >
           {t("mobile.reset.sendCode")}
         </AuthButton>
@@ -66,13 +68,26 @@ export function ForgotPasswordPage() {
         </>
       }
     >
-      <AuthPhoneInput
-        label={t("mobile.reset.phoneLabel")}
-        hint={t("mobile.reset.phoneHint")}
-        placeholder={t("mobile.reset.phoneNationalPlaceholder")}
-        value={digits}
-        onChange={setDigits}
-      />
+      <form
+        className="flex flex-col gap-2"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void sendCode();
+        }}
+      >
+        <AuthField
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          label={t("mobile.reset.emailLabel")}
+          placeholder={t("mobile.reset.emailPlaceholder")}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+        />
+        <small className="px-1 text-caption text-ink-secondary">{t("mobile.reset.emailHint")}</small>
+      </form>
     </AuthScreen>
   );
 }

@@ -11,7 +11,11 @@ export function createLoginSchema(t: TFunction<"auth">) {
 
 export function createRegisterSchema(t: TFunction<"auth">) {
   return z.object({
-    username: z.string().trim().min(3, t("validation.usernameMinLength")),
+    username: z
+      .string()
+      .trim()
+      .min(3, t("validation.usernameMinLength"))
+      .refine((value) => !value.includes("@"), t("validation.usernameNoAt")),
     password: z.string().min(8, t("validation.passwordMinLength")),
     firstName: z.string().trim().min(1, t("validation.firstNameRequired")),
     lastName: z.string().trim().min(1, t("validation.lastNameRequired")),

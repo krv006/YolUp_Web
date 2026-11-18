@@ -7,6 +7,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { applyApiFieldErrors, type AppError } from "@/shared/api";
 import type { RegisterFormValues } from "../api/auth.dto";
 import { createRegisterSchema } from "../model/auth.schemas";
+import { useRegisterEmail } from "../model/use-register-email";
+import { RegisterEmailField } from "./register-email-field";
 import {
   AuthButton,
   AuthField,
@@ -27,6 +29,7 @@ export function MobileRegisterForm({ onSubmit, onDone }: MobileRegisterFormProps
   const { t } = useTranslation("auth");
   const navigate = useNavigate();
   const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
+  const email = useRegisterEmail();
   const [confirm, setConfirm] = useState("");
   const [confirmError, setConfirmError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -58,10 +61,12 @@ export function MobileRegisterForm({ onSubmit, onDone }: MobileRegisterFormProps
       return;
     }
     setConfirmError(null);
+    if (!email.validate()) return;
     try {
-      await onSubmit(values);
+      await onSubmit(email.withEmail(values));
       setCreated(true);
     } catch (error) {
+      if (email.takeServerError(error)) return;
       const appError = error as AppError;
       if (
         !applyApiFieldErrors(appError, setError, { first_name: "firstName", last_name: "lastName" })
@@ -183,6 +188,16 @@ export function MobileRegisterForm({ onSubmit, onDone }: MobileRegisterFormProps
           hint={t("mobile.reset.phoneHint")}
           {...register("phone")}
         />
+
+        {email.visible ? (
+          <RegisterEmailField
+            key={email.fieldKey}
+            required={email.required}
+            value={email.value}
+            onChange={email.change}
+            error={email.error}
+          />
+        ) : null}
 
         <AuthPasswordField
           autoComplete="new-password"

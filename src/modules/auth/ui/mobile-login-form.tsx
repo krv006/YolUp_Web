@@ -44,12 +44,13 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
       await onSubmit(values);
     } catch (error) {
       const appError = error as AppError;
+      const explained = appError?.status === 400 && !appError.fields ? appError.message : "";
       if (!applyApiFieldErrors(appError, setError, { username: "login" })) {
-        setError("root", { type: "server", message: t("mobile.login.failed") });
+        setError("root", { type: "server", message: explained || t("mobile.login.failed") });
       }
       showErrorToast({
         title: t("mobile.login.errorToastTitle"),
-        description: t("mobile.login.errorToastDescription"),
+        description: explained || t("mobile.login.errorToastDescription"),
       });
     }
   }
@@ -97,6 +98,8 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
         <div className="flex flex-col gap-1">
           <AuthField
             autoComplete="username"
+          autoCapitalize="none"
+          spellCheck={false}
             label={t("form.loginLabel")}
             placeholder={t("form.loginPlaceholder")}
             invalid={Boolean(errors.login) || failed}

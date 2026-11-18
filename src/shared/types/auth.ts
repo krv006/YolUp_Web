@@ -36,6 +36,9 @@ export interface AuthUser {
   inviteCode: string | null;
   avatarUrl: string | null;
   email: string | null;
+  emailVerified: boolean;
+  emailSetupRequired: boolean;
+  emailSetupDeadline: string | null;
   status: string;
   avgRating: number | null;
   ratingCount: number | null;
