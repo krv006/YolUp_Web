@@ -463,7 +463,12 @@
     "imageUpdated": "Kanal rasmi yangilandi",
     "imageRemoved": "Kanal rasmi olib tashlandi",
     "linkedGroups": "Ulangan guruhlar",
-    "groupFallback": "Guruh"
+    "groupFallback": "Guruh",
+    "detachGroup": "«{{title}}» guruhini kanaldan ajratish",
+    "detachTitle": "Guruhni kanaldan ajratish",
+    "detachHint": "«{{title}}» guruhi orqali qo‘shilgan a’zolar kanaldan chiqariladi. Kanalga alohida qo‘shilganlar qoladi.",
+    "detachConfirm": "Ajratish",
+    "groupDetached": "«{{title}}» ajratildi · {{count}} ta a’zo chiqarildi"
   },
   "club": {
     "badge": "Club"

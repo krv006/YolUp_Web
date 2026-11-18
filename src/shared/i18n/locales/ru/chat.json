@@ -472,7 +472,15 @@
     "imageUpdated": "Фото канала обновлено",
     "imageRemoved": "Фото канала удалено",
     "linkedGroups": "Связанные группы",
-    "groupFallback": "Группа"
+    "groupFallback": "Группа",
+    "detachGroup": "Отвязать группу «{{title}}» от канала",
+    "detachTitle": "Отвязать группу от канала",
+    "detachHint": "Участники, добавленные через группу «{{title}}», будут удалены из канала. Добавленные отдельно останутся.",
+    "detachConfirm": "Отвязать",
+    "groupDetached_one": "«{{title}}» отвязана · удалён {{count}} участник",
+    "groupDetached_few": "«{{title}}» отвязана · удалено {{count}} участника",
+    "groupDetached_many": "«{{title}}» отвязана · удалено {{count}} участников",
+    "groupDetached_other": "«{{title}}» отвязана · удалено {{count}} участника"
   },
   "club": {
     "badge": "Клуб"

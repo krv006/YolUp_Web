@@ -20,6 +20,7 @@ import { Switch } from "@/shared/ui/switch";
 import type { Submission } from "@/shared/types";
 import { SubmissionPreview } from "./submission-preview";
 import { ResubmitDialog } from "./resubmit-dialog";
+import { HomeworkFocusCard } from "./homework-focus-card";
 import { nextPendingSubmission, reviewedCount } from "./review-progress";
 import { ReviewSavedDialog, type ReviewSaved } from "./review-saved-dialog";
 
@@ -161,6 +162,7 @@ export function HomeworkReviewPage() {
     />
   ) : null;
 
+  const focusCard = current?.focus ? <HomeworkFocusCard focus={current.focus} /> : null;
   const studentNote = current?.comment && !textAnswer ? (
     <div className="flex flex-col gap-2">
       <span className="text-body-xs text-ink-secondary">{t("review.studentComment")}</span>
@@ -367,6 +369,7 @@ export function HomeworkReviewPage() {
           {answersBlock ? <div className="mt-4">{answersBlock}</div> : null}
           {studentNote ? <div className="mt-4">{studentNote}</div> : null}
           {fileList ? <div className="mt-4">{fileList}</div> : null}
+          {focusCard ? <div className="mt-4">{focusCard}</div> : null}
         </div>
 
         <div className="grid shrink-0 grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-2 rounded-t-2xl bg-surface px-4 pt-3 pb-8">
@@ -636,6 +639,7 @@ export function HomeworkReviewPage() {
 
         {answersBlock}
         {studentNote}
+        {focusCard}
 
         <label className="flex flex-col gap-2">
           <span className="text-body-xs text-ink-secondary">{t("review.comment")}</span>

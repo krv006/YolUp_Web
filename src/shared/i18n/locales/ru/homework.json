@@ -535,5 +535,24 @@
     "next": "Следующий: {{name}}",
     "back": "К заданию",
     "close": "Закрыть"
+  },
+  "reviewFocus": {
+    "title": "Уходы со страницы",
+    "exits_one": "Уходил {{count}} раз",
+    "exits_few": "Уходил {{count}} раза",
+    "exits_many": "Уходил {{count}} раз",
+    "exits_other": "Уходил {{count}} раза",
+    "stayed": "Не уходил",
+    "stayedHint": "Не переключался на другие окна или вкладки со страницы задания",
+    "away": "Вне страницы всего {{total}} · самое долгое {{longest}}",
+    "notReturned": "не вернулся",
+    "more_one": "Ещё {{count}}",
+    "more_few": "Ещё {{count}}",
+    "more_many": "Ещё {{count}}",
+    "more_other": "Ещё {{count}}",
+    "seconds": "{{seconds}} с",
+    "minutes": "{{minutes}} мин",
+    "minutesSeconds": "{{minutes}} мин {{seconds}} с",
+    "hours": "{{hours}} ч {{minutes}} мин"
   }
 }

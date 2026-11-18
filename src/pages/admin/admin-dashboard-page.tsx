@@ -24,7 +24,7 @@ import {
 } from "@/modules/analytics";
 import { NotificationBell, SentNotificationsPanel, type NotificationLink } from "@/modules/notification";
 import { can, PERMISSIONS } from "@/modules/permission";
-import { ServerMonitoringPanel, StoragePanel } from "./system-panels";
+import { ClientHealthPanel, ServerMonitoringPanel, StoragePanel } from "./system-panels";
 import type { DashboardPeriod } from "@/shared/types";
 
 const PERIODS: DashboardPeriod[] = ["day", "week", "month", "year"];
@@ -327,6 +327,7 @@ export function AdminDashboardPage() {
 
       <StoragePanel />
       <ServerMonitoringPanel />
+      <ClientHealthPanel />
 
       {can(user, PERMISSIONS.NOTIFICATION_SEND) ? <SentNotificationsPanel /> : null}
     </main>

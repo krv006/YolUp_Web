@@ -10,6 +10,7 @@ export const analyticsKeys = Object.freeze({
   videoStats: ["analytics", "video-stats"] as const,
   monitoringCurrent: ["analytics", "monitoring", "current"] as const,
   monitoringHistory: (hours: number) => ["analytics", "monitoring", "history", hours] as const,
+  clientHealth: (hours: number) => ["analytics", "monitoring", "client-health", hours] as const,
 });
 
 export function useDashboardSummary(enabled = true) {
@@ -79,6 +80,16 @@ export function useMonitoringCurrent(enabled = true) {
     queryKey: analyticsKeys.monitoringCurrent,
     queryFn: ({ signal }) => analyticsApi.getMonitoringCurrent({ signal }),
     enabled,
+    refetchInterval: MONITORING_POLL_MS,
+  });
+}
+
+export function useClientHealth(hours: number, enabled = true) {
+  return useQuery({
+    queryKey: analyticsKeys.clientHealth(hours),
+    queryFn: ({ signal }) => analyticsApi.getClientHealth(hours, { signal }),
+    enabled,
+    placeholderData: keepPreviousData,
     refetchInterval: MONITORING_POLL_MS,
   });
 }

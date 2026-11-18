@@ -521,5 +521,20 @@
     "next": "Next: {{name}}",
     "back": "Back to homework",
     "close": "Close"
+  },
+  "reviewFocus": {
+    "title": "Leaving the page",
+    "exits_one": "Left {{count}} time",
+    "exits_other": "Left {{count}} times",
+    "stayed": "Stayed",
+    "stayedHint": "Didn't switch to other windows or tabs from the homework page",
+    "away": "Away {{total}} in total · longest {{longest}}",
+    "notReturned": "didn't return",
+    "more_one": "{{count}} more",
+    "more_other": "{{count}} more",
+    "seconds": "{{seconds}}s",
+    "minutes": "{{minutes}} min",
+    "minutesSeconds": "{{minutes}} min {{seconds}}s",
+    "hours": "{{hours}} h {{minutes}} min"
   }
 }

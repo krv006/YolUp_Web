@@ -8,4 +8,5 @@ export const analyticsEndpoints = Object.freeze({
   teacherVideoStats: "/api/v1/auth/teachers/video-stats/",
   monitoringCurrent: "/api/v1/monitoring/current/",
   monitoringHistory: "/api/v1/monitoring/history/",
+  monitoringClientHealth: "/api/v1/monitoring/client-health/",
 });

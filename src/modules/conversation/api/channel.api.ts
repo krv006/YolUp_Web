@@ -18,6 +18,7 @@ const ENDPOINTS = Object.freeze({
   channel: (id: string) => `/api/v1/chat/channels/${id}/`,
   members: (id: string) => `/api/v1/chat/channels/${id}/members/`,
   member: (id: string, userId: string) => `/api/v1/chat/channels/${id}/members/${userId}/`,
+  course: (id: string, courseId: string) => `/api/v1/chat/channels/${id}/courses/${courseId}/`,
 });
 
 export function audienceBody({ courseIds, studentIds }: AudienceInput) {
@@ -49,5 +50,9 @@ export const channelApi = {
   },
   async removeMember(id: string, userId: string) {
     await apiClient.delete(ENDPOINTS.member(id, userId));
+  },
+  async detachCourse(id: string, courseId: string) {
+    const dto = await apiClient.delete<{ removed?: number } | null>(ENDPOINTS.course(id, courseId));
+    return Number(dto?.removed ?? 0);
   },
 };

@@ -466,7 +466,13 @@
     "imageUpdated": "Channel photo updated",
     "imageRemoved": "Channel photo removed",
     "linkedGroups": "Linked groups",
-    "groupFallback": "Group"
+    "groupFallback": "Group",
+    "detachGroup": "Detach “{{title}}” from the channel",
+    "detachTitle": "Detach group from channel",
+    "detachHint": "Members who joined through “{{title}}” will be removed from the channel. Members added individually stay.",
+    "detachConfirm": "Detach",
+    "groupDetached_one": "“{{title}}” detached · {{count}} member removed",
+    "groupDetached_other": "“{{title}}” detached · {{count}} members removed"
   },
   "club": {
     "badge": "Club"

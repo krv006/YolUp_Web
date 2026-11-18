@@ -8,6 +8,7 @@ import {
   ChannelAvatar,
   useAddChannelMembers,
   useDeleteChannel,
+  useDetachChannelCourse,
   useRemoveChannelMember,
   useRemoveRoomImage,
   useSetRoomImage,
@@ -44,6 +45,7 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
   const [addOpen, setAddOpen] = useState(false);
   const [audience, setAudience] = useState<AudienceInput>({ courseIds: [], studentIds: [] });
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [detaching, setDetaching] = useState<{ id: string; title: string } | null>(null);
   const members = useQuery({
     queryKey: messageKeys.members(conversation.id, ""),
     queryFn: ({ signal }) => messageApi.getMembers(conversation.id, "", { signal }),
@@ -53,6 +55,7 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
   const remove = useDeleteChannel();
   const addMembers = useAddChannelMembers();
   const removeMember = useRemoveChannelMember();
+  const detachCourse = useDetachChannelCourse();
   const setImage = useSetRoomImage();
   const removeImage = useRemoveRoomImage();
   const imageRef = useRef<HTMLInputElement>(null);
@@ -97,6 +100,21 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
           toast.success(t("channel.membersAdded", { count }));
           setAudience({ courseIds: [], studentIds: [] });
           setAddOpen(false);
+          void members.refetch();
+        },
+        onError: (error: Error) => toast.error(error.message),
+      }
+    );
+  }
+
+  function detach() {
+    if (!detaching) return;
+    detachCourse.mutate(
+      { id: conversation.id, courseId: detaching.id },
+      {
+        onSuccess: (count) => {
+          toast.success(t("channel.groupDetached", { title: detaching.title, count }));
+          setDetaching(null);
           void members.refetch();
         },
         onError: (error: Error) => toast.error(error.message),
@@ -220,10 +238,21 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
                 {linkedCourses.map((course) => (
                   <li
                     key={course.id}
-                    className="flex h-8 max-w-full items-center gap-1.5 rounded-full bg-subtle px-3 text-caption-strong text-ink"
+                    className={`flex h-8 max-w-full items-center gap-1.5 rounded-full bg-subtle pl-3 text-caption-strong text-ink ${manage ? "pr-1" : "pr-3"}`}
                   >
                     <Icon name="groups" size={16} className="shrink-0 text-ink-secondary" />
                     <span className="truncate">{course.title || t("channel.groupFallback")}</span>
+                    {manage ? (
+                      <button
+                        type="button"
+                        className="grid size-6 shrink-0 place-items-center rounded-full text-ink-tertiary transition-colors hover:bg-error-bg hover:text-error-text"
+                        aria-label={t("channel.detachGroup", { title: course.title || t("channel.groupFallback") })}
+                        title={t("channel.detachGroup", { title: course.title || t("channel.groupFallback") })}
+                        onClick={() => setDetaching({ id: course.id, title: course.title || t("channel.groupFallback") })}
+                      >
+                        <Icon name="close" size={14} />
+                      </button>
+                    ) : null}
                   </li>
                 ))}
               </ul>
@@ -319,6 +348,18 @@ export function ChannelInfoDialog({ conversation, open, onOpenChange, manage, cu
       >
         <AudiencePicker value={audience} onChange={setAudience} />
       </AppDialog>
+
+      <ConfirmDialog
+        open={Boolean(detaching)}
+        onOpenChange={(next) => !next && setDetaching(null)}
+        icon="groups"
+        title={t("channel.detachTitle")}
+        description={t("channel.detachHint", { title: detaching?.title ?? "" })}
+        confirmLabel={t("channel.detachConfirm")}
+        cancelLabel={t("channel.cancel")}
+        pending={detachCourse.isPending}
+        onConfirm={detach}
+      />
 
       <ConfirmDialog
         open={deleteOpen}

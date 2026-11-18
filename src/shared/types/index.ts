@@ -78,6 +78,7 @@ export type {
   StudentAnalytics,
   StudentAttemptSummary,
   HomeworkAnswer,
+  HomeworkFocus,
   HomeworkQuestion,
   HomeworkQuestionType,
   Submission,

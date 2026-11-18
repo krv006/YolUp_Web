@@ -4,6 +4,7 @@ import type {
   CourseHomeworkReport,
   GradingScale,
   HomeworkAnswer,
+  HomeworkFocus,
   HomeworkQuestion,
   HomeworkReport,
   HomeworkReportSummary,
@@ -19,6 +20,7 @@ import type {
   HomeworkBoardDto,
   HomeworkAnswerDto,
   HomeworkCourseReportDto,
+  HomeworkFocusDto,
   HomeworkQuestionDto,
   HomeworkReportDto,
   SubmissionDto,
@@ -85,6 +87,23 @@ export function mapSubmissionDto(dto: SubmissionDto | null | undefined): Submiss
     aiState: dto.ai_state ?? null,
     aiSummary: dto.ai_summary?.trim() || null,
     aiCheckingSince: dto.ai_checking_since ?? null,
+    focus: mapHomeworkFocusDto(dto.focus),
+  };
+}
+
+export function mapHomeworkFocusDto(dto: HomeworkFocusDto | null | undefined): HomeworkFocus | null {
+  if (!dto) return null;
+  return {
+    exits: Number(dto.exits ?? 0),
+    awaySeconds: Number(dto.away_seconds ?? 0),
+    longestSeconds: Number(dto.longest_seconds ?? 0),
+    onPageSeconds: Number(dto.on_page_seconds ?? 0),
+    totalSeconds: Number(dto.total_seconds ?? 0),
+    timeline: (dto.timeline ?? []).map((item) => ({
+      leftAt: item.left_at,
+      returnedAt: item.returned_at ?? null,
+      seconds: Number(item.seconds ?? 0),
+    })),
   };
 }
 

@@ -514,5 +514,18 @@
     "next": "Keyingi: {{name}}",
     "back": "Vazifaga qaytish",
     "close": "Yopish"
+  },
+  "reviewFocus": {
+    "title": "Sahifadan chiqish",
+    "exits": "{{count}} marta chiqqan",
+    "stayed": "Chiqmagan",
+    "stayedHint": "Vazifa sahifasidan boshqa oyna yoki tabga o‘tilmagan",
+    "away": "Tashqarida jami {{total}} · eng uzuni {{longest}}",
+    "notReturned": "qaytmagan",
+    "more": "Yana {{count}} ta",
+    "seconds": "{{seconds}} s",
+    "minutes": "{{minutes}} daq",
+    "minutesSeconds": "{{minutes}} daq {{seconds}} s",
+    "hours": "{{hours}} soat {{minutes}} daq"
   }
 }
