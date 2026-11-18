@@ -36,7 +36,7 @@ import { HomeworkSubmittedDialog } from "./homework-submitted-dialog";
 
 const DAY_MS = 86_400_000;
 const GRADES = [1, 2, 3, 4, 5];
-const ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.docx";
+const ACCEPT = ".pdf,.png,.jpg,.jpeg,.webp,.heic,.heif,.docx";
 const ACCEPT_SPEAKING = ".mp3,.wav,.m4a,.ogg";
 
 const MAX_FILES = 5;
