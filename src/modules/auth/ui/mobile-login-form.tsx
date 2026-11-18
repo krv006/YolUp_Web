@@ -44,7 +44,7 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
       await onSubmit(values);
     } catch (error) {
       const appError = error as AppError;
-      const explained = appError?.status === 400 && !appError.fields ? appError.message : "";
+      const explained = (appError?.status === 400 && !appError.fields) || appError?.status === 429 ? appError.message : "";
       if (!applyApiFieldErrors(appError, setError, { username: "login" })) {
         setError("root", { type: "server", message: explained || t("mobile.login.failed") });
       }
