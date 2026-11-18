@@ -103,5 +103,6 @@
     "submit": "Send",
     "sent_one": "Message sent to {{count}} student",
     "sent_other": "Message sent to {{count}} students"
-  }
+  },
+  "opening": "Opening the notification…"
 }

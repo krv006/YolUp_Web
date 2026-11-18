@@ -15,7 +15,7 @@ function isResult(kind?: string | null): boolean {
   return Boolean(kind) && RESULT_KINDS.some((part) => kind!.includes(part));
 }
 
-export function useOpenNotificationLink(): OpenNotificationLink {
+export function useOpenNotificationLink({ replace = false }: { replace?: boolean } = {}): OpenNotificationLink {
   const { t } = useTranslation("notification");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -23,21 +23,23 @@ export function useOpenNotificationLink(): OpenNotificationLink {
   const routes = useRoleRoutes();
   const conversations = useConversations(student ? "student" : "teacher");
 
+  const go = useCallback((to: string) => navigate(to, { replace }), [navigate, replace]);
+
   return useCallback(
     (link, kind) => {
       const fail = (error: unknown) => toast.error(error instanceof Error ? error.message : t("openFailed"));
       const type = link.type.toLowerCase();
 
       if (type === "lesson") {
-        navigate(kind?.includes("recording") ? routes.recording(link.id) : ROUTES.live(link.id));
+        go(kind?.includes("recording") ? routes.recording(link.id) : ROUTES.live(link.id));
         return;
       }
       if (type === "recording") {
-        navigate(routes.recording(link.id));
+        go(routes.recording(link.id));
         return;
       }
       if (type === "assignment" || type === "homework") {
-        navigate(routes.homeworkItem(link.id));
+        go(routes.homeworkItem(link.id));
         return;
       }
       if (type === "submission") {
@@ -48,7 +50,7 @@ export function useOpenNotificationLink(): OpenNotificationLink {
           })
           .then((submission) => {
             if (!submission) throw new Error(t("openFailed"));
-            navigate(
+            go(
               student
                 ? ROUTES.student.homeworkItem(submission.assignmentId)
                 : `${ROUTES.teacher.homeworkReview(submission.assignmentId)}?s=${encodeURIComponent(link.id)}`
@@ -58,33 +60,33 @@ export function useOpenNotificationLink(): OpenNotificationLink {
         return;
       }
       if (type === "quiz" || type === "test") {
-        navigate(isResult(kind) ? routes.testResults(link.id) : routes.test(link.id));
+        go(isResult(kind) ? routes.testResults(link.id) : routes.test(link.id));
         return;
       }
       if (type === "exam" || type === "mock") {
-        if (student) navigate(isResult(kind) ? ROUTES.student.mockResults(link.id) : ROUTES.student.mockExams);
-        else navigate(ROUTES.teacher.mockResults(link.id));
+        if (student) go(isResult(kind) ? ROUTES.student.mockResults(link.id) : ROUTES.student.mockExams);
+        else go(ROUTES.teacher.mockResults(link.id));
         return;
       }
       if (type === "course" || type === "club") {
         const room = conversations.data?.find((item) => item.courseId === link.id);
-        navigate(room ? routes.chat(room.id) : routes.chats);
+        go(room ? routes.chat(room.id) : routes.chats);
         return;
       }
       if (type === "certificate") {
-        navigate(`${routes.profile}/certificates`);
+        go(`${routes.profile}/certificates`);
         return;
       }
       if (type === "support") {
-        navigate(`${routes.profile}/help?ticket=${encodeURIComponent(link.id)}`);
+        go(`${routes.profile}/help?ticket=${encodeURIComponent(link.id)}`);
         return;
       }
       if (type === "conversation" || type === "room" || type === "chat" || type === "chat_room" || type === "message") {
-        navigate(routes.chat(link.id));
+        go(routes.chat(link.id));
         return;
       }
-      navigate(routes.notifications);
+      go(routes.notifications);
     },
-    [navigate, queryClient, student, routes, conversations.data, t]
+    [go, queryClient, student, routes, conversations.data, t]
   );
 }

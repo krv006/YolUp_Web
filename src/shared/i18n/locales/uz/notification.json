@@ -103,5 +103,6 @@
     "submit": "Yuborish",
     "sent_one": "Xabar {{count}} ta o‘quvchiga yuborildi",
     "sent_other": "Xabar {{count}} ta o‘quvchiga yuborildi"
-  }
+  },
+  "opening": "Bildirishnoma ochilmoqda…"
 }
