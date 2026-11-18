@@ -14,6 +14,7 @@ import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
 import { MOBILE_INPUT } from "@/shared/ui/mobile-fields";
+import { passwordChangeIssues, passwordChangeServerErrors, type PasswordChangeErrors } from "./password-change";
 import { DeleteAccountDialog } from "./profile-dialogs";
 import { ProfileSubPage, SettingsRow, SettingsSection } from "./profile-shell";
 import { SETTINGS_TONES } from "./settings-tones";
@@ -37,7 +38,7 @@ export function AccountSettingsPage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-  const [mismatch, setMismatch] = useState(false);
+  const [passwordErrors, setPasswordErrors] = useState<PasswordChangeErrors>({});
   const [username, setUsername] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const updateSettings = useUpdateSettingsMutation();
@@ -77,18 +78,21 @@ export function AccountSettingsPage() {
     setCurrentPassword("");
     setNewPassword("");
     setRepeatPassword("");
-    setMismatch(false);
+    setPasswordErrors({});
   }
 
   function savePassword() {
-    if (!currentPassword || !newPassword) {
-      toast.error(t("page.passwordRule"));
+    const issues = passwordChangeIssues(currentPassword, newPassword, repeatPassword);
+    const local: PasswordChangeErrors = {
+      current: issues.current ? t("page.currentPasswordRequired") : undefined,
+      next: issues.next === "rule" ? t("page.passwordRule") : issues.next === "same" ? t("page.passwordSame") : undefined,
+      repeat: issues.repeat ? t("page.passwordMismatch") : undefined,
+    };
+    if (local.current || local.next || local.repeat) {
+      setPasswordErrors(local);
       return;
     }
-    if (newPassword !== repeatPassword) {
-      setMismatch(true);
-      return;
-    }
+    setPasswordErrors({});
     changePassword.mutate(
       { currentPassword, newPassword },
       {
@@ -96,10 +100,13 @@ export function AccountSettingsPage() {
           toast.success(t("page.passwordChanged"));
           closePassword();
         },
-        onError: (error: Error) => toast.error(error.message),
+        onError: (error: Error) => setPasswordErrors(passwordChangeServerErrors(error, t("page.passwordChangeFailed"))),
       }
     );
   }
+
+  const invalidInput = isCompact ? "border-error-text!" : "border-danger bg-surface";
+  const errorText = "text-body-xs text-danger";
 
   return (
     <ProfileSubPage title={t("page.accountTitle")}>
@@ -180,23 +187,34 @@ export function AccountSettingsPage() {
             <span className={label}>{t("page.currentPassword")}</span>
             <input
               type="password"
-              className={input}
+              className={`${input} ${passwordErrors.current ? invalidInput : ""}`}
               autoComplete="current-password"
+              aria-invalid={Boolean(passwordErrors.current)}
               value={currentPassword}
-              onChange={(event) => setCurrentPassword(event.target.value)}
+              onChange={(event) => {
+                setCurrentPassword(event.target.value);
+                setPasswordErrors((current) => ({ ...current, current: undefined, form: undefined }));
+              }}
             />
+            {passwordErrors.current ? <small className={errorText}>{passwordErrors.current}</small> : null}
           </label>
 
           <label className={field}>
             <span className={label}>{t("page.newPassword")}</span>
             <input
               type="password"
-              className={input}
+              className={`${input} ${passwordErrors.next ? invalidInput : ""}`}
               autoComplete="new-password"
+              aria-invalid={Boolean(passwordErrors.next)}
               value={newPassword}
-              onChange={(event) => setNewPassword(event.target.value)}
+              onChange={(event) => {
+                setNewPassword(event.target.value);
+                setPasswordErrors((current) => ({ ...current, next: undefined, form: undefined }));
+              }}
             />
-            <small className="text-body-xs text-ink-tertiary">{t("page.passwordRule")}</small>
+            <small className={passwordErrors.next ? errorText : "text-body-xs text-ink-tertiary"}>
+              {passwordErrors.next ?? t("page.passwordRule")}
+            </small>
           </label>
 
           <label className={field}>
@@ -204,15 +222,16 @@ export function AccountSettingsPage() {
             <span className="relative flex items-center">
               <input
                 type="password"
-                className={`${input} ${mismatch ? (isCompact ? "border-error-text! pr-12" : "border-danger bg-surface pr-11") : ""}`}
+                className={`${input} ${passwordErrors.repeat ? `${invalidInput} ${isCompact ? "pr-12" : "pr-11"}` : ""}`}
                 autoComplete="new-password"
+                aria-invalid={Boolean(passwordErrors.repeat)}
                 value={repeatPassword}
                 onChange={(event) => {
                   setRepeatPassword(event.target.value);
-                  setMismatch(false);
+                  setPasswordErrors((current) => ({ ...current, repeat: undefined, form: undefined }));
                 }}
               />
-              {mismatch ? (
+              {passwordErrors.repeat ? (
                 <Icon
                   name={isCompact ? "warning-fill" : "error"}
                   size={isCompact ? 20 : 18}
@@ -220,10 +239,14 @@ export function AccountSettingsPage() {
                 />
               ) : null}
             </span>
-            {mismatch ? (
-              <small className="text-body-xs text-danger">{t("page.passwordMismatch")}</small>
-            ) : null}
+            {passwordErrors.repeat ? <small className={errorText}>{passwordErrors.repeat}</small> : null}
           </label>
+          {passwordErrors.form ? (
+            <p role="alert" className="flex items-start gap-2 rounded-xl bg-danger-bg px-3.5 py-2.5 text-body-sm text-error-text">
+              <Icon name="warning" size={18} className="mt-0.5 shrink-0" />
+              {passwordErrors.form}
+            </p>
+          ) : null}
         </div>
       </AppDialog>
 
