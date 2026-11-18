@@ -111,6 +111,12 @@ export const authApi = {
       { skipAuth: true, skipRefresh: true }
     );
   },
+  requestEmailChange(email: string) {
+    return apiClient.post<CodeSentDto>(authEndpoints.meEmailRequest, { email });
+  },
+  confirmEmailChange(email: string, code: string) {
+    return apiClient.post<AuthUserDto>(authEndpoints.meEmailConfirm, { email, code });
+  },
   getRegisterOptions(options?: RequestOptions) {
     return apiClient.get<RegisterOptionsDto>(authEndpoints.registerOptions, {
       ...options,

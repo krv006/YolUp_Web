@@ -285,7 +285,13 @@
     "certificateIssuerPlaceholder": "Например: British Council",
     "certificateYear": "Год",
     "certificateRejected": "Отклонён",
-    "certificateRejectReason": "Причина: {{reason}}"
+    "certificateRejectReason": "Причина: {{reason}}",
+    "emailNotSet": "Не добавлен",
+    "emailVerified": "Подтверждён",
+    "emailUnverified": "Не подтверждён",
+    "emailAdd": "Добавить",
+    "emailVerify": "Подтвердить",
+    "emailChange": "Изменить"
   },
   "help": {
     "search": "Поиск вопроса или темы…",

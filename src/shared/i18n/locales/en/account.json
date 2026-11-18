@@ -283,7 +283,13 @@
     "certificateIssuerPlaceholder": "E.g. British Council",
     "certificateYear": "Year",
     "certificateRejected": "Rejected",
-    "certificateRejectReason": "Reason: {{reason}}"
+    "certificateRejectReason": "Reason: {{reason}}",
+    "emailNotSet": "Not added",
+    "emailVerified": "Verified",
+    "emailUnverified": "Not verified",
+    "emailAdd": "Add",
+    "emailVerify": "Verify",
+    "emailChange": "Change"
   },
   "help": {
     "search": "Search a question or topic…",

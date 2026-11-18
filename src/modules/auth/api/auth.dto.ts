@@ -58,6 +58,7 @@ export const userDtoSchema = z.object({
   middle_name: z.string().nullable().optional(),
   birth_date: z.string().nullable().optional(),
   email: z.string().nullable().optional(),
+  email_verified: z.boolean().nullable().optional(),
   subject: z.string().nullable().optional(),
   city: z.string().nullable().optional(),
   bio: z.string().nullable().optional(),

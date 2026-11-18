@@ -2,6 +2,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
+  EmailVerifyDialog,
   useAuth,
   useIsStudent,
   useRemoveAvatarMutation,
@@ -34,6 +35,35 @@ const CITIES = [
   "Termiz",
 ];
 
+function EmailRow({ className, onOpen }: { className: string; onOpen: () => void }) {
+  const { t } = useTranslation("account");
+  const { user } = useAuth();
+  const email = user?.email ?? "";
+  const verified = Boolean(email && user?.emailVerified);
+  return (
+    <div className={`${className} flex items-center gap-2`}>
+      <span className={`min-w-0 flex-1 truncate ${email ? "text-ink" : "text-ink-tertiary"}`}>{email || t("page.emailNotSet")}</span>
+      {email ? (
+        <span
+          className={`flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-caption-strong ${
+            verified ? "bg-success-bg text-success-fg" : "bg-warning-bg text-warning-fg"
+          }`}
+        >
+          <Icon name={verified ? "check-circle" : "warning"} size={14} />
+          {verified ? t("page.emailVerified") : t("page.emailUnverified")}
+        </span>
+      ) : null}
+      <button
+        type="button"
+        className="shrink-0 rounded-full px-2.5 py-1 text-body-xs font-semibold text-brand transition-colors hover:bg-brand-subtle"
+        onClick={onOpen}
+      >
+        {!email ? t("page.emailAdd") : verified ? t("page.emailChange") : t("page.emailVerify")}
+      </button>
+    </div>
+  );
+}
+
 const FIELD = "flex flex-col gap-2";
 const LABEL = "text-body-sm text-ink";
 const INPUT =
@@ -52,12 +82,15 @@ export function PersonalInfoPage() {
   const courses = useCourses();
   const studying = [...new Set((courses.data ?? []).map((course) => course.subjectLabel).filter(Boolean))].join(", ");
   const fileRef = useRef<HTMLInputElement>(null);
+  const [emailOpen, setEmailOpen] = useState(false);
+  const emailDialog = (
+    <EmailVerifyDialog open={emailOpen} onOpenChange={setEmailOpen} initialEmail={user?.email ?? ""} />
+  );
   const [form, setForm] = useState({
     firstName: user?.firstName ?? "",
     lastName: user?.lastName ?? "",
     username: user?.username ?? "",
     phone: user?.phone ?? "",
-    email: user?.email ?? "",
     subject: user?.subject ?? "",
     city: user?.city ?? "",
   });
@@ -72,7 +105,6 @@ export function PersonalInfoPage() {
       lastName: user?.lastName ?? "",
       username: user?.username ?? "",
       phone: user?.phone ?? "",
-      email: user?.email ?? "",
       subject: user?.subject ?? "",
       city: user?.city ?? "",
     });
@@ -99,8 +131,8 @@ export function PersonalInfoPage() {
   if (isCompact) {
     const subjectLabel = subjectOptions.find((item) => item.value === form.subject)?.label ?? "";
     const field = (
-      key: "firstName" | "lastName" | "username" | "phone" | "email",
-      extra: { inputMode?: "tel" | "email" } = {}
+      key: "firstName" | "lastName" | "username" | "phone",
+      extra: { inputMode?: "tel" } = {}
     ) => (
       <input
         className={MOBILE_INPUT_SURFACE}
@@ -140,7 +172,9 @@ export function PersonalInfoPage() {
             </small>
           </div>
           <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.phone")}>{field("phone", { inputMode: "tel" })}</MobileFieldLabel>
-          <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.email")}>{field("email", { inputMode: "email" })}</MobileFieldLabel>
+          <MobileFieldLabel gapClassName="gap-[7px]" label={t("page.email")}>
+            <EmailRow className={MOBILE_INPUT_SURFACE} onOpen={() => setEmailOpen(true)} />
+          </MobileFieldLabel>
           <div className="grid grid-cols-2 gap-3">
             <MobileFieldLabel gapClassName="gap-[7px]" label={student ? t("page.studying") : t("page.subject")}>
               {student ? (
@@ -173,6 +207,7 @@ export function PersonalInfoPage() {
             </MobileFieldLabel>
           </div>
         </form>
+        {emailDialog}
       </ProfileSubPage>
     );
   }
@@ -301,15 +336,10 @@ export function PersonalInfoPage() {
           />
         </label>
 
-        <label className={FIELD}>
+        <div className={FIELD}>
           <span className={LABEL}>{t("page.email")}</span>
-          <input
-            className={INPUT}
-            value={form.email}
-            inputMode="email"
-            onChange={(event) => setForm((c) => ({ ...c, email: event.target.value }))}
-          />
-        </label>
+          <EmailRow className={INPUT} onOpen={() => setEmailOpen(true)} />
+        </div>
 
         <div className="profile-form grid grid-cols-2 items-start gap-3">
           {student ? (
@@ -339,6 +369,7 @@ export function PersonalInfoPage() {
           />
         </div>
       </form>
+      {emailDialog}
     </ProfileSubPage>
   );
 }

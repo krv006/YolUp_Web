@@ -94,6 +94,7 @@ export function mapUserDto(dto: unknown): AuthUser {
     inviteCode: parsed.invite_code ?? null,
     avatarUrl: normalizeMediaUrl(parsed.avatar),
     email: parsed.email ?? null,
+    emailVerified: parsed.email_verified === true,
     status: "online",
     avgRating: parsed.avg_rating ?? null,
     ratingCount: parsed.rating_count ?? null,
