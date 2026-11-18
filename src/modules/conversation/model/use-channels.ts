@@ -34,6 +34,14 @@ export function useAddChannelMembers() {
   });
 }
 
+export function useDetachChannelCourse() {
+  const refresh = useRefresh();
+  return useMutation({
+    mutationFn: ({ id, courseId }: { id: string; courseId: string }) => channelApi.detachCourse(id, courseId),
+    onSuccess: refresh,
+  });
+}
+
 export function useRemoveChannelMember() {
   const refresh = useRefresh();
   return useMutation({

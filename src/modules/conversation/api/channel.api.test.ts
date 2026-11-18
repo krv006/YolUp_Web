@@ -25,4 +25,12 @@ describe("channels", () => {
     await channelApi.create({ title: " E'lonlar ", description: "", courseIds: ["g1"], studentIds: [] });
     expect(post).toHaveBeenCalledWith("/api/v1/chat/channels/", { title: "E'lonlar", description: "", course_ids: ["g1"] });
   });
+
+  it("detaches a group and reports how many members left with it", async () => {
+    const remove = vi.spyOn(apiClient, "delete").mockResolvedValue({ removed: 12 });
+    await expect(channelApi.detachCourse("c1", "g1")).resolves.toBe(12);
+    expect(remove).toHaveBeenCalledWith("/api/v1/chat/channels/c1/courses/g1/");
+    remove.mockResolvedValue(null);
+    await expect(channelApi.detachCourse("c1", "g2")).resolves.toBe(0);
+  });
 });

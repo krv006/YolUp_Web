@@ -41,6 +41,7 @@ export { audienceBody, channelApi } from "./api/channel.api";
 export type { AudienceInput, ChannelInput } from "./api/channel.api";
 export {
   useAddChannelMembers,
+  useDetachChannelCourse,
   useCreateChannel,
   useDeleteChannel,
   useRemoveChannelMember,
