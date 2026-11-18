@@ -17,6 +17,7 @@ export const BOARD_TEXT_SIZES = [
 ] as const;
 
 export const BOARD_SIZE_LIMITS = { min: 12, max: 48 } as const;
+export const BOARD_GUIDE_CELL = 30;
 export const CODE_TEXT_SIZE = 20;
 export const CODE_TEXT_COLOR = "#1c1e3a";
 export const CODE_MAX_CHARS = 6000;
