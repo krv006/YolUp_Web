@@ -90,3 +90,4 @@ export { OtpInput } from "./ui/otp-input";
 export { MobileTwoFactorForm, TwoFactorForm } from "./ui/two-factor-form";
 export { describeTwoFactorChallenge } from "./lib/describe-two-factor";
 export { describeResetError } from "./lib/describe-reset-error";
+export { describeEmailCodeError, isValidEmail, normalizeEmail } from "./lib/email-code";

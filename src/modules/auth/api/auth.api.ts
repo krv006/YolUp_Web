@@ -90,17 +90,17 @@ export const authApi = {
   disableTwoFactor(password: string) {
     return apiClient.post<{ enabled?: boolean }>(authEndpoints.twoFactorDisable, { password });
   },
-  requestPasswordReset(phone: string) {
-    return apiClient.post<{ sent?: boolean; expires_in?: number; retry_after?: number }>(
+  requestPasswordReset(email: string) {
+    return apiClient.post<CodeSentDto>(
       authEndpoints.passwordResetRequest,
-      { phone },
+      { email },
       { skipAuth: true, skipRefresh: true }
     );
   },
-  verifyPasswordReset(phone: string, code: string) {
+  verifyPasswordReset(email: string, code: string) {
     return apiClient.post<{ reset_token: string; expires_in?: number }>(
       authEndpoints.passwordResetVerify,
-      { phone, code },
+      { email, code },
       { skipAuth: true, skipRefresh: true }
     );
   },

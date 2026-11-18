@@ -17,14 +17,9 @@ const DEFAULT_EXPIRES_IN = 120;
 const DEFAULT_RETRY_AFTER = 45;
 
 interface ResetCodeState {
-  phone?: string;
-  digits?: string;
+  email?: string;
   expiresIn?: number;
   retryAfter?: number;
-}
-
-function maskPhone(digits: string): string {
-  return `+998 ${digits.slice(0, 2)} ••• •• ${digits.slice(7, 9)}`;
 }
 
 function formatClock(seconds: number): string {
@@ -37,8 +32,7 @@ export function VerifyCodePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const state = (location.state ?? null) as ResetCodeState | null;
-  const phone = state?.phone ?? "";
-  const digits = state?.digits ?? phone.replace(/^\+?998/, "");
+  const email = state?.email ?? "";
   const verifyCode = usePasswordResetVerifyMutation();
   const requestCode = usePasswordResetRequestMutation();
   const [code, setCode] = useState("");
@@ -58,9 +52,9 @@ export function VerifyCodePage() {
   const expired = expiresIn <= 0;
 
   async function confirm(value = code) {
-    if (!phone || value.length < CODE_LENGTH || expired) return;
+    if (!email || value.length < CODE_LENGTH || expired) return;
     try {
-      const response = await verifyCode.mutateAsync({ phone, code: value });
+      const response = await verifyCode.mutateAsync({ email, code: value });
       navigate("/new-password", { state: { resetToken: response.reset_token }, replace: true });
     } catch (caught) {
       if (caught instanceof AppError && caught.status >= 400 && caught.status < 500) {
@@ -75,9 +69,9 @@ export function VerifyCodePage() {
   }
 
   async function resend() {
-    if (!phone) return;
+    if (!email) return;
     try {
-      const response = await requestCode.mutateAsync(phone);
+      const response = await requestCode.mutateAsync(email);
       setExpiresIn(response.expires_in ?? DEFAULT_EXPIRES_IN);
       setRetryIn(response.retry_after ?? DEFAULT_RETRY_AFTER);
       setCode("");
@@ -90,7 +84,7 @@ export function VerifyCodePage() {
     }
   }
 
-  if (!phone) return <Navigate to="/forgot-password" replace />;
+  if (!email) return <Navigate to="/forgot-password" replace />;
 
   const error = expired ? t("mobile.code.expired") : invalid ? t("mobile.code.invalid") : null;
   const shownCode = expired ? "" : code;
@@ -99,10 +93,7 @@ export function VerifyCodePage() {
     <AuthScreen
       onBack={() => navigate(-1)}
       title={t("mobile.code.title")}
-      description={t("mobile.code.descriptionPhone", {
-        phone: maskPhone(digits),
-        length: CODE_LENGTH,
-      })}
+      description={t("mobile.code.descriptionEmail", { email, length: CODE_LENGTH })}
       action={
         <AuthButton
           onClick={() => confirm()}
@@ -115,11 +106,11 @@ export function VerifyCodePage() {
       }
       footer={
         <>
-          {t("mobile.code.wrongNumber")}{" "}
+          {t("mobile.code.wrongEmail")}{" "}
           <button
             type="button"
             className="font-semibold text-brand-strong"
-            onClick={() => navigate("/forgot-password", { state: { digits }, replace: true })}
+            onClick={() => navigate("/forgot-password", { state: { email }, replace: true })}
           >
             {t("mobile.code.change")}
           </button>

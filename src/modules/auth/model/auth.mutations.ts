@@ -46,14 +46,14 @@ export function useDisableTwoFactorMutation() {
 
 export function usePasswordResetRequestMutation() {
   return useMutation({
-    mutationFn: (phone: string) => authApi.requestPasswordReset(phone),
+    mutationFn: (email: string) => authApi.requestPasswordReset(email),
   });
 }
 
 export function usePasswordResetVerifyMutation() {
   return useMutation({
-    mutationFn: (values: { phone: string; code: string }) =>
-      authApi.verifyPasswordReset(values.phone, values.code),
+    mutationFn: (values: { email: string; code: string }) =>
+      authApi.verifyPasswordReset(values.email, values.code),
   });
 }
 
