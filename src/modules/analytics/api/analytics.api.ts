@@ -16,6 +16,7 @@ import {
   mapMyAnalytics,
   mapTeacherVideoStats,
 } from "../lib/analytics.mappers";
+import { mapClientHealth } from "../lib/client-health";
 
 export const analyticsApi = {
   async getDashboardSummary(options?: RequestOptions) {
@@ -91,6 +92,13 @@ export const analyticsApi = {
   async getMonitoringHistory(hours: number, options: RequestOptions = {}) {
     return mapMonitoringHistory(
       await apiClient.get(analyticsEndpoints.monitoringHistory, { ...options, query: { hours } })
+    );
+  },
+
+  async getClientHealth(hours: number, options: RequestOptions = {}) {
+    return mapClientHealth(
+      await apiClient.get(analyticsEndpoints.monitoringClientHealth, { ...options, query: { hours } }),
+      hours
     );
   },
 };

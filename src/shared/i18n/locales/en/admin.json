@@ -185,5 +185,36 @@
       "dismiss": "Report dismissed, the chat is open again",
       "unblock": "The chat is open again"
     }
+  },
+  "clientHealth": {
+    "eyebrow": "Devices",
+    "title": "Client health",
+    "note": "Reports browsers send every 30 seconds during live lessons: whose computer or internet is slowing the lesson down. Reports are kept for 14 days.",
+    "days_one": "{{count}} day",
+    "days_other": "{{count}} days",
+    "loading": "Loading reports…",
+    "reports": "Reports",
+    "cpuLimited": "CPU-limited reports",
+    "users": "Users",
+    "slowUsers": "Slow computers",
+    "empty": "No reports in this period.",
+    "cores_one": "{{count}} core",
+    "cores_other": "{{count}} cores",
+    "memory": "{{value}} GB",
+    "columns": {
+      "user": "User",
+      "reports": "Reports",
+      "cpu": "CPU limited",
+      "network": "Network limited",
+      "minFps": "Min FPS",
+      "device": "Device",
+      "lastAt": "Last"
+    },
+    "roles": {
+      "student": "student",
+      "teacher": "teacher",
+      "parent": "parent",
+      "admin": "admin"
+    }
   }
 }

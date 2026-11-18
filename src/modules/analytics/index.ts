@@ -15,6 +15,7 @@ export {
 } from "./lib/analytics.mappers";
 export {
   analyticsKeys,
+  useClientHealth,
   useDashboardSummary,
   useDashboardTrends,
   useMonitoringCurrent,
@@ -25,5 +26,6 @@ export {
   useDashboardActivity,
   useTeacherVideoStats,
 } from "./model/analytics.queries";
+export { shortUserAgent, type ClientHealthSummary, type ClientHealthUser } from "./lib/client-health";
 export { TrendLineChart, type TrendLineSeries } from "./ui/trend-line-chart";
 export { TrendStackedBarChart, type TrendBarSeries } from "./ui/trend-stacked-bar-chart";

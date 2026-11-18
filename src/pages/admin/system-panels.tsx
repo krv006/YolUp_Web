@@ -1,8 +1,10 @@
 import { useMemo, useState } from "react";
-import { Activity, HardDrive } from "lucide-react";
+import { Activity, Gauge, HardDrive } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
+  shortUserAgent,
   TrendLineChart,
+  useClientHealth,
   useMonitoringCurrent,
   useMonitoringHistory,
   useTeacherVideoStats,
@@ -12,6 +14,7 @@ import type { MonitoringSample } from "@/shared/types";
 import { LoadingFallback } from "@/shared/ui/legacy";
 
 const HOUR_OPTIONS = [6, 24, 72, 168];
+const CLIENT_HOUR_OPTIONS = [24, 72, 168, 336];
 const MAX_POINTS = 48;
 
 function downsample(samples: MonitoringSample[]): MonitoringSample[] {
@@ -163,6 +166,112 @@ export function ServerMonitoringPanel() {
               <b>CPU {history.data.peak.cpuPercent.toFixed(1)}%</b>
             </div>
           ) : null}
+        </>
+      ) : null}
+    </section>
+  );
+}
+
+export function ClientHealthPanel() {
+  const { t } = useTranslation("admin");
+  const [hours, setHours] = useState(24);
+  const health = useClientHealth(hours);
+  const data = health.data;
+  const limitedShare = data?.total ? Math.round((data.cpuLimitedTotal / data.total) * 100) : 0;
+
+  return (
+    <section className="portal-card admin-teacher-panel">
+      <div className="portal-section-head">
+        <div>
+          <span>
+            <Gauge size={13} /> {t("clientHealth.eyebrow")}
+          </span>
+          <h2>{t("clientHealth.title")}</h2>
+          <p className="portal-muted monitoring-note">{t("clientHealth.note")}</p>
+        </div>
+        <div className="monitoring-range">
+          {CLIENT_HOUR_OPTIONS.map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={value === hours ? "is-active" : ""}
+              onClick={() => setHours(value)}
+            >
+              {value < 48 ? t("monitoring.hours", { count: value }) : t("clientHealth.days", { count: value / 24 })}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {health.isLoading ? <LoadingFallback label={t("clientHealth.loading")} /> : null}
+      {health.isError ? <p className="portal-muted">{health.error.message}</p> : null}
+
+      {data ? (
+        <>
+          <div className="teacher-stats-grid monitoring-now">
+            <article>
+              <strong>{data.total}</strong>
+              <small>{t("clientHealth.reports")}</small>
+            </article>
+            <article>
+              <strong>
+                {data.cpuLimitedTotal} · {limitedShare}%
+              </strong>
+              <small>{t("clientHealth.cpuLimited")}</small>
+            </article>
+            <article>
+              <strong>{data.users.length}</strong>
+              <small>{t("clientHealth.users")}</small>
+            </article>
+            <article>
+              <strong>{data.users.filter((user) => user.cpuLimitedReports > 0).length}</strong>
+              <small>{t("clientHealth.slowUsers")}</small>
+            </article>
+          </div>
+
+          {data.users.length ? (
+            <div className="dash-table-wrap">
+              <table className="dash-table">
+                <thead>
+                  <tr>
+                    <th>{t("clientHealth.columns.user")}</th>
+                    <th>{t("clientHealth.columns.reports")}</th>
+                    <th>{t("clientHealth.columns.cpu")}</th>
+                    <th>{t("clientHealth.columns.network")}</th>
+                    <th>{t("clientHealth.columns.minFps")}</th>
+                    <th>{t("clientHealth.columns.device")}</th>
+                    <th>{t("clientHealth.columns.lastAt")}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.users.map((user) => (
+                    <tr key={user.userId}>
+                      <td className="cell-primary">
+                        @{user.username || "—"}
+                        <small className="portal-muted"> · {t(`clientHealth.roles.${user.role}`, { defaultValue: user.role })}</small>
+                      </td>
+                      <td>{user.reports}</td>
+                      <td className={user.cpuLimitedReports ? "font-semibold text-error-text" : ""}>{user.cpuLimitedReports}</td>
+                      <td>{user.bandwidthLimitedReports}</td>
+                      <td className={user.minFps !== null && user.minFps < 10 ? "font-semibold text-error-text" : ""}>{user.minFps ?? "—"}</td>
+                      <td>
+                        {[
+                          user.cores ? t("clientHealth.cores", { count: user.cores }) : "",
+                          user.memoryGb ? t("clientHealth.memory", { value: user.memoryGb }) : "",
+                          shortUserAgent(user.userAgent),
+                        ]
+                          .filter(Boolean)
+                          .join(" · ") || "—"}
+                      </td>
+                      <td>{user.lastAt ? formatDateTime(user.lastAt) : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <p className="portal-muted">{t("clientHealth.empty")}</p>
+          )}
         </>
       ) : null}
     </section>

@@ -185,5 +185,34 @@
       "dismiss": "Shikoyat rad etildi, chat qayta ochildi",
       "unblock": "Chat qayta ochildi"
     }
+  },
+  "clientHealth": {
+    "eyebrow": "Qurilmalar",
+    "title": "Mijoz salomatligi",
+    "note": "Jonli darsda brauzerlar har 30 soniyada yuborgan hisobotlar: kimning kompyuteri yoki interneti darsni sekinlashtiryapti. Hisobotlar 14 kun saqlanadi.",
+    "days": "{{count}} kun",
+    "loading": "Hisobotlar yuklanmoqda…",
+    "reports": "Hisobotlar",
+    "cpuLimited": "CPU yetmagan hisobotlar",
+    "users": "Foydalanuvchilar",
+    "slowUsers": "Kompyuteri sekinlar",
+    "empty": "Bu davrda hisobot kelmagan.",
+    "cores": "{{count}} yadro",
+    "memory": "{{value}} GB",
+    "columns": {
+      "user": "Foydalanuvchi",
+      "reports": "Hisobot",
+      "cpu": "CPU cheklovi",
+      "network": "Tarmoq cheklovi",
+      "minFps": "Eng past FPS",
+      "device": "Qurilma",
+      "lastAt": "Oxirgi"
+    },
+    "roles": {
+      "student": "o‘quvchi",
+      "teacher": "o‘qituvchi",
+      "parent": "ota-ona",
+      "admin": "admin"
+    }
   }
 }
