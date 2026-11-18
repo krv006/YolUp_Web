@@ -10,6 +10,8 @@ import type {
   LoginRequestDto,
   LoginResponseDto,
   RefreshRequestDto,
+  CodeSentDto,
+  RegisterOptionsDto,
   RegisterRequestDto,
   SwitchAccountResponseDto,
   TokenPairDto,
@@ -106,6 +108,27 @@ export const authApi = {
     return apiClient.post<{ ok?: boolean }>(
       authEndpoints.passwordResetConfirm,
       { reset_token: resetToken, password },
+      { skipAuth: true, skipRefresh: true }
+    );
+  },
+  getRegisterOptions(options?: RequestOptions) {
+    return apiClient.get<RegisterOptionsDto>(authEndpoints.registerOptions, {
+      ...options,
+      skipAuth: true,
+      skipRefresh: true,
+    });
+  },
+  requestRegisterEmailCode(email: string) {
+    return apiClient.post<CodeSentDto>(
+      authEndpoints.registerEmailRequest,
+      { email },
+      { skipAuth: true, skipRefresh: true }
+    );
+  },
+  verifyRegisterEmailCode(email: string, code: string) {
+    return apiClient.post<{ email_token: string; expires_in?: number }>(
+      authEndpoints.registerEmailVerify,
+      { email, code },
       { skipAuth: true, skipRefresh: true }
     );
   },

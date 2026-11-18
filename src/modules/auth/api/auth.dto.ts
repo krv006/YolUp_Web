@@ -171,6 +171,25 @@ export interface RegisterRequestDto {
   last_name: string;
   role: string;
   phone: string;
+  email?: string;
+  email_token?: string;
+}
+
+export interface RegisterOptionsDto {
+  email_required?: boolean | null;
+  email_available?: boolean | null;
+  phone_available?: boolean | null;
+}
+
+export interface RegisterOptions {
+  emailRequired: boolean;
+  emailAvailable: boolean;
+}
+
+export interface CodeSentDto {
+  sent?: boolean;
+  expires_in?: number | null;
+  retry_after?: number | null;
 }
 
 export interface CreateChildRequestDto {
@@ -198,6 +217,8 @@ export interface RegisterFormValues {
   lastName: string;
   phone?: string;
   role: "teacher" | "parent" | "student";
+  email?: string;
+  emailToken?: string;
 }
 
 export interface TokenPair {

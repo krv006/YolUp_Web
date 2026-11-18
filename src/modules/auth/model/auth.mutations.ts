@@ -17,6 +17,7 @@ export function useRegisterMutation() {
         last_name: values.lastName.trim(),
         role: values.role,
         phone: normalizeUzPhone(values.phone ?? ""),
+        ...(values.email && values.emailToken ? { email: values.email, email_token: values.emailToken } : {}),
       }),
   });
 }

@@ -4,6 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { applyApiFieldErrors } from "@/shared/api";
 import { createRegisterSchema } from "../model/auth.schemas";
+import { useRegisterEmail } from "../model/use-register-email";
+import { RegisterEmailField } from "./register-email-field";
 import type { AppError } from "@/shared/api";
 import type { RegisterFormValues } from "../api/auth.dto";
 import { AuthButton, AuthField, AuthFieldError, AuthPasswordField } from "./auth-screen";
@@ -18,6 +20,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
   const { t } = useTranslation("auth");
   const [showPassword, setShowPassword] = useState(false);
   const registerSchema = useMemo(() => createRegisterSchema(t), [t]);
+  const email = useRegisterEmail();
   const {
     register,
     control,
@@ -37,9 +40,11 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
   });
 
   async function submit(values: RegisterFormValues) {
+    if (!email.validate()) return;
     try {
-      await onSubmit(values);
+      await onSubmit(email.withEmail(values));
     } catch (error) {
+      if (email.takeServerError(error)) return;
       const appError = error as AppError;
       if (!applyApiFieldErrors(appError, setError, { first_name: "firstName", last_name: "lastName" }))
         setError("root", { message: appError.message });
@@ -112,6 +117,16 @@ export function RegisterForm({ onSubmit }: RegisterFormProps) {
         placeholder="+998 90 123 45 67"
         {...register("phone")}
       />
+
+      {email.visible ? (
+        <RegisterEmailField
+          key={email.fieldKey}
+          required={email.required}
+          value={email.value}
+          onChange={email.change}
+          error={email.error}
+        />
+      ) : null}
 
       <div className="flex flex-col gap-1.5">
         <AuthPasswordField

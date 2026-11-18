@@ -3,6 +3,7 @@ import { toast } from "sonner";
 import type { AuthUser } from "@/shared/types";
 import { authApi } from "../api/auth.api";
 import { mapUserDto } from "../lib/auth.mappers";
+import type { RegisterOptions } from "../api/auth.dto";
 
 export const authKeys = Object.freeze({
   all: ["auth"] as const,
@@ -127,5 +128,21 @@ export function useApproveTeacher() {
       toast.success("O‘qituvchi tasdiqlandi");
     },
     onError: (error: Error) => toast.error(error.message),
+  });
+}
+
+const NO_EMAIL: RegisterOptions = { emailRequired: false, emailAvailable: false };
+
+export function useRegisterOptions() {
+  return useQuery({
+    queryKey: ["auth", "register-options"] as const,
+    queryFn: async ({ signal }): Promise<RegisterOptions> => {
+      const dto = await authApi.getRegisterOptions({ signal });
+      const emailAvailable = dto?.email_available === true;
+      return { emailAvailable, emailRequired: emailAvailable && dto?.email_required === true };
+    },
+    staleTime: 5 * 60_000,
+    retry: false,
+    placeholderData: NO_EMAIL,
   });
 }
