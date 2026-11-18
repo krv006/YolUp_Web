@@ -12,7 +12,7 @@ export type {
   ResubmitRequestInput,
 } from "./api/homework.dto";
 export { HOMEWORK_EXTENSIONS, HOMEWORK_MAX_FILE_SIZE, HOMEWORK_SKILLS } from "./constants/homework.constants";
-export { defaultMaxScore, mapAiResultDto, mapAssignmentDto, mapAssignmentRequest, mapHomeworkReportDto, mapSubmissionDto } from "./lib/homework.mappers";
+export { defaultMaxScore, mapAiResultDto, mapAssignmentDto, mapAssignmentRequest, mapHomeworkFocusDto, mapHomeworkReportDto, mapSubmissionDto } from "./lib/homework.mappers";
 export { validateHomeworkFile } from "./lib/homework-validation";
 export { submissionAiState } from "./lib/submission-ai-state";
 export { latestSubmission } from "./lib/latest-submission";
@@ -34,6 +34,7 @@ export { answerInputs, isAnswered } from "./lib/homework-answers";
 export type { AnswerDraft } from "./lib/homework-answers";
 export { QuestionsResult } from "./ui/questions-result";
 export { useHomeworkBoardSource } from "./model/use-homework-board";
+export { useHomeworkFocusTracker } from "./model/use-homework-focus";
 export type { HomeworkBoardSaveState } from "./model/use-homework-board";
 export { getHomeworkPollingInterval, homeworkKeys, useAssignmentAiSummary, useHomeworkAiStats, useRemindAssignment, useRequestResubmit, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useHomeworkDraft, useSaveHomeworkDraft, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment, useHomeworkBank, useAssignFromBank, useAssignmentAudience, useSetAssignmentAudience } from "./model/homework.queries";
 export { AssignmentDetailDialog } from "./ui/assignment-detail-dialog";

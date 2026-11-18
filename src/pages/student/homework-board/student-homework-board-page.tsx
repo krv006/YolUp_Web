@@ -7,6 +7,7 @@ import {
   useAssignment,
   useHomeworkBoard,
   useHomeworkBoardSource,
+  useHomeworkFocusTracker,
   useSubmitHomeworkBoard,
   type HomeworkBoardSaveState,
 } from "@/modules/homework";
@@ -55,6 +56,7 @@ function HomeworkBoardScreen({
   const { t } = useTranslation("homework");
   const { source, saveState, flush } = useHomeworkBoardSource(assignment.id, board);
   const submit = useSubmitHomeworkBoard();
+  useHomeworkFocusTracker(assignment.id, true);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const isCompact = useIsCompact();
   const html = assignment.body ? sanitizeHtml(assignment.body) : "";

@@ -10,6 +10,7 @@ import {
   useDownloadAssignmentFile,
   useDownloadSubmissionFile,
   useHomeworkDraft,
+  useHomeworkFocusTracker,
   useSaveHomeworkDraft,
   useSubmission,
   useSubmitHomework,
@@ -133,6 +134,7 @@ function HomeworkSubmit({
   const downloadTask = useDownloadAssignmentFile();
   const draft = useHomeworkDraft(assignment.id);
   const saveDraftMutation = useSaveHomeworkDraft(assignment.id);
+  useHomeworkFocusTracker(assignment.id, !assignment.googleFormUrl);
   const inputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [comment, setComment] = useState("");

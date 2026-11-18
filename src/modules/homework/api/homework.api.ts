@@ -136,6 +136,9 @@ export const homeworkApi = {
     );
     return { comment: dto?.comment ?? "", updatedAt: dto?.updated_at ?? null };
   },
+  async sendFocus(assignmentId: string, kind: "exit" | "return") {
+    await apiClient.post(homeworkEndpoints.focus(assignmentId), { kind });
+  },
   async saveDraft(assignmentId: string, comment: string) {
     await apiClient.put(homeworkEndpoints.draft(assignmentId), { comment });
   },

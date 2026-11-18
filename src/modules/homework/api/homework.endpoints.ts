@@ -13,6 +13,7 @@ export const homeworkEndpoints = Object.freeze({
   boardSubmit: (id: string) => `/api/v1/homework/assignments/${id}/board/submit/`,
   report: "/api/v1/homework/report/",
   draft: (id: string) => `/api/v1/homework/assignments/${id}/draft/`,
+  focus: (id: string) => `/api/v1/homework/assignments/${id}/focus/`,
   assignFromBank: (id: string) => `/api/v1/homework/assignments/${id}/assign/`,
   audience: (id: string) => `/api/v1/homework/assignments/${id}/audience/`,
 });
