@@ -34,6 +34,7 @@ export {
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { ForcePasswordDialog } from "./ui/force-password-dialog";
 export { EmailVerifyDialog } from "./ui/email-verify-dialog";
+export { EmailSetupDialog } from "./ui/email-setup-dialog";
 export { TeacherRatingsDialog } from "./ui/teacher-ratings-dialog";
 export { describeUserAgent } from "./lib/describe-user-agent";
 export { useAuth, useCurrentUser, useIsAuthenticated } from "./model/use-auth";
