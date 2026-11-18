@@ -423,7 +423,7 @@
       "answer": "Your answer",
       "answerHint": "Upload a file or write your answer in the note. Your teacher reviews it after you submit.",
       "drop": "Drop a file here or browse",
-      "dropHint": "PDF, JPG, PNG, DOCX · up to 25 MB",
+      "dropHint": "PDF, JPG, PNG, HEIC, DOCX · up to 25 MB",
       "dropSpeaking": "MP3, WAV, M4A, OGG · up to 25 MB",
       "fileReady": "{{size}} · selected",
       "remove": "Remove",

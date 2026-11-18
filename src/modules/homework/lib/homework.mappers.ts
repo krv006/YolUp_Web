@@ -52,6 +52,7 @@ export function mapAiResultDto(dto: AiResultDto | null | undefined): AiResult | 
           recommendations: dto.summary.recommendations ?? [],
         }
       : null,
+    skippedImages: Number(dto.skipped_images ?? 0),
   };
 }
 

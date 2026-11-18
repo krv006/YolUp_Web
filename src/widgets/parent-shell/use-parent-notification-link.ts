@@ -4,8 +4,9 @@ import type { OpenNotificationLink } from "@/modules/notification";
 import { useSelectedChild } from "@/modules/parent";
 import { ROUTES } from "@/shared/config";
 
-export function useParentNotificationLink(): OpenNotificationLink {
+export function useParentNotificationLink({ replace = false }: { replace?: boolean } = {}): OpenNotificationLink {
   const navigate = useNavigate();
+  const go = useCallback((to: string) => navigate(to, { replace }), [navigate, replace]);
   const { children, selectChild } = useSelectedChild();
   return useCallback(
     (link, _kind, data) => {
@@ -13,13 +14,13 @@ export function useParentNotificationLink(): OpenNotificationLink {
       const studentId = typeof data?.student_id === "string" ? data.student_id : "";
       const child = children.find((item) => item.id === studentId);
       if (child) selectChild(child.id);
-      if (type === "login") navigate(child ? ROUTES.parent.childLogins(child.id) : ROUTES.parent.children);
-      else if (["assignment", "homework", "submission"].includes(type)) navigate(ROUTES.parent.homework);
-      else if (["lesson", "recording"].includes(type)) navigate(ROUTES.parent.attendance);
-      else if (["exam", "mock", "quiz", "test"].includes(type)) navigate(ROUTES.parent.exams);
-      else if (type === "course") navigate(ROUTES.parent.course(link.id));
-      else if (["conversation", "room", "chat", "chat_room", "message"].includes(type)) navigate(ROUTES.parent.chat(link.id));
+      if (type === "login") go(child ? ROUTES.parent.childLogins(child.id) : ROUTES.parent.children);
+      else if (["assignment", "homework", "submission"].includes(type)) go(ROUTES.parent.homework);
+      else if (["lesson", "recording"].includes(type)) go(ROUTES.parent.attendance);
+      else if (["exam", "mock", "quiz", "test"].includes(type)) go(ROUTES.parent.exams);
+      else if (type === "course") go(ROUTES.parent.course(link.id));
+      else if (["conversation", "room", "chat", "chat_room", "message"].includes(type)) go(ROUTES.parent.chat(link.id));
     },
-    [children, navigate, selectChild]
+    [children, go, selectChild]
   );
 }

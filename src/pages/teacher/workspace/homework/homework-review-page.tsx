@@ -11,6 +11,7 @@ import {
   useSubmission,
   QuestionsResult,
   submissionAiState,
+  AiSkippedNotice,
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
@@ -316,6 +317,7 @@ export function HomeworkReviewPage() {
                       ? current?.aiSummary || t("review.aiFailedHint")
                       : t("review.aiSuggestionHint")}
               </small>
+              {checking ? null : <AiSkippedNotice count={current?.result?.skippedImages ?? 0} />}
               {questions.length && !checking ? (
                 <span className="flex items-center gap-2 text-body-sm text-ink">
                   <Icon name="check-circle" size={18} className="text-success" />
@@ -597,6 +599,8 @@ export function HomeworkReviewPage() {
                 </small>
               </span>
             </span>
+
+            <AiSkippedNotice count={current?.result?.skippedImages ?? 0} />
 
             {findings.length ? (
               <span className="flex flex-col gap-1.5">

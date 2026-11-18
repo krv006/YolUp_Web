@@ -103,5 +103,14 @@
     "submit": "Yuborish",
     "sent_one": "Xabar {{count}} ta o‘quvchiga yuborildi",
     "sent_other": "Xabar {{count}} ta o‘quvchiga yuborildi"
+  },
+  "opening": "Bildirishnoma ochilmoqda…",
+  "pushPrompt": {
+    "title": "Bildirishnomalarni yoqing",
+    "text": "Yangi baho, dars boshlanishi va xabarlarni sayt yopiq bo‘lsa ham darhol ko‘rasiz.",
+    "enable": "Yoqish",
+    "later": "Keyinroq",
+    "enabled": "Bildirishnomalar yoqildi",
+    "failed": "Bildirishnomalarni yoqib bo‘lmadi"
   }
 }

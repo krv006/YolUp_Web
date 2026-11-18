@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { EmailSetupDialog, ForcePasswordDialog, resolveHomeRoute, useAuth } from "@/modules/auth";
-import { RealtimeHubContext } from "@/modules/notification";
+import { PushPrompt, RealtimeHubContext } from "@/modules/notification";
 import { hasRole } from "@/modules/permission";
 import { ROLES, type Role } from "@/shared/constants";
 import { ROUTES } from "@/shared/config";
@@ -28,12 +28,14 @@ export function RoleRoute({ allowedRoles }: { allowedRoles: Role[] }) {
         <Outlet />
         <ForcePasswordDialog />
         <EmailSetupDialog />
+        <PushPrompt />
       </RealtimeHubContext.Provider>
     ) : (
       <>
         <Outlet />
         <ForcePasswordDialog />
         <EmailSetupDialog />
+        <PushPrompt />
       </>
     );
   }

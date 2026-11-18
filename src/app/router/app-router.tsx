@@ -100,6 +100,9 @@ const HelpCenterPage = lazy(() =>
     default: module.HelpCenterPage,
   }))
 );
+const NotificationOpenPage = lazy(() =>
+  import("@/pages/notifications/notification-open-page").then((module) => ({ default: module.NotificationOpenPage }))
+);
 const NotificationsPage = lazy(() =>
   import("@/pages/notifications/notifications-page").then((module) => ({
     default: module.NotificationsPage,
@@ -506,6 +509,7 @@ export function AppRouter() {
                 </Route>
 
                 <Route path="/live/:lessonId" element={<LiveLessonPage />} />
+                <Route path="/notification-open" element={<NotificationOpenPage />} />
 
                 <Route
                   element={

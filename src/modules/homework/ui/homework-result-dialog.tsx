@@ -20,6 +20,7 @@ import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { FileViewer } from "@/shared/ui/file-viewer";
 import { homeworkApi } from "../api/homework.api";
 import { submissionAiState } from "../lib/submission-ai-state";
+import { AiSkippedNotice } from "./ai-skipped-notice";
 import {
   useRecheckSubmission,
   useReviewSubmission,
@@ -405,6 +406,7 @@ export function HomeworkResultDialog({
                     )}
                   </span>
                 </section>
+                <AiSkippedNotice count={submission.result?.skippedImages ?? 0} className="mt-3" />
                 {reviewError ? (
                   <p className="mt-3 rounded-xl bg-danger-bg px-4 py-3 text-body-sm text-error-text">{reviewError}</p>
                 ) : null}
@@ -543,6 +545,7 @@ export function HomeworkResultDialog({
                   ) : null}
                 </div>
               </header>
+              <AiSkippedNotice count={submission.result?.skippedImages ?? 0} />
 
               {reviewError ? <div className="form-alert">{reviewError}</div> : null}
 

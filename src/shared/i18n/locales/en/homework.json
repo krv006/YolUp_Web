@@ -536,5 +536,7 @@
     "minutes": "{{minutes}} min",
     "minutesSeconds": "{{minutes}} min {{seconds}}s",
     "hours": "{{hours}} h {{minutes}} min"
-  }
+  },
+  "aiSkipped_one": "{{count}} page didn't fit into the AI — the score covers only the pages it saw. Check the rest yourself.",
+  "aiSkipped_other": "{{count}} pages didn't fit into the AI — the score covers only the pages it saw. Check the rest yourself."
 }

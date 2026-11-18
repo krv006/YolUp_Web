@@ -103,5 +103,14 @@
     "submit": "Send",
     "sent_one": "Message sent to {{count}} student",
     "sent_other": "Message sent to {{count}} students"
+  },
+  "opening": "Opening the notification…",
+  "pushPrompt": {
+    "title": "Turn on notifications",
+    "text": "See new grades, lesson starts and messages right away, even when the site is closed.",
+    "enable": "Turn on",
+    "later": "Later",
+    "enabled": "Notifications are on",
+    "failed": "Couldn't turn on notifications"
   }
 }

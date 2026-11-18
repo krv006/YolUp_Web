@@ -1,9 +1,11 @@
 
 function urlFromLink(payload) {
   const type = String(payload.link_type || "").toLowerCase();
-  const id = payload.link_id ? encodeURIComponent(String(payload.link_id)) : "";
-  if (type === "lesson" && id && !String(payload.kind || "").includes("recording")) return `/live/${id}`;
-  return "";
+  const id = payload.link_id ? String(payload.link_id) : "";
+  if (!type || !id) return "";
+  const query = new URLSearchParams({ type, id });
+  if (payload.kind) query.set("kind", String(payload.kind));
+  return `/notification-open?${query.toString()}`;
 }
 
 function readPayload(event) {
