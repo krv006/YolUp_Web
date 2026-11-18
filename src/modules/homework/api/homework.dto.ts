@@ -35,6 +35,7 @@ export interface AiResultDto {
   grade?: string;
   questions?: AiQuestionDto[];
   summary?: AiSummaryDto | null;
+  skipped_images?: number | null;
 }
 
 export interface SubmissionDto {

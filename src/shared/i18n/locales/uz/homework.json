@@ -527,5 +527,6 @@
     "minutes": "{{minutes}} daq",
     "minutesSeconds": "{{minutes}} daq {{seconds}} s",
     "hours": "{{hours}} soat {{minutes}} daq"
-  }
+  },
+  "aiSkipped": "{{count}} ta sahifa AI'ga sig‘madi — ball faqat ko‘rilgan sahifalar bo‘yicha. Qolganini o‘zingiz ko‘rib chiqing."
 }

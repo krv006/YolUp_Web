@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mapHomeworkFocusDto } from "./homework.mappers";
+import { mapAiResultDto, mapHomeworkFocusDto } from "./homework.mappers";
 
 describe("mapHomeworkFocusDto", () => {
   it("maps the page leaving summary with an open absence", () => {
@@ -21,5 +21,12 @@ describe("mapHomeworkFocusDto", () => {
   it("keeps an untracked submission empty instead of inventing zeros", () => {
     expect(mapHomeworkFocusDto(undefined)).toBeNull();
     expect(mapHomeworkFocusDto({})).toMatchObject({ exits: 0, timeline: [] });
+  });
+});
+
+describe("mapAiResultDto skipped images", () => {
+  it("keeps how many pages the AI could not see, zero when the field is missing", () => {
+    expect(mapAiResultDto({ overall_score: 70, skipped_images: 5 })?.skippedImages).toBe(5);
+    expect(mapAiResultDto({ overall_score: 70 })?.skippedImages).toBe(0);
   });
 });

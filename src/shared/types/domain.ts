@@ -364,6 +364,7 @@ export interface AiResult {
   grade: string;
   questions: AiQuestion[];
   summary: AiSummary | null;
+  skippedImages: number;
 }
 
 export type HomeworkQuestionType = "single" | "multiple" | "short" | "long";
