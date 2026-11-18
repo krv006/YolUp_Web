@@ -291,7 +291,10 @@
     "emailUnverified": "Не подтверждён",
     "emailAdd": "Добавить",
     "emailVerify": "Подтвердить",
-    "emailChange": "Изменить"
+    "emailChange": "Изменить",
+    "currentPasswordRequired": "Введите текущий пароль",
+    "passwordSame": "Новый пароль должен отличаться от текущего",
+    "passwordChangeFailed": "Не удалось сменить пароль. Попробуйте снова."
   },
   "help": {
     "search": "Поиск вопроса или темы…",

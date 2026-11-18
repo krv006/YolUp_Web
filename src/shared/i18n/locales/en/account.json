@@ -289,7 +289,10 @@
     "emailUnverified": "Not verified",
     "emailAdd": "Add",
     "emailVerify": "Verify",
-    "emailChange": "Change"
+    "emailChange": "Change",
+    "currentPasswordRequired": "Enter your current password",
+    "passwordSame": "The new password must differ from the current one",
+    "passwordChangeFailed": "Couldn't change the password. Try again."
   },
   "help": {
     "search": "Search a question or topic…",
