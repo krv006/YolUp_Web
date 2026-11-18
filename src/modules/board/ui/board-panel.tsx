@@ -41,6 +41,8 @@ import { confirmsPending } from "../lib/board-pending";
 import { strokesAlong } from "../lib/board-select";
 import { BOARD_ZOOM, clampZoom, zoomScroll } from "../lib/board-zoom";
 import { BoardZoomControls } from "./board-zoom-controls";
+import { BoardGuides } from "./board-guides";
+import { useBoardGuides } from "../model/use-board-guides";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
@@ -144,6 +146,7 @@ export function BoardPanel({
   const { t } = useTranslation("board");
   const isCompact = useIsCompact();
   const mobileLayout = Boolean(isCompact && mobile);
+  const { guides, toggleGuides } = useBoardGuides();
   const { user } = useAuth();
   const userId = currentUserId ?? user?.id ?? null;
   const realtime = useBoardRealtime(lessonId, !source, userId);
@@ -908,6 +911,7 @@ export function BoardPanel({
             style={{ aspectRatio: `${state.width} / ${canvasHeight}` }}
             {...pointerHandlers}
           >
+            {guides ? <BoardGuides width={state.width} height={canvasHeight} /> : null}
             {strokeNodes}
             {pendingNodes}
             {selection.box && selection.selected ? (
@@ -1084,6 +1088,8 @@ export function BoardPanel({
         onZoomIn={() => zoomBy(BOARD_ZOOM.step)}
         onZoomOut={() => zoomBy(1 / BOARD_ZOOM.step)}
         onReset={() => zoomBy(1 / zoomRef.current)}
+        guides={guides}
+        onToggleGuides={toggleGuides}
       />
     </div>
   );

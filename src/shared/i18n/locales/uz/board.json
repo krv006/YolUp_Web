@@ -247,5 +247,9 @@
     "in": "Kattalashtirish",
     "out": "Kichiklashtirish",
     "reset": "Asl o'lchamga qaytarish ({{value}}%)"
+  },
+  "guides": {
+    "show": "Yordamchi katakni ko‘rsatish",
+    "hide": "Yordamchi katakni yashirish"
   }
 }

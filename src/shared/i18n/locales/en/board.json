@@ -248,5 +248,9 @@
     "in": "Zoom in",
     "out": "Zoom out",
     "reset": "Reset zoom ({{value}}%)"
+  },
+  "guides": {
+    "show": "Show guide grid",
+    "hide": "Hide guide grid"
   }
 }
