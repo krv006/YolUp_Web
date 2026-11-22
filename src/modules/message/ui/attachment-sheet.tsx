@@ -8,6 +8,7 @@ import { Icon } from "@/shared/ui/icon";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { messageApi } from "../api/message.api";
 import { messageKeys } from "../model/message.keys";
+import { useChatImage } from "../model/use-chat-image";
 
 const DOCUMENT_TYPES =
   ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.rar,application/pdf";
@@ -40,7 +41,7 @@ export function AttachmentSheet({
 
   const recent = roomId
     ? (client.getQueryData<ChatMessage[]>(messageKeys.all(roomId)) ?? [])
-        .filter((message) => message.attachment?.kind === "image" && message.attachment.url)
+        .filter((message) => message.attachment?.kind === "image" && message.attachment.url && !message.pending)
         .slice(-RECENT_LIMIT)
         .reverse()
     : [];
@@ -135,11 +136,7 @@ export function AttachmentSheet({
                 disabled={loadingId !== null}
                 onClick={() => void pickRecent(message)}
               >
-                <img
-                  src={message.attachment?.url ?? ""}
-                  alt={message.attachment?.name ?? ""}
-                  className="size-full object-cover"
-                />
+                <ChatThumb url={message.attachment?.url ?? null} name={message.attachment?.name ?? ""} />
               </button>
             ))}
           </div>
@@ -201,4 +198,9 @@ export function AttachmentSheet({
       </div>
     </AppDialog>
   );
+}
+
+function ChatThumb({ url, name }: { url: string | null; name: string }) {
+  const { src } = useChatImage(url, { thumb: true });
+  return src ? <img src={src} alt={name} className="size-full object-cover" /> : <span className="block size-full animate-pulse bg-skeleton" />;
 }
