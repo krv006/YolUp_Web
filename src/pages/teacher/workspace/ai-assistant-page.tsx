@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
-import { useAiQuizJobs, useGenerateQuizFromBank, useStartAiQuiz } from "@/modules/quiz";
+import { AI_MATERIAL_ACCEPT, checkAiMaterials, useAiQuizJobs, useGenerateQuizFromBank, useStartAiQuiz } from "@/modules/quiz";
 import type { AiQuizStandard } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -19,9 +19,6 @@ const EXAM_MODES: Array<{ id: string; standard: AiQuizStandard | null }> = [
   { id: "bank", standard: null },
 ];
 
-const MAX_FILES = 5;
-const MAX_FILE_MB = 20;
-const MAX_FILE_BYTES = MAX_FILE_MB * 1024 * 1024;
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 50;
 
@@ -209,18 +206,18 @@ export function AiAssistantPage() {
             ref={fileRef}
             type="file"
             multiple
-            accept=".pdf,.doc,.docx,image/*"
+            accept={AI_MATERIAL_ACCEPT}
             className="hidden"
             onChange={(event) => {
               const picked = Array.from(event.target.files ?? []);
               event.target.value = "";
-              const tooBig = picked.find((file) => file.size > MAX_FILE_BYTES);
-              if (tooBig) {
-                setFileError(t("ai.fileTooBig", { name: tooBig.name, size: MAX_FILE_MB }));
+              const problem = checkAiMaterials(picked);
+              if (problem) {
+                setFileError(t(`ai.material.${problem.kind}`, problem));
                 return;
               }
               setFileError(null);
-              setFiles(picked.slice(0, MAX_FILES));
+              setFiles(picked);
             }}
           />
 
@@ -315,10 +312,14 @@ export function AiAssistantPage() {
                     <strong className="truncate text-title-sm text-ink">
                       {job.title || job.topic}
                     </strong>
-                    <small className="truncate text-body-xs text-ink-tertiary">
+                    <small
+                      className={`text-body-xs ${job.status === "failed" ? "text-error-text" : "truncate text-ink-tertiary"}`}
+                    >
                       {done
                         ? t("ai.jobDone", { count: job.questionCount })
-                        : t(`ai.status.${job.status}`)}
+                        : job.status === "failed"
+                          ? job.error || t("ai.status.failed")
+                          : t(`ai.status.${job.status}`)}
                     </small>
                   </span>
                   {done && job.quizId ? (
@@ -332,7 +333,7 @@ export function AiAssistantPage() {
                   ) : null}
                 </div>
 
-                {done ? null : (
+                {done || job.status === "failed" ? null : (
                   <span className="h-1.5 w-full overflow-hidden rounded-full bg-subtle">
                     <i className="block h-full w-2/5 animate-pulse rounded-full bg-accent-violet-fg" />
                   </span>

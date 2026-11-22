@@ -5,14 +5,13 @@ import { useSearchParams } from "react-router-dom";
 import { Button, LoadingFallback } from "@/shared/ui/legacy";
 import { SelectPicker } from "@/shared/ui/legacy/form-pickers";
 import type { AiQuizJob, AiQuizStandard } from "../api/quiz.dto";
+import { AI_MATERIAL_ACCEPT, AI_MATERIAL_MAX_FILES, checkAiMaterials } from "../lib/ai-material";
 import { useAiQuizJobs, useStartAiQuiz } from "../model/quiz.queries";
 
-const MATERIAL_ACCEPT = ".pdf,.docx,.pptx,.xlsx,.xlsm,.csv,.txt,.md";
+const MATERIAL_ACCEPT = AI_MATERIAL_ACCEPT;
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 60;
-const MAX_FILE_MB = 20;
-const MAX_FILES = 5;
-const MAX_TOTAL_MB = 40;
+const MAX_FILES = AI_MATERIAL_MAX_FILES;
 const MAX_MATERIAL_TEXT = 120000;
 const MAX_RULES_MB = 5;
 const MAX_RULES_TEXT = 30000;
@@ -86,29 +85,14 @@ export function AiQuizCreator({ subjects, courses = [], onOpenQuiz }: AiQuizCrea
     const picked = Array.from(event.target.files ?? []);
     event.target.value = "";
     if (!picked.length) return;
-    const big = picked.find((item) => item.size > MAX_FILE_MB * 1024 * 1024);
-    if (big) {
-      return setError(
-        t("aiPage.fileTooLarge", {
-          size: (big.size / 1024 / 1024).toFixed(1),
-          max: MAX_FILE_MB,
-        }),
-      );
-    }
     // Yangi tanlov oldingilariga QO'SHILADI (bir xil fayl ikki marta qo'shilmaydi)
     const known = new Set(files.map((item) => `${item.name}:${item.size}`));
     const merged = [
       ...files,
       ...picked.filter((item) => !known.has(`${item.name}:${item.size}`)),
     ];
-    if (merged.length > MAX_FILES)
-      return setError(t("aiPage.tooManyFiles", { max: MAX_FILES }));
-    if (
-      merged.reduce((sum, item) => sum + item.size, 0) >
-      MAX_TOTAL_MB * 1024 * 1024
-    ) {
-      return setError(t("aiPage.totalTooLarge", { max: MAX_TOTAL_MB }));
-    }
+    const problem = checkAiMaterials(merged);
+    if (problem) return setError(t(`ai.material.${problem.kind}`, problem));
     setError(null);
     setFiles(merged);
   }

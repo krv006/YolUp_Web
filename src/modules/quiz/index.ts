@@ -1,5 +1,7 @@
 export { quizApi } from "./api/quiz.api";
 export { quizErrorMessage } from "./lib/quiz-errors";
+export { AI_MATERIAL_ACCEPT, checkAiMaterials } from "./lib/ai-material";
+export type { AiMaterialProblem } from "./lib/ai-material";
 export { emptyAnswer } from "./lib/answer-value";
 export { groupQuestions } from "./lib/group-questions";
 export { QuizGroupPanel } from "./ui/quiz-group-panel";

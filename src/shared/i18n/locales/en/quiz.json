@@ -364,8 +364,6 @@
     "modeBank": "Test bank",
     "chooseFiles": "Choose material (several files allowed)",
     "filesChosen": "{{count}} files selected",
-    "tooManyFiles": "You can pick at most {{max}} files at once.",
-    "totalTooLarge": "The files together must not exceed {{max}} MB.",
     "materialTextLabel": "Or paste the material here",
     "materialTextPlaceholder": "You can copy text from the web and paste it here...",
     "materialOptionalHint": "Material is optional: if you have none, leave it empty — AI writes the text itself from the topic and rules.",
@@ -614,7 +612,7 @@
     },
     "pickFiles": "Add material (optional)",
     "filesPicked": "{{count}} files picked",
-    "filesHint": "up to 5 files, 20 MB each · PDF, Word, image",
+    "filesHint": "up to 5 files, 20 MB each, 40 MB total · PDF, Word, PowerPoint, Excel, TXT",
     "questionCount": "Questions",
     "less": "Fewer",
     "more": "More",
@@ -638,9 +636,8 @@
         "rules": "With rules",
         "bank": "From bank"
       },
-      "pickFiles": "Upload material (PDF, DOCX, image)",
-      "filesHint": "Up to 5 files · 20 MB total",
-      "filesTooBig": "Files must not exceed {{size}} MB in total",
+      "pickFiles": "Upload material (PDF, Word, PowerPoint)",
+      "filesHint": "Up to 5 files · 40 MB total · PDF, Word, PowerPoint, Excel",
       "countRange": "from {{min}} to {{max}}",
       "count": "{{count}}",
       "submit": "Create test with AI",
@@ -654,7 +651,13 @@
       "retry": "Retry"
     },
     "bankHint": "No AI call: a draft quiz is assembled on the topic from questions in your earlier AI-made quizzes.",
-    "bankSubmit": "Build from bank"
+    "bankSubmit": "Build from bank",
+    "material": {
+      "type": "“{{name}}” can't be read. Allowed: PDF, DOCX, PPTX, XLSX, CSV, TXT, MD. Old .doc, images and scanned PDFs are not accepted.",
+      "fileSize": "“{{name}}” is larger than {{max}} MB.",
+      "count": "You can pick at most {{max}} files.",
+      "total": "Files must not exceed {{max}} MB in total."
+    }
   },
   "details": {
     "title": "Edit test",

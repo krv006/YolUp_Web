@@ -364,8 +364,6 @@
     "modeBank": "Test banki",
     "chooseFiles": "Material tanlash (bir nechta fayl)",
     "filesChosen": "{{count}} ta fayl tanlandi",
-    "tooManyFiles": "Bir vaqtda ko'pi bilan {{max}} ta fayl tanlash mumkin.",
-    "totalTooLarge": "Fayllar umumiy hajmi {{max}} MB dan oshmasligi kerak.",
     "materialTextLabel": "Yoki materialni shu yerga qo'ying",
     "materialTextPlaceholder": "Matnni internetdan nusxalab shu yerga yopishtirishingiz mumkin...",
     "materialOptionalHint": "Material ixtiyoriy: topolmasangiz bo'sh qoldiring, AI mavzu va qoidalar bo'yicha matnni o'zi yozadi.",
@@ -613,7 +611,7 @@
     },
     "pickFiles": "Material tanlash (ixtiyoriy)",
     "filesPicked": "{{count}} ta fayl tanlandi",
-    "filesHint": "5 tagacha fayl, har biri 20 MB gacha · PDF, Word, rasm",
+    "filesHint": "5 tagacha fayl, har biri 20 MB, jami 40 MB · PDF, Word, PowerPoint, Excel, TXT",
     "questionCount": "Savollar soni",
     "less": "Kamaytirish",
     "more": "Ko‘paytirish",
@@ -637,9 +635,8 @@
         "rules": "Qoidalar bilan",
         "bank": "Bankdan"
       },
-      "pickFiles": "Material yuklang (PDF, DOCX, rasm)",
-      "filesHint": "5 tagacha fayl · jami 20 MB",
-      "filesTooBig": "Fayllar jami {{size}} MB dan oshmasligi kerak",
+      "pickFiles": "Material yuklang (PDF, Word, PowerPoint)",
+      "filesHint": "5 tagacha fayl · jami 40 MB · PDF, Word, PowerPoint, Excel",
       "countRange": "{{min}} dan {{max}} gacha",
       "count": "{{count}} ta",
       "submit": "AI bilan test yaratish",
@@ -653,7 +650,13 @@
       "retry": "Qayta"
     },
     "bankHint": "AI chaqirilmaydi: avval AI bilan yaratgan testlaringizdagi savollardan mavzu bo‘yicha qoralama test yig‘iladi.",
-    "bankSubmit": "Bankdan yig‘ish"
+    "bankSubmit": "Bankdan yig‘ish",
+    "material": {
+      "type": "«{{name}}» o‘qilmaydi. Mumkin: PDF, DOCX, PPTX, XLSX, CSV, TXT, MD. Eski .doc, rasm va skanerlangan PDF qabul qilinmaydi.",
+      "fileSize": "«{{name}}» {{max}} MB dan katta.",
+      "count": "Ko‘pi bilan {{max}} ta fayl tanlash mumkin.",
+      "total": "Fayllar jami {{max}} MB dan oshmasligi kerak."
+    }
   },
   "details": {
     "title": "Testni tahrirlash",

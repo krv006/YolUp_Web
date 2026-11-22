@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { AiQuizJob, AiQuizStandard } from "@/modules/quiz";
+import { AI_MATERIAL_ACCEPT, checkAiMaterials, type AiQuizJob, type AiQuizStandard } from "@/modules/quiz";
 import { Icon } from "@/shared/ui/icon";
 import { MOBILE_INPUT_SURFACE, MobileFieldLabel, MobilePickerField } from "@/shared/ui/mobile-fields";
 import {
@@ -16,8 +16,6 @@ import {
 type Tab = "simple" | "rules" | "bank";
 
 const STANDARDS: AiQuizStandard[] = ["uzbmb", "ielts", "sat"];
-const MAX_FILES = 5;
-const MAX_TOTAL_MB = 20;
 const MIN_QUESTIONS = 5;
 const MAX_QUESTIONS = 50;
 
@@ -178,14 +176,14 @@ export function MobileAiForm({
               ref={fileRef}
               type="file"
               multiple
-              accept=".pdf,.doc,.docx,image/*"
+              accept={AI_MATERIAL_ACCEPT}
               className="hidden"
               onChange={(event) => {
-                const picked = Array.from(event.target.files ?? []).slice(0, MAX_FILES);
+                const picked = Array.from(event.target.files ?? []);
                 event.target.value = "";
-                const total = picked.reduce((sum, file) => sum + file.size, 0);
-                if (total > MAX_TOTAL_MB * 1024 * 1024) {
-                  setFileError(t("ai.mobile.filesTooBig", { size: MAX_TOTAL_MB }));
+                const problem = checkAiMaterials(picked);
+                if (problem) {
+                  setFileError(t(`ai.material.${problem.kind}`, problem));
                   return;
                 }
                 setFileError(null);
