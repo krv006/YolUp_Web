@@ -6,7 +6,6 @@ import { useLessons } from "@/modules/lesson";
 import {
   isConsentRequired,
   parentHome,
-  useChildExams,
   useChildSummary,
   useParentHomework,
   useParentLinks,
@@ -35,7 +34,6 @@ export function useParentHome() {
   const attendance = useAttendance({ student: childId ?? "", page_size: 100 }, enabled);
   const homework = useParentHomework(childId);
   const logins = useLoginHistory(childId, enabled);
-  const exams = useChildExams(childId);
   const courses = useCourses();
 
   useEffect(() => {
@@ -85,12 +83,10 @@ export function useParentHome() {
       attention: parentHome.attentionItems({
         dueSoon: homeworkSummary.dueSoon,
         logins: logins.data ?? [],
-        exams: exams.data ?? [],
-        courseIds: null,
         now,
       }),
     };
-  }, [finished.data, scheduled.data, live.data, attendance.data, homework.data, logins.data, exams.data, summary.data, now]);
+  }, [finished.data, scheduled.data, live.data, attendance.data, homework.data, logins.data, summary.data, now]);
 
   const teachers = useMemo(
     () => new Map((courses.data ?? []).map((course) => [course.id, course.teacher])),
@@ -113,7 +109,7 @@ export function useParentHome() {
   const failed =
     coreFailed || [finished, scheduled, live, homework].some((query) => query.isError) || (attendance.isError && !locked);
   const retry = () => {
-    for (const query of [childrenQuery, links, finished, scheduled, live, attendance, homework, logins, exams, summary]) {
+    for (const query of [childrenQuery, links, finished, scheduled, live, attendance, homework, logins, summary]) {
       void query.refetch();
     }
   };

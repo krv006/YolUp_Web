@@ -170,11 +170,6 @@ const ParentCoursePage = lazy(() =>
     default: module.ParentCoursePage,
   }))
 );
-const ParentExamResultPage = lazy(() =>
-  import("@/pages/parent/exams/parent-exam-result-page").then((module) => ({
-    default: module.ParentExamResultPage,
-  }))
-);
 const ParentProfilePage = lazy(() =>
   import("@/pages/parent/settings/parent-profile-page").then((module) => ({
     default: module.ParentProfilePage,
@@ -230,8 +225,6 @@ const HomeworkDetailPage = lazy(() => import("@/pages/teacher/workspace/homework
 const HomeworkReviewPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-review-page").then((module) => ({ default: module.HomeworkReviewPage })));
 const AiAssistantPage = lazy(() => import("@/pages/teacher/workspace/ai-assistant-page").then((module) => ({ default: module.AiAssistantPage })));
 const WorkspaceAnalyticsPage = lazy(() => import("@/pages/teacher/workspace/analytics-page").then((module) => ({ default: module.WorkspaceAnalyticsPage })));
-const MockExamsPage = lazy(() => import("@/pages/teacher/workspace/mock-exams-page").then((module) => ({ default: module.MockExamsPage })));
-const MockResultsPage = lazy(() => import("@/pages/teacher/workspace/mock-results-page").then((module) => ({ default: module.MockResultsPage })));
 const TestResultsPage = lazy(() => import("@/pages/teacher/workspace/test-results-page").then((module) => ({ default: module.TestResultsPage })));
 const TestEditorPage = lazy(() => import("@/pages/teacher/workspace/test-editor-page").then((module) => ({ default: module.TestEditorPage })));
 const TestDetailsPage = lazy(() => import("@/pages/teacher/workspace/test-details-page").then((module) => ({ default: module.TestDetailsPage })));
@@ -239,19 +232,15 @@ const TestsPage = lazy(() => import("@/pages/teacher/workspace/tests-page").then
 const TeacherDashboardPage = lazy(() => import("@/pages/teacher/dashboard/teacher-dashboard-page").then((module) => ({ default: module.TeacherDashboardPage })));
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
 const SchedulePage = lazy(() => import("@/pages/schedule/schedule-page").then((module) => ({ default: module.SchedulePage })));
-const ParentExamsPage = lazy(() => import("@/pages/parent/exams/parent-exams-page").then((module) => ({ default: module.ParentExamsPage })));
 const ParentReportPage = lazy(() => import("@/pages/parent/report/parent-report-page").then((module) => ({ default: module.ParentReportPage })));
 const StudentWorkspacePage = lazy(() => import("@/pages/student/workspace/student-workspace-page").then((module) => ({ default: module.StudentWorkspacePage })));
 const StudentTestsPage = lazy(() => import("@/pages/student/workspace/student-tests-page").then((module) => ({ default: module.StudentTestsPage })));
 const StudentTestPage = lazy(() => import("@/pages/student/workspace/student-test-page").then((module) => ({ default: module.StudentTestPage })));
 const StudentTestResultsPage = lazy(() => import("@/pages/student/workspace/student-test-results-page").then((module) => ({ default: module.StudentTestResultsPage })));
 const StudentAnalyticsPage = lazy(() => import("@/pages/student/workspace/student-analytics-page").then((module) => ({ default: module.StudentAnalyticsPage })));
-const StudentMockPage = lazy(() => import("@/pages/student/workspace/student-mock-page").then((module) => ({ default: module.StudentMockPage })));
-const StudentMockResultPage = lazy(() => import("@/pages/student/workspace/student-mock-result-page").then((module) => ({ default: module.StudentMockResultPage })));
 const StudentHomeworkItemPage = lazy(() => import("@/pages/student/workspace/student-homework-item-page").then((module) => ({ default: module.StudentHomeworkItemPage })));
 const StudentHomeworkPage = lazy(() => import("@/pages/student/workspace/student-homework-page").then((module) => ({ default: module.StudentHomeworkPage })));
 const StudentHomeworkBoardPage = lazy(() => import("@/pages/student/homework-board/student-homework-board-page").then((module) => ({ default: module.StudentHomeworkBoardPage })));
-const StudentExamPage = lazy(() => import("@/pages/student/exams/student-exam-page").then((module) => ({ default: module.StudentExamPage })));
 const StudentDashboardPage = lazy(() => import("@/pages/student/dashboard/student-dashboard-page").then((module) => ({ default: module.StudentDashboardPage })));
 
 type ChunkLoader = () => Promise<unknown>;
@@ -337,8 +326,7 @@ export function AppRouter() {
                     />
                     <Route path={ROUTES.teacher.materials} element={<MaterialsPage />} />
                     <Route path={ROUTES.teacher.workspaceAnalytics} element={<WorkspaceAnalyticsPage />} />
-                    <Route path={ROUTES.teacher.mockExams} element={<MockExamsPage />} />
-                    <Route path="/teacher/workspace/mock/:examId" element={<MockResultsPage />} />
+                    <Route path="/teacher/workspace/mock/*" element={<Navigate to={ROUTES.teacher.workspace} replace />} />
                     <Route path={ROUTES.teacher.profile} element={<ProfileLayout />}>
                       <Route index element={<ProfileIndexRoute />} />
                       <Route path="personal" element={<PersonalInfoPage />} />
@@ -391,7 +379,7 @@ export function AppRouter() {
                     />
                     <Route
                       path="exams"
-                      element={<Navigate to={ROUTES.teacher.mockExams} replace />}
+                      element={<Navigate to={ROUTES.teacher.workspace} replace />}
                     />
                     <Route
                       path=":conversationId"
@@ -424,9 +412,7 @@ export function AppRouter() {
                       path={ROUTES.student.ai}
                       element={FEATURES.aiAssistant ? <StudentAiPage /> : <Navigate to={ROUTES.student.workspace} replace />}
                     />
-                    <Route path={ROUTES.student.mockExams} element={<StudentMockPage />} />
-                    <Route path="/student/workspace/mock/:examId" element={<StudentMockResultPage />} />
-                    <Route path="/student/workspace/mock/:examId/take" element={<StudentExamPage />} />
+                    <Route path="/student/workspace/mock/*" element={<Navigate to={ROUTES.student.workspace} replace />} />
                     <Route path={ROUTES.student.homework} element={<StudentHomeworkPage />} />
                     <Route path="/student/workspace/homework/:assignmentId" element={<StudentHomeworkItemPage />} />
                     <Route
@@ -457,8 +443,7 @@ export function AppRouter() {
                     <Route path="workspace" element={<Navigate to={ROUTES.student.workspace} replace />} />
                     <Route path="analytics" element={<Navigate to={ROUTES.student.workspaceAnalytics} replace />} />
                     <Route path="quizzes" element={<Navigate to={ROUTES.student.tests} replace />} />
-                    <Route path="exams" element={<Navigate to={ROUTES.student.mockExams} replace />} />
-                    <Route path="exams/:examId" element={<LegacyRedirect to={(params) => ROUTES.student.mockExam(params.examId ?? "")} />} />
+                    <Route path="exams/*" element={<Navigate to={ROUTES.student.workspace} replace />} />
                     <Route
                       path="homework-board/:assignmentId"
                       element={<LegacyRedirect to={(params) => ROUTES.student.homeworkBoard(params.assignmentId ?? "")} />}
@@ -493,8 +478,7 @@ export function AppRouter() {
                     <Route path="attendance/search" element={<AttendanceSearchPage />} />
                     <Route path="homework" element={<ParentHomeworkPage />} />
                     <Route path="homework/:assignmentId" element={<ParentHomeworkItemPage />} />
-                    <Route path="exams" element={<ParentExamsPage />} />
-                    <Route path="exams/:examId" element={<ParentExamResultPage />} />
+                    <Route path="exams/*" element={<Navigate to={ROUTES.parent.grades} replace />} />
                     <Route path="grades" element={<ParentReportPage />} />
                     <Route path="grades/:courseId" element={<ParentCoursePage />} />
                     <Route path="profile" element={<ParentProfilePage />} />

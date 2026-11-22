@@ -9,7 +9,6 @@
     "children": "Students",
     "attendance": "Attendance",
     "homework": "Homework",
-    "exams": "Mock tests",
     "grades": "Rating"
   },
   "rail": {

@@ -1,5 +1,5 @@
 import { LATE_AFTER_MINUTES } from "@/modules/attendance";
-import type { Assignment, AttendanceRow, ExamSummary, Lesson } from "@/shared/types";
+import type { Assignment, AttendanceRow, Lesson } from "@/shared/types";
 
 const DAY_MS = 86_400_000;
 
@@ -35,8 +35,7 @@ export interface ScorePoint {
 
 export type AttentionItem =
   | { kind: "homework"; assignment: Assignment }
-  | { kind: "login"; at: string; device: string }
-  | { kind: "exam"; exam: ExamSummary };
+  | { kind: "login"; at: string; device: string };
 
 export interface LoginLike {
   at: string;
@@ -241,15 +240,11 @@ export function homeworkSummary(assignments: Assignment[], now: number) {
 export function attentionItems({
   dueSoon,
   logins,
-  exams,
-  courseIds,
   now,
   limit = 3,
 }: {
   dueSoon: Assignment[];
   logins: LoginLike[];
-  exams: ExamSummary[];
-  courseIds: ReadonlySet<string> | null;
   now: number;
   limit?: number;
 }): AttentionItem[] {
@@ -259,12 +254,6 @@ export function attentionItems({
     .filter((record) => record.isNewDevice && Date.parse(record.at) > weekAgo)
     .sort((a, b) => b.at.localeCompare(a.at))[0];
   if (login) items.push({ kind: "login", at: login.at, device: login.device });
-  for (const exam of exams) {
-    const ended = Date.parse(exam.endsAt);
-    if (exam.state === "finished" && ended > weekAgo && ended <= now && (!courseIds || courseIds.has(exam.courseId))) {
-      items.push({ kind: "exam", exam });
-    }
-  }
   return items.slice(0, limit);
 }
 

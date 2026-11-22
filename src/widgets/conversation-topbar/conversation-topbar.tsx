@@ -29,7 +29,6 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
   const openAssignment = useAssignmentCreateStore((state) => state.setOpen);
   const openPageCreate = usePageCreateStore((state) => state.setOpen);
   const quizzes = pathname.endsWith("/quizzes");
-  const exams = pathname.endsWith("/exams");
   const isSubPage = workspace && !pathname.endsWith("/workspace");
   const quizT = useTranslation("quiz").t;
   const lessonT = useTranslation("lesson").t;
@@ -181,30 +180,28 @@ export function ConversationTopbar({ role, title, section = "chat" }: Conversati
         </>
       ) : null}
 
-      {(quizzes || exams) && role === "teacher" ? (
+      {quizzes && role === "teacher" ? (
         <>
           <button
             type="button"
             className="grid size-11 shrink-0 place-items-center rounded-full bg-action text-on-action transition-colors hover:bg-action-hover lg:hidden"
-            onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
-            aria-label={
-              quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")
-            }
+            onClick={() => openPageCreate("quiz", true)}
+            aria-label={quizT("teacherPage.createButton")}
           >
             <Icon name="add" size={20} />
           </button>
           <button
             type="button"
             className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"
-            onClick={() => openPageCreate(quizzes ? "quiz" : "exam", true)}
+            onClick={() => openPageCreate("quiz", true)}
           >
             <Icon name="add" size={18} />
-            {quizzes ? quizT("teacherPage.createButton") : t("exam:teacherList.createButton")}
+            {quizT("teacherPage.createButton")}
           </button>
         </>
       ) : null}
 
-      {workspace && !assignments && !quizzes && !exams && role === "teacher" ? (
+      {workspace && !assignments && !quizzes && role === "teacher" ? (
         <button
           type="button"
           className="hidden h-11 shrink-0 items-center gap-2 rounded-full bg-action px-4 text-label-strong text-on-action transition-colors hover:bg-action-hover lg:flex"

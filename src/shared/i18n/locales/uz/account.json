@@ -291,7 +291,16 @@
     "emailChange": "O‘zgartirish",
     "currentPasswordRequired": "Joriy parolni kiriting",
     "passwordSame": "Yangi parol joriy paroldan farq qilishi kerak",
-    "passwordChangeFailed": "Parolni o‘zgartirib bo‘lmadi. Qaytadan urinib ko‘ring."
+    "passwordChangeFailed": "Parolni o‘zgartirib bo‘lmadi. Qaytadan urinib ko‘ring.",
+    "deviceFilter": "Qurilma turi",
+    "deviceKinds": {
+      "all": "Hammasi",
+      "phone": "Telefon",
+      "tablet": "Planshet",
+      "computer": "Kompyuter"
+    },
+    "loginCount": "{{count}} marta kirilgan",
+    "activeSession": "Faol seans"
   },
   "help": {
     "search": "Savol yoki mavzu qidirish…",

@@ -12,7 +12,7 @@ import { ConnectChild } from "../dashboard/home-empty";
 import { ChildScoreChart } from "@/widgets/child-score-chart";
 import { useHomeworkView } from "../homework/use-homework-view";
 import { ResultsCoursePanel } from "./results-course-panel";
-import { GradeRow, MonthPicker, ResultsTabs } from "./results-parts";
+import { GradeRow, MonthPicker } from "./results-parts";
 
 function Tile({
   icon,
@@ -82,9 +82,7 @@ export function ParentResults() {
       ) : (
         <div className="grid grid-cols-[minmax(0,1fr)_320px] items-start gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-5">
-            <div className="flex items-center gap-3">
-              <ResultsTabs />
-              <span className="flex-1" />
+            <div className="flex items-center justify-end gap-3">
               <MonthPicker months={months} value={period} onChange={setPeriod} />
             </div>
             <div className={`grid grid-cols-4 gap-4 ${view.loading ? "animate-pulse" : ""}`}>

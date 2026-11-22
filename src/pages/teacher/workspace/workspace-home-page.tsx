@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useMyAnalytics } from "@/modules/analytics";
 import { useMaterials } from "@/modules/material";
 import { useCourses } from "@/modules/course";
-import { useExams } from "@/modules/exam";
 import { homeworkApi, homeworkKeys } from "@/modules/homework";
 import { useQuizzes } from "@/modules/quiz";
 import { FEATURES, ROUTES } from "@/shared/config";
@@ -30,12 +29,6 @@ const ALL_MODULES: ModuleCard[] = [
     to: ROUTES.teacher.homework,
   },
   {
-    id: "mock",
-    icon: "emoji-events",
-    tone: "bg-accent-red-bg text-accent-red-fg",
-    to: ROUTES.teacher.mockExams,
-  },
-  {
     id: "ai",
     icon: "auto-awesome",
     tone: "bg-accent-violet-bg text-accent-violet-fg",
@@ -58,7 +51,6 @@ export function WorkspaceHomePage() {
   const isCompact = useIsCompact();
   const courses = useCourses();
   const quizzes = useQuizzes(null);
-  const exams = useExams(null);
   const analytics = useMyAnalytics();
   const materials = useMaterials({}, !isCompact);
 
@@ -79,8 +71,6 @@ export function WorkspaceHomePage() {
 
   const quizItems = quizzes.data ?? [];
   const drafts = quizItems.filter((quiz) => quiz.status === "draft").length;
-  const examItems = exams.data ?? [];
-  const runningExams = examItems.filter((exam) => exam.state === "running").length;
   const activeAssignments = assignments.filter((item) => item.status === "active").length;
   const pendingSubmissions = assignments.reduce((sum, item) => {
     const total = item.stats?.studentsCount ?? 0;
@@ -95,13 +85,12 @@ export function WorkspaceHomePage() {
       (sum, item) => sum + item.submissions.filter((entry) => !entry.grade).length,
       0
     );
-    return <MobileWorkspaceHome unchecked={unchecked} tests={quizItems.length} exams={examItems.length} />;
+    return <MobileWorkspaceHome unchecked={unchecked} tests={quizItems.length} />;
   }
 
   const counts: Record<string, string> = {
     tests: t("home.moduleCounts.tests", { count: quizItems.length }),
     assignments: t("home.moduleCounts.assignments", { count: activeAssignments }),
-    mock: t("home.moduleCounts.mock", { count: runningExams }),
     ai: t("home.moduleCounts.ai", { count: 0 }),
     analytics: t("home.moduleCounts.analytics", {
       value: rating === null ? "—" : rating.toFixed(1).replace(".", ","),
@@ -123,7 +112,7 @@ export function WorkspaceHomePage() {
         </button>
       }
     >
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           label={t("home.stats.tests")}
           value={String(quizItems.length)}
@@ -134,11 +123,6 @@ export function WorkspaceHomePage() {
           value={String(activeAssignments)}
           tone="text-brand-strong"
           hint={t("home.stats.assignmentsHint", { count: pendingSubmissions })}
-        />
-        <StatCard
-          label={t("home.stats.mock")}
-          value={String(examItems.length)}
-          hint={t("home.stats.mockHint", { count: runningExams })}
         />
         <StatCard
           label={t("home.stats.rating")}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Assignment, AttendanceRow, ExamSummary, Lesson } from "@/shared/types";
+import type { Assignment, AttendanceRow, Lesson } from "@/shared/types";
 import {
   attentionItems,
   childLessons,
@@ -151,19 +151,16 @@ describe("homework and scores", () => {
 });
 
 describe("attentionItems", () => {
-  it("collects due homework, a new device login and fresh mock results", () => {
-    const exam = { id: "e1", state: "finished", endsAt: at(28, 12), courseId: "c1", title: "IELTS mock" } as ExamSummary;
+  it("collects due homework and a new device login", () => {
     const items = attentionItems({
       dueSoon: [assignment("soon", { dueAt: at(30, 23) })],
       logins: [
         { at: at(29, 15, 7), device: "Chrome · Android", isNewDevice: true },
         { at: at(29, 9), device: "Safari · iPhone", isNewDevice: false },
       ],
-      exams: [exam, { ...exam, id: "other", courseId: "c9" }],
-      courseIds: new Set(["c1"]),
       now: NOW,
     });
-    expect(items.map((item) => item.kind)).toEqual(["homework", "login", "exam"]);
+    expect(items.map((item) => item.kind)).toEqual(["homework", "login"]);
     expect(items[1]).toMatchObject({ device: "Chrome · Android" });
   });
 });

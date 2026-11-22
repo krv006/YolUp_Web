@@ -18,6 +18,7 @@ import { Icon } from "@/shared/ui/icon";
 import { toIntlLocale } from "@/shared/i18n";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
 import { FileViewer } from "@/shared/ui/file-viewer";
+import { MathText } from "@/modules/quiz";
 import { homeworkApi } from "../api/homework.api";
 import { submissionAiState } from "../lib/submission-ai-state";
 import { AiSkippedNotice } from "./ai-skipped-notice";
@@ -283,7 +284,9 @@ export function HomeworkResultDialog({
             {textAnswer ? (
               <section className="mt-4 flex flex-col gap-2 rounded-lg bg-surface p-4">
                 <small className="text-caption text-ink-secondary">{t("detailDialog.textAnswer")}</small>
-                <p className="text-body-sm whitespace-pre-line text-ink">{textAnswer}</p>
+                <p className="text-body-sm whitespace-pre-line text-ink">
+                  <MathText text={textAnswer} size={15} />
+                </p>
               </section>
             ) : null}
 
@@ -552,7 +555,9 @@ export function HomeworkResultDialog({
               {textAnswer ? (
                 <section className="flex flex-col gap-1.5 rounded-xl bg-subtle px-4 py-3">
                   <span className="dialog-section-label">{t("detailDialog.textAnswer")}</span>
-                  <p className="text-body-sm whitespace-pre-line text-ink">{textAnswer}</p>
+                  <p className="text-body-sm whitespace-pre-line text-ink">
+                  <MathText text={textAnswer} size={15} />
+                </p>
                 </section>
               ) : null}
 

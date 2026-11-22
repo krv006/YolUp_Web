@@ -15,6 +15,7 @@ import {
   useSubmission,
   useSubmitHomework,
   answerInputs,
+  FormulaField,
   QuestionsAnswerForm,
   QuestionsResult,
   GoogleFormLink,
@@ -337,19 +338,23 @@ function HomeworkSubmit({
       ) : null}
       {error ? <small className="mt-2 text-body-xs text-error-text">{error}</small> : null}
 
-      <label className="mt-4 flex flex-col gap-2">
-        <span className="text-body-sm font-medium text-ink">{t("workspace.hwItem.comment")}</span>
-        <textarea
+      <div className="mt-4 flex flex-col gap-2">
+        <label htmlFor="homework-comment" className="text-body-sm font-medium text-ink">
+          {t("workspace.hwItem.comment")}
+        </label>
+        <FormulaField
+          multiline
+          id="homework-comment"
           className="min-h-28 resize-y rounded-xl border border-line-strong bg-surface px-4 py-3 text-body-sm text-ink outline-none placeholder:text-ink-tertiary focus:border-focus"
           value={comment}
           maxLength={2000}
           placeholder={t("workspace.hwItem.commentPlaceholder")}
-          onChange={(event) => {
+          onValueChange={(text) => {
             touched.current = true;
-            setComment(event.target.value);
+            setComment(text);
           }}
         />
-      </label>
+      </div>
 
       <p
         className={`mt-4 flex items-center gap-2.5 rounded-xl px-4 py-3 text-body-xs ${

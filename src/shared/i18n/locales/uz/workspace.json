@@ -15,10 +15,6 @@
       "title": "AI",
       "description": "AI yordamida test tuzish."
     },
-    "exams": {
-      "title": "Mock test",
-      "description": "IELTS, SAT, Milliy sertifikat va o'z mock testingiz."
-    },
     "assignments": {
       "title": "Vazifalar",
       "description": "Uy vazifalarini berish va AI yordamida tekshirish."
@@ -120,15 +116,12 @@
       "testsHint": "{{count}} ta qoralama",
       "assignments": "Faol vazifalar",
       "assignmentsHint": "{{count}} ta tekshirish",
-      "mock": "Mock imtihon",
-      "mockHint": "{{count}} tasi ketmoqda",
       "rating": "O‘rtacha baho",
       "ratingHint": "bu oy"
     },
     "moduleCounts": {
       "tests": "{{count}} ta test",
       "assignments": "{{count}} ta faol",
-      "mock": "{{count}} ta ketmoqda",
       "ai": "{{count}} ta yaratilmoqda",
       "analytics": "Reyting {{value}}",
       "materials": "{{count}} ta fayl"
@@ -141,10 +134,6 @@
       "assignments": {
         "title": "Vazifalar",
         "description": "Uy vazifalarini berish va AI yordamida tekshirish"
-      },
-      "mock": {
-        "title": "Mock testlar",
-        "description": "IELTS, SAT, Milliy sertifikat va o‘z mock testingiz"
       },
       "ai": {
         "title": "AI yordamchi",
@@ -166,13 +155,11 @@
       "details": "Batafsil",
       "stats": {
         "unchecked": "Tekshirilmagan",
-        "tests": "Test",
-        "mock": "Mock imtihon"
+        "tests": "Test"
       },
       "createItems": {
         "test": "Yangi test",
         "homework": "Vazifa berish",
-        "mock": "Mock imtihon",
         "ai": "AI bilan test"
       },
       "modules": {
@@ -187,10 +174,6 @@
         "ai": {
           "title": "AI yordamchi",
           "description": "AI yordamida test tuzish"
-        },
-        "mock": {
-          "title": "Mock test",
-          "description": "IELTS, SAT, Milliy sertifikat"
         },
         "assignments": {
           "title": "Vazifalar",

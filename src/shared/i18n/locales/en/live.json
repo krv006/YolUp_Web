@@ -240,7 +240,13 @@
     "notStartedTitle": "The lesson hasn't started yet",
     "notStartedDescription": "The lesson starts at {{time}}. As soon as the teacher starts it — even early — the “Join the lesson” button becomes active.",
     "startedTitle": "The teacher has started the lesson",
-    "startedDescription": "You can join the lesson now."
+    "startedDescription": "You can join the lesson now.",
+    "queueTitle": "You're in the queue",
+    "queueDescription_one": "Many students are joining at once. You'll be connected in ~{{count}} second.",
+    "queueDescription_other": "Many students are joining at once. You'll be connected in ~{{count}} seconds.",
+    "queueConnecting": "It's your turn — connecting to the lesson…",
+    "queueStuckTitle": "Queue problem",
+    "queueStuckDescription": "The join queue is taking far too long. Try again, and tell your teacher if it happens again."
   },
   "mediaMode": {
     "openMic": "Microphone open to all",

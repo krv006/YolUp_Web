@@ -142,8 +142,6 @@
       "testsHint": "{{count}} на сегодня",
       "assignments": "Активные задания",
       "assignmentsHint": "{{count}} на завтра",
-      "mock": "Пробный экзамен",
-      "mockNone": "не запланирован",
       "average": "Средний результат",
       "averageHint": "последние {{count}} попыток"
     },
@@ -156,10 +154,6 @@
       "assignments": {
         "title": "Задания",
         "description": "Сдавайте домашние задания и смотрите оценки."
-      },
-      "mock": {
-        "title": "Пробные тесты",
-        "description": "Пробные экзамены IELTS, SAT и нацсертификата."
       },
       "ai": {
         "title": "AI-помощник",
@@ -177,7 +171,6 @@
     "counts": {
       "tests": "{{count}} новых",
       "assignments": "{{count}} активных",
-      "mockNone": "Не запланирован",
       "ai": "Практика и объяснения",
       "analytics": "В среднем {{value}}",
       "materials": "Файлов: {{count}}"
@@ -345,70 +338,6 @@
         "test": "тесты {{value}}%",
         "empty": "Вы ещё не в группе"
       }
-    },
-    "mock": {
-      "eyebrow": "Назначенные вам пробные экзамены",
-      "title": "Пробные тесты",
-      "filters": {
-        "all": "Все",
-        "ielts": "IELTS",
-        "sat": "SAT",
-        "milliy": "Нацсертификат",
-        "other": "Другие"
-      },
-      "states": {
-        "running": "Идёт",
-        "upcoming": "Запланирован",
-        "finished": "Завершён",
-        "submitted": "Сдан"
-      },
-      "today": "сегодня {{time}}",
-      "hours": "{{count}} ч",
-      "hoursMinutes": "{{hours}} ч {{minutes}} мин",
-      "minutesOnly": "{{count}} мин",
-      "continue": "Продолжить",
-      "remind": "Напомнить",
-      "result": "Результат",
-      "live": "Live",
-      "left": "осталось",
-      "leftSection": "осталось · {{section}}",
-      "back": "Вернуться к экзамену",
-      "emptyTitle": "Пробных экзаменов пока нет",
-      "emptyHint": "Пробные экзамены преподавателя появятся здесь.",
-      "reminderOn": "Напоминание · за {{count}} мин",
-      "reminderSet": "Напомним за {{count}} минут до экзамена",
-      "reminderCleared": "Напоминание отменено"
-    },
-    "mockResult": {
-      "eyebrow": "Пробные тесты / Ваш результат · {{date}}",
-      "pdf": "Скачать PDF",
-      "stats": {
-        "overall": "Общий балл",
-        "group": "Среднее по группе",
-        "target": "Ваша цель"
-      },
-      "sections": "Результаты по разделам",
-      "details": "Подробно по разделам",
-      "correct": "{{earned}} / {{max}} правильных",
-      "manual": "Оценивает преподаватель",
-      "pending": "Проверяется",
-      "essay": "Ваше эссе · {{title}}",
-      "words": "{{count}} слов",
-      "aiTitle": "AI-разбор · критерии IELTS",
-      "aiQueued": "AI-разбор готовится…",
-      "mistakes": "Основные ошибки: {{value}}",
-      "strengths": "Сильные стороны: {{value}}",
-      "askTeacher": "Вопрос преподавателю",
-      "practice": "Работа над ошибками",
-      "notReady": "Результаты ещё не опубликованы",
-      "notReadyHint": "Появятся здесь после публикации преподавателем.",
-      "practiceTitle": "Работа над ошибками",
-      "targetTitle": "Ваша цель",
-      "targetHint": "Введите балл, которого хотите достичь (например, 7.5 или 1400).",
-      "targetPlaceholder": "Например, 7.5",
-      "targetSave": "Сохранить",
-      "targetCancel": "Отмена",
-      "targetInvalid": "Балл должен быть от 0 до 1600"
     },
     "homework": {
       "eyebrow": "Workspace / Задания · {{count}}",

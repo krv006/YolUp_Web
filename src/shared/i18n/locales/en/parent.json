@@ -260,8 +260,6 @@
       "homeworkTomorrow": "Homework due tomorrow",
       "homeworkSoon": "Homework due soon",
       "login": "Sign-in from a new device",
-      "exam": "Mock test results are out",
-      "examMeta": "{{title}} · see the result",
       "empty": "Nothing needs your attention right now"
     },
     "score": {
@@ -273,7 +271,7 @@
     "serverError": "Can’t reach the server — data didn’t load.",
     "connect": {
       "title": "Connect your student",
-      "description": "Connect your student’s account or create a new one to follow attendance, homework, mock results and safety in one place.",
+      "description": "Connect your student’s account or create a new one to follow attendance, homework, grades and safety in one place.",
       "link": "Connect a student",
       "create": "New student account",
       "step": "Step {{n}}",
@@ -777,10 +775,6 @@
   "results": {
     "eyebrow": "Rating",
     "title": "Results",
-    "tabs": {
-      "rating": "Rating",
-      "mock": "Mock tests"
-    },
     "month": "Month",
     "stats": {
       "given": "Homework given",
@@ -811,55 +805,6 @@
     "rank": {
       "place": "#{{rank}} in group",
       "top": "Top {{value}}%"
-    }
-  },
-  "mock": {
-    "eyebrow": "Mock tests",
-    "next": "Next: {{title}} — {{date}}",
-    "nextPattern": "MMMM d, HH:mm",
-    "minutes": "{{count}} minutes",
-    "minutesShort": "{{count}} min",
-    "resultAfter": "results open after the exam",
-    "remind": "Remind me",
-    "reminderSet": "Reminder set",
-    "columns": {
-      "exam": "Exam",
-      "date": "Date",
-      "duration": "Duration",
-      "sections": "Sections",
-      "overall": "Overall"
-    },
-    "state": {
-      "upcoming": "Scheduled",
-      "running": "In progress",
-      "pending": "Pending",
-      "absent": "Didn’t take it"
-    },
-    "open": "Result",
-    "empty": {
-      "title": "No mock tests",
-      "text": "When the teacher schedules an exam, its date, sections and results will appear here."
-    },
-    "locked": {
-      "title": "Result not available yet",
-      "text": "The result of {{exam}} will appear here after it ends ({{date}}).",
-      "ok": "Got it",
-      "close": "Close"
-    },
-    "result": {
-      "title": "{{name}} — {{exam}} result",
-      "datePattern": "MMMM d",
-      "close": "Close",
-      "pdf": "Download PDF",
-      "overall": "Overall band",
-      "level": "Close to {{level}}",
-      "delta": "vs previous mock {{value}}",
-      "groupAverage": "group average {{value}}",
-      "notReady": "Overall band not calculated yet",
-      "waitingTeacher": "Waiting for the teacher’s grade",
-      "sectionWaiting": "pending",
-      "pendingNote": "Some sections are graded manually — the result will appear here once it’s ready.",
-      "teacherComment": "Teacher’s note"
     }
   },
   "settings": {
@@ -1076,11 +1021,6 @@
     "results": {
       "submitted": "{{submitted}} / {{total}} submitted"
     },
-    "mock": {
-      "finished": "Finished exams",
-      "dayPattern": "MMMM d",
-      "resultTitle": "Mock result"
-    },
     "settings": {
       "role": "Observer · {{count}} students",
       "securityTitle": "Security — protected",
@@ -1171,8 +1111,7 @@
     "kinds": {
       "overall": "All",
       "homework": "Homework",
-      "quiz": "Tests",
-      "exam": "Mock"
+      "quiz": "Tests"
     },
     "ranges": {
       "8w": "8 weeks",
@@ -1185,8 +1124,7 @@
     "kindsShort": {
       "overall": "All",
       "homework": "Homework",
-      "quiz": "Tests",
-      "exam": "Mock"
+      "quiz": "Tests"
     },
     "monthsShort": [
       "Jan",

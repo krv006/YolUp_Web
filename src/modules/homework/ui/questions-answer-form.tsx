@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { HomeworkQuestion } from "@/shared/types";
 import { isAnswered, type AnswerDraft } from "../lib/homework-answers";
+import { FormulaField } from "./formula-field";
 
 const FIELD =
   "w-full rounded-md border border-transparent bg-subtle px-4 text-body text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface disabled:opacity-60";
@@ -76,21 +77,24 @@ export function QuestionsAnswerForm({
                 })}
               </div>
             ) : question.type === "short" ? (
-              <input
+              <FormulaField
                 className={`${FIELD} h-12`}
                 maxLength={500}
+                disabled={disabled}
                 value={typeof current === "string" ? current : ""}
                 placeholder={t("questions.shortPlaceholder")}
-                onChange={(event) => onChange({ ...value, [question.id]: event.target.value })}
+                onValueChange={(text) => onChange({ ...value, [question.id]: text })}
               />
             ) : (
-              <textarea
+              <FormulaField
+                multiline
                 rows={5}
                 maxLength={10000}
+                disabled={disabled}
                 className={`${FIELD} resize-y py-3`}
                 value={typeof current === "string" ? current : ""}
                 placeholder={t("questions.longPlaceholder")}
-                onChange={(event) => onChange({ ...value, [question.id]: event.target.value })}
+                onValueChange={(text) => onChange({ ...value, [question.id]: text })}
               />
             )}
           </fieldset>

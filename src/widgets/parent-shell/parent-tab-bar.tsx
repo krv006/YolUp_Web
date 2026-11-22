@@ -10,7 +10,7 @@ const TABS = [
   { id: "attendance", icon: "event", to: ROUTES.parent.attendance, extra: [] },
   { id: "home", icon: "home", to: ROUTES.parent.dashboard, extra: [] },
   { id: "homework", icon: "assignment", to: ROUTES.parent.homework, extra: [] },
-  { id: "results", icon: "bar-chart", to: ROUTES.parent.grades, extra: [ROUTES.parent.exams] },
+  { id: "results", icon: "bar-chart", to: ROUTES.parent.grades, extra: [] },
 ] as const;
 
 export function ParentTabBar() {

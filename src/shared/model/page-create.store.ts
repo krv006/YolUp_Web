@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type PageCreateKey = "quiz" | "exam";
+export type PageCreateKey = "quiz";
 
 interface PageCreateState {
   open: Record<PageCreateKey, boolean>;
@@ -8,6 +8,6 @@ interface PageCreateState {
 }
 
 export const usePageCreateStore = create<PageCreateState>((set) => ({
-  open: { quiz: false, exam: false },
+  open: { quiz: false },
   setOpen: (key, value) => set((state) => ({ open: { ...state.open, [key]: value } })),
 }));

@@ -4,6 +4,7 @@ import { loadMathfieldElement } from "../lib/mathlive-loader";
 export interface MathFieldInputProps {
   value: string;
   onChange: (latex: string) => void;
+  virtualKeyboard?: "auto" | "manual";
 }
 
 export interface MathFieldInputHandle {
@@ -19,7 +20,7 @@ type MathfieldHost = HTMLElement & {
 };
 
 export const MathFieldInput = forwardRef<MathFieldInputHandle, MathFieldInputProps>(function MathFieldInput(
-  { value, onChange },
+  { value, onChange, virtualKeyboard = "auto" },
   ref
 ) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -61,6 +62,7 @@ export const MathFieldInput = forwardRef<MathFieldInputHandle, MathFieldInputPro
 
     const field = document.createElement("math-field") as MathfieldHost;
     field.className = "math-field";
+    field.setAttribute("math-virtual-keyboard-policy", virtualKeyboard);
     field.value = value;
     const handleInput = () => onChange(field.value);
     field.addEventListener("input", handleInput);

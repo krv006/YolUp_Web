@@ -12,12 +12,14 @@ import type {
 import {
   certificateDtoSchema,
   lessonRatingDtoSchema,
+  loginDeviceDtoSchema,
   loginRecordDtoSchema,
   loginResponseDtoSchema,
   switchAccountResponseDtoSchema,
   tokenPairDtoSchema,
   userDtoSchema,
   type LinkedAccountDto,
+  type LoginDevice,
   type LoginRecord,
   type LoginRequestDto,
   type TokenPair,
@@ -141,9 +143,30 @@ export function mapSwitchAccountResponse(dto: unknown): { tokens: TokenPair; use
   };
 }
 
-export function mapLoginRecordsPage(dto: unknown, options: PaginationOptions): Page<LoginRecord> {
+export function mapLoginDevicesPage(dto: unknown, options: PaginationOptions): Page<LoginDevice> {
   const page = normalizePagination<unknown>(dto, options);
-  return { ...page, items: mapLoginRecords(page.items) };
+  return {
+    ...page,
+    items: loginDeviceDtoSchema
+      .array()
+      .parse(page.items)
+      .map((item) => {
+        const device = item.device || [item.browser, item.os].filter(Boolean).join(" · ");
+        return {
+          id: item.last_login_id ?? `${device}-${item.device_type ?? ""}`,
+          device,
+          deviceType: item.device_type ?? null,
+          lastLoginAt: item.last_login_at,
+          firstLoginAt: item.first_login_at ?? item.last_login_at,
+          loginCount: Math.max(1, item.login_count ?? 1),
+          lastIp: item.last_ip ?? "",
+          location: [item.location, item.country].filter(Boolean).join(", "),
+          sessionActive: item.session_active === true,
+          isCurrent: item.is_current === true,
+          lastLoginId: item.last_login_id ?? null,
+        };
+      }),
+  };
 }
 
 export function mapLoginRecords(dto: unknown): LoginRecord[] {

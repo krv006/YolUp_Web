@@ -26,7 +26,7 @@ export interface ChildScores {
   periods: ScorePeriod[];
 }
 
-export const SCORE_KINDS: ScoreKind[] = ["overall", "homework", "quiz", "exam"];
+export const SCORE_KINDS: ScoreKind[] = ["overall", "homework", "quiz"];
 
 function values(source: ScoreValues | undefined): Record<ScoreKind, number | null> {
   return {

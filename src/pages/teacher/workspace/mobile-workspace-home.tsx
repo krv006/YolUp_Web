@@ -26,12 +26,6 @@ const ALL_MODULES = [
     tone: "bg-accent-saffron-bg text-accent-saffron-fg",
     to: ROUTES.teacher.workspaceAi,
   },
-  {
-    id: "mock",
-    icon: "assignment-check-fill",
-    tone: "bg-accent-violet-bg text-accent-violet-fg",
-    to: ROUTES.teacher.mockExams,
-  },
   { id: "assignments", icon: "assign", tone: "bg-accent-red-bg text-accent-red-fg", to: ROUTES.teacher.homework },
   { id: "materials", icon: "folder", tone: "bg-accent-violet-bg text-accent-red-fg", to: ROUTES.teacher.materials },
 ] as const;
@@ -39,7 +33,6 @@ const ALL_MODULES = [
 const ALL_CREATE = [
   { id: "test", icon: "quiz", to: `${ROUTES.teacher.tests}?new=1` },
   { id: "homework", icon: "assign", to: `${ROUTES.teacher.homework}?new=1` },
-  { id: "mock", icon: "assignment-check-fill", to: `${ROUTES.teacher.mockExams}?new=1` },
   { id: "ai", icon: "sparkles-fill", to: ROUTES.teacher.workspaceAi },
 ] as const;
 
@@ -49,10 +42,9 @@ const CREATE = ALL_CREATE.filter((item) => item.id !== "ai" || FEATURES.aiAssist
 export interface MobileWorkspaceHomeProps {
   unchecked: number;
   tests: number;
-  exams: number;
 }
 
-export function MobileWorkspaceHome({ unchecked, tests, exams }: MobileWorkspaceHomeProps) {
+export function MobileWorkspaceHome({ unchecked, tests }: MobileWorkspaceHomeProps) {
   const { t } = useTranslation("workspace");
   const navigate = useNavigate();
 
@@ -87,7 +79,6 @@ export function MobileWorkspaceHome({ unchecked, tests, exams }: MobileWorkspace
         items={[
           { id: "unchecked", value: unchecked, label: t("home.mobile.stats.unchecked") },
           { id: "tests", value: tests, label: t("home.mobile.stats.tests") },
-          { id: "mock", value: exams, label: t("home.mobile.stats.mock") },
         ]}
       />
 

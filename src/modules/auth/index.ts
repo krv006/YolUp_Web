@@ -6,6 +6,8 @@ export type {
   ConsentRequestDto,
   CreateChildRequestDto,
   LinkAction,
+  LoginDevice,
+  LoginDeviceType,
   LoginRecord,
   LoginRecordDto,
   ProfileFormValues,
@@ -29,7 +31,7 @@ export {
   useTeacherStats,
   useTeachers,
   useTwoFactorStatus,
-  useLoginHistoryPage,
+  useLoginDevicesPage,
 } from "./model/auth.queries";
 export { LoginHistoryDialog } from "./ui/login-history-dialog";
 export { ForcePasswordDialog } from "./ui/force-password-dialog";

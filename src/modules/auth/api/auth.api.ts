@@ -1,12 +1,13 @@
 import { apiClient, normalizePagination, type RequestOptions } from "@/shared/api";
 import { authEndpoints } from "./auth.endpoints";
-import { mapLoginRecords, mapLoginRecordsPage, mapTeacherRatings, mapTeacherStats } from "../lib/auth.mappers";
+import { mapLoginDevicesPage, mapLoginRecords, mapTeacherRatings, mapTeacherStats } from "../lib/auth.mappers";
 import type {
   AuthUserDto,
   CertificateDto,
   ConsentRequestDto,
   CreateChildRequestDto,
   LinkAction,
+  LoginDeviceType,
   LoginRequestDto,
   LoginResponseDto,
   RefreshRequestDto,
@@ -197,9 +198,12 @@ export const authApi = {
   updateSettings(dto: { theme?: string; text_size?: string; target_band?: number | null; username?: string }) {
     return apiClient.patch<AuthUserDto>(authEndpoints.me, dto);
   },
-  async getLoginsPage(page: number, pageSize: number, options?: RequestOptions) {
-    return mapLoginRecordsPage(
-      await apiClient.get(authEndpoints.logins, { ...options, query: { page, page_size: pageSize } }),
+  async getLoginDevicesPage(page: number, pageSize: number, device: LoginDeviceType | null, options?: RequestOptions) {
+    return mapLoginDevicesPage(
+      await apiClient.get(authEndpoints.logins, {
+        ...options,
+        query: { group: "device", page, page_size: pageSize, ...(device ? { device } : {}) },
+      }),
       { page, pageSize }
     );
   },

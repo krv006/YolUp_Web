@@ -12,7 +12,7 @@ import {
   MobileTitleHeader,
 } from "@/shared/ui/mobile-page";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
-import { sameDay, shortDateTime } from "../lib/format";
+import { sameDay } from "../lib/format";
 import { useStudentWorkspace } from "./use-student-workspace";
 
 const DAY_MS = 86_400_000;
@@ -20,7 +20,6 @@ const DAY_MS = 86_400_000;
 const ALL_MODULES = [
   { id: "tests", icon: "quiz", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.tests },
   { id: "assignments", icon: "assign", tone: "bg-accent-saffron-bg text-accent-saffron-fg", to: ROUTES.student.homework },
-  { id: "mock", icon: "emoji-events", tone: "bg-accent-red-bg text-accent-red-fg", to: ROUTES.student.mockExams },
   { id: "ai", icon: "auto-awesome", tone: "bg-accent-violet-bg text-accent-violet-fg", to: ROUTES.student.ai },
   { id: "analytics", icon: "bar-chart", tone: "bg-accent-green-bg text-accent-green-fg", to: ROUTES.student.workspaceAnalytics },
   { id: "materials", icon: "folder", tone: "bg-accent-blue-bg text-accent-blue-fg", to: ROUTES.student.materials },
@@ -30,7 +29,6 @@ const MODULES = ALL_MODULES.filter((module) => module.id !== "ai" || FEATURES.ai
 
 export function StudentWorkspacePage() {
   const { t } = useTranslation("student");
-  const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
   const navigate = useNavigate();
   const isCompact = useIsCompact();
   const data = useStudentWorkspace();
@@ -42,18 +40,12 @@ export function StudentWorkspacePage() {
   const open = data.assignments.filter((item) => !item.mySubmission);
   const tomorrow = new Date(now.getTime() + DAY_MS);
   const openTomorrow = open.filter((item) => item.dueAt && sameDay(new Date(item.dueAt), tomorrow)).length;
-  const nextExam =
-    data.exams.find((exam) => exam.state === "running") ??
-    [...data.exams].filter((exam) => exam.state === "upcoming").sort((a, b) => a.startsAt.localeCompare(b.startsAt))[0] ??
-    null;
-  const examLabel = nextExam ? shortDateTime(nextExam.startsAt, months) : t("workspace.counts.mockNone");
   const average = data.avgPercentage === null ? "—" : `${Math.round(data.avgPercentage)}%`;
   const loading = data.quizzesLoading || data.assignmentsLoading;
 
   const counts: Record<(typeof MODULES)[number]["id"], string> = {
     tests: t("workspace.counts.tests", { count: fresh.length }),
     assignments: t("workspace.counts.assignments", { count: open.length }),
-    mock: examLabel,
     ai: t("workspace.counts.ai"),
     analytics: t("workspace.counts.analytics", { value: average }),
     materials: t("workspace.counts.materials", { count: materials.data?.length ?? 0 }),
@@ -97,7 +89,7 @@ export function StudentWorkspacePage() {
 
   return (
     <WorkspaceShell eyebrow={t("workspace.eyebrow")} title={t("workspace:title")}>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           label={t("workspace.stats.tests")}
           value={loading ? "—" : String(fresh.length)}
@@ -108,11 +100,6 @@ export function StudentWorkspacePage() {
           value={loading ? "—" : String(open.length)}
           tone="text-brand-strong"
           hint={t("workspace.stats.assignmentsHint", { count: openTomorrow })}
-        />
-        <StatCard
-          label={t("workspace.stats.mock")}
-          value={String(data.exams.filter((exam) => exam.state !== "finished").length)}
-          hint={nextExam ? shortDateTime(nextExam.startsAt, months) : t("workspace.stats.mockNone")}
         />
         <StatCard
           label={t("workspace.stats.average")}

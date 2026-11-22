@@ -27,8 +27,6 @@ export const ROUTES = Object.freeze({
     workspaceAi: "/teacher/workspace/ai",
     materials: "/teacher/workspace/materials",
     workspaceAnalytics: "/teacher/workspace/analytics",
-    mockExams: "/teacher/workspace/mock",
-    mockResults: (examId: string) => `/teacher/workspace/mock/${segment(examId)}`,
     homework: "/teacher/workspace/homework",
     homeworkItem: (assignmentId: string) => `/teacher/workspace/homework/${segment(assignmentId)}`,
     homeworkReview: (assignmentId: string) =>
@@ -54,9 +52,6 @@ export const ROUTES = Object.freeze({
     workspaceAnalytics: "/student/workspace/analytics",
     materials: "/student/workspace/materials",
     ai: "/student/workspace/ai",
-    mockExams: "/student/workspace/mock",
-    mockExam: (examId: string) => `/student/workspace/mock/${segment(examId)}/take`,
-    mockResults: (examId: string) => `/student/workspace/mock/${segment(examId)}`,
     homework: "/student/workspace/homework",
     homeworkItem: (assignmentId: string) => `/student/workspace/homework/${segment(assignmentId)}`,
     homeworkBoard: (assignmentId: string) =>
@@ -75,7 +70,6 @@ export const ROUTES = Object.freeze({
     childLogins: (childId: string) => `/parent/children/${segment(childId)}/logins`,
     attendance: "/parent/attendance",
     homework: "/parent/homework",
-    exams: "/parent/exams",
     grades: "/parent/grades",
     payments: "/parent/payments",
     chats: "/parent/chats",
@@ -89,7 +83,6 @@ export const ROUTES = Object.freeze({
     attendanceSearch: "/parent/attendance/search",
     homeworkItem: (assignmentId: string) => `/parent/homework/${segment(assignmentId)}`,
     course: (courseId: string) => `/parent/grades/${segment(courseId)}`,
-    examResult: (examId: string) => `/parent/exams/${segment(examId)}`,
   }),
   admin: Object.freeze({
     root: "/admin",

@@ -13,7 +13,7 @@ export interface AuthShellProps {
   notice?: ReactNode;
 }
 
-const PILLS = ["live", "ai", "mock"] as const;
+const PILLS = ["live", "ai"] as const;
 
 export function AuthShell({
   title,

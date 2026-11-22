@@ -142,8 +142,6 @@
       "testsHint": "{{count}} due today",
       "assignments": "Active tasks",
       "assignmentsHint": "{{count}} due tomorrow",
-      "mock": "Mock exam",
-      "mockNone": "not scheduled",
       "average": "Average score",
       "averageHint": "last {{count}} attempts"
     },
@@ -156,10 +154,6 @@
       "assignments": {
         "title": "Assignments",
         "description": "Submit homework and see your grades."
-      },
-      "mock": {
-        "title": "Mock tests",
-        "description": "IELTS, SAT and national certificate practice exams."
       },
       "ai": {
         "title": "AI assistant",
@@ -177,7 +171,6 @@
     "counts": {
       "tests": "{{count}} new",
       "assignments": "{{count}} active",
-      "mockNone": "Not scheduled",
       "ai": "Practice and explanations",
       "analytics": "Average {{value}}",
       "materials": "{{count}} files"
@@ -337,70 +330,6 @@
         "test": "tests {{value}}%",
         "empty": "You haven’t joined a group yet"
       }
-    },
-    "mock": {
-      "eyebrow": "Practice exams assigned to you",
-      "title": "Mock tests",
-      "filters": {
-        "all": "All",
-        "ielts": "IELTS",
-        "sat": "SAT",
-        "milliy": "National",
-        "other": "Other"
-      },
-      "states": {
-        "running": "Live",
-        "upcoming": "Scheduled",
-        "finished": "Finished",
-        "submitted": "Submitted"
-      },
-      "today": "today {{time}}",
-      "hours": "{{count}} h",
-      "hoursMinutes": "{{hours}} h {{minutes}} min",
-      "minutesOnly": "{{count}} min",
-      "continue": "Continue",
-      "remind": "Set reminder",
-      "result": "Result",
-      "live": "Live",
-      "left": "left",
-      "leftSection": "left · {{section}}",
-      "back": "Back to exam",
-      "emptyTitle": "No mock exams yet",
-      "emptyHint": "Practice exams from your teacher will appear here.",
-      "reminderOn": "Reminder · {{count}} min before",
-      "reminderSet": "We'll remind you {{count}} minutes before the exam",
-      "reminderCleared": "Reminder removed"
-    },
-    "mockResult": {
-      "eyebrow": "Mock tests / Your result · {{date}}",
-      "pdf": "Download PDF",
-      "stats": {
-        "overall": "Overall band",
-        "group": "Group average",
-        "target": "Your target"
-      },
-      "sections": "Your results by section",
-      "details": "Section details",
-      "correct": "{{earned}} / {{max}} correct",
-      "manual": "Graded by teacher",
-      "pending": "Being graded",
-      "essay": "Your essay · {{title}}",
-      "words": "{{count}} words",
-      "aiTitle": "AI review · IELTS criteria",
-      "aiQueued": "AI review in progress…",
-      "mistakes": "Main mistakes: {{value}}",
-      "strengths": "Strengths: {{value}}",
-      "askTeacher": "Ask the teacher",
-      "practice": "Work on mistakes",
-      "notReady": "Results aren’t published yet",
-      "notReadyHint": "They’ll appear here once your teacher publishes them.",
-      "practiceTitle": "Practice your mistakes",
-      "targetTitle": "Your target",
-      "targetHint": "Enter the score you want to reach (e.g. 7.5 or 1400).",
-      "targetPlaceholder": "e.g. 7.5",
-      "targetSave": "Save",
-      "targetCancel": "Cancel",
-      "targetInvalid": "Score must be between 0 and 1600"
     },
     "homework": {
       "eyebrow": "Workspace / Assignments · {{count}}",

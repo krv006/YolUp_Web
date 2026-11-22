@@ -15,10 +15,6 @@
       "title": "AI",
       "description": "Работа с ИИ-помощником."
     },
-    "exams": {
-      "title": "Мок-тест",
-      "description": "IELTS, SAT, Национальный сертификат и свой мок-тест."
-    },
     "assignments": {
       "title": "Задания",
       "description": "Выдача домашних заданий и проверка с ИИ."
@@ -120,15 +116,12 @@
       "testsHint": "черновиков: {{count}}",
       "assignments": "Активные задания",
       "assignmentsHint": "на проверке: {{count}}",
-      "mock": "Mock экзамены",
-      "mockHint": "идёт: {{count}}",
       "rating": "Средняя оценка",
       "ratingHint": "в этом месяце"
     },
     "moduleCounts": {
       "tests": "{{count}} тестов",
       "assignments": "{{count}} активных",
-      "mock": "{{count}} идёт",
       "ai": "{{count}} создаётся",
       "analytics": "Рейтинг {{value}}",
       "materials": "{{count}} файлов"
@@ -141,10 +134,6 @@
       "assignments": {
         "title": "Задания",
         "description": "Домашние задания и проверка с AI"
-      },
-      "mock": {
-        "title": "Mock экзамены",
-        "description": "IELTS, SAT, Milliy sertifikat и свои экзамены"
       },
       "ai": {
         "title": "AI помощник",
@@ -166,13 +155,11 @@
       "details": "Подробнее",
       "stats": {
         "unchecked": "Не проверено",
-        "tests": "Тесты",
-        "mock": "Пробные экзамены"
+        "tests": "Тесты"
       },
       "createItems": {
         "test": "Новый тест",
         "homework": "Задать задание",
-        "mock": "Пробный экзамен",
         "ai": "Тест с ИИ"
       },
       "modules": {
@@ -187,10 +174,6 @@
         "ai": {
           "title": "ИИ-помощник",
           "description": "Составление тестов с ИИ"
-        },
-        "mock": {
-          "title": "Пробные тесты",
-          "description": "IELTS, SAT, Национальный сертификат"
         },
         "assignments": {
           "title": "Задания",

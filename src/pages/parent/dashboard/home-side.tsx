@@ -45,18 +45,12 @@ export function AttentionCard({
                     : t("home.attention.homeworkSoon");
               meta = `${item.assignment.title} · ${formatDayTime(due)}`;
               open = () => navigate(ROUTES.parent.homework);
-            } else if (item.kind === "login") {
+            } else {
               icon = "shield";
               tone = "bg-danger-bg text-error-text";
               title = t("home.attention.login");
               meta = `${item.device} · ${formatDayTime(item.at)}`;
               open = () => navigate(ROUTES.parent.childLogins(childId));
-            } else {
-              icon = "emoji-events";
-              tone = "bg-accent-blue-bg text-accent-blue-fg";
-              title = t("home.attention.exam");
-              meta = t("home.attention.examMeta", { title: item.exam.title });
-              open = () => navigate(ROUTES.parent.exams);
             }
             return (
               <li key={`${item.kind}-${index}`} className="border-b border-line last:border-b-0">
