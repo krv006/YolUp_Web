@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { MathText } from "@/modules/quiz";
 import type { HomeworkAnswer } from "@/shared/types";
 
 function scoreText(value: number | null): string {
@@ -79,7 +80,7 @@ export function QuestionsResult({
               </ul>
             ) : (
               <p className="rounded-md bg-subtle px-3 py-2 text-body-sm text-ink break-words whitespace-pre-wrap">
-                {typeof answer.answer === "string" && answer.answer ? answer.answer : t("questions.noAnswer")}
+                {typeof answer.answer === "string" && answer.answer ? <MathText text={answer.answer} size={15} /> : t("questions.noAnswer")}
               </p>
             )}
             {answer.aiScore !== null && onScoreChange ? (

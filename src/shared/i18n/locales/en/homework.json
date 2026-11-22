@@ -538,5 +538,14 @@
     "hours": "{{hours}} h {{minutes}} min"
   },
   "aiSkipped_one": "{{count}} page didn't fit into the AI — the score covers only the pages it saw. Check the rest yourself.",
-  "aiSkipped_other": "{{count}} pages didn't fit into the AI — the score covers only the pages it saw. Check the rest yourself."
+  "aiSkipped_other": "{{count}} pages didn't fit into the AI — the score covers only the pages it saw. Check the rest yourself.",
+  "formula": {
+    "add": "Formula",
+    "title": "Add a formula",
+    "description": "Pick a template or type in the field — the formula is added to your answer.",
+    "insert": "Add",
+    "cancel": "Cancel",
+    "preview": "Formula preview",
+    "tooLong": "The answer would be too long — shorten the text first."
+  }
 }

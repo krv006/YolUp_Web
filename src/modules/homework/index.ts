@@ -30,6 +30,7 @@ export type { DraftQuestion } from "./lib/homework-questions";
 export { QuestionsEditor } from "./ui/questions-editor";
 export { useQuestionDrafts } from "./model/use-question-drafts";
 export { QuestionsAnswerForm } from "./ui/questions-answer-form";
+export { FormulaField } from "./ui/formula-field";
 export { answerInputs, isAnswered } from "./lib/homework-answers";
 export type { AnswerDraft } from "./lib/homework-answers";
 export { QuestionsResult } from "./ui/questions-result";

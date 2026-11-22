@@ -13,6 +13,7 @@ import {
   submissionAiState,
   AiSkippedNotice,
 } from "@/modules/homework";
+import { MathText } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -167,7 +168,9 @@ export function HomeworkReviewPage() {
   const studentNote = current?.comment && !textAnswer ? (
     <div className="flex flex-col gap-2">
       <span className="text-body-xs text-ink-secondary">{t("review.studentComment")}</span>
-      <p className="rounded-md border border-line px-4 py-3 text-body-sm whitespace-pre-line text-ink">{current.comment}</p>
+      <p className="rounded-md border border-line px-4 py-3 text-body-sm whitespace-pre-line text-ink">
+        <MathText text={current.comment} size={15} />
+      </p>
     </div>
   ) : null;
 
@@ -178,7 +181,9 @@ export function HomeworkReviewPage() {
           <Icon name="edit-note" size={16} />
           {t("review.textAnswer")}
         </span>
-        <p className="text-body whitespace-pre-line text-ink">{current.comment}</p>
+        <p className="text-body whitespace-pre-line text-ink">
+          <MathText text={current.comment} />
+        </p>
       </>
     ) : null;
 
