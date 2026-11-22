@@ -5,6 +5,7 @@ import type { MessageAttachment as Attachment } from "@/shared/types";
 import { FileViewer } from "@/shared/ui/file-viewer";
 import { Icon } from "@/shared/ui/icon";
 import { messageApi } from "../api/message.api";
+import { useChatImage } from "../model/use-chat-image";
 
 export function MessageAttachment({
   attachment,
@@ -26,12 +27,14 @@ export function MessageAttachment({
     .filter(Boolean)
     .join(" · ");
 
+  const image = useChatImage(kind === "image" && !failed ? attachment.url : null, { thumb: true });
+
   const load = useCallback(
     (signal: AbortSignal) => messageApi.downloadFile(attachment.messageId, { signal }),
     [attachment.messageId]
   );
 
-  if (kind === "image" && attachment.url && !failed)
+  if (kind === "image" && attachment.url && !failed && !image.failed)
     return (
       <>
         <button
@@ -40,12 +43,16 @@ export function MessageAttachment({
           onClick={() => setOpen(true)}
           aria-label={t("attachment.openAria", { name: attachment.name })}
         >
-          <img
-            className="max-h-[320px] w-full object-cover"
-            src={attachment.url}
-            alt={attachment.name}
-            draggable={false}
-          />
+          {image.src ? (
+            <img
+              className="max-h-[320px] w-full object-cover"
+              src={image.src}
+              alt={attachment.name}
+              draggable={false}
+            />
+          ) : (
+            <span className="block aspect-[4/3] w-full animate-pulse bg-skeleton motion-reduce:animate-none" />
+          )}
           {uploading ? (
             <span className="absolute inset-0 grid place-items-center bg-black/35 text-white">
               <Icon name="refresh" size={26} className="animate-spin" />

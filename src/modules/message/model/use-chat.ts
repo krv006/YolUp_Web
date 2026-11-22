@@ -14,7 +14,7 @@ import {
   useConversations,
   useRoomTyping,
 } from "@/modules/conversation";
-import type { ChatMessage, Conversation, ConversationRole, SendMessagePayload } from "@/shared/types";
+import type { ChatMessage, Conversation, ConversationRole, MessageAttachment, SendMessagePayload } from "@/shared/types";
 import { messageApi } from "../api/message.api";
 import { ChatSocketManager, type SocketState } from "../lib/chat-socket-manager";
 import { applyReactions, markMessageFailed, upsertMessage } from "../lib/message.mappers";
@@ -31,6 +31,20 @@ export interface UseChatOptions {
 
 interface OptimisticContext {
   temporaryId: string;
+  previewUrl: string | null;
+}
+
+function pendingAttachment(messageId: string, file: File | null | undefined, previewUrl: string | null): MessageAttachment | undefined {
+  if (!file) return undefined;
+  const image = file.type.startsWith("image/");
+  return {
+    messageId,
+    name: file.name,
+    mimeType: file.type,
+    size: file.size,
+    url: previewUrl,
+    kind: image ? "image" : "file",
+  };
 }
 
 export function useChat(
@@ -164,6 +178,8 @@ export function useChat(
       messageApi.send(conversationId as string, payload, senderId),
     onMutate: async (payload): Promise<OptimisticContext> => {
       const temporaryId = `temp-${crypto.randomUUID()}`;
+      const previewUrl = payload.file?.type.startsWith("image/") ? URL.createObjectURL(payload.file) : null;
+      const attachment = pendingAttachment(temporaryId, payload.file, previewUrl);
       const optimistic: ChatMessage = {
         id: temporaryId,
         clientMessageId: payload.clientMessageId ?? null,
@@ -174,7 +190,8 @@ export function useChat(
         text: payload.text,
         replyTo: payload.replyTo,
         replyToId: payload.replyToId ?? null,
-        type: "text",
+        type: attachment ? attachment.kind ?? "file" : "text",
+        ...(attachment ? { attachment } : {}),
         createdAt: new Date().toISOString(),
         status: "pending",
         pending: true,
@@ -184,7 +201,7 @@ export function useChat(
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
         upsertMessage(current, optimistic)
       );
-      return { temporaryId };
+      return { temporaryId, previewUrl };
     },
     onSuccess: (message, payload, context) => {
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
@@ -194,11 +211,14 @@ export function useChat(
         )
       );
       queryClient.invalidateQueries({ queryKey: conversationKeys.list(role), exact: true });
+      if (context.previewUrl) URL.revokeObjectURL(context.previewUrl);
     },
-    onError: (_error, _payload, context) =>
+    onError: (_error, _payload, context) => {
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
         markMessageFailed(current, context?.temporaryId ?? "")
-      ),
+      );
+      if (context?.previewUrl) URL.revokeObjectURL(context.previewUrl);
+    },
   });
 
   const updateMessage = useMutation({

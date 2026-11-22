@@ -6,6 +6,7 @@ import { FileViewer } from "@/shared/ui/file-viewer";
 import { Icon } from "@/shared/ui/icon";
 import { messageApi } from "../api/message.api";
 import { MessageAttachment } from "./message-attachment";
+import { useChatImage } from "../model/use-chat-image";
 
 export interface RoomAttachmentsProps {
   roomId: string;
@@ -76,7 +77,7 @@ export function RoomAttachments({ roomId, type, empty }: RoomAttachmentsProps) {
 function MediaTile({ item }: { item: RoomAttachment }) {
   const { t } = useTranslation("chat");
   const [open, setOpen] = useState(false);
-  const preview = item.thumbnailUrl ?? item.url;
+  const preview = useChatImage(item.mimeType.startsWith("image/") ? (item.thumbnailUrl ?? item.url) : null, { thumb: true }).src;
   return (
     <>
       <button
