@@ -5,7 +5,6 @@ import * as auth from "@/modules/auth/lib/auth.mappers";
 import * as board from "@/modules/board/lib/board.mappers";
 import * as conversation from "@/modules/conversation/lib/conversation.mappers";
 import * as course from "@/modules/course/lib/course.mappers";
-import * as exam from "@/modules/exam/lib/exam.mappers";
 import * as homework from "@/modules/homework/lib/homework.mappers";
 import * as lesson from "@/modules/lesson/lib/lesson.mappers";
 import * as live from "@/modules/live/lib/live.mappers";
@@ -25,7 +24,6 @@ const RESPONSE_MAPPERS: Record<string, Mapper> = {
   ...pick(board, ["mapSignalsDto", "mapBoardDto", "mapPeriodicElementDto"]),
   ...pick(conversation, ["mapConversationDto", "mapConversationPage", "mapTeacherDto"]),
   ...pick(course, ["mapCourseDto", "mapCourseUserDto", "mapEnrollmentDto", "mapCoursePage"]),
-  ...pick(exam, ["mapExamTemplateItemDto", "mapExamTemplateDto", "mapExamSectionDto", "mapExamSummaryDto", "mapExamDetailDto", "mapExamCurrentDto", "mapExamStudentResultDto", "mapExamResultsDto", "mapExamStudentResultDetailDto"]),
   ...pick(homework, ["mapAiResultDto", "mapSubmissionDto", "mapBoardDto", "mapAssignmentDto", "mapHomeworkReportDto"]),
   ...pick(lesson, ["mapLessonDto", "mapLessonPage", "mapLessonRecordingDto", "mapLessonRatingDto", "mapLessonRatingList"]),
   ...pick(live, ["mapRoomTokenDto", "mapAttentionDto", "mapFocusDto"]),

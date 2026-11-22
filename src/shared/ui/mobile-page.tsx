@@ -130,7 +130,7 @@ export function MobileStatsCard({ icon = "bar-chart", label, actionLabel, onActi
           </button>
         ) : null}
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
         {items.map((item) => (
           <div key={item.id} className="flex h-15 min-w-0 flex-col justify-center rounded-md bg-on-action/20 pr-1.5 pl-3">
             <strong className="truncate text-[20px] leading-6 font-semibold">{item.value}</strong>

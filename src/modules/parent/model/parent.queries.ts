@@ -4,7 +4,6 @@ import type { CreateChildRequestDto, LinkAction } from "@/modules/auth";
 import type { ScoreRange } from "../lib/child-scores";
 import { parentApi } from "../api/parent.api";
 import type { SetConsentInput } from "../api/parent.dto";
-import { examApi } from "@/modules/exam";
 import { homeworkApi } from "@/modules/homework";
 import { AppError } from "@/shared/api";
 import { isConsentRequired } from "../lib/parent-errors";
@@ -21,7 +20,6 @@ export const parentKeys = Object.freeze({
   rank: (childId: string | null, courseId: string | null, month: string) => ["parent", "rank", childId, courseId, month] as const,
   scores: (childId: string | null, range: ScoreRange) => ["parent", "scores", childId, range] as const,
   sessions: (childId: string | null) => ["parent", "sessions", childId] as const,
-  exams: (childId: string | null) => ["parent", "exams", childId] as const,
   username: (value: string) => ["parent", "username", value] as const,
 });
 
@@ -142,15 +140,6 @@ export function useChildRank(childId: string | null, courseId: string | null, mo
     queryFn: ({ signal }) => parentApi.getChildRank(childId as string, courseId as string, month, { signal }),
     enabled: Boolean(childId && courseId),
     retry: false,
-  });
-}
-
-export function useChildExams(childId: string | null) {
-  return useQuery({
-    queryKey: parentKeys.exams(childId),
-    queryFn: ({ signal }) => examApi.getAll(null, { signal, query: { student: childId as string } }),
-    enabled: Boolean(childId),
-    refetchInterval: 60_000,
   });
 }
 

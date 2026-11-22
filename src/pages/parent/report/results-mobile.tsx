@@ -12,7 +12,6 @@ import { subjectLook } from "../attendance/attendance-styles";
 import { MobileConnect } from "../dashboard/parent-home-mobile";
 import { ChildScoreChart } from "@/widgets/child-score-chart";
 import { useHomeworkView } from "../homework/use-homework-view";
-import { ResultsTabs } from "./results-parts";
 
 export function ResultsMobile() {
   const { t } = useTranslation("parent");
@@ -67,7 +66,6 @@ export function ResultsMobile() {
           </label>
         }
       />
-      <ResultsTabs wide />
       {online && view.failed ? <ParentErrorBanner onRetry={view.retry} /> : null}
       {!view.loading && !view.child ? (
         <MobileConnect />

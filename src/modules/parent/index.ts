@@ -23,7 +23,6 @@ export {
   useRespondParentLink,
   useSetParentConsent,
   useCancelLink,
-  useChildExams,
   useChildRank,
   useChildScores,
   useChildSessions,

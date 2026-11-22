@@ -1,7 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
 import { useChildRank } from "@/modules/parent";
-import { ROUTES } from "@/shared/config";
 import { formatLocalized } from "@/shared/lib";
 import type { Assignment } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
@@ -25,31 +23,6 @@ export function CourseRank({ childId, courseId, now }: { childId: string | null;
     </span>
   );
 }
-
-export function ResultsTabs({ wide = false }: { wide?: boolean }) {
-  const { t } = useTranslation("parent");
-  return (
-    <nav className={`flex shrink-0 items-center gap-1 rounded-full bg-surface p-1 ${wide ? "w-full" : ""}`}>
-      {[
-        { to: ROUTES.parent.grades, label: t("results.tabs.rating") },
-        { to: ROUTES.parent.exams, label: t("results.tabs.mock") },
-      ].map((tab) => (
-        <NavLink
-          key={tab.to}
-          to={tab.to}
-          className={({ isActive }) =>
-            `flex items-center justify-center rounded-full px-6 transition-colors ${wide ? "h-11 flex-1 text-title-sm font-medium" : "h-10 text-button"} ${
-              isActive ? "bg-brand text-on-action" : "text-ink hover:bg-subtle"
-            }`
-          }
-        >
-          {tab.label}
-        </NavLink>
-      ))}
-    </nav>
-  );
-}
-
 export function MonthPicker({
   months,
   value,

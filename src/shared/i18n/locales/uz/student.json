@@ -142,8 +142,6 @@
       "testsHint": "{{count}} tasi bugun",
       "assignments": "Faol vazifalar",
       "assignmentsHint": "{{count}} tasi ertaga",
-      "mock": "Mock imtihon",
-      "mockNone": "rejalashtirilmagan",
       "average": "O‘rtacha natija",
       "averageHint": "oxirgi {{count}} urinish"
     },
@@ -156,10 +154,6 @@
       "assignments": {
         "title": "Vazifalar",
         "description": "Uy vazifalarini topshiring va baholarni ko‘ring."
-      },
-      "mock": {
-        "title": "Mock testlar",
-        "description": "IELTS, SAT, Milliy sertifikat sinov imtihonlari."
       },
       "ai": {
         "title": "AI yordamchi",
@@ -177,7 +171,6 @@
     "counts": {
       "tests": "{{count}} ta yangi",
       "assignments": "{{count}} ta faol",
-      "mockNone": "Rejalashtirilmagan",
       "ai": "Mashq va tushuntirish",
       "analytics": "O‘rtacha {{value}}",
       "materials": "{{count}} ta fayl"
@@ -333,70 +326,6 @@
         "test": "test {{value}}%",
         "empty": "Hali guruhga qo‘shilmagansiz"
       }
-    },
-    "mock": {
-      "eyebrow": "Sizga biriktirilgan sinov imtihonlari",
-      "title": "Mock testlar",
-      "filters": {
-        "all": "Hammasi",
-        "ielts": "IELTS",
-        "sat": "SAT",
-        "milliy": "Milliy",
-        "other": "Boshqa"
-      },
-      "states": {
-        "running": "Ketmoqda",
-        "upcoming": "Rejalashtirilgan",
-        "finished": "Tugagan",
-        "submitted": "Topshirilgan"
-      },
-      "today": "bugun {{time}}",
-      "hours": "{{count}} soat",
-      "hoursMinutes": "{{hours}} soat {{minutes}} daq",
-      "minutesOnly": "{{count}} daq",
-      "continue": "Davom ettirish",
-      "remind": "Eslatma qo‘yish",
-      "result": "Natija",
-      "live": "Jonli",
-      "left": "qoldi",
-      "leftSection": "qoldi · {{section}}",
-      "back": "Imtihonga qaytish",
-      "emptyTitle": "Hozircha mock imtihon yo‘q",
-      "emptyHint": "O‘qituvchingiz sinov imtihonini belgilasa, shu yerda ko‘rinadi.",
-      "reminderOn": "Eslatma · {{count}} daq oldin",
-      "reminderSet": "Imtihondan {{count}} daqiqa oldin eslatamiz",
-      "reminderCleared": "Eslatma bekor qilindi"
-    },
-    "mockResult": {
-      "eyebrow": "Mock testlar / Natijangiz · {{date}}",
-      "pdf": "PDF yuklab olish",
-      "stats": {
-        "overall": "Umumiy band",
-        "group": "Guruh o‘rtachasi",
-        "target": "Maqsadingiz"
-      },
-      "sections": "Bo‘limlar bo‘yicha natijangiz",
-      "details": "Bo‘limlar tafsiloti",
-      "correct": "{{earned}} / {{max}} to‘g‘ri javob",
-      "manual": "O‘qituvchi baholaydi",
-      "pending": "Baholanmoqda",
-      "essay": "Sizning inshoyingiz · {{title}}",
-      "words": "{{count}} so‘z",
-      "aiTitle": "AI tahlili · IELTS mezonlari",
-      "aiQueued": "AI tahlili tayyorlanmoqda…",
-      "mistakes": "Asosiy xatolar: {{value}}",
-      "strengths": "Kuchli tomonlar: {{value}}",
-      "askTeacher": "O‘qituvchiga savol",
-      "practice": "Xatolar ustida ishlash",
-      "notReady": "Natija hali e’lon qilinmagan",
-      "notReadyHint": "O‘qituvchi natijalarni e’lon qilgach, shu yerda ko‘rinadi.",
-      "practiceTitle": "Xatolar ustida mashq",
-      "targetTitle": "Maqsadingiz",
-      "targetHint": "Erishmoqchi bo‘lgan ballingizni kiriting (masalan, 7.5 yoki 1400).",
-      "targetPlaceholder": "Masalan, 7.5",
-      "targetSave": "Saqlash",
-      "targetCancel": "Bekor qilish",
-      "targetInvalid": "Ball 0 dan 1600 gacha bo‘lishi kerak"
     },
     "homework": {
       "eyebrow": "Workspace / Vazifalar · {{count}} ta",

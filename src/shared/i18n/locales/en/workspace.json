@@ -15,10 +15,6 @@
       "title": "AI",
       "description": "Work with the AI assistant."
     },
-    "exams": {
-      "title": "Mock test",
-      "description": "IELTS, SAT, National certificate and your own mock test."
-    },
     "assignments": {
       "title": "Assignments",
       "description": "Give homework and review it with AI."
@@ -120,15 +116,12 @@
       "testsHint": "{{count}} drafts",
       "assignments": "Active assignments",
       "assignmentsHint": "{{count}} to review",
-      "mock": "Mock exams",
-      "mockHint": "{{count}} running",
       "rating": "Average rating",
       "ratingHint": "this month"
     },
     "moduleCounts": {
       "tests": "{{count}} tests",
       "assignments": "{{count}} active",
-      "mock": "{{count}} running",
       "ai": "{{count}} generating",
       "analytics": "Rating {{value}}",
       "materials": "{{count}} files"
@@ -141,10 +134,6 @@
       "assignments": {
         "title": "Assignments",
         "description": "Set homework and review it with AI"
-      },
-      "mock": {
-        "title": "Mock exams",
-        "description": "IELTS, SAT, Milliy sertifikat and your own"
       },
       "ai": {
         "title": "AI assistant",
@@ -166,13 +155,11 @@
       "details": "Details",
       "stats": {
         "unchecked": "Unchecked",
-        "tests": "Tests",
-        "mock": "Mock exams"
+        "tests": "Tests"
       },
       "createItems": {
         "test": "New test",
         "homework": "Assign homework",
-        "mock": "Mock exam",
         "ai": "Test with AI"
       },
       "modules": {
@@ -187,10 +174,6 @@
         "ai": {
           "title": "AI assistant",
           "description": "Build tests with AI"
-        },
-        "mock": {
-          "title": "Mock tests",
-          "description": "IELTS, SAT, National certificate"
         },
         "assignments": {
           "title": "Homework",

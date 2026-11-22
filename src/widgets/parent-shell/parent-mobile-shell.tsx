@@ -13,7 +13,6 @@ const TAB_ROOTS: string[] = [
   ROUTES.parent.attendance,
   ROUTES.parent.homework,
   ROUTES.parent.grades,
-  ROUTES.parent.exams,
 ];
 
 export function ParentMobileShell() {

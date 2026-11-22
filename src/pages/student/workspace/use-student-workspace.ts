@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useMyAnalytics } from "@/modules/analytics";
 import { useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
-import { useExams } from "@/modules/exam";
 import { useQuizzes } from "@/modules/quiz";
 import type { StudentAttemptSummary } from "@/shared/types";
 import { useStudentAssignments } from "../lib/use-student-assignments";
@@ -11,7 +10,6 @@ export function useStudentWorkspace() {
   const [now] = useState(() => new Date());
   const courses = useCourses();
   const quizzes = useQuizzes(null);
-  const exams = useExams(null);
   const analytics = useMyAnalytics();
   const groupImages = useGroupImages("student");
   const groups = useMemo(
@@ -41,8 +39,6 @@ export function useStudentWorkspace() {
     coursesLoading: courses.isLoading,
     quizzes: published,
     quizzesLoading: quizzes.isLoading,
-    exams: exams.data ?? [],
-    examsLoading: exams.isLoading,
     assignments: assignments.data,
     assignmentsLoading: assignments.isLoading || courses.isLoading,
     attempts,

@@ -20,7 +20,7 @@ const ITEMS = [
   { id: "children", icon: "group", to: ROUTES.parent.children, extra: [] },
   { id: "attendance", icon: "event", to: ROUTES.parent.attendance, extra: [] },
   { id: "homework", icon: "assignment", to: ROUTES.parent.homework, extra: [] },
-  { id: "results", icon: "bar-chart", to: ROUTES.parent.grades, extra: [ROUTES.parent.exams] },
+  { id: "results", icon: "bar-chart", to: ROUTES.parent.grades, extra: [] },
   { id: "chats", icon: "chat", to: ROUTES.parent.chats, extra: [] },
 ];
 

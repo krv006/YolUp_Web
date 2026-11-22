@@ -1,4 +1,4 @@
-import type { Assignment, ExamStudentResult, ExamSummary } from "@/shared/types";
+import type { Assignment } from "@/shared/types";
 import { gradedScores } from "./parent-home";
 
 export interface MonthHomework {
@@ -88,39 +88,4 @@ export function activeMonths(assignments: Assignment[], now: number): Array<{ ye
       return { year, month };
     })
     .sort((a, b) => b.year - a.year || b.month - a.month);
-}
-
-export function cefrLevel(band: number | null): string | null {
-  if (band === null) return null;
-  if (band >= 8.5) return "C2";
-  if (band >= 7) return "C1";
-  if (band >= 5.5) return "B2";
-  if (band >= 4) return "B1";
-  return "A2";
-}
-
-export function sectionShort(title: string, key: string): string {
-  return (title || key).trim().charAt(0).toUpperCase();
-}
-
-export function nextExam(exams: ExamSummary[], now: number): ExamSummary | null {
-  return (
-    exams
-      .filter((exam) => exam.state === "upcoming" && Date.parse(exam.startsAt) > now)
-      .sort((a, b) => a.startsAt.localeCompare(b.startsAt))[0] ?? null
-  );
-}
-
-export function previousOverall(
-  exam: ExamSummary,
-  exams: ExamSummary[],
-  results: Map<string, ExamStudentResult | null>
-): number | null {
-  const current = results.get(exam.id)?.total?.score ?? null;
-  if (current === null) return null;
-  const earlier = exams
-    .filter((item) => item.id !== exam.id && item.startsAt < exam.startsAt && results.get(item.id)?.total?.score != null)
-    .sort((a, b) => b.startsAt.localeCompare(a.startsAt))[0];
-  const previous = earlier ? (results.get(earlier.id)?.total?.score ?? null) : null;
-  return delta(current, previous);
 }

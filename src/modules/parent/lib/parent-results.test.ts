@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Assignment, ExamStudentResult, ExamSummary } from "@/shared/types";
-import { activeMonths, cefrLevel, delta, monthHomework, nextExam, previousOverall, recentGrades, subjectRows } from "./parent-results";
+import type { Assignment } from "@/shared/types";
+import { activeMonths, delta, monthHomework, recentGrades, subjectRows } from "./parent-results";
 
 const NOW = new Date(2026, 9, 29, 14, 39).getTime();
 const at = (day: number, month = 9) => new Date(2026, month, day, 12).toISOString();
@@ -46,22 +46,5 @@ describe("subjectRows and recentGrades", () => {
       { year: 2026, month: 9 },
       { year: 2026, month: 8 },
     ]);
-  });
-});
-
-describe("mock helpers", () => {
-  const exam = (id: string, startsAt: string, state: ExamSummary["state"]) => ({ id, startsAt, state }) as ExamSummary;
-  const result = (score: number | null) => ({ total: score === null ? null : { score, max: 9, label: "" } }) as ExamStudentResult;
-
-  it("maps IELTS bands to CEFR levels", () => {
-    expect([cefrLevel(6.5), cefrLevel(7), cefrLevel(4.5), cefrLevel(9), cefrLevel(null)]).toEqual(["B2", "C1", "B1", "C2", null]);
-  });
-
-  it("finds the next exam and compares overall bands", () => {
-    const exams = [exam("e1", at(16), "finished"), exam("e2", at(18), "finished"), exam("e3", new Date(2026, 10, 2, 10).toISOString(), "upcoming")];
-    expect(nextExam(exams, NOW)?.id).toBe("e3");
-    const results = new Map<string, ExamStudentResult | null>([["e1", result(6)], ["e2", result(6.5)]]);
-    expect(previousOverall(exams[1], exams, results)).toBe(0.5);
-    expect(previousOverall(exams[0], exams, results)).toBeNull();
   });
 });

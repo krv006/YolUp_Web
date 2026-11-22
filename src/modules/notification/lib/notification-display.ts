@@ -49,7 +49,7 @@ export function notificationIcon(item: InboxNotification) {
 export function notificationActionKey(link: NotificationLink | null): string | null {
   if (!link) return null;
   if (link.type === "assignment") return "openAssignment";
-  if (link.type === "quiz" || link.type === "exam") return "openQuiz";
+  if (link.type === "quiz") return "openQuiz";
   if (link.type === "course") return "review";
   return "open";
 }

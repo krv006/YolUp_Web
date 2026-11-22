@@ -260,8 +260,6 @@
       "homeworkTomorrow": "Vazifa muddati ertaga",
       "homeworkSoon": "Vazifa muddati yaqin",
       "login": "Yangi qurilmadan kirish",
-      "exam": "Mock natijasi chiqdi",
-      "examMeta": "{{title}} · natijani ko‘ring",
       "empty": "Hozircha diqqat talab qiladigan narsa yo‘q"
     },
     "score": {
@@ -273,7 +271,7 @@
     "serverError": "Server bilan aloqa yo‘q — ma’lumotlar yuklanmadi.",
     "connect": {
       "title": "O‘quvchingizni ulang",
-      "description": "Davomat, vazifalar, mock natijalar va xavfsizlikni bir joyda kuzatish uchun o‘quvchi hisobini ulang yoki yangisini yarating.",
+      "description": "Davomat, vazifalar, baholar va xavfsizlikni bir joyda kuzatish uchun o‘quvchi hisobini ulang yoki yangisini yarating.",
       "link": "Mavjud o‘quvchini ulash",
       "create": "Yangi bola hisobi",
       "step": "{{n}}-qadam",
@@ -777,10 +775,6 @@
   "results": {
     "eyebrow": "Reyting",
     "title": "Natijalar",
-    "tabs": {
-      "rating": "Reyting",
-      "mock": "Mock testlar"
-    },
     "month": "Oy",
     "stats": {
       "given": "Berilgan vazifa",
@@ -811,55 +805,6 @@
     "rank": {
       "place": "Guruhda {{rank}}-o‘rin",
       "top": "Top {{value}}%"
-    }
-  },
-  "mock": {
-    "eyebrow": "Mock testlar",
-    "next": "Keyingi: {{title}} — {{date}}",
-    "nextPattern": "d-MMMM, HH:mm",
-    "minutes": "{{count}} daqiqa",
-    "minutesShort": "{{count}} daq",
-    "resultAfter": "natija imtihon tugagach ochiladi",
-    "remind": "Eslatib qo‘yish",
-    "reminderSet": "Eslatma qo‘yilgan",
-    "columns": {
-      "exam": "Imtihon",
-      "date": "Sana",
-      "duration": "Davomiyligi",
-      "sections": "Bo‘limlar",
-      "overall": "Overall"
-    },
-    "state": {
-      "upcoming": "Rejada",
-      "running": "Davom etmoqda",
-      "pending": "Kutilmoqda",
-      "absent": "Qatnashmagan"
-    },
-    "open": "Natija",
-    "empty": {
-      "title": "Mock testlar yo‘q",
-      "text": "O‘qituvchi imtihon belgilaganda sana, bo‘limlar va natijalar shu yerda chiqadi."
-    },
-    "locked": {
-      "title": "Natija hali ochilmagan",
-      "text": "{{exam}} {{date}} da tugagach, natija shu yerda chiqadi.",
-      "ok": "Tushunarli",
-      "close": "Yopish"
-    },
-    "result": {
-      "title": "{{name}} — {{exam}} natijasi",
-      "datePattern": "d-MMMM",
-      "close": "Yopish",
-      "pdf": "PDF yuklab olish",
-      "overall": "Overall band",
-      "level": "{{level}} darajaga yaqin",
-      "delta": "Oldingi mockdan {{value}}",
-      "groupAverage": "guruh o‘rtachasi {{value}}",
-      "notReady": "Overall band hali hisoblanmagan",
-      "waitingTeacher": "O‘qituvchi bahosi kutilmoqda",
-      "sectionWaiting": "kutilmoqda",
-      "pendingNote": "Ayrim bo‘limlar qo‘lda baholanadi — natija tayyor bo‘lganda shu yerda ko‘rinadi.",
-      "teacherComment": "O‘qituvchi izohi"
     }
   },
   "settings": {
@@ -1076,11 +1021,6 @@
     "results": {
       "submitted": "{{submitted}} / {{total}} topshirildi"
     },
-    "mock": {
-      "finished": "Tugagan imtihonlar",
-      "dayPattern": "d-MMMM",
-      "resultTitle": "Mock natija"
-    },
     "settings": {
       "role": "Kuzatuvchi · {{count}} o‘quvchi",
       "securityTitle": "Xavfsizlik — himoyalangan",
@@ -1171,8 +1111,7 @@
     "kinds": {
       "overall": "Hammasi",
       "homework": "Uy vazifasi",
-      "quiz": "Test",
-      "exam": "Mock"
+      "quiz": "Test"
     },
     "ranges": {
       "8w": "8 hafta",
@@ -1185,8 +1124,7 @@
     "kindsShort": {
       "overall": "Hammasi",
       "homework": "Vazifa",
-      "quiz": "Test",
-      "exam": "Mock"
+      "quiz": "Test"
     },
     "monthsShort": [
       "Yan",
