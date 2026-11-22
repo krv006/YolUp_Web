@@ -9,6 +9,7 @@ export {
   SCREEN_SHARE_SOURCE,
 } from "./lib/live-permissions";
 export { MIC_TRACK, tokenAllowsTrack } from "./lib/live-token";
+export { JOIN_DELAY_LIMIT_MS, joinDelayTooLong, queueSecondsLeft } from "./lib/join-queue";
 export { decodeScreenShareRequest, encodeScreenShareRequest } from "./lib/screen-share-signal";
 export {
   DISPLAY_CAPTURE_OPTIONS,

@@ -240,7 +240,12 @@
     "notStartedTitle": "Dars hali boshlanmagan",
     "notStartedDescription": "Dars {{time}} da boshlanadi. O‘qituvchi darsni boshlashi bilan — vaqtidan oldin bo‘lsa ham — «Darsga qo‘shilish» tugmasi yonadi.",
     "startedTitle": "O‘qituvchi darsni boshladi",
-    "startedDescription": "Endi darsga qo‘shilishingiz mumkin."
+    "startedDescription": "Endi darsga qo‘shilishingiz mumkin.",
+    "queueTitle": "Navbatdasiz",
+    "queueDescription": "Hozir ko‘p o‘quvchi bir vaqtda kirmoqda. ~{{count}} soniyadan keyin darsga ulanasiz.",
+    "queueConnecting": "Navbatingiz keldi — darsga ulanmoqda…",
+    "queueStuckTitle": "Navbatda muammo",
+    "queueStuckDescription": "Darsga kirish navbati odatdagidan juda uzoq. Qayta urinib ko‘ring, takrorlansa o‘qituvchiga xabar bering."
   },
   "mediaMode": {
     "openMic": "Hammaga mikrofon ochiq",

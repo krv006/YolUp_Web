@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/modules/auth";
 import { useCourse } from "@/modules/course";
 import {
+  joinDelayTooLong,
   LessonPreJoin,
   liveApi,
   MIC_TRACK,
@@ -22,6 +23,7 @@ import { ROLES } from "@/shared/constants";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { LoadingFallback } from "@/shared/ui/legacy";
 import { LiveRoom, LiveRoomState, useLeaveGuard } from "@/widgets/live-room";
+import { JoinQueueState } from "./join-queue-state";
 
 // adaptiveStream: tomoshabin faqat ko'rinib turgan o'lchamga mos qatlamni oladi (tarmoq va server CPU'ni 2-3x kamaytiradi).
 // dynacast: hech kim ko'rmayotgan qatlam yuborilmaydi (o'qituvchi yuklashi kamayadi). Modul darajasida — Room qayta yaratilmasin.
@@ -84,7 +86,7 @@ export function LiveLessonPage() {
   }, []);
 
   useEffect(() => {
-    if (!choices || !token.data || token.data.joinDelayMs <= 0) return;
+    if (!choices || !token.data || token.data.joinDelayMs <= 0 || joinDelayTooLong(token.data.joinDelayMs)) return;
     const timer = globalThis.setTimeout(() => setReadyToConnect(true), token.data.joinDelayMs);
     return () => globalThis.clearTimeout(timer);
   }, [choices, token.data]);
@@ -335,10 +337,37 @@ export function LiveLessonPage() {
     );
   }
 
+  if (!readyToConnect && joinDelayTooLong(token.data.joinDelayMs)) {
+    return (
+      <main className="live-page">
+        <LiveRoomState
+          tone="error"
+          lessonTitle={lesson.data.title || lesson.data.courseTitle}
+          subtitle={lesson.data.courseTitle}
+          title={t("state.queueStuckTitle")}
+          description={t("state.queueStuckDescription")}
+          actionLabel={t("state.retry")}
+          actionDisabled={token.isFetching}
+          onAction={() => void token.refetch()}
+          secondaryLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
+          onSecondary={handleLeave}
+          onBack={handleLeave}
+        />
+      </main>
+    );
+  }
+
   if (!readyToConnect && token.data.joinDelayMs > 0) {
     return (
       <main className="live-page">
-        <LoadingFallback label={t("state.joiningRoom")} />
+        <JoinQueueState
+          key={token.dataUpdatedAt}
+          delayMs={token.data.joinDelayMs}
+          lessonTitle={lesson.data.title || lesson.data.courseTitle}
+          subtitle={lesson.data.courseTitle}
+          backLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
+          onLeave={handleLeave}
+        />
       </main>
     );
   }
