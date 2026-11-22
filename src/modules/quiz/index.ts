@@ -9,6 +9,25 @@ export { AssignQuizDialog } from "./ui/assign-quiz-dialog";
 export { MathText } from "./ui/math-text";
 export { QuizExportDialog } from "./ui/quiz-export-dialog";
 export { QuestionAnswerInput, QuestionPrompt } from "./ui/question-answer-input";
+export { QuestionMedia } from "./ui/question-media";
+export { QuestionImageField } from "./ui/question-image-field";
+export {
+  QUESTION_IMAGE_ACCEPT,
+  QUESTION_IMAGE_MAX_MB,
+  checkQuestionImage,
+  pickImageFile,
+} from "./lib/question-image";
+export {
+  cloneDraft,
+  createBlankDrafts,
+  draftStatus,
+  insertAfter,
+  insertDraft,
+  moveDraft,
+  retypeDrafts,
+  summarizeDrafts,
+} from "./lib/bulk-draft";
+export type { DraftState, DraftStatus } from "./lib/bulk-draft";
 export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
 export type { ImportedQuiz } from "./api/quiz.api";
 export { quizEndpoints } from "./api/quiz.endpoints";
@@ -45,8 +64,11 @@ export {
   quizKeys,
   useCreateQuiz,
   useDeleteQuiz,
+  useDownloadQuizTemplate,
   useImportGoogleLink,
   useImportQuizDocx,
+  useImportQuizText,
+  useUploadQuestionImage,
   useQuiz,
   useStartQuiz,
   useQuizAttempts,
@@ -87,7 +109,7 @@ export {
   questionToDraft,
   validateDraft,
 } from "./lib/question-draft";
-export type { GroupDraft, KeyFactory, QuestionDraft } from "./lib/question-draft";
+export type { DraftError, GroupDraft, KeyFactory, QuestionDraft } from "./lib/question-draft";
 export { QuizImportDialog } from "./ui/quiz-import-dialog";
 export type { QuizImportSource } from "./ui/quiz-import-dialog";
 export { StudentChecklist } from "./ui/student-checklist";

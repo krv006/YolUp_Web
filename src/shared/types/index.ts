@@ -70,6 +70,7 @@ export type {
   QuizImportWarning,
   QuizOption,
   QuizQuestion,
+  QuizQuestionImage,
   QuizChoiceItem,
   QuizQuestionFormValues,
   QuizQuestionType,

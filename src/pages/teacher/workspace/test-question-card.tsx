@@ -1,10 +1,15 @@
+import { useLayoutEffect, useRef, useState, type ReactNode, type TextareaHTMLAttributes } from "react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
 import {
   MAX_OPTIONS,
   QUESTION_TYPE_ORDER,
+  QuestionImageField,
   changeDraftType,
+  checkQuestionImage,
   optionLetter,
+  pickImageFile,
+  useUploadQuestionImage,
   type KeyFactory,
   type QuestionDraft,
 } from "@/modules/quiz";
@@ -18,6 +23,22 @@ export interface TestQuestionCardProps {
   onChange: (update: (draft: QuestionDraft) => QuestionDraft) => void;
   onRemove: () => void;
   onFocus: () => void;
+  /** Sarlavhadagi raqam yonida ko'rsatiladigan belgi (masalan, holat). */
+  badge?: ReactNode;
+  /** Kartaning pastki qatori (masalan, ko'chirish, nusxa). */
+  footer?: ReactNode;
+}
+
+/** Matn yozilgani sari o'zi kattalashadigan maydon: uzun savolni ham to'liq ko'rib yozish mumkin. */
+function AutoTextarea({ value, ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useLayoutEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    element.style.height = "auto";
+    element.style.height = `${element.scrollHeight}px`;
+  }, [value]);
+  return <textarea ref={ref} rows={2} value={value} {...rest} />;
 }
 
 const FIELD =
@@ -37,8 +58,23 @@ export function TestQuestionCard({
   onChange,
   onRemove,
   onFocus,
+  badge,
+  footer,
 }: TestQuestionCardProps) {
   const { t } = useTranslation("quiz");
+  const uploadImage = useUploadQuestionImage();
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  function pickImage(file: File) {
+    if (locked) return;
+    const problem = checkQuestionImage(file);
+    if (problem) {
+      setImageError(t(`editor.${problem}`));
+      return;
+    }
+    setImageError(null);
+    uploadImage.mutate(file, { onSuccess: (image) => onChange((current) => ({ ...current, image })) });
+  }
 
   function setOption(key: string, text: string) {
     onChange((current) => ({
@@ -70,10 +106,26 @@ export function TestQuestionCard({
     <article
       className="flex flex-col gap-4 rounded-lg bg-surface p-5"
       onFocusCapture={onFocus}
+      onPaste={(event) => {
+        const file = pickImageFile(event.clipboardData.files);
+        if (!file) return;
+        event.preventDefault();
+        pickImage(file);
+      }}
+      onDragOver={(event) => {
+        if (Array.from(event.dataTransfer.types).includes("Files")) event.preventDefault();
+      }}
+      onDrop={(event) => {
+        const file = pickImageFile(event.dataTransfer.files);
+        if (!file) return;
+        event.preventDefault();
+        pickImage(file);
+      }}
     >
       <div className="flex items-center gap-3">
-        <span className="min-w-0 flex-1 truncate text-body-xs text-ink-tertiary">
+        <span className="flex min-w-0 flex-1 items-center gap-2 truncate text-body-xs text-ink-tertiary">
           {t("editor.questionNumber", { number: index + 1 })}
+          {badge}
         </span>
 
         <label className="flex h-8 shrink-0 items-center gap-1 rounded-full bg-subtle px-3 text-label text-ink-secondary">
@@ -120,12 +172,26 @@ export function TestQuestionCard({
         </button>
       </div>
 
-      <input
-        className="w-full min-w-0 bg-transparent text-title-lg text-ink outline-none placeholder:text-ink-tertiary disabled:opacity-70"
+      <AutoTextarea
+        className="min-h-16 w-full min-w-0 resize-none rounded-md border border-transparent bg-subtle px-4 py-3 text-title-lg text-ink outline-none placeholder:text-ink-tertiary focus:border-focus focus:bg-surface disabled:opacity-70"
         value={draft.text}
         disabled={locked}
         placeholder={t("editor.questionPlaceholder")}
         onChange={(event) => onChange((current) => ({ ...current, text: event.target.value }))}
+      />
+
+      <QuestionImageField
+        image={draft.image}
+        textAfter={draft.textAfter}
+        uploading={uploadImage.isPending}
+        disabled={locked}
+        error={imageError}
+        onPick={pickImage}
+        onRemove={() => {
+          setImageError(null);
+          onChange((current) => ({ ...current, image: null, textAfter: "" }));
+        }}
+        onTextAfter={(value) => onChange((current) => ({ ...current, textAfter: value }))}
       />
 
       {draft.type === "single" || draft.type === "multiple" ? (
@@ -396,6 +462,8 @@ export function TestQuestionCard({
           />
         </label>
       ) : null}
+
+      {footer}
     </article>
   );
 }

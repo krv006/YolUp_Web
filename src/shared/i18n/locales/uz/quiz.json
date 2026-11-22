@@ -180,13 +180,13 @@
   "types": {
     "single": "Bitta to'g'ri javob",
     "multiple": "Bir nechta to'g'ri javob",
-    "true_false": "To'g'ri / noto'g'ri",
-    "numeric": "Son kiritish",
-    "text": "Qisqa matn",
-    "matching": "Moslashtirish",
-    "ordering": "Tartibga solish",
-    "fill_blank": "Bo'sh joyni to'ldirish",
-    "essay": "Insho (Writing)"
+    "true_false": "To'g'ri yoki noto'g'ri",
+    "numeric": "Son yozish",
+    "text": "Qisqa yozma javob",
+    "matching": "Juftlash",
+    "ordering": "To'g'ri tartibga qo'yish",
+    "fill_blank": "Gapdagi bo'sh joyni to'ldirish",
+    "essay": "Insho (uzun javob)"
   },
   "editor": {
     "back": "Orqaga",
@@ -260,7 +260,16 @@
         "fill_blank": "Bo‘sh joy",
         "essay": "Insho (Writing)"
       }
-    }
+    },
+    "addImage": "Rasm qo'shish",
+    "imageHint": "tanlang, shu yerga tashlang yoki Ctrl+V bosing",
+    "replaceImage": "Almashtirish",
+    "removeImage": "Olib tashlash",
+    "textAfterPlaceholder": "Rasm ostiga yozuv (ixtiyoriy)",
+    "uploadingImage": "Rasm yuklanmoqda…",
+    "imageBadType": "Faqat PNG, JPG, WEBP yoki GIF rasm qo'ying.",
+    "imageTooLarge": "Rasm 5 MB dan katta. Kichikroq rasm tanlang.",
+    "imageAlt": "Savol rasmi"
   },
   "answer": {
     "true": "To'g'ri",
@@ -714,6 +723,99 @@
       "time": "{{count}} daq",
       "attempts": "{{count}} urinish",
       "perAttempt": "{{count}} tadan savol"
+    }
+  },
+  "newPage": {
+    "eyebrow": "Workspace / Testlar",
+    "title": "Yangi test",
+    "back": "Testlarga qaytish",
+    "tabs": {
+      "ai": "AI bilan yaratish",
+      "import": "Tayyor testni yuklash",
+      "manual": "Qo'lda yozish"
+    },
+    "leads": {
+      "ai": "Dars materialingizni yoki mavzuni bering. AI savollarni o'zi yozadi, siz tekshirib chiqasiz.",
+      "import": "Savollaringiz allaqachon yozilgan: Word, Excel, Google Form yoki matnda. Biz ularni olib kiramiz.",
+      "manual": "Savollarni o'zingiz yozasiz. «Yozishni boshlash» desangiz katta sahifa ochiladi va savollar tayyor shablon bo'lib turadi."
+    },
+    "import": {
+      "fileTitle": "Word yoki Excel fayl",
+      "fileHint": "Tayyor savollar fayli. To'g'ri javob fayldan o'qiladi.",
+      "pickFile": "Fayl tanlash",
+      "templateWord": "Word shablon",
+      "templateExcel": "Excel shablon",
+      "reading": "Fayl o'qilmoqda…",
+      "found": "{{count}} ta savol topildi",
+      "foundWarnings": "{{count}} ta savolni tekshirish kerak bo'ladi (javobi topilmadi).",
+      "createTest": "Testni yaratish",
+      "googleTitle": "Google Form yoki hujjat havolasi",
+      "googleHint": "Havola «Havolaga ega har kim» rejimida bo'lishi kerak. Google Form to'g'ri javobni bermaydi, ularni keyin o'zingiz belgilaysiz.",
+      "googleInvalid": "Ochiq Google Form yoki Google hujjat havolasini kiriting.",
+      "read": "O'qib olish",
+      "textTitle": "Matn joylash",
+      "textHint": "ChatGPT yoki boshqa joydan olingan savollar. Format: raqam, variantlar, «Javob: B».",
+      "textPlaceholder": "1. Savol matni\nA) Birinchi variant\nB) Ikkinchi variant\nJavob: B"
+    },
+    "manual": {
+      "settings": "Test sozlamasi",
+      "name": "Test nomi",
+      "namePlaceholder": "Masalan: Present Perfect nazorat",
+      "defaultName": "Yangi test",
+      "count": "Nechta savol bo'ladi?",
+      "countHint": "Shuncha bo'sh shablon ochiladi. Keyin qo'shish yoki olib tashlash mumkin.",
+      "type": "Savollar turi",
+      "typeHint": "Bu umumiy tur. Keyin har bir savolning turini alohida o'zgartirish mumkin.",
+      "start": "Yozishni boshlash",
+      "back": "Orqaga",
+      "progress": "Tayyor: {{ready}} / {{total}}",
+      "save": "Saqlash",
+      "globalType": "Umumiy tur",
+      "globalTypeHint": "Yangi savollar shu turda ochiladi. Har bir savolning turini alohida o'zgartirish mumkin.",
+      "retypeNote": "Umumiy tur «{{type}}» qilindi. {{count}} ta bo'sh savolga qo'lladim, yozilgan savollar o'zgarmadi.",
+      "retypeAll": "Yozilganlariga ham qo'llash",
+      "insertHere": "Shu yerga savol qo'shish",
+      "addQuestion": "Savol qo'shish",
+      "moveUp": "Yuqoriga",
+      "moveDown": "Pastga",
+      "duplicate": "Nusxa olish",
+      "deleted": "Savol o'chirildi.",
+      "undo": "Qaytarish",
+      "leaveConfirm": "Yozganlaringiz saqlanmaydi. Chiqaymi?",
+      "leave": "Ha, chiqish",
+      "stay": "Qolish",
+      "state": {
+        "empty": "Bo'sh",
+        "partial": "To'liq emas",
+        "ready": "Tayyor"
+      },
+      "missing": "Yetishmaydi: {{reason}}",
+      "incompleteList": "{{count}} ta savol to'liq emas:",
+      "emptyList": "{{count}} ta savol bo'sh:",
+      "saveWithoutEmpty": "Bo'shlarsiz saqlash",
+      "noQuestions": "Hali birorta savol yozilmagan.",
+      "typeHints": {
+        "single": "A, B, C, D variantlardan bittasi to'g'ri. Eng ko'p ishlatiladigan tur.",
+        "multiple": "Variantlardan bir nechtasi to'g'ri bo'ladi.",
+        "true_false": "Gap to'g'rimi yoki noto'g'rimi, o'quvchi tanlaydi.",
+        "numeric": "O'quvchi son yozadi.",
+        "text": "O'quvchi so'z yoki gapni o'zi yozadi. To'g'ri javoblarni siz yozib qo'yasiz.",
+        "matching": "O'quvchi chap tomondagi har bir narsani o'ng tomondagi mosi bilan bog'laydi.",
+        "ordering": "Siz to'g'ri tartibda yozasiz, o'quvchiga aralash ko'rinadi, u tartibga soladi.",
+        "fill_blank": "Gapning bir qismi bo'sh qoladi, o'quvchi uni to'ldiradi.",
+        "essay": "O'quvchi uzun yozadi. O'qituvchi yoki AI baholaydi."
+      },
+      "typeExamples": {
+        "single": "Misol: Poytaxt qaysi? A) Toshkent B) Buxoro",
+        "multiple": "Misol: Qaysilari tub son? 2, 3, 4, 5",
+        "true_false": "Misol: Yer yumaloq.",
+        "numeric": "Misol: 12 + 5 nechiga teng? Javob: 17",
+        "text": "Misol: Poytaxtni yozing. Javob: Toshkent",
+        "matching": "Misol: Toshkent bilan O'zbekiston, Parij bilan Fransiya",
+        "ordering": "Misol: Voqealarni yil bo'yicha tartiblang",
+        "fill_blank": "Misol: Toshkent {{O'zbekiston}} poytaxti.",
+        "essay": "Misol: Sevimli faslingiz haqida yozing"
+      }
     }
   }
 }
