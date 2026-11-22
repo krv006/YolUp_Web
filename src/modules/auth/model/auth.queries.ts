@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import type { AuthUser } from "@/shared/types";
 import { authApi } from "../api/auth.api";
 import { mapUserDto } from "../lib/auth.mappers";
-import type { RegisterOptions } from "../api/auth.dto";
+import type { LoginDeviceType, RegisterOptions } from "../api/auth.dto";
 
 export const authKeys = Object.freeze({
   all: ["auth"] as const,
@@ -14,13 +14,13 @@ export const authKeys = Object.freeze({
   teacherRatings: (id: string) => ["auth", "ratings", id] as const,
   teacherStats: (id: string) => ["auth", "stats", id] as const,
   twoFactor: ["auth", "2fa"] as const,
-  loginsPage: (page: number) => ["auth", "logins", "page", page] as const,
+  loginDevices: (page: number, device: LoginDeviceType | null) => ["auth", "logins", "devices", page, device] as const,
 });
 
-export function useLoginHistoryPage(page: number, pageSize = 10) {
+export function useLoginDevicesPage(page: number, pageSize = 10, device: LoginDeviceType | null = null) {
   return useQuery({
-    queryKey: authKeys.loginsPage(page),
-    queryFn: ({ signal }) => authApi.getLoginsPage(page, pageSize, { signal }),
+    queryKey: authKeys.loginDevices(page, device),
+    queryFn: ({ signal }) => authApi.getLoginDevicesPage(page, pageSize, device, { signal }),
     staleTime: 30_000,
     placeholderData: (previous) => previous,
   });

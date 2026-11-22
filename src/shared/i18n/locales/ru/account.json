@@ -294,7 +294,19 @@
     "emailChange": "Изменить",
     "currentPasswordRequired": "Введите текущий пароль",
     "passwordSame": "Новый пароль должен отличаться от текущего",
-    "passwordChangeFailed": "Не удалось сменить пароль. Попробуйте снова."
+    "passwordChangeFailed": "Не удалось сменить пароль. Попробуйте снова.",
+    "deviceFilter": "Тип устройства",
+    "deviceKinds": {
+      "all": "Все",
+      "phone": "Телефон",
+      "tablet": "Планшет",
+      "computer": "Компьютер"
+    },
+    "loginCount_one": "{{count}} вход",
+    "loginCount_few": "{{count}} входа",
+    "loginCount_many": "{{count}} входов",
+    "loginCount_other": "{{count}} входа",
+    "activeSession": "Активный сеанс"
   },
   "help": {
     "search": "Поиск вопроса или темы…",

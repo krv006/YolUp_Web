@@ -21,7 +21,7 @@ type Mapper = (dto: never, ...rest: never[]) => unknown;
 const RESPONSE_MAPPERS: Record<string, Mapper> = {
   ...pick(analytics, ["mapTopCourseDto", "mapTopTeacherDto", "mapDashboardSummaryDto", "mapDashboardTrendsDto", "mapMyAnalytics", "mapTeacherVideoStats", "mapMonitoringSample", "mapMonitoringHistory"]),
   ...pick(attendance, ["mapAttendanceDto", "mapAttendancePage", "mapAttendanceSummary"]),
-  ...pick(auth, ["mapLoginRecordsPage", "mapLoginRecords", "mapTeacherRatings", "mapTeacherStats"]),
+  ...pick(auth, ["mapLoginDevicesPage", "mapLoginRecords", "mapTeacherRatings", "mapTeacherStats"]),
   ...pick(board, ["mapSignalsDto", "mapBoardDto", "mapPeriodicElementDto"]),
   ...pick(conversation, ["mapConversationDto", "mapConversationPage", "mapTeacherDto"]),
   ...pick(course, ["mapCourseDto", "mapCourseUserDto", "mapEnrollmentDto", "mapCoursePage"]),

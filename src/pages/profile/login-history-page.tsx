@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { useLoginHistoryPage, useLogoutOtherSessionsMutation } from "@/modules/auth";
+import { useLoginDevicesPage, useLogoutOtherSessionsMutation, type LoginDevice, type LoginDeviceType } from "@/modules/auth";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { ConfirmDialog } from "@/shared/ui/confirm-dialog";
@@ -29,15 +29,53 @@ function clock(value: string): string {
   return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
-function isPhone(device: string): boolean {
-  return /iphone|android|ios|mobile|yolup/i.test(device);
+function dayLabel(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}.${date.getFullYear()}`;
+}
+
+function lastSeen(value: string, group: GroupKey): string {
+  return group === "earlierGroup" ? `${dayLabel(value)} ${clock(value)}` : clock(value);
+}
+
+function isPhone(row: LoginDevice): boolean {
+  return row.deviceType ? row.deviceType !== "computer" : /iphone|android|ios|mobile|yolup/i.test(row.device);
+}
+
+const KINDS: Array<LoginDeviceType | null> = [null, "phone", "tablet", "computer"];
+
+function DeviceFilter({ value, onChange }: { value: LoginDeviceType | null; onChange: (value: LoginDeviceType | null) => void }) {
+  const { t } = useTranslation("account");
+  return (
+    <div className="-mx-4 flex gap-2 overflow-x-auto px-4 lg:mx-0 lg:px-0" role="group" aria-label={t("page.deviceFilter")}>
+      {KINDS.map((kind) => (
+        <button
+          key={kind ?? "all"}
+          type="button"
+          aria-pressed={value === kind}
+          className={`flex h-10 shrink-0 items-center rounded-full border px-4 text-button transition-colors ${
+            value === kind ? "border-brand bg-brand text-on-action" : "border-line-strong bg-surface text-ink hover:bg-subtle"
+          }`}
+          onClick={() => onChange(kind)}
+        >
+          {t(`page.deviceKinds.${kind ?? "all"}`)}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function deviceHint(row: LoginDevice, count: string): string {
+  return [count, row.location, row.lastIp].filter(Boolean).join(" · ");
 }
 
 export function LoginHistoryPage() {
   const { t } = useTranslation("account");
   const isCompact = useIsCompact();
   const [page, setPage] = useState(1);
-  const logins = useLoginHistoryPage(page, PAGE_SIZE);
+  const [kind, setKind] = useState<LoginDeviceType | null>(null);
+  const logins = useLoginDevicesPage(page, PAGE_SIZE, kind);
   const logoutOthers = useLogoutOtherSessionsMutation();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -47,6 +85,11 @@ export function LoginHistoryPage() {
   const rows = items.length > PAGE_SIZE ? items.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE) : items;
   const anyCurrent = items.some((row) => row.isCurrent);
   const groups: GroupKey[] = ["todayGroup", "yesterdayGroup", "earlierGroup"];
+
+  function changeKind(next: LoginDeviceType | null) {
+    setKind(next);
+    setPage(1);
+  }
 
   function closeOthers() {
     logoutOthers.mutate(undefined, {
@@ -61,6 +104,8 @@ export function LoginHistoryPage() {
   if (isCompact)
     return (
       <ProfileSubPage title={t("page.loginsTitle")}>
+        <DeviceFilter value={kind} onChange={changeKind} />
+
         {logins.isLoading ? (
           <div className="flex flex-col gap-2">
             {Array.from({ length: 4 }, (_, index) => (
@@ -70,30 +115,35 @@ export function LoginHistoryPage() {
         ) : null}
 
         {groups.map((group) => {
-          const items = rows.filter((row) => groupOf(row.at) === group);
+          const items = rows.filter((row) => groupOf(row.lastLoginAt) === group);
           if (!items.length) return null;
           return (
             <SettingsSection key={group} label={t(`page.${group}`)}>
               {items.map((row, index) => {
-                const thisDevice = anyCurrent ? row.isCurrent : current === 1 && group === "todayGroup" && index === 0;
+                const thisDevice = anyCurrent ? row.isCurrent : !kind && current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <SettingsRow
                     key={row.id}
-                    icon={isPhone(row.device) ? "person" : "settings"}
+                    icon={isPhone(row) ? "smartphone" : "laptop"}
                     tone={
                       thisDevice
                         ? "bg-success-bg text-ink"
-                        : isPhone(row.device)
+                        : isPhone(row)
                           ? "bg-brand-subtle text-ink"
                           : SETTINGS_TONES.brand
                     }
                     title={row.device || "—"}
-                    hint={[row.location, row.ip].filter(Boolean).join(" · ")}
+                    hint={deviceHint(row, t("page.loginCount", { count: row.loginCount }))}
                     right={
                       thisDevice ? (
                         <small className="shrink-0 text-caption-strong text-success-fg">{t("page.thisDevice")}</small>
                       ) : (
-                        <small className="shrink-0 text-caption-strong text-ink">{clock(row.at)}</small>
+                        <span className="flex shrink-0 flex-col items-end gap-0.5">
+                          <small className="text-caption-strong text-ink">{lastSeen(row.lastLoginAt, group)}</small>
+                          {row.sessionActive ? (
+                            <small className="text-caption text-success-fg">{t("page.activeSession")}</small>
+                          ) : null}
+                        </span>
                       )
                     }
                   />
@@ -134,6 +184,8 @@ export function LoginHistoryPage() {
 
   return (
     <ProfileSubPage title={t("page.loginsTitle")}>
+      <DeviceFilter value={kind} onChange={changeKind} />
+
       {logins.isLoading ? (
         <div className="flex flex-col gap-2">
           {Array.from({ length: 4 }, (_, index) => (
@@ -143,7 +195,7 @@ export function LoginHistoryPage() {
       ) : null}
 
       {groups.map((group) => {
-        const items = rows.filter((row) => groupOf(row.at) === group);
+        const items = rows.filter((row) => groupOf(row.lastLoginAt) === group);
         if (!items.length) return null;
 
         return (
@@ -152,7 +204,7 @@ export function LoginHistoryPage() {
 
             <div className="flex flex-col divide-y divide-line-subtle overflow-hidden rounded-lg bg-surface">
               {items.map((row, index) => {
-                const thisDevice = anyCurrent ? row.isCurrent : current === 1 && group === "todayGroup" && index === 0;
+                const thisDevice = anyCurrent ? row.isCurrent : !kind && current === 1 && group === "todayGroup" && index === 0;
                 return (
                   <div key={row.id} className="flex items-center gap-3 px-4 py-3.5">
                     <span
@@ -160,7 +212,7 @@ export function LoginHistoryPage() {
                         thisDevice ? SETTINGS_TONES.success : SETTINGS_TONES.brand
                       }`}
                     >
-                      <Icon name={thisDevice ? "person" : "settings"} size={18} />
+                      <Icon name={isPhone(row) ? "smartphone" : "laptop"} size={18} />
                     </span>
 
                     <span className="flex min-w-0 flex-1 flex-col">
@@ -168,7 +220,7 @@ export function LoginHistoryPage() {
                         {row.device || "—"}
                       </strong>
                       <small className="truncate text-body-xs text-ink-tertiary">
-                        {[row.location, row.ip].filter(Boolean).join(" · ")}
+                        {deviceHint(row, t("page.loginCount", { count: row.loginCount }))}
                       </small>
                     </span>
 
@@ -177,9 +229,12 @@ export function LoginHistoryPage() {
                         {t("page.thisDevice")}
                       </small>
                     ) : (
-                      <small className="shrink-0 text-body-xs text-ink-tertiary">
-                        {clock(row.at)}
-                      </small>
+                      <span className="flex shrink-0 flex-col items-end gap-0.5">
+                        <small className="text-body-xs text-ink-tertiary">{lastSeen(row.lastLoginAt, group)}</small>
+                        {row.sessionActive ? (
+                          <small className="text-body-xs text-success">{t("page.activeSession")}</small>
+                        ) : null}
+                      </span>
                     )}
                   </div>
                 );

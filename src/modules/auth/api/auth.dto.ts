@@ -101,6 +101,22 @@ export const loginRecordDtoSchema = z.object({
   location: z.string().nullable().optional(),
 });
 
+export const loginDeviceDtoSchema = z.object({
+  device: z.string().nullable().optional(),
+  browser: z.string().nullable().optional(),
+  os: z.string().nullable().optional(),
+  device_type: z.enum(["phone", "tablet", "computer"]).nullable().optional(),
+  last_login_at: z.string(),
+  first_login_at: z.string().nullable().optional(),
+  login_count: z.number().nullable().optional(),
+  last_ip: z.string().nullable().optional(),
+  location: z.string().nullable().optional(),
+  country: z.string().nullable().optional(),
+  session_active: z.boolean().nullable().optional(),
+  is_current: z.boolean().nullable().optional(),
+  last_login_id: z.string().nullable().optional(),
+});
+
 export const lessonRatingDtoSchema = z.object({
   id: z.string(),
   lesson: z.string(),
@@ -131,6 +147,22 @@ export type LoginRecordDto = z.infer<typeof loginRecordDtoSchema>;
 export type CertificateDto = z.infer<typeof certificateDtoSchema>;
 
 export type SwitchAccountResponseDto = z.infer<typeof switchAccountResponseDtoSchema>;
+
+export type LoginDeviceType = "phone" | "tablet" | "computer";
+
+export interface LoginDevice {
+  id: string;
+  device: string;
+  deviceType: LoginDeviceType | null;
+  lastLoginAt: string;
+  firstLoginAt: string;
+  loginCount: number;
+  lastIp: string;
+  location: string;
+  sessionActive: boolean;
+  isCurrent: boolean;
+  lastLoginId: string | null;
+}
 
 export interface LoginRecord {
   id: string;
