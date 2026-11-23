@@ -269,7 +269,15 @@
     "uploadingImage": "Uploading image…",
     "imageBadType": "Only PNG, JPG, WEBP or GIF images work.",
     "imageTooLarge": "The image is over 5 MB. Pick a smaller one.",
-    "imageAlt": "Question image"
+    "imageAlt": "Question image",
+    "suggestAnswers": "Let AI suggest answers ({{count}})",
+    "suggesting": "AI is thinking…",
+    "suggestSaveFirst": "Save your changes first",
+    "suggestDone": "Answers suggested for {{done}} questions. Review and save.",
+    "suggestSome": "Suggestions for {{done}} questions; AI found no confident answer for {{skipped}}.",
+    "suggestNone": "AI found no confident answers. Mark them yourself.",
+    "aiSuggested": "AI suggestion, please check",
+    "aiSuggestedLow": "AI suggestion (low confidence), please check"
   },
   "answer": {
     "true": "True",

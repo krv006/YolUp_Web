@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   QuestionAnswerInput,
@@ -20,8 +21,12 @@ import {
   useUpdateQuiz,
   useUploadGroupAudio,
   usePaidTestGate,
+  applySuggestions,
+  unansweredCount,
+  useSuggestQuizAnswers,
   type GroupDraft,
   type QuestionDraft,
+  type SuggestionConfidence,
 } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -61,6 +66,9 @@ export function TestEditorPage() {
   const [exportOpen, setExportOpen] = useState(false);
   const [preview, setPreview] = useState<Record<string, QuizAnswerValue>>({});
   const [loadedId, setLoadedId] = useState<string | null>(null);
+  const suggest = useSuggestQuizAnswers();
+  // AI taklif qilgan savollar: belgilangan javoblar ro'yxati (`marks`) o'zgarsa taklif yorlig'i yo'qoladi
+  const [suggested, setSuggested] = useState<Record<string, { confidence: SuggestionConfidence; marks: string }>>({});
 
   const detail = quiz.data ?? null;
 
@@ -72,6 +80,7 @@ export function TestEditorPage() {
     );
     setActiveKey(null);
     setDirty(0);
+    setSuggested({});
   }
 
   const locked = (attempts.data ?? []).length > 0;
@@ -89,6 +98,36 @@ export function TestEditorPage() {
     setActiveKey(draft.key);
     setDirty((value) => value + 1);
     setTypeOpen(false);
+  }
+
+  const missingAnswers = unansweredCount(drafts);
+
+  function askSuggestions() {
+    if (!quizId) return;
+    suggest.mutate(quizId, {
+      onSuccess: (result) => {
+        const { drafts: next, applied } = applySuggestions(drafts, result.suggestions);
+        const done = Object.keys(applied).length;
+        if (!done) {
+          toast(t("editor.suggestNone"));
+          return;
+        }
+        setDrafts(next);
+        setSuggested(
+          Object.fromEntries(
+            next.flatMap((draft) =>
+              applied[draft.key] ? [[draft.key, { confidence: applied[draft.key], marks: draft.correctKeys.join(",") }]] : []
+            )
+          )
+        );
+        setDirty((value) => value + 1);
+        toast.success(
+          done === result.asked
+            ? t("editor.suggestDone", { done })
+            : t("editor.suggestSome", { done, skipped: result.asked - done })
+        );
+      },
+    });
   }
 
   function save(asDraft: boolean, then?: () => void) {
@@ -120,6 +159,7 @@ export function TestEditorPage() {
       {
         onSuccess: () => {
           setDirty(0);
+          setSuggested({});
           then?.();
         },
       }
@@ -271,6 +311,18 @@ export function TestEditorPage() {
             {importGate.allowed ? null : <Icon name="lock" size={16} />}
             {t("editor.import")}
           </button>
+          {missingAnswers > 0 && !locked ? (
+            <button
+              type="button"
+              className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
+              disabled={suggest.isPending || dirty > 0 || !quizId}
+              title={dirty > 0 ? t("editor.suggestSaveFirst") : undefined}
+              onClick={askSuggestions}
+            >
+              <Icon name="auto-awesome" size={16} />
+              {suggest.isPending ? t("editor.suggesting") : t("editor.suggestAnswers", { count: missingAnswers })}
+            </button>
+          ) : null}
           <button
             type="button"
             className="flex h-10 shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-4 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-50"
@@ -306,6 +358,13 @@ export function TestEditorPage() {
               newKey={newKey}
               onFocus={() => setActiveKey(draft.key)}
               onChange={(apply) => patch(draft.key, apply)}
+              badge={
+                suggested[draft.key] && suggested[draft.key].marks === draft.correctKeys.join(",") ? (
+                  <span className="rounded-full bg-warning-bg px-2 py-0.5 text-caption-strong text-warning-fg">
+                    {suggested[draft.key].confidence === "low" ? t("editor.aiSuggestedLow") : t("editor.aiSuggested")}
+                  </span>
+                ) : null
+              }
               onRemove={() => {
                 setDrafts((current) => current.filter((item) => item.key !== draft.key));
                 setDirty((value) => value + 1);

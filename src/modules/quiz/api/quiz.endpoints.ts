@@ -4,6 +4,7 @@ export const quizEndpoints = Object.freeze({
   audience: (id: string) => `/api/v1/quizzes/${id}/audience/`,
   export: (id: string) => `/api/v1/quizzes/${id}/export/`,
   publish: (id: string) => `/api/v1/quizzes/${id}/publish/`,
+  suggestAnswers: (id: string) => `/api/v1/quizzes/${id}/suggest-answers/`,
   groupAudio: (quizId: string, groupId: string) => `/api/v1/quizzes/${quizId}/groups/${groupId}/audio/`,
   attempts: (id: string) => `/api/v1/quizzes/${id}/attempts/`,
   start: (id: string) => `/api/v1/quizzes/${id}/start/`,

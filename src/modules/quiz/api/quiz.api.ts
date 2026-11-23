@@ -14,6 +14,7 @@ import type {
   QuizQuestionImage,
 } from "@/shared/types";
 import { quizEndpoints } from "./quiz.endpoints";
+import type { AnswerSuggestionResult } from "../lib/answer-suggestions";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import type {
   AiQuizJob,
@@ -169,6 +170,24 @@ export const quizApi = {
       warnings: item.warnings ?? [],
       createdAt: item.created_at ?? "",
     }));
+  },
+  /** Javobi belgilanmagan savollar uchun AI taklifi. Hech narsa saqlanmaydi: o'qituvchi tekshirib, muharrirda saqlaydi. */
+  async suggestAnswers(id: string): Promise<AnswerSuggestionResult> {
+    const dto = await apiClient.post<{
+      asked?: number;
+      skipped?: number;
+      suggestions?: Array<{ number: number; question: string | number; correct: number[]; confidence?: string }>;
+    }>(quizEndpoints.suggestAnswers(id), {}, { timeoutMs: AI_UPLOAD_TIMEOUT_MS });
+    return {
+      asked: dto.asked ?? 0,
+      skipped: dto.skipped ?? 0,
+      suggestions: (dto.suggestions ?? []).map((item) => ({
+        number: item.number,
+        questionId: String(item.question),
+        correct: item.correct ?? [],
+        confidence: item.confidence === "high" || item.confidence === "medium" ? item.confidence : "low",
+      })),
+    };
   },
   async publish(id: string) {
     return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.publish(id), {}));

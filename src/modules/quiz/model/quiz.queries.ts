@@ -166,6 +166,14 @@ export function useImportQuizText() {
   });
 }
 
+/** Javobsiz savollar uchun AI taklifi (hech narsa saqlanmaydi). */
+export function useSuggestQuizAnswers() {
+  return useMutation({
+    mutationFn: (quizId: string) => quizApi.suggestAnswers(quizId),
+    onError: (error: Error) => toast.error(error.message),
+  });
+}
+
 /** Savol rasmini yuklash. Xatolik bu yerda ko'rsatiladi; muvaffaqiyatda chaqiruvchi `onSuccess` beradi. */
 export function useUploadQuestionImage() {
   return useMutation({
