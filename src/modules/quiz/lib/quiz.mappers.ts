@@ -68,12 +68,20 @@ function mapAnswerKey(dto: QuizQuestionDto): QuizAnswerKey | undefined {
   return Object.keys(key).length ? key : undefined;
 }
 
+function mapQuestionImageDto(image: QuizQuestionDto["image"]): QuizQuestion["image"] {
+  if (!image) return null;
+  if (typeof image === "string") return { id: null, url: image };
+  return { id: String(image.id), url: image.url };
+}
+
 export function mapQuizQuestionDto(dto: QuizQuestionDto): QuizQuestion {
   return {
     id: String(dto.id),
     type: toQuestionType(dto.type),
     groupId: dto.group == null ? null : String(dto.group),
     text: dto.text,
+    textAfter: dto.text_after ?? "",
+    image: mapQuestionImageDto(dto.image),
     points: Number(dto.points) || 0,
     order: dto.order,
     options: (dto.options ?? []).map(mapQuizOptionDto),
@@ -253,6 +261,8 @@ export function mapQuestionRequest(question: QuizQuestionFormValues): Record<str
     type: question.type,
     text: question.text,
     points: question.points,
+    image: question.imageId ?? null,
+    text_after: question.textAfter ?? "",
     ...(question.groupIndex == null ? {} : { group: question.groupIndex }),
   };
   switch (question.type) {

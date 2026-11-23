@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import type { QuizAnswerValue, QuizQuestion } from "@/shared/types";
 import { emptyAnswer } from "../lib/answer-value";
 import { MathText } from "./math-text";
+import { QuestionMedia } from "./question-media";
 
 export interface QuestionAnswerInputProps {
   question: QuizQuestion;
@@ -29,9 +30,12 @@ export function QuestionPrompt({ question }: { question: QuizQuestion }) {
   if (question.type === "fill_blank") return <small className="quiz-answer-hint">{t("answer.fillBlankHint")}</small>;
   if (!question.text.trim()) return <p className="quiz-preview-placeholder">{t("preview.questionPlaceholder")}</p>;
   return (
-    <p className={question.type === "essay" ? "quiz-essay-prompt" : undefined}>
-      <MathText text={question.text} />
-    </p>
+    <>
+      <p className={question.type === "essay" ? "quiz-essay-prompt" : undefined}>
+        <MathText text={question.text} />
+      </p>
+      <QuestionMedia question={question} />
+    </>
   );
 }
 

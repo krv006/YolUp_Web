@@ -6,7 +6,13 @@ import {
   normalizePagination,
   type RequestOptions,
 } from "@/shared/api";
-import type { QuizDetail, QuizEditValues, QuizFormValues, QuizImportWarning } from "@/shared/types";
+import type {
+  QuizDetail,
+  QuizEditValues,
+  QuizFormValues,
+  QuizImportWarning,
+  QuizQuestionImage,
+} from "@/shared/types";
 import { quizEndpoints } from "./quiz.endpoints";
 import type { QuizAttemptAnswerInput } from "../lib/quiz.mappers";
 import type {
@@ -106,6 +112,19 @@ export const quizApi = {
     return mapImportedQuizDto(
       await apiClient.post<QuizDto>(endpoint, { url, ...mapQuizImportRequest(request) })
     );
+  },
+  /** Joylangan matndan (masalan ChatGPT yozgan) darhol qoralama test yaratadi. */
+  async importText(text: string, request: QuizImportRequest) {
+    return mapImportedQuizDto(
+      await apiClient.post<QuizDto>(quizEndpoints.importText, { text, ...mapQuizImportRequest(request) })
+    );
+  },
+  /** Savol rasmini yuklaydi; qaytgan `id` savolning `imageId` maydoniga yuboriladi. */
+  async uploadQuestionImage(file: File): Promise<QuizQuestionImage> {
+    const body = new FormData();
+    body.set("file", file);
+    const dto = await apiClient.post<{ id: string | number; url: string }>(quizEndpoints.questionImages, body);
+    return { id: String(dto.id), url: dto.url };
   },
   async startAiGenerate(files: File[], request: AiQuizRequest) {
     const body = new FormData();

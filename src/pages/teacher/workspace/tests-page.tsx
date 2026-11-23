@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
@@ -46,7 +46,7 @@ export function TestsPage() {
   const exportQuiz = useExportQuiz();
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const [createOpen, setCreateOpen] = useState(() => params.get("new") === "1");
+  const [createOpen, setCreateOpen] = useState(() => params.get("new") === "1" && isCompact);
   const [exportOf, setExportOf] = useState<QuizSummary | null>(null);
   const [deleting, setDeleting] = useState<QuizSummary | null>(null);
   const [importOpen, setImportOpen] = useState(false);
@@ -63,6 +63,16 @@ export function TestsPage() {
     subject: course.subject,
     studentCount: course.studentCount ?? 0,
   }));
+
+  // Kompyuterda «Yangi test» alohida sahifada ochiladi; telefonda eski oyna.
+  function openCreate() {
+    if (isCompact) setCreateOpen(true);
+    else navigate(ROUTES.teacher.testNew);
+  }
+
+  useEffect(() => {
+    if (!isCompact && params.get("new") === "1" && gate.allowed) navigate(ROUTES.teacher.testNew, { replace: true });
+  }, [isCompact, params, gate.allowed, navigate]);
 
   function changeCreateOpen(open: boolean) {
     setCreateOpen(open);
@@ -281,7 +291,7 @@ export function TestsPage() {
           type="button"
           className={workspaceAction}
           title={gate.allowed ? undefined : t("paid.badge")}
-          onClick={gate.guard(() => changeCreateOpen(true))}
+          onClick={gate.guard(openCreate)}
         >
           {gate.allowed ? null : <Icon name="lock" size={16} />}
           {t("tests.create")}
@@ -449,7 +459,7 @@ export function TestsPage() {
             type="button"
             className={workspaceAction}
             title={gate.allowed ? undefined : t("paid.badge")}
-            onClick={gate.guard(() => changeCreateOpen(true))}
+            onClick={gate.guard(openCreate)}
           >
             {gate.allowed ? null : <Icon name="lock" size={16} />}
             {t("tests.create")}

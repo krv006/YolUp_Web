@@ -2,6 +2,7 @@ import type {
   QuizChoiceItem,
   QuizOption,
   QuizQuestion,
+  QuizQuestionImage,
   QuizQuestionFormValues,
   QuizQuestionType,
 } from "@/shared/types";
@@ -48,6 +49,9 @@ export interface QuestionDraft {
   type: QuizQuestionType;
   groupKey: string | null;
   text: string;
+  /** Savolga rasm (yuklangan) va rasmdan keyingi matn. */
+  image: QuizQuestionImage | null;
+  textAfter: string;
   points: string;
   options: DraftOption[];
   correctKeys: string[];
@@ -101,6 +105,8 @@ export function createDraft(type: QuizQuestionType, newKey: KeyFactory): Questio
     type,
     groupKey: null,
     text: "",
+    image: null,
+    textAfter: "",
     points: String(DEFAULT_POINTS),
     options: type === "ordering" ? emptyOptions(newKey, 3) : emptyOptions(newKey),
     correctKeys: [],
@@ -127,6 +133,8 @@ export function changeDraftType(
     key: draft.key,
     groupKey: draft.groupKey,
     text: type === "fill_blank" || draft.type === "fill_blank" ? draft.text.replace(BLANK_PATTERN, "$1") : draft.text,
+    image: draft.image,
+    textAfter: draft.textAfter,
     points: draft.points,
     options: keepOptions ? draft.options : fresh.options,
     correctKeys: type === "single" ? draft.correctKeys.slice(0, 1) : type === "multiple" ? draft.correctKeys : [],
@@ -262,6 +270,8 @@ export function draftToFormValues(
     type: draft.type,
     groupIndex,
     text: draft.text.trim(),
+    imageId: draft.image?.id ?? null,
+    textAfter: draft.image ? draft.textAfter.trim() : "",
     points: draftPoints(draft) ?? DEFAULT_POINTS,
     options: [] as QuizQuestionFormValues["options"],
   };
@@ -316,6 +326,7 @@ export function formValuesToDraft(values: QuizQuestionFormValues, newKey: KeyFac
   return {
     ...draft,
     text: values.text,
+    textAfter: values.textAfter ?? "",
     points: String(values.points || DEFAULT_POINTS),
     options: options.length ? options : draft.options,
     correctKeys: values.options.flatMap((option, index) => (option.isCorrect ? [options[index].key] : [])),
@@ -330,6 +341,8 @@ export function questionToDraft(question: QuizQuestion, newKey: KeyFactory): Que
     ...draft,
     groupKey: question.groupId,
     text: question.text,
+    image: question.image ?? null,
+    textAfter: question.textAfter ?? "",
     points: String(question.points || DEFAULT_POINTS),
   };
   switch (question.type) {
@@ -386,6 +399,8 @@ export function draftToStudentQuestion(draft: QuestionDraft, index: number): Qui
     type: draft.type,
     groupId: null,
     text: draft.text,
+    image: draft.image,
+    textAfter: draft.textAfter,
     points: draftPoints(draft) ?? DEFAULT_POINTS,
     order: index,
     options: [] as QuizOption[],
@@ -420,6 +435,8 @@ export function hasDraftContent(draft: QuestionDraft): boolean {
     draft.text.trim() ||
       draft.options.some((option) => option.text.trim()) ||
       draft.pairs.some((pair) => pair.left.trim() || pair.right.trim()) ||
-      draft.acceptedAnswers.some((value) => value.trim())
+      draft.acceptedAnswers.some((value) => value.trim()) ||
+      draft.image ||
+      draft.textAfter.trim()
   );
 }

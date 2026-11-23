@@ -6,6 +6,7 @@ import { useCourse } from "@/modules/course";
 import {
   MathText,
   QuestionAnswerInput,
+  QuestionMedia,
   QuizGroupPanel,
   emptyAnswer,
   formatCountdown,
@@ -490,6 +491,7 @@ function QuestionBody({
           <MathText text={question.text} />
         </div>
       )}
+      <QuestionMedia question={question} />
       {choices ? (
         <div className="mt-3 flex flex-col gap-3" role={question.type === "multiple" ? "group" : "radiogroup"}>
           {choices.map((choice, position) => {

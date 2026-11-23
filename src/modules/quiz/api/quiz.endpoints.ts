@@ -17,6 +17,8 @@ export const quizEndpoints = Object.freeze({
   import: "/api/v1/quizzes/import/",
   importGoogleDoc: "/api/v1/quizzes/import-google-doc/",
   importGoogleForm: "/api/v1/quizzes/import-google-form/",
+  importText: "/api/v1/quizzes/import-text/",
+  questionImages: "/api/v1/quizzes/question-images/",
   template: "/api/v1/quizzes/template/",
   aiGenerate: "/api/v1/quizzes/ai-generate/",
 });

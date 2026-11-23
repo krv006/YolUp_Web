@@ -25,6 +25,9 @@ export interface QuizQuestionDto {
   id: string | number;
   type?: QuizQuestionTypeDto;
   text: string;
+  text_after?: string | null;
+  /** O'qituvchiga `{id, url}`, o'quvchiga faqat manzil (matn). */
+  image?: { id: string | number; url: string } | string | null;
   group?: string | number | null;
   points: number;
   order: number;
