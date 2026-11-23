@@ -184,6 +184,8 @@ export interface AiQuizRequest {
   materialText?: string;
   /** Imtihon nomi: AI uning rasmiy tuzilmasini o'zi eslaydi (qoidalar berilmasa). */
   examName?: string;
+  /** Test tili: uz | uz_cyrl | ru | en. Bo'sh = avtomatik (material tili). */
+  language?: "" | "uz" | "uz_cyrl" | "ru" | "en";
 }
 
 export interface AiQuizJobDto {
@@ -212,6 +214,7 @@ export interface AiQuizJob {
   questionCount: number;
   quizId: string | null;
   error: string;
+  warnings: QuizImportWarningDto[];
   createdAt: string;
 }
 
