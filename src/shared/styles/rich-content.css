@@ -1,0 +1,73 @@
+/* Vazifa matni: yozish muharriri (.rich-editor) va o'quvchi/o'qituvchi ko'rinishi (.rich-content) uchun umumiy uslub. */
+.rich-content,
+.rich-editor .ProseMirror {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+  overflow-wrap: anywhere;
+}
+.rich-editor .ProseMirror { outline: none; min-height: 520px; caret-color: var(--color-brand); }
+.rich-content > :first-child, .rich-editor .ProseMirror > :first-child { margin-top: 0; }
+.rich-content p, .rich-editor .ProseMirror p { margin: 0.25rem 0; }
+.rich-content h1, .rich-editor .ProseMirror h1 { font-size: 1.875rem; line-height: 1.25; font-weight: 700; margin: 1.6rem 0 0.5rem; }
+.rich-content h2, .rich-editor .ProseMirror h2 { font-size: 1.5rem; line-height: 1.3; font-weight: 700; margin: 1.4rem 0 0.4rem; }
+.rich-content h3, .rich-editor .ProseMirror h3 { font-size: 1.2rem; font-weight: 700; margin: 1.1rem 0 0.25rem; }
+.rich-content ul, .rich-content ol, .rich-editor .ProseMirror ul, .rich-editor .ProseMirror ol { margin: 0.25rem 0; padding-left: 1.6rem; }
+.rich-content ul, .rich-editor .ProseMirror ul { list-style: disc; }
+.rich-content ol, .rich-editor .ProseMirror ol { list-style: decimal; }
+.rich-content li > p, .rich-editor .ProseMirror li > p { margin: 0; }
+.rich-content blockquote, .rich-editor .ProseMirror blockquote { margin: 0.6rem 0; padding: 0.1rem 1rem; border-left: 3px solid var(--color-ink); color: var(--color-ink-secondary); }
+.rich-content hr, .rich-editor .ProseMirror hr { border: 0; border-top: 1px solid var(--color-line-strong); margin: 1.1rem 0; }
+.rich-content a, .rich-editor .ProseMirror a { color: var(--color-brand); text-decoration: underline; }
+.rich-content img, .rich-editor .ProseMirror img { display: block; max-width: 100%; height: auto; border-radius: 0.5rem; margin: 0.6rem 0; }
+.rich-editor .ProseMirror img.ProseMirror-selectednode,
+.rich-editor .ProseMirror .tiptap-mathematics-render.ProseMirror-selectednode { outline: 2px solid var(--color-brand); outline-offset: 2px; }
+.rich-content sub, .rich-content sup, .rich-editor .ProseMirror sub, .rich-editor .ProseMirror sup { font-size: 0.75em; line-height: 0; }
+.rich-content mark, .rich-editor .ProseMirror mark { border-radius: 3px; padding: 0 1px; color: inherit; }
+.rich-content code, .rich-editor .ProseMirror code {
+  background: var(--color-subtle); border-radius: 5px; padding: 1px 6px; font: 0.875em ui-monospace, Menlo, Consolas, monospace;
+}
+.rich-content pre, .rich-editor .ProseMirror pre {
+  position: relative; margin: 0.8rem 0; padding: 0.9rem 1rem; overflow: auto; white-space: pre-wrap; tab-size: 4;
+  background: var(--color-subtle); border: 1px solid var(--color-line); border-radius: 0.6rem;
+  font: 0.84rem/1.6 ui-monospace, Menlo, Consolas, monospace;
+}
+.rich-content pre code, .rich-editor .ProseMirror pre code { background: none; padding: 0; color: inherit; font: inherit; }
+.rich-content pre:has(code[class*="language-"])::before, .rich-editor .ProseMirror pre:has(code[class*="language-"])::before {
+  position: absolute; top: 6px; right: 12px; font: 11px system-ui, sans-serif; color: var(--color-ink-tertiary); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.rich-content pre:has(code.language-python)::before, .rich-editor .ProseMirror pre:has(code.language-python)::before { content: "Python"; }
+.rich-content pre:has(code.language-javascript)::before, .rich-editor .ProseMirror pre:has(code.language-javascript)::before { content: "JavaScript"; }
+.rich-content pre:has(code.language-sql)::before, .rich-editor .ProseMirror pre:has(code.language-sql)::before { content: "SQL"; }
+.rich-content pre:has(code.language-java)::before, .rich-editor .ProseMirror pre:has(code.language-java)::before { content: "Java"; }
+.rich-content pre:has(code.language-cpp)::before, .rich-editor .ProseMirror pre:has(code.language-cpp)::before { content: "C++"; }
+.rich-content pre:has(code.language-html)::before, .rich-editor .ProseMirror pre:has(code.language-html)::before { content: "HTML"; }
+.rich-content pre:has(code.language-css)::before, .rich-editor .ProseMirror pre:has(code.language-css)::before { content: "CSS"; }
+.rich-content .hljs-keyword, .rich-content .hljs-selector-tag, .rich-content .hljs-literal, .rich-content .hljs-built_in,
+.rich-editor .hljs-keyword, .rich-editor .hljs-selector-tag, .rich-editor .hljs-literal, .rich-editor .hljs-built_in { color: #7c55ea; }
+.rich-content .hljs-string, .rich-content .hljs-regexp, .rich-content .hljs-attr, .rich-editor .hljs-string, .rich-editor .hljs-regexp, .rich-editor .hljs-attr { color: #2c9a78; }
+.rich-content .hljs-number, .rich-content .hljs-symbol, .rich-content .hljs-meta, .rich-editor .hljs-number, .rich-editor .hljs-symbol, .rich-editor .hljs-meta { color: #e0791f; }
+.rich-content .hljs-comment, .rich-content .hljs-quote, .rich-editor .hljs-comment, .rich-editor .hljs-quote { color: var(--color-ink-tertiary); font-style: italic; }
+.rich-content .hljs-title, .rich-content .hljs-function, .rich-content .hljs-name, .rich-content .hljs-selector-class,
+.rich-editor .hljs-title, .rich-editor .hljs-function, .rich-editor .hljs-name, .rich-editor .hljs-selector-class { color: #4567f5; }
+.rich-content .hljs-tag, .rich-editor .hljs-tag { color: #d9468f; }
+.rich-content table, .rich-editor .ProseMirror table { border-collapse: collapse; width: 100%; table-layout: fixed; margin: 0.8rem 0; }
+.rich-content td, .rich-content th, .rich-editor .ProseMirror td, .rich-editor .ProseMirror th {
+  border: 1px solid var(--color-line-strong); padding: 0.5rem 0.65rem; vertical-align: top; min-width: 2.5rem;
+}
+.rich-content th, .rich-editor .ProseMirror th { background: var(--color-subtle); text-align: left; font-weight: 600; }
+.rich-content td p, .rich-content th p, .rich-editor .ProseMirror td p, .rich-editor .ProseMirror th p { margin: 0; }
+.rich-editor .ProseMirror .selectedCell { background: var(--color-brand-subtle); }
+.rich-content .callout, .rich-editor .ProseMirror .callout { background: #fef8eb; color: #5a3e0c; border-radius: 0.6rem; padding: 0.7rem 1rem; margin: 0.8rem 0; }
+.rich-content .callout p, .rich-editor .ProseMirror .callout p { margin: 0; }
+.rich-content [data-type="inline-math"], .rich-editor .tiptap-mathematics-render {
+  display: inline-block; padding: 1px 8px; margin: 0 1px; border-radius: 6px; vertical-align: baseline;
+}
+.rich-editor .tiptap-mathematics-render { cursor: pointer; background: var(--color-brand-subtle); }
+.rich-editor .tiptap-mathematics-render:hover { outline: 2px solid var(--color-brand); outline-offset: 1px; }
+.rich-editor .tiptap-mathematics-render.inline-math-error { color: var(--color-danger-fg); background: var(--color-danger-bg); }
+.rich-content .katex, .rich-editor .katex { font-size: 1.1em; }
+.rich-editor .ProseMirror-gapcursor { display: none; pointer-events: none; position: absolute; }
+.rich-editor .ProseMirror-gapcursor::after { content: ""; display: block; position: absolute; top: -2px; width: 20px; border-top: 1px solid var(--color-ink); animation: rich-cursor-blink 1.1s steps(2, start) infinite; }
+@keyframes rich-cursor-blink { to { visibility: hidden; } }
+.rich-editor .ProseMirror-focused .ProseMirror-gapcursor { display: block; }

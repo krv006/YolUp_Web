@@ -537,5 +537,69 @@
     "cancel": "Bekor qilish",
     "preview": "Formulalar ko‘rinishi",
     "tooLong": "Javob juda uzun bo‘lib qoladi — avval matnni qisqartiring."
+  },
+  "newPage": {
+    "eyebrow": "Vazifa",
+    "title": "Yangi vazifa",
+    "editTitle": "Vazifani tahrirlash",
+    "back": "Orqaga",
+    "save": "Saqlash",
+    "untitled": "Nomsiz vazifa",
+    "autosave": "Qoralama avtomatik saqlanadi",
+    "savedAt": "Qoralama saqlandi · {{time}}",
+    "saveFailed": "Qoralama saqlanmadi (brauzer xotirasi to‘lgan)",
+    "restored": "Oldingi qoralama tiklandi",
+    "tabs": {
+      "write": "Vazifa",
+      "pick": "Testlardan tanlash"
+    },
+    "side": {
+      "whom": "Kimga",
+      "grading": "Baholash",
+      "extra": "Qo‘shimcha"
+    },
+    "errors": {
+      "banner": "Saqlashdan oldin guruh va muddatni tekshiring.",
+      "group": "Guruhni tanlang.",
+      "date": "Muddat hozirdan keyin bo‘lsin.",
+      "empty": "Vazifa bo‘sh: matn, rasm, savol yoki Google Form havolasini qo‘shing."
+    }
+  },
+  "picker": {
+    "title": "Testlardan tanlash",
+    "lead": "Yaratilgan testlaringizdan savollarni vazifaga olasiz. Savollar nusxalanadi, keyin vazifada tahrirlash mumkin.",
+    "search": "Test nomi yoki fan bo‘yicha qidirish",
+    "loading": "Yuklanmoqda…",
+    "empty": "Test topilmadi.",
+    "questions": "{{count}} savol",
+    "pickPrompt": "Chapdan testni tanlang: nimalar olinishi shu yerda ko‘rinadi.",
+    "preview": "«{{title}}» — nimalar olinadi",
+    "skippedShort": "o‘tkazib yuboriladi",
+    "skippedWarn": "Vazifada bu turlar yo‘q, shuning uchun {{count}} ta savol tushib qoladi ({{types}}). Ularni qo‘lda boshqa turda yozish mumkin.",
+    "imagesDropped": "{{count}} ta savolning rasmi vazifaga olinmaydi (faqat matni olinadi).",
+    "add": "{{count}} ta savolni vazifaga qo‘shish",
+    "added": "qo‘shilgan",
+    "remove": "Olib tashlash",
+    "addedToast": "{{count}} ta savol vazifaga qo‘shildi",
+    "nothing": "Bu testda vazifaga olinadigan savol yo‘q.",
+    "true": "To‘g‘ri",
+    "false": "Noto‘g‘ri",
+    "types": {
+      "single": "Bitta javob",
+      "multiple": "Ko‘p javob",
+      "true_false": "To‘g‘ri / noto‘g‘ri",
+      "numeric": "Son yozish",
+      "text": "Qisqa matn",
+      "matching": "Juftlash",
+      "ordering": "Tartibga qo‘yish",
+      "fill_blank": "Bo‘sh joy",
+      "essay": "Insho"
+    },
+    "homeworkTypes": {
+      "single": "Bitta javobli",
+      "multiple": "Ko‘p javobli",
+      "short": "Qisqa javob",
+      "long": "Uzun javob"
+    }
   }
 }

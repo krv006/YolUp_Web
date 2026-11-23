@@ -13,7 +13,7 @@ import {
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { sanitizeHtml } from "@/shared/lib";
+import { RichContent } from "@/modules/rich-editor";
 import type { Assignment } from "@/shared/types";
 import { Button, Dialog, DialogContent, LoadingFallback, RouteState } from "@/shared/ui/legacy";
 
@@ -59,7 +59,6 @@ function HomeworkBoardScreen({
   useHomeworkFocusTracker(assignment.id, true);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const isCompact = useIsCompact();
-  const html = assignment.body ? sanitizeHtml(assignment.body) : "";
 
   async function send() {
     if (!(await flush())) return;
@@ -137,11 +136,11 @@ function HomeworkBoardScreen({
         </div>
       </div>
 
-      {assignment.description || html ? (
+      {assignment.description || assignment.body ? (
         <section className="portal-card homework-board-task">
           <h2>{t("board.task")}</h2>
           {assignment.description ? <p>{assignment.description}</p> : null}
-          {html ? <div className="homework-board-task-body" dangerouslySetInnerHTML={{ __html: html }} /> : null}
+          {assignment.body ? <RichContent html={assignment.body} className="homework-board-task-body" /> : null}
         </section>
       ) : null}
 

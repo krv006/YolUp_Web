@@ -1,0 +1,165 @@
+{
+  "editor": {
+    "label": "Vazifa matni"
+  },
+  "toolbar": {
+    "label": "Matn formati",
+    "undo": "Qaytarish",
+    "redo": "Qayta bajarish",
+    "block": "Matn turi",
+    "font": "Shrift",
+    "size": "O‘lcham",
+    "bold": "Qalin",
+    "italic": "Qiyshiq",
+    "underline": "Tagiga chizish",
+    "strike": "Ustidan chizish",
+    "textColor": "Matn rangi",
+    "highlight": "Belgilash rangi",
+    "bulletList": "Ro‘yxat",
+    "orderedList": "Raqamli ro‘yxat",
+    "alignLeft": "Chapga",
+    "alignCenter": "Markazga",
+    "alignRight": "O‘ngga",
+    "link": "Havola",
+    "clear": "Formatni tozalash",
+    "insert": "Qo‘shish",
+    "formula": "Formula",
+    "code": "Kod",
+    "table": "Jadval",
+    "image": "Rasm",
+    "callout": "Izoh bloki",
+    "reset": "Bekor qilish"
+  },
+  "blocks": {
+    "p": "Matn",
+    "h1": "Sarlavha 1",
+    "h2": "Sarlavha 2",
+    "h3": "Sarlavha 3",
+    "quote": "Iqtibos"
+  },
+  "fonts": {
+    "default": "Standart",
+    "serif": "Serif (kitob)",
+    "mono": "Mono (kod)",
+    "hand": "Qo‘lyozma"
+  },
+  "sizes": {
+    "small": "Kichik",
+    "normal": "Oddiy",
+    "large": "Katta",
+    "huge": "Juda katta"
+  },
+  "codeMenu": {
+    "block": "Kod bloki",
+    "inline": "Qator ichida kod"
+  },
+  "codeBar": {
+    "exit": "Blokdan chiqish",
+    "delete": "O‘chirish"
+  },
+  "languages": {
+    "python": "Python",
+    "javascript": "JS",
+    "sql": "SQL",
+    "java": "Java",
+    "cpp": "C++",
+    "html": "HTML",
+    "css": "CSS",
+    "text": "Matn"
+  },
+  "table": {
+    "row": "Qator",
+    "column": "Ustun",
+    "headerRow": "Sarlavha qatori",
+    "cellColor": "Katak rangi",
+    "delete": "Jadvalni o‘chirish"
+  },
+  "image": {
+    "full": "To‘liq",
+    "delete": "O‘chirish",
+    "notImage": "Faqat rasm fayllari qo‘yiladi.",
+    "tooBig": "Rasm 5 MB dan katta.",
+    "uploadFailed": "Rasm yuklanmadi. Qayta urinib ko‘ring."
+  },
+  "link": {
+    "prompt": "Havola manzili (https://…)"
+  },
+  "symbols": {
+    "formula": "Formula yozish",
+    "tabs": {
+      "math": "Matematika",
+      "greek": "Yunon",
+      "index": "Indekslar"
+    }
+  },
+  "formula": {
+    "title": "Formula qo‘shish",
+    "editTitle": "Formulani tahrirlash",
+    "hint": "Kerakli formulani pastdan bosing, keyin raqam va harflarini o‘zgartiring. Belgilarni sichqoncha bilan tanlash uchun “Klaviatura” tugmasini bosing.",
+    "loading": "Formula muharriri yuklanmoqda…",
+    "loadFailed": "Formula muharriri yuklanmadi, LaTeX ko‘rinishida yozing.",
+    "add": "Qo‘shish",
+    "update": "Yangilash",
+    "cancel": "Bekor qilish",
+    "delete": "O‘chirish",
+    "keyboard": "Klaviatura",
+    "gallery": "Tayyor formulalar",
+    "templates": {
+      "fraction": "Kasr",
+      "root": "Ildiz",
+      "power": "Daraja",
+      "index": "Indeks",
+      "integral": "Integral",
+      "sum": "Yig‘indi",
+      "limit": "Limit"
+    },
+    "items": {
+      "fraction": "Kasr",
+      "sqrt": "Kvadrat ildiz",
+      "power": "Daraja",
+      "index": "Indeks",
+      "quadratic": "Kvadrat tenglama",
+      "roots": "Ildiz formulasi",
+      "discriminant": "Diskriminant",
+      "pythagoras": "Pifagor",
+      "circle": "Doira yuzi",
+      "integral": "Integral",
+      "sum": "Yig‘indi",
+      "limit": "Limit",
+      "log": "Logarifm",
+      "trig": "Trigonometriya",
+      "percent": "Foiz"
+    }
+  },
+  "slash": {
+    "basic": "Asosiy",
+    "insert": "Qo‘shish",
+    "questions": "Savol qo‘shish",
+    "divider": "Chiziq",
+    "hints": {
+      "p": "Oddiy paragraf",
+      "h1": "Katta sarlavha",
+      "h2": "O‘rta sarlavha",
+      "h3": "Kichik sarlavha",
+      "bullet": "Nuqtali ro‘yxat",
+      "ordered": "1, 2, 3…",
+      "quote": "Ajratib ko‘rsatish",
+      "divider": "Ajratuvchi chiziq",
+      "table": "Setka 3×3",
+      "image": "Fayldan tanlash",
+      "callout": "Rangli ajratilgan matn",
+      "formula": "Kasr, ildiz, integral…",
+      "code": "Dasturlash kodi"
+    },
+    "question": {
+      "single": "Bitta javobli savol",
+      "singleHint": "A, B, C — bittasi to‘g‘ri",
+      "multiple": "Ko‘p javobli savol",
+      "multipleHint": "Bir nechta to‘g‘ri",
+      "short": "Qisqa javobli savol",
+      "shortHint": "Bir-ikki so‘z",
+      "long": "Uzun javobli savol",
+      "longHint": "Insho, izoh"
+    }
+  }
+}

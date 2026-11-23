@@ -547,5 +547,69 @@
     "cancel": "Cancel",
     "preview": "Formula preview",
     "tooLong": "The answer would be too long — shorten the text first."
+  },
+  "newPage": {
+    "eyebrow": "Assignment",
+    "title": "New assignment",
+    "editTitle": "Edit assignment",
+    "back": "Back",
+    "save": "Save",
+    "untitled": "Untitled assignment",
+    "autosave": "The draft is saved automatically",
+    "savedAt": "Draft saved · {{time}}",
+    "saveFailed": "Draft not saved (browser storage is full)",
+    "restored": "Your previous draft was restored",
+    "tabs": {
+      "write": "Assignment",
+      "pick": "Pick from tests"
+    },
+    "side": {
+      "whom": "For",
+      "grading": "Grading",
+      "extra": "Extras"
+    },
+    "errors": {
+      "banner": "Check the group and the due date before saving.",
+      "group": "Choose a group.",
+      "date": "The due date must be in the future.",
+      "empty": "The assignment is empty: add text, an image, a question or a Google Form link."
+    }
+  },
+  "picker": {
+    "title": "Pick from tests",
+    "lead": "Take questions from the tests you have created. They are copied, and you can edit them in the assignment afterwards.",
+    "search": "Search by test name or subject",
+    "loading": "Loading…",
+    "empty": "No tests found.",
+    "questions": "{{count}} questions",
+    "pickPrompt": "Choose a test on the left: what will be taken is shown here.",
+    "preview": "“{{title}}” — what will be taken",
+    "skippedShort": "will be skipped",
+    "skippedWarn": "Assignments do not have these types, so {{count}} questions will be left out ({{types}}). You can rewrite them by hand as another type.",
+    "imagesDropped": "The image of {{count}} questions is not copied (only the text is).",
+    "add": "Add {{count}} questions to the assignment",
+    "added": "added",
+    "remove": "Remove",
+    "addedToast": "{{count}} questions added to the assignment",
+    "nothing": "This test has no questions that can be taken into an assignment.",
+    "true": "True",
+    "false": "False",
+    "types": {
+      "single": "Single answer",
+      "multiple": "Multiple answers",
+      "true_false": "True / false",
+      "numeric": "Number",
+      "text": "Short text",
+      "matching": "Matching",
+      "ordering": "Ordering",
+      "fill_blank": "Fill in the blank",
+      "essay": "Essay"
+    },
+    "homeworkTypes": {
+      "single": "Single answer",
+      "multiple": "Multiple answers",
+      "short": "Short answer",
+      "long": "Long answer"
+    }
   }
 }

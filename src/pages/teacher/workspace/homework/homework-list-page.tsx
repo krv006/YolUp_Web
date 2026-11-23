@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses } from "@/modules/course";
 import {
   homeworkApi,
@@ -118,6 +118,8 @@ export function HomeworkListPage() {
     <AssignHomeworkDialog open={Boolean(giving)} onOpenChange={(open) => !open && setGiving(null)} assignment={giving} />
   );
 
+  if (!isCompact && params.get("new") === "1") return <Navigate to={ROUTES.teacher.homeworkNew} replace />;
+
   if (isCompact)
     return (
       <>
@@ -161,7 +163,11 @@ export function HomeworkListPage() {
       eyebrow={t("list.eyebrow", { count: groups.length })}
       title={t("list.title")}
       action={
-        <button type="button" className={workspaceAction} onClick={() => setCreateOpen(true)}>
+        <button
+          type="button"
+          className={workspaceAction}
+          onClick={() => navigate(filter === "bank" ? `${ROUTES.teacher.homeworkNew}?bank=1` : ROUTES.teacher.homeworkNew)}
+        >
           {t("list.create")}
         </button>
       }

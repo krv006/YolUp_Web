@@ -6,3 +6,4 @@
 @import "./shared/styles/theme.css";
 @import "./shared/styles/legacy.css" layer(fokus-legacy);
 @import "./shared/styles/form-skin.css";
+@import "./shared/styles/rich-content.css";
