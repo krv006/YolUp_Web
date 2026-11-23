@@ -112,6 +112,7 @@ export function NewTestImport({ onCreated }: NewTestImportProps) {
         {previewFile.isPending ? (
           <small className="text-body-xs text-ink-secondary">{t("newPage.import.reading")}</small>
         ) : null}
+        <InlineError error={previewFile.error ?? importDocx.error} />
 
         {preview ? (
           <div className="flex flex-col gap-3">
@@ -165,6 +166,7 @@ export function NewTestImport({ onCreated }: NewTestImportProps) {
           </button>
         </div>
         {linkError ? <small className="text-body-xs text-error-text">{linkError}</small> : null}
+        <InlineError error={importLink.error} />
       </section>
 
       <section className={CARD}>
@@ -189,7 +191,17 @@ export function NewTestImport({ onCreated }: NewTestImportProps) {
         >
           {t("newPage.import.read")}
         </button>
+        <InlineError error={importText.error} />
       </section>
     </div>
   );
+}
+
+/** So'rov xatosi sahifada qoladi (toast bir necha soniyada yo'qoladi). */
+function InlineError({ error }: { error: Error | null }) {
+  return error ? (
+    <small role="alert" className="text-body-xs text-error-text">
+      {error.message}
+    </small>
+  ) : null;
 }

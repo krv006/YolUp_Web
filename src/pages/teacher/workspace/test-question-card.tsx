@@ -108,7 +108,10 @@ export function TestQuestionCard({
       onFocusCapture={onFocus}
       onPaste={(event) => {
         const file = pickImageFile(event.clipboardData.files);
-        if (!file) return;
+        if (!file) {
+          if (event.clipboardData.files.length) setImageError(t("editor.imageBadType"));
+          return;
+        }
         event.preventDefault();
         pickImage(file);
       }}
@@ -117,7 +120,13 @@ export function TestQuestionCard({
       }}
       onDrop={(event) => {
         const file = pickImageFile(event.dataTransfer.files);
-        if (!file) return;
+        if (!file) {
+          if (event.dataTransfer.files.length) {
+            event.preventDefault();
+            setImageError(t("editor.imageBadType"));
+          }
+          return;
+        }
         event.preventDefault();
         pickImage(file);
       }}
