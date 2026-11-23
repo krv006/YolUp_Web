@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses, useSubjects } from "@/modules/course";
 import { AiQuizCreator, usePaidTestGate } from "@/modules/quiz";
-import { FEATURES, ROUTES } from "@/shared/config";
+import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceGhostAction } from "@/widgets/workspace-shell";
@@ -13,7 +13,7 @@ import { ManualEditor, ManualStartCard, type ManualStart } from "./new-test-manu
 type Tab = "ai" | "import" | "manual";
 
 /**
- * Yangi test: «AI bilan yaratish» (AI yoqilgan bo'lsa), «Tayyor testni yuklash», «Qo'lda yozish».
+ * Yangi test: «AI bilan yaratish», «Tayyor testni yuklash», «Qo'lda yozish» (AI yorlig'i `FEATURES.aiAssistant`ga bog'liq emas).
  * Faqat kompyuter ko'rinishi — telefonda eski oyna (`?new=1`) ishlayveradi.
  */
 export function NewTestPage() {
@@ -26,7 +26,7 @@ export function NewTestPage() {
   const courses = useCourses();
   const [manual, setManual] = useState<ManualStart | null>(null);
 
-  const tabs = useMemo<Tab[]>(() => (FEATURES.aiAssistant ? ["ai", "import", "manual"] : ["import", "manual"]), []);
+  const tabs: Tab[] = ["ai", "import", "manual"];
   const requested = params.get("tab");
   const tab = tabs.find((item) => item === requested) ?? tabs[0];
 
