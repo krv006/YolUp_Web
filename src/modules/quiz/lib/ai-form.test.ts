@@ -1,26 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { aiJobStep, checkAiForm, deriveAiTopic, isAiJobActive } from "./ai-form";
-
-describe("deriveAiTopic", () => {
-  const base = { topic: "", fileNames: [] as string[], text: "", fallback: "AI test" };
-
-  it("keeps an explicit topic", () => {
-    expect(deriveAiTopic({ ...base, topic: "  Present Perfect ", fileNames: ["x.pdf"] })).toBe("Present Perfect");
-  });
-
-  it("falls back to the first file name without extension", () => {
-    expect(deriveAiTopic({ ...base, fileNames: ["Biologiya_9-sinf_fotosintez.pdf"] })).toBe("Biologiya 9 sinf fotosintez");
-  });
-
-  it("then to the first line of pasted text, then to the fallback", () => {
-    expect(deriveAiTopic({ ...base, text: "\n\nFotosintez nima?\nBatafsil..." })).toBe("Fotosintez nima?");
-    expect(deriveAiTopic(base)).toBe("AI test");
-  });
-
-  it("never exceeds the backend limit", () => {
-    expect(deriveAiTopic({ ...base, topic: "a".repeat(500) })).toHaveLength(200);
-  });
-});
+import { aiJobStep, checkAiForm, isAiJobActive } from "./ai-form";
 
 describe("checkAiForm", () => {
   const ok = { fileCount: 1, text: "", topic: "", simple: true, examName: "", count: 20 };

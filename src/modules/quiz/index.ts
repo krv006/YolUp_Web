@@ -8,7 +8,6 @@ export {
   AI_MIN_QUESTIONS,
   aiJobStep,
   checkAiForm,
-  deriveAiTopic,
   isAiJobActive,
 } from "./lib/ai-form";
 export type { AiMaterialProblem } from "./lib/ai-material";
