@@ -37,6 +37,8 @@ export {
   summarizeDrafts,
 } from "./lib/bulk-draft";
 export type { DraftState, DraftStatus } from "./lib/bulk-draft";
+export { applySuggestions, needsAnswer, unansweredCount } from "./lib/answer-suggestions";
+export type { AnswerSuggestion, AnswerSuggestionResult, SuggestionConfidence } from "./lib/answer-suggestions";
 export type { QuizAttemptAnswerInput } from "./lib/quiz.mappers";
 export type { ImportedQuiz } from "./api/quiz.api";
 export { quizEndpoints } from "./api/quiz.endpoints";
@@ -77,6 +79,7 @@ export {
   useImportGoogleLink,
   useImportQuizDocx,
   useImportQuizText,
+  useSuggestQuizAnswers,
   useUploadQuestionImage,
   useQuiz,
   useStartQuiz,

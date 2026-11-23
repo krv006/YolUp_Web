@@ -269,7 +269,15 @@
     "uploadingImage": "Rasm yuklanmoqda…",
     "imageBadType": "Faqat PNG, JPG, WEBP yoki GIF rasm qo'ying.",
     "imageTooLarge": "Rasm 5 MB dan katta. Kichikroq rasm tanlang.",
-    "imageAlt": "Savol rasmi"
+    "imageAlt": "Savol rasmi",
+    "suggestAnswers": "AI javob taklif qilsin ({{count}})",
+    "suggesting": "AI o'ylayapti…",
+    "suggestSaveFirst": "Avval o'zgarishlarni saqlang",
+    "suggestDone": "{{done}} ta savolga javob taklif qilindi. Tekshirib, saqlang.",
+    "suggestSome": "{{done}} ta savolga taklif berildi, {{skipped}} tasiga AI ishonchli javob topa olmadi.",
+    "suggestNone": "AI hech qaysi savolga ishonchli javob topa olmadi. Javoblarni o'zingiz belgilang.",
+    "aiSuggested": "AI taklifi, tekshiring",
+    "aiSuggestedLow": "AI taklifi (ishonch past), tekshiring"
   },
   "answer": {
     "true": "To'g'ri",
