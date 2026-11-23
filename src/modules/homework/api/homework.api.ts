@@ -80,6 +80,13 @@ export const homeworkApi = {
       await apiClient.patch<AssignmentDto>(homeworkEndpoints.assignment(id), mapAssignmentRequest(form))
     );
   },
+  /** Vazifa matniga rasm yuklash: `<img src>` uchun manzilni qaytaradi (PNG/JPG/WEBP/GIF, 5 MB gacha). */
+  async uploadImage(file: File): Promise<string> {
+    const body = new FormData();
+    body.set("file", file);
+    const dto = await apiClient.post<{ id: string | number; url: string }>(homeworkEndpoints.images, body);
+    return dto.url;
+  },
   async deleteAssignment(id: string) {
     await apiClient.delete(homeworkEndpoints.assignment(id));
     return id;

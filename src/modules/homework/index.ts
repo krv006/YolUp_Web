@@ -19,8 +19,11 @@ export { latestSubmission } from "./lib/latest-submission";
 export { googleFormUrlInvalid, isGoogleFormUrl } from "./lib/google-form";
 export { GoogleFormField } from "./ui/google-form-field";
 export { GoogleFormLink } from "./ui/google-form-link";
+export { quizQuestionsToDrafts, HOMEWORK_TYPE_OF_QUIZ } from "./lib/quiz-to-homework";
+export type { QuizConversion } from "./lib/quiz-to-homework";
 export {
   draftsFromQuestions,
+  emptyQuestion,
   isTestQuestion,
   questionIssue,
   toQuestionInputs,

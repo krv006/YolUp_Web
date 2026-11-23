@@ -29,6 +29,8 @@ export const ROUTES = Object.freeze({
     materials: "/teacher/workspace/materials",
     workspaceAnalytics: "/teacher/workspace/analytics",
     homework: "/teacher/workspace/homework",
+    homeworkNew: "/teacher/workspace/homework/new",
+    homeworkEdit: (assignmentId: string) => `/teacher/workspace/homework/${segment(assignmentId)}/edit`,
     homeworkItem: (assignmentId: string) => `/teacher/workspace/homework/${segment(assignmentId)}`,
     homeworkReview: (assignmentId: string) =>
       `/teacher/workspace/homework/${segment(assignmentId)}/review`,

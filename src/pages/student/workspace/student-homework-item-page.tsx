@@ -26,7 +26,7 @@ import {
 } from "@/modules/homework";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
-import { sanitizeHtml } from "@/shared/lib";
+import { RichContent } from "@/modules/rich-editor";
 import type { Assignment, Submission } from "@/shared/types";
 import { Icon } from "@/shared/ui/icon";
 import { MobileActionBar, MobileEmptyCard, MobilePageHeader } from "@/shared/ui/mobile-page";
@@ -157,7 +157,6 @@ function HomeworkSubmit({
         : left <= 0
           ? t("workspace.hwItem.today")
           : t("workspace.hwItem.daysLeft", { count: left });
-  const html = assignment.body ? sanitizeHtml(assignment.body) : "";
   const serverDraft = draft.data?.comment ?? "";
   const answerList = answerInputs(assignment.questions, answers);
   const ready = files.length > 0 || answerList.length > 0 || Boolean(comment.trim());
@@ -221,7 +220,7 @@ function HomeworkSubmit({
         ) : null}
       </span>
       {assignment.description ? <p className="text-[15px]/5 whitespace-pre-line text-ink">{assignment.description}</p> : null}
-      {html ? <div className="homework-board-task-body text-body-sm text-ink" dangerouslySetInnerHTML={{ __html: html }} /> : null}
+      {assignment.body ? <RichContent html={assignment.body} className="homework-board-task-body text-body-sm text-ink" /> : null}
       {assignment.hasAttachment ? (
         <button
           type="button"

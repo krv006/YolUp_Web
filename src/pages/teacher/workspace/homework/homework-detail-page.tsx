@@ -11,6 +11,7 @@ import {
   useRemindAssignment,
   useUpdateAssignment,
 } from "@/modules/homework";
+import { RichContent } from "@/modules/rich-editor";
 import { ROUTES } from "@/shared/config";
 import { Avatar } from "@/shared/ui/legacy";
 import { Icon } from "@/shared/ui/icon";
@@ -63,6 +64,8 @@ export function HomeworkDetailPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
   const isCompact = useIsCompact();
+  // Kompyuterda tahrirlash yangi sahifada (katta muharrir), telefonda eski oynada.
+  const openEdit = () => (isCompact || !item ? setEditOpen(true) : navigate(ROUTES.teacher.homeworkEdit(item.id)));
 
   const item = assignment.data ?? null;
   const isBank = Boolean(item?.isBank);
@@ -180,7 +183,7 @@ export function HomeworkDetailPage() {
           missing={missing}
           emptyHint={emptyHint}
           onBack={() => navigate(-1)}
-          onEdit={() => setEditOpen(true)}
+          onEdit={openEdit}
           onDelete={() => setDeleteOpen(true)}
           onRemind={() => setRemindOpen(true)}
           onSummary={() => assignmentId && aiSummary.mutate(assignmentId)}
@@ -250,7 +253,11 @@ export function HomeworkDetailPage() {
               </span>
             </span>
 
-            <p className="mt-3 text-body-sm text-ink">{item?.body || item?.description}</p>
+            {item?.body ? (
+              <RichContent html={item.body} className="mt-3 text-body-sm text-ink" />
+            ) : (
+              <p className="mt-3 text-body-sm text-ink">{item?.description}</p>
+            )}
 
             {item?.hasAttachment ? (
               <button
@@ -290,7 +297,7 @@ export function HomeworkDetailPage() {
               <button
                 type="button"
                 className="flex h-10 items-center justify-center rounded-full border border-line-strong bg-surface text-body-sm font-semibold text-ink transition-colors hover:bg-subtle"
-                onClick={() => setEditOpen(true)}
+                onClick={openEdit}
               >
                 {t("detail.edit")}
               </button>

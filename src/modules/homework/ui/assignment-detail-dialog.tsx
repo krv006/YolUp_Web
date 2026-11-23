@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { RichContent } from "@/modules/rich-editor";
 import {
   BarChart3,
   CheckCircle2,
@@ -149,10 +150,10 @@ export function AssignmentDetailDialog({
               </div>
             ) : (
               <div className="assignment-detail">
-                {data.description || data.body ? (
-                  <p className="assignment-detail-body">
-                    {data.description || data.body}
-                  </p>
+                {data.body ? (
+                  <RichContent html={data.body} className="assignment-detail-body" />
+                ) : data.description ? (
+                  <p className="assignment-detail-body">{data.description}</p>
                 ) : null}
 
                 {data.hasAttachment ? (

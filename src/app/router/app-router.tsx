@@ -222,6 +222,7 @@ const BoardPage = lazy(() => import("@/pages/board/board-page").then((module) =>
 const WorkspaceHomePage = lazy(() => import("@/pages/teacher/workspace/workspace-home-page").then((module) => ({ default: module.WorkspaceHomePage })));
 const HomeworkListPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-list-page").then((module) => ({ default: module.HomeworkListPage })));
 const HomeworkDetailPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-detail-page").then((module) => ({ default: module.HomeworkDetailPage })));
+const NewHomeworkPage = lazy(() => import("@/pages/teacher/workspace/homework/new-homework/new-homework-page").then((module) => ({ default: module.NewHomeworkPage })));
 const HomeworkReviewPage = lazy(() => import("@/pages/teacher/workspace/homework/homework-review-page").then((module) => ({ default: module.HomeworkReviewPage })));
 const AiAssistantPage = lazy(() => import("@/pages/teacher/workspace/ai-assistant-page").then((module) => ({ default: module.AiAssistantPage })));
 const WorkspaceAnalyticsPage = lazy(() => import("@/pages/teacher/workspace/analytics-page").then((module) => ({ default: module.WorkspaceAnalyticsPage })));
@@ -318,6 +319,8 @@ export function AppRouter() {
                     <Route path="/teacher/workspace/tests/:quizId/results" element={<TestResultsPage />} />
                     <Route path="/teacher/workspace/tests/:quizId/edit" element={<TestDetailsPage />} />
                     <Route path={ROUTES.teacher.homework} element={<HomeworkListPage />} />
+                    <Route path={ROUTES.teacher.homeworkNew} element={<NewHomeworkPage />} />
+                    <Route path="/teacher/workspace/homework/:assignmentId/edit" element={<NewHomeworkPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId" element={<HomeworkDetailPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId/review" element={<HomeworkReviewPage />} />
                     <Route
