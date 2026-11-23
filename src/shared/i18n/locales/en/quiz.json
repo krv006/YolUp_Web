@@ -818,6 +818,52 @@
         "fill_blank": "Example: Tashkent is the capital of {{Uzbekistan}}.",
         "essay": "Example: Write about your favourite season"
       }
+    },
+    "ai": {
+      "material": "Material",
+      "uploadLabel": "Upload a file",
+      "dropTitle": "Choose or drop a file",
+      "dropHint": "PDF, Word, PowerPoint, Excel, TXT · up to 5 files · up to 20 MB",
+      "textLabel": "Or paste text",
+      "textPlaceholder": "Text copied from a textbook or a website",
+      "textHint": "You can use a file and text together.",
+      "settings": "Settings",
+      "format": "Format",
+      "formatSimple": "Simple test (A-B-C-D)",
+      "formatOther": "Other exam…",
+      "language": "Language",
+      "languages": {
+        "uz": "Uzbek (Latin)",
+        "uzCyrl": "Uzbek (Cyrillic)",
+        "ru": "Russian",
+        "en": "English"
+      },
+      "simpleHint": "In a simple test, AI writes multiple-choice questions only.",
+      "examHint": "In an exam format, the number and types of questions follow the format.",
+      "topic": "Topic · optional",
+      "topicPlaceholder": "If empty, AI finds it in the material",
+      "group": "Group · optional",
+      "noGroup": "No group (draft)",
+      "create": "Create",
+      "needMaterial": "Add material or write a topic.",
+      "defaultTopic": "AI test",
+      "progressTitle": "Creating the test",
+      "progressHint": "You can close the page, the work continues. You will get a notification when it is ready.",
+      "steps": {
+        "read": "Reading the material",
+        "write": "Writing questions",
+        "save": "Saving the draft"
+      },
+      "resultNote": "Draft. Not visible to students.",
+      "report": "Report",
+      "loadingResult": "Loading the result…",
+      "ready": "questions ready",
+      "shortage": "{{requested}} requested, {{produced}} ready. The material may not be enough for that many questions. You can add more in the editor.",
+      "warnings": "{{count}} questions need checking. Review them in the editor.",
+      "another": "Create another test",
+      "open": "Open in editor",
+      "failedTitle": "The test was not created",
+      "retry": "Try again"
     }
   }
 }

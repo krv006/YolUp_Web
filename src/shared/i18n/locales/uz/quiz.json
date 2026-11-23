@@ -816,6 +816,52 @@
         "fill_blank": "Misol: Toshkent {{O'zbekiston}} poytaxti.",
         "essay": "Misol: Sevimli faslingiz haqida yozing"
       }
+    },
+    "ai": {
+      "material": "Material",
+      "uploadLabel": "Fayl yuklang",
+      "dropTitle": "Faylni tanlang yoki tashlang",
+      "dropHint": "PDF, Word, PowerPoint, Excel, TXT · 5 tagacha · 20 MB gacha",
+      "textLabel": "Yoki matnni qo'ying",
+      "textPlaceholder": "Darslik yoki saytdan nusxalangan matn",
+      "textHint": "Fayl va matnni birga ishlatish mumkin.",
+      "settings": "Sozlamalar",
+      "format": "Format",
+      "formatSimple": "Oddiy test (A-B-C-D)",
+      "formatOther": "Boshqa imtihon…",
+      "language": "Til",
+      "languages": {
+        "uz": "O'zbekcha (lotin)",
+        "uzCyrl": "Ўзбекча (кирилл)",
+        "ru": "Русский",
+        "en": "English"
+      },
+      "simpleHint": "Oddiy testda AI faqat variantli savol yozadi.",
+      "examHint": "Imtihon formatida savollar soni va turlari format bo'yicha belgilanadi.",
+      "topic": "Mavzu · ixtiyoriy",
+      "topicPlaceholder": "Bo'sh bo'lsa, AI materialdan topadi",
+      "group": "Guruh · ixtiyoriy",
+      "noGroup": "Guruhsiz (qoralama)",
+      "create": "Yaratish",
+      "needMaterial": "Material qo'shing yoki mavzu yozing.",
+      "defaultTopic": "AI test",
+      "progressTitle": "Test yaratilmoqda",
+      "progressHint": "Sahifani yopsangiz ham ish davom etadi. Tayyor bo'lganda bildirishnoma keladi.",
+      "steps": {
+        "read": "Material o'qilmoqda",
+        "write": "Savollar yozilmoqda",
+        "save": "Qoralama saqlanmoqda"
+      },
+      "resultNote": "Qoralama. O'quvchilarga ko'rinmaydi.",
+      "report": "Hisobot",
+      "loadingResult": "Natija yuklanmoqda…",
+      "ready": "savol tayyor",
+      "shortage": "{{requested}} ta so'raldi, {{produced}} ta tayyor. Material shuncha savolga yetmagan bo'lishi mumkin. Muharrirda o'zingiz qo'shishingiz mumkin.",
+      "warnings": "{{count}} ta savolni tekshirish kerak. Muharrirda ko'rib chiqing.",
+      "another": "Yana test yaratish",
+      "open": "Muharrirda ochish",
+      "failedTitle": "Test yaratilmadi",
+      "retry": "Qayta urinish"
     }
   }
 }

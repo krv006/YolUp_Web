@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
-import { useCourses, useSubjects } from "@/modules/course";
-import { AiQuizCreator, usePaidTestGate } from "@/modules/quiz";
+import { usePaidTestGate } from "@/modules/quiz";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { WorkspaceShell, workspaceGhostAction } from "@/widgets/workspace-shell";
+import { NewTestAi } from "./new-test-ai";
 import { NewTestImport } from "./new-test-import";
 import { ManualEditor, ManualStartCard, type ManualStart } from "./new-test-manual";
 
@@ -22,8 +22,6 @@ export function NewTestPage() {
   const isCompact = useIsCompact();
   const gate = usePaidTestGate();
   const [params, setParams] = useSearchParams();
-  const subjects = useSubjects();
-  const courses = useCourses();
   const [manual, setManual] = useState<ManualStart | null>(null);
 
   const tabs: Tab[] = ["ai", "import", "manual"];
@@ -87,11 +85,7 @@ export function NewTestPage() {
           <p className="text-body text-ink-secondary">{t(`newPage.leads.${tab}`)}</p>
 
           {tab === "ai" ? (
-            <AiQuizCreator
-              subjects={subjects.data ?? []}
-              courses={(courses.data ?? []).map((course) => ({ id: course.id, title: course.title }))}
-              onOpenQuiz={openQuiz}
-            />
+            <NewTestAi onOpenQuiz={openQuiz} />
           ) : null}
           {tab === "import" ? <NewTestImport onCreated={(quiz) => openQuiz(quiz.id)} /> : null}
           {tab === "manual" ? <ManualStartCard onStart={setManual} /> : null}

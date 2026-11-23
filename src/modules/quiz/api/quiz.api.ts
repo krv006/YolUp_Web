@@ -135,6 +135,7 @@ export const quizApi = {
     if (request.rulesText) body.set("rules_text", request.rulesText);
     if (request.materialText) body.set("material_text", request.materialText);
     if (request.examName) body.set("exam_name", request.examName);
+    if (request.language) body.set("language", request.language);
     body.set("question_count", String(request.questionCount));
     if (request.courseId) body.set("course", request.courseId);
     if (request.subject) body.set("subject", request.subject);
@@ -165,6 +166,7 @@ export const quizApi = {
       questionCount: item.question_count ?? 0,
       quizId: item.quiz === null || item.quiz === undefined ? null : String(item.quiz),
       error: item.error ?? "",
+      warnings: item.warnings ?? [],
       createdAt: item.created_at ?? "",
     }));
   },

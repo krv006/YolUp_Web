@@ -1,6 +1,16 @@
 export { quizApi } from "./api/quiz.api";
 export { quizErrorMessage } from "./lib/quiz-errors";
-export { AI_MATERIAL_ACCEPT, checkAiMaterials } from "./lib/ai-material";
+export { AI_MATERIAL_ACCEPT, AI_MATERIAL_MAX_FILES, checkAiMaterials } from "./lib/ai-material";
+export {
+  AI_DEFAULT_QUESTIONS,
+  AI_EXAM_FORMATS,
+  AI_MAX_QUESTIONS,
+  AI_MIN_QUESTIONS,
+  aiJobStep,
+  checkAiForm,
+  deriveAiTopic,
+  isAiJobActive,
+} from "./lib/ai-form";
 export type { AiMaterialProblem } from "./lib/ai-material";
 export { emptyAnswer } from "./lib/answer-value";
 export { groupQuestions } from "./lib/group-questions";
