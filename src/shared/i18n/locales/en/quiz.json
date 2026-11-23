@@ -842,11 +842,11 @@
       "examHint": "In an exam format, the number and types of questions follow the format.",
       "topic": "Topic · optional",
       "topicPlaceholder": "If empty, AI finds it in the material",
+      "topicHint": "If you write the topic precisely, AI will write questions on exactly that topic, even from a big book.",
       "group": "Group · optional",
       "noGroup": "No group (draft)",
       "create": "Create",
       "needMaterial": "Add material or write a topic.",
-      "defaultTopic": "AI test",
       "progressTitle": "Creating the test",
       "progressHint": "You can close the page, the work continues. You will get a notification when it is ready.",
       "steps": {

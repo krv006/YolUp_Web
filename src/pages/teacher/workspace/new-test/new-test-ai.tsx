@@ -11,7 +11,6 @@ import {
   aiJobStep,
   checkAiForm,
   checkAiMaterials,
-  deriveAiTopic,
   isAiJobActive,
   useAiQuizJobs,
   useQuiz,
@@ -115,12 +114,8 @@ export function NewTestAi({ onOpenQuiz }: NewTestAiProps) {
       {
         files,
         request: {
-          topic: deriveAiTopic({
-            topic,
-            fileNames: files.map((file) => file.name),
-            text,
-            fallback: t("newPage.ai.defaultTopic"),
-          }),
+          // Bo'sh bo'lsa backend o'zi nom beradi, lekin uni AI'ga mavzu qilib bermaydi (kitob nomi haqida savol chiqmasin)
+          topic: topic.trim(),
           courseId: courseId || null,
           title: "",
           questionCount: requested,
@@ -331,6 +326,7 @@ export function NewTestAi({ onOpenQuiz }: NewTestAiProps) {
               placeholder={t("newPage.ai.topicPlaceholder")}
               onChange={(event) => setTopic(event.target.value)}
             />
+            <small className="text-body-xs text-ink-tertiary">{t("newPage.ai.topicHint")}</small>
           </label>
           <label className="flex flex-col gap-2">
             <span className={LABEL}>{t("newPage.ai.group")}</span>

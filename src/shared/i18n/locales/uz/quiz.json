@@ -840,11 +840,11 @@
       "examHint": "Imtihon formatida savollar soni va turlari format bo'yicha belgilanadi.",
       "topic": "Mavzu · ixtiyoriy",
       "topicPlaceholder": "Bo'sh bo'lsa, AI materialdan topadi",
+      "topicHint": "Mavzuni aniq yozsangiz, AI katta kitobdan ham aynan shu mavzuga oid qismlardan savol tuzadi.",
       "group": "Guruh · ixtiyoriy",
       "noGroup": "Guruhsiz (qoralama)",
       "create": "Yaratish",
       "needMaterial": "Material qo'shing yoki mavzu yozing.",
-      "defaultTopic": "AI test",
       "progressTitle": "Test yaratilmoqda",
       "progressHint": "Sahifani yopsangiz ham ish davom etadi. Tayyor bo'lganda bildirishnoma keladi.",
       "steps": {
