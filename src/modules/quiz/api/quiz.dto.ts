@@ -185,7 +185,7 @@ export interface AiQuizRequest {
   /** Imtihon nomi: AI uning rasmiy tuzilmasini o'zi eslaydi (qoidalar berilmasa). */
   examName?: string;
   /** Test tili: uz | uz_cyrl | ru | en. Bo'sh = avtomatik (material tili). */
-  language?: "" | "uz" | "uz_cyrl" | "ru" | "en";
+  language?: "" | "uz" | "uz_cyrl" | "ru" | "en" | "tr";
 }
 
 export interface AiQuizJobDto {

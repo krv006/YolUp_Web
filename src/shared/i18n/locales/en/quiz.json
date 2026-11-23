@@ -841,10 +841,12 @@
       "formatOther": "Other exam…",
       "language": "Language",
       "languages": {
+        "auto": "Auto (by subject)",
         "uz": "Uzbek (Latin)",
         "uzCyrl": "Uzbek (Cyrillic)",
         "ru": "Russian",
-        "en": "English"
+        "en": "English",
+        "tr": "Türkçe"
       },
       "simpleHint": "In a simple test, AI writes multiple-choice questions only.",
       "examHint": "In an exam format, the number and types of questions follow the format.",
@@ -871,7 +873,8 @@
       "another": "Create another test",
       "open": "Open in editor",
       "failedTitle": "The test was not created",
-      "retry": "Try again"
+      "retry": "Try again",
+      "languageHint": "Auto: in an English, Russian or Turkish language group the test is in that language; for other subjects it is in Uzbek."
     }
   }
 }

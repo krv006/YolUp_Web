@@ -26,10 +26,12 @@ const OTHER = "other";
 const NO_GROUP = "";
 type Language = NonNullable<AiQuizRequest["language"]>;
 const LANGUAGES: Array<{ value: Language; key: string }> = [
+  { value: "", key: "auto" },
   { value: "uz", key: "uz" },
   { value: "uz_cyrl", key: "uzCyrl" },
   { value: "ru", key: "ru" },
   { value: "en", key: "en" },
+  { value: "tr", key: "tr" },
 ];
 
 interface Tracked {
@@ -54,7 +56,8 @@ export function NewTestAi({ onOpenQuiz }: NewTestAiProps) {
   const [count, setCount] = useState(String(AI_DEFAULT_QUESTIONS));
   const [format, setFormat] = useState(SIMPLE);
   const [customExam, setCustomExam] = useState("");
-  const [language, setLanguage] = useState<Language>("uz");
+  // "Avto": til fani (ingliz/rus/turk tili) bo'lsa test shu tilda, boshqa fanlarda o'zbekcha — o'qituvchi tilni qayta tanlab yurmaydi
+  const [language, setLanguage] = useState<Language>("");
   const [topic, setTopic] = useState("");
   const [courseId, setCourseId] = useState(NO_GROUP);
   const [error, setError] = useState<string | null>(null);
@@ -300,6 +303,7 @@ export function NewTestAi({ onOpenQuiz }: NewTestAiProps) {
                 </option>
               ))}
             </select>
+            {language === "" ? <small className="text-body-xs text-ink-tertiary">{t("newPage.ai.languageHint")}</small> : null}
           </label>
         </div>
 
