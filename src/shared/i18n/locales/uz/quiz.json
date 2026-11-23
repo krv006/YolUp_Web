@@ -839,10 +839,12 @@
       "formatOther": "Boshqa imtihon…",
       "language": "Til",
       "languages": {
+        "auto": "Avto (fanga qarab)",
         "uz": "O'zbekcha (lotin)",
         "uzCyrl": "Ўзбекча (кирилл)",
         "ru": "Русский",
-        "en": "English"
+        "en": "English",
+        "tr": "Türkçe"
       },
       "simpleHint": "Oddiy testda AI faqat variantli savol yozadi.",
       "examHint": "Imtihon formatida savollar soni va turlari format bo'yicha belgilanadi.",
@@ -869,7 +871,8 @@
       "another": "Yana test yaratish",
       "open": "Muharrirda ochish",
       "failedTitle": "Test yaratilmadi",
-      "retry": "Qayta urinish"
+      "retry": "Qayta urinish",
+      "languageHint": "Avto: ingliz, rus yoki turk tili guruhida test shu tilda chiqadi, boshqa fanlarda o‘zbekcha."
     }
   }
 }
