@@ -7,6 +7,8 @@ import {
   emptyQuestion,
   googleFormUrlInvalid,
   homeworkApi,
+  VoiceNoteField,
+  type AssignmentVoiceInput,
   QuestionsEditor,
   useAssignment,
   useCreateAssignment,
@@ -97,6 +99,7 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
   const [added, setAdded] = useState<Array<{ quizId: string; title: string; keys: string[] }>>([]);
   const [asked, setAsked] = useState(false);
   const [dateBad, setDateBad] = useState(false);
+  const [voice, setVoice] = useState<AssignmentVoiceInput | null | undefined>(undefined);
   const [saveState, setSaveState] = useState<{ ok: boolean; time: string } | null>(null);
   const questionsRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +116,7 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
     group: asked && !settings.group,
     date: dateBad && !inBank,
   };
-  const empty = isRichHtmlEmpty(html) && !questions.drafts.length && !settings.googleFormUrl.trim();
+  const empty = isRichHtmlEmpty(html) && !questions.drafts.length && !settings.googleFormUrl.trim() && !voice && !(item?.voice && voice !== null);
 
   // Qoralama: faqat yangi vazifada, yozgandan 0,6 soniya keyin o'zi saqlanadi.
   const { drafts } = questions;
@@ -181,6 +184,7 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
       ...(inBank ? {} : { dueAt: `${settings.date}T${settings.time || "23:59"}`, status: "active" as const, announceInChat: settings.announce }),
       allowLate: true,
       aiCheck: settings.aiCheck,
+      voice,
       grading: settings.grading,
       googleFormUrl: settings.googleFormUrl.trim(),
     };
@@ -264,6 +268,7 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
                 uploadImage={(file) => homeworkApi.uploadImage(file)}
                 onAddQuestion={addQuestion}
               />
+              <VoiceNoteField existing={item?.voice ?? null} value={voice} onChange={setVoice} disabled={pending} />
               <div ref={questionsRef}>
                 <QuestionsEditor value={questions.drafts} onChange={questions.setDrafts} locked={questions.locked} showIssues={questions.showIssues} />
               </div>

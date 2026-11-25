@@ -457,6 +457,7 @@ export interface Assignment {
   body: string;
   attachmentName: string;
   hasAttachment: boolean;
+  voice: AssignmentVoice | null;
   googleFormUrl: string | null;
   isBank: boolean;
   sourceId: string | null;
@@ -486,6 +487,12 @@ export interface Assignment {
   questions: HomeworkQuestion[];
   hasQuestions: boolean;
   questionsPoints: number;
+}
+
+export interface AssignmentVoice {
+  url: string;
+  durationMs: number | null;
+  mime: string;
 }
 
 export interface AiGroupSummary {

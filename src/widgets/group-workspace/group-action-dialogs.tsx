@@ -8,6 +8,8 @@ import {
   QuestionsEditor,
   useAssignment,
   useQuestionDrafts,
+  VoiceNoteField,
+  type AssignmentVoiceInput,
   type HomeworkQuestionInput,
 } from "@/modules/homework";
 import { Button, Dialog, DialogContent } from "@/shared/ui/legacy";
@@ -27,6 +29,7 @@ export interface AddAssignmentDialogProps {
       body: string;
       extraInstructions: string;
       file: File | null;
+      voice?: AssignmentVoiceInput | null;
       questions?: HomeworkQuestionInput[];
       googleFormUrl: string;
       aiCheck: boolean;
@@ -87,6 +90,7 @@ export function AddAssignmentDialog({
   const [file, setFile] = useState<File | null>(null);
   const [googleFormUrl, setGoogleFormUrl] = useState(initialValues?.googleFormUrl ?? "");
   const [aiCheck, setAiCheck] = useState(initialValues?.aiCheck ?? true);
+  const [voice, setVoice] = useState<AssignmentVoiceInput | null | undefined>(undefined);
   const googleFormInvalid = googleFormUrlInvalid(googleFormUrl);
   const fileRef = useRef<HTMLInputElement>(null);
   const detail = useAssignment(open && initialValues ? initialValues.id : null);
@@ -134,11 +138,13 @@ export function AddAssignmentDialog({
       body: rest.description,
       extraInstructions: gradingNote,
       file,
+      voice,
       googleFormUrl: googleFormUrl.trim(),
       aiCheck,
     });
     setForm(EMPTY_ASSIGNMENT);
     setFile(null);
+    setVoice(undefined);
     setGoogleFormUrl("");
     onOpenChange(false);
   }
@@ -200,6 +206,7 @@ export function AddAssignmentDialog({
                 </span>
               ) : null}
             </div>
+            <VoiceNoteField existing={detail.data?.voice ?? initialValues?.voice ?? null} value={voice} onChange={setVoice} />
             <div className="form-grid-two">
               <DatePicker
                 label={t("dialogs.assignment.dueLabel")}

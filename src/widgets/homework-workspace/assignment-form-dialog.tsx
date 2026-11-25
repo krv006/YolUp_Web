@@ -11,6 +11,8 @@ import {
   useCreateAssignment,
   useQuestionDrafts,
   useUpdateAssignment,
+  VoiceNoteField,
+  type AssignmentVoiceInput,
 } from "@/modules/homework";
 import type { Assignment, AssignmentStatus, GradingScale } from "@/shared/types";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
@@ -60,6 +62,7 @@ export function AssignmentFormDialog({
   const [announce, setAnnounce] = useState(true);
   const [allowLate, setAllowLate] = useState(true);
   const [googleFormUrl, setGoogleFormUrl] = useState("");
+  const [voice, setVoice] = useState<AssignmentVoiceInput | null | undefined>(undefined);
 
   const detail = useAssignment(open && assignment ? assignment.id : null);
   const questionsLocked =
@@ -84,6 +87,7 @@ export function AssignmentFormDialog({
     setLessonId(assignment?.lessonId ?? "");
     setGradingNote("");
     setFile(null);
+    setVoice(undefined);
     setGrading(assignment?.grading ?? "five");
     setMaxScore(String(assignment?.maxScore ?? 100));
     setAnnounce(assignment?.announceInChat ?? true);
@@ -161,6 +165,7 @@ export function AssignmentFormDialog({
       body: body.trim(),
       dueAt: date ? new Date(`${date}T${time}`).toISOString() : undefined,
       file,
+      voice,
       status,
       announceInChat: announce,
       allowLate,
@@ -319,6 +324,7 @@ export function AssignmentFormDialog({
                 ) : null}
               </span>
             ) : null}
+            <VoiceNoteField existing={detail.data?.voice ?? assignment.voice ?? null} value={voice} onChange={setVoice} />
           </div>
 
           <DatePicker label={t("form.dueDate")} value={date} onChange={setDate} optional />

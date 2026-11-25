@@ -158,6 +158,9 @@ export function mapAssignmentDto(dto: AssignmentDto): Assignment {
     description: dto.description || "",
     body: dto.body || "",
     attachmentName: dto.attachment_name || "",
+    voice: dto.voice?.url
+      ? { url: dto.voice.url, durationMs: dto.voice.duration_ms ?? null, mime: dto.voice.mime || "audio/webm" }
+      : null,
     hasAttachment: Boolean(dto.has_attachment),
     googleFormUrl: dto.google_form_url || null,
     isBank: dto.is_bank === true || dto.status === "bank",
@@ -292,6 +295,10 @@ export function mapAssignmentRequest(form: AssignmentFormInput): FormData {
   if (form.grading) data.set("grading", form.grading);
   if (form.grading === "hundred" && form.maxScore) data.set("max_score", String(form.maxScore));
   if (form.file) data.set("attachment", form.file);
+  if (form.voice) {
+    data.set("voice", form.voice.file, `voice.${form.voice.file.type.includes("mp4") ? "m4a" : form.voice.file.type.includes("ogg") ? "ogg" : "webm"}`);
+    data.set("voice_duration_ms", String(Math.round(form.voice.durationMs)));
+  } else if (form.voice === null) data.set("remove_voice", "true");
   if (form.questions) data.set("questions", JSON.stringify(form.questions));
   if (form.googleFormUrl !== undefined) data.set("google_form_url", form.googleFormUrl.trim());
   return data;

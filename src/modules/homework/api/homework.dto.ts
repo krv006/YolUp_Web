@@ -150,6 +150,7 @@ export interface AssignmentDto {
   description?: string;
   body?: string;
   attachment_name?: string;
+  voice?: { url?: string | null; duration_ms?: number | null; mime?: string | null } | null;
   has_attachment?: boolean;
   google_form_url?: string | null;
   is_bank?: boolean;
@@ -231,6 +232,7 @@ export interface AssignmentFormInput {
   lessonId?: string | null;
   extraInstructions?: string;
   file?: File | null;
+  voice?: AssignmentVoiceInput | null;
   status?: AssignmentStatus;
   announceInChat?: boolean;
   allowLate?: boolean;
@@ -239,6 +241,11 @@ export interface AssignmentFormInput {
   maxScore?: number;
   questions?: HomeworkQuestionInput[];
   googleFormUrl?: string;
+}
+
+export interface AssignmentVoiceInput {
+  file: Blob;
+  durationMs: number;
 }
 
 export interface AssignmentCopyDto {

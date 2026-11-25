@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { homeworkApi } from "@/modules/homework";
+import { AssignmentVoicePlayer, homeworkApi } from "@/modules/homework";
 import { downloadBlob, parentHomework, retryMinutes, useRemindChildHomework, type HomeworkState } from "@/modules/parent";
 import { formatLocalized, htmlToPlainText } from "@/shared/lib";
 import type { Assignment, Course } from "@/shared/types";
@@ -334,6 +334,7 @@ export function HomeworkDetail({
       ) : null}
 
       {(state === "pending" || state === "overdue") && attachment ? <FileCard file={attachment} onView={setViewing} /> : null}
+      {(state === "pending" || state === "overdue") && assignment.voice ? <AssignmentVoicePlayer voice={assignment.voice} /> : null}
       {submission ? answers.map((file) => <FileCard key={`${file.name}-${file.meta}`} file={file} onView={setViewing} />) : null}
 
       <FileViewer

@@ -611,5 +611,17 @@
       "short": "Short answer",
       "long": "Long answer"
     }
+  },
+  "voice": {
+    "title": "Voice note",
+    "record": "Record a voice note",
+    "recordAgain": "Record the voice note again",
+    "recording": "Recording...",
+    "stop": "Stop",
+    "remove": "Remove the voice note",
+    "loadFailed": "Could not load the voice note",
+    "unsupported": "This browser cannot record audio",
+    "denied": "Microphone access was denied",
+    "label": "Voice note (optional, up to 10 minutes)"
   }
 }
