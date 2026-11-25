@@ -23,6 +23,7 @@ import {
 } from "../lib/lesson.mappers";
 import { bulkLessonsRequest, type BulkLessonRow } from "../lib/bulk-lessons";
 import { mapRecordingChoice, type RecordingChoice } from "../lib/recording-choice";
+import { mapScheduleQuizItems, type ScheduleFeedDto } from "../lib/schedule-feed";
 
 function isMissingRatingApi(error: unknown): boolean {
   return (
@@ -46,6 +47,9 @@ function appendSequence(formData: FormData, sequence?: RecordingChunkSequence) {
 export const lessonApi = {
   async getAll(options: RequestOptions = {}) {
     return mapLessonPage(await apiClient.get(lessonEndpoints.list, options), options.query);
+  },
+  async getScheduleQuizzes(range: { from: string; to: string }, options: RequestOptions = {}) {
+    return mapScheduleQuizItems(await apiClient.get<ScheduleFeedDto>(lessonEndpoints.feed, { ...options, query: range }));
   },
   async getById(id: string, options?: RequestOptions) {
     return mapLessonDto(await apiClient.get<LessonDto>(lessonEndpoints.detail(id), options));

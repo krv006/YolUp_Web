@@ -15,6 +15,7 @@ import {
   usePublishQuiz,
   useQuizAttempts,
   useQuizzes,
+  copiesBySource,
   PaidTestDialog,
   usePaidTestGate,
   useQuizLimitsText,
@@ -108,6 +109,13 @@ export function TestsPage() {
   }
 
   const items = useMemo(() => quizzes.data ?? [], [quizzes.data]);
+  const assignedCounts = useMemo(() => copiesBySource(items), [items]);
+  const courseTitles = useMemo(() => new Map((courses.data ?? []).map((course) => [course.id, course.title])), [courses.data]);
+  const groupNote = (quiz: QuizSummary) => {
+    if (quiz.sourceQuizId) return courseTitles.get(quiz.courseId) ?? "";
+    const count = assignedCounts.get(quiz.id);
+    return count ? t("tests.assignedCount", { count }) : "";
+  };
 
   const subjects = useMemo(() => {
     const map = new Map<string, { label: string; count: number }>();
@@ -185,7 +193,7 @@ export function TestsPage() {
         }}
         quizId={assignTarget?.id ?? null}
         quizLabel={assignTarget ? quizDisplayTitle(assignTarget) : ""}
-        quizzes={items.filter((quiz) => quiz.status !== DRAFT).map((quiz) => ({ id: quiz.id, label: quizDisplayTitle(quiz) }))}
+        quizzes={items.filter((quiz) => quiz.status !== DRAFT && !quiz.sourceQuizId).map((quiz) => ({ id: quiz.id, label: quizDisplayTitle(quiz) }))}
         courses={courseOptions.map((course) => ({ id: course.id, label: course.label, studentCount: course.studentCount }))}
         pending={assign.isPending}
         onSubmit={(value) => {
@@ -252,6 +260,7 @@ export function TestsPage() {
     return (
       <>
         <MobileTests
+          groupNote={groupNote}
           drafts={matches.filter((quiz) => quiz.status === DRAFT)}
           published={matches.filter((quiz) => quiz.status !== DRAFT)}
           loading={quizzes.isLoading}
@@ -392,7 +401,12 @@ export function TestsPage() {
                         {quizDisplayTitle(quiz)}
                       </strong>
                       <small className="truncate text-body-xs text-ink-tertiary">
-                        {[quiz.subjectLabel, t("tests.questionCount", { count: quiz.questionCount }), limitsText(quiz)]
+                        {[
+                          quiz.subjectLabel,
+                          t("tests.questionCount", { count: quiz.questionCount }),
+                          limitsText(quiz),
+                          groupNote(quiz),
+                        ]
                           .filter(Boolean)
                           .join(" · ")}
                       </small>

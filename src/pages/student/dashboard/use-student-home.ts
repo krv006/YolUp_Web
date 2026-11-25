@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { format, startOfMonth } from "date-fns";
 import { useMyAnalytics } from "@/modules/analytics";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
@@ -22,7 +23,7 @@ function sameDay(a: Date, b: Date): boolean {
 
 export function useStudentHome() {
   const [now] = useState(() => new Date());
-  const lessons = useLessons({ page_size: 100 });
+  const lessons = useLessons({ starts_at__gte: format(startOfMonth(now), "yyyy-MM-dd"), ordering: "starts_at", page_size: 100 });
   const courses = useCourses();
   const conversations = useConversations("student");
   const groupImages = useGroupImages("student");

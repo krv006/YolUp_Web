@@ -107,6 +107,7 @@ export const loginDeviceDtoSchema = z.object({
   os: z.string().nullable().optional(),
   device_type: z.enum(["phone", "tablet", "computer"]).nullable().optional(),
   last_login_at: z.string(),
+  last_seen_at: z.string().nullable().optional(),
   first_login_at: z.string().nullable().optional(),
   login_count: z.number().nullable().optional(),
   last_ip: z.string().nullable().optional(),
@@ -154,6 +155,7 @@ export interface LoginDevice {
   id: string;
   device: string;
   deviceType: LoginDeviceType | null;
+  lastSeenAt: string;
   lastLoginAt: string;
   firstLoginAt: string;
   loginCount: number;

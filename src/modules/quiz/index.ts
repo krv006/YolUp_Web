@@ -1,5 +1,6 @@
 export { quizApi } from "./api/quiz.api";
 export { quizErrorMessage } from "./lib/quiz-errors";
+export { copiesBySource } from "./lib/quiz-copies";
 export { AI_MATERIAL_ACCEPT, AI_MATERIAL_MAX_FILES, checkAiMaterials } from "./lib/ai-material";
 export {
   AI_DEFAULT_QUESTIONS,

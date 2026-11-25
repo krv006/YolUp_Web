@@ -16,6 +16,6 @@ export function switchOptions(user: AuthUser | null | undefined): SwitchOptions 
   const unopened = SELF_SERVICE_ROLES.filter(
     (role) => role !== user.role && !linked.some((account) => account.role === role)
   );
-  if (user.roleSwitchBlocked === "phone_required" || !user.phone?.trim()) return { blocked: "phone_required", roles: unopened };
+  if (user.roleSwitchBlocked === "phone_required") return { blocked: "phone_required", roles: unopened };
   return { blocked: null, roles: user.availableRoles ?? unopened };
 }

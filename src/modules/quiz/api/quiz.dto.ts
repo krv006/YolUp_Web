@@ -57,6 +57,7 @@ export interface QuizSummaryDto {
   description?: string;
   due_at: string | null;
   opens_at: string | null;
+  source_quiz_id?: string | number | null;
   question_count: number;
   created_at: string;
   student_ids?: Array<string | number> | null;

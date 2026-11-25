@@ -85,9 +85,8 @@ export const quizApi = {
       await apiClient.patch<QuizDto>(quizEndpoints.detail(id), mapQuizEditRequest(values))
     );
   },
-  /** Guruhsiz testni (masalan, AI yaratgan) o'qituvchining guruhiga biriktiradi. */
   async assignToCourse({ quizId, ...input }: QuizAssignInput) {
-    return mapQuizDto(await apiClient.patch<QuizDto>(quizEndpoints.detail(quizId), assignRequestBody(input)));
+    return mapQuizDto(await apiClient.post<QuizDto>(quizEndpoints.assign(quizId), assignRequestBody(input)));
   },
   async getAudience(id: string, options?: RequestOptions) {
     return mapQuizAudienceDto(await apiClient.get<QuizAudienceDto>(quizEndpoints.audience(id), options));

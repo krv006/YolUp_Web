@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format, subDays } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -64,7 +65,11 @@ export function StudentGroupWorkspace({
   const tabParam = params.get("tab") as TabId | null;
   const active: TabId = tabParam && TABS.includes(tabParam) ? tabParam : "chat";
 
-  const lessons = useLessons({ course: courseId, page_size: 100 }, active === "lessons");
+  const [historyFrom] = useState(() => format(subDays(new Date(), 30), "yyyy-MM-dd"));
+  const lessons = useLessons(
+    { course: courseId, starts_at__gte: historyFrom, ordering: "starts_at", page_size: 100 },
+    active === "lessons"
+  );
   const assignments = useAssignments(courseId, active === "assignments" || active === "chat");
   const quizzes = useQuizzes(courseId, active === "assignments" && Boolean(courseId));
   const pinned = chat.pinnedMessages.data?.[0]?.messageId ?? null;

@@ -13,6 +13,7 @@ import {
 } from "@/shared/ui/mobile-page";
 
 export interface MobileTestsProps {
+  groupNote: (quiz: QuizSummary) => string;
   drafts: QuizSummary[];
   published: QuizSummary[];
   loading: boolean;
@@ -126,7 +127,12 @@ function TestCard({ quiz, ...props }: MobileTestsProps & { quiz: QuizSummary }) 
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <strong className="truncate text-title text-ink">{quizDisplayTitle(quiz)}</strong>
                 <small className="truncate text-body-sm text-ink-secondary">
-                  {[quiz.subjectLabel, t("tests.questionCount", { count: quiz.questionCount }), limitsText(quiz)]
+                  {[
+                    quiz.subjectLabel,
+                    t("tests.questionCount", { count: quiz.questionCount }),
+                    limitsText(quiz),
+                    props.groupNote(quiz),
+                  ]
                     .filter(Boolean)
                     .join(" · ")}
                 </small>

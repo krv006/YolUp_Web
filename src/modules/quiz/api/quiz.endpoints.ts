@@ -2,6 +2,7 @@ export const quizEndpoints = Object.freeze({
   list: "/api/v1/quizzes/",
   detail: (id: string) => `/api/v1/quizzes/${id}/`,
   audience: (id: string) => `/api/v1/quizzes/${id}/audience/`,
+  assign: (id: string) => `/api/v1/quizzes/${id}/assign/`,
   export: (id: string) => `/api/v1/quizzes/${id}/export/`,
   publish: (id: string) => `/api/v1/quizzes/${id}/publish/`,
   suggestAnswers: (id: string) => `/api/v1/quizzes/${id}/suggest-answers/`,

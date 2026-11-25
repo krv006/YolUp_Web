@@ -106,6 +106,7 @@ export function mapQuizSummaryDto(dto: QuizSummaryDto): QuizSummary {
     description: dto.description || "",
     dueAt: dto.due_at,
     opensAt: dto.opens_at,
+    sourceQuizId: dto.source_quiz_id == null ? null : String(dto.source_quiz_id),
     createdAt: dto.created_at,
     questionCount: dto.question_count,
     studentIds: dto.student_ids?.length ? dto.student_ids.map(String) : null,

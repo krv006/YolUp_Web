@@ -433,7 +433,7 @@ export function BoardPanel({
     setRedoStack((current) => [...current, lastOwn]);
     const home = homeOf(undoTarget.id);
     if (source) source.eraseStroke(home.index, undoTarget.id);
-    else erase.mutate({ sheet: home.index, strokeIds: [undoTarget.id], reason: t("eraseReason") });
+    else erase.mutate({ sheet: home.index, strokeIds: [undoTarget.id], reason: "" });
   }
 
   function redo() {
@@ -519,7 +519,7 @@ export function BoardPanel({
       const index = homeOf(id).index;
       bySheet.set(index, [...(bySheet.get(index) ?? []), id]);
     }
-    bySheet.forEach((ids, index) => erase.mutate({ sheet: index, strokeIds: ids, reason: t("eraseReason") }));
+    bySheet.forEach((ids, index) => erase.mutate({ sheet: index, strokeIds: ids, reason: "" }));
   }
 
   function deleteSelected(strokeId: string) {

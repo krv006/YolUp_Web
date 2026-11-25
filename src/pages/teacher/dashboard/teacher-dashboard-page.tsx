@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
+import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/modules/auth";
@@ -56,7 +57,8 @@ export function TeacherDashboardPage() {
   const isCompact = useIsCompact();
   const openNewGroup = useNewConversationStore((state) => state.setOpen);
   const courses = useCourses();
-  const lessons = useLessons({ page_size: LESSON_PAGE_SIZE });
+  const [fromDay] = useState(() => format(new Date(), "yyyy-MM-dd"));
+  const lessons = useLessons({ starts_at__gte: fromDay, ordering: "starts_at", page_size: LESSON_PAGE_SIZE });
   const stats = useMyAnalytics();
   const dashboard = useTeacherDashboard();
   const activity = useDashboardActivity(10);

@@ -680,6 +680,7 @@ export interface QuizSummary {
   description: string;
   dueAt: string | null;
   opensAt: string | null;
+  sourceQuizId: string | null;
   createdAt: string;
   questionCount: number;
   studentIds: string[] | null;
