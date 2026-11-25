@@ -813,6 +813,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const [shareRequest, setShareRequest] = useState<ShareRequest | null>(null);
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [recordingDismissed, setRecordingDismissed] = useState(false);
+  const [recordingStarted, setRecordingStarted] = useState(false);
   const recordingChoice = useRecordingChoice(lesson.id, isTeacher);
   const isCompact = useIsCompact();
   const allowShare = useAllowShare(lesson.id);
@@ -855,7 +856,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const shareSourceText = useShareSourceText();
   const pendingRequestsCount = mic.requests.length + camera.requests.length;
 
-  const audioRecording = useTeacherAudioRecording(lesson.id, audioMediaTracks, isTeacher);
+  const audioRecording = useTeacherAudioRecording(lesson.id, audioMediaTracks, isTeacher && (isCompact || recordingStarted));
   const screenVideoOnlyStream = useMemo(() => {
     const videoTrack = screenStream?.getVideoTracks()[0];
     return videoTrack ? new MediaStream([videoTrack]) : null;
@@ -935,7 +936,10 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
           open={recordingPromptOpen}
           withScreen={!isCompact}
           onClose={() => setRecordingDismissed(true)}
-          onScreen={setScreenStream}
+          onScreen={(stream) => {
+            setScreenStream(stream);
+            setRecordingStarted(true);
+          }}
         />
       ) : null}
 
