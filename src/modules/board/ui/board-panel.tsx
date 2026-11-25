@@ -70,7 +70,6 @@ import {
 } from "./board-mobile";
 import { BoardPagesSheet } from "./board-pages-sheet";
 import { BoardPermissionDialog } from "./board-permission-dialog";
-import { EraseReasonDialog } from "./erase-reason-dialog";
 import { FormulaSolverDialog } from "./formula-solver-dialog";
 import { FormulaPalette } from "./formula-palette";
 import { InlineTextEditor } from "./inline-text-editor";
@@ -171,14 +170,10 @@ export function BoardPanel({
   const [eraserSize, setEraserSize] = useState<number>(ERASER_SIZES[1].value);
   const [eraserAt, setEraserAt] = useState<Point | null>(null);
   const [erasing, setErasing] = useState<string[] | null>(null);
-  const [eraseIds, setEraseIds] = useState<string[]>([]);
   const eraserLast = useRef<Point | null>(null);
   const [history, setHistory] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
   const [redoStack, setRedoStack] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
-  const [selected, setSelected] = useState<string | null>(null);
 
-  const [reasonOpen, setReasonOpen] = useState(false);
-  const [reason, setReason] = useState("");
   const [grantOpen, setGrantOpen] = useState(false);
   const [pagesOpen, setPagesOpen] = useState(false);
 
@@ -389,7 +384,7 @@ export function BoardPanel({
     });
     setRedoStack((current) => [...current, lastOwn]);
     if (source) source.eraseStroke(sheet, undoTarget.id);
-    else erase.mutate({ sheet, strokeIds: [undoTarget.id], reason: t("mobile.undoReason") });
+    else erase.mutate({ sheet, strokeIds: [undoTarget.id], reason: t("eraseReason") });
   }
 
   function redo() {
@@ -440,7 +435,7 @@ export function BoardPanel({
 
   const selectedStroke = selection.selected;
   useEffect(() => {
-    if (!selectedStroke || placement || reasonOpen) return undefined;
+    if (!selectedStroke || placement) return undefined;
     const handler = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (target?.closest("input, textarea, select, [contenteditable='true'], [role='dialog']")) return;
@@ -468,12 +463,14 @@ export function BoardPanel({
     return () => window.removeEventListener("keydown", handler);
   });
 
+  function eraseNow(strokeIds: string[]) {
+    erase.mutate({ sheet, strokeIds, reason: t("eraseReason") });
+  }
+
   function deleteSelected(strokeId: string) {
     selection.clear();
     if (source) return source.eraseStroke(sheet, strokeId);
-    setSelected(strokeId);
-    setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
-    setReasonOpen(true);
+    eraseNow([strokeId]);
   }
   const drag = selection.drag;
 
@@ -686,7 +683,7 @@ export function BoardPanel({
           return <BoardStroke key={stroke.id} stroke={drag.stroke} selected={false} onSelect={handleStrokeClick} />;
         }
         const node = (
-          <BoardStroke key={stroke.id} stroke={stroke} selected={selected === stroke.id} onSelect={handleStrokeClick} />
+          <BoardStroke key={stroke.id} stroke={stroke} selected={false} onSelect={handleStrokeClick} />
         );
         return drag?.kind === "move" && drag.id === stroke.id ? (
           <g key={stroke.id} transform={`translate(${drag.dx} ${drag.dy})`}>
@@ -696,18 +693,11 @@ export function BoardPanel({
           node
         );
       }),
-    [activeStrokes, selected, handleStrokeClick, drag, hiddenId, erasing]
+    [activeStrokes, handleStrokeClick, drag, hiddenId, erasing]
   );
   const pendingNodes = visiblePending.map((pending) => (
     <BoardStroke key={pending.id} stroke={pending} selected={false} onSelect={() => undefined} />
   ));
-
-  function closeReasonDialog() {
-    setReasonOpen(false);
-    setSelected(null);
-    setEraseIds([]);
-    setReason("");
-  }
 
   function eraserPoint(event: PointerEvent<SVGSVGElement>): Point {
     return clientToBoard(event.currentTarget, event.clientX, event.clientY, state?.width ?? 1200, canvasHeight);
@@ -728,9 +718,7 @@ export function BoardPanel({
       ids.forEach((id) => source.eraseStroke(sheet, id));
       return;
     }
-    setEraseIds(ids);
-    setReason(mobileLayout ? t("eraseDialog.reasons.wrongAnswer") : "");
-    setReasonOpen(true);
+    eraseNow(ids);
   }
 
   const eraserHandlers = {
@@ -760,18 +748,6 @@ export function BoardPanel({
       if (!eraserLast.current) setEraserAt(null);
     },
   };
-
-  async function removeSelected() {
-    const strokeIds = eraseIds.length ? eraseIds : selected ? [selected] : [];
-    if (!strokeIds.length || !reason.trim()) return;
-    try {
-      await erase.mutateAsync({ sheet, strokeIds, reason: reason.trim() });
-      closeReasonDialog();
-      toast.success(strokeIds.length > 1 ? t("eraseDialog.deletedCount", { count: strokeIds.length }) : t("eraseDialog.deleted"));
-    } catch (error) {
-      void error;
-    }
-  }
 
   async function solveFormula(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -1096,15 +1072,6 @@ export function BoardPanel({
 
   const dialogs = (
     <>
-        <EraseReasonDialog
-          open={reasonOpen}
-          pending={erase.isPending}
-          reason={reason}
-          onReasonChange={setReason}
-          onCancel={closeReasonDialog}
-          onConfirm={removeSelected}
-        />
-
         <BoardPagesSheet
           open={pagesOpen}
           onOpenChange={setPagesOpen}

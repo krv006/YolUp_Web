@@ -71,23 +71,6 @@
       "code": "Edit code"
     }
   },
-  "eraseDialog": {
-    "title": "Delete element",
-    "description": "You are deleting the selected element. Pick a reason — the student will see it.",
-    "reasonLabel": "Reason",
-    "cancel": "Cancel",
-    "confirm": "Delete",
-    "deleted": "Element deleted",
-    "reasons": {
-      "wrongAnswer": "Wrong answer",
-      "offTopic": "Off topic",
-      "cleanup": "Clearing the board",
-      "other": "Other"
-    },
-    "reasonPlaceholder": "Describe the reason",
-    "deletedCount_one": "{{count}} element deleted",
-    "deletedCount_other": "{{count}} elements deleted"
-  },
   "grantDialog": {
     "title": "Board drawing permission",
     "description": "Choose which student to grant permission to.",
@@ -218,7 +201,6 @@
     "title": "Board · {{page}} / {{total}}",
     "undo": "Undo",
     "redo": "Redo",
-    "undoReason": "Step undone",
     "modes": {
       "teacher": "Only you",
       "selected": "Selected",
@@ -252,5 +234,6 @@
   "guides": {
     "show": "Show guide grid",
     "hide": "Hide guide grid"
-  }
+  },
+  "eraseReason": "Deleted"
 }
