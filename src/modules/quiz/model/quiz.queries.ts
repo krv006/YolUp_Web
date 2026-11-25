@@ -12,6 +12,7 @@ export const quizKeys = Object.freeze({
   all: ["quizzes"] as const,
   lists: ["quizzes", "list"] as const,
   list: (courseId: string | null) => ["quizzes", "list", courseId] as const,
+  assignable: ["quizzes", "assignable"] as const,
   detail: (id: string) => ["quizzes", "detail", id] as const,
   attempts: (id: string) => ["quizzes", "attempts", id] as const,
   draft: (id: string) => ["quizzes", "draft", id] as const,
@@ -22,6 +23,14 @@ export function useQuizzes(courseId: string | null, enabled = true) {
   return useQuery({
     queryKey: quizKeys.list(courseId),
     queryFn: ({ signal }) => quizApi.getAll(courseId, { signal }),
+    enabled,
+  });
+}
+
+export function useAssignableQuizzes(enabled = true) {
+  return useQuery({
+    queryKey: quizKeys.assignable,
+    queryFn: ({ signal }) => quizApi.getAssignable({ signal }),
     enabled,
   });
 }

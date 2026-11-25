@@ -99,6 +99,7 @@ export {
   useExportQuiz,
   usePublishQuiz,
   useQuizzes,
+  useAssignableQuizzes,
   useSubmitQuizAttempt,
 } from "./model/quiz.queries";
 export { QuizAttemptDialog } from "./ui/quiz-attempt-dialog";
