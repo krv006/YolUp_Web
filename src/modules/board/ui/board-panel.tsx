@@ -48,6 +48,7 @@ import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/ri
 import {
   useAddStroke,
   useBoard,
+  useAddSheet,
   useEraseStrokes,
   useSetBoardPermissions,
   useSolveFormula,
@@ -57,6 +58,7 @@ import { useBoardDrawing } from "../model/use-board-drawing";
 import { useBoardRealtime } from "../model/use-board-realtime";
 import { useBoardSelection } from "../model/use-board-selection";
 import { BoardStroke } from "./board-stroke";
+import { buildLenta, pageAt, shiftChanges, shiftStroke, strokeTop, type LentaPage } from "../lib/board-lenta";
 import { BoardToolbar, type BoardTool } from "./board-toolbar";
 import { CodeEditor } from "./code-editor";
 import {
@@ -143,6 +145,7 @@ export function BoardPanel({
   const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
   const addStroke = useAddStroke(lessonId);
   const erase = useEraseStrokes(lessonId);
+  const addSheet = useAddSheet(lessonId);
   const updateMutation = useUpdateStroke(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
   const solve = useSolveFormula(lessonId);
@@ -185,9 +188,7 @@ export function BoardPanel({
 
   const state = source ? source.state : board.data;
   const orderedSheets = useMemo(() => [...(state?.sheets ?? [])].sort((a, b) => a.index - b.index), [state?.sheets]);
-  const active = orderedSheets[orderedSheets.length - 1];
-  const sheet = active?.index ?? 0;
-  const earlierSheets = orderedSheets.slice(0, -1);
+  const sheet = orderedSheets[orderedSheets.length - 1]?.index ?? 0;
   const canDraw = Boolean(state?.canDraw);
 
   const boardHeight = state?.height ?? 900;
@@ -301,34 +302,69 @@ export function BoardPanel({
   }, [canvasWrap]);
 
   const sheetHeight = useCallback(
-    (strokes: readonly StrokeDto[]) => {
+    (strokes: readonly StrokeShapeDto[]) => {
       const bottom = strokes.reduce((max, stroke) => {
-        const span = strokeSpan(stroke);
+        const span = strokeSpan(stroke as StrokeDto);
         return span ? Math.max(max, span.bottom) : max;
       }, 0);
       return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN));
     },
     [boardHeight]
   );
-  const [workingLayer, setWorkingLayer] = useState<HTMLDivElement | null>(null);
+  const lenta = useMemo(() => buildLenta(orderedSheets, sheetHeight), [orderedSheets, sheetHeight]);
+  const strokeHome = useMemo(() => {
+    const homes = new Map<string, LentaPage>();
+    for (const item of orderedSheets) {
+      const page = lenta.pages.find((entry) => entry.index === item.index);
+      if (page) for (const stroke of item.strokes) homes.set(stroke.id, page);
+    }
+    return homes;
+  }, [orderedSheets, lenta]);
+  const active = useMemo(
+    () => ({
+      index: sheet,
+      title: "",
+      strokes: orderedSheets.flatMap((item) => {
+        const offset = lenta.pages.find((entry) => entry.index === item.index)?.offset ?? 0;
+        return offset ? item.strokes.map((stroke) => shiftStroke(stroke, offset)) : item.strokes;
+      }),
+    }),
+    [orderedSheets, lenta, sheet]
+  );
+  const lastPage = lenta.pages[lenta.pages.length - 1] ?? { index: sheet, offset: 0, height: boardHeight };
+
+  const canAddPage = Boolean(source) || Boolean(state?.isTeacher && canDraw);
+
+  function addPage() {
+    if (source) source.addSheet();
+    else addSheet.mutate();
+  }
+
+  function homeOf(strokeId: string): LentaPage {
+    return strokeHome.get(strokeId) ?? lastPage;
+  }
+
+  function place<T extends StrokeShapeDto>(shape: T): { sheet: number; shape: T } {
+    const page = pageAt(lenta.pages, strokeTop(shape)) ?? lastPage;
+    return { sheet: page.index, shape: shiftStroke(shape, -page.offset) };
+  }
+
   const lentaScrolled = useRef(false);
-  const hasEarlier = earlierSheets.length > 0;
+  const lastOffset = lastPage.offset;
   useEffect(() => {
-    if (lentaScrolled.current || !hasEarlier || !canvasWrap || !workingLayer || !viewWidth) return;
+    if (lentaScrolled.current || !lastOffset || !canvasWrap || !viewWidth) return;
     const frame = requestAnimationFrame(() => {
       lentaScrolled.current = true;
-      canvasWrap.scrollTop = workingLayer.offsetTop;
+      const svg = svgRef.current;
+      if (svg) canvasWrap.scrollTop = (lastOffset * svg.getBoundingClientRect().width) / boardWidth;
     });
     return () => cancelAnimationFrame(frame);
-  }, [hasEarlier, canvasWrap, workingLayer, viewWidth]);
+  });
 
-  const canvasHeight = useMemo(() => {
-    const bottom = (active?.strokes ?? []).reduce((max, stroke) => {
-      const span = strokeSpan(stroke);
-      return span ? Math.max(max, span.bottom) : max;
-    }, 0);
-    return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN), Math.floor(boardWidth * viewRatio));
-  }, [active?.strokes, boardHeight, boardWidth, viewRatio]);
+  const canvasHeight = useMemo(
+    () => Math.max(lenta.total, boardHeight, Math.floor(boardWidth * viewRatio)),
+    [lenta.total, boardHeight, boardWidth, viewRatio]
+  );
 
   function flowPointFor(lines: number): Point {
     return nextTextPoint(active?.strokes ?? [], {
@@ -339,14 +375,17 @@ export function BoardPanel({
     });
   }
 
-  function sendStroke(stroke: StrokeShapeDto, target = sheet) {
-    if (source) return source.addStroke(target, stroke);
+  function sendStroke(stroke: StrokeShapeDto) {
+    const target = place(stroke);
+    if (source) return source.addStroke(target.sheet, target.shape);
     pendingSeq.current += 1;
     const id = `pending-${pendingSeq.current}`;
     const drop = () => setPendingStrokes((current) => current.filter((item) => item.stroke.id !== id));
-    setPendingStrokes((current) => [...current, { sheet: target, stroke: { ...stroke, id } as StrokeDto }]);
+    setPendingStrokes((current) => [...current, { sheet, stroke: { ...stroke, id } as StrokeDto }]);
     globalThis.setTimeout(drop, PENDING_STROKE_MS);
-    if (!realtime.sendStroke(target, stroke)) addStroke.mutate({ sheet: target, stroke }, { onError: drop });
+    if (!realtime.sendStroke(target.sheet, target.shape)) {
+      addStroke.mutate({ sheet: target.sheet, stroke: target.shape }, { onError: drop });
+    }
   }
 
   function commitStroke(stroke: StrokeShapeDto) {
@@ -378,8 +417,9 @@ export function BoardPanel({
       return current.filter((_, position) => position !== index);
     });
     setRedoStack((current) => [...current, lastOwn]);
-    if (source) source.eraseStroke(sheet, undoTarget.id);
-    else erase.mutate({ sheet, strokeIds: [undoTarget.id], reason: t("eraseReason") });
+    const home = homeOf(undoTarget.id);
+    if (source) source.eraseStroke(home.index, undoTarget.id);
+    else erase.mutate({ sheet: home.index, strokeIds: [undoTarget.id], reason: t("eraseReason") });
   }
 
   function redo() {
@@ -387,7 +427,7 @@ export function BoardPanel({
     if (!entry) return;
     setRedoStack((current) => current.slice(0, -1));
     setHistory((current) => [...current, entry]);
-    sendStroke(entry.shape, entry.sheet);
+    sendStroke(entry.shape);
   }
 
   const { svgRef, draft, handlePointerDown, handlePointerMove, handlePointerUp, cancel: cancelDrawing } = useBoardDrawing({
@@ -409,8 +449,10 @@ export function BoardPanel({
   });
 
   function updateStroke(strokeId: string, update: StrokeUpdate) {
-    if (source) return source.updateStroke(sheet, strokeId, update);
-    updateMutation.mutate({ sheet, strokeId, update });
+    const home = homeOf(strokeId);
+    const local: StrokeUpdate = update.changes ? { ...update, changes: shiftChanges(update.changes, -home.offset) } : update;
+    if (source) return source.updateStroke(home.index, strokeId, local);
+    updateMutation.mutate({ sheet: home.index, strokeId, update: local });
   }
 
   const selection = useBoardSelection({
@@ -458,12 +500,17 @@ export function BoardPanel({
   });
 
   function eraseNow(strokeIds: string[]) {
-    erase.mutate({ sheet, strokeIds, reason: t("eraseReason") });
+    const bySheet = new Map<number, string[]>();
+    for (const id of strokeIds) {
+      const index = homeOf(id).index;
+      bySheet.set(index, [...(bySheet.get(index) ?? []), id]);
+    }
+    bySheet.forEach((ids, index) => erase.mutate({ sheet: index, strokeIds: ids, reason: t("eraseReason") }));
   }
 
   function deleteSelected(strokeId: string) {
     selection.clear();
-    if (source) return source.eraseStroke(sheet, strokeId);
+    if (source) return source.eraseStroke(homeOf(strokeId).index, strokeId);
     eraseNow([strokeId]);
   }
   const drag = selection.drag;
@@ -645,13 +692,14 @@ export function BoardPanel({
       };
     }
 
+    const target = place(stroke);
     if (source) {
-      source.addStroke(sheet, stroke);
+      source.addStroke(target.sheet, target.shape);
       closePlacement();
       return;
     }
     addStroke.mutate(
-      { sheet, stroke },
+      { sheet: target.sheet, stroke: target.shape },
       {
         onSuccess: closePlacement,
         onError: (error) => toast.error(error.message),
@@ -709,7 +757,7 @@ export function BoardPanel({
     eraserLast.current = null;
     if (!ids.length) return;
     if (source) {
-      ids.forEach((id) => source.eraseStroke(sheet, id));
+      ids.forEach((id) => source.eraseStroke(homeOf(id).index, id));
       return;
     }
     eraseNow(ids);
@@ -763,12 +811,13 @@ export function BoardPanel({
       setFormula("");
       setSolution(null);
     };
+    const target = place(stroke);
     if (source) {
-      source.addStroke(sheet, stroke);
+      source.addStroke(target.sheet, target.shape);
       done();
       return;
     }
-    addStroke.mutate({ sheet, stroke }, { onSuccess: done });
+    addStroke.mutate({ sheet: target.sheet, stroke: target.shape }, { onSuccess: done });
   }
 
   function placeResultOnly() {
@@ -787,12 +836,13 @@ export function BoardPanel({
       setFormula("");
       setSolution(null);
     };
+    const target = place(stroke);
     if (source) {
-      source.addStroke(sheet, stroke);
+      source.addStroke(target.sheet, target.shape);
       done();
       return;
     }
-    addStroke.mutate({ sheet, stroke }, { onSuccess: done });
+    addStroke.mutate({ sheet: target.sheet, stroke: target.shape }, { onSuccess: done });
   }
 
   if (!source && board.isLoading)
@@ -872,29 +922,7 @@ export function BoardPanel({
   const canvas = (
     <div className="relative h-full min-h-0">
       <div ref={setCanvasWrap} className="board-canvas-wrap h-full">
-        {earlierSheets.length ? (
-          <div className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
-            {earlierSheets.map((item) => {
-              const height = sheetHeight(item.strokes);
-              return (
-                <div key={item.index} className="border-b-2 border-dashed border-line">
-                  <svg
-                    className="block w-full"
-                    viewBox={`0 0 ${state.width} ${height}`}
-                    preserveAspectRatio="xMidYMin meet"
-                    style={{ aspectRatio: `${state.width} / ${height}` }}
-                    aria-label={t("sheet.earlier", { page: item.index + 1 })}
-                  >
-                    {item.strokes.map((stroke) => (
-                      <BoardStroke key={stroke.id} stroke={stroke} selected={false} onSelect={() => undefined} />
-                    ))}
-                  </svg>
-                </div>
-              );
-            })}
-          </div>
-        ) : null}
-        <div ref={setWorkingLayer} className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
+        <div className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
           <svg
             ref={svgRef}
             className={`board-canvas board-canvas--${tool}`}
@@ -904,6 +932,22 @@ export function BoardPanel({
             {...pointerHandlers}
           >
             {guides ? <BoardGuides width={state.width} height={canvasHeight} /> : null}
+            {lenta.pages.slice(1).map((page, position) => (
+              <g key={page.index} className="pointer-events-none" aria-hidden="true">
+                <line
+                  x1={0}
+                  x2={state.width}
+                  y1={page.offset}
+                  y2={page.offset}
+                  stroke="var(--color-line-strong)"
+                  strokeWidth={2}
+                  strokeDasharray="10 8"
+                />
+                <text x={state.width - 16} y={page.offset + 26} textAnchor="end" fontSize={mobileLayout ? Math.round(state.width / 30) : 18} fontWeight={600} fill="var(--color-ink-tertiary)">
+                  {t("sheet.page", { page: position + 2 })}
+                </text>
+              </g>
+            ))}
             {strokeNodes}
             {pendingNodes}
             {selection.box && selection.selected ? (
@@ -926,6 +970,19 @@ export function BoardPanel({
               <circle className="board-eraser" cx={eraserAt[0]} cy={eraserAt[1]} r={eraserSize} />
             ) : null}
           </svg>
+          {canAddPage ? (
+            <div className={`flex justify-center pt-4 ${mobileLayout ? "pb-24" : "pb-4"}`}>
+              <button
+                type="button"
+                className="flex h-10 items-center gap-1.5 rounded-full border border-dashed border-brand bg-brand-subtle px-5 text-button text-brand transition-colors hover:bg-tint disabled:opacity-60"
+                disabled={!source && addSheet.isPending}
+                onClick={addPage}
+              >
+                <Icon name="add" size={18} />
+                {t("sheet.addPage")}
+              </button>
+            </div>
+          ) : null}
 
           {!mobileLayout ? selectionToolbar(false) : null}
 
