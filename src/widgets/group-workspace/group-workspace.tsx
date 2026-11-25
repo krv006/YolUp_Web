@@ -403,6 +403,7 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         startsOn: draft.startsOn,
         endsOn: draft.endsOn,
         dates: draft.dates,
+        quizId: draft.quizId || undefined,
       })
       .then(() => {
         setDialog(false);

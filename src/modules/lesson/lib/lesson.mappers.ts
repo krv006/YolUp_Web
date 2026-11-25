@@ -1,3 +1,4 @@
+import { withLocalOffset } from "./lesson-schedule";
 import {
   normalizeMediaUrl,
   normalizePagination,
@@ -136,9 +137,7 @@ export function mapLessonRatingRequest(input: LessonRatingInput): LessonRateRequ
 }
 
 export function mapLessonRequest(form: LessonFormInput): LessonRequestDto {
-  const startsAt =
-    form.startsAt ??
-    `${form.date || new Date().toISOString().slice(0, 10)}T${form.time || "00:00"}:00`;
+  const startsAt = form.startsAt ?? withLocalOffset(form.date || new Date().toISOString().slice(0, 10), form.time || "00:00");
   return {
     course: form.courseId ?? null,
     title: form.topic ?? form.title ?? "",

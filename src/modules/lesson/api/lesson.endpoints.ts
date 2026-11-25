@@ -11,7 +11,6 @@ export const lessonEndpoints = Object.freeze({
   finalizeRecordingAudio: (id: string) => `/api/v1/lessons/${id}/recording/audio/finalize/`,
   recordingVideo: (id: string) => `/api/v1/lessons/${id}/recording/video/`,
   finalizeRecordingVideo: (id: string) => `/api/v1/lessons/${id}/recording/video/finalize/`,
-  schedule: (courseId: string) => `/api/v1/courses/${courseId}/schedule/`,
   waiting: (id: string) => `/api/v1/lessons/${id}/waiting/`,
   shareRecording: (id: string) => `/api/v1/lessons/${id}/recording/share/`,
   boardPdf: (id: string) => `/api/v1/lessons/${id}/board/pdf/`,

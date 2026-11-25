@@ -196,11 +196,12 @@ export function SchedulePage() {
         courseId: draft.courseId,
         title: draft.topic,
         time: draft.time,
-        durationMinutes: Number(draft.duration) || 90,
+        durationMinutes: Number(draft.duration) || 45,
         weekdays: draft.weekdays,
         startsOn: draft.startsOn,
         endsOn: draft.endsOn,
         dates: draft.dates,
+        quizId: draft.quizId || undefined,
       })
       .then(closeLessonForm);
   }
