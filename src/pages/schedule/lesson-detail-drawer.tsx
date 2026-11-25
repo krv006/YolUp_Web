@@ -57,6 +57,7 @@ export function LessonDetailDrawer({
   const today = starts.toDateString() === now.toDateString();
   const live = lesson.status === "live";
   const finished = lesson.status === "finished";
+  const closed = finished || lesson.status === "cancelled";
 
   const timeValue = `${today ? `${t("schedule.today")}, ` : `${starts.getDate()}-${months[starts.getMonth()]}, `}${clock(starts)} – ${clock(ends)} · ${t("list.durationMinutes", { count: lesson.durationMinutes || 45 })}`;
   const statusLabel = live
@@ -84,7 +85,6 @@ export function LessonDetailDrawer({
 
   if (student) {
     const homework = lesson.note || lesson.assignment?.title || "";
-    const closed = finished || lesson.status === "cancelled";
     const repeatValue = lesson.recurrence
       ? `${lesson.recurrence.weekdays
           .map((day) => weekdaysShort[day] ?? "")
@@ -230,7 +230,7 @@ export function LessonDetailDrawer({
         description={t("schedule.detailTitle")}
         footerClassName="px-4 pt-6 pb-7"
         footer={
-          <div className="grid w-full grid-cols-2 gap-3">
+          <div className={`grid w-full gap-3 ${closed ? "grid-cols-1" : "grid-cols-2"}`}>
             <button
               type="button"
               className={`${dialogButton.secondary} h-13 border-line-strong text-title font-semibold`}
@@ -238,13 +238,15 @@ export function LessonDetailDrawer({
             >
               {t("schedule.openChat")}
             </button>
-            <button
-              type="button"
-              className={`${dialogButton.primary} h-13 text-title font-semibold`}
-              onClick={() => onJoin(lesson)}
-            >
-              {t("schedule.join")}
-            </button>
+            {closed ? null : (
+              <button
+                type="button"
+                className={`${dialogButton.primary} h-13 text-title font-semibold`}
+                onClick={() => onJoin(lesson)}
+              >
+                {t("schedule.join")}
+              </button>
+            )}
           </div>
         }
       >
@@ -408,7 +410,7 @@ export function LessonDetailDrawer({
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className={`grid gap-3 ${closed ? "grid-cols-1" : "grid-cols-2"}`}>
               <button
                 type="button"
                 className="flex h-12 items-center justify-center rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
@@ -416,13 +418,15 @@ export function LessonDetailDrawer({
               >
                 {t("schedule.openChat")}
               </button>
-              <button
-                type="button"
-                className="flex h-12 items-center justify-center rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-                onClick={() => onJoin(lesson)}
-              >
-                {t("schedule.join")}
-              </button>
+              {closed ? null : (
+                <button
+                  type="button"
+                  className="flex h-12 items-center justify-center rounded-full bg-brand text-button text-ink-inverse transition-colors hover:bg-brand-strong"
+                  onClick={() => onJoin(lesson)}
+                >
+                  {t("schedule.join")}
+                </button>
+              )}
             </div>
           </div>
         </DialogPrimitive.Content>

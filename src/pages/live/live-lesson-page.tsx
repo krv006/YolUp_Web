@@ -302,7 +302,7 @@ export function LiveLessonPage() {
     );
   }
 
-  if (token.isError || !token.data) {
+  if (token.isError || !token.data || (lesson.data.status === "finished" && !choices)) {
     const finished = lesson.data.status === "finished";
     return (
       <main className="live-page">
