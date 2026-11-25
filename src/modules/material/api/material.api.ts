@@ -26,6 +26,8 @@ function mapMaterial(dto: MaterialDto): Material {
     uploadedBy: dto.uploaded_by ? { id: String(dto.uploaded_by.id), name: dto.uploaded_by.name ?? "" } : null,
     createdAt: dto.created_at ?? "",
     lessonId: dto.lesson_id === null || dto.lesson_id === undefined ? null : String(dto.lesson_id),
+    source: dto.source === "chat" ? "chat" : "upload",
+    url: dto.url ?? null,
   };
 }
 
@@ -98,7 +100,8 @@ export const materialApi = {
   boardPdf(lessonId: string, options?: RequestOptions) {
     return apiClient.get<Blob>(materialEndpoints.boardPdf(lessonId), { ...options, responseType: "blob" });
   },
-  download(id: string, options?: RequestOptions) {
-    return apiClient.get<Blob>(materialEndpoints.file(id), { ...options, responseType: "blob" });
+  download(material: Pick<Material, "id" | "source" | "url">, options?: RequestOptions) {
+    const path = material.source === "chat" && material.url ? material.url : materialEndpoints.file(material.id);
+    return apiClient.get<Blob>(path, { ...options, responseType: "blob" });
   },
 };

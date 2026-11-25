@@ -259,6 +259,7 @@
     "boardHint": "Darsda doskaga yozilganlar",
     "searchHint": "Boshqa so'z bilan qidirib ko'ring",
     "videoCount": "{{count}} ta video",
-    "boardCount": "{{count}} ta doska"
+    "boardCount": "{{count}} ta doska",
+    "fromChat": "Chatdan"
   }
 }

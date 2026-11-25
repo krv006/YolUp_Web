@@ -652,6 +652,8 @@ export interface Material {
   uploadedBy: { id: string; name: string } | null;
   createdAt: string;
   lessonId: string | null;
+  source: "upload" | "chat";
+  url: string | null;
 }
 
 export interface PracticeQuestion {
