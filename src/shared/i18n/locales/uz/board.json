@@ -14,7 +14,8 @@
   },
   "sheet": {
     "page": "{{page}}-sahifa",
-    "addPage": "Sahifa qo'shish"
+    "addPage": "Sahifa qo'shish",
+    "pageAdded": "{{page}}-sahifa qo'shildi"
   },
   "permission": {
     "grantButton": "Ruxsat",

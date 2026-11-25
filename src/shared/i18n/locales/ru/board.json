@@ -14,7 +14,8 @@
   },
   "sheet": {
     "page": "Страница {{page}}",
-    "addPage": "Добавить страницу"
+    "addPage": "Добавить страницу",
+    "pageAdded": "Добавлена страница {{page}}"
   },
   "permission": {
     "grantButton": "Разрешение",

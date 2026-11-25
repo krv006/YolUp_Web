@@ -112,6 +112,7 @@ interface InlineText {
   obstacles?: BoardObstacle[];
 }
 
+const PAGE_REVEAL_MARGIN = 56;
 const PENDING_STROKE_MS = 8000;
 
 interface PendingStroke {
@@ -344,15 +345,30 @@ export function BoardPanel({
     else addSheet.mutate();
   }
 
+  const knownPages = useRef<number | null>(null);
+  const boardReady = Boolean(state);
   useEffect(() => {
+    if (!boardReady) return;
+    const known = knownPages.current;
+    knownPages.current = pageCount;
+    if (known === null || pageCount <= known) return;
+    toast.success(t("sheet.pageAdded", { page: pageCount }));
     if (!revealNewPage.current || !canvasWrap) return;
     revealNewPage.current = false;
     const frame = requestAnimationFrame(() => {
       const svg = svgRef.current;
-      if (svg) canvasWrap.scrollTop = (lastOffset * svg.getBoundingClientRect().width) / boardWidth;
+      if (!svg) return;
+      const box = svg.getBoundingClientRect();
+      const target = box.top + (lastOffset * box.width) / boardWidth;
+      let scroller: HTMLElement | null = canvasWrap;
+      while (scroller && scroller.scrollHeight <= scroller.clientHeight) scroller = scroller.parentElement;
+      const container = scroller ?? document.scrollingElement;
+      if (!container) return;
+      const top = scroller ? scroller.getBoundingClientRect().top : 0;
+      container.scrollBy({ top: target - top - PAGE_REVEAL_MARGIN, behavior: "smooth" });
     });
     return () => cancelAnimationFrame(frame);
-  }, [pageCount]);
+  }, [pageCount, boardReady]);
 
   function homeOf(strokeId: string): LentaPage {
     return strokeHome.get(strokeId) ?? lastPage;
@@ -946,22 +962,35 @@ export function BoardPanel({
             {...pointerHandlers}
           >
             {guides ? <BoardGuides width={state.width} height={canvasHeight} /> : null}
-            {lenta.pages.slice(1).map((page, position) => (
-              <g key={page.index} className="pointer-events-none" aria-hidden="true">
-                <line
-                  x1={0}
-                  x2={state.width}
-                  y1={page.offset}
-                  y2={page.offset}
-                  stroke="var(--color-line-strong)"
-                  strokeWidth={2}
-                  strokeDasharray="10 8"
-                />
-                <text x={state.width - 16} y={page.offset + 26} textAnchor="end" fontSize={mobileLayout ? Math.round(state.width / 30) : 18} fontWeight={600} fill="var(--color-ink-tertiary)">
-                  {t("sheet.page", { page: position + 2 })}
-                </text>
-              </g>
-            ))}
+            {lenta.pages.slice(1).map((page, position) => {
+              const fontSize = mobileLayout ? Math.round(state.width / 30) : 18;
+              const pillWidth = fontSize * 6;
+              const pillHeight = fontSize * 1.8;
+              return (
+                <g key={page.index} className="pointer-events-none" aria-hidden="true">
+                  <line x1={0} x2={state.width} y1={page.offset} y2={page.offset} stroke="var(--color-brand)" strokeWidth={3} strokeOpacity={0.55} />
+                  <rect
+                    x={(state.width - pillWidth) / 2}
+                    y={page.offset - pillHeight / 2}
+                    width={pillWidth}
+                    height={pillHeight}
+                    rx={pillHeight / 2}
+                    fill="var(--color-brand)"
+                  />
+                  <text
+                    x={state.width / 2}
+                    y={page.offset}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    fontSize={fontSize}
+                    fontWeight={600}
+                    fill="var(--color-ink-inverse)"
+                  >
+                    {t("sheet.page", { page: position + 2 })}
+                  </text>
+                </g>
+              );
+            })}
             {strokeNodes}
             {pendingNodes}
             {selection.box && selection.selected ? (

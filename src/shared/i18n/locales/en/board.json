@@ -14,7 +14,8 @@
   },
   "sheet": {
     "page": "Page {{page}}",
-    "addPage": "Add page"
+    "addPage": "Add page",
+    "pageAdded": "Page {{page}} added"
   },
   "permission": {
     "grantButton": "Grant",
