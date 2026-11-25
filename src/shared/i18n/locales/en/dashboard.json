@@ -146,7 +146,7 @@
       },
       "workspace": {
         "title": "Workspace — your tools",
-        "text": "Tests, homework, mock exams and the AI assistant live here. Open it any time from the bottom menu."
+        "text": "Tests, homework, materials and the AI assistant live here. Open it any time from the bottom menu."
       }
     },
     "serverError": "Can’t reach the server"
