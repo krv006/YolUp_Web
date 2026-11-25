@@ -45,15 +45,6 @@ export interface AssignmentFormDialogProps {
 
 const GRADINGS: GradingScale[] = ["five", "hundred", "none"];
 
-const FORMAT_BUTTONS = [
-  { id: "bold", icon: "format-bold" },
-  { id: "italic", icon: "format-italic" },
-  { id: "underline", icon: "format-underlined" },
-  { id: "list", icon: "format-list-bulleted" },
-  { id: "link", icon: "link" },
-  { id: "formula", icon: "functions" },
-];
-
 const BANK_VALUE = "__bank__";
 
 function today(): string {
@@ -227,13 +218,6 @@ export function AssignmentFormDialog({
 
               <MobileFieldLabel label={<RequiredLabel>{t("form.bodyLabel")}</RequiredLabel>}>
                 <span className="flex flex-col overflow-hidden rounded-lg bg-surface">
-                  <span className="flex h-[47px] items-center border-b border-line px-1.5">
-                    {FORMAT_BUTTONS.map((button) => (
-                      <span key={button.id} className="grid size-9 place-items-center text-ink-secondary">
-                        <Icon name={button.icon} size={18} />
-                      </span>
-                    ))}
-                  </span>
                   <textarea
                     rows={3}
                     className="h-24 w-full resize-none bg-transparent px-4 py-3 text-body text-ink outline-none placeholder:text-ink-secondary"
@@ -426,16 +410,6 @@ export function AssignmentFormDialog({
           <label className="flex flex-col gap-2">
             <span className="text-body-xs text-ink-secondary">{t("form.bodyLabel")}</span>
             <span className="flex flex-col overflow-hidden rounded-md bg-subtle">
-              <span className="flex items-center gap-1 px-2 py-1.5">
-                {FORMAT_BUTTONS.map((button) => (
-                  <span
-                    key={button.id}
-                    className="grid size-8 place-items-center rounded-sm text-icon-tertiary"
-                  >
-                    <Icon name={button.icon} size={16} />
-                  </span>
-                ))}
-              </span>
               <textarea
                 className="min-h-25 w-full resize-none bg-transparent px-4 py-3 text-body text-ink outline-none placeholder:text-ink-tertiary"
                 value={body}
