@@ -13,7 +13,8 @@
     "slowSyncNote": "Sinxronlash sekin rejimda — chizganlaringiz saqlanadi va ulanish tiklanganda yuboriladi"
   },
   "sheet": {
-    "earlier": "{{page}}-sahifa (oldingi)"
+    "page": "{{page}}-sahifa",
+    "addPage": "Sahifa qo'shish"
   },
   "permission": {
     "grantButton": "Ruxsat",

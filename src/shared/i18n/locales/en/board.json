@@ -13,7 +13,8 @@
     "slowSyncNote": "Syncing in slow mode — your drawings are saved and will be sent once the connection is back"
   },
   "sheet": {
-    "earlier": "Page {{page}} (earlier)"
+    "page": "Page {{page}}",
+    "addPage": "Add page"
   },
   "permission": {
     "grantButton": "Grant",
