@@ -1,3 +1,4 @@
+import { endOfMonth, endOfWeek, format, startOfMonth, startOfWeek } from "date-fns";
 import type { ScheduleQuizItem } from "@/modules/lesson";
 import type { Lesson } from "@/shared/types";
 
@@ -13,13 +14,10 @@ export function quizEventId(lesson: Pick<Lesson, "id">): string {
 }
 
 export function scheduleRange(anchor: Date): { from: string; to: string } {
-  const day = (date: Date) =>
-    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
-  const last = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 0);
-  first.setDate(first.getDate() - ((first.getDay() + 6) % 7));
-  last.setDate(last.getDate() + ((7 - last.getDay()) % 7));
-  return { from: day(first), to: day(last) };
+  return {
+    from: format(startOfWeek(startOfMonth(anchor), { weekStartsOn: 1 }), "yyyy-MM-dd"),
+    to: format(endOfWeek(endOfMonth(anchor), { weekStartsOn: 1 }), "yyyy-MM-dd"),
+  };
 }
 
 export function quizEvents(

@@ -23,12 +23,13 @@ const RECORDING_POLL_MS = 15_000;
 const MERGING_POLL_MS = 2_000;
 const CONVERTING_POLL_MS = 30_000;
 
-export function useLessons(params: QueryParams = {}, enabled = true) {
+export function useLessons(params: QueryParams = {}, enabled = true, keepPrevious = false) {
   return useQuery({
     queryKey: lessonKeys.list(params),
     queryFn: ({ signal }) => lessonApi.getAll({ signal, query: params }),
     select: (page) => page.items,
     enabled,
+    placeholderData: keepPrevious ? keepPreviousData : undefined,
   });
 }
 

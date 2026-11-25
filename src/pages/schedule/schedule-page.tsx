@@ -55,7 +55,9 @@ export function SchedulePage() {
   const student = useIsStudent();
   const routes = useRoleRoutes();
   const me = useCurrentUser();
-  const lessons = useLessons({ page_size: 200 });
+  const [anchor, setAnchor] = useState(() => new Date());
+  const range = useMemo(() => scheduleRange(anchor), [anchor]);
+  const lessons = useLessons({ starts_at__gte: range.from, starts_at__lte: range.to, ordering: "starts_at", page_size: 200 }, true, true);
   const courses = useCourses();
   const { t: tq } = useTranslation("quiz");
   const conversations = useConversations(student ? "student" : "teacher");
@@ -67,7 +69,6 @@ export function SchedulePage() {
   const reminder = useLessonReminder();
 
   const [view, setView] = useState<View>("week");
-  const [anchor, setAnchor] = useState(() => new Date());
   const [now] = useState(() => new Date());
   const [detail, setDetail] = useState<Lesson | null>(null);
   const [cancelTarget, setCancelTarget] = useState<Lesson | null>(null);
@@ -79,7 +80,6 @@ export function SchedulePage() {
   const isCompact = useIsCompact();
   const [mobileView, setMobileView] = useState<MobileScheduleView>("day");
 
-  const range = useMemo(() => scheduleRange(anchor), [anchor]);
   const quizzes = useScheduleQuizzes(range);
 
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
