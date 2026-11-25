@@ -45,6 +45,13 @@ describe("account switch options", () => {
     });
   });
 
+  it("lets a user without a phone switch when the backend allows it (confirmed email)", () => {
+    expect(switchOptions(user({ phone: null, roleSwitchBlocked: null, availableRoles: [ROLES.PARENT] }))).toEqual({
+      blocked: null,
+      roles: [ROLES.PARENT],
+    });
+  });
+
   it("reads the switch fields from /auth/me", () => {
     const me = mapUserDto({
       id: "u1",
