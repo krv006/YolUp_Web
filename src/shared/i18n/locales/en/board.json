@@ -232,6 +232,5 @@
   "guides": {
     "show": "Show guide grid",
     "hide": "Hide guide grid"
-  },
-  "eraseReason": "Deleted"
+  }
 }
