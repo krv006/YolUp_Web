@@ -272,6 +272,7 @@ export function TestsPage() {
           }
           onPublish={(quiz) => publish.mutate(quiz.id)}
           onResults={(quiz) => navigate(ROUTES.teacher.testResults(quiz.id))}
+          onView={(quiz) => navigate(ROUTES.teacher.testView(quiz.id))}
           onAssign={setAssignTarget}
           onAttempts={setAttemptsOf}
           onDownload={setExportOf}
@@ -284,6 +285,7 @@ export function TestsPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.teacher.workspace}
       eyebrow={quizzes.isLoading ? t("tests.eyebrowLoading") : t("tests.eyebrow", { count: items.length })}
       title={t("tests.title")}
       action={
@@ -375,7 +377,13 @@ export function TestsPage() {
               const draft = quiz.status === DRAFT;
               return (
                 <article key={quiz.id} className="flex flex-col gap-3.5 rounded-lg bg-surface p-5">
-                  <div className="flex items-start gap-3">
+                  <button
+                    type="button"
+                    className="flex items-start gap-3 rounded-md text-left transition-opacity enabled:hover:opacity-80 disabled:cursor-default"
+                    disabled={draft}
+                    aria-label={draft ? undefined : t("view.openAria", { title: quizDisplayTitle(quiz) })}
+                    onClick={() => navigate(ROUTES.teacher.testView(quiz.id))}
+                  >
                     <span className="grid size-9 shrink-0 place-items-center rounded-md bg-accent-violet-bg text-accent-violet-fg">
                       <Icon name="quiz" size={20} />
                     </span>
@@ -395,7 +403,7 @@ export function TestsPage() {
                         {t("tests.draft")}
                       </span>
                     ) : null}
-                  </div>
+                  </button>
 
                   <div className="grid grid-cols-2 gap-3">
                     {draft ? (

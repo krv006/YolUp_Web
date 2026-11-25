@@ -11,6 +11,7 @@ export interface LessonDetailDrawerProps {
   now: Date;
   onOpenChange: (open: boolean) => void;
   onChat: (lesson: Lesson) => void;
+  onEdit?: (lesson: Lesson) => void;
   onJoin: (lesson: Lesson) => void;
   onRatings: (lesson: Lesson) => void;
   onCancel: (lesson: Lesson) => void;
@@ -33,6 +34,7 @@ export function LessonDetailDrawer({
   now,
   onOpenChange,
   onChat,
+  onEdit,
   onJoin,
   onRatings,
   onCancel,
@@ -282,7 +284,7 @@ export function LessonDetailDrawer({
             <button
               type="button"
               className="flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface text-button text-ink"
-              onClick={() => (finished ? onRatings(lesson) : onChat(lesson))}
+              onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
             >
               <Icon name={finished ? "star" : "edit"} size={18} />
               {finished ? t("schedule.ratings") : t("schedule.edit")}
@@ -391,7 +393,7 @@ export function LessonDetailDrawer({
               <button
                 type="button"
                 className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
-                onClick={() => (finished ? onRatings(lesson) : onChat(lesson))}
+                onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
               >
                 <Icon name={finished ? "star" : "edit"} size={18} />
                 {finished ? t("schedule.ratings") : t("schedule.edit")}

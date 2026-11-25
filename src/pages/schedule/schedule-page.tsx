@@ -14,15 +14,19 @@ import {
 import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
+import { useQuizzes } from "@/modules/quiz";
 import {
+  CancelLessonDialog,
+  LessonFormDialog,
   RateLessonDialog,
-  buildScheduleDates,
-  useCancelLesson,
   useCreateLesson,
   useCreateLessonSchedule,
   useCreateLessonsBulk,
   useLessonReminder,
   useLessons,
+  useUpdateLesson,
+  type LessonDraft,
+  type LessonScheduleDraft,
 } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -32,10 +36,10 @@ import type { Lesson } from "@/shared/types";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { monthAttendanceRate } from "@/pages/student/lib/attendance-rate";
 import { LessonDetailDrawer } from "./lesson-detail-drawer";
+import { isQuizEvent, quizEventId, quizEvents } from "./quiz-events";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
 import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
-import { NewLessonDialog, type NewLessonValues } from "./new-lesson-dialog";
 import { ScheduleDay } from "./schedule-day";
 import { ScheduleList } from "./schedule-list";
 import { ScheduleMonth } from "./schedule-month";
@@ -54,28 +58,48 @@ export function SchedulePage() {
   const me = useCurrentUser();
   const lessons = useLessons({ page_size: 200 });
   const courses = useCourses();
+  const quizzes = useQuizzes(null);
+  const { t: tq } = useTranslation("quiz");
   const conversations = useConversations(student ? "student" : "teacher");
   const groupImages = useGroupImages(student ? "student" : "teacher");
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
   const createBulk = useCreateLessonsBulk();
-  const cancelLesson = useCancelLesson();
+  const updateLesson = useUpdateLesson();
   const reminder = useLessonReminder();
 
   const [view, setView] = useState<View>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [now] = useState(() => new Date());
   const [detail, setDetail] = useState<Lesson | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Lesson | null>(null);
   const [ratingsOf, setRatingsOf] = useState<Lesson | null>(null);
   const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [editing, setEditing] = useState<Lesson | null>(null);
+  const allLessons = useLessons({ page_size: 200 }, createOpen);
   const isCompact = useIsCompact();
   const [mobileView, setMobileView] = useState<MobileScheduleView>("day");
 
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
 
-  const items = useMemo(() => lessons.data ?? [], [lessons.data]);
+  const quizItems = useMemo(
+    () =>
+      quizEvents(quizzes.data ?? [], {
+        courseTitle: (courseId) => (courses.data ?? []).find((course) => course.id === courseId)?.title ?? "",
+        label: (title) => tq("schedule.testLabel", { title }),
+        now,
+      }),
+    [quizzes.data, courses.data, tq, now]
+  );
+  const items = useMemo(() => [...(lessons.data ?? []), ...quizItems], [lessons.data, quizItems]);
+
+  function select(lesson: Lesson) {
+    if (!isQuizEvent(lesson)) return setDetail(lesson);
+    const quizId = quizEventId(lesson);
+    navigate(student ? ROUTES.student.test(quizId) : ROUTES.teacher.testView(quizId));
+  }
   const detailLesson = detail ? (items.find((item) => item.id === detail.id) ?? detail) : null;
 
   function toggleReminder(lesson: Lesson) {
@@ -153,26 +177,33 @@ export function SchedulePage() {
     setAnchor((current) => addDays(current, view === "day" ? direction : direction * 7));
   }
 
-  function createFromDialog(values: NewLessonValues) {
-    if (!values.repeatWeeks) return createLesson.mutateAsync(values).then(() => setCreateOpen(false));
-    const first = new Date(`${values.date}T00:00`);
-    const endsOn = addDays(first, values.repeatWeeks * 7 - 1);
-    const range = {
-      startsOn: values.date,
-      endsOn: `${endsOn.getFullYear()}-${String(endsOn.getMonth() + 1).padStart(2, "0")}-${String(endsOn.getDate()).padStart(2, "0")}`,
-      weekdays: [first.getDay() === 0 ? 7 : first.getDay()],
-    };
+  function closeLessonForm() {
+    setCreateOpen(false);
+    setEditing(null);
+  }
+
+  function saveLesson(values: LessonDraft & { courseId: string }) {
+    const request = editing
+      ? updateLesson.mutateAsync({ id: editing.id, form: values })
+      : createLesson.mutateAsync(values);
+    return request.then(closeLessonForm);
+  }
+
+  function saveSchedule(draft: LessonScheduleDraft) {
     return createSchedule
       .mutateAsync({
-        courseId: values.courseId,
-        title: values.topic,
-        time: values.time,
-        durationMinutes: Number(values.duration) || 45,
-        ...range,
-        dates: buildScheduleDates(range),
+        courseId: draft.courseId,
+        title: draft.topic,
+        time: draft.time,
+        durationMinutes: Number(draft.duration) || 90,
+        weekdays: draft.weekdays,
+        startsOn: draft.startsOn,
+        endsOn: draft.endsOn,
+        dates: draft.dates,
       })
-      .then(() => setCreateOpen(false));
+      .then(closeLessonForm);
   }
+
 
   function openChat(lesson: Lesson) {
     const room = roomByCourse.get(lesson.courseId);
@@ -194,6 +225,11 @@ export function SchedulePage() {
           setDetail(null);
           openChat(lesson);
         }}
+        onEdit={(lesson) => {
+          setDetail(null);
+          setEditing(lesson);
+          setCreateOpen(true);
+        }}
         onJoin={joinLesson}
         student={student}
         teacherName={detail ? courseLook(detail.courseId).teacher : ""}
@@ -208,8 +244,14 @@ export function SchedulePage() {
           setRatingsOf(lesson);
         }}
         onCancel={(lesson) => {
-          cancelLesson.mutate({ id: lesson.id, scope: "one" });
           setDetail(null);
+          setCancelTarget(lesson);
+        }}
+      />
+      <CancelLessonDialog
+        lesson={cancelTarget}
+        onOpenChange={(open) => {
+          if (!open) setCancelTarget(null);
         }}
       />
 
@@ -229,9 +271,13 @@ export function SchedulePage() {
           }}
         />
       ) : (
-      <NewLessonDialog
+      <LessonFormDialog
+        key={editing?.id ?? "new-lesson"}
         open={createOpen}
-        onOpenChange={setCreateOpen}
+        onOpenChange={(open) => {
+          if (!open) closeLessonForm();
+          else setCreateOpen(true);
+        }}
         courses={(courses.data ?? []).map((course) => ({
           id: course.id,
           title: course.title,
@@ -239,11 +285,11 @@ export function SchedulePage() {
           tone: course.color,
           image: course.avatarUrl ?? groupImages.get(course.id) ?? null,
         }))}
-        pending={createLesson.isPending || createSchedule.isPending || createBulk.isPending}
-        onSubmit={createFromDialog}
-        onSubmitBulk={(courseId, rows) =>
-          createBulk.mutateAsync({ courseId, rows }).then(() => setCreateOpen(false))
-        }
+        initialValues={editing}
+        existingLessons={allLessons.data ?? []}
+        onCreate={saveLesson}
+        onCreateSchedule={saveSchedule}
+        onCreateBulk={(rows, courseId) => createBulk.mutateAsync({ courseId, rows }).then(closeLessonForm)}
       />
       )}
     </>
@@ -264,7 +310,7 @@ export function SchedulePage() {
           courseLook={courseLook}
           onView={setMobileView}
           onAnchor={setAnchor}
-          onSelect={setDetail}
+          onSelect={select}
           onChat={openChat}
           onJoin={joinLesson}
           student={student}
@@ -281,7 +327,7 @@ export function SchedulePage() {
           ? `${rangeLabel} · ${t("scheduleState.loading")}`
           : lessons.isError
             ? rangeLabel
-            : `${rangeLabel} · ${t("schedule.lessonCount", { count: visible.length })}`
+            : `${rangeLabel} · ${t("schedule.lessonCount", { count: visible.filter((item) => !isQuizEvent(item)).length })}`
       }
       title={t("schedule.title")}
     >
@@ -364,7 +410,7 @@ export function SchedulePage() {
           student={student}
           attendanceRate={attendanceRate}
           onPickDay={setAnchor}
-          onSelect={setDetail}
+          onSelect={select}
           onChat={openChat}
           onJoin={joinLesson}
         />
@@ -375,8 +421,7 @@ export function SchedulePage() {
           anchor={anchor}
           lessons={visible}
           now={now}
-          onSelect={setDetail}
-          onCreate={student ? undefined : () => setCreateOpen(true)}
+          onSelect={select}
         />
       ) : null}
 
@@ -384,7 +429,7 @@ export function SchedulePage() {
         <ScheduleMonth
           anchor={anchor}
           lessons={visible}
-          onSelect={setDetail}
+          onSelect={select}
           onPickDay={(date) => {
             setAnchor(date);
             setView("day");
@@ -397,7 +442,7 @@ export function SchedulePage() {
           lessons={visible}
           now={now}
           courseLook={courseLook}
-          onSelect={setDetail}
+          onSelect={select}
           onJoin={joinLesson}
         />
       ) : null}

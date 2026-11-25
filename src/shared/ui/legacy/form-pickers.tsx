@@ -304,6 +304,7 @@ function PickerModal({
       onOpenChange={onOpenChange}
       variant="confirm"
       width="lg:w-105"
+      elevated
       title={title}
       footer={footer}
     >
@@ -368,7 +369,7 @@ export function SelectPicker({ label, value, onChange, options, icon, hideLabel,
       />
       {isCompact ? (
         <Drawer open={open} onOpenChange={(next) => (next ? setOpen(true) : close())}>
-          <DrawerContent className="px-4 pb-6">
+          <DrawerContent className="z-150 px-4 pb-6" overlayClassName="z-150">
             <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
               {label}
             </DrawerTitle>
@@ -841,7 +842,7 @@ export function DatePicker({
       />
       {isCompact ? (
         <Drawer open={open} onOpenChange={setOpen}>
-          <DrawerContent className="px-4 pb-6">
+          <DrawerContent className="z-150 px-4 pb-6" overlayClassName="z-150">
             <DrawerTitle className="px-1 pt-2 pb-3 font-heading text-h3 text-ink">
               {label}
             </DrawerTitle>

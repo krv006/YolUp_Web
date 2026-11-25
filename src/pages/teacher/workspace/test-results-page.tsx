@@ -177,6 +177,7 @@ export function TestResultsPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.teacher.tests}
       eyebrow={[
         t("results.eyebrow", { count: quiz.data?.questionCount ?? 0, subject: quiz.data?.subjectLabel ?? "" }),
         limitsText,

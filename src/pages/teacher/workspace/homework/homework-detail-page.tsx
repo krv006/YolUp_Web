@@ -205,6 +205,7 @@ export function HomeworkDetailPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.teacher.homework}
       eyebrow={
         isBank
           ? bankEyebrow

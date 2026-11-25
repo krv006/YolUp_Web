@@ -44,7 +44,7 @@ export function StudentAiPage() {
     );
 
   return (
-    <WorkspaceShell eyebrow={t("tutor.eyebrow")} title={t("tutor.title")}>
+    <WorkspaceShell backTo={ROUTES.student.workspace} eyebrow={t("tutor.eyebrow")} title={t("tutor.title")}>
       <FilterChips items={modes} value={mode} onChange={setMode} />
       <div className="max-w-3xl">{body}</div>
     </WorkspaceShell>

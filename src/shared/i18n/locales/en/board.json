@@ -13,10 +13,7 @@
     "slowSyncNote": "Syncing in slow mode — your drawings are saved and will be sent once the connection is back"
   },
   "sheet": {
-    "addSheet": "Sheet",
-    "pageOf": "Page {{page}} / {{total}}",
-    "prev": "Previous page",
-    "next": "Next page"
+    "earlier": "Page {{page}} (earlier)"
   },
   "permission": {
     "grantButton": "Grant",
@@ -70,23 +67,6 @@
       "math": "Edit formula",
       "code": "Edit code"
     }
-  },
-  "eraseDialog": {
-    "title": "Delete element",
-    "description": "You are deleting the selected element. Pick a reason — the student will see it.",
-    "reasonLabel": "Reason",
-    "cancel": "Cancel",
-    "confirm": "Delete",
-    "deleted": "Element deleted",
-    "reasons": {
-      "wrongAnswer": "Wrong answer",
-      "offTopic": "Off topic",
-      "cleanup": "Clearing the board",
-      "other": "Other"
-    },
-    "reasonPlaceholder": "Describe the reason",
-    "deletedCount_one": "{{count}} element deleted",
-    "deletedCount_other": "{{count}} elements deleted"
   },
   "grantDialog": {
     "title": "Board drawing permission",
@@ -215,17 +195,16 @@
     "empty": "The board is empty for now"
   },
   "mobile": {
-    "title": "Board · {{page}} / {{total}}",
     "undo": "Undo",
     "redo": "Redo",
-    "undoReason": "Step undone",
     "modes": {
       "teacher": "Only you",
       "selected": "Selected",
       "everyone": "Everyone"
     },
     "liveLesson": "Live lesson",
-    "menu": "Actions"
+    "menu": "Actions",
+    "boardTitle": "Board"
   },
   "code": {
     "language": "Programming language",
@@ -252,5 +231,6 @@
   "guides": {
     "show": "Show guide grid",
     "hide": "Hide guide grid"
-  }
+  },
+  "eraseReason": "Deleted"
 }

@@ -13,10 +13,7 @@
     "slowSyncNote": "Sinxronlash sekin rejimda — chizganlaringiz saqlanadi va ulanish tiklanganda yuboriladi"
   },
   "sheet": {
-    "addSheet": "Sahifa",
-    "pageOf": "Sahifa {{page}} / {{total}}",
-    "prev": "Oldingi sahifa",
-    "next": "Keyingi sahifa"
+    "earlier": "{{page}}-sahifa (oldingi)"
   },
   "permission": {
     "grantButton": "Ruxsat",
@@ -70,22 +67,6 @@
       "math": "Formulani tahrirlash",
       "code": "Kodni tahrirlash"
     }
-  },
-  "eraseDialog": {
-    "title": "Elementni o‘chirish",
-    "description": "Tanlangan elementni o‘chiryapsiz. Sababini tanlang — u o‘quvchiga ko‘rsatiladi.",
-    "reasonLabel": "Sabab",
-    "cancel": "Bekor qilish",
-    "confirm": "O'chirish",
-    "deleted": "Element o'chirildi",
-    "reasons": {
-      "wrongAnswer": "Noto‘g‘ri javob",
-      "offTopic": "Mavzuga aloqasiz",
-      "cleanup": "Doskani tozalash",
-      "other": "Boshqa"
-    },
-    "reasonPlaceholder": "Sababni yozing",
-    "deletedCount": "{{count}} ta element o'chirildi"
   },
   "grantDialog": {
     "title": "Doskada chizish ruxsati",
@@ -214,17 +195,16 @@
     "empty": "Doska hozircha bo‘sh"
   },
   "mobile": {
-    "title": "Doska · {{page}} / {{total}}",
     "undo": "Bekor qilish",
     "redo": "Qaytarish",
-    "undoReason": "Qadam bekor qilindi",
     "modes": {
       "teacher": "Faqat siz",
       "selected": "Tanlanganlar",
       "everyone": "Hamma"
     },
     "liveLesson": "Jonli dars",
-    "menu": "Amallar"
+    "menu": "Amallar",
+    "boardTitle": "Doska"
   },
   "code": {
     "language": "Dasturlash tili",
@@ -251,5 +231,6 @@
   "guides": {
     "show": "Yordamchi katakni ko‘rsatish",
     "hide": "Yordamchi katakni yashirish"
-  }
+  },
+  "eraseReason": "O'chirildi"
 }

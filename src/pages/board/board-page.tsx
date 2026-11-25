@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { boardApi, BoardPanel, BoardStroke, MobileBoardPageNav, useBoard, useSendBoardToChat } from "@/modules/board";
+import { boardApi, BoardPanel, useBoard, useSendBoardToChat } from "@/modules/board";
 import { useLesson } from "@/modules/lesson";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
@@ -20,7 +20,6 @@ export function BoardPage() {
   const board = useBoard(lessonId ?? "", { live: false, enabled: Boolean(lessonId) });
   const sendToChat = useSendBoardToChat(lessonId ?? "");
   const [busy, setBusy] = useState(false);
-  const [sheet, setSheet] = useState(0);
 
   if (lesson.isLoading || (!lesson.isError && !lesson.data))
     return <LoadingFallback label={t("page.loading")} />;
@@ -76,8 +75,6 @@ export function BoardPage() {
         <BoardPanel
           lessonId={data.id}
           courseId={data.courseId}
-          sheetIndex={sheet}
-          onSheetChange={setSheet}
           mobile={{
             title: editable ? undefined : data.title,
             subtitle: editable
@@ -109,14 +106,6 @@ export function BoardPage() {
             ),
             footer: editable ? undefined : (
               <div className="flex flex-col items-center pt-3">
-                <MobileBoardPageNav
-                  className="h-[60px]"
-                  page={sheet + 1}
-                  total={Math.max(1, sheets.length)}
-                  onPrev={() => setSheet(Math.max(0, sheet - 1))}
-                  onNext={() => setSheet(Math.min(sheets.length - 1, sheet + 1))}
-                  onPages={() => undefined}
-                />
                 <div className="-mt-px grid w-full grid-cols-2 gap-3">
                   <button
                     type="button"
@@ -165,45 +154,12 @@ export function BoardPage() {
           <BoardPanel
             lessonId={data.id}
             courseId={data.courseId}
-            sheetIndex={sheet}
-            onSheetChange={setSheet}
             hideSheetBar
             statusNote={data.status === "finished" ? t("page.lessonFinished") : undefined}
           />
         </div>
 
         <div className="flex min-w-0 flex-col gap-4">
-          {sheets.map((item) => {
-            const current = item.index === sheet;
-            return (
-              <button
-                key={item.index}
-                type="button"
-                className={`flex flex-col gap-2 rounded-lg bg-surface p-3 text-left transition-colors ${
-                  current ? "ring-2 ring-brand" : "hover:bg-subtle"
-                }`}
-                onClick={() => setSheet(item.index)}
-              >
-                <small className="text-body-xs text-ink-tertiary">{item.index + 1}</small>
-                <svg
-                  viewBox={`0 0 ${state?.width ?? 1040} ${state?.height ?? 700}`}
-                  className="block h-full w-full"
-                  style={{ aspectRatio: `${state?.width ?? 1040} / ${state?.height ?? 700}` }}
-                  aria-hidden="true"
-                >
-                  {item.strokes.map((stroke) => (
-                    <BoardStroke
-                      key={stroke.id}
-                      stroke={stroke}
-                      selected={false}
-                      onSelect={() => undefined}
-                    />
-                  ))}
-                </svg>
-              </button>
-            );
-          })}
-
           <button
             type="button"
             className="flex h-12 items-center justify-center rounded-full border border-line bg-surface px-5 text-button text-ink transition-colors hover:bg-subtle disabled:opacity-60"

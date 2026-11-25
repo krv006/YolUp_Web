@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { addDays, isSameDay, isToday, startOfWeek } from "date-fns";
-import { Icon } from "@/shared/ui/icon";
 import type { Lesson } from "@/shared/types";
 import { lessonTone } from "./lesson-tone";
 
@@ -16,7 +15,6 @@ export interface ScheduleWeekProps {
   lessons: Lesson[];
   now: Date;
   onSelect: (lesson: Lesson) => void;
-  onCreate?: () => void;
 }
 
 function minutesFromStart(date: Date): number {
@@ -27,7 +25,7 @@ function clock(date: Date): string {
   return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
-export function ScheduleWeek({ anchor, lessons, now, onSelect, onCreate }: ScheduleWeekProps) {
+export function ScheduleWeek({ anchor, lessons, now, onSelect }: ScheduleWeekProps) {
   const { t } = useTranslation("lesson");
   const weekdays = t("list.weekdaysShort", { returnObjects: true }) as string[];
   const start = startOfWeek(anchor, WEEK_OPTIONS);
@@ -35,7 +33,6 @@ export function ScheduleWeek({ anchor, lessons, now, onSelect, onCreate }: Sched
   const hours = Array.from({ length: END_HOUR - START_HOUR }, (_, index) => START_HOUR + index);
   const nowOffset = (minutesFromStart(now) / 60) * HOUR_HEIGHT;
   const showNow = nowOffset >= 0 && nowOffset <= (END_HOUR - START_HOUR) * HOUR_HEIGHT;
-  const empty = !lessons.length;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -184,28 +181,6 @@ export function ScheduleWeek({ anchor, lessons, now, onSelect, onCreate }: Sched
         </div>
       </div>
 
-      {empty ? (
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="pointer-events-auto flex flex-col items-center gap-3 rounded-xl bg-surface px-8 py-7 text-center shadow-xl">
-            <span className="grid size-16 place-items-center rounded-full bg-brand-subtle text-brand">
-              <Icon name="calendar-month" size={28} />
-            </span>
-            <strong className="font-heading text-h2 text-ink">{t("schedule.emptyWeek")}</strong>
-            <p className="max-w-80 text-body-sm text-ink-secondary">
-              {onCreate ? t("schedule.emptyWeekHint") : t("schedule.emptyStudentHint")}
-            </p>
-            {onCreate ? (
-              <button
-                type="button"
-                className="flex h-11 items-center rounded-full bg-brand px-5 text-button text-ink-inverse transition-colors hover:bg-brand-strong"
-                onClick={onCreate}
-              >
-                {t("schedule.create")}
-              </button>
-            ) : null}
-          </div>
-        </div>
-      ) : null}
     </section>
   );
 }

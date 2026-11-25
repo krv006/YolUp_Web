@@ -16,12 +16,15 @@ import {
 } from "@/modules/homework";
 import {
   FinishLessonDialog,
+  type LessonDraft,
+  LessonFormDialog,
   LessonRatingsDialog,
+  type LessonScheduleDraft,
   LiveLessonBar,
   useCancelLesson,
   useCreateLesson,
-  useCreateLessonSchedule,
   useCreateLessonsBulk,
+  useCreateLessonSchedule,
   useDeleteLesson,
   useLessons,
   useUpdateLesson,
@@ -30,7 +33,6 @@ import { useLessonPresence } from "@/modules/live";
 import {
   AddQuizDialog,
   AssignQuizDialog,
-  QuizAttemptsDialog,
   quizDisplayTitle,
   useAssignQuizToCourse,
   useCreateQuiz,
@@ -76,9 +78,6 @@ import { ROLES } from "@/shared/constants";
 import { Icon } from "@/shared/ui/icon";
 import {
   AddAssignmentDialog,
-  AddLessonDialog,
-  type LessonDraft,
-  type LessonScheduleDraft,
 } from "./group-action-dialogs";
 import { CancelLessonDialog } from "./cancel-lesson-dialog";
 import { LessonBoard } from "./lesson-board";
@@ -481,8 +480,9 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         />
       )}
 
-      <AddLessonDialog
+      <LessonFormDialog
         key={editing?.id ?? "new-lesson"}
+        courseId={courseId ?? ""}
         onDelete={editing ? () => setDeleteTarget(editing) : undefined}
         open={dialog}
         onOpenChange={(open) => {
@@ -595,7 +595,7 @@ function AssignmentsPanel({
 
   const lessons = useLessons({ course: courseId, page_size: 100 }, dialog);
   const courseQuizzes = useQuizzes(courseId, Boolean(courseId));
-  const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
+  const navigate = useNavigate();
   const courseQuizList = useMemo(
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
@@ -634,16 +634,6 @@ function AssignmentsPanel({
 
   const dialogs = (
     <>
-        <QuizAttemptsDialog
-          courseId={courseId}
-          quizId={attemptsOf?.id ?? null}
-          open={Boolean(attemptsOf)}
-          onOpenChange={(open) => {
-            if (!open) setAttemptsOf(null);
-          }}
-          title={attemptsOf?.title}
-        />
-
         {editQuizTarget && editQuizDetail.data && !editQuizAttempts.isLoading ? (
           <AddQuizDialog
             key={editQuizTarget.id}
@@ -834,7 +824,7 @@ function AssignmentsPanel({
             setDialog(true);
           }}
           onDeleteAssignment={setDeleteTarget}
-          onOpenQuiz={setAttemptsOf}
+          onOpenQuiz={(quiz) => navigate(ROUTES.teacher.testView(quiz.id))}
           onEditQuiz={setEditQuizTarget}
         />
       ) : (

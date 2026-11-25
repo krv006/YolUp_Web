@@ -21,10 +21,11 @@ export interface AppDialogProps {
   titleClassName?: string;
   footerClassName?: string;
   closeClassName?: string;
+  elevated?: boolean;
 }
 
 const SHELL =
-  "fixed z-50 flex flex-col bg-surface text-ink shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0";
+  "fixed flex flex-col bg-surface text-ink shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0";
 
 const PLACEMENT: Record<AppDialogVariant, string> = {
   sheet:
@@ -53,6 +54,7 @@ export function AppDialog({
   titleClassName = "text-h2 leading-6 font-semibold lg:font-heading lg:font-medium",
   footerClassName,
   closeClassName = "size-11 lg:size-9",
+  elevated = false,
 }: AppDialogProps) {
   const { t } = useTranslation("common");
 
@@ -72,9 +74,9 @@ export function AppDialog({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Overlay className={`fixed inset-0 ${elevated ? "z-150" : "z-50"} bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0`} />
         <DialogPrimitive.Content
-          className={`${SHELL} ${PLACEMENT[variant]} ${width}`}
+          className={`${SHELL} ${elevated ? "z-150" : "z-50"} ${PLACEMENT[variant]} ${width}`}
         >
           <span
             className={`mx-auto mt-2 mb-px h-[5px] w-10 shrink-0 rounded-full bg-line ${

@@ -103,6 +103,7 @@ export interface QuizAssignInput {
   quizId: string;
   courseId: string;
   dueAt?: string | null;
+  opensAt?: string | null;
   studentIds?: string[] | null;
   timeLimitMinutes?: number | null;
   maxAttempts?: number | null;

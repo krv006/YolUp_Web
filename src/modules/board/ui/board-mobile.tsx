@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Atom, ChevronLeft, ChevronRight, Plus, Redo2, Undo2 } from "lucide-react";
+import { Atom, ChevronLeft, Redo2, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
 import { BOARD_TEXT_SIZES, ERASER_SIZES, MOBILE_BOARD_COLORS, MOBILE_BOARD_WIDTHS } from "../constants/board.constants";
@@ -233,53 +233,11 @@ export function MobileBoardToolbar({
 }
 
 export interface MobileBoardFooterProps {
-  page: number;
-  total: number;
   canUndo: boolean;
   canRedo: boolean;
   showHistory: boolean;
   onUndo: () => void;
   onRedo: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-  onPages: () => void;
-  onAdd?: () => void;
-}
-
-export function MobileBoardPageNav({
-  page,
-  total,
-  onPrev,
-  onNext,
-  onPages,
-  className = "h-16",
-}: Pick<MobileBoardFooterProps, "page" | "total" | "onPrev" | "onNext" | "onPages"> & { className?: string }) {
-  const { t } = useTranslation("board");
-  return (
-    <span className={`flex shrink-0 items-center rounded-full bg-surface px-3 ${className}`}>
-      <button
-        type="button"
-        className="grid size-10 place-items-center rounded-full text-ink disabled:text-ink-tertiary"
-        aria-label={t("sheet.prev")}
-        disabled={page <= 1}
-        onClick={onPrev}
-      >
-        <ChevronLeft size={18} />
-      </button>
-      <button type="button" className="min-w-14 text-center text-title-sm text-ink" onClick={onPages}>
-        {page} / {total}
-      </button>
-      <button
-        type="button"
-        className="grid size-10 place-items-center rounded-full text-ink disabled:text-ink-tertiary"
-        aria-label={t("sheet.next")}
-        disabled={page >= total}
-        onClick={onNext}
-      >
-        <ChevronRight size={18} />
-      </button>
-    </span>
-  );
 }
 
 export function MobileBoardFooter(props: MobileBoardFooterProps) {
@@ -309,19 +267,6 @@ export function MobileBoardFooter(props: MobileBoardFooterProps) {
         </span>
       ) : (
         <span className="w-[78px] shrink-0" aria-hidden="true" />
-      )}
-      <MobileBoardPageNav {...props} />
-      {props.onAdd ? (
-        <button
-          type="button"
-          className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-brand px-4 text-title-sm text-on-action"
-          onClick={props.onAdd}
-        >
-          <Plus size={18} />
-          {t("sheet.addSheet")}
-        </button>
-      ) : (
-        <span className="w-[98px] shrink-0" aria-hidden="true" />
       )}
     </div>
   );

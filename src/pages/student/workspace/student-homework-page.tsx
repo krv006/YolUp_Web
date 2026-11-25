@@ -79,7 +79,7 @@ export function StudentHomeworkPage() {
     );
 
   return (
-    <WorkspaceShell eyebrow={t("workspace.homework.eyebrow", { count: items.length })} title={t("workspace.homework.title")}>
+    <WorkspaceShell backTo={ROUTES.student.workspace} eyebrow={t("workspace.homework.eyebrow", { count: items.length })} title={t("workspace.homework.title")}>
       <FilterChips items={chips} value={filter} onChange={setFilter} />
       {content}
     </WorkspaceShell>

@@ -230,6 +230,7 @@ const TestResultsPage = lazy(() => import("@/pages/teacher/workspace/test-result
 const TestEditorPage = lazy(() => import("@/pages/teacher/workspace/test-editor-page").then((module) => ({ default: module.TestEditorPage })));
 const TestDetailsPage = lazy(() => import("@/pages/teacher/workspace/test-details-page").then((module) => ({ default: module.TestDetailsPage })));
 const NewTestPage = lazy(() => import("@/pages/teacher/workspace/new-test/new-test-page").then((module) => ({ default: module.NewTestPage })));
+const QuizViewPage = lazy(() => import("@/pages/teacher/workspace/quiz-view-page").then((module) => ({ default: module.QuizViewPage })));
 const TestsPage = lazy(() => import("@/pages/teacher/workspace/tests-page").then((module) => ({ default: module.TestsPage })));
 const TeacherDashboardPage = lazy(() => import("@/pages/teacher/dashboard/teacher-dashboard-page").then((module) => ({ default: module.TeacherDashboardPage })));
 const RecordingPage = lazy(() => import("@/pages/recording/recording-page").then((module) => ({ default: module.RecordingPage })));
@@ -318,6 +319,7 @@ export function AppRouter() {
                     <Route path="/teacher/workspace/tests/:quizId" element={<TestEditorPage />} />
                     <Route path="/teacher/workspace/tests/:quizId/results" element={<TestResultsPage />} />
                     <Route path="/teacher/workspace/tests/:quizId/edit" element={<TestDetailsPage />} />
+                    <Route path="/teacher/workspace/tests/:quizId/view" element={<QuizViewPage />} />
                     <Route path={ROUTES.teacher.homework} element={<HomeworkListPage />} />
                     <Route path={ROUTES.teacher.homeworkNew} element={<NewHomeworkPage />} />
                     <Route path="/teacher/workspace/homework/:assignmentId/edit" element={<NewHomeworkPage />} />

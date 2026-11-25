@@ -320,7 +320,6 @@
     "noNext": "Bugunga boshqa dars yo‘q.",
     "doneCount": "Tugadi",
     "studentCount": "O‘quvchi",
-    "emptyWeekHint": "Dars jadvalini qo‘shing, o‘quvchilaringiz eslatma oladi.",
     "moreCount": "+{{count}} ta",
     "rows": {
       "time": "Vaqt",
@@ -368,16 +367,9 @@
     "group": "Guruh",
     "topic": "Dars mavzusi",
     "topicPlaceholder": "Masalan: Present Perfect — amaliyot",
-    "single": "Bitta dars",
-    "repeating": "Takrorlanuvchi",
     "date": "Sana",
     "start": "Boshlanish",
-    "duration": "Davomiyligi (daqiqa)",
-    "submit": "Darsni saqlash",
-    "mobileDescription": "Guruhni tanlang va vaqtni belgilang",
-    "weeksValue": "{{count}} hafta",
-    "fewerWeeks": "Haftani kamaytirish",
-    "moreWeeks": "Haftani ko‘paytirish"
+    "duration": "Davomiyligi (daqiqa)"
   },
   "mobileSchedule": {
     "offline": "Internet yo‘q. Oxirgi saqlangan jadval",
@@ -435,8 +427,6 @@
     "noteLine": "Izoh: {{text}}"
   },
   "bulk": {
-    "mode": "Bir nechta dars",
-    "modeShort": "Bir nechta",
     "topicPlaceholder": "Dars mavzusi",
     "topicAria": "{{number}}-dars mavzusi",
     "date": "Sana",
@@ -450,7 +440,6 @@
     "past": "Bu vaqt o'tib ketgan",
     "overlap": "Ro'yxatdagi boshqa dars bilan bir vaqtga to'g'ri keladi",
     "busy": "Bu vaqtda «{{title}}» darsi bor",
-    "submit": "{{count}} ta darsni saqlash",
     "saved": "{{count}} ta dars qo'shildi"
   }
 }

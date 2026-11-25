@@ -480,6 +480,7 @@ export function MaterialsPage() {
 
   return (
     <WorkspaceShell
+      onBack={back}
       eyebrow={level === "root" ? t("materials.rootEyebrow") : t("materials.title")}
       title={title}
       action={

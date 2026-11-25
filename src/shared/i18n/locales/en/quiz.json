@@ -430,7 +430,11 @@
     "dueLabel": "Due",
     "timeLabel": "Time",
     "pick": "Select",
-    "students": "{{count}} students"
+    "students": "{{count}} students",
+    "opensLabel": "Opens (optional)",
+    "opensTimeLabel": "Opening time",
+    "opensNow": "Leave empty to open right away",
+    "opensAfterDue": "The opening time must be before the deadline."
   },
   "exportDialog": {
     "title": "Download the test",
@@ -876,5 +880,28 @@
       "retry": "Try again",
       "languageHint": "Auto: in an English, Russian or Turkish language group the test is in that language; for other subjects it is in Uzbek."
     }
+  },
+  "view": {
+    "title": "Test",
+    "eyebrow": "Workspace / Tests / View",
+    "back": "Back",
+    "edit": "Edit",
+    "results": "Results",
+    "opens": "Opens: {{date}}",
+    "due": "Due: {{date}}",
+    "questions_one": "{{count}} question",
+    "questions_other": "{{count}} questions",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "true": "True",
+    "false": "False",
+    "essay": "Essay — graded by the teacher or AI",
+    "noKey": "No correct answer marked",
+    "loadError": "Couldn't load the test.",
+    "open": "View",
+    "openAria": "View the “{{title}}” test"
+  },
+  "schedule": {
+    "testLabel": "Test: {{title}}"
   }
 }
