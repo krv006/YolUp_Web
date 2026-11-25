@@ -334,11 +334,25 @@ export function BoardPanel({
   const lastPage = lenta.pages[lenta.pages.length - 1] ?? { index: sheet, offset: 0, height: boardHeight };
 
   const canAddPage = Boolean(source) || Boolean(state?.isTeacher && canDraw);
+  const addPageInBar = !mobileLayout && !hideSheetBar;
+  const revealNewPage = useRef(false);
+  const pageCount = lenta.pages.length;
 
   function addPage() {
+    revealNewPage.current = true;
     if (source) source.addSheet();
     else addSheet.mutate();
   }
+
+  useEffect(() => {
+    if (!revealNewPage.current || !canvasWrap) return;
+    revealNewPage.current = false;
+    const frame = requestAnimationFrame(() => {
+      const svg = svgRef.current;
+      if (svg) canvasWrap.scrollTop = (lastOffset * svg.getBoundingClientRect().width) / boardWidth;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [pageCount]);
 
   function homeOf(strokeId: string): LentaPage {
     return strokeHome.get(strokeId) ?? lastPage;
@@ -970,7 +984,7 @@ export function BoardPanel({
               <circle className="board-eraser" cx={eraserAt[0]} cy={eraserAt[1]} r={eraserSize} />
             ) : null}
           </svg>
-          {canAddPage ? (
+          {canAddPage && !addPageInBar ? (
             <div className={`flex justify-center pt-4 ${mobileLayout ? "pb-24" : "pb-4"}`}>
               <button
                 type="button"
@@ -1383,6 +1397,23 @@ export function BoardPanel({
                 </span>
               </>
             )}
+
+            {canAddPage && addPageInBar ? (
+              <>
+                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                  ·
+                </i>
+                <button
+                  type="button"
+                  className="flex shrink-0 items-center gap-1 text-caption-strong whitespace-nowrap text-brand transition-opacity hover:opacity-80 disabled:opacity-50"
+                  disabled={!source && addSheet.isPending}
+                  onClick={addPage}
+                >
+                  <Icon name="add" size={15} />
+                  {t("sheet.addPage")}
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
         )}
