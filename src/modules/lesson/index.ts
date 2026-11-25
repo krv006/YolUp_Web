@@ -26,6 +26,7 @@ export {
   useLessonRecording,
   useLessonWaiting,
   useLessonConflicts,
+  useScheduleQuizzes,
   useShareRecording,
   useLiveLesson,
   useLiveLessons,
@@ -42,6 +43,7 @@ export {
   useLessonReminder,
   useUpdateLesson,
 } from "./model/lesson.queries";
+export type { ScheduleQuizItem } from "./lib/schedule-feed";
 export { useLessonView, useLessonViewStore } from "./model/lesson-view.store";
 export { useTeacherAudioRecording } from "./model/use-teacher-audio-recording";
 export type {

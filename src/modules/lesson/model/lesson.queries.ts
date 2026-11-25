@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { AppError, type QueryParams } from "@/shared/api";
 import { describeCreateError } from "@/modules/auth";
@@ -265,6 +265,14 @@ export function useLessonWaiting(id: string | null, enabled = true) {
 export function useShareRecording(id: string | null) {
   return useMutation({
     mutationFn: () => lessonApi.shareRecording(id as string),
+  });
+}
+
+export function useScheduleQuizzes(range: { from: string; to: string }) {
+  return useQuery({
+    queryKey: ["schedule", "quizzes", range.from, range.to],
+    queryFn: ({ signal }) => lessonApi.getScheduleQuizzes(range, { signal }),
+    placeholderData: keepPreviousData,
   });
 }
 

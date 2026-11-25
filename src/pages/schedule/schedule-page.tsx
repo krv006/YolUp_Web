@@ -14,7 +14,6 @@ import {
 import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
-import { useQuizzes } from "@/modules/quiz";
 import {
   CancelLessonDialog,
   LessonFormDialog,
@@ -24,6 +23,7 @@ import {
   useCreateLessonsBulk,
   useLessonReminder,
   useLessons,
+  useScheduleQuizzes,
   useUpdateLesson,
   type LessonDraft,
   type LessonScheduleDraft,
@@ -36,7 +36,7 @@ import type { Lesson } from "@/shared/types";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { monthAttendanceRate } from "@/pages/student/lib/attendance-rate";
 import { LessonDetailDrawer } from "./lesson-detail-drawer";
-import { isQuizEvent, quizEventId, quizEvents } from "./quiz-events";
+import { isQuizEvent, quizEventId, quizEvents, scheduleRange } from "./quiz-events";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
 import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
@@ -57,7 +57,6 @@ export function SchedulePage() {
   const me = useCurrentUser();
   const lessons = useLessons({ page_size: 200 });
   const courses = useCourses();
-  const quizzes = useQuizzes(null);
   const { t: tq } = useTranslation("quiz");
   const conversations = useConversations(student ? "student" : "teacher");
   const groupImages = useGroupImages(student ? "student" : "teacher");
@@ -79,6 +78,9 @@ export function SchedulePage() {
   const allLessons = useLessons({ page_size: 200 }, createOpen);
   const isCompact = useIsCompact();
   const [mobileView, setMobileView] = useState<MobileScheduleView>("day");
+
+  const range = useMemo(() => scheduleRange(anchor), [anchor]);
+  const quizzes = useScheduleQuizzes(range);
 
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
