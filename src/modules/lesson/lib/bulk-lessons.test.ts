@@ -18,8 +18,8 @@ describe("bulk lessons", () => {
     expect(body).toEqual({
       course: "c1",
       lessons: [
-        { title: "Kasrlar", starts_at: "2026-11-12T18:00:00", duration_min: 90 },
-        { title: "Mavzu", starts_at: "2026-11-14T10:00:00", duration_min: 60 },
+        { title: "Kasrlar", starts_at: expect.stringMatching(/^2026-11-12T18:00:00[+-]\d\d:\d\d$/), duration_min: 90 },
+        { title: "Mavzu", starts_at: expect.stringMatching(/^2026-11-14T10:00:00[+-]\d\d:\d\d$/), duration_min: 60 },
       ],
     });
   });

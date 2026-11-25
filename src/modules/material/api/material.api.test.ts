@@ -28,6 +28,26 @@ describe("materialApi folders", () => {
     expect(folders[1]).toMatchObject({ fileCount: 0, recordingCount: 0, boardCount: 0, kind: "club" });
   });
 
+  it("marks files sent in the group chat and downloads them through the chat endpoint", async () => {
+    const get = vi.spyOn(apiClient, "get").mockResolvedValueOnce({
+      count: 2,
+      next: null,
+      previous: null,
+      results: [
+        { id: 7, course_id: "c1", title: "Konspekt.pdf", kind: "pdf", source: "chat", url: "/api/v1/chat/attachments/7/" },
+        { id: 8, course_id: "c1", title: "Test.pdf", kind: "pdf", source: "upload", url: "/api/v1/materials/8/file/" },
+      ],
+    });
+    const [chat, upload] = await materialApi.list({ course: "c1", lesson: "general" });
+    expect(chat).toMatchObject({ source: "chat", url: "/api/v1/chat/attachments/7/" });
+    expect(upload.source).toBe("upload");
+    get.mockResolvedValue(new Blob(["x"]));
+    await materialApi.download(chat);
+    expect(get).toHaveBeenLastCalledWith("/api/v1/chat/attachments/7/", { responseType: "blob" });
+    await materialApi.download(upload);
+    expect(get.mock.lastCall?.[0]).not.toBe("/api/v1/chat/attachments/7/");
+  });
+
   it("uploads into a lesson folder only when one is chosen", async () => {
     const post = vi.spyOn(apiClient, "post").mockResolvedValue({ id: 1, course_id: "c1" });
     const file = new File(["x"], "a.pdf");

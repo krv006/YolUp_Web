@@ -264,7 +264,7 @@
     "title": "Record the lesson",
     "text": "Share your screen to record. In the window that opens, turn on \"Share audio\" — otherwise sound from the screen won't be recorded.",
     "mobileTitle": "Lesson recording",
-    "mobileText": "The lesson audio is recorded. Choose what happens to the recording once it's ready.",
+    "mobileText": "The lesson audio will be recorded. If you tap «Later», nothing is recorded — you can start later with the «Record» button at the top.",
     "start": "Share screen and start recording",
     "starting": "Opening...",
     "later": "Later",
@@ -272,7 +272,8 @@
     "buttonAria": "Share your screen and start recording the lesson",
     "unsupported": "This browser can't share the screen — try another browser.",
     "noAudio": "Screen audio wasn't connected — turn on \"Share audio\" in the window that opens and try again.",
-    "denied": "Screen sharing wasn't allowed. Try again, or start later with the button below."
+    "denied": "Screen sharing wasn't allowed. Try again, or start later with the button below.",
+    "mobileStart": "Record"
   },
   "silenceAll": {
     "aria": "Turn off everyone's mic and camera",

@@ -43,6 +43,7 @@ export interface MobileTile {
 export interface MobileLiveLayoutProps {
   startedAt: Date;
   recording: boolean;
+  onStartRecording?: () => void;
   participants: number;
   requests: number;
   stage: ReactNode;
@@ -69,6 +70,7 @@ function Elapsed({ startedAt }: { startedAt: Date }) {
 export function MobileLiveLayout({
   startedAt,
   recording,
+  onStartRecording,
   participants,
   requests,
   stage,
@@ -98,6 +100,15 @@ export function MobileLiveLayout({
               <i className="size-1.5 shrink-0 rounded-full bg-on-action not-italic" aria-hidden="true" />
               {t("room.rec")}
             </span>
+          ) : onStartRecording ? (
+            <button
+              type="button"
+              className="flex h-6 shrink-0 items-center gap-1 rounded-full border border-danger/70 px-2 text-caption-strong text-danger"
+              onClick={onStartRecording}
+            >
+              <i className="size-1.5 shrink-0 rounded-full bg-danger not-italic" aria-hidden="true" />
+              {t("recordingStart.mobileStart")}
+            </button>
           ) : null}
           <Elapsed startedAt={startedAt} />
         </span>
@@ -364,6 +375,7 @@ export interface MobileLiveRoomProps {
   currentUserId: string;
   startedAt: Date;
   recording: boolean;
+  onStartRecording?: () => void;
   participants: number;
   requests: number;
   cameraTracks: TrackReferenceOrPlaceholder[];
@@ -383,6 +395,7 @@ export function MobileLiveRoom({
   currentUserId,
   startedAt,
   recording,
+  onStartRecording,
   participants,
   requests,
   cameraTracks,
@@ -447,6 +460,7 @@ export function MobileLiveRoom({
       <MobileLiveLayout
         startedAt={startedAt}
         recording={recording}
+        onStartRecording={onStartRecording}
         participants={participants}
         requests={requests}
         stage={stage}

@@ -99,6 +99,18 @@ function beginSession(tokens: TokenPair, persistent: boolean): number {
   return sessionSeq;
 }
 
+async function reloadSwitchedUser(switched: AuthUser): Promise<AuthUser> {
+  const session = sessionSeq;
+  try {
+    const fresh = mapUserDto(await authApi.getCurrentUser());
+    if (session !== sessionSeq || fresh.id !== switched.id) return switched;
+    useAuthStore.setState({ user: fresh });
+    return fresh;
+  } catch {
+    return switched;
+  }
+}
+
 function endSession(): void {
   sessionSeq += 1;
   tokenStorage.clearTokens();
@@ -203,11 +215,11 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   },
 
   async switchAccount(userId) {
-    return get().adoptSession(await authApi.switchAccount(userId));
+    return reloadSwitchedUser(get().adoptSession(await authApi.switchAccount(userId)));
   },
 
   async switchRole(role) {
-    return get().adoptSession(await authApi.switchRole(role));
+    return reloadSwitchedUser(get().adoptSession(await authApi.switchRole(role)));
   },
 
   async linkAccount(username, password) {

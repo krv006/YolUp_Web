@@ -10,6 +10,7 @@ export interface MaterialDto {
   kind?: MaterialKind | null;
   mime?: string | null;
   url?: string | null;
+  source?: "upload" | "chat" | null;
   uploaded_by?: { id: string | number; name?: string | null } | null;
   created_at?: string | null;
   lesson_id?: string | number | null;

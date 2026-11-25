@@ -262,6 +262,7 @@
     "videoCount_one": "{{count}} video",
     "videoCount_other": "{{count}} videos",
     "boardCount_one": "{{count}} board",
-    "boardCount_other": "{{count}} boards"
+    "boardCount_other": "{{count}} boards",
+    "fromChat": "From chat"
   }
 }

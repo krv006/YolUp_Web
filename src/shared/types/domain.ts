@@ -163,6 +163,8 @@ export interface ChatMessage {
   status: string;
   pending: boolean;
   failed: boolean;
+  uploadProgress?: number;
+  failReason?: string | null;
   editedAt?: string | null;
   retryPayload?: SendMessagePayload;
   attachment?: MessageAttachment;
@@ -455,6 +457,7 @@ export interface Assignment {
   body: string;
   attachmentName: string;
   hasAttachment: boolean;
+  voice: AssignmentVoice | null;
   googleFormUrl: string | null;
   isBank: boolean;
   sourceId: string | null;
@@ -484,6 +487,12 @@ export interface Assignment {
   questions: HomeworkQuestion[];
   hasQuestions: boolean;
   questionsPoints: number;
+}
+
+export interface AssignmentVoice {
+  url: string;
+  durationMs: number | null;
+  mime: string;
 }
 
 export interface AiGroupSummary {
@@ -643,6 +652,8 @@ export interface Material {
   uploadedBy: { id: string; name: string } | null;
   createdAt: string;
   lessonId: string | null;
+  source: "upload" | "chat";
+  url: string | null;
 }
 
 export interface PracticeQuestion {

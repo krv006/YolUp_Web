@@ -18,6 +18,7 @@ import type { ChatMessage, Conversation, ConversationRole, MessageAttachment, Se
 import { messageApi } from "../api/message.api";
 import { ChatSocketManager, type SocketState } from "../lib/chat-socket-manager";
 import { applyReactions, markMessageFailed, upsertMessage } from "../lib/message.mappers";
+import { uploadFailureReason } from "../lib/upload-failure";
 import { messageKeys } from "./message.keys";
 
 const TYPING_RESET_MS = 2600;
@@ -173,11 +174,27 @@ export function useChat(
     return () => socket?.stop();
   }, [socket]);
 
+  const [uploadIds] = useState(() => new WeakMap<SendMessagePayload, string>());
   const sendMessage = useMutation({
-    mutationFn: (payload: SendMessagePayload) =>
-      messageApi.send(conversationId as string, payload, senderId),
+    mutationFn: (payload: SendMessagePayload) => {
+      const temporaryId = uploadIds.get(payload);
+      let shown = -1;
+      const onProgress =
+        temporaryId && (payload.file || payload.voice)
+          ? (fraction: number) => {
+              const percent = Math.min(99, Math.round(fraction * 100));
+              if (percent === shown) return;
+              shown = percent;
+              queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
+                current.map((item) => (item.id === temporaryId ? { ...item, uploadProgress: percent } : item))
+              );
+            }
+          : undefined;
+      return messageApi.send(conversationId as string, payload, senderId, onProgress);
+    },
     onMutate: async (payload): Promise<OptimisticContext> => {
       const temporaryId = `temp-${crypto.randomUUID()}`;
+      uploadIds.set(payload, temporaryId);
       const previewUrl = payload.file?.type.startsWith("image/") ? URL.createObjectURL(payload.file) : null;
       const attachment = pendingAttachment(temporaryId, payload.file, previewUrl);
       const optimistic: ChatMessage = {
@@ -213,9 +230,10 @@ export function useChat(
       queryClient.invalidateQueries({ queryKey: conversationKeys.list(role), exact: true });
       if (context.previewUrl) URL.revokeObjectURL(context.previewUrl);
     },
-    onError: (_error, _payload, context) => {
+    onError: (error, payload, context) => {
+      const reason = payload.file || payload.voice ? uploadFailureReason(error, i18n.t("chat:attachment.timeout")) : null;
       queryClient.setQueryData<ChatMessage[]>(messagesKey, (current = []) =>
-        markMessageFailed(current, context?.temporaryId ?? "")
+        markMessageFailed(current, context?.temporaryId ?? "", reason)
       );
       if (context?.previewUrl) URL.revokeObjectURL(context.previewUrl);
     },

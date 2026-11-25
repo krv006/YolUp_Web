@@ -85,6 +85,7 @@ export type {
   Submission,
   SubmissionStatus,
   AssignmentCopy,
+  AssignmentVoice,
   AssignmentStatus,
   GradingScale,
   TeacherAnalytics,

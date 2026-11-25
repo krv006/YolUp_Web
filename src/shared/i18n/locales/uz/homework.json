@@ -601,5 +601,17 @@
       "short": "Qisqa javob",
       "long": "Uzun javob"
     }
+  },
+  "voice": {
+    "title": "Ovozli izoh",
+    "record": "Ovozli izoh yozish",
+    "recordAgain": "Ovozli izohni qayta yozish",
+    "recording": "Yozilmoqda...",
+    "stop": "To'xtatish",
+    "remove": "Ovozli izohni o'chirish",
+    "loadFailed": "Ovozli izohni yuklab bo'lmadi",
+    "unsupported": "Bu brauzer ovoz yozishni qo'llamaydi",
+    "denied": "Mikrofonga ruxsat berilmadi",
+    "label": "Ovozli izoh (ixtiyoriy, 10 daqiqagacha)"
   }
 }

@@ -153,7 +153,7 @@ export function MaterialsPage() {
 
   async function download(item: Material) {
     try {
-      downloadBlob(await materialApi.download(item.id), item.name || item.title);
+      downloadBlob(await materialApi.download(item), item.name || item.title);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : t("materials.downloadFailed"));
     }
@@ -168,7 +168,7 @@ export function MaterialsPage() {
       name: item.name || item.title,
       mimeType: item.mimeType,
       meta: [item.courseTitle, item.size !== null ? formatFileSize(item.size) : ""].filter(Boolean).join(" · "),
-      load: (signal) => materialApi.download(item.id, { signal }),
+      load: (signal) => materialApi.download(item, { signal }),
     });
   }
 
@@ -189,6 +189,7 @@ export function MaterialsPage() {
                   item.size !== null ? formatFileSize(item.size) : "",
                   shortDate(item.createdAt),
                   isStudent ? item.uploadedBy?.name : "",
+                  item.source === "chat" ? t("materials.fromChat") : "",
                 ]
                   .filter(Boolean)
                   .join(" · ")}
@@ -204,7 +205,7 @@ export function MaterialsPage() {
           >
             <Icon name="download" size={20} />
           </button>
-          {canManage ? (
+          {canManage && item.source !== "chat" ? (
             <button
               type="button"
               className="grid size-10 shrink-0 place-items-center rounded-full text-ink-secondary transition-colors hover:bg-danger-bg hover:text-error-text"

@@ -43,6 +43,7 @@ import {
   useQuiz,
   useQuizAttempts,
   useQuizzes,
+  useAssignableQuizzes,
   useUpdateQuiz,
   PaidTestDialog,
   usePaidTestGate,
@@ -403,6 +404,7 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         startsOn: draft.startsOn,
         endsOn: draft.endsOn,
         dates: draft.dates,
+        quizId: draft.quizId || undefined,
       })
       .then(() => {
         setDialog(false);
@@ -590,7 +592,6 @@ function AssignmentsPanel({
   const editQuizAttempts = useQuizAttempts(editQuizTarget?.id ?? null, Boolean(editQuizTarget));
   const uploadAudio = useUploadGroupAudio(editQuizTarget?.id ?? "");
   const removeAudio = useRemoveGroupAudio(editQuizTarget?.id ?? "");
-  const { t: quizT } = useTranslation("quiz");
   const course = useCourse(courseId);
 
   const lessons = useLessons({ course: courseId, page_size: 100 }, dialog);
@@ -600,7 +601,8 @@ function AssignmentsPanel({
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
   );
-  const allQuizzes = useQuizzes(null, quizDialog || bankDialog);
+  const allQuizzes = useQuizzes(null, quizDialog);
+  const assignable = useAssignableQuizzes(bankDialog);
   const courseSubject = course.data?.subject ?? "";
   function closeQuizEditor() {
     setEditQuizTarget(null);
@@ -610,16 +612,13 @@ function AssignmentsPanel({
 
   const bankOptions = useMemo(
     () =>
-      (allQuizzes.data ?? [])
-        .filter((quiz) => !quiz.sourceQuizId && quiz.courseId !== courseId)
+      [...(assignable.data ?? [])]
         .sort((a, b) => Number(b.subject === courseSubject) - Number(a.subject === courseSubject))
         .map((quiz) => ({
           id: quiz.id,
-          label: `${quizDisplayTitle(quiz)} · ${t("assignments.quizQuestions", { count: quiz.questionCount })}${
-            quiz.status === "draft" ? ` · ${quizT("teacherPage.draftBadge")}` : ""
-          }`,
+          label: `${quizDisplayTitle(quiz)} · ${t("assignments.quizQuestions", { count: quiz.questionCount })}`,
         })),
-    [allQuizzes.data, courseId, courseSubject, quizT, t]
+    [assignable.data, courseSubject, t]
   );
 
   const quizTitleOptions = useMemo(() => {

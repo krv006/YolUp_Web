@@ -3,6 +3,7 @@ import { AppError, createTransportError } from "./api-error";
 import { buildRequestUrl, createRequestInit, type RequestOptions } from "./request-interceptor";
 import { handleApiResponse } from "./response-interceptor";
 import { expireSession, refreshTokenManager } from "./refresh-token-manager";
+import { xhrFetch } from "./xhr-fetch";
 
 function createRequestId(): string {
   return (
@@ -62,10 +63,11 @@ export class ApiClient {
     const requestSignal = createSignal(options.signal, options.timeoutMs ?? this.timeoutMs);
 
     try {
-      const response = await fetch(
-        requestUrl,
-        createRequestInit(requestOptions, requestSignal.signal, apiConfig.defaultHeaders)
-      );
+      const init = createRequestInit(requestOptions, requestSignal.signal, apiConfig.defaultHeaders);
+      const response =
+        options.onUploadProgress && typeof XMLHttpRequest !== "undefined"
+          ? await xhrFetch(requestUrl, init, options.onUploadProgress)
+          : await fetch(requestUrl, init);
 
       if (
         response.status === 401 &&

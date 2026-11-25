@@ -3,6 +3,7 @@ export type {
   AiResultDto,
   AssignmentDto,
   AssignmentFormInput,
+  AssignmentVoiceInput,
   HomeworkAnswerInput,
   HomeworkCourseReportDto,
   HomeworkQuestionInput,
@@ -50,3 +51,5 @@ export { AiSkippedNotice } from "./ui/ai-skipped-notice";
 export { formatGradeValue, gradePercent } from "./lib/grade-display";
 export { HomeworkReportView } from "./ui/homework-report-view";
 export type { AssignFromBankInput, AssignmentAudience, AssignTarget } from "./api/homework.dto";
+export { VoiceNoteField } from "./ui/voice-note-field";
+export { AssignmentVoicePlayer } from "./ui/assignment-voice-player";

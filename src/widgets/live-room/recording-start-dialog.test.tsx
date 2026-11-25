@@ -28,10 +28,11 @@ let root: Root;
 let host: HTMLDivElement;
 const onClose = vi.fn();
 const onScreen = vi.fn();
+const onAudio = vi.fn();
 
 function render(withScreen = true) {
   act(() => {
-    root.render(<RecordingStartDialog lessonId="l1" open withScreen={withScreen} onClose={onClose} onScreen={onScreen} />);
+    root.render(<RecordingStartDialog lessonId="l1" open withScreen={withScreen} onClose={onClose} onScreen={onScreen} onAudio={onAudio} />);
   });
 }
 
@@ -97,6 +98,15 @@ describe("recording start dialog", () => {
     render(false);
     await click(button("recordingStart.continue"));
     expect(mocks.save).not.toHaveBeenCalled();
+    expect(onAudio).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("records nothing on a phone when the teacher picks later", async () => {
+    render(false);
+    await click(button("recordingStart.later"));
+    expect(onAudio).not.toHaveBeenCalled();
+    expect(onScreen).not.toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();
   });
 });

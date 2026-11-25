@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   GoogleFormLink,
+  AssignmentVoicePlayer,
   useAssignment,
   useDeleteAssignment,
   useDownloadAssignmentFile,
@@ -122,6 +123,7 @@ export function HomeworkDetailPage() {
               announceInChat: item.announceInChat,
               aiCheck: item.aiCheck,
               googleFormUrl: item.googleFormUrl,
+              voice: item.voice,
               questions: item.questions,
               questionsLocked: item.submissions.length > 0 || (item.submissionsCount ?? 0) > 0,
             }}
@@ -278,6 +280,8 @@ export function HomeworkDetailPage() {
                 <Icon name="download" size={18} className="shrink-0 text-icon-tertiary" />
               </button>
             ) : null}
+
+            {item?.voice ? <AssignmentVoicePlayer voice={item.voice} className="mt-3" /> : null}
 
             {item?.googleFormUrl ? (
               <GoogleFormLink className="mt-3" url={item.googleFormUrl} hint={item.googleFormUrl} />

@@ -1,3 +1,4 @@
+import { AssignmentVoicePlayer } from "./assignment-voice-player";
 import { useState } from "react";
 import { RichContent } from "@/modules/rich-editor";
 import {
@@ -171,6 +172,8 @@ export function AssignmentDetailDialog({
                     {data.attachmentName || t("detailDialog.downloadAttachmentAria")}
                   </Button>
                 ) : null}
+
+                {data.voice ? <AssignmentVoicePlayer voice={data.voice} /> : null}
 
                 {data.stats ? (
                   <div className="assignment-stat-grid">

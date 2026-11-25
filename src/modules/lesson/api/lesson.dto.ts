@@ -115,16 +115,6 @@ export interface LessonRatingInput {
   description?: string;
 }
 
-export interface LessonScheduleRequestDto {
-  title: string;
-  days: number[];
-  start_time: string;
-  end_time: string;
-  weeks: number;
-  start_date: string;
-  note?: string;
-}
-
 export interface LessonScheduleResponseDto {
   count?: number;
   lessons?: LessonDto[];

@@ -19,6 +19,7 @@ import {
   QuestionsAnswerForm,
   QuestionsResult,
   GoogleFormLink,
+  AssignmentVoicePlayer,
   formatGradeValue,
   gradePercent,
   latestSubmission,
@@ -242,6 +243,7 @@ function HomeworkSubmit({
           <Icon name="download" size={20} className="shrink-0 text-icon-secondary" />
         </button>
       ) : null}
+      {assignment.voice ? <AssignmentVoicePlayer voice={assignment.voice} /> : null}
       {assignment.googleFormUrl ? <GoogleFormLink url={assignment.googleFormUrl} /> : null}
       <dl className="flex flex-col gap-3 text-body-sm">
         <span className="flex items-center justify-between gap-3">

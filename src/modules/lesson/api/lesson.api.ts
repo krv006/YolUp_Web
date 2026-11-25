@@ -1,5 +1,4 @@
 import { API_ERROR_CODES, apiClient, AppError, type RequestOptions } from "@/shared/api";
-import type { Lesson } from "@/shared/types";
 import { lessonEndpoints } from "./lesson.endpoints";
 import type {
   LessonConflictsDto,
@@ -8,7 +7,6 @@ import type {
   LessonRatingDto,
   LessonRatingInput,
   LessonRecordingDto,
-  LessonScheduleRequestDto,
   LessonScheduleResponseDto,
   LessonWaitingDto,
 } from "./lesson.dto";
@@ -72,52 +70,10 @@ export const lessonApi = {
     );
     return dto.cancelled_count ?? 1;
   },
-  async createSchedule(
-    courseId: string,
-    payload: LessonScheduleRequestDto
-  ): Promise<{ count: number; lessons: Lesson[] } | null> {
-    try {
-      const dto = await apiClient.post<LessonScheduleResponseDto>(
-        lessonEndpoints.schedule(courseId),
-        payload
-      );
-      const lessons = (dto?.lessons ?? []).map(mapLessonDto);
-      return { count: Number(dto?.count ?? lessons.length), lessons };
-    } catch (error) {
-      if (error instanceof AppError && error.status === 404) return null;
-      throw error;
-    }
-  },
   async createBulk(courseId: string, rows: readonly BulkLessonRow[]) {
     const dto = await apiClient.post<LessonScheduleResponseDto>(lessonEndpoints.bulk, bulkLessonsRequest(courseId, rows));
     const lessons = (dto?.lessons ?? []).map(mapLessonDto);
     return { count: Number(dto?.count ?? lessons.length), lessons };
-  },
-  async createMany(dates: readonly string[], form: LessonFormInput) {
-    const created: Lesson[] = [];
-    const failed: Array<{ date: string; message: string }> = [];
-    const CHUNK = 4;
-
-    for (let index = 0; index < dates.length; index += CHUNK) {
-      const chunk = dates.slice(index, index + CHUNK);
-      const results = await Promise.allSettled(
-        chunk.map((date) =>
-          apiClient
-            .post<LessonDto>(lessonEndpoints.list, mapLessonRequest({ ...form, date }))
-            .then(mapLessonDto)
-        )
-      );
-      results.forEach((result, offset) => {
-        if (result.status === "fulfilled") created.push(result.value);
-        else
-          failed.push({
-            date: chunk[offset],
-            message: result.reason instanceof Error ? result.reason.message : "Xatolik",
-          });
-      });
-    }
-
-    return { created, failed };
   },
   async remove(id: string) {
     await apiClient.delete(lessonEndpoints.detail(id));

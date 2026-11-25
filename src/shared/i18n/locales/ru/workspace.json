@@ -268,6 +268,7 @@
     "boardCount_one": "{{count}} доска",
     "boardCount_few": "{{count}} доски",
     "boardCount_many": "{{count}} досок",
-    "boardCount_other": "{{count}} доски"
+    "boardCount_other": "{{count}} доски",
+    "fromChat": "Из чата"
   }
 }

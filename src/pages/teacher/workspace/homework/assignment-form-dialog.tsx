@@ -17,9 +17,11 @@ import {
   googleFormUrlInvalid,
   QuestionsEditor,
   useQuestionDrafts,
+  VoiceNoteField,
   type AssignmentFormInput,
+  type AssignmentVoiceInput,
 } from "@/modules/homework";
-import type { GradingScale, HomeworkQuestion } from "@/shared/types";
+import type { AssignmentVoice, GradingScale, HomeworkQuestion } from "@/shared/types";
 import { toast } from "sonner";
 
 export interface AssignmentFormDialogProps {
@@ -37,6 +39,7 @@ export interface AssignmentFormDialogProps {
     announceInChat: boolean;
     aiCheck?: boolean;
     googleFormUrl?: string | null;
+    voice?: AssignmentVoice | null;
     questions?: HomeworkQuestion[];
     questionsLocked?: boolean;
   } | null;
@@ -80,6 +83,7 @@ export function AssignmentFormDialog({
   const [announce, setAnnounce] = useState(initial?.announceInChat ?? true);
   const [googleFormUrl, setGoogleFormUrl] = useState(initial?.googleFormUrl ?? "");
   const [touched, setTouched] = useState(false);
+  const [voice, setVoice] = useState<AssignmentVoiceInput | null | undefined>(undefined);
   const questions = useQuestionDrafts(initial?.questions ?? [], {
     editing: Boolean(initial),
     locked: Boolean(initial?.questionsLocked),
@@ -125,6 +129,7 @@ export function AssignmentFormDialog({
       ...(inBank ? {} : { dueAt: `${date}T${time || "23:59"}`, status, announceInChat: announce }),
       allowLate: true,
       aiCheck,
+      voice,
       grading,
       googleFormUrl: googleFormUrl.trim(),
     });
@@ -264,6 +269,7 @@ export function AssignmentFormDialog({
               </MobileFieldLabel>
 
               <GoogleFormField compact value={googleFormUrl} onChange={setGoogleFormUrl} />
+              <VoiceNoteField existing={initial?.voice ?? null} value={voice} onChange={setVoice} disabled={pending} />
 
               <div className="mt-0.5 rounded-lg bg-surface p-4">
                 <QuestionsEditor
@@ -420,6 +426,7 @@ export function AssignmentFormDialog({
           </label>
 
           <GoogleFormField value={googleFormUrl} onChange={setGoogleFormUrl} />
+          <VoiceNoteField existing={initial?.voice ?? null} value={voice} onChange={setVoice} disabled={pending} />
         </div>
 
         <div className="lesson-form flex min-w-0 flex-col gap-4">

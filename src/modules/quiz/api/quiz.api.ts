@@ -63,6 +63,13 @@ function mapImportedQuizDto(dto: QuizDto): ImportedQuiz {
 }
 
 export const quizApi = {
+  async getAssignable(options: RequestOptions = {}) {
+    const dto = await apiClient.get<unknown>(quizEndpoints.list, {
+      ...options,
+      query: { is_copy: false, status: "published", ordering: "-created_at", page_size: 100 },
+    });
+    return normalizePagination<QuizSummaryDto>(dto).items.map(mapQuizSummaryDto);
+  },
   async getAll(courseId: string | null, options: RequestOptions = {}) {
     const dto = await apiClient.get<unknown>(quizEndpoints.list, {
       ...options,

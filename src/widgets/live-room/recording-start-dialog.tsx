@@ -12,9 +12,10 @@ export interface RecordingStartDialogProps {
   withScreen: boolean;
   onClose: () => void;
   onScreen: (stream: MediaStream) => void;
+  onAudio: () => void;
 }
 
-export function RecordingStartDialog({ lessonId, open, withScreen, onClose, onScreen }: RecordingStartDialogProps) {
+export function RecordingStartDialog({ lessonId, open, withScreen, onClose, onScreen, onAudio }: RecordingStartDialogProps) {
   const { t } = useTranslation("live");
   const { t: tl } = useTranslation("lesson");
   const choice = useRecordingChoice(lessonId).data;
@@ -31,6 +32,13 @@ export function RecordingStartDialog({ lessonId, open, withScreen, onClose, onSc
   function later() {
     remember();
     setError(null);
+    onClose();
+  }
+
+  function startAudio() {
+    remember();
+    setError(null);
+    onAudio();
     onClose();
   }
 
@@ -77,9 +85,14 @@ export function RecordingStartDialog({ lessonId, open, withScreen, onClose, onSc
             </button>
           </>
         ) : (
-          <button type="button" className={dialogButton.primary} onClick={later}>
-            {t("recordingStart.continue")}
-          </button>
+          <>
+            <button type="button" className={dialogButton.secondary} onClick={later}>
+              {t("recordingStart.later")}
+            </button>
+            <button type="button" className={dialogButton.primary} onClick={startAudio}>
+              {t("recordingStart.continue")}
+            </button>
+          </>
         )
       }
     >

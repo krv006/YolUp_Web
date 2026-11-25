@@ -108,6 +108,24 @@ export function weeksBetween(startsOn: string, endsOn: string): number {
   return Math.min(MAX_SCHEDULE_WEEKS, Math.max(1, Math.ceil(days / 7)));
 }
 
+export function seriesWeeks(firstDate: string, endsOn: string): number {
+  const first = parseDate(firstDate);
+  const end = parseDate(endsOn);
+  if (!first || !end || end < first) return 1;
+  const monday = first.getTime() - ((first.getUTCDay() + 6) % 7) * 86_400_000;
+  const weeks = Math.floor((end.getTime() - monday) / (7 * 86_400_000)) + 1;
+  return Math.min(MAX_SCHEDULE_WEEKS, Math.max(1, weeks));
+}
+
+export function withLocalOffset(date: string, time: string): string {
+  const [year, month, day] = date.split("-").map(Number);
+  const [hours, minutes] = (time || "00:00").split(":").map(Number);
+  const offset = -new Date(year, (month || 1) - 1, day || 1, hours || 0, minutes || 0).getTimezoneOffset();
+  const sign = offset >= 0 ? "+" : "-";
+  const pad = (value: number) => String(Math.floor(Math.abs(value))).padStart(2, "0");
+  return `${date}T${pad(hours || 0)}:${pad(minutes || 0)}:00${sign}${pad(offset / 60)}:${pad(offset % 60)}`;
+}
+
 export function addMinutesToTime(time: string, minutes: number): string {
   const [hours, mins] = (time || "").split(":").map(Number);
   if (Number.isNaN(hours) || Number.isNaN(mins)) return time;
