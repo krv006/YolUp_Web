@@ -32,6 +32,7 @@ export function useTeacherAudioRecording(
       unsubscribe();
       sessionRef.current = null;
       releaseTeacherAudioRecording(session);
+      setSnapshot(INITIAL_SNAPSHOT);
     };
   }, [enabled, lessonId]);
 

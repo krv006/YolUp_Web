@@ -814,6 +814,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
   const [recordingDismissed, setRecordingDismissed] = useState(false);
   const [recordingStarted, setRecordingStarted] = useState(false);
+  const [recordingSince, setRecordingSince] = useState<Date | null>(null);
   const recordingChoice = useRecordingChoice(lesson.id, isTeacher);
   const isCompact = useIsCompact();
   const allowShare = useAllowShare(lesson.id);
@@ -856,7 +857,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
   const shareSourceText = useShareSourceText();
   const pendingRequestsCount = mic.requests.length + camera.requests.length;
 
-  const audioRecording = useTeacherAudioRecording(lesson.id, audioMediaTracks, isTeacher && (isCompact || recordingStarted));
+  const audioRecording = useTeacherAudioRecording(lesson.id, audioMediaTracks, isTeacher && recordingStarted);
   const screenVideoOnlyStream = useMemo(() => {
     const videoTrack = screenStream?.getVideoTracks()[0];
     return videoTrack ? new MediaStream([videoTrack]) : null;
@@ -899,12 +900,17 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
     return !Number.isNaN(scheduled.getTime()) && scheduled.getTime() <= joinedAt.getTime() ? scheduled : joinedAt;
   }, [lesson.recordingStartedAt, lesson.startsAt, joinedAt]);
   const connected = connectionState === ConnectionState.Connected;
+  function startRecording() {
+    if (recordingStarted) return;
+    setRecordingStarted(true);
+    setRecordingSince(new Date());
+  }
   const recordingPromptOpen =
     isTeacher &&
     connected &&
     !recordingDismissed &&
     recordingChoice.isFetched &&
-    ((!isCompact && !screenStream) || !recordingChoice.data?.decided);
+    (isCompact ? !recordingStarted : !screenStream);
 
   const recordingChips = isTeacher
     ? [
@@ -938,8 +944,9 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
           onClose={() => setRecordingDismissed(true)}
           onScreen={(stream) => {
             setScreenStream(stream);
-            setRecordingStarted(true);
+            startRecording();
           }}
+          onAudio={startRecording}
         />
       ) : null}
 
@@ -1024,6 +1031,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
           currentUserId={room.localParticipant.identity}
           startedAt={lessonStartedAt}
           recording={isTeacher ? recordingChips.length > 0 : lesson.recordingActive}
+          onStartRecording={isTeacher && !recordingStarted ? () => setRecordingDismissed(false) : undefined}
           participants={participants.length}
           requests={pendingRequestsCount}
           cameraTracks={cameraTracks}
@@ -1080,7 +1088,7 @@ export function LiveRoom({ lesson, isTeacher, onLeave }: LiveRoomProps) {
           </span>
         ) : null}
 
-        {recordingChips.length ? <RecordingChip startedAt={lessonStartedAt} /> : null}
+        {recordingChips.length ? <RecordingChip startedAt={recordingSince ?? lessonStartedAt} /> : null}
 
         {!isTeacher && lesson.status === "live" && lesson.recordingActive ? (
           <>
