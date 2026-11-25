@@ -425,7 +425,7 @@
     "courseLabel": "Group",
     "submit": "Send",
     "cancel": "Cancel",
-    "noQuizzes": "There are no ready group-less tests. Create a new one on the AI page.",
+    "noQuizzes": "There are no ready tests yet. Create a new one on the AI page.",
     "draftHint": "The test is published as soon as it is given to the group and students can see it (if every question has a correct answer marked).",
     "dueLabel": "Due",
     "timeLabel": "Time",
@@ -486,7 +486,9 @@
       "deleteTitle": "Delete the test?",
       "deleteDescription": "“{{title}}” and its results will be deleted permanently.",
       "emptySearch": "Nothing found"
-    }
+    },
+    "assignedCount_one": "Assigned to {{count}} group",
+    "assignedCount_other": "Assigned to {{count}} groups"
   },
   "typeDialog": {
     "title": "Add a question",

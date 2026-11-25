@@ -425,7 +425,7 @@
     "courseLabel": "Guruh",
     "submit": "Yuborish",
     "cancel": "Bekor qilish",
-    "noQuizzes": "Guruhsiz tayyor testlar yo'q. AI sahifasida yangi test yarating.",
+    "noQuizzes": "Hali tayyor test yo'q. AI sahifasida yangi test yarating.",
     "draftHint": "Test guruhga berilishi bilan e'lon qilinadi va o'quvchilarga ko'rinadi (savollarda to'g'ri javob belgilangan bo'lsa).",
     "dueLabel": "Muddat",
     "timeLabel": "Vaqt",
@@ -486,7 +486,8 @@
       "deleteTitle": "Testni o‘chirasizmi?",
       "deleteDescription": "“{{title}}” testi va uning natijalari butunlay o‘chiriladi.",
       "emptySearch": "Hech narsa topilmadi"
-    }
+    },
+    "assignedCount": "{{count}} ta guruhga berilgan"
   },
   "typeDialog": {
     "title": "Savol qo‘shish",

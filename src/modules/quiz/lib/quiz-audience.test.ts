@@ -37,16 +37,17 @@ describe("quiz audience", () => {
     expect(audience.students[1]).toEqual({ id: "2", name: "vali", username: "vali", avatarUrl: null, assigned: false, attempted: false });
   });
 
-  it("assigns course, due date and students in one request", async () => {
+  it("assigns a copy of the test to the course in one request", async () => {
     expect(assignRequestBody({ courseId: "c1" })).toEqual({ course: "c1" });
     expect(assignRequestBody({ courseId: "c1", dueAt: "2026-11-20T23:59", studentIds: null })).toEqual({
       course: "c1",
       due_at: "2026-11-20T23:59",
       student_ids: [],
     });
-    const patch = vi.spyOn(apiClient, "patch").mockResolvedValue({ ...summary, course: "c1", questions: [], groups: [] });
-    await quizApi.assignToCourse({ quizId: "q1", courseId: "c1", studentIds: ["s1"] });
-    expect(patch).toHaveBeenCalledWith("/api/v1/quizzes/q1/", { course: "c1", student_ids: ["s1"] });
+    const post = vi.spyOn(apiClient, "post").mockResolvedValue({ ...summary, id: "q9", source_quiz_id: "q1", course: "c1", questions: [], groups: [] });
+    const copy = await quizApi.assignToCourse({ quizId: "q1", courseId: "c1", studentIds: ["s1"] });
+    expect(post).toHaveBeenCalledWith("/api/v1/quizzes/q1/assign/", { course: "c1", student_ids: ["s1"] });
+    expect(copy.sourceQuizId).toBe("q1");
   });
 
   it("replaces the audience with PUT", async () => {

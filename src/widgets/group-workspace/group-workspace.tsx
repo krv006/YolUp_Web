@@ -608,11 +608,10 @@ function AssignmentsPanel({
     setPublishError(null);
   }
 
-  // Tayyor (guruhsiz) testlar: avval shu guruh fanidagilar — AI yaratgan testlar ham shu yerda
   const bankOptions = useMemo(
     () =>
       (allQuizzes.data ?? [])
-        .filter((quiz) => !quiz.courseId)
+        .filter((quiz) => !quiz.sourceQuizId && quiz.courseId !== courseId)
         .sort((a, b) => Number(b.subject === courseSubject) - Number(a.subject === courseSubject))
         .map((quiz) => ({
           id: quiz.id,
@@ -620,7 +619,7 @@ function AssignmentsPanel({
             quiz.status === "draft" ? ` · ${quizT("teacherPage.draftBadge")}` : ""
           }`,
         })),
-    [allQuizzes.data, courseSubject, quizT, t]
+    [allQuizzes.data, courseId, courseSubject, quizT, t]
   );
 
   const quizTitleOptions = useMemo(() => {
