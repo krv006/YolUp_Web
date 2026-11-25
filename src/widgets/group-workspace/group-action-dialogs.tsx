@@ -1,17 +1,6 @@
 import { useMemo, useRef, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import {
-  Bold,
-  CalendarDays,
-  FileUp,
-  GraduationCap,
-  Hourglass,
-  Italic,
-  Link,
-  List,
-  Paperclip,
-  Underline,
-} from "lucide-react";
+import { CalendarDays, FileUp, GraduationCap, Hourglass, Paperclip } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import {
@@ -33,6 +22,7 @@ import {
 } from "@/shared/ui/mobile-fields";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
+import { Switch } from "@/shared/ui/switch";
 import {
   BulkLessonRows,
   bulkRowErrors,
@@ -84,6 +74,7 @@ export interface AddAssignmentDialogProps {
       file: File | null;
       questions?: HomeworkQuestionInput[];
       googleFormUrl: string;
+      aiCheck: boolean;
     }
   ) => void;
   lessons?: readonly Lesson[];
@@ -876,6 +867,7 @@ export function AddAssignmentDialog({
   );
   const [file, setFile] = useState<File | null>(null);
   const [googleFormUrl, setGoogleFormUrl] = useState(initialValues?.googleFormUrl ?? "");
+  const [aiCheck, setAiCheck] = useState(initialValues?.aiCheck ?? true);
   const googleFormInvalid = googleFormUrlInvalid(googleFormUrl);
   const fileRef = useRef<HTMLInputElement>(null);
   const detail = useAssignment(open && initialValues ? initialValues.id : null);
@@ -924,6 +916,7 @@ export function AddAssignmentDialog({
       extraInstructions: gradingNote,
       file,
       googleFormUrl: googleFormUrl.trim(),
+      aiCheck,
     });
     setForm(EMPTY_ASSIGNMENT);
     setFile(null);
@@ -958,27 +951,6 @@ export function AddAssignmentDialog({
             <div className="grid gap-1.5">
               <span className="field-block-label">{t("dialogs.assignment.descriptionLabel")}</span>
               <div className="rich-assignment-field">
-                <div
-                  className="rich-toolbar"
-                  aria-label={t("dialogs.assignment.toolbarAria")}
-                >
-                  <button type="button" aria-label={t("dialogs.assignment.boldAria")}>
-                    <Bold size={14} />
-                  </button>
-                  <button type="button" aria-label={t("dialogs.assignment.italicAria")}>
-                    <Italic size={14} />
-                  </button>
-                  <button type="button" aria-label={t("dialogs.assignment.underlineAria")}>
-                    <Underline size={14} />
-                  </button>
-                  <span />
-                  <button type="button" aria-label={t("dialogs.assignment.listAria")}>
-                    <List size={14} />
-                  </button>
-                  <button type="button" aria-label={t("dialogs.assignment.linkAria")}>
-                    <Link size={14} />
-                  </button>
-                </div>
                 <textarea
                   value={form.description}
                   onChange={(event) => update("description", event.target.value)}
@@ -1067,6 +1039,21 @@ export function AddAssignmentDialog({
                 {googleFormInvalid ? t("homework:form.googleFormInvalid") : t("homework:form.googleFormHint")}
               </small>
             </label>
+            <div className="flex items-center gap-3 rounded-xl bg-subtle px-4 py-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-accent-saffron-bg text-accent-saffron-fg">
+                <Icon name="auto-awesome" size={18} />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col">
+                <strong className="text-label-strong text-ink">{t("homework:form.aiCheck")}</strong>
+                <small className="text-body-xs text-ink-secondary">{t("homework:form.aiCheckHint")}</small>
+              </span>
+              <Switch
+                size="lg"
+                checked={aiCheck}
+                onCheckedChange={setAiCheck}
+                aria-label={t("homework:form.aiCheck")}
+              />
+            </div>
           </motion.form>
           <div className="mt-4">
             <QuestionsEditor
