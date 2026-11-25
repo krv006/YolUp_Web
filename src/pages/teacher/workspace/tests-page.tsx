@@ -284,6 +284,7 @@ export function TestsPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.teacher.workspace}
       eyebrow={quizzes.isLoading ? t("tests.eyebrowLoading") : t("tests.eyebrow", { count: items.length })}
       title={t("tests.title")}
       action={

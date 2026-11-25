@@ -211,7 +211,7 @@ export function StudentAnalyticsPage() {
     );
 
   return (
-    <WorkspaceShell eyebrow={t("workspace.analytics.eyebrow")} title={t("workspace.analytics.title")}>
+    <WorkspaceShell backTo={ROUTES.student.workspace} eyebrow={t("workspace.analytics.eyebrow")} title={t("workspace.analytics.title")}>
       {statCards}
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
         {chart}

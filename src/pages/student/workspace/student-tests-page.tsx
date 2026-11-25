@@ -130,6 +130,7 @@ export function StudentTestsPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.student.workspace}
       eyebrow={t("workspace.tests.eyebrow", { count: data.quizzes.length })}
       title={t("workspace.tests.title")}
     >

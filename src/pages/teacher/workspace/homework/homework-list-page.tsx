@@ -160,6 +160,7 @@ export function HomeworkListPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.teacher.workspace}
       eyebrow={t("list.eyebrow", { count: groups.length })}
       title={t("list.title")}
       action={

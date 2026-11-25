@@ -444,6 +444,7 @@ function HomeworkSubmit({
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.student.homework}
       eyebrow={t("workspace.hwItem.eyebrow", {
         course: assignment.courseTitle || course.data?.title || "",
         teacher: course.data?.teacher ?? "",

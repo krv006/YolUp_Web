@@ -222,6 +222,7 @@ export function StudentTestResultsPage() {
 
   return (
     <WorkspaceShell
+      backTo={ROUTES.student.tests}
       eyebrow={t("workspace.results.eyebrow", { course: course.data?.title ?? quiz.data?.subjectLabel ?? "" })}
       title={title}
       action={

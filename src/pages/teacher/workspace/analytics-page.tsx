@@ -78,7 +78,7 @@ export function WorkspaceAnalyticsPage() {
 
   if (empty)
     return (
-      <WorkspaceShell eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>
+      <WorkspaceShell backTo={ROUTES.teacher.workspace} eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>
         <div className="flex min-h-120 flex-col items-center justify-center gap-4 text-center">
           <span className="grid size-22 place-items-center rounded-xl bg-brand-subtle text-brand">
             <Icon name="bar-chart" size={36} />
@@ -102,7 +102,7 @@ export function WorkspaceAnalyticsPage() {
     );
 
   return (
-    <WorkspaceShell eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>
+    <WorkspaceShell backTo={ROUTES.teacher.workspace} eyebrow={t("stats.eyebrow")} title={t("analytics.title")}>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label={t("analytics.avgRating")}
