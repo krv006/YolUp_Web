@@ -303,8 +303,7 @@
     "views": {
       "day": "Kun",
       "week": "Hafta",
-      "month": "Oy",
-      "list": "Ro‘yxat"
+      "month": "Oy"
     },
     "live": "Dars ketmoqda",
     "finished": "tugadi",

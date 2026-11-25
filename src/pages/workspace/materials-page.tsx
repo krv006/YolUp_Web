@@ -266,7 +266,7 @@ export function MaterialsPage() {
       <MobileEmptyCard
         icon="folder"
         title={t("materials.noGroups")}
-        description={canManage ? t("materials.emptyHintTeacher") : t("materials.emptyHintStudent")}
+        description={canManage ? undefined : t("materials.emptyHintStudent")}
       />
     );
   } else if (level === "course") {
@@ -314,7 +314,7 @@ export function MaterialsPage() {
           <MobileEmptyCard
             icon="folder"
             title={t("materials.emptyTitle")}
-            description={canManage ? t("materials.emptyHintTeacher") : t("materials.emptyHintStudent")}
+            description={canManage ? undefined : t("materials.emptyHintStudent")}
           />
         ) : null}
       </div>
@@ -329,7 +329,7 @@ export function MaterialsPage() {
       <MobileEmptyCard
         icon="folder"
         title={t("materials.emptyTitle")}
-        description={canManage ? t("materials.emptyHintTeacher") : t("materials.emptyHintStudent")}
+        description={canManage ? undefined : t("materials.emptyHintStudent")}
       />
     );
   } else {
@@ -369,7 +369,7 @@ export function MaterialsPage() {
           <MobileEmptyCard
             icon="folder"
             title={t("materials.emptyTitle")}
-            description={canManage ? t("materials.emptyHintTeacher") : t("materials.emptyHintStudent")}
+            description={canManage ? undefined : t("materials.emptyHintStudent")}
           />
         ) : null}
       </div>
