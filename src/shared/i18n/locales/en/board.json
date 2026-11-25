@@ -13,10 +13,7 @@
     "slowSyncNote": "Syncing in slow mode — your drawings are saved and will be sent once the connection is back"
   },
   "sheet": {
-    "addSheet": "Sheet",
-    "pageOf": "Page {{page}} / {{total}}",
-    "prev": "Previous page",
-    "next": "Next page"
+    "earlier": "Page {{page}} (earlier)"
   },
   "permission": {
     "grantButton": "Grant",
@@ -198,7 +195,6 @@
     "empty": "The board is empty for now"
   },
   "mobile": {
-    "title": "Board · {{page}} / {{total}}",
     "undo": "Undo",
     "redo": "Redo",
     "modes": {
@@ -207,7 +203,8 @@
       "everyone": "Everyone"
     },
     "liveLesson": "Live lesson",
-    "menu": "Actions"
+    "menu": "Actions",
+    "boardTitle": "Board"
   },
   "code": {
     "language": "Programming language",

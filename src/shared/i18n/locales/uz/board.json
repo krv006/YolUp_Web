@@ -13,10 +13,7 @@
     "slowSyncNote": "Sinxronlash sekin rejimda — chizganlaringiz saqlanadi va ulanish tiklanganda yuboriladi"
   },
   "sheet": {
-    "addSheet": "Sahifa",
-    "pageOf": "Sahifa {{page}} / {{total}}",
-    "prev": "Oldingi sahifa",
-    "next": "Keyingi sahifa"
+    "earlier": "{{page}}-sahifa (oldingi)"
   },
   "permission": {
     "grantButton": "Ruxsat",
@@ -198,7 +195,6 @@
     "empty": "Doska hozircha bo‘sh"
   },
   "mobile": {
-    "title": "Doska · {{page}} / {{total}}",
     "undo": "Bekor qilish",
     "redo": "Qaytarish",
     "modes": {
@@ -207,7 +203,8 @@
       "everyone": "Hamma"
     },
     "liveLesson": "Jonli dars",
-    "menu": "Amallar"
+    "menu": "Amallar",
+    "boardTitle": "Doska"
   },
   "code": {
     "language": "Dasturlash tili",

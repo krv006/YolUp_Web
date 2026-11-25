@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent, type ReactNode } from "react";
-import { Check, ChevronLeft, ChevronRight, Eye, Pencil, Users, Wifi, X } from "lucide-react";
+import { Check, Eye, Pencil, Users, Wifi, X } from "lucide-react";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
 import { Icon } from "@/shared/ui/icon";
 import { useTranslation } from "react-i18next";
@@ -46,9 +46,6 @@ import { useBoardGuides } from "../model/use-board-guides";
 import { CODE_PAD, detectCodeLanguage } from "../lib/code-highlight";
 import { hasRichFormatting, linesToPlainText, plainTextToLines } from "../lib/rich-text";
 import {
-  useAddSheet,
-  useRenameSheet,
-  useSetCurrentSheet,
   useAddStroke,
   useBoard,
   useEraseStrokes,
@@ -68,7 +65,6 @@ import {
   MobileBoardPill,
   MobileBoardToolbar,
 } from "./board-mobile";
-import { BoardPagesSheet } from "./board-pages-sheet";
 import { BoardPermissionDialog } from "./board-permission-dialog";
 import { FormulaSolverDialog } from "./formula-solver-dialog";
 import { FormulaPalette } from "./formula-palette";
@@ -89,9 +85,6 @@ export interface BoardPanelProps {
   footerActions?: ReactNode;
   /** Berilsa - doska dars o'rniga shu manbadan ishlaydi (uy vazifasi doskasi): realtime va ruxsatlarsiz. */
   source?: BoardSource;
-  /** Sahifa tashqaridan boshqarilsa (arxiv sahifasi). */
-  sheetIndex?: number;
-  onSheetChange?: (index: number) => void;
   /** Pastdagi sahifa paneli yashiriladi (sahifalar tashqarida ko'rsatilganda). */
   hideSheetBar?: boolean;
   mobile?: BoardMobileChrome;
@@ -137,8 +130,6 @@ export function BoardPanel({
   statusNote,
   footerActions,
   source,
-  sheetIndex,
-  onSheetChange,
   hideSheetBar = false,
   mobile,
 }: BoardPanelProps) {
@@ -151,18 +142,12 @@ export function BoardPanel({
   const realtime = useBoardRealtime(lessonId, !source, userId);
   const board = useBoard(lessonId, { live: realtime.connected, enabled: !source });
   const addStroke = useAddStroke(lessonId);
-  const addSheet = useAddSheet(lessonId);
   const erase = useEraseStrokes(lessonId);
   const updateMutation = useUpdateStroke(lessonId);
   const permissions = useSetBoardPermissions(lessonId);
-  const renameSheet = useRenameSheet(lessonId);
   const solve = useSolveFormula(lessonId);
-  const currentSheet = useSetCurrentSheet(lessonId);
   const members = useCourseStudents(board.data?.isTeacher ? courseId : null, { page_size: 100 });
 
-  const [localSheet, setLocalSheet] = useState(0);
-  const sheet = sheetIndex ?? localSheet;
-  const setSheet = onSheetChange ?? setLocalSheet;
   const [tool, setTool] = useState<BoardTool>("pen");
   const [color, setColor] = useState<string>(mobileLayout ? MOBILE_BOARD_COLORS[1] : BOARD_COLORS[0]);
   const [strokeWidth, setStrokeWidth] = useState<number>(mobileLayout ? MOBILE_BOARD_WIDTHS[1] : BOARD_WIDTHS[1]);
@@ -175,7 +160,6 @@ export function BoardPanel({
   const [redoStack, setRedoStack] = useState<Array<{ sheet: number; shape: StrokeShapeDto }>>([]);
 
   const [grantOpen, setGrantOpen] = useState(false);
-  const [pagesOpen, setPagesOpen] = useState(false);
 
   const [placement, setPlacement] = useState<{
     tool: PlacedTool;
@@ -200,22 +184,11 @@ export function BoardPanel({
   const [solution, setSolution] = useState<FormulaSolutionDto | null>(null);
 
   const state = source ? source.state : board.data;
-  const active = state?.sheets.find((item) => item.index === sheet) ?? state?.sheets[0];
+  const orderedSheets = useMemo(() => [...(state?.sheets ?? [])].sort((a, b) => a.index - b.index), [state?.sheets]);
+  const active = orderedSheets[orderedSheets.length - 1];
+  const sheet = active?.index ?? 0;
+  const earlierSheets = orderedSheets.slice(0, -1);
   const canDraw = Boolean(state?.canDraw);
-  const followSheet = !source && board.data && !board.data.isTeacher ? board.data.currentSheet : null;
-  const lastFollowed = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (followSheet === null || followSheet === lastFollowed.current) return;
-    lastFollowed.current = followSheet;
-    setSheet(followSheet);
-  }, [followSheet, setSheet]);
-
-  const { mutate: announceSheet } = currentSheet;
-  function changeSheet(next: number) {
-    setSheet(next);
-    if (!source && board.data?.isTeacher) announceSheet(next);
-  }
 
   const boardHeight = state?.height ?? 900;
   const boardWidth = state?.width ?? 1600;
@@ -327,6 +300,28 @@ export function BoardPanel({
     return () => observer.disconnect();
   }, [canvasWrap]);
 
+  const sheetHeight = useCallback(
+    (strokes: readonly StrokeDto[]) => {
+      const bottom = strokes.reduce((max, stroke) => {
+        const span = strokeSpan(stroke);
+        return span ? Math.max(max, span.bottom) : max;
+      }, 0);
+      return Math.max(boardHeight, Math.ceil(bottom + FLOW_MARGIN));
+    },
+    [boardHeight]
+  );
+  const [workingLayer, setWorkingLayer] = useState<HTMLDivElement | null>(null);
+  const lentaScrolled = useRef(false);
+  const hasEarlier = earlierSheets.length > 0;
+  useEffect(() => {
+    if (lentaScrolled.current || !hasEarlier || !canvasWrap || !workingLayer || !viewWidth) return;
+    const frame = requestAnimationFrame(() => {
+      lentaScrolled.current = true;
+      canvasWrap.scrollTop = workingLayer.offsetTop;
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [hasEarlier, canvasWrap, workingLayer, viewWidth]);
+
   const canvasHeight = useMemo(() => {
     const bottom = (active?.strokes ?? []).reduce((max, stroke) => {
       const span = strokeSpan(stroke);
@@ -392,7 +387,6 @@ export function BoardPanel({
     if (!entry) return;
     setRedoStack((current) => current.slice(0, -1));
     setHistory((current) => [...current, entry]);
-    if (entry.sheet !== sheet) setSheet(entry.sheet);
     sendStroke(entry.shape, entry.sheet);
   }
 
@@ -878,7 +872,29 @@ export function BoardPanel({
   const canvas = (
     <div className="relative h-full min-h-0">
       <div ref={setCanvasWrap} className="board-canvas-wrap h-full">
-        <div className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
+        {earlierSheets.length ? (
+          <div className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
+            {earlierSheets.map((item) => {
+              const height = sheetHeight(item.strokes);
+              return (
+                <div key={item.index} className="border-b-2 border-dashed border-line">
+                  <svg
+                    className="block w-full"
+                    viewBox={`0 0 ${state.width} ${height}`}
+                    preserveAspectRatio="xMidYMin meet"
+                    style={{ aspectRatio: `${state.width} / ${height}` }}
+                    aria-label={t("sheet.earlier", { page: item.index + 1 })}
+                  >
+                    {item.strokes.map((stroke) => (
+                      <BoardStroke key={stroke.id} stroke={stroke} selected={false} onSelect={() => undefined} />
+                    ))}
+                  </svg>
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+        <div ref={setWorkingLayer} className="board-zoom-layer" style={{ width: `${zoom * 100}%` }}>
           <svg
             ref={svgRef}
             className={`board-canvas board-canvas--${tool}`}
@@ -1072,23 +1088,6 @@ export function BoardPanel({
 
   const dialogs = (
     <>
-        <BoardPagesSheet
-          open={pagesOpen}
-          onOpenChange={setPagesOpen}
-          sheets={state.sheets}
-          active={sheet}
-          boardWidth={state.width}
-          boardHeight={state.height}
-          canAdd={state.isTeacher || Boolean(source)}
-          onSelect={(index) => {
-            changeSheet(index);
-            setPagesOpen(false);
-          }}
-          onAdd={() => (source ? source.addSheet() : addSheet.mutate())}
-          canRename={state.isTeacher && !source}
-          onRename={(index, title) => renameSheet.mutate({ index, title })}
-        />
-
         <BoardPermissionDialog
           open={grantOpen}
           onOpenChange={setGrantOpen}
@@ -1148,8 +1147,6 @@ export function BoardPanel({
   );
 
   if (mobileLayout && mobile) {
-    const page = (active?.index ?? sheet) + 1;
-    const total = state.sheets.length;
     const pill = source ? null : !canDraw ? (
       <MobileBoardPill icon={<Eye size={14} />} tone="neutral">
         {t("status.viewOnly")}
@@ -1171,7 +1168,7 @@ export function BoardPanel({
     return (
       <div className="flex min-h-0 flex-1 flex-col [&_.board-canvas]:bg-none [&_.board-canvas-wrap]:bg-transparent">
         <MobileBoardHeader
-          title={mobile.title ?? t("mobile.title", { page, total })}
+          title={mobile.title ?? t("mobile.boardTitle")}
           subtitle={mobile.subtitle}
           live={mobile.live}
           backLabel={mobile.backLabel}
@@ -1237,17 +1234,11 @@ export function BoardPanel({
         <div className="mx-1 mt-0.5">
           {mobile.footer ?? (
             <MobileBoardFooter
-              page={page}
-              total={total}
               showHistory={canDraw}
               canUndo={Boolean(undoTarget)}
               canRedo={redoStack.length > 0}
               onUndo={undo}
               onRedo={redo}
-              onPrev={() => changeSheet(Math.max(0, sheet - 1))}
-              onNext={() => changeSheet(Math.min(total - 1, sheet + 1))}
-              onPages={() => setPagesOpen(true)}
-              onAdd={state.isTeacher || source ? () => (source ? source.addSheet() : addSheet.mutate()) : undefined}
             />
           )}
         </div>
@@ -1300,65 +1291,17 @@ export function BoardPanel({
         {hideSheetBar ? null : (
         <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center px-4">
           <div className="flex h-9 max-w-full items-center gap-3 overflow-x-auto rounded-full bg-surface px-4 shadow-lg">
-            <button
-              type="button"
-              className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
-              aria-label={t("sheet.prev")}
-              disabled={sheet <= 0}
-              onClick={() => changeSheet(sheet - 1)}
-            >
-              <ChevronLeft size={16} />
-            </button>
-
-            <button
-              type="button"
-              className="shrink-0 text-caption-strong whitespace-nowrap text-ink"
-              onClick={() => setPagesOpen(true)}
-            >
-              {t("sheet.pageOf", { page: sheet + 1, total: state.sheets.length })}
-            </button>
-
-            <button
-              type="button"
-              className="grid size-6 shrink-0 place-items-center rounded-full text-icon-tertiary transition-colors hover:bg-subtle hover:text-ink disabled:opacity-40"
-              aria-label={t("sheet.next")}
-              disabled={sheet >= state.sheets.length - 1}
-              onClick={() => changeSheet(sheet + 1)}
-            >
-              <ChevronRight size={16} />
-            </button>
-
             {statusNote ? (
-              <>
-                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
-                  ·
-                </i>
-                <span className="shrink-0 text-caption-strong whitespace-nowrap text-ink-tertiary">
-                  {statusNote}
-                </span>
-              </>
-            ) : null}
-
-            {state.isTeacher || source ? (
-              <>
-                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
-                  ·
-                </i>
-                <button
-                  type="button"
-                  className="shrink-0 text-caption-strong whitespace-nowrap text-brand transition-opacity hover:opacity-80"
-                  onClick={() => (source ? source.addSheet() : addSheet.mutate())}
-                >
-                  + {t("sheet.addSheet")}
-                </button>
-              </>
+              <span className="shrink-0 text-caption-strong whitespace-nowrap text-ink-tertiary">{statusNote}</span>
             ) : null}
 
             {state.isTeacher ? (
               <>
-                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
-                  ·
-                </i>
+                {statusNote ? (
+                  <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                    ·
+                  </i>
+                ) : null}
                 <button
                   type="button"
                   className="shrink-0 text-caption-strong whitespace-nowrap text-success transition-opacity hover:opacity-80"
@@ -1369,9 +1312,11 @@ export function BoardPanel({
               </>
             ) : (
               <>
-                <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
-                  ·
-                </i>
+                {statusNote ? (
+                  <i className="not-italic text-caption text-ink-tertiary" aria-hidden="true">
+                    ·
+                  </i>
+                ) : null}
                 <span
                   className={`shrink-0 text-caption-strong whitespace-nowrap ${
                     canDraw ? "text-success" : "text-ink-tertiary"

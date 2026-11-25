@@ -2,6 +2,7 @@ import { useEffect, useRef, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Point } from "../api/board.dto";
 import { baselineOffset } from "../lib/board-measure";
+import { wrapToWidth } from "../lib/wrap-text";
 
 export interface InlineTextEditorProps {
   value: string;
@@ -15,6 +16,7 @@ export interface InlineTextEditorProps {
 }
 
 const LINE_HEIGHT = 1.35;
+const EDGE_MARGIN = 24;
 
 export function InlineTextEditor({ value, onChange, anchor, size, color, boardWidth, scale, onCommit }: InlineTextEditorProps) {
   const { t } = useTranslation("board");
@@ -23,6 +25,16 @@ export function InlineTextEditor({ value, onChange, anchor, size, color, boardWi
   const family = getComputedStyle(document.body).fontFamily;
   const offset = baselineOffset(fontPx, LINE_HEIGHT, family);
   const font = { fontSize: fontPx, lineHeight: LINE_HEIGHT, fontWeight: 600, fontFamily: "inherit", letterSpacing: "normal" };
+  const measurer = useRef<CanvasRenderingContext2D | null>(null);
+
+  function fitToBoard(next: string): string {
+    measurer.current ??= document.createElement("canvas").getContext("2d");
+    const context = measurer.current;
+    if (!context) return next;
+    context.font = `600 ${fontPx}px ${family}`;
+    const room = (boardWidth - anchor[0] - EDGE_MARGIN) * scale;
+    return wrapToWidth(next, room, (value) => context.measureText(value).width);
+  }
 
   useEffect(() => {
     const area = areaRef.current;
@@ -61,7 +73,7 @@ export function InlineTextEditor({ value, onChange, anchor, size, color, boardWi
           aria-label={t("inline.textAria")}
           className="col-start-1 row-start-1 m-0 block min-w-[1ch] resize-none overflow-hidden whitespace-pre border-0 bg-transparent p-0 outline-none"
           style={{ ...font, color, caretColor: color }}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => onChange(fitToBoard(event.target.value))}
           onKeyDown={handleKeyDown}
           onBlur={onCommit}
         />
