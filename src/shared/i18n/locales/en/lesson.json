@@ -367,16 +367,9 @@
     "group": "Group",
     "topic": "Lesson topic",
     "topicPlaceholder": "For example: Present Perfect — practice",
-    "single": "Single lesson",
-    "repeating": "Recurring",
     "date": "Date",
     "start": "Starts",
-    "duration": "Duration (min)",
-    "submit": "Save the lesson",
-    "mobileDescription": "Pick a group and set the time",
-    "weeksValue": "{{count}} weeks",
-    "fewerWeeks": "Fewer weeks",
-    "moreWeeks": "More weeks"
+    "duration": "Duration (min)"
   },
   "mobileSchedule": {
     "offline": "No internet. Last saved schedule",
@@ -434,8 +427,6 @@
     "noteLine": "Note: {{text}}"
   },
   "bulk": {
-    "mode": "Several lessons",
-    "modeShort": "Several",
     "topicPlaceholder": "Lesson topic",
     "topicAria": "Lesson {{number}} topic",
     "date": "Date",
@@ -449,8 +440,6 @@
     "past": "This time has already passed",
     "overlap": "Overlaps another lesson in this list",
     "busy": "«{{title}}» is already at this time",
-    "submit_one": "Save {{count}} lesson",
-    "submit_other": "Save {{count}} lessons",
     "saved_one": "{{count}} lesson added",
     "saved_other": "{{count}} lessons added"
   }

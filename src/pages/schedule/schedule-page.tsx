@@ -15,14 +15,17 @@ import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
 import {
-  RateLessonDialog,
-  buildScheduleDates,
   CancelLessonDialog,
+  LessonFormDialog,
+  RateLessonDialog,
   useCreateLesson,
   useCreateLessonSchedule,
   useCreateLessonsBulk,
   useLessonReminder,
   useLessons,
+  useUpdateLesson,
+  type LessonDraft,
+  type LessonScheduleDraft,
 } from "@/modules/lesson";
 import { ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -35,7 +38,6 @@ import { LessonDetailDrawer } from "./lesson-detail-drawer";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
 import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
-import { NewLessonDialog, type NewLessonValues } from "./new-lesson-dialog";
 import { ScheduleDay } from "./schedule-day";
 import { ScheduleList } from "./schedule-list";
 import { ScheduleMonth } from "./schedule-month";
@@ -59,6 +61,7 @@ export function SchedulePage() {
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
   const createBulk = useCreateLessonsBulk();
+  const updateLesson = useUpdateLesson();
   const reminder = useLessonReminder();
 
   const [view, setView] = useState<View>("week");
@@ -69,6 +72,8 @@ export function SchedulePage() {
   const [ratingsOf, setRatingsOf] = useState<Lesson | null>(null);
   const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [editing, setEditing] = useState<Lesson | null>(null);
+  const allLessons = useLessons({ page_size: 200 }, createOpen);
   const isCompact = useIsCompact();
   const [mobileView, setMobileView] = useState<MobileScheduleView>("day");
 
@@ -153,26 +158,33 @@ export function SchedulePage() {
     setAnchor((current) => addDays(current, view === "day" ? direction : direction * 7));
   }
 
-  function createFromDialog(values: NewLessonValues) {
-    if (!values.repeatWeeks) return createLesson.mutateAsync(values).then(() => setCreateOpen(false));
-    const first = new Date(`${values.date}T00:00`);
-    const endsOn = addDays(first, values.repeatWeeks * 7 - 1);
-    const range = {
-      startsOn: values.date,
-      endsOn: `${endsOn.getFullYear()}-${String(endsOn.getMonth() + 1).padStart(2, "0")}-${String(endsOn.getDate()).padStart(2, "0")}`,
-      weekdays: [first.getDay() === 0 ? 7 : first.getDay()],
-    };
+  function closeLessonForm() {
+    setCreateOpen(false);
+    setEditing(null);
+  }
+
+  function saveLesson(values: LessonDraft & { courseId: string }) {
+    const request = editing
+      ? updateLesson.mutateAsync({ id: editing.id, form: values })
+      : createLesson.mutateAsync(values);
+    return request.then(closeLessonForm);
+  }
+
+  function saveSchedule(draft: LessonScheduleDraft) {
     return createSchedule
       .mutateAsync({
-        courseId: values.courseId,
-        title: values.topic,
-        time: values.time,
-        durationMinutes: Number(values.duration) || 45,
-        ...range,
-        dates: buildScheduleDates(range),
+        courseId: draft.courseId,
+        title: draft.topic,
+        time: draft.time,
+        durationMinutes: Number(draft.duration) || 90,
+        weekdays: draft.weekdays,
+        startsOn: draft.startsOn,
+        endsOn: draft.endsOn,
+        dates: draft.dates,
       })
-      .then(() => setCreateOpen(false));
+      .then(closeLessonForm);
   }
+
 
   function openChat(lesson: Lesson) {
     const room = roomByCourse.get(lesson.courseId);
@@ -193,6 +205,11 @@ export function SchedulePage() {
         onChat={(lesson) => {
           setDetail(null);
           openChat(lesson);
+        }}
+        onEdit={(lesson) => {
+          setDetail(null);
+          setEditing(lesson);
+          setCreateOpen(true);
         }}
         onJoin={joinLesson}
         student={student}
@@ -235,9 +252,13 @@ export function SchedulePage() {
           }}
         />
       ) : (
-      <NewLessonDialog
+      <LessonFormDialog
+        key={editing?.id ?? "new-lesson"}
         open={createOpen}
-        onOpenChange={setCreateOpen}
+        onOpenChange={(open) => {
+          if (!open) closeLessonForm();
+          else setCreateOpen(true);
+        }}
         courses={(courses.data ?? []).map((course) => ({
           id: course.id,
           title: course.title,
@@ -245,11 +266,11 @@ export function SchedulePage() {
           tone: course.color,
           image: course.avatarUrl ?? groupImages.get(course.id) ?? null,
         }))}
-        pending={createLesson.isPending || createSchedule.isPending || createBulk.isPending}
-        onSubmit={createFromDialog}
-        onSubmitBulk={(courseId, rows) =>
-          createBulk.mutateAsync({ courseId, rows }).then(() => setCreateOpen(false))
-        }
+        initialValues={editing}
+        existingLessons={allLessons.data ?? []}
+        onCreate={saveLesson}
+        onCreateSchedule={saveSchedule}
+        onCreateBulk={(rows, courseId) => createBulk.mutateAsync({ courseId, rows }).then(closeLessonForm)}
       />
       )}
     </>

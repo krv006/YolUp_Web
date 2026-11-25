@@ -107,6 +107,8 @@ export { LessonViewSwitch } from "./ui/lesson-view-switch";
 export { RateLessonDialog } from "./ui/rate-lesson-dialog";
 export { LessonDetailDialog } from "./ui/lesson-detail-dialog";
 export { CancelLessonDialog } from "./ui/cancel-lesson-dialog";
+export { LessonFormDialog } from "./ui/lesson-form-dialog";
+export type { LessonDraft, LessonFormCourse, LessonScheduleDraft } from "./ui/lesson-form-dialog";
 export { LessonCreateDialog } from "./ui/lesson-create-dialog";
 export {
   ScheduleDay,

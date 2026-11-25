@@ -367,16 +367,9 @@
     "group": "Группа",
     "topic": "Тема урока",
     "topicPlaceholder": "Например: Present Perfect — практика",
-    "single": "Один урок",
-    "repeating": "Повторяющийся",
     "date": "Дата",
     "start": "Начало",
-    "duration": "Длительность (мин)",
-    "submit": "Сохранить урок",
-    "mobileDescription": "Выберите группу и время",
-    "weeksValue": "{{count}} нед.",
-    "fewerWeeks": "Меньше недель",
-    "moreWeeks": "Больше недель"
+    "duration": "Длительность (мин)"
   },
   "mobileSchedule": {
     "offline": "Нет интернета. Последнее сохранённое расписание",
@@ -434,8 +427,6 @@
     "noteLine": "Комментарий: {{text}}"
   },
   "bulk": {
-    "mode": "Несколько уроков",
-    "modeShort": "Несколько",
     "topicPlaceholder": "Тема урока",
     "topicAria": "Тема урока {{number}}",
     "date": "Дата",
@@ -449,10 +440,6 @@
     "past": "Это время уже прошло",
     "overlap": "Совпадает по времени с другим уроком из списка",
     "busy": "В это время уже есть урок «{{title}}»",
-    "submit_one": "Сохранить {{count}} урок",
-    "submit_few": "Сохранить {{count}} урока",
-    "submit_many": "Сохранить {{count}} уроков",
-    "submit_other": "Сохранить {{count}} урока",
     "saved_one": "Добавлен {{count}} урок",
     "saved_few": "Добавлено {{count}} урока",
     "saved_many": "Добавлено {{count}} уроков",

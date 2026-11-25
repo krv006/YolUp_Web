@@ -16,12 +16,15 @@ import {
 } from "@/modules/homework";
 import {
   FinishLessonDialog,
+  type LessonDraft,
+  LessonFormDialog,
   LessonRatingsDialog,
+  type LessonScheduleDraft,
   LiveLessonBar,
   useCancelLesson,
   useCreateLesson,
-  useCreateLessonSchedule,
   useCreateLessonsBulk,
+  useCreateLessonSchedule,
   useDeleteLesson,
   useLessons,
   useUpdateLesson,
@@ -76,9 +79,6 @@ import { ROLES } from "@/shared/constants";
 import { Icon } from "@/shared/ui/icon";
 import {
   AddAssignmentDialog,
-  AddLessonDialog,
-  type LessonDraft,
-  type LessonScheduleDraft,
 } from "./group-action-dialogs";
 import { CancelLessonDialog } from "./cancel-lesson-dialog";
 import { LessonBoard } from "./lesson-board";
@@ -481,8 +481,9 @@ function LessonsPanel({ courseId, lessons = [], loading, studentCount }: Lessons
         />
       )}
 
-      <AddLessonDialog
+      <LessonFormDialog
         key={editing?.id ?? "new-lesson"}
+        courseId={courseId ?? ""}
         onDelete={editing ? () => setDeleteTarget(editing) : undefined}
         open={dialog}
         onOpenChange={(open) => {

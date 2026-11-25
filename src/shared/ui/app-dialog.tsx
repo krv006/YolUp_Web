@@ -21,7 +21,6 @@ export interface AppDialogProps {
   titleClassName?: string;
   footerClassName?: string;
   closeClassName?: string;
-  /** Eski (legacy) dialog ichidan ochiladigan oyna uchun: uning ustida turadi. */
   elevated?: boolean;
 }
 
