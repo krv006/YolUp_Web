@@ -60,9 +60,11 @@ export function LessonDetailDrawer({
   const closed = finished || lesson.status === "cancelled";
 
   const timeValue = `${today ? `${t("schedule.today")}, ` : `${starts.getDate()}-${months[starts.getMonth()]}, `}${clock(starts)} – ${clock(ends)} · ${t("list.durationMinutes", { count: lesson.durationMinutes || 45 })}`;
+  const cancellable = lesson.status === "scheduled";
+  const editable = lesson.status !== "cancelled";
   const statusLabel = live
     ? t("schedule.live")
-    : minutes >= 0
+    : cancellable && minutes >= 0
       ? t("schedule.startsIn", { count: minutes })
       : t(`status.${lesson.status}`);
 
@@ -282,25 +284,28 @@ export function LessonDetailDrawer({
             value={t("schedule.students", { count: studentCount })}
           />
 
-          <div className="mt-2 grid grid-cols-2 gap-3">
-            <button
-              type="button"
-              className="flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface text-button text-ink"
-              onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
-            >
-              <Icon name={finished ? "star" : "edit"} size={18} />
-              {finished ? t("schedule.ratings") : t("schedule.edit")}
-            </button>
-            <button
-              type="button"
-              className="flex h-11 items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-danger disabled:opacity-50"
-              disabled={finished}
-              onClick={() => onCancel(lesson)}
-            >
-              <Icon name="close" size={18} />
-              {t("schedule.cancel")}
-            </button>
-          </div>
+          {editable ? (
+            <div className={`mt-2 grid gap-3 ${cancellable ? "grid-cols-2" : "grid-cols-1"}`}>
+              <button
+                type="button"
+                className="flex h-11 items-center justify-center gap-2 rounded-full border border-line-strong bg-surface text-button text-ink"
+                onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
+              >
+                <Icon name={finished ? "star" : "edit"} size={18} />
+                {finished ? t("schedule.ratings") : t("schedule.edit")}
+              </button>
+              {cancellable ? (
+                <button
+                  type="button"
+                  className="flex h-11 items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-danger"
+                  onClick={() => onCancel(lesson)}
+                >
+                  <Icon name="close" size={18} />
+                  {t("schedule.cancel")}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </AppDialog>
     );
@@ -331,11 +336,7 @@ export function LessonDetailDrawer({
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             <span className="flex h-7 items-center gap-1.5 rounded-full bg-warning-bg px-3 text-caption-strong text-warning-fg">
               <Icon name="schedule" size={13} />
-              {live
-                ? t("schedule.live")
-                : minutes >= 0
-                  ? t("schedule.startsIn", { count: minutes })
-                  : t(`status.${lesson.status}`)}
+              {statusLabel}
             </span>
             {lesson.quizId ? (
               <span className="flex h-7 items-center gap-1.5 rounded-full bg-brand-subtle px-3 text-caption-strong text-brand">
@@ -391,24 +392,28 @@ export function LessonDetailDrawer({
           </dl>
 
           <div className="flex shrink-0 flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                type="button"
-                className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
-                onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
-              >
-                <Icon name={finished ? "star" : "edit"} size={18} />
-                {finished ? t("schedule.ratings") : t("schedule.edit")}
-              </button>
-              <button
-                type="button"
-                className="flex h-12 items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-danger transition-opacity hover:opacity-85"
-                onClick={() => onCancel(lesson)}
-              >
-                <Icon name="close" size={18} />
-                {t("schedule.cancel")}
-              </button>
-            </div>
+            {editable ? (
+              <div className={`grid gap-3 ${cancellable ? "grid-cols-2" : "grid-cols-1"}`}>
+                <button
+                  type="button"
+                  className="flex h-12 items-center justify-center gap-2 rounded-full border border-line bg-surface text-button text-ink transition-colors hover:bg-subtle"
+                  onClick={() => (finished ? onRatings(lesson) : (onEdit ?? onChat)(lesson))}
+                >
+                  <Icon name={finished ? "star" : "edit"} size={18} />
+                  {finished ? t("schedule.ratings") : t("schedule.edit")}
+                </button>
+                {cancellable ? (
+                  <button
+                    type="button"
+                    className="flex h-12 items-center justify-center gap-2 rounded-full bg-danger-bg text-button text-danger transition-opacity hover:opacity-85"
+                    onClick={() => onCancel(lesson)}
+                  >
+                    <Icon name="close" size={18} />
+                    {t("schedule.cancel")}
+                  </button>
+                ) : null}
+              </div>
+            ) : null}
 
             <div className={`grid gap-3 ${closed ? "grid-cols-1" : "grid-cols-2"}`}>
               <button
