@@ -26,6 +26,7 @@ export interface MobileTestsProps {
   onCreate: () => void;
   createLocked?: boolean;
   onEdit: (quiz: QuizSummary) => void;
+  onView: (quiz: QuizSummary) => void;
   onPublish: (quiz: QuizSummary) => void;
   onResults: (quiz: QuizSummary) => void;
   onAssign: (quiz: QuizSummary) => void;
@@ -136,6 +137,7 @@ function TestCard({ quiz, ...props }: MobileTestsProps & { quiz: QuizSummary }) 
             <DropdownItem onSelect={() => props.onEdit(quiz)}>{t("tests.edit")}</DropdownItem>
             {draft ? null : (
               <>
+                <DropdownItem onSelect={() => props.onView(quiz)}>{t("view.open")}</DropdownItem>
                 <DropdownItem onSelect={() => props.onResults(quiz)}>{t("tests.results")}</DropdownItem>
                 <DropdownItem onSelect={() => props.onAttempts(quiz)}>{t("tests.attempts")}</DropdownItem>
               </>

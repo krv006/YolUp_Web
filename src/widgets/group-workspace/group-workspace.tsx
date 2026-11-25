@@ -33,7 +33,6 @@ import { useLessonPresence } from "@/modules/live";
 import {
   AddQuizDialog,
   AssignQuizDialog,
-  QuizAttemptsDialog,
   quizDisplayTitle,
   useAssignQuizToCourse,
   useCreateQuiz,
@@ -596,7 +595,7 @@ function AssignmentsPanel({
 
   const lessons = useLessons({ course: courseId, page_size: 100 }, dialog);
   const courseQuizzes = useQuizzes(courseId, Boolean(courseId));
-  const [attemptsOf, setAttemptsOf] = useState<QuizSummary | null>(null);
+  const navigate = useNavigate();
   const courseQuizList = useMemo(
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
@@ -635,16 +634,6 @@ function AssignmentsPanel({
 
   const dialogs = (
     <>
-        <QuizAttemptsDialog
-          courseId={courseId}
-          quizId={attemptsOf?.id ?? null}
-          open={Boolean(attemptsOf)}
-          onOpenChange={(open) => {
-            if (!open) setAttemptsOf(null);
-          }}
-          title={attemptsOf?.title}
-        />
-
         {editQuizTarget && editQuizDetail.data && !editQuizAttempts.isLoading ? (
           <AddQuizDialog
             key={editQuizTarget.id}
@@ -835,7 +824,7 @@ function AssignmentsPanel({
             setDialog(true);
           }}
           onDeleteAssignment={setDeleteTarget}
-          onOpenQuiz={setAttemptsOf}
+          onOpenQuiz={(quiz) => navigate(ROUTES.teacher.testView(quiz.id))}
           onEditQuiz={setEditQuizTarget}
         />
       ) : (

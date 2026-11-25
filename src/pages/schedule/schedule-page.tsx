@@ -14,6 +14,7 @@ import {
 import { useCurrentUser, useIsStudent, useRoleRoutes } from "@/modules/auth";
 import { useConversations, useGroupImages } from "@/modules/conversation";
 import { useCourses } from "@/modules/course";
+import { useQuizzes } from "@/modules/quiz";
 import {
   CancelLessonDialog,
   LessonFormDialog,
@@ -35,6 +36,7 @@ import type { Lesson } from "@/shared/types";
 import { WorkspaceShell } from "@/widgets/workspace-shell";
 import { monthAttendanceRate } from "@/pages/student/lib/attendance-rate";
 import { LessonDetailDrawer } from "./lesson-detail-drawer";
+import { isQuizEvent, quizEventId, quizEvents } from "./quiz-events";
 import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
 import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
@@ -56,6 +58,8 @@ export function SchedulePage() {
   const me = useCurrentUser();
   const lessons = useLessons({ page_size: 200 });
   const courses = useCourses();
+  const quizzes = useQuizzes(null);
+  const { t: tq } = useTranslation("quiz");
   const conversations = useConversations(student ? "student" : "teacher");
   const groupImages = useGroupImages(student ? "student" : "teacher");
   const createLesson = useCreateLesson();
@@ -80,7 +84,22 @@ export function SchedulePage() {
   const months = t("list.monthsLong", { returnObjects: true }) as string[];
   const weekdaysLong = t("list.weekdaysLong", { returnObjects: true }) as string[];
 
-  const items = useMemo(() => lessons.data ?? [], [lessons.data]);
+  const quizItems = useMemo(
+    () =>
+      quizEvents(quizzes.data ?? [], {
+        courseTitle: (courseId) => (courses.data ?? []).find((course) => course.id === courseId)?.title ?? "",
+        label: (title) => tq("schedule.testLabel", { title }),
+        now,
+      }),
+    [quizzes.data, courses.data, tq, now]
+  );
+  const items = useMemo(() => [...(lessons.data ?? []), ...quizItems], [lessons.data, quizItems]);
+
+  function select(lesson: Lesson) {
+    if (!isQuizEvent(lesson)) return setDetail(lesson);
+    const quizId = quizEventId(lesson);
+    navigate(student ? ROUTES.student.test(quizId) : ROUTES.teacher.testView(quizId));
+  }
   const detailLesson = detail ? (items.find((item) => item.id === detail.id) ?? detail) : null;
 
   function toggleReminder(lesson: Lesson) {
@@ -291,7 +310,7 @@ export function SchedulePage() {
           courseLook={courseLook}
           onView={setMobileView}
           onAnchor={setAnchor}
-          onSelect={setDetail}
+          onSelect={select}
           onChat={openChat}
           onJoin={joinLesson}
           student={student}
@@ -308,7 +327,7 @@ export function SchedulePage() {
           ? `${rangeLabel} · ${t("scheduleState.loading")}`
           : lessons.isError
             ? rangeLabel
-            : `${rangeLabel} · ${t("schedule.lessonCount", { count: visible.length })}`
+            : `${rangeLabel} · ${t("schedule.lessonCount", { count: visible.filter((item) => !isQuizEvent(item)).length })}`
       }
       title={t("schedule.title")}
     >
@@ -391,7 +410,7 @@ export function SchedulePage() {
           student={student}
           attendanceRate={attendanceRate}
           onPickDay={setAnchor}
-          onSelect={setDetail}
+          onSelect={select}
           onChat={openChat}
           onJoin={joinLesson}
         />
@@ -402,7 +421,7 @@ export function SchedulePage() {
           anchor={anchor}
           lessons={visible}
           now={now}
-          onSelect={setDetail}
+          onSelect={select}
         />
       ) : null}
 
@@ -410,7 +429,7 @@ export function SchedulePage() {
         <ScheduleMonth
           anchor={anchor}
           lessons={visible}
-          onSelect={setDetail}
+          onSelect={select}
           onPickDay={(date) => {
             setAnchor(date);
             setView("day");
@@ -423,7 +442,7 @@ export function SchedulePage() {
           lessons={visible}
           now={now}
           courseLook={courseLook}
-          onSelect={setDetail}
+          onSelect={select}
           onJoin={joinLesson}
         />
       ) : null}

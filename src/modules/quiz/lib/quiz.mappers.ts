@@ -139,6 +139,7 @@ export function assignRequestBody(input: Omit<QuizAssignInput, "quizId">): Recor
   return {
     course: input.courseId,
     ...(input.dueAt === undefined ? {} : { due_at: input.dueAt }),
+    ...(input.opensAt === undefined ? {} : { opens_at: input.opensAt }),
     ...(input.studentIds === undefined ? {} : { student_ids: input.studentIds ?? [] }),
     ...(input.timeLimitMinutes === undefined ? {} : { time_limit_minutes: input.timeLimitMinutes }),
     ...(input.maxAttempts === undefined ? {} : { max_attempts: input.maxAttempts }),

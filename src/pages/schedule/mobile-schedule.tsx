@@ -17,6 +17,7 @@ import { Icon } from "@/shared/ui/icon";
 import { MobileUserHeader } from "@/widgets/mobile-user-header";
 import type { CourseLook } from "./lesson-tone";
 import { MobileScheduleSkeleton, ScheduleError } from "./schedule-states";
+import { isQuizEvent } from "./quiz-events";
 
 export type MobileScheduleView = "day" | "week" | "month";
 
@@ -41,6 +42,10 @@ export interface MobileScheduleProps {
   onJoin: (lesson: Lesson) => void;
   onCreate?: () => void;
   student?: boolean;
+}
+
+function lessonsOnly(rows: readonly Lesson[]): number {
+  return rows.filter((row) => !isQuizEvent(row)).length;
 }
 
 function clock(value: string | Date): string {
@@ -185,7 +190,7 @@ function DayView(props: MobileScheduleProps) {
         })}
       </div>
 
-      <DayHeading day={anchor} now={now} count={rows.length} pending={props.loading || props.error} />
+      <DayHeading day={anchor} now={now} count={lessonsOnly(rows)} pending={props.loading || props.error} />
 
       {props.loading ? (
         <MobileScheduleSkeleton />
@@ -348,6 +353,8 @@ function LessonMeta({
 }) {
   const { t } = useTranslation("lesson");
   const students = look.students;
+  if (isQuizEvent(lesson))
+    return <small className="truncate text-body-sm text-accent-violet-fg">{lesson.title}</small>;
   if (live)
     return (
       <small className="flex items-center gap-1.5 truncate text-body-sm text-danger">
@@ -500,7 +507,7 @@ function WeekView(props: MobileScheduleProps) {
                 {weekdaysLong[(day.getDay() + 6) % 7]}, {day.getDate()}-{months[day.getMonth()]}
                 {isSameDay(day, now) ? ` · ${t("schedule.today")}` : ""}
               </span>
-              <span className="shrink-0 font-normal normal-case">{t("schedule.lessonCountShort", { count: rows.length })}</span>
+              <span className="shrink-0 font-normal normal-case">{t("schedule.lessonCountShort", { count: lessonsOnly(rows) })}</span>
             </span>
             <LessonRows {...props} rows={rows} />
           </section>
@@ -607,7 +614,7 @@ function MonthView(props: MobileScheduleProps) {
           {anchor.getDate()}-{(monthsLong[anchor.getMonth()] ?? "").toLowerCase()}, {weekdaysLong[(anchor.getDay() + 6) % 7]}
         </h2>
         <small className="shrink-0 text-body-sm text-ink-secondary">
-          {rows.length ? t("schedule.lessonCount", { count: rows.length }) : t("schedule.noLessonsDay")}
+          {lessonsOnly(rows) ? t("schedule.lessonCount", { count: lessonsOnly(rows) }) : t("schedule.noLessonsDay")}
         </small>
       </div>
 

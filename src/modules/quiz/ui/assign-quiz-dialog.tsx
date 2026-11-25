@@ -50,6 +50,8 @@ export function AssignQuizDialog({
   const [pickedCourse, setPickedCourse] = useState("");
   const [date, setDate] = useState(today);
   const [time, setTime] = useState("23:59");
+  const [opensDate, setOpensDate] = useState("");
+  const [opensTime, setOpensTime] = useState("09:00");
 
   const finalQuiz = pickedQuiz ?? quizId ?? "";
   const finalCourse = courseId ?? pickedCourse;
@@ -85,7 +87,8 @@ export function AssignQuizDialog({
     onSubmit({
       quizId: finalQuiz,
       courseId: finalCourse,
-      dueAt: date ? `${date}T${time || "23:59"}` : null,
+      dueAt,
+      opensAt,
       studentIds: excludedIds.size ? chosen : null,
       ...limits.limits,
     });
@@ -104,7 +107,10 @@ export function AssignQuizDialog({
     ) : finalQuiz ? (
       <span className="h-20 animate-pulse rounded-lg bg-skeleton" aria-hidden="true" />
     ) : null;
-  const blocked = pending || !finalQuiz || !finalCourse || nobody || limits.invalid.length > 0 || !detail.data;
+  const opensAt = opensDate ? `${opensDate}T${opensTime || "00:00"}` : null;
+  const dueAt = date ? `${date}T${time || "23:59"}` : null;
+  const opensAfterDue = Boolean(opensAt && dueAt && opensAt >= dueAt);
+  const blocked = opensAfterDue || pending || !finalQuiz || !finalCourse || nobody || limits.invalid.length > 0 || !detail.data;
 
   const checklist = finalCourse ? (
     <StudentChecklist
@@ -128,6 +134,12 @@ export function AssignQuizDialog({
     const dateLabel = Number.isNaN(day.getTime())
       ? date
       : `${day.getDate()}-${(months[day.getMonth()] ?? "").slice(0, 3).toLowerCase()}`;
+    const shortDate = (value: string) => {
+      const parsed = new Date(`${value}T00:00`);
+      return Number.isNaN(parsed.getTime())
+        ? value
+        : `${parsed.getDate()}-${(months[parsed.getMonth()] ?? "").slice(0, 3).toLowerCase()}`;
+    };
 
     return (
       <AppDialog
@@ -212,6 +224,31 @@ export function AssignQuizDialog({
             </MobileFieldLabel>
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <MobileFieldLabel label={t("assignDialog.opensLabel")}>
+              <MobilePickerField
+                type="date"
+                value={opensDate}
+                display={opensDate ? shortDate(opensDate) : t("assignDialog.opensNow")}
+                min={today()}
+                ariaLabel={t("assignDialog.opensLabel")}
+                onChange={setOpensDate}
+              />
+            </MobileFieldLabel>
+            {opensDate ? (
+              <MobileFieldLabel label={t("assignDialog.timeLabel")}>
+                <MobilePickerField
+                  type="time"
+                  value={opensTime}
+                  display={opensTime}
+                  ariaLabel={t("assignDialog.opensTimeLabel")}
+                  onChange={setOpensTime}
+                />
+              </MobileFieldLabel>
+            ) : null}
+          </div>
+          {opensAfterDue ? <p className="text-body-xs text-error-text">{t("assignDialog.opensAfterDue")}</p> : null}
+
           {limitsBlock(true)}
         </div>
       </AppDialog>
@@ -279,6 +316,16 @@ export function AssignQuizDialog({
           <DatePicker label={t("assignDialog.dueLabel")} value={date} onChange={setDate} />
           <TimePicker label={t("assignDialog.timeLabel")} value={time} onChange={setTime} />
         </div>
+
+        <div className="grid grid-cols-2 items-start gap-3">
+          <DatePicker label={t("assignDialog.opensLabel")} value={opensDate} onChange={setOpensDate} optional />
+          {opensDate ? (
+            <TimePicker label={t("assignDialog.opensTimeLabel")} value={opensTime} onChange={setOpensTime} />
+          ) : (
+            <p className="self-end pb-3 text-body-xs text-ink-tertiary">{t("assignDialog.opensNow")}</p>
+          )}
+        </div>
+        {opensAfterDue ? <p className="text-body-xs text-danger">{t("assignDialog.opensAfterDue")}</p> : null}
 
         {limitsBlock(false)}
 

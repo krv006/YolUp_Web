@@ -430,7 +430,11 @@
     "dueLabel": "Muddat",
     "timeLabel": "Vaqt",
     "pick": "Tanlang",
-    "students": "{{count}} o‘quvchi"
+    "students": "{{count}} o‘quvchi",
+    "opensLabel": "Ochilish (ixtiyoriy)",
+    "opensTimeLabel": "Ochilish vaqti",
+    "opensNow": "Bo'sh qolsa — darhol ochiladi",
+    "opensAfterDue": "Ochilish vaqti muddatdan oldin bo'lishi kerak."
   },
   "exportDialog": {
     "title": "Testni yuklab olish",
@@ -874,5 +878,26 @@
       "retry": "Qayta urinish",
       "languageHint": "Avto: ingliz, rus yoki turk tili guruhida test shu tilda chiqadi, boshqa fanlarda o‘zbekcha."
     }
+  },
+  "view": {
+    "title": "Test",
+    "eyebrow": "Workspace / Testlar / Ko'rish",
+    "back": "Orqaga",
+    "edit": "Tahrirlash",
+    "results": "Natijalar",
+    "opens": "Ochiladi: {{date}}",
+    "due": "Muddat: {{date}}",
+    "questions": "{{count}} ta savol",
+    "points": "{{count}} ball",
+    "true": "To'g'ri",
+    "false": "Noto'g'ri",
+    "essay": "Insho — o'qituvchi yoki AI baholaydi",
+    "noKey": "To'g'ri javob belgilanmagan",
+    "loadError": "Testni yuklab bo'lmadi.",
+    "open": "Ko'rish",
+    "openAria": "«{{title}}» testini ko'rish"
+  },
+  "schedule": {
+    "testLabel": "Test: {{title}}"
   }
 }

@@ -430,7 +430,11 @@
     "dueLabel": "Срок",
     "timeLabel": "Время",
     "pick": "Выберите",
-    "students": "{{count}} учеников"
+    "students": "{{count}} учеников",
+    "opensLabel": "Открытие (необязательно)",
+    "opensTimeLabel": "Время открытия",
+    "opensNow": "Если не указать — откроется сразу",
+    "opensAfterDue": "Время открытия должно быть раньше срока."
   },
   "exportDialog": {
     "title": "Скачать тест",
@@ -880,5 +884,32 @@
       "retry": "Попробовать снова",
       "languageHint": "Авто: в группе английского, русского или турецкого языка тест будет на этом языке, по другим предметам — на узбекском."
     }
+  },
+  "view": {
+    "title": "Тест",
+    "eyebrow": "Workspace / Тесты / Просмотр",
+    "back": "Назад",
+    "edit": "Редактировать",
+    "results": "Результаты",
+    "opens": "Открывается: {{date}}",
+    "due": "Срок: {{date}}",
+    "questions_one": "{{count}} вопрос",
+    "questions_few": "{{count}} вопроса",
+    "questions_many": "{{count}} вопросов",
+    "questions_other": "{{count}} вопроса",
+    "points_one": "{{count}} балл",
+    "points_few": "{{count}} балла",
+    "points_many": "{{count}} баллов",
+    "points_other": "{{count}} балла",
+    "true": "Верно",
+    "false": "Неверно",
+    "essay": "Эссе — оценивает учитель или ИИ",
+    "noKey": "Правильный ответ не отмечен",
+    "loadError": "Не удалось загрузить тест.",
+    "open": "Просмотр",
+    "openAria": "Открыть тест «{{title}}»"
+  },
+  "schedule": {
+    "testLabel": "Тест: {{title}}"
   }
 }
