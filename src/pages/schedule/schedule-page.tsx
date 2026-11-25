@@ -376,7 +376,6 @@ export function SchedulePage() {
           lessons={visible}
           now={now}
           onSelect={setDetail}
-          onCreate={student ? undefined : () => setCreateOpen(true)}
         />
       ) : null}
 

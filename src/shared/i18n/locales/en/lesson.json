@@ -320,7 +320,6 @@
     "noNext": "No more lessons today.",
     "doneCount": "Finished",
     "studentCount": "Students",
-    "emptyWeekHint": "Add the schedule — your students get a reminder.",
     "moreCount": "+{{count}} more",
     "rows": {
       "time": "Time",
