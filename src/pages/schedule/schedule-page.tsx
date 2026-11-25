@@ -41,13 +41,12 @@ import { LessonRatingsDialog } from "./lesson-ratings-dialog";
 import { MobileSchedule, type MobileScheduleView } from "./mobile-schedule";
 import { ScheduleError, ScheduleListSkeleton } from "./schedule-states";
 import { ScheduleDay } from "./schedule-day";
-import { ScheduleList } from "./schedule-list";
 import { ScheduleMonth } from "./schedule-month";
 import { ScheduleWeek } from "./schedule-week";
 
-type View = "day" | "week" | "month" | "list";
+type View = "day" | "week" | "month";
 
-const VIEWS: View[] = ["day", "week", "month", "list"];
+const VIEWS: View[] = ["day", "week", "month"];
 
 export function SchedulePage() {
   const { t } = useTranslation("lesson");
@@ -140,7 +139,7 @@ export function SchedulePage() {
     return items.filter((lesson) => {
       const date = new Date(lesson.startsAt);
       if (view === "day") return isSameDay(date, anchor);
-      if (view === "week" || view === "list")
+      if (view === "week")
         return isWithinInterval(date, {
           start: startOfWeek(anchor, { weekStartsOn: 1 }),
           end: endOfWeek(anchor, { weekStartsOn: 1 }),
@@ -437,15 +436,6 @@ export function SchedulePage() {
         />
       ) : null}
 
-      {!lessons.isLoading && !lessons.isError && view === "list" ? (
-        <ScheduleList
-          lessons={visible}
-          now={now}
-          courseLook={courseLook}
-          onSelect={select}
-          onJoin={joinLesson}
-        />
-      ) : null}
       </div>
 
       {dialogs}

@@ -303,8 +303,7 @@
     "views": {
       "day": "Day",
       "week": "Week",
-      "month": "Month",
-      "list": "List"
+      "month": "Month"
     },
     "live": "Lesson running",
     "finished": "finished",
