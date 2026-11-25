@@ -156,6 +156,7 @@ export function mapLoginDevicesPage(dto: unknown, options: PaginationOptions): P
           id: item.last_login_id ?? `${device}-${item.device_type ?? ""}`,
           device,
           deviceType: item.device_type ?? null,
+          lastSeenAt: item.last_seen_at || item.last_login_at,
           lastLoginAt: item.last_login_at,
           firstLoginAt: item.first_login_at ?? item.last_login_at,
           loginCount: Math.max(1, item.login_count ?? 1),

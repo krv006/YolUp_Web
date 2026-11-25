@@ -115,7 +115,7 @@ export function LoginHistoryPage() {
         ) : null}
 
         {groups.map((group) => {
-          const items = rows.filter((row) => groupOf(row.lastLoginAt) === group);
+          const items = rows.filter((row) => groupOf(row.lastSeenAt) === group);
           if (!items.length) return null;
           return (
             <SettingsSection key={group} label={t(`page.${group}`)}>
@@ -139,7 +139,7 @@ export function LoginHistoryPage() {
                         <small className="shrink-0 text-caption-strong text-success-fg">{t("page.thisDevice")}</small>
                       ) : (
                         <span className="flex shrink-0 flex-col items-end gap-0.5">
-                          <small className="text-caption-strong text-ink">{lastSeen(row.lastLoginAt, group)}</small>
+                          <small className="text-caption-strong text-ink">{lastSeen(row.lastSeenAt, group)}</small>
                           {row.sessionActive ? (
                             <small className="text-caption text-success-fg">{t("page.activeSession")}</small>
                           ) : null}
@@ -195,7 +195,7 @@ export function LoginHistoryPage() {
       ) : null}
 
       {groups.map((group) => {
-        const items = rows.filter((row) => groupOf(row.lastLoginAt) === group);
+        const items = rows.filter((row) => groupOf(row.lastSeenAt) === group);
         if (!items.length) return null;
 
         return (
@@ -230,7 +230,7 @@ export function LoginHistoryPage() {
                       </small>
                     ) : (
                       <span className="flex shrink-0 flex-col items-end gap-0.5">
-                        <small className="text-body-xs text-ink-tertiary">{lastSeen(row.lastLoginAt, group)}</small>
+                        <small className="text-body-xs text-ink-tertiary">{lastSeen(row.lastSeenAt, group)}</small>
                         {row.sessionActive ? (
                           <small className="text-body-xs text-success">{t("page.activeSession")}</small>
                         ) : null}
