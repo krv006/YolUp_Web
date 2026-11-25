@@ -60,11 +60,12 @@ export function LiveLessonPage() {
   const { user } = useAuth();
   const lesson = useLesson(lessonId ?? null, 30_000);
   const course = useCourse(lesson.data?.courseId ?? null);
-  const token = useLiveToken(lessonId, true);
+  const [choices, setChoices] = useState<LessonPreJoinChoices | null>(null);
+  const deferToken = user?.role === ROLES.TEACHER && !choices;
+  const token = useLiveToken(lessonId, !deferToken);
   const joined = useRef(false);
   const isTeacher = useRef(false);
   const [ratePrompt, setRatePrompt] = useState(false);
-  const [choices, setChoices] = useState<LessonPreJoinChoices | null>(null);
   const waiting = useLessonWaiting(lessonId ?? null, !choices);
   const [readyToConnect, setReadyToConnect] = useState(false);
   const isCompact = useIsCompact();
@@ -212,7 +213,7 @@ export function LiveLessonPage() {
     if (rejoining.current) stopRejoin();
   }, [stopRejoin]);
 
-  if (lesson.isLoading || token.isLoading) {
+  if (lesson.isLoading || (token.isLoading && !deferToken)) {
     return (
       <main className="live-page">
         <LoadingFallback label={t("state.joiningRoom")} />
@@ -278,6 +279,24 @@ export function LiveLessonPage() {
           secondaryLabel={isCompact ? t("state.mobileBackToChat") : t("state.backToChat")}
           onSecondary={handleLeave}
           onBack={handleLeave}
+        />
+      </main>
+    );
+  }
+
+  if (deferToken && lesson.data.status !== "finished" && lesson.data.status !== "cancelled") {
+    return (
+      <main className="live-page">
+        <LessonPreJoin
+          lesson={lesson.data}
+          userName={user?.name}
+          isTeacher
+          waitingCount={waiting.data?.waitingCount ?? null}
+          totalCount={waiting.data?.totalCount ?? null}
+          waitingNames={(waiting.data?.students ?? []).map((item) => item.name)}
+          teacherName={course.data?.teacher ?? ""}
+          onJoin={setChoices}
+          onCancel={() => navigate(-1)}
         />
       </main>
     );

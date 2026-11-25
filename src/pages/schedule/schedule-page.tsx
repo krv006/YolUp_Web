@@ -17,7 +17,7 @@ import { useCourses } from "@/modules/course";
 import {
   RateLessonDialog,
   buildScheduleDates,
-  useCancelLesson,
+  CancelLessonDialog,
   useCreateLesson,
   useCreateLessonSchedule,
   useCreateLessonsBulk,
@@ -59,13 +59,13 @@ export function SchedulePage() {
   const createLesson = useCreateLesson();
   const createSchedule = useCreateLessonSchedule();
   const createBulk = useCreateLessonsBulk();
-  const cancelLesson = useCancelLesson();
   const reminder = useLessonReminder();
 
   const [view, setView] = useState<View>("week");
   const [anchor, setAnchor] = useState(() => new Date());
   const [now] = useState(() => new Date());
   const [detail, setDetail] = useState<Lesson | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Lesson | null>(null);
   const [ratingsOf, setRatingsOf] = useState<Lesson | null>(null);
   const [rateTarget, setRateTarget] = useState<Lesson | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -208,8 +208,14 @@ export function SchedulePage() {
           setRatingsOf(lesson);
         }}
         onCancel={(lesson) => {
-          cancelLesson.mutate({ id: lesson.id, scope: "one" });
           setDetail(null);
+          setCancelTarget(lesson);
+        }}
+      />
+      <CancelLessonDialog
+        lesson={cancelTarget}
+        onOpenChange={(open) => {
+          if (!open) setCancelTarget(null);
         }}
       />
 
