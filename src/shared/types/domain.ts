@@ -163,6 +163,8 @@ export interface ChatMessage {
   status: string;
   pending: boolean;
   failed: boolean;
+  uploadProgress?: number;
+  failReason?: string | null;
   editedAt?: string | null;
   retryPayload?: SendMessagePayload;
   attachment?: MessageAttachment;

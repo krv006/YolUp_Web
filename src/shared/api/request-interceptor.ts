@@ -17,6 +17,7 @@ export interface RequestOptions {
   requestId?: string;
   skipAuth?: boolean;
   skipRefresh?: boolean;
+  onUploadProgress?: (fraction: number) => void;
 }
 
 export function appendQuery(url: string, query?: QueryParams): string {

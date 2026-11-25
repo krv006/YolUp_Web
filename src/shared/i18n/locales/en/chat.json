@@ -235,7 +235,9 @@
     "voicePause": "Pause",
     "voiceFailed": "Could not load the voice message",
     "uploading": "Uploading...",
-    "pages": "{{count}} pages"
+    "pages": "{{count}} pages",
+    "uploadingPercent": "Uploading... {{percent}}%",
+    "timeout": "Slow connection, the upload timed out. Try again."
   },
   "removedFromGroup": "You were removed from this group",
   "directPage": {

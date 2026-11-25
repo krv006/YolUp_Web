@@ -235,7 +235,9 @@
     "voicePause": "To‘xtatish",
     "voiceFailed": "Ovozli xabar yuklanmadi",
     "uploading": "Yuklanmoqda...",
-    "pages": "{{count}} sahifa"
+    "pages": "{{count}} sahifa",
+    "uploadingPercent": "Yuklanmoqda... {{percent}}%",
+    "timeout": "Internet sekin, vaqt tugadi. Qayta urinib ko'ring."
   },
   "removedFromGroup": "Siz bu guruhdan chiqarildingiz",
   "directPage": {

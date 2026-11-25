@@ -11,10 +11,14 @@ export function MessageAttachment({
   attachment,
   failed = false,
   uploading = false,
+  progress,
+  failReason,
 }: {
   attachment: Attachment;
   failed?: boolean;
   uploading?: boolean;
+  progress?: number;
+  failReason?: string | null;
 }) {
   const { t } = useTranslation("chat");
   const [open, setOpen] = useState(false);
@@ -56,6 +60,7 @@ export function MessageAttachment({
           {uploading ? (
             <span className="absolute inset-0 grid place-items-center bg-black/35 text-white">
               <Icon name="refresh" size={26} className="animate-spin" />
+              {progress === undefined ? null : <small className="absolute bottom-2 text-caption-strong">{progress}%</small>}
             </span>
           ) : null}
         </button>
@@ -87,12 +92,14 @@ export function MessageAttachment({
         <span className="flex min-w-0 flex-1 flex-col">
           <strong className="truncate text-label-strong text-ink">{attachment.name}</strong>
           <small
-            className={`truncate text-caption ${failed ? "text-error-text" : "text-ink-tertiary"}`}
+            className={`text-caption ${failed ? "line-clamp-2 text-error-text" : "truncate text-ink-tertiary"}`}
           >
             {failed
-              ? `${t("attachment.uploadFailed")} · ${fileKindLabel(kind)}`
+              ? `${t("attachment.uploadFailed")} · ${failReason || fileKindLabel(kind)}`
               : uploading
-                ? t("attachment.uploading")
+                ? progress === undefined
+                  ? t("attachment.uploading")
+                  : t("attachment.uploadingPercent", { percent: progress })
                 : meta || `${fileKindLabel(kind)} · ${t("attachment.openSuffix")}`}
           </small>
         </span>
@@ -107,7 +114,11 @@ export function MessageAttachment({
 
       {uploading && !failed ? (
         <span className="mt-1 block h-1 w-full overflow-hidden rounded-full bg-muted">
-          <span className="block h-full w-1/3 animate-[pulse_1.1s_ease-in-out_infinite] rounded-full bg-action" />
+          {progress === undefined ? (
+            <span className="block h-full w-1/3 animate-[pulse_1.1s_ease-in-out_infinite] rounded-full bg-action" />
+          ) : (
+            <span className="block h-full rounded-full bg-action transition-[width]" style={{ width: `${Math.max(progress, 3)}%` }} />
+          )}
         </span>
       ) : null}
 

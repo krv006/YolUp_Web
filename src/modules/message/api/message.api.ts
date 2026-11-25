@@ -16,6 +16,8 @@ function toList(response: MessageDto[] | MessagePageDto): MessageDto[] {
   return Array.isArray(response) ? response : (response.items ?? []);
 }
 
+const FILE_UPLOAD_TIMEOUT_MS = 180_000;
+
 function buildSendBody(payload: SendMessagePayload): FormData | Record<string, unknown> {
   const file = payload.file ?? null;
   if (file) {
@@ -81,8 +83,10 @@ export const messageApi = {
   async send(
     roomId: string,
     payload: SendMessagePayload,
-    currentUserId?: string | null
+    currentUserId?: string | null,
+    onUploadProgress?: (fraction: number) => void
   ): Promise<ChatMessage> {
+    const upload = { timeoutMs: FILE_UPLOAD_TIMEOUT_MS, onUploadProgress };
     if (payload.voice) {
       const body = new FormData();
       body.set("file", payload.voice.file);
@@ -92,12 +96,12 @@ export const messageApi = {
       if (payload.replyToId) body.set("reply_to_id", payload.replyToId);
       if (payload.clientMessageId) body.set("client_message_id", payload.clientMessageId);
       return mapMessageDto(
-        await apiClient.post<MessageDto>(messageEndpoints.voice(roomId), body),
+        await apiClient.post<MessageDto>(messageEndpoints.voice(roomId), body, upload),
         currentUserId
       );
     }
     return mapMessageDto(
-      await apiClient.post<MessageDto>(messageEndpoints.send(roomId), buildSendBody(payload)),
+      await apiClient.post<MessageDto>(messageEndpoints.send(roomId), buildSendBody(payload), payload.file ? upload : undefined),
       currentUserId
     );
   },

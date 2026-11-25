@@ -252,9 +252,9 @@ export function upsertMessage(messages: ChatMessage[] = [], message: ChatMessage
   );
 }
 
-export function markMessageFailed(messages: ChatMessage[] = [], temporaryId: string): ChatMessage[] {
+export function markMessageFailed(messages: ChatMessage[] = [], temporaryId: string, reason: string | null = null): ChatMessage[] {
   return messages.map((item) =>
-    item.id === temporaryId ? { ...item, pending: false, failed: true, status: "failed" } : item
+    item.id === temporaryId ? { ...item, pending: false, failed: true, status: "failed", failReason: reason } : item
   );
 }
 

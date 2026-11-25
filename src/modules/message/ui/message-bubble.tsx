@@ -287,6 +287,8 @@ export function MessageBubble({
               attachment={message.attachment}
               failed={message.failed}
               uploading={message.pending}
+              progress={message.uploadProgress}
+              failReason={message.failReason}
             />
           )
         ) : null}

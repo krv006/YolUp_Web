@@ -235,7 +235,9 @@
     "voicePause": "Пауза",
     "voiceFailed": "Голосовое не загрузилось",
     "uploading": "Загружается...",
-    "pages": "{{count}} стр."
+    "pages": "{{count}} стр.",
+    "uploadingPercent": "Загрузка... {{percent}}%",
+    "timeout": "Медленный интернет, время истекло. Попробуйте ещё раз."
   },
   "removedFromGroup": "Вы были удалены из этой группы",
   "directPage": {
