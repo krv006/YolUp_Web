@@ -214,8 +214,21 @@ export function useHomeworkBoard(assignmentId: string | null) {
   });
 }
 
+type HomeworkBoardData = Awaited<ReturnType<typeof homeworkApi.getBoard>>;
+
 export function useSaveHomeworkBoard(assignmentId: string) {
-  return useMutation({ mutationFn: (sheets: StrokeDto[][]) => homeworkApi.saveBoard(assignmentId, sheets) });
+  const client = useQueryClient();
+  const key = homeworkKeys.board(assignmentId);
+  return useMutation({
+    mutationFn: (sheets: StrokeDto[][]) => homeworkApi.saveBoard(assignmentId, sheets),
+    onMutate: (sheets) => {
+      client.setQueryData<HomeworkBoardData>(key, (current) => (current ? { ...current, sheets } : current));
+    },
+    onSuccess: (saved) => {
+      if (saved.sheets.length) client.setQueryData<HomeworkBoardData>(key, saved);
+    },
+    onError: () => client.invalidateQueries({ queryKey: key }),
+  });
 }
 
 export function useSubmitHomeworkBoard() {
