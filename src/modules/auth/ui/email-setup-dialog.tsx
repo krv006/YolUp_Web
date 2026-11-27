@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { AppDialog, dialogButton } from "@/shared/ui/app-dialog";
 import { Icon } from "@/shared/ui/icon";
-import { emailSetupOverdue, formatDeadline } from "../lib/email-setup";
+import { emailBannerAllowed, emailSetupOverdue, formatDeadline } from "../lib/email-setup";
 import { useAuth } from "../model/use-auth";
 import { EmailVerifyForm } from "./email-verify-form";
 
@@ -34,7 +35,8 @@ export function EmailSetupDialog() {
   const overdue = emailSetupOverdue(deadline);
   const required = Boolean(user?.emailSetupRequired) && !user?.mustChangePassword;
   const open = required && (overdue || !later);
-  const showBanner = required && !overdue && later;
+  const { pathname } = useLocation();
+  const showBanner = required && !overdue && later && emailBannerAllowed(pathname);
 
   function postpone() {
     rememberLater(true);
