@@ -3,11 +3,12 @@ import type { Editor } from "@tiptap/core";
 import { useEditorState } from "@tiptap/react";
 import { useTranslation } from "react-i18next";
 import { Icon } from "@/shared/ui/icon";
+import { toggleSmartCode } from "../lib/smart-code";
 import { FONT_FAMILIES, FONT_SIZES, HIGHLIGHT_COLORS, SYMBOLS, TEXT_COLORS, type SymbolTab } from "../lib/symbols";
 import { Popup, type PopupPosition } from "./popup";
 import { barButton, barButtonActive, below } from "./popup-utils";
 
-type MenuKind = "block" | "font" | "size" | "color" | "highlight" | "formula" | "code";
+type MenuKind = "block" | "font" | "size" | "color" | "highlight" | "formula";
 
 export interface EditorToolbarProps {
   editor: Editor;
@@ -162,11 +163,10 @@ export function EditorToolbar({ editor, onOpenFormula, onPickImage }: EditorTool
       </div>
 
       <div className="mt-1.5 flex flex-wrap items-center gap-0.5 border-t border-line pt-1.5">
-        <span className="mr-2 ml-1.5 text-body-xs font-medium text-ink-tertiary">{t("toolbar.insert")}</span>
         <ToolButton label={t("toolbar.formula")} wide onClick={open("formula")}>
           <span className="font-bold text-brand">Σ</span> {t("toolbar.formula")}
         </ToolButton>
-        <ToolButton label={t("toolbar.code")} wide active={state.code || state.inlineCode} onClick={open("code")}>
+        <ToolButton label={t("toolbar.code")} wide active={state.code || state.inlineCode} onClick={() => toggleSmartCode(editor)}>
           <Icon name="code" size={17} className="text-brand" /> {t("toolbar.code")}
         </ToolButton>
         <ToolButton
@@ -309,25 +309,6 @@ export function EditorToolbar({ editor, onOpenFormula, onPickImage }: EditorTool
               </button>
             ))}
           </div>
-        </Popup>
-      ) : null}
-
-      {menu?.kind === "code" ? (
-        <Popup position={menu.position} onClose={close} className="min-w-52 p-1.5">
-          <button
-            type="button"
-            className="block w-full rounded-md px-3 py-2 text-left text-body-sm hover:bg-subtle"
-            onClick={() => run(() => editor.chain().focus().setCodeBlock({ language: "python" }).run())}
-          >
-            {t("codeMenu.block")}
-          </button>
-          <button
-            type="button"
-            className="block w-full rounded-md px-3 py-2 text-left text-body-sm hover:bg-subtle"
-            onClick={() => run(() => editor.chain().focus().toggleCode().run())}
-          >
-            {t("codeMenu.inline")}
-          </button>
         </Popup>
       ) : null}
     </div>
