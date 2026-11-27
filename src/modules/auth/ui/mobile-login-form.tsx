@@ -8,6 +8,7 @@ import { applyApiFieldErrors, type AppError } from "@/shared/api";
 import { useOnline } from "@/shared/hooks/use-online";
 import { showErrorToast } from "@/shared/ui/app-toast";
 import type { LoginCredentials } from "@/shared/types";
+import { loginErrorMessage } from "../lib/login-error";
 import { createLoginSchema } from "../model/auth.schemas";
 import {
   AuthButton,
@@ -22,7 +23,7 @@ export interface MobileLoginFormProps {
 }
 
 export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
-  const { t } = useTranslation("auth");
+  const { t, i18n } = useTranslation("auth");
   const navigate = useNavigate();
   const online = useOnline();
   const [showPassword, setShowPassword] = useState(false);
@@ -44,13 +45,14 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
       await onSubmit(values);
     } catch (error) {
       const appError = error as AppError;
-      const explained = (appError?.status === 400 && !appError.fields) || appError?.status === 429 ? appError.message : "";
+      const fallback = t("mobile.login.failed");
+      const message = loginErrorMessage(appError, i18n.language, fallback);
       if (!applyApiFieldErrors(appError, setError, { username: "login" })) {
-        setError("root", { type: "server", message: explained || t("mobile.login.failed") });
+        setError("root", { type: "server", message });
       }
       showErrorToast({
         title: t("mobile.login.errorToastTitle"),
-        description: explained || t("mobile.login.errorToastDescription"),
+        description: message !== fallback ? message : t("mobile.login.errorToastDescription"),
       });
     }
   }
@@ -98,7 +100,8 @@ export function MobileLoginForm({ onSubmit }: MobileLoginFormProps) {
         <div className="flex flex-col gap-1">
           <AuthField
             autoComplete="username"
-          autoCapitalize="none"
+            inputMode="email"
+            autoCapitalize="none"
           spellCheck={false}
             label={t("form.loginLabel")}
             placeholder={t("form.loginPlaceholder")}
