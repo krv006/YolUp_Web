@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { applyApiFieldErrors } from "@/shared/api";
+import { loginErrorMessage } from "../lib/login-error";
 import { createLoginSchema } from "../model/auth.schemas";
 import type { AppError } from "@/shared/api";
 import type { LoginCredentials } from "@/shared/types";
@@ -14,7 +15,7 @@ export interface LoginFormProps {
 }
 
 export function LoginForm({ onSubmit }: LoginFormProps) {
-  const { t } = useTranslation("auth");
+  const { t, i18n } = useTranslation("auth");
   const [showPassword, setShowPassword] = useState(false);
   const loginSchema = useMemo(() => createLoginSchema(t), [t]);
   const {
@@ -33,7 +34,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
     } catch (error) {
       const appError = error as AppError;
       if (!applyApiFieldErrors(appError, setError, { username: "login" })) {
-        setError("root", { type: "server", message: appError.message });
+        setError("root", { type: "server", message: loginErrorMessage(appError, i18n.language, t("mobile.login.failed")) });
       }
     }
   }
@@ -44,6 +45,7 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         <AuthField
           id="login"
           autoComplete="username"
+          inputMode="email"
           autoCapitalize="none"
           spellCheck={false}
           placeholder={t("form.loginPlaceholder")}

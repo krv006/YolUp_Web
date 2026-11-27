@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emailSetupOverdue, formatDeadline, localDay } from "./email-setup";
+import { emailBannerAllowed, emailSetupOverdue, formatDeadline, localDay } from "./email-setup";
 
 describe("email setup deadline", () => {
   it("is a reminder until the deadline day ends and required after it", () => {
@@ -12,5 +12,17 @@ describe("email setup deadline", () => {
   it("formats the deadline and today's local day", () => {
     expect(formatDeadline("2026-12-02")).toBe("02.12.2026");
     expect(localDay(new Date(2026, 0, 5))).toBe("2026-01-05");
+  });
+});
+
+describe("emailBannerAllowed", () => {
+  it("shows the reminder only on role home and tab pages", () => {
+    expect(emailBannerAllowed("/teacher")).toBe(true);
+    expect(emailBannerAllowed("/teacher/schedule")).toBe(true);
+    expect(emailBannerAllowed("/parent/chats")).toBe(true);
+    expect(emailBannerAllowed("/student/recordings/r1")).toBe(false);
+    expect(emailBannerAllowed("/teacher/workspace/tests")).toBe(false);
+    expect(emailBannerAllowed("/teacher/notifications")).toBe(false);
+    expect(emailBannerAllowed("/live/l1")).toBe(false);
   });
 });
