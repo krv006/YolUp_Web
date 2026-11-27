@@ -1,12 +1,10 @@
 import { useMemo, useState } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { useCourses, useCourseStudents } from "@/modules/course";
+import { useCourseStudents } from "@/modules/course";
 import { useLessons } from "@/modules/lesson";
 import {
-  homeworkApi,
-  homeworkKeys,
   useAssignmentAiSummary,
+  useAllAssignments,
   useAssignments,
   useDeleteAssignment,
   useRemindAssignment,
@@ -52,20 +50,10 @@ export function HomeworkWorkspace({
   const { t } = useTranslation("homework");
   const months = useTranslation("lesson").t("list.months", { returnObjects: true }) as string[];
   const scoped = useAssignments(courseId, Boolean(courseId));
-  const courses = useCourses();
-  const perCourse = useQueries({
-    queries: (courseId ? [] : (courses.data ?? [])).map((course) => ({
-      queryKey: homeworkKeys.assignments(course.id),
-      queryFn: ({ signal }: { signal: AbortSignal }) =>
-        homeworkApi.getAssignments(course.id, { signal }),
-    })),
-  });
+  const everyCourse = useAllAssignments(!courseId);
   const assignments = courseId
     ? { data: scoped.data, isLoading: scoped.isLoading }
-    : {
-        data: perCourse.flatMap((query) => query.data ?? []),
-        isLoading: courses.isLoading || perCourse.some((query) => query.isLoading),
-      };
+    : { data: everyCourse.data ?? [], isLoading: everyCourse.isLoading };
   const remove = useDeleteAssignment();
   const remind = useRemindAssignment();
   const aiSummary = useAssignmentAiSummary();

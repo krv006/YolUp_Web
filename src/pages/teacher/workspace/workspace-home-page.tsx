@@ -1,11 +1,9 @@
 import { useMemo } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useMyAnalytics } from "@/modules/analytics";
 import { useMaterials } from "@/modules/material";
-import { useCourses } from "@/modules/course";
-import { homeworkApi, homeworkKeys } from "@/modules/homework";
+import { useAllAssignments } from "@/modules/homework";
 import { useQuizzes } from "@/modules/quiz";
 import { FEATURES, ROUTES } from "@/shared/config";
 import { useIsCompact } from "@/shared/hooks/use-media-query";
@@ -49,25 +47,12 @@ export function WorkspaceHomePage() {
   const { t } = useTranslation("workspace");
   const navigate = useNavigate();
   const isCompact = useIsCompact();
-  const courses = useCourses();
   const quizzes = useQuizzes(null);
   const analytics = useMyAnalytics();
   const materials = useMaterials({}, !isCompact);
 
-  const groups = useMemo(() => courses.data ?? [], [courses.data]);
-
-  const assignmentQueries = useQueries({
-    queries: groups.map((course) => ({
-      queryKey: homeworkKeys.assignments(course.id),
-      queryFn: ({ signal }: { signal: AbortSignal }) =>
-        homeworkApi.getAssignments(course.id, { signal }),
-    })),
-  });
-
-  const assignments = useMemo(
-    () => assignmentQueries.flatMap((query) => query.data ?? []),
-    [assignmentQueries]
-  );
+  const allAssignments = useAllAssignments();
+  const assignments = useMemo(() => allAssignments.data ?? [], [allAssignments.data]);
 
   const quizItems = quizzes.data ?? [];
   const drafts = quizItems.filter((quiz) => quiz.status === "draft").length;
