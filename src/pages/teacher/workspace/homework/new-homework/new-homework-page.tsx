@@ -83,7 +83,11 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
   const [tab, setTab] = useState<Tab>("write");
   const [html, setHtml] = useState(() => (item ? bodyToEditorHtml(item.body || item.description) : (restored?.html ?? "")));
   const [settings, setSettings] = useState<HomeworkSettings>(() => ({
-    group: item ? (item.courseId ? item.courseId : BANK_VALUE) : (restored?.group ?? (params.get("bank") === "1" ? BANK_VALUE : "")),
+    group: item
+      ? item.courseId
+        ? item.courseId
+        : BANK_VALUE
+      : (params.get("course") || restored?.group || (params.get("bank") === "1" ? BANK_VALUE : "")),
     date: splitDue(item?.dueAt)?.date ?? restored?.date ?? dateString(1),
     time: splitDue(item?.dueAt)?.time ?? restored?.time ?? "18:00",
     grading: item?.grading ?? restored?.grading ?? "hundred",
@@ -191,12 +195,18 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
     const request = item ? update.mutateAsync({ id: item.id, form }) : create.mutateAsync(form);
     void request.then(() => {
       clearDraft();
-      navigate(item ? ROUTES.teacher.homeworkItem(item.id) : ROUTES.teacher.homework);
+      leave();
     });
   }
 
   const pending = create.isPending || update.isPending;
-  const backTo = item ? ROUTES.teacher.homeworkItem(item.id) : ROUTES.teacher.homework;
+  const fallbackTo = item ? ROUTES.teacher.homeworkItem(item.id) : ROUTES.teacher.homework;
+  // Guruh chatidagi "Vazifalar" tabidan kelingan bo'lsa (`?course=`), orqaga o'sha tabga qaytamiz.
+  const fromGroup = Boolean(params.get("course")) && ((window.history.state as { idx?: number } | null)?.idx ?? 0) > 0;
+  function leave() {
+    if (fromGroup) navigate(-1);
+    else navigate(fallbackTo);
+  }
 
   return (
     <WorkspaceShell
@@ -204,7 +214,7 @@ function HomeworkWorkspace({ item }: { item: Assignment | null }) {
       title={editing ? t("newPage.editTitle") : t("newPage.title")}
       action={
         <>
-          <button type="button" className={workspaceGhostAction} onClick={() => navigate(backTo)}>
+          <button type="button" className={workspaceGhostAction} onClick={leave}>
             <Icon name="arrow-back" size={18} />
             {t("newPage.back")}
           </button>

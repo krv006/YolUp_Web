@@ -565,6 +565,7 @@ function AssignmentsPanel({
   groupImage = null,
 }: AssignmentsPanelProps) {
   const { t } = useTranslation("group");
+  const isCompact = useIsCompact();
   const [dialog, setDialog] = useState(false);
   const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Assignment | null>(null);
@@ -597,6 +598,17 @@ function AssignmentsPanel({
   const lessons = useLessons({ course: courseId, page_size: 100 }, dialog);
   const courseQuizzes = useQuizzes(courseId, Boolean(courseId));
   const navigate = useNavigate();
+  // Kompyuterda vazifa yangi sahifada (boy matn muharriri, formula, ovoz) yaratiladi/tahrirlanadi; eski oyna faqat telefon uchun qoldi.
+  function openCreate() {
+    if (isCompact) setDialog(true);
+    else navigate(courseId ? `${ROUTES.teacher.homeworkNew}?course=${encodeURIComponent(courseId)}` : ROUTES.teacher.homeworkNew);
+  }
+  function openEdit(item: Assignment) {
+    if (isCompact) {
+      setEditingAssignment(item);
+      setDialog(true);
+    } else navigate(ROUTES.teacher.homeworkEdit(item.id));
+  }
   const courseQuizList = useMemo(
     () => (courseQuizzes.data ?? []).filter((quiz) => quiz.courseId === courseId),
     [courseQuizzes.data, courseId]
@@ -778,7 +790,7 @@ function AssignmentsPanel({
             <AddAssignmentMenu
               className="px-4 lg:h-[42px] lg:px-[15px]"
               label={t("assignments.addAssignment")}
-              onCreate={() => setDialog(true)}
+              onCreate={openCreate}
               onFromBank={() => setGiveFromBank(true)}
             />
             <AddQuizMenu
@@ -817,10 +829,7 @@ function AssignmentsPanel({
           courseTone={course.data?.color}
           highlightId={highlightId}
           onOpenAssignment={(item) => setDetailId(item.id)}
-          onEditAssignment={(item) => {
-            setEditingAssignment(item);
-            setDialog(true);
-          }}
+          onEditAssignment={openEdit}
           onDeleteAssignment={setDeleteTarget}
           onOpenQuiz={(quiz) => navigate(ROUTES.teacher.testView(quiz.id))}
           onEditQuiz={setEditQuizTarget}
@@ -830,7 +839,7 @@ function AssignmentsPanel({
           icon="assign"
           title={t("assignments.emptyTitle")}
           description={t("assignments.emptyHint")}
-          action={{ label: t("assignments.emptyCreateFirst"), icon: "add", onClick: () => setDialog(true) }}
+          action={{ label: t("assignments.emptyCreateFirst"), icon: "add", onClick: openCreate }}
         />
       )}
 
