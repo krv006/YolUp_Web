@@ -260,6 +260,7 @@
     "searchHint": "Boshqa so'z bilan qidirib ko'ring",
     "videoCount": "{{count}} ta video",
     "boardCount": "{{count}} ta doska",
-    "fromChat": "Chatdan"
+    "fromChat": "Chatdan",
+    "including": "shundan {{parts}}"
   }
 }
