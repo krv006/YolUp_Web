@@ -1,11 +1,9 @@
 import { useMemo, useState } from "react";
-import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useCourses } from "@/modules/course";
 import {
-  homeworkApi,
-  homeworkKeys,
+  useAllAssignments,
   useCreateAssignment,
   useDeleteAssignment,
   useHomeworkAiStats,
@@ -49,16 +47,9 @@ export function HomeworkListPage() {
 
   const groups = useMemo(() => courses.data ?? [], [courses.data]);
 
-  const queries = useQueries({
-    queries: groups.map((course) => ({
-      queryKey: homeworkKeys.assignments(course.id),
-      queryFn: ({ signal }: { signal: AbortSignal }) =>
-        homeworkApi.getAssignments(course.id, { signal }),
-    })),
-  });
-
-  const items = useMemo(() => queries.flatMap((query) => query.data ?? []), [queries]);
-  const loading = queries.some((query) => query.isLoading);
+  const all = useAllAssignments();
+  const items = useMemo(() => all.data ?? [], [all.data]);
+  const loading = all.isLoading;
 
   const toReview = items.reduce((sum, item) => sum + awaitingReview(item), 0);
 

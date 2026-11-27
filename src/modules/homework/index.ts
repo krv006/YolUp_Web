@@ -41,7 +41,7 @@ export { QuestionsResult } from "./ui/questions-result";
 export { useHomeworkBoardSource } from "./model/use-homework-board";
 export { useHomeworkFocusTracker } from "./model/use-homework-focus";
 export type { HomeworkBoardSaveState } from "./model/use-homework-board";
-export { getHomeworkPollingInterval, homeworkKeys, useAssignmentAiSummary, useHomeworkAiStats, useRemindAssignment, useRequestResubmit, useAssignment, useAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useHomeworkDraft, useSaveHomeworkDraft, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment, useHomeworkBank, useAssignFromBank, useAssignmentAudience, useSetAssignmentAudience } from "./model/homework.queries";
+export { getHomeworkPollingInterval, homeworkKeys, useAssignmentAiSummary, useHomeworkAiStats, useRemindAssignment, useRequestResubmit, useAssignment, useAssignments, useAllAssignments, useSubmission, useCreateAssignment, useDeleteAssignment, useDownloadAssignmentFile, useHomeworkBoard, useHomeworkDraft, useSaveHomeworkDraft, useSaveHomeworkBoard, useSubmitHomeworkBoard, useDownloadSubmissionFile, useHomeworkReport, useRecheckSubmission, useReviewSubmission, useSubmitHomework, useUpdateAssignment, useHomeworkBank, useAssignFromBank, useAssignmentAudience, useSetAssignmentAudience } from "./model/homework.queries";
 export { AssignmentDetailDialog } from "./ui/assignment-detail-dialog";
 export { HomeworkChatCard } from "./ui/homework-chat-card";
 export { HomeworkMessageCard } from "./ui/homework-message-card";
