@@ -41,17 +41,18 @@ export function ProfileLayout() {
   const [switchOpen, setSwitchOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
-  if (isCompact) return <Outlet />;
+  if (isCompact || pathname.includes("/help/tickets")) return <Outlet />;
 
   const items = student ? ITEMS.filter((item) => item.to !== "certificates") : ITEMS;
-  const active = [...items, HELP].find((item) => pathname.endsWith(`/${item.to}`));
+  const help = pathname.includes("/help");
+  const active = help ? HELP : [...items, HELP].find((item) => pathname.endsWith(`/${item.to}`));
 
   return (
     <WorkspaceShell
       eyebrow={`${student ? tn("roles.student") : (user?.name ?? "")}${user?.username ? ` · @${user.username}` : ""}`}
       title={t(active?.titleKey ?? "page.title")}
     >
-      <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,640px)] lg:items-start">
+      <div className={`grid gap-5 lg:items-start ${help ? "lg:grid-cols-[280px_minmax(0,1fr)]" : "lg:grid-cols-[280px_minmax(0,640px)]"}`}>
         <nav className="flex flex-col rounded-2xl bg-surface p-2.5" aria-label={t("page.title")}>
           {items.map((item) => (
             <NavLink key={item.to} to={item.to} className={navClass}>

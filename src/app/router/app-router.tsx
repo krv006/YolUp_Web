@@ -342,7 +342,7 @@ export function AppRouter() {
                       <Route path="ratings" element={<MyRatingsPage />} />
                       <Route path="certificates" element={<CertificatesPage />} />
                       <Route path="logins" element={<LoginHistoryPage />} />
-                      <Route path="help" element={<HelpCenterPage />} />
+                      <Route path="help/*" element={<HelpCenterPage />} />
                     </Route>
                   </Route>
                   <Route
@@ -433,7 +433,7 @@ export function AppRouter() {
                       <Route path="system" element={<SystemSettingsPage />} />
                       <Route path="ratings" element={<MyRatingsPage />} />
                       <Route path="logins" element={<LoginHistoryPage />} />
-                      <Route path="help" element={<HelpCenterPage />} />
+                      <Route path="help/*" element={<HelpCenterPage />} />
                     </Route>
                   </Route>
                   <Route
@@ -491,7 +491,7 @@ export function AppRouter() {
                     <Route path="profile" element={<ParentProfilePage />} />
                     <Route path="settings" element={<ParentSettingsPage />} />
                     <Route path="settings/:section" element={<ParentSettingsPage />} />
-                    <Route path="help" element={<ParentHelpPage />} />
+                    <Route path="help/*" element={<ParentHelpPage />} />
                     <Route path="notifications" element={<ParentNotificationsPage />} />
                     <Route path="chats" element={<ParentChatsPage />} />
                     <Route path="chats/:conversationId" element={<ParentChatsPage />} />

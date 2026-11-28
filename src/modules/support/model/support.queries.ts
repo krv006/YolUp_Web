@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supportApi } from "../api/support.api";
-import type { SupportTicket, SupportTicketStatus } from "../api/support.dto";
+import type { ArticleFeedback, SupportRating, SupportTicket, SupportTicketStatus, TicketDraft } from "../api/support.dto";
 
 export const supportKeys = Object.freeze({
   all: ["support"] as const,
@@ -9,6 +9,7 @@ export const supportKeys = Object.freeze({
   ticket: (id: string) => ["support", "ticket", id] as const,
   videos: ["support", "videos"] as const,
   faq: ["support", "faq"] as const,
+  config: ["support", "config"] as const,
 });
 
 export function useSupportTickets(filters: { all?: boolean; status?: SupportTicketStatus | null } = {}, enabled = true) {
@@ -44,9 +45,35 @@ export function useCreateSupportTicket() {
   return useMutation({ mutationFn: supportApi.createTicket, onSuccess: update });
 }
 
+export function useCreateTicketDraft(onProgress?: (fraction: number) => void) {
+  const update = useTicketUpdate();
+  return useMutation({ mutationFn: (draft: TicketDraft) => supportApi.createDraft(draft, onProgress), onSuccess: update });
+}
+
 export function useReplySupportTicket(id: string) {
   const update = useTicketUpdate();
-  return useMutation({ mutationFn: (message: string) => supportApi.reply(id, message), onSuccess: update });
+  return useMutation({
+    mutationFn: ({ message, files = [] }: { message: string; files?: File[] }) => supportApi.reply(id, message, files),
+    onSuccess: update,
+  });
+}
+
+export function useRateSupportTicket(id: string) {
+  const update = useTicketUpdate();
+  return useMutation({ mutationFn: (rating: SupportRating) => supportApi.rate(id, rating), onSuccess: update });
+}
+
+export function useHelpConfig() {
+  return useQuery({
+    queryKey: supportKeys.config,
+    queryFn: ({ signal }) => supportApi.getConfig({ signal }),
+    staleTime: 300_000,
+    retry: false,
+  });
+}
+
+export function useSendArticleFeedback() {
+  return useMutation({ mutationFn: (feedback: ArticleFeedback) => supportApi.sendFeedback(feedback) });
 }
 
 export function useCloseSupportTicket(id: string) {

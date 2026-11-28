@@ -1,0 +1,648 @@
+{
+  "title": "Yordam markazi",
+  "home": {
+    "greeting": "Salom, {{name}}",
+    "heading": "Qanday yordam bera olamiz?",
+    "search": "Savol yoki mavzu qidirish...",
+    "send": "Murojaat yuborish",
+    "online": "Support onlayn · odatda {{minutes}} daqiqada javob beradi",
+    "offline": "Support hozir oflayn · javob ish vaqtida beriladi",
+    "categories": "Kategoriyalar",
+    "faq": "Ko‘p so‘raladigan savollar",
+    "all": "Barchasi",
+    "activeTicket": "Faol murojaatingiz",
+    "contact": "Bog‘lanish",
+    "videos": "Video qo‘llanmalar",
+    "articleCount_one": "{{count}} ta maqola",
+    "articleCount_other": "{{count}} ta maqola",
+    "newReply": "Yangi javob",
+    "telegram": "Telegram orqali yozish",
+    "phone": "Qo‘ng‘iroq qilish",
+    "ticketRow": "Murojaat yuborish",
+    "ticketRowHint": "Odatda {{minutes}} daqiqada javob beramiz",
+    "myTickets": "Mening murojaatlarim",
+    "myTicketsHint": "Yuborilgan murojaatlar va javoblar",
+    "tour": "Yo‘l-yo‘riqni qayta ko‘rish",
+    "tourHint": "Asosiy ekran bo‘yicha qisqa tanishuv",
+    "version": "YolUp · ilova versiyasi {{version}}"
+  },
+  "search": {
+    "cancel": "Bekor",
+    "clear": "Tozalash",
+    "recent": "So‘nggi qidiruvlar",
+    "suggestions": "Tavsiyalar",
+    "articles": "Maqolalar",
+    "videos": "Video",
+    "allTab": "Hammasi",
+    "allResults": "Barcha natijalar ({{count}})",
+    "enter": "Enter",
+    "videoMeta": "Video qo‘llanma · {{duration}}",
+    "videoMetaNoDuration": "Video qo‘llanma",
+    "faqMeta": "Ko‘p so‘raladigan savol",
+    "emptyTitle": "«{{query}}» bo‘yicha hech narsa topilmadi",
+    "emptyTitleShort": "Hech narsa topilmadi",
+    "emptyText": "Boshqacha so‘z bilan qidiring yoki savolingizni bizga yozing.",
+    "emptyTextLong": "Boshqacha so‘z bilan qidiring yoki savolingizni bizga yozing — yordam beramiz.",
+    "popular": "Mashhur mavzular",
+    "notFound": "Javob topilmadimi?",
+    "notFoundHint": "Supportga murojaat yuboring",
+    "readMinutes": "{{minutes}} daqiqa"
+  },
+  "category": {
+    "summary": "{{articles}} · {{videos}}",
+    "videos_one": "{{count}} ta video",
+    "videos_other": "{{count}} ta video",
+    "updated": "Oxirgi yangilanish: {{date}}",
+    "readTime": "{{minutes}} daqiqa o‘qish",
+    "all": "Hammasi",
+    "tags": {
+      "homework": "Vazifalar",
+      "tests": "Testlar"
+    },
+    "empty": "Bu bo‘limda hozircha maqola yo‘q.",
+    "allArticles": "Barcha maqolalar",
+    "allVideos": "Video qo‘llanmalar"
+  },
+  "article": {
+    "title": "Maqola",
+    "meta": "{{minutes}} daqiqa o‘qish · {{date}}da yangilandi",
+    "share": "Ulashish",
+    "copied": "Havola nusxalandi",
+    "helpful": "Maqola foydali bo‘ldimi?",
+    "yes": "Ha, foydali",
+    "no": "Yo‘q",
+    "thanks": "Rahmat, fikringiz qabul qilindi!",
+    "thanksHint": "Maqolani yaxshilashda albatta inobatga olamiz.",
+    "sent": "Rahmat! Fikringiz yuborildi",
+    "inSection": "Shu bo‘limda",
+    "similar": "O‘xshash maqolalar",
+    "needHelp": "Hali yordam kerakmi?",
+    "needHelpMobile": "Hali ham yordam kerakmi?",
+    "needHelpText": "Murojaat yuboring — odatda {{minutes}} daqiqada javob beramiz.",
+    "needHelpHint": "Supportga murojaat yuboring",
+    "notFound": "Maqola topilmadi",
+    "notFoundText": "Bu maqola o‘chirilgan yoki havola noto‘g‘ri.",
+    "back": "Yordam markaziga qaytish",
+    "feedback": {
+      "title": "Nima yetishmadi?",
+      "description": "Fikringiz maqolani yaxshilashga yordam beradi",
+      "outdated": "Ma’lumot eskirgan",
+      "unclear": "Tushunarsiz yozilgan",
+      "different": "Mening muammom boshqacha",
+      "other": "Boshqa sabab",
+      "comment": "Izoh (ixtiyoriy)",
+      "commentPlaceholder": "Nima yetishmadi?",
+      "cancel": "Bekor qilish",
+      "send": "Yuborish"
+    }
+  },
+  "states": {
+    "offline": "Internet aloqasi yo‘q",
+    "errorTitle": "Ma’lumotlarni yuklab bo‘lmadi",
+    "errorText": "Internet aloqasini tekshiring va qayta urinib ko‘ring.",
+    "retry": "Qayta urinish",
+    "urgent": "Shoshilinch yordam",
+    "phoneOffline": "{{phone}} · internetsiz ham ishlaydi"
+  },
+  "ticket": {
+    "newTitle": "Yangi murojaat",
+    "newSubtitle": "Odatda {{minutes}} daqiqada javob beramiz",
+    "hours": " · {{hours}}",
+    "topic": "Mavzu",
+    "topicPlaceholder": "Mavzuni tanlang",
+    "topicSheetTitle": "Mavzuni tanlang",
+    "topicSheetHint": "To‘g‘ri mavzu javobni tezlashtiradi",
+    "choose": "Tanlash",
+    "subject": "Qisqacha sarlavha",
+    "subjectPlaceholder": "Masalan: Darsga kira olmayapman",
+    "description": "Batafsil tavsif",
+    "descriptionPlaceholder": "Nima bo‘ldi? Qaysi qadamda xato chiqdi?",
+    "descriptionHint": "Kamida {{min}} ta belgi",
+    "descriptionShort": "Kamida {{min}} ta belgi yozing (hozir {{count}})",
+    "files": "Skrinshot yoki fayl",
+    "dropFiles": "Faylni shu yerga tashlang yoki",
+    "pickFiles": "tanlang",
+    "attach": "Fayl biriktirish",
+    "filesHint": "PNG, JPG, PDF · {{mb}} MB gacha",
+    "addFile": "Yana fayl qo‘shish",
+    "tooBig": "{{size}} · {{mb}} MB dan katta",
+    "badType": "Faqat PNG, JPG yoki PDF",
+    "uploading": "Yuklanmoqda · {{percent}}%",
+    "removeFile": "Faylni olib tashlash",
+    "deviceInfo": "Brauzer va tizim ma’lumotini biriktirish",
+    "deviceInfoMobile": "Brauzer va telefon ma’lumotini biriktirish",
+    "suggest": "Bu maqola yordam berishi mumkin",
+    "cancel": "Bekor qilish",
+    "send": "Yuborish",
+    "sending": "Yuborilmoqda...",
+    "failed": "Murojaatni yuborib bo‘lmadi",
+    "discardTitle": "Murojaatni bekor qilasizmi?",
+    "discardText": "Yozgan matningiz va biriktirgan fayllaringiz saqlanmaydi.",
+    "discardConfirm": "Ha, bekor qilish",
+    "discardKeep": "Yozishda davom etish",
+    "createdTitle": "Murojaatingiz qabul qilindi",
+    "createdText": "Javob kelganda bildirishnoma yuboramiz. Odatda bu {{minutes}} daqiqagacha vaqt oladi.",
+    "createdPage": "Murojaat yuborildi",
+    "number": "Murojaat raqami",
+    "status": "Holat",
+    "view": "Murojaatni ko‘rish",
+    "backToHelp": "Yordam markaziga qaytish",
+    "helpCenter": "Yordam markazi"
+  },
+  "topics": {
+    "tech": {
+      "title": "Texnik muammo",
+      "hint": "Ilova, kirish, dars ochilmayapti"
+    },
+    "lessons": {
+      "title": "Darslar va jadval",
+      "hint": "Vaqt, xona, davomat"
+    },
+    "tasks": {
+      "title": "Vazifa va testlar",
+      "hint": "Topshirish, baholash"
+    },
+    "payments": {
+      "title": "To‘lovlar",
+      "hint": "To‘lov, qaytarish, chek"
+    },
+    "account": {
+      "title": "Akkaunt va xavfsizlik",
+      "hint": "Parol, kirish, email"
+    },
+    "feedback": {
+      "title": "Taklif yoki fikr",
+      "hint": "Ilovani yaxshilash uchun"
+    }
+  },
+  "status": {
+    "open": "Ochiq",
+    "answered": "Javob berildi",
+    "closed": "Yopilgan"
+  },
+  "tickets": {
+    "title": "Mening murojaatlarim",
+    "back": "Yordam markazi",
+    "filters": {
+      "all": "Hammasi",
+      "open": "Ochiq",
+      "answered": "Javobli",
+      "closed": "Yopilgan"
+    },
+    "thisWeek": "Bu hafta",
+    "new": "Yangi murojaat",
+    "emptyTitle": "Hali murojaatlar yo‘q",
+    "emptyText": "Savol yoki muammo bo‘lsa, bizga yozing — odatda {{minutes}} daqiqada javob beramiz.",
+    "emptyOpenTitle": "Ochiq murojaatlar yo‘q",
+    "emptyOpenText": "Barcha murojaatlaringizga javob berilgan.",
+    "emptyAnsweredTitle": "Javob berilgan murojaatlar yo‘q",
+    "emptyAnsweredText": "Javob kelganda shu yerda ko‘rasiz.",
+    "emptyClosedTitle": "Yopilgan murojaatlar yo‘q",
+    "emptyClosedText": "Hal bo‘lgan murojaatlar shu yerda saqlanadi.",
+    "archiveNote": "Yopilgan murojaatlar 90 kundan keyin arxivlanadi.",
+    "queue": "Navbatda {{position}}-o‘rin · mutaxassis ~{{minutes}} daqiqada ulanadi",
+    "queueShort": "Navbatda {{position}}-o‘rin · taxminan {{minutes}} daqiqa",
+    "selectTitle": "Murojaatni tanlang",
+    "selectText": "Chap tomondagi ro‘yxatdan murojaatni oching.",
+    "openedAt": "{{time}} da ochilgan",
+    "openedOn": "{{date}} da ochilgan",
+    "today": "Bugun",
+    "yesterday": "Kecha",
+    "created": "Murojaat {{number}} yaratildi",
+    "createdNoNumber": "Murojaat yaratildi",
+    "joined": "{{name}} (YolUp yordam) suhbatga qo‘shildi",
+    "staff": "YolUp yordam",
+    "closedEvent": "Murojaat yopildi",
+    "closedRated": "Murojaat yopildi · siz {{stars}} ★ bilan baholadingiz",
+    "close": "Murojaatni yopish",
+    "solved": "Muammo hal bo‘ldimi?",
+    "solvedYes": "Ha, hal bo‘ldi",
+    "solvedNo": "Yo‘q, hali ham",
+    "composer": "Xabar yozing...",
+    "send": "Yuborish",
+    "attach": "Fayl biriktirish",
+    "sendFailed": "Xabar yuborilmadi · qayta urinish uchun bosing",
+    "offlineNote": "Internet yo‘q — ulanganda yuboriladi",
+    "closedNote": "Bu murojaat yopilgan. Yangi savol bo‘lsa — yangi murojaat oching.",
+    "confirmTitle": "Murojaatni yopasizmi?",
+    "confirmText": "Muammo hal bo‘lgan bo‘lsa yoping. Kerak bo‘lsa, yangi murojaat ochishingiz mumkin.",
+    "confirmYes": "Ha, yopish",
+    "confirmNo": "Bekor qilish",
+    "closedToast": "Murojaat yopildi",
+    "menu": "Amallar",
+    "loadError": "Murojaatni yuklab bo‘lmadi",
+    "notFound": "Murojaat topilmadi",
+    "threadTitle": "Murojaat {{number}}"
+  },
+  "rating": {
+    "title": "Xizmatni baholang",
+    "subtitle": "{{name}} sizga yordam berdi",
+    "subtitleNoName": "Bizning xizmatimiz qanday bo‘ldi?",
+    "labels": [
+      "Juda yomon",
+      "Yomon",
+      "O‘rtacha",
+      "Yaxshi",
+      "A’lo"
+    ],
+    "tags": {
+      "fast": "Tez javob",
+      "clear": "Tushunarli",
+      "polite": "Xushmuomala",
+      "solved": "Muammo hal bo‘ldi"
+    },
+    "comment": "Izoh (ixtiyoriy)",
+    "commentPlaceholder": "Yana nimani yaxshilashimiz mumkin?",
+    "skip": "O‘tkazib yuborish",
+    "submit": "Baholash",
+    "sent": "Rahmat! Bahoingiz yuborildi",
+    "star": "{{count}} yulduz"
+  },
+  "categories": {
+    "start": {
+      "title": "Boshlash",
+      "short": "Boshlash"
+    },
+    "lessons": {
+      "title": "Darslar va jadval",
+      "short": "Darslar va jadval"
+    },
+    "tasks": {
+      "title": "Vazifa va testlar",
+      "short": "Vazifa va testlar"
+    },
+    "payments": {
+      "title": "To‘lovlar",
+      "short": "To‘lovlar"
+    },
+    "account": {
+      "title": "Akkaunt va xavfsizlik",
+      "short": "Akkaunt"
+    },
+    "tech": {
+      "title": "Texnik muammolar",
+      "short": "Texnik muammolar"
+    }
+  },
+  "articles": {
+    "intro": {
+      "title": "YolUp bilan tanishuv",
+      "hint": "Asosiy, Suhbatlar, Jadval va Workspace",
+      "intro": "YolUp’da hamma narsa to‘rtta bo‘limda: darslar, guruh suhbatlari, vazifalar va testlar.",
+      "steps": [
+        "«Asosiy» — bugungi darslar, yaqin vazifalar va so‘nggi yangiliklar.",
+        "«Suhbatlar» — guruh chatlari va shaxsiy xabarlar.",
+        "«Jadval» — darslar va testlar kun, hafta yoki oy bo‘yicha.",
+        "«Workspace» — vazifalar, testlar, materiallar va natijalar."
+      ],
+      "tip": "Maslahat: profil rasmingiz ustiga bosib sozlamalar va yordam markazini ochasiz."
+    },
+    "joinGroup": {
+      "title": "Guruhga qanday qo‘shilaman?",
+      "hint": "Suhbatlar → «Guruhga qo‘shilish»",
+      "intro": "Guruhga o‘qituvchi bergan taklif kodi yoki havola orqali qo‘shilasiz.",
+      "steps": [
+        "«Suhbatlar» bo‘limini oching.",
+        "«Guruhga qo‘shilish» tugmasini bosing.",
+        "O‘qituvchi bergan kodni kiriting — guruh chati ro‘yxatda paydo bo‘ladi."
+      ]
+    },
+    "createGroup": {
+      "title": "Guruh qanday yaratiladi?",
+      "hint": "Suhbatlar → «+» → yangi guruh",
+      "intro": "Guruh yaratilganda unga chat, jadval va vazifalar bo‘limi avtomatik ochiladi.",
+      "steps": [
+        "«Suhbatlar» bo‘limini oching.",
+        "Yuqoridagi «+» tugmasini bosing va yangi guruhni tanlang.",
+        "Guruh nomi va fanini kiriting.",
+        "«Yaratish»ni bosing — guruh ro‘yxatda paydo bo‘ladi."
+      ]
+    },
+    "addStudent": {
+      "title": "O‘quvchi qanday qo‘shiladi?",
+      "hint": "Guruh → O‘quvchi qo‘shish",
+      "intro": "O‘quvchilarni taklif kodi orqali yoki o‘zingiz qo‘shishingiz mumkin.",
+      "steps": [
+        "Guruh chatini oching.",
+        "Guruh menyusidan «O‘quvchi qo‘shish»ni tanlang.",
+        "Taklif kodini o‘quvchiga yuboring yoki uni ro‘yxatdan tanlang."
+      ]
+    },
+    "parentStart": {
+      "title": "Farzandimni qanday ulayman?",
+      "hint": "Farzand qo‘shish → login yoki FK-kod",
+      "intro": "Farzandingizning darslari, baholari va vazifalarini ko‘rish uchun uning hisobini ulang.",
+      "steps": [
+        "Bosh sahifada «Farzand qo‘shish»ni bosing.",
+        "Farzandingizning login (username) yoki FK-… taklif kodini kiriting.",
+        "Tasdiqlang — farzandingiz ma’lumotlari bosh sahifada chiqadi."
+      ]
+    },
+    "language": {
+      "title": "Ilova tilini qanday o‘zgartiraman?",
+      "hint": "Tizim sozlamalari → Til",
+      "intro": "Ilova o‘zbek, rus va ingliz tillarida ishlaydi.",
+      "steps": [
+        "Profil → «Tizim sozlamalari»ni oching.",
+        "«Til» qatorini bosing.",
+        "Kerakli tilni tanlang — ilova darhol shu tilga o‘tadi."
+      ]
+    },
+    "joinLesson": {
+      "title": "Darsga qanday qo‘shilaman?",
+      "hint": "Jadval → dars kartasi → «Qo‘shilish»",
+      "intro": "Jonli darsga o‘qituvchi darsni boshlagandan keyin kira olasiz.",
+      "steps": [
+        "«Jadval» bo‘limida darsni toping.",
+        "Dars kartasini oching va «Darsga qo‘shilish»ni bosing.",
+        "Kamera va mikrofonni tekshirib, «Kirish»ni bosing."
+      ],
+      "tip": "Maslahat: dars hali boshlanmagan bo‘lsa, kutish oynasi ochiladi va o‘qituvchi boshlashi bilan ulanasiz."
+    },
+    "startLesson": {
+      "title": "Darsni qanday boshlayman?",
+      "hint": "Asosiy → «Darsni boshlash»",
+      "intro": "Dars siz xonaga kirganingizda boshlanadi va o‘quvchilarga xabar boradi.",
+      "steps": [
+        "«Asosiy» ekranda yoki «Jadval»da darsni oching.",
+        "«Darsni boshlash» tugmasini bosing.",
+        "Kamera va mikrofonni tekshiring.",
+        "«Kirish»ni bosing — dars jonli bo‘ladi va o‘quvchilar qo‘shila oladi."
+      ],
+      "tip": "Maslahat: darsni yozib olish uchun ekranni ulashishga ruxsat bering."
+    },
+    "createLesson": {
+      "title": "Yangi dars qanday qo‘shiladi?",
+      "hint": "Jadval → «Dars qo‘shish»",
+      "intro": "Bitta dars, takrorlanuvchi jadval yoki bir nechta darsni birdaniga qo‘shish mumkin.",
+      "steps": [
+        "«Jadval» bo‘limini oching.",
+        "«Dars qo‘shish» tugmasini bosing.",
+        "Guruhni va rejimni tanlang: bitta, takrorlanuvchi yoki bir nechta dars.",
+        "Sana va vaqtni kiritib, saqlang."
+      ]
+    },
+    "cancelLesson": {
+      "title": "Darsni qanday bekor qilaman?",
+      "hint": "Jadval → dars → «Bekor qilish»",
+      "intro": "Faqat hali boshlanmagan darsni bekor qilish mumkin.",
+      "steps": [
+        "«Jadval»da darsni oching.",
+        "«Bekor qilish» tugmasini bosing.",
+        "Faqat shu darsni yoki butun seriyani tanlab, tasdiqlang."
+      ]
+    },
+    "recordings": {
+      "title": "Dars yozuvini qayerdan ko‘raman?",
+      "hint": "Workspace → Materiallar → guruh",
+      "intro": "Yozib olingan darslar tayyor bo‘lgach materiallarda saqlanadi.",
+      "steps": [
+        "«Workspace» → «Materiallar»ni oching.",
+        "Guruhni va dars papkasini tanlang.",
+        "Video yozuvni oching."
+      ]
+    },
+    "schedule": {
+      "title": "Jadvalni qanday ko‘raman?",
+      "hint": "Jadval → kun, hafta yoki oy",
+      "intro": "Jadvalda darslar va guruhga berilgan testlar birga ko‘rinadi.",
+      "steps": [
+        "«Jadval» bo‘limini oching.",
+        "Kun, hafta yoki oy ko‘rinishini tanlang.",
+        "Dars yoki test ustiga bosib, tafsilotlarni oching."
+      ]
+    },
+    "submitHomework": {
+      "title": "Vazifani qanday topshiraman?",
+      "hint": "Workspace → Vazifalar → fayl yoki matn",
+      "intro": "Uy vazifasini ilovadan bir necha soniyada topshirishingiz mumkin: fayl, rasm yoki oddiy matn yuborsa bo‘ladi.",
+      "steps": [
+        "Workspace → Vazifalar bo‘limini oching.",
+        "Kerakli vazifani tanlab, «Topshirish» tugmasini bosing.",
+        "Fayl, rasm yoki matn qo‘shing.",
+        "«Yuborish»ni bosing — o‘qituvchingizga xabar boradi."
+      ],
+      "tip": "Maslahat: bitta fayl hajmi 20 MB dan oshmasin."
+    },
+    "lateHomework": {
+      "title": "Muddat o‘tib ketsa nima bo‘ladi?",
+      "hint": "Kechikkan topshiriq",
+      "intro": "O‘qituvchi ruxsat bergan bo‘lsa, muddatdan keyin ham topshirish mumkin — topshiriq «kechikkan» deb belgilanadi.",
+      "steps": [
+        "Vazifani oching va «Topshirish» tugmasi borligini tekshiring.",
+        "Tugma bo‘lmasa, o‘qituvchingizga guruh chatida yozing."
+      ]
+    },
+    "resubmit": {
+      "title": "Vazifani qayta topshirish",
+      "hint": "O‘qituvchi qayta so‘raganda",
+      "intro": "O‘qituvchi vazifani qayta topshirishni so‘rasa, sizga bildirishnoma keladi.",
+      "steps": [
+        "Bildirishnomani yoki vazifani oching.",
+        "O‘qituvchi izohini o‘qing.",
+        "Yangi javobni qo‘shib, qayta yuboring."
+      ]
+    },
+    "createHomework": {
+      "title": "Vazifa qanday beriladi?",
+      "hint": "Workspace → Vazifalar → «Yangi vazifa»",
+      "intro": "Vazifaga matn, fayl, ovozli izoh va test savollarini qo‘shish mumkin.",
+      "steps": [
+        "Workspace → Vazifalar bo‘limini oching.",
+        "«Yangi vazifa» tugmasini bosing.",
+        "Guruh, muddat va baholash turini tanlang.",
+        "Matnni yozib, «Saqlash»ni bosing — o‘quvchilarga xabar boradi."
+      ]
+    },
+    "checkHomework": {
+      "title": "Vazifa qanday tekshiriladi?",
+      "hint": "AI tavsiya beradi, bahoni siz qo‘yasiz",
+      "intro": "Topshirilgan javoblar vazifa sahifasida ko‘rinadi.",
+      "steps": [
+        "Vazifani oching va topshirganlar ro‘yxatini ko‘ring.",
+        "O‘quvchi javobini oching — AI tavsiyasi bo‘lsa, u ham chiqadi.",
+        "Baho va izohni qo‘yib, saqlang."
+      ]
+    },
+    "aiCheck": {
+      "title": "AI tekshiruvi qanday ishlaydi?",
+      "hint": "Avtomatik tavsiya va baho",
+      "intro": "Vazifada «AI tekshirsin» yoqilgan bo‘lsa, AI javobni ko‘rib chiqib, tavsiya va taxminiy baho beradi.",
+      "steps": [
+        "O‘quvchi javob yuboradi.",
+        "AI javobni bir necha daqiqada tekshiradi.",
+        "Yakuniy bahoni o‘qituvchi tasdiqlaydi yoki o‘zgartiradi."
+      ]
+    },
+    "takeTest": {
+      "title": "Testni qanday yechaman?",
+      "hint": "Workspace → Testlar → «Yechish»",
+      "intro": "Test ochilish vaqtidan boshlab muddat tugaguncha yechiladi.",
+      "steps": [
+        "Workspace → Testlar bo‘limini oching.",
+        "Testni tanlab, «Yechish»ni bosing.",
+        "Savollarga javob bering va «Yakunlash»ni bosing."
+      ]
+    },
+    "testResults": {
+      "title": "Test natijasini qayerda ko‘raman?",
+      "hint": "Workspace → Testlar → natija",
+      "intro": "Natija test yakunlangandan keyin darhol ko‘rinadi.",
+      "steps": [
+        "Workspace → Testlar bo‘limini oching.",
+        "Yechilgan testni ochib, ball va javoblarni ko‘ring."
+      ]
+    },
+    "assignTest": {
+      "title": "Testni guruhga qanday beraman?",
+      "hint": "Workspace → Testlar → «Guruhga berish»",
+      "intro": "Bitta testni istalgan sondagi guruhga berish mumkin — har guruhga o‘z nusxasi yaratiladi.",
+      "steps": [
+        "Workspace → Testlar bo‘limini oching.",
+        "Testni tanlab, «Guruhga berish»ni bosing.",
+        "Guruhni, ochilish vaqti va muddatni tanlab, yuboring."
+      ]
+    },
+    "paymentQuestion": {
+      "title": "To‘lov bo‘yicha savolim bor",
+      "hint": "Murojaat → «To‘lovlar» mavzusi",
+      "intro": "To‘lov bilan bog‘liq har qanday savol bo‘yicha supportga yozing.",
+      "steps": [
+        "«Murojaat yuborish»ni bosing.",
+        "Mavzu sifatida «To‘lovlar»ni tanlang.",
+        "Savolingizni batafsil yozing va yuboring."
+      ]
+    },
+    "paymentCharged": {
+      "title": "To‘lov o‘tmadi, pul yechildi",
+      "hint": "Chek bilan murojaat yuboring",
+      "intro": "Pul yechilgan, lekin kurs ochilmagan bo‘lsa, mutaxassis to‘lovni tekshiradi.",
+      "steps": [
+        "«Murojaat yuborish»ni bosing va «To‘lovlar» mavzusini tanlang.",
+        "To‘lov sanasi va summasini yozing.",
+        "Chek skrinshotini biriktirib, yuboring."
+      ]
+    },
+    "forgotPassword": {
+      "title": "Parolni unutdim, nima qilaman?",
+      "hint": "Kirish → «Parolni unutdim» → email kod",
+      "intro": "Parolni emailingizga keladigan kod orqali tiklaysiz.",
+      "steps": [
+        "Kirish sahifasida «Parolni unutdim»ni bosing.",
+        "Akkauntingizga bog‘langan emailni kiriting.",
+        "Emailga kelgan kodni yozing.",
+        "Yangi parolni o‘rnating va kiring."
+      ],
+      "tip": "Maslahat: email tasdiqlanmagan bo‘lsa, kod kelmaydi — supportga yozing."
+    },
+    "changePassword": {
+      "title": "Parolni qanday o‘zgartiraman?",
+      "hint": "Akkaunt sozlamalari → Xavfsizlik",
+      "intro": "Parolni istalgan vaqtda profil sozlamalarida almashtirish mumkin.",
+      "steps": [
+        "Profil → «Akkaunt sozlamalari»ni oching.",
+        "«Xavfsizlik» bo‘limida «Parolni o‘zgartirish»ni bosing.",
+        "Joriy va yangi parolni kiritib, saqlang."
+      ]
+    },
+    "emailLogin": {
+      "title": "Email bilan kira olmayapman",
+      "hint": "Email tasdiqlangan bo‘lishi kerak",
+      "intro": "Email bilan faqat u tasdiqlangan bo‘lsa kirish mumkin.",
+      "steps": [
+        "Login (username) bilan kiring.",
+        "Profilda emailingizni kod bilan tasdiqlang.",
+        "Keyingi safar email bilan ham kira olasiz."
+      ],
+      "tip": "Maslahat: bitta email bir nechta akkauntga bog‘langan bo‘lsa, login bilan kiring."
+    },
+    "switchAccount": {
+      "title": "Akkauntni qanday almashtiraman?",
+      "hint": "Profil → «Akkauntni almashtirish»",
+      "intro": "Bir nechta rol (masalan, o‘qituvchi va ota-ona) bo‘lsa, ular orasida parolsiz o‘tasiz.",
+      "steps": [
+        "Profilni oching.",
+        "«Akkauntni almashtirish»ni bosing.",
+        "Kerakli akkauntni tanlang yoki yangi rolni oching."
+      ]
+    },
+    "loginHistory": {
+      "title": "Kim kirganini qanday ko‘raman?",
+      "hint": "Profil → «Kirishlar tarixi»",
+      "intro": "Kirishlar tarixida qurilmalar va oxirgi faollik vaqti ko‘rinadi.",
+      "steps": [
+        "Profil → «Kirishlar tarixi»ni oching.",
+        "Tanish bo‘lmagan qurilma bo‘lsa, parolni darhol almashtiring."
+      ]
+    },
+    "notifications": {
+      "title": "Bildirishnomalar kelmayapti",
+      "hint": "Tizim sozlamalari → Bildirishnomalar",
+      "intro": "Bildirishnomalar ilovada va brauzerda yoqilgan bo‘lishi kerak.",
+      "steps": [
+        "Profil → «Tizim sozlamalari» → «Bildirishnomalar»ni oching.",
+        "Kerakli bildirishnomalarni yoqing.",
+        "Brauzer so‘rasa, bildirishnomalarga ruxsat bering."
+      ]
+    },
+    "cameraMic": {
+      "title": "Kamera yoki mikrofon ishlamayapti",
+      "hint": "Brauzer ruxsatini tekshiring",
+      "intro": "Ko‘pincha sabab — brauzer kamera yoki mikrofonga ruxsat bermagan.",
+      "steps": [
+        "Manzil qatoridagi qulf belgisini bosing.",
+        "Kamera va mikrofonga ruxsat bering.",
+        "Sahifani yangilab, darsga qayta kiring."
+      ]
+    },
+    "blankScreen": {
+      "title": "Sahifa ochilmayapti yoki oq ekran",
+      "hint": "Sahifani yangilang va keshni tozalang",
+      "intro": "Eski versiya keshda qolgan bo‘lsa, sahifa to‘g‘ri ochilmasligi mumkin.",
+      "steps": [
+        "Sahifani Ctrl+Shift+R (Mac’da Cmd+Shift+R) bilan yangilang.",
+        "Brauzerni eng so‘nggi versiyaga yangilang.",
+        "Muammo qolsa, skrinshot bilan murojaat yuboring."
+      ]
+    },
+    "fileUpload": {
+      "title": "Fayl yuklanmayapti",
+      "hint": "Hajm va internetni tekshiring",
+      "intro": "Fayl juda katta bo‘lsa yoki internet sekin bo‘lsa, yuklash to‘xtashi mumkin.",
+      "steps": [
+        "Fayl hajmini tekshiring.",
+        "Internet aloqasini tekshirib, qayta urinib ko‘ring.",
+        "Xato matni chiqsa, uni murojaatga yozing."
+      ],
+      "tip": "Maslahat: chatda fayl 20 MB gacha, video 50 MB gacha bo‘lishi mumkin."
+    },
+    "parentAttendance": {
+      "title": "Farzandim darsga kelganini qanday ko‘raman?",
+      "hint": "Davomat bo‘limi",
+      "intro": "Davomat bo‘limida farzandingizning darslari va qatnashgani ko‘rinadi.",
+      "steps": [
+        "Menyudan «Davomat»ni oching.",
+        "Kerak bo‘lsa, yuqorida farzandingizni tanlang.",
+        "Dars ustiga bosib, tafsilotlarni ko‘ring."
+      ]
+    },
+    "parentHomework": {
+      "title": "Farzandimning vazifalarini qayerda ko‘raman?",
+      "hint": "Vazifalar bo‘limi",
+      "intro": "Vazifalar bo‘limida berilgan, topshirilgan va muddati o‘tgan vazifalar ko‘rinadi.",
+      "steps": [
+        "Menyudan «Vazifalar»ni oching.",
+        "Vazifani tanlab, holatini va o‘qituvchi bahosini ko‘ring."
+      ]
+    },
+    "parentResults": {
+      "title": "Baholar va test natijalarini qayerda ko‘raman?",
+      "hint": "Natijalar bo‘limi",
+      "intro": "Natijalar bo‘limida fanlar bo‘yicha baholar va test natijalari jamlangan.",
+      "steps": [
+        "Menyudan «Natijalar»ni oching.",
+        "Fanni tanlab, batafsil natijalarni ko‘ring."
+      ]
+    }
+  }
+}
