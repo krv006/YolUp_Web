@@ -20,6 +20,7 @@ export function useParentNotificationLink({ replace = false }: { replace?: boole
       else if (["quiz", "test"].includes(type)) go(ROUTES.parent.grades);
       else if (type === "course") go(ROUTES.parent.course(link.id));
       else if (["conversation", "room", "chat", "chat_room", "message"].includes(type)) go(ROUTES.parent.chat(link.id));
+      else if (type === "support") go(`${ROUTES.parent.help}/tickets/${encodeURIComponent(link.id)}`);
     },
     [children, go, selectChild]
   );

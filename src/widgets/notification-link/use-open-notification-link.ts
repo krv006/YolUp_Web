@@ -73,7 +73,7 @@ export function useOpenNotificationLink({ replace = false }: { replace?: boolean
         return;
       }
       if (type === "support") {
-        go(`${routes.profile}/help?ticket=${encodeURIComponent(link.id)}`);
+        go(`${routes.profile}/help/tickets/${encodeURIComponent(link.id)}`);
         return;
       }
       if (type === "conversation" || type === "room" || type === "chat" || type === "chat_room" || type === "message") {

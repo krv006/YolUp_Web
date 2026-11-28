@@ -1,0 +1,648 @@
+{
+  "title": "Help center",
+  "home": {
+    "greeting": "Hi, {{name}}",
+    "heading": "How can we help?",
+    "search": "Search a question or topic...",
+    "send": "Send a request",
+    "online": "Support online · usually replies in {{minutes}} min",
+    "offline": "Support is offline · we reply during working hours",
+    "categories": "Categories",
+    "faq": "Frequently asked questions",
+    "all": "All",
+    "activeTicket": "Your active request",
+    "contact": "Contact",
+    "videos": "Video guides",
+    "articleCount_one": "{{count}} article",
+    "articleCount_other": "{{count}} articles",
+    "newReply": "New reply",
+    "telegram": "Write on Telegram",
+    "phone": "Call us",
+    "ticketRow": "Send a request",
+    "ticketRowHint": "We usually reply in {{minutes}} min",
+    "myTickets": "My requests",
+    "myTicketsHint": "Sent requests and replies",
+    "tour": "Replay the tour",
+    "tourHint": "A short tour of the home screen",
+    "version": "YolUp · app version {{version}}"
+  },
+  "search": {
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "recent": "Recent searches",
+    "suggestions": "Suggestions",
+    "articles": "Articles",
+    "videos": "Video",
+    "allTab": "All",
+    "allResults": "All results ({{count}})",
+    "enter": "Enter",
+    "videoMeta": "Video guide · {{duration}}",
+    "videoMetaNoDuration": "Video guide",
+    "faqMeta": "Frequently asked question",
+    "emptyTitle": "Nothing found for “{{query}}”",
+    "emptyTitleShort": "Nothing found",
+    "emptyText": "Try other words or send us your question.",
+    "emptyTextLong": "Try other words or send us your question — we will help.",
+    "popular": "Popular topics",
+    "notFound": "Didn't find an answer?",
+    "notFoundHint": "Send a request to support",
+    "readMinutes": "{{minutes}} min"
+  },
+  "category": {
+    "summary": "{{articles}} · {{videos}}",
+    "videos_one": "{{count}} video",
+    "videos_other": "{{count}} videos",
+    "updated": "Last updated: {{date}}",
+    "readTime": "{{minutes}} min read",
+    "all": "All",
+    "tags": {
+      "homework": "Homework",
+      "tests": "Tests"
+    },
+    "empty": "No articles in this section yet.",
+    "allArticles": "All articles",
+    "allVideos": "Video guides"
+  },
+  "article": {
+    "title": "Article",
+    "meta": "{{minutes}} min read · updated {{date}}",
+    "share": "Share",
+    "copied": "Link copied",
+    "helpful": "Was this article helpful?",
+    "yes": "Yes, helpful",
+    "no": "No",
+    "thanks": "Thanks, your feedback was received!",
+    "thanksHint": "We will use it to improve the article.",
+    "sent": "Thanks! Feedback sent",
+    "inSection": "In this section",
+    "similar": "Similar articles",
+    "needHelp": "Still need help?",
+    "needHelpMobile": "Still need help?",
+    "needHelpText": "Send a request — we usually reply in {{minutes}} min.",
+    "needHelpHint": "Send a request to support",
+    "notFound": "Article not found",
+    "notFoundText": "This article was removed or the link is wrong.",
+    "back": "Back to the help center",
+    "feedback": {
+      "title": "What was missing?",
+      "description": "Your feedback helps us improve the article",
+      "outdated": "The information is outdated",
+      "unclear": "It is hard to understand",
+      "different": "My problem is different",
+      "other": "Another reason",
+      "comment": "Comment (optional)",
+      "commentPlaceholder": "What was missing?",
+      "cancel": "Cancel",
+      "send": "Send"
+    }
+  },
+  "states": {
+    "offline": "No internet connection",
+    "errorTitle": "Could not load the data",
+    "errorText": "Check your internet connection and try again.",
+    "retry": "Try again",
+    "urgent": "Urgent help",
+    "phoneOffline": "{{phone}} · works without internet"
+  },
+  "ticket": {
+    "newTitle": "New request",
+    "newSubtitle": "We usually reply in {{minutes}} min",
+    "hours": " · {{hours}}",
+    "topic": "Topic",
+    "topicPlaceholder": "Choose a topic",
+    "topicSheetTitle": "Choose a topic",
+    "topicSheetHint": "The right topic speeds up the reply",
+    "choose": "Choose",
+    "subject": "Short title",
+    "subjectPlaceholder": "For example: I can't join the lesson",
+    "description": "Description",
+    "descriptionPlaceholder": "What happened? At which step did the error appear?",
+    "descriptionHint": "At least {{min}} characters",
+    "descriptionShort": "Write at least {{min}} characters (now {{count}})",
+    "files": "Screenshot or file",
+    "dropFiles": "Drop a file here or",
+    "pickFiles": "choose",
+    "attach": "Attach a file",
+    "filesHint": "PNG, JPG, PDF · up to {{mb}} MB",
+    "addFile": "Add another file",
+    "tooBig": "{{size}} · larger than {{mb}} MB",
+    "badType": "PNG, JPG or PDF only",
+    "uploading": "Uploading · {{percent}}%",
+    "removeFile": "Remove the file",
+    "deviceInfo": "Attach browser and system details",
+    "deviceInfoMobile": "Attach browser and phone details",
+    "suggest": "This article may help",
+    "cancel": "Cancel",
+    "send": "Send",
+    "sending": "Sending...",
+    "failed": "Could not send the request",
+    "discardTitle": "Discard the request?",
+    "discardText": "Your text and attached files will not be saved.",
+    "discardConfirm": "Yes, discard",
+    "discardKeep": "Keep writing",
+    "createdTitle": "Your request was received",
+    "createdText": "We will notify you when a reply arrives. It usually takes up to {{minutes}} min.",
+    "createdPage": "Request sent",
+    "number": "Request number",
+    "status": "Status",
+    "view": "View the request",
+    "backToHelp": "Back to the help center",
+    "helpCenter": "Help center"
+  },
+  "topics": {
+    "tech": {
+      "title": "Technical problem",
+      "hint": "App, sign-in, lesson won't open"
+    },
+    "lessons": {
+      "title": "Lessons and schedule",
+      "hint": "Time, room, attendance"
+    },
+    "tasks": {
+      "title": "Homework and tests",
+      "hint": "Submitting, grading"
+    },
+    "payments": {
+      "title": "Payments",
+      "hint": "Payment, refund, receipt"
+    },
+    "account": {
+      "title": "Account and security",
+      "hint": "Password, sign-in, email"
+    },
+    "feedback": {
+      "title": "Suggestion or feedback",
+      "hint": "To improve the app"
+    }
+  },
+  "status": {
+    "open": "Open",
+    "answered": "Answered",
+    "closed": "Closed"
+  },
+  "tickets": {
+    "title": "My requests",
+    "back": "Help center",
+    "filters": {
+      "all": "All",
+      "open": "Open",
+      "answered": "Answered",
+      "closed": "Closed"
+    },
+    "thisWeek": "This week",
+    "new": "New request",
+    "emptyTitle": "No requests yet",
+    "emptyText": "If you have a question or a problem, write to us — we usually reply in {{minutes}} min.",
+    "emptyOpenTitle": "No open requests",
+    "emptyOpenText": "All your requests have been answered.",
+    "emptyAnsweredTitle": "No answered requests",
+    "emptyAnsweredText": "You will see replies here when they arrive.",
+    "emptyClosedTitle": "No closed requests",
+    "emptyClosedText": "Resolved requests are kept here.",
+    "archiveNote": "Closed requests are archived after 90 days.",
+    "queue": "Position {{position}} in the queue · a specialist joins in ~{{minutes}} min",
+    "queueShort": "Position {{position}} in the queue · about {{minutes}} min",
+    "selectTitle": "Choose a request",
+    "selectText": "Open a request from the list on the left.",
+    "openedAt": "opened at {{time}}",
+    "openedOn": "opened on {{date}}",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "created": "Request {{number}} created",
+    "createdNoNumber": "Request created",
+    "joined": "{{name}} (YolUp support) joined the chat",
+    "staff": "YolUp support",
+    "closedEvent": "Request closed",
+    "closedRated": "Request closed · you rated it {{stars}} ★",
+    "close": "Close the request",
+    "solved": "Is the problem solved?",
+    "solvedYes": "Yes, solved",
+    "solvedNo": "No, not yet",
+    "composer": "Write a message...",
+    "send": "Send",
+    "attach": "Attach a file",
+    "sendFailed": "Message not sent · tap to retry",
+    "offlineNote": "No internet — will send when connected",
+    "closedNote": "This request is closed. If you have a new question, open a new request.",
+    "confirmTitle": "Close the request?",
+    "confirmText": "Close it if the problem is solved. You can open a new request any time.",
+    "confirmYes": "Yes, close",
+    "confirmNo": "Cancel",
+    "closedToast": "Request closed",
+    "menu": "Actions",
+    "loadError": "Could not load the request",
+    "notFound": "Request not found",
+    "threadTitle": "Request {{number}}"
+  },
+  "rating": {
+    "title": "Rate the support",
+    "subtitle": "{{name}} helped you",
+    "subtitleNoName": "How was our support?",
+    "labels": [
+      "Very bad",
+      "Bad",
+      "Okay",
+      "Good",
+      "Excellent"
+    ],
+    "tags": {
+      "fast": "Fast reply",
+      "clear": "Clear",
+      "polite": "Polite",
+      "solved": "Problem solved"
+    },
+    "comment": "Comment (optional)",
+    "commentPlaceholder": "What else can we improve?",
+    "skip": "Skip",
+    "submit": "Rate",
+    "sent": "Thanks! Your rating was sent",
+    "star": "{{count}} stars"
+  },
+  "categories": {
+    "start": {
+      "title": "Getting started",
+      "short": "Getting started"
+    },
+    "lessons": {
+      "title": "Lessons and schedule",
+      "short": "Lessons and schedule"
+    },
+    "tasks": {
+      "title": "Homework and tests",
+      "short": "Homework and tests"
+    },
+    "payments": {
+      "title": "Payments",
+      "short": "Payments"
+    },
+    "account": {
+      "title": "Account and security",
+      "short": "Account"
+    },
+    "tech": {
+      "title": "Technical problems",
+      "short": "Technical problems"
+    }
+  },
+  "articles": {
+    "intro": {
+      "title": "Getting to know YolUp",
+      "hint": "Home, Chats, Schedule and Workspace",
+      "intro": "Everything in YolUp lives in four sections: lessons, group chats, homework and tests.",
+      "steps": [
+        "“Home” — today's lessons, upcoming homework and the latest news.",
+        "“Chats” — group chats and direct messages.",
+        "“Schedule” — lessons and tests by day, week or month.",
+        "“Workspace” — homework, tests, materials and results."
+      ],
+      "tip": "Tip: tap your profile photo to open settings and the help center."
+    },
+    "joinGroup": {
+      "title": "How do I join a group?",
+      "hint": "Chats → “Join a group”",
+      "intro": "You join a group with the invite code or link from your teacher.",
+      "steps": [
+        "Open “Chats”.",
+        "Tap “Join a group”.",
+        "Enter the code from your teacher — the group chat appears in the list."
+      ]
+    },
+    "createGroup": {
+      "title": "How do I create a group?",
+      "hint": "Chats → “+” → new group",
+      "intro": "A new group automatically gets a chat, a schedule and a homework section.",
+      "steps": [
+        "Open “Chats”.",
+        "Tap “+” at the top and choose a new group.",
+        "Enter the group name and subject.",
+        "Tap “Create” — the group appears in the list."
+      ]
+    },
+    "addStudent": {
+      "title": "How do I add a student?",
+      "hint": "Group → Add a student",
+      "intro": "Invite students with a code or add them yourself.",
+      "steps": [
+        "Open the group chat.",
+        "Choose “Add a student” in the group menu.",
+        "Send the invite code to the student or pick them from the list."
+      ]
+    },
+    "parentStart": {
+      "title": "How do I connect my child?",
+      "hint": "Add a child → login or FK code",
+      "intro": "Connect your child's account to see their lessons, grades and homework.",
+      "steps": [
+        "Tap “Add a child” on the home page.",
+        "Enter your child's login (username) or the FK-… invite code.",
+        "Confirm — your child's data appears on the home page."
+      ]
+    },
+    "language": {
+      "title": "How do I change the app language?",
+      "hint": "System settings → Language",
+      "intro": "The app works in Uzbek, Russian and English.",
+      "steps": [
+        "Open Profile → “System settings”.",
+        "Tap “Language”.",
+        "Choose a language — the app switches right away."
+      ]
+    },
+    "joinLesson": {
+      "title": "How do I join a lesson?",
+      "hint": "Schedule → lesson card → “Join”",
+      "intro": "You can join a live lesson after the teacher starts it.",
+      "steps": [
+        "Find the lesson in “Schedule”.",
+        "Open the lesson card and tap “Join the lesson”.",
+        "Check your camera and microphone and tap “Enter”."
+      ],
+      "tip": "Tip: if the lesson hasn't started yet, a waiting screen opens and you join as soon as the teacher starts."
+    },
+    "startLesson": {
+      "title": "How do I start a lesson?",
+      "hint": "Home → “Start the lesson”",
+      "intro": "The lesson starts when you enter the room, and students get a notification.",
+      "steps": [
+        "Open the lesson on “Home” or in “Schedule”.",
+        "Tap “Start the lesson”.",
+        "Check your camera and microphone.",
+        "Tap “Enter” — the lesson goes live and students can join."
+      ],
+      "tip": "Tip: allow screen sharing to record the lesson."
+    },
+    "createLesson": {
+      "title": "How do I add a lesson?",
+      "hint": "Schedule → “Add a lesson”",
+      "intro": "Add a single lesson, a repeating schedule or several lessons at once.",
+      "steps": [
+        "Open “Schedule”.",
+        "Tap “Add a lesson”.",
+        "Choose the group and the mode: single, repeating or several lessons.",
+        "Set the date and time and save."
+      ]
+    },
+    "cancelLesson": {
+      "title": "How do I cancel a lesson?",
+      "hint": "Schedule → lesson → “Cancel”",
+      "intro": "Only a lesson that hasn't started yet can be cancelled.",
+      "steps": [
+        "Open the lesson in “Schedule”.",
+        "Tap “Cancel”.",
+        "Choose this lesson only or the whole series and confirm."
+      ]
+    },
+    "recordings": {
+      "title": "Where can I watch a lesson recording?",
+      "hint": "Workspace → Materials → group",
+      "intro": "Recorded lessons are saved in materials once they are ready.",
+      "steps": [
+        "Open “Workspace” → “Materials”.",
+        "Choose the group and the lesson folder.",
+        "Open the video recording."
+      ]
+    },
+    "schedule": {
+      "title": "How do I see the schedule?",
+      "hint": "Schedule → day, week or month",
+      "intro": "The schedule shows lessons and tests assigned to groups together.",
+      "steps": [
+        "Open “Schedule”.",
+        "Choose the day, week or month view.",
+        "Tap a lesson or a test to see the details."
+      ]
+    },
+    "submitHomework": {
+      "title": "How do I submit homework?",
+      "hint": "Workspace → Homework → file or text",
+      "intro": "You can submit homework in the app in a few seconds: a file, a photo or plain text.",
+      "steps": [
+        "Open Workspace → Homework.",
+        "Choose the homework and tap “Submit”.",
+        "Add a file, a photo or text.",
+        "Tap “Send” — your teacher gets a notification."
+      ],
+      "tip": "Tip: keep each file under 20 MB."
+    },
+    "lateHomework": {
+      "title": "What if the deadline has passed?",
+      "hint": "Late submission",
+      "intro": "If the teacher allows it, you can submit after the deadline — it is marked as late.",
+      "steps": [
+        "Open the homework and check whether the “Submit” button is there.",
+        "If it isn't, write to your teacher in the group chat."
+      ]
+    },
+    "resubmit": {
+      "title": "Resubmitting homework",
+      "hint": "When the teacher asks again",
+      "intro": "If the teacher asks you to resubmit, you get a notification.",
+      "steps": [
+        "Open the notification or the homework.",
+        "Read the teacher's comment.",
+        "Add a new answer and send it again."
+      ]
+    },
+    "createHomework": {
+      "title": "How do I give homework?",
+      "hint": "Workspace → Homework → “New homework”",
+      "intro": "Homework can include text, a file, a voice note and test questions.",
+      "steps": [
+        "Open Workspace → Homework.",
+        "Tap “New homework”.",
+        "Choose the group, the deadline and the grading type.",
+        "Write the text and tap “Save” — students get a notification."
+      ]
+    },
+    "checkHomework": {
+      "title": "How do I check homework?",
+      "hint": "AI suggests, you set the grade",
+      "intro": "Submitted answers appear on the homework page.",
+      "steps": [
+        "Open the homework and see who submitted.",
+        "Open a student's answer — an AI suggestion appears if there is one.",
+        "Set the grade and a comment and save."
+      ]
+    },
+    "aiCheck": {
+      "title": "How does the AI check work?",
+      "hint": "Automatic feedback and grade",
+      "intro": "If “AI check” is on for the homework, AI reviews the answer and suggests feedback and an estimated grade.",
+      "steps": [
+        "The student sends an answer.",
+        "AI checks it within a few minutes.",
+        "The teacher confirms or changes the final grade."
+      ]
+    },
+    "takeTest": {
+      "title": "How do I take a test?",
+      "hint": "Workspace → Tests → “Solve”",
+      "intro": "A test can be taken from its opening time until the deadline.",
+      "steps": [
+        "Open Workspace → Tests.",
+        "Choose the test and tap “Solve”.",
+        "Answer the questions and tap “Finish”."
+      ]
+    },
+    "testResults": {
+      "title": "Where can I see my test result?",
+      "hint": "Workspace → Tests → result",
+      "intro": "The result appears right after the test is finished.",
+      "steps": [
+        "Open Workspace → Tests.",
+        "Open a finished test to see the score and answers."
+      ]
+    },
+    "assignTest": {
+      "title": "How do I assign a test to a group?",
+      "hint": "Workspace → Tests → “Assign to a group”",
+      "intro": "One test can be assigned to any number of groups — each group gets its own copy.",
+      "steps": [
+        "Open Workspace → Tests.",
+        "Choose the test and tap “Assign to a group”.",
+        "Choose the group, the opening time and the deadline and send."
+      ]
+    },
+    "paymentQuestion": {
+      "title": "I have a payment question",
+      "hint": "Request → “Payments” topic",
+      "intro": "Write to support about any payment question.",
+      "steps": [
+        "Tap “Send a request”.",
+        "Choose the “Payments” topic.",
+        "Describe your question in detail and send it."
+      ]
+    },
+    "paymentCharged": {
+      "title": "The payment failed but money was charged",
+      "hint": "Send a request with the receipt",
+      "intro": "If money was charged but the course didn't open, a specialist will check the payment.",
+      "steps": [
+        "Tap “Send a request” and choose the “Payments” topic.",
+        "Write the payment date and amount.",
+        "Attach a screenshot of the receipt and send."
+      ]
+    },
+    "forgotPassword": {
+      "title": "I forgot my password, what do I do?",
+      "hint": "Sign in → “Forgot password” → email code",
+      "intro": "You reset the password with a code sent to your email.",
+      "steps": [
+        "Tap “Forgot password” on the sign-in page.",
+        "Enter the email linked to your account.",
+        "Enter the code from the email.",
+        "Set a new password and sign in."
+      ],
+      "tip": "Tip: if your email isn't verified, the code won't arrive — write to support."
+    },
+    "changePassword": {
+      "title": "How do I change my password?",
+      "hint": "Account settings → Security",
+      "intro": "You can change your password any time in profile settings.",
+      "steps": [
+        "Open Profile → “Account settings”.",
+        "Tap “Change password” under “Security”.",
+        "Enter the current and new password and save."
+      ]
+    },
+    "emailLogin": {
+      "title": "I can't sign in with my email",
+      "hint": "The email must be verified",
+      "intro": "You can sign in with email only if it is verified.",
+      "steps": [
+        "Sign in with your login (username).",
+        "Verify your email in the profile with a code.",
+        "Next time you can sign in with email too."
+      ],
+      "tip": "Tip: if one email is linked to several accounts, sign in with your login."
+    },
+    "switchAccount": {
+      "title": "How do I switch accounts?",
+      "hint": "Profile → “Switch account”",
+      "intro": "If you have several roles (for example teacher and parent), you switch between them without a password.",
+      "steps": [
+        "Open your profile.",
+        "Tap “Switch account”.",
+        "Choose an account or open a new role."
+      ]
+    },
+    "loginHistory": {
+      "title": "How do I see who signed in?",
+      "hint": "Profile → “Sign-in history”",
+      "intro": "Sign-in history shows devices and the time of last activity.",
+      "steps": [
+        "Open Profile → “Sign-in history”.",
+        "If you see an unknown device, change your password right away."
+      ]
+    },
+    "notifications": {
+      "title": "Notifications don't arrive",
+      "hint": "System settings → Notifications",
+      "intro": "Notifications must be enabled in the app and in the browser.",
+      "steps": [
+        "Open Profile → “System settings” → “Notifications”.",
+        "Turn on the notifications you need.",
+        "Allow notifications if the browser asks."
+      ]
+    },
+    "cameraMic": {
+      "title": "The camera or microphone doesn't work",
+      "hint": "Check browser permissions",
+      "intro": "Most often the browser hasn't allowed the camera or microphone.",
+      "steps": [
+        "Click the lock icon in the address bar.",
+        "Allow the camera and microphone.",
+        "Reload the page and join the lesson again."
+      ]
+    },
+    "blankScreen": {
+      "title": "The page won't open or shows a blank screen",
+      "hint": "Reload the page and clear the cache",
+      "intro": "If an old version is stuck in the cache, the page may not open properly.",
+      "steps": [
+        "Reload the page with Ctrl+Shift+R (Cmd+Shift+R on Mac).",
+        "Update your browser to the latest version.",
+        "If it still happens, send a request with a screenshot."
+      ]
+    },
+    "fileUpload": {
+      "title": "A file won't upload",
+      "hint": "Check the size and your internet",
+      "intro": "If the file is too large or the internet is slow, the upload may stop.",
+      "steps": [
+        "Check the file size.",
+        "Check your internet connection and try again.",
+        "If an error message appears, include it in your request."
+      ],
+      "tip": "Tip: in chat a file can be up to 20 MB and a video up to 50 MB."
+    },
+    "parentAttendance": {
+      "title": "How do I see if my child attended a lesson?",
+      "hint": "Attendance section",
+      "intro": "The Attendance section shows your child's lessons and attendance.",
+      "steps": [
+        "Open “Attendance” in the menu.",
+        "Choose your child at the top if needed.",
+        "Tap a lesson to see the details."
+      ]
+    },
+    "parentHomework": {
+      "title": "Where can I see my child's homework?",
+      "hint": "Homework section",
+      "intro": "The Homework section shows assigned, submitted and overdue homework.",
+      "steps": [
+        "Open “Homework” in the menu.",
+        "Choose a homework to see its status and the teacher's grade."
+      ]
+    },
+    "parentResults": {
+      "title": "Where can I see grades and test results?",
+      "hint": "Results section",
+      "intro": "The Results section collects grades by subject and test results.",
+      "steps": [
+        "Open “Results” in the menu.",
+        "Choose a subject to see detailed results."
+      ]
+    }
+  }
+}
